@@ -17,6 +17,7 @@ import { FileDashboard } from '#common/interfaces/blockml/internal/file-dashboar
 import { FileMod } from '#common/interfaces/blockml/internal/file-mod';
 import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
 import { FileReport } from '#common/interfaces/blockml/internal/file-report';
+import { FileSchema } from '#common/interfaces/blockml/internal/file-schema';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { log } from '../extra/log';
 
@@ -36,6 +37,7 @@ export function splitFiles(
 
   let mods: FileMod[] = [];
   let stores: FileStore[] = [];
+  let schemas: FileSchema[] = [];
   let dashboards: FileDashboard[] = [];
   let reports: FileReport[] = [];
   let charts: FileChart[] = [];
@@ -182,6 +184,38 @@ export function splitFiles(
         break;
       }
 
+      case FileExtensionEnum.Schema: {
+        if (file.name === file.schema + FileExtensionEnum.Schema) {
+          delete file.ext;
+          delete file.name;
+          delete file.path;
+
+          let newSchemaOptions: FileSchema = {
+            name: file.schema,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt
+          };
+
+          schemas.push(Object.assign(file, newSchemaOptions));
+        } else {
+          item.errors.push(
+            new BmError({
+              title: ErTitleEnum.WRONG_SCHEMA_NAME,
+              message: `filename ${file.name} does not match "${ParameterEnum.Schema}: ${file.schema}"`,
+              lines: [
+                {
+                  line: file.schema_line_num,
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+        }
+        break;
+      }
+
       case FileExtensionEnum.Yml: {
         if (file.name === MPROVE_CONFIG_FILENAME) {
           delete file.ext;
@@ -206,6 +240,7 @@ export function splitFiles(
 
   log(cs, caller, func, structId, LogTypeEnum.Mods, mods);
   log(cs, caller, func, structId, LogTypeEnum.Stores, stores);
+  log(cs, caller, func, structId, LogTypeEnum.Schemas, schemas);
   log(cs, caller, func, structId, LogTypeEnum.Reports, reports);
   log(cs, caller, func, structId, LogTypeEnum.Ds, dashboards);
   log(cs, caller, func, structId, LogTypeEnum.Charts, charts);
@@ -215,6 +250,7 @@ export function splitFiles(
   return {
     mods: mods,
     stores: stores,
+    schemas: schemas,
     reports: reports,
     dashboards: dashboards,
     charts: charts,

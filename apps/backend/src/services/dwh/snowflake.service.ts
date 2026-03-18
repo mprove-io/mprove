@@ -16,12 +16,12 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import {
-  ConnectionSchema,
-  SchemaColumn,
-  SchemaForeignKey,
-  SchemaIndex,
-  SchemaTable
-} from '#common/interfaces/backend/connection-schema';
+  ConnectionRawSchema,
+  RawSchemaColumn,
+  RawSchemaForeignKey,
+  RawSchemaIndex,
+  RawSchemaTable
+} from '#common/interfaces/backend/connection-schemas/raw-schema';
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
@@ -191,7 +191,7 @@ export class SnowFlakeService {
 
   async fetchSchema(item: {
     connection: ConnectionTab;
-  }): Promise<ConnectionSchema> {
+  }): Promise<ConnectionRawSchema> {
     let { connection } = item;
 
     let snoflakeOptions = this.optionsToSnowFlakeOptions({
@@ -344,7 +344,7 @@ export class SnowFlakeService {
         });
       }
 
-      let tables: SchemaTable[] = tablesRows.map(row => {
+      let tables: RawSchemaTable[] = tablesRows.map(row => {
         let tableConstraintRows = constraintRows.filter(
           cr =>
             cr.TABLE_SCHEMA === row.TABLE_SCHEMA &&
@@ -355,7 +355,7 @@ export class SnowFlakeService {
           ...new Set(tableConstraintRows.map(cr => cr.CONSTRAINT_NAME))
         ];
 
-        let indexes: SchemaIndex[] = constraintNames.map(constraintName => {
+        let indexes: RawSchemaIndex[] = constraintNames.map(constraintName => {
           let constraintGroup = tableConstraintRows.filter(
             cr => cr.CONSTRAINT_NAME === constraintName
           );
@@ -369,14 +369,14 @@ export class SnowFlakeService {
           };
         });
 
-        let columns: SchemaColumn[] = columnsRows
+        let columns: RawSchemaColumn[] = columnsRows
           .filter(
             c =>
               c.TABLE_SCHEMA === row.TABLE_SCHEMA &&
               c.TABLE_NAME === row.TABLE_NAME
           )
           .map(c => {
-            let foreignKeys: SchemaForeignKey[] = fkRows
+            let foreignKeys: RawSchemaForeignKey[] = fkRows
               .filter(
                 fk =>
                   fk.TABLE_SCHEMA === c.TABLE_SCHEMA &&

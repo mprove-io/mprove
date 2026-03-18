@@ -1,0 +1,3 @@
+schema: no_dot
+tables:
+- table: t1

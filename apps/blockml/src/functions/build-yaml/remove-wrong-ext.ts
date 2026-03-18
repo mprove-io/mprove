@@ -40,6 +40,7 @@ export function removeWrongExt(
     if (
       [
         FileExtensionEnum.Store,
+        FileExtensionEnum.Schema,
         FileExtensionEnum.Report,
         FileExtensionEnum.Dashboard,
         FileExtensionEnum.Chart,

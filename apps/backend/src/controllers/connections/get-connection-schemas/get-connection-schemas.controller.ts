@@ -39,10 +39,13 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import {
   ColumnCombinedReference,
-  ConnectionSchema,
-  ConnectionSchemaItem
-} from '#common/interfaces/backend/connection-schema';
-import { MproveConfigRelationship } from '#common/interfaces/backend/mprove-config-relationship';
+  CombinedSchema,
+  CombinedSchemaColumn,
+  CombinedSchemaItem,
+  CombinedSchemaTable
+} from '#common/interfaces/backend/connection-schemas/combined-schema';
+import { ExtraSchema } from '#common/interfaces/backend/connection-schemas/extra-schema';
+import { ConnectionRawSchema } from '#common/interfaces/backend/connection-schemas/raw-schema';
 import { ConnectionLt, ConnectionSt } from '#common/interfaces/st-lt';
 import {
   ToBackendGetConnectionSchemasRequest,
@@ -100,7 +103,7 @@ export class GetConnectionSchemasController {
       projectId: projectId
     });
 
-    let relationships = struct.mproveConfig?.relationships || [];
+    let extraSchemas = struct.extraSchemas ?? [];
 
     let apiEnvs = await this.envsService.getApiEnvs({
       projectId: projectId
@@ -141,12 +144,15 @@ export class GetConnectionSchemasController {
           c.type === ConnectionTypeEnum.Trino)
     );
 
-    let connectionSchemaItems: ConnectionSchemaItem[];
+    let rawSchemasByConnection: {
+      connectionId: string;
+      schema: ConnectionRawSchema;
+    }[] = [];
 
     if (isRefresh === true) {
-      let schemaResults: ConnectionSchemaItem[] = await Promise.all(
+      await Promise.all(
         eligibleConnections.map(async connection => {
-          let schema: ConnectionSchema;
+          let schema: ConnectionRawSchema;
 
           if (connection.type === ConnectionTypeEnum.PostgreSQL) {
             schema = await this.pgService.fetchSchema({
@@ -183,18 +189,18 @@ export class GetConnectionSchemasController {
           }
 
           if (isDefined(schema)) {
-            connection.schema = schema;
+            connection.rawSchema = schema;
           }
 
-          return {
+          rawSchemasByConnection.push({
             connectionId: connection.connectionId,
             schema: schema
-          };
+          });
         })
       );
 
       let connectionsToUpdate = eligibleConnections.filter(c =>
-        isDefined(c.schema)
+        isDefined(c.rawSchema)
       );
 
       if (connectionsToUpdate.length > 0) {
@@ -202,7 +208,7 @@ export class GetConnectionSchemasController {
 
         await forEachSeries(connectionsToUpdate, async c => {
           let connectionSt: ConnectionSt = { options: c.options };
-          let connectionLt: ConnectionLt = { schema: c.schema };
+          let connectionLt: ConnectionLt = { rawSchema: c.rawSchema };
 
           let entProps = this.tabToEntService.getEntProps({
             dataSt: connectionSt,
@@ -215,39 +221,42 @@ export class GetConnectionSchemasController {
           );
         });
       }
-
-      connectionSchemaItems = schemaResults;
     } else {
-      connectionSchemaItems = eligibleConnections
-        .filter(x => isDefined(x.schema))
-        .map(x => ({
-          connectionId: x.connectionId,
-          schema: x.schema
-        }));
+      eligibleConnections
+        .filter(x => isDefined(x.rawSchema))
+        .forEach(x => {
+          rawSchemasByConnection.push({
+            connectionId: x.connectionId,
+            schema: x.rawSchema
+          });
+        });
     }
 
-    this.buildCombinedReferences({
-      connectionSchemaItems: connectionSchemaItems,
-      relationships: relationships
+    let combinedSchemaItems = this.buildCombinedSchema({
+      rawSchemasByConnection: rawSchemasByConnection,
+      extraSchemas: extraSchemas
     });
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let payload: ToBackendGetConnectionSchemasResponsePayload = {
       userMember: apiUserMember,
-      connectionSchemaItems: connectionSchemaItems
+      combinedSchemaItems: combinedSchemaItems
     };
 
     return payload;
   }
 
-  private buildCombinedReferences(item: {
-    connectionSchemaItems: ConnectionSchemaItem[];
-    relationships: MproveConfigRelationship[];
-  }) {
-    let { connectionSchemaItems, relationships } = item;
+  private buildCombinedSchema(item: {
+    rawSchemasByConnection: {
+      connectionId: string;
+      schema: ConnectionRawSchema;
+    }[];
+    extraSchemas: ExtraSchema[];
+  }): CombinedSchemaItem[] {
+    let { rawSchemasByConnection, extraSchemas } = item;
 
-    // Build relationship lookup as array of {key, entries}
+    // Build relationship lookup
     let relLookup: {
       key: string;
       relationshipType: RelationshipTypeEnum;
@@ -256,112 +265,199 @@ export class GetConnectionSchemasController {
       targetColumnName: string;
     }[] = [];
 
-    relationships.forEach(rel => {
-      let dotIndex = rel.schema.indexOf('.');
-      let connectionId = rel.schema.substring(0, dotIndex);
-      let fromSchemaName = rel.schema.substring(dotIndex + 1);
+    extraSchemas.forEach(sch => {
+      let dotIndex = sch.schema.indexOf('.');
+      let connectionId = sch.schema.substring(0, dotIndex);
+      let fromSchemaName = sch.schema.substring(dotIndex + 1);
 
-      rel.references.forEach(ref => {
-        let [fromTableName, fromColumnName] = ref.from.split('.');
-        let [toTableName, toColumnName] = ref.to.split('.');
+      (sch.tables ?? []).forEach(tbl => {
+        (tbl.columns ?? []).forEach(col => {
+          (col.relationships ?? []).forEach(rel => {
+            let [toTableName, toColumnName] = rel.to.split('.');
 
-        let toSchemaName = ref.toSchema
-          ? ref.toSchema.substring(ref.toSchema.indexOf('.') + 1)
-          : fromSchemaName;
+            let toSchemaName = rel.toSchema
+              ? rel.toSchema.substring(rel.toSchema.indexOf('.') + 1)
+              : fromSchemaName;
 
-        // Forward entry
-        relLookup.push({
-          key: `${connectionId}.${fromSchemaName}.${fromTableName}.${fromColumnName}`,
-          relationshipType: ref.type,
-          targetSchemaName: toSchemaName,
-          targetTableName: toTableName,
-          targetColumnName: toColumnName
-        });
+            // Forward entry
+            relLookup.push({
+              key: `${connectionId}.${fromSchemaName}.${tbl.table}.${col.column}`,
+              relationshipType: rel.type,
+              targetSchemaName: toSchemaName,
+              targetTableName: toTableName,
+              targetColumnName: toColumnName
+            });
 
-        // Reverse entry
-        let reverseType =
-          ref.type === RelationshipTypeEnum.ManyToOne
-            ? RelationshipTypeEnum.OneToMany
-            : ref.type === RelationshipTypeEnum.OneToMany
-              ? RelationshipTypeEnum.ManyToOne
-              : ref.type;
+            // Reverse entry
+            let reverseType =
+              rel.type === RelationshipTypeEnum.ManyToOne
+                ? RelationshipTypeEnum.OneToMany
+                : rel.type === RelationshipTypeEnum.OneToMany
+                  ? RelationshipTypeEnum.ManyToOne
+                  : rel.type;
 
-        relLookup.push({
-          key: `${connectionId}.${toSchemaName}.${toTableName}.${toColumnName}`,
-          relationshipType: reverseType,
-          targetSchemaName: fromSchemaName,
-          targetTableName: fromTableName,
-          targetColumnName: fromColumnName
+            relLookup.push({
+              key: `${connectionId}.${toSchemaName}.${toTableName}.${toColumnName}`,
+              relationshipType: reverseType,
+              targetSchemaName: fromSchemaName,
+              targetTableName: tbl.table,
+              targetColumnName: col.column
+            });
+          });
         });
       });
     });
 
-    // Build combined references for each column
-    connectionSchemaItems.forEach(csItem => {
-      let schema = csItem.schema;
+    // Build combined schema items
+    let combinedSchemaItems: CombinedSchemaItem[] = [];
 
-      if (!isDefined(schema) || isDefined(schema.errorMessage)) {
+    rawSchemasByConnection.forEach(rawItem => {
+      let connectionId = rawItem.connectionId;
+      let rawSchema = rawItem.schema;
+
+      if (!isDefined(rawSchema)) {
         return;
       }
 
-      schema.tables.forEach(table => {
-        table.columns.forEach(col => {
-          let combinedRefs: ColumnCombinedReference[] = [];
-
-          // Add FK entries
-          let foreignKeys = col.foreignKeys || [];
-
-          foreignKeys.forEach(fk => {
-            let schemaNameDiffers =
-              fk.referencedSchemaName !== table.schemaName;
-
-            combinedRefs.push({
-              isForeignKey: true,
-              referencedSchemaName: schemaNameDiffers
-                ? fk.referencedSchemaName
-                : undefined,
-              referencedTableName: fk.referencedTableName,
-              referencedColumnName: fk.referencedColumnName
-            });
-          });
-
-          // Add relationship entries
-          let lookupKey = `${csItem.connectionId}.${table.schemaName}.${table.tableName}.${col.columnName}`;
-
-          let relEntries = relLookup.filter(x => x.key === lookupKey);
-
-          relEntries.forEach(relEntry => {
-            let existing = combinedRefs.find(
-              x =>
-                x.referencedTableName === relEntry.targetTableName &&
-                x.referencedColumnName === relEntry.targetColumnName &&
-                (x.referencedSchemaName || table.schemaName) ===
-                  relEntry.targetSchemaName
-            );
-
-            if (existing) {
-              existing.relationshipType = relEntry.relationshipType;
-            } else {
-              let schemaNameDiffers =
-                relEntry.targetSchemaName !== table.schemaName;
-
-              combinedRefs.push({
-                relationshipType: relEntry.relationshipType,
-                isForeignKey: false,
-                referencedSchemaName: schemaNameDiffers
-                  ? relEntry.targetSchemaName
-                  : undefined,
-                referencedTableName: relEntry.targetTableName,
-                referencedColumnName: relEntry.targetColumnName
-              });
-            }
-          });
-
-          if (combinedRefs.length > 0) {
-            col.combinedReferences = combinedRefs;
-          }
+      if (isDefined(rawSchema.errorMessage)) {
+        combinedSchemaItems.push({
+          connectionId: connectionId,
+          schemas: [],
+          lastRefreshedTs: rawSchema.lastRefreshedTs,
+          errorMessage: rawSchema.errorMessage
         });
+        return;
+      }
+
+      // Group raw tables by schemaName
+      let schemaGroups: {
+        schemaName: string;
+        tables: typeof rawSchema.tables;
+      }[] = [];
+
+      rawSchema.tables.forEach(t => {
+        let group = schemaGroups.find(g => g.schemaName === t.schemaName);
+        if (!group) {
+          group = { schemaName: t.schemaName, tables: [] };
+          schemaGroups.push(group);
+        }
+        group.tables.push(t);
+      });
+
+      let combinedSchemas: CombinedSchema[] = [];
+
+      schemaGroups.forEach(schemaGroup => {
+        let schemaName = schemaGroup.schemaName;
+        let rawTables = schemaGroup.tables;
+
+        let extraSch = extraSchemas.find(
+          s => s.schema === `${connectionId}.${schemaName}`
+        );
+
+        let combinedTables: CombinedSchemaTable[] = rawTables.map(rawTable => {
+          let extraTable = extraSch?.tables?.find(
+            t => t.table === rawTable.tableName
+          );
+
+          let combinedColumns: CombinedSchemaColumn[] = rawTable.columns.map(
+            rawCol => {
+              let extraCol = extraTable?.columns?.find(
+                c => c.column === rawCol.columnName
+              );
+
+              let combinedRefs: ColumnCombinedReference[] = [];
+
+              // Add FK entries
+              let foreignKeys = rawCol.foreignKeys || [];
+
+              foreignKeys.forEach(fk => {
+                let schemaNameDiffers = fk.referencedSchemaName !== schemaName;
+
+                combinedRefs.push({
+                  isForeignKey: true,
+                  referencedSchemaName: schemaNameDiffers
+                    ? fk.referencedSchemaName
+                    : undefined,
+                  referencedTableName: fk.referencedTableName,
+                  referencedColumnName: fk.referencedColumnName
+                });
+              });
+
+              // Add relationship entries
+              let lookupKey = `${connectionId}.${schemaName}.${rawTable.tableName}.${rawCol.columnName}`;
+
+              let relEntries = relLookup.filter(x => x.key === lookupKey);
+
+              relEntries.forEach(relEntry => {
+                let existing = combinedRefs.find(
+                  x =>
+                    x.referencedTableName === relEntry.targetTableName &&
+                    x.referencedColumnName === relEntry.targetColumnName &&
+                    (x.referencedSchemaName || schemaName) ===
+                      relEntry.targetSchemaName
+                );
+
+                if (existing) {
+                  existing.relationshipType = relEntry.relationshipType;
+                } else {
+                  let schemaNameDiffers =
+                    relEntry.targetSchemaName !== schemaName;
+
+                  combinedRefs.push({
+                    relationshipType: relEntry.relationshipType,
+                    isForeignKey: false,
+                    referencedSchemaName: schemaNameDiffers
+                      ? relEntry.targetSchemaName
+                      : undefined,
+                    referencedTableName: relEntry.targetTableName,
+                    referencedColumnName: relEntry.targetColumnName
+                  });
+                }
+              });
+
+              let combinedColumn: CombinedSchemaColumn = {
+                columnName: rawCol.columnName,
+                dataType: rawCol.dataType,
+                isNullable: rawCol.isNullable,
+                isPrimaryKey: rawCol.isPrimaryKey,
+                isUnique: rawCol.isUnique,
+                foreignKeys: rawCol.foreignKeys,
+                description: extraCol?.description,
+                example: extraCol?.example,
+                references: combinedRefs.length > 0 ? combinedRefs : undefined
+              };
+
+              return combinedColumn;
+            }
+          );
+
+          let combinedTable: CombinedSchemaTable = {
+            tableName: rawTable.tableName,
+            tableType: rawTable.tableType,
+            columns: combinedColumns,
+            indexes: rawTable.indexes,
+            description: extraTable?.description
+          };
+
+          return combinedTable;
+        });
+
+        let combinedSchema: CombinedSchema = {
+          schemaName: schemaName,
+          description: extraSch?.description,
+          tables: combinedTables
+        };
+
+        combinedSchemas.push(combinedSchema);
+      });
+
+      combinedSchemaItems.push({
+        connectionId: connectionId,
+        schemas: combinedSchemas,
+        lastRefreshedTs: rawSchema.lastRefreshedTs
       });
     });
+
+    return combinedSchemaItems;
   }
 }

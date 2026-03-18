@@ -1,0 +1,4 @@
+schema: c1.s1
+tables:
+- table: t1
+  columns: not_a_list

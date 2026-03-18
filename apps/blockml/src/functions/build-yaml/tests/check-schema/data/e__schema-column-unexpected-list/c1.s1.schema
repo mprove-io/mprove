@@ -1,0 +1,5 @@
+schema: c1.s1
+tables:
+- table: t1
+  columns:
+  - column: [a, b]

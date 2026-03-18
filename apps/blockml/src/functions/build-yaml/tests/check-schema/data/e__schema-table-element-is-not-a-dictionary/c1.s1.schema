@@ -1,0 +1,3 @@
+schema: c1.s1
+tables:
+- just_a_string

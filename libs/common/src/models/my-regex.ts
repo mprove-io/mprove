@@ -17,7 +17,7 @@ export class MyRegex {
   }
 
   static CAPTURE_EXT(): RegExp {
-    return cloneRegexp(/([.][\s\S]+)$/);
+    return cloneRegexp(/([.][^.]+)$/);
   }
 
   static CONTAINS_DOT(): RegExp {

@@ -55,19 +55,22 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import {
+  ExtraSchema,
+  ExtraSchemaColumn,
+  ExtraSchemaRelationship,
+  ExtraSchemaTable
+} from '#common/interfaces/backend/connection-schemas/extra-schema';
 import { Ev } from '#common/interfaces/backend/ev';
 import { MproveConfig } from '#common/interfaces/backend/mprove-config';
-import { MproveConfigReference } from '#common/interfaces/backend/mprove-config-reference';
-import { MproveConfigRelationship } from '#common/interfaces/backend/mprove-config-relationship';
 import { ProjectConnection } from '#common/interfaces/backend/project-connection';
 import { BmlFile } from '#common/interfaces/blockml/bml-file';
 import { FileChart } from '#common/interfaces/blockml/internal/file-chart';
 import { FileDashboard } from '#common/interfaces/blockml/internal/file-dashboard';
 import { FileMod } from '#common/interfaces/blockml/internal/file-mod';
 import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
-import { FileRelationship } from '#common/interfaces/blockml/internal/file-relationship';
-import { FileRelationshipReference } from '#common/interfaces/blockml/internal/file-relationship-reference';
 import { FileReport } from '#common/interfaces/blockml/internal/file-report';
+import { FileSchema } from '#common/interfaces/blockml/internal/file-schema';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { Model } from '#common/interfaces/blockml/model';
 import { ModelMetric } from '#common/interfaces/blockml/model-metric';
@@ -95,6 +98,7 @@ interface RebuildStructPrep {
   apiModels: Model[];
   reports: FileReport[];
   charts: FileChart[];
+  extraSchemas: ExtraSchema[];
   mproveConfig: MproveConfig;
 }
 
@@ -223,6 +227,7 @@ export class RebuildStructService {
       presets: prep.presets,
       mconfigs: mconfigs,
       queries: queries,
+      extraSchemas: prep.extraSchemas,
       mproveConfig: prep.mproveConfig
     };
 
@@ -312,6 +317,7 @@ export class RebuildStructService {
     let mods: FileMod[] = [];
 
     let stores: FileStore[];
+    let schemas: FileSchema[];
     let reports: FileReport[];
     let dashboards: FileDashboard[];
     let charts: FileChart[];
@@ -336,6 +342,7 @@ export class RebuildStructService {
             .filter(model => model.type === ModelTypeEnum.Store)
             .map(model => model.storeContent)
         : yamlBuildItem.stores;
+    schemas = yamlBuildItem.schemas;
     dashboards = yamlBuildItem.dashboards;
     reports = yamlBuildItem.reports;
     charts = yamlBuildItem.charts;
@@ -367,24 +374,7 @@ export class RebuildStructService {
               PROJECT_CONFIG_CURRENCY_SUFFIX,
             thousands_separator:
               item.cachedMproveConfig.thousandsSeparator ??
-              PROJECT_CONFIG_THOUSANDS_SEPARATOR,
-            relationships: (item.cachedMproveConfig.relationships ?? []).map(
-              rel => {
-                let fileRelationship: FileRelationship = {
-                  schema: rel.schema,
-                  references: (rel.references ?? []).map(ref => {
-                    let fileRelReference: FileRelationshipReference = {
-                      from: ref.from,
-                      to: ref.to,
-                      to_schema: ref.toSchema,
-                      type: ref.type
-                    };
-                    return fileRelReference;
-                  })
-                };
-                return fileRelationship;
-              }
-            )
+              PROJECT_CONFIG_THOUSANDS_SEPARATOR
           }
         : yamlBuildItem.projectConfig;
 
@@ -398,6 +388,7 @@ export class RebuildStructService {
         reports: [],
         dashboards: [],
         charts: [],
+        extraSchemas: [],
         mproveConfig: {
           mproveDirValue: undefined,
           weekStart: PROJECT_CONFIG_WEEK_START,
@@ -411,8 +402,7 @@ export class RebuildStructService {
           formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
           caseSensitiveStringFilters: toBooleanFromLowercaseString(
             PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
-          ),
-          relationships: []
+          )
         }
       };
     }
@@ -773,6 +763,36 @@ export class RebuildStructService {
       dashboards: dashboards,
       reports: reports,
       charts: charts,
+      extraSchemas: (schemas ?? []).map(sch => {
+        let extraSchema: ExtraSchema = {
+          schema: sch.schema,
+          description: sch.description,
+          tables: (sch.tables ?? []).map(tbl => {
+            let extraTable: ExtraSchemaTable = {
+              table: tbl.table,
+              description: tbl.description,
+              columns: (tbl.columns ?? []).map(col => {
+                let extraColumn: ExtraSchemaColumn = {
+                  column: col.column,
+                  example: col.example,
+                  description: col.description,
+                  relationships: (col.relationships ?? []).map(rel => {
+                    let extraRel: ExtraSchemaRelationship = {
+                      to: rel.to,
+                      toSchema: rel.to_schema,
+                      type: rel.type
+                    };
+                    return extraRel;
+                  })
+                };
+                return extraColumn;
+              })
+            };
+            return extraTable;
+          })
+        };
+        return extraSchema;
+      }),
       mproveConfig: {
         mproveDirValue: projectConfig.mprove_dir,
         weekStart: projectConfig.week_start,
@@ -786,22 +806,7 @@ export class RebuildStructService {
         thousandsSeparator: projectConfig.thousands_separator,
         caseSensitiveStringFilters: toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
-        ),
-        relationships: (projectConfig.relationships ?? []).map(rel => {
-          let configRelationship: MproveConfigRelationship = {
-            schema: rel.schema,
-            references: (rel.references ?? []).map(ref => {
-              let relReference: MproveConfigReference = {
-                from: ref.from,
-                to: ref.to,
-                toSchema: ref.to_schema,
-                type: ref.type
-              };
-              return relReference;
-            })
-          };
-          return configRelationship;
-        })
+        )
       }
     };
 

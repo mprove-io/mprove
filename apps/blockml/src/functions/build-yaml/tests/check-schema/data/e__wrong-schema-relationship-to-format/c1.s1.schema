@@ -1,0 +1,8 @@
+schema: c1.s1
+tables:
+- table: t1
+  columns:
+  - column: c1
+    relationships:
+    - to: wrong_format
+      type: one_to_one

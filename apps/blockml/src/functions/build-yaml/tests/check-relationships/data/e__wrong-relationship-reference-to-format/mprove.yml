@@ -1,7 +1,0 @@
-mprove_dir: ./
-relationships:
-  - schema: c1.s1
-    references:
-      - from: t1.c1
-        to: two.dots.unk
-        type: one_to_one

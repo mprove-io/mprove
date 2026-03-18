@@ -1,0 +1,4 @@
+schema: c1.s1
+unknown_param: value
+tables:
+- table: t1

@@ -76,6 +76,7 @@ export class StructsService {
       errors: [],
       metrics: [],
       presets: [],
+      extraSchemas: [],
       mproveConfig: {
         mproveDirValue: './data',
         weekStart: ProjectWeekStartEnum.Sunday,
@@ -85,8 +86,7 @@ export class StructsService {
         formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
         currencyPrefix: PROJECT_CONFIG_CURRENCY_PREFIX,
         currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
-        thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
-        relationships: []
+        thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR
       },
       mproveVersion:
         this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),

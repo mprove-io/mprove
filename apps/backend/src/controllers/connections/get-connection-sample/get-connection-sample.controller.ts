@@ -136,17 +136,17 @@ export class GetConnectionSampleController {
       });
     }
 
-    if (isUndefined(connection.schema)) {
+    if (isUndefined(connection.rawSchema)) {
       throw new ServerError({
         message: ErEnum.BACKEND_CONNECTION_SCHEMA_IS_NOT_FOUND
       });
     }
 
-    let schemaTable = connection.schema.tables.find(
+    let schemaTable = connection.rawSchema.tables.find(
       t => t.schemaName === schemaName && t.tableName === tableName
     );
 
-    if (!connection.schema.tables.some(t => t.schemaName === schemaName)) {
+    if (!connection.rawSchema.tables.some(t => t.schemaName === schemaName)) {
       throw new ServerError({
         message: ErEnum.BACKEND_WRONG_SCHEMA_NAME
       });

@@ -3,10 +3,10 @@ import initVizdom, { DirectedGraph, RankDir } from '@vizdom/vizdom-ts-web';
 import { Edge, Node } from 'ngx-vflow';
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import {
-  SchemaColumn,
-  SchemaIndex,
-  SchemaTable
-} from '#common/interfaces/backend/connection-schema';
+  CombinedSchemaColumn,
+  CombinedSchemaTable
+} from '#common/interfaces/backend/connection-schemas/combined-schema';
+import { RawSchemaIndex } from '#common/interfaces/backend/connection-schemas/raw-schema';
 
 let NODE_WIDTH = 250;
 let HEADER_HEIGHT = 40;
@@ -17,8 +17,8 @@ export interface MapNodeData {
   connectionId: string;
   schemaName: string;
   tableName: string;
-  columns: SchemaColumn[];
-  indexes: SchemaIndex[];
+  columns: CombinedSchemaColumn[];
+  indexes: RawSchemaIndex[];
   color: 'orange' | 'gray';
   selectedColumnName: string;
   onSelect: () => void;
@@ -44,9 +44,10 @@ export interface MapGraphResult {
   edgesByTable: Map<string, Set<string>>;
 }
 
-export interface GraphTable extends SchemaTable {
+export interface GraphTable extends CombinedSchemaTable {
   tableFullId: string;
   connectionId: string;
+  schemaName: string;
 }
 
 export function tableKey(item: {
@@ -188,8 +189,8 @@ export async function buildAllTablesGraph(item: {
     let sourceKey = table.tableFullId;
 
     table.columns.forEach(col => {
-      if (col.combinedReferences) {
-        col.combinedReferences.forEach(ref => {
+      if (col.references) {
+        col.references.forEach(ref => {
           let refSchemaName = ref.referencedSchemaName ?? table.schemaName;
           let targetKey = tableKey({
             connectionId: table.connectionId,

@@ -5,7 +5,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ConnectionSchemaItem } from '#common/interfaces/backend/connection-schema';
+import { CombinedSchemaItem } from '#common/interfaces/backend/connection-schemas/combined-schema';
 import { Member } from '#common/interfaces/backend/member';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -40,8 +40,8 @@ export class ToBackendGetConnectionSchemasResponsePayload {
   userMember: Member;
 
   @ValidateNested()
-  @Type(() => ConnectionSchemaItem)
-  connectionSchemaItems: ConnectionSchemaItem[];
+  @Type(() => CombinedSchemaItem)
+  combinedSchemaItems: CombinedSchemaItem[];
 }
 
 export class ToBackendGetConnectionSchemasResponse extends MyResponse {

@@ -248,7 +248,7 @@ export class ConnectionsService {
       options: connection.options
     };
 
-    let connectionLt: ConnectionLt = { schema: connection.schema };
+    let connectionLt: ConnectionLt = { rawSchema: connection.rawSchema };
 
     let apiBaseConnection: BaseConnection = {
       connectionId: connection.connectionId,

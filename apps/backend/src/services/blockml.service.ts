@@ -159,6 +159,7 @@ export class BlockmlService {
     let struct: StructTab = {
       projectId: projectId,
       structId: structId,
+      extraSchemas: rs.extraSchemas,
       mproveConfig: rs.mproveConfig,
       errors: rs.errors,
       metrics: rs.metrics,

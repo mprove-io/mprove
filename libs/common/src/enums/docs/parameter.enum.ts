@@ -123,8 +123,11 @@ export enum ParameterEnum {
   //
   Relationships = 'relationships',
   Schema = 'schema',
-  References = 'references',
-  From = 'from',
+  Table = 'table',
+  Tables = 'tables',
+  Column = 'column',
+  Columns = 'columns',
+  Example = 'example',
   To = 'to',
   ToSchema = 'to_schema'
 }

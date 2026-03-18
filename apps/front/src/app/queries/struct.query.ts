@@ -17,8 +17,7 @@ let structState: StructState = {
     formatNumber: undefined,
     currencyPrefix: undefined,
     currencySuffix: undefined,
-    thousandsSeparator: undefined,
-    relationships: []
+    thousandsSeparator: undefined
   },
   errors: [],
   metrics: [],

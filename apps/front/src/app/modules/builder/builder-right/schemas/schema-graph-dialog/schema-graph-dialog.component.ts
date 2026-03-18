@@ -16,10 +16,7 @@ import { map, take } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ConnectionSchemaItem,
-  SchemaTable
-} from '#common/interfaces/backend/connection-schema';
+import { CombinedSchemaItem } from '#common/interfaces/backend/connection-schemas/combined-schema';
 import { ToBackendGetConnectionSampleResponse } from '#common/interfaces/to-backend/connections/to-backend-get-connection-sample';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -33,7 +30,7 @@ import {
 } from './schema-graph-builder';
 
 export interface SchemaGraphDialogData {
-  connectionSchemaItems: ConnectionSchemaItem[];
+  combinedSchemaItems: CombinedSchemaItem[];
   connectionId: string;
   schemaName: string;
   tableName: string;
@@ -133,59 +130,38 @@ export class SchemaGraphDialogComponent implements OnInit {
   }
 
   buildSchemaTree() {
-    let groupKey = (item: { connectionId: string; schemaName: string }) =>
-      `${item.connectionId}__${item.schemaName}`;
-
-    let schemaGroups = new Map<
-      string,
-      { connectionId: string; schemaName: string; tables: SchemaTable[] }
-    >();
-
-    this.dataItem.connectionSchemaItems.forEach(csItem => {
-      csItem.schema.tables.forEach(table => {
-        let key = groupKey({
-          connectionId: csItem.connectionId,
-          schemaName: table.schemaName
-        });
-        let group = schemaGroups.get(key);
-        if (!group) {
-          group = {
-            connectionId: csItem.connectionId,
-            schemaName: table.schemaName,
-            tables: []
-          };
-          schemaGroups.set(key, group);
-        }
-        group.tables.push(table);
-      });
-    });
-
     this.schemaNodes = [];
 
-    schemaGroups.forEach(group => {
-      let tableNodes: SchemaGraphTableNode[] = group.tables
-        .map(t => ({
-          tableFullId: tableKey({
-            connectionId: group.connectionId,
-            schemaName: t.schemaName,
-            tableName: t.tableName
-          }),
-          connectionId: group.connectionId,
-          schemaName: t.schemaName,
-          tableName: t.tableName,
-          checked:
-            group.connectionId === this.dataItem.connectionId &&
-            group.schemaName === this.dataItem.schemaName
-        }))
-        .sort((a, b) => a.tableName.localeCompare(b.tableName));
+    this.dataItem.combinedSchemaItems.forEach(csItem => {
+      if (isDefined(csItem.errorMessage)) {
+        return;
+      }
 
-      this.schemaNodes.push({
-        connectionId: group.connectionId,
-        schemaName: group.schemaName,
-        expanded:
-          group.connectionId === this.dataItem.connectionId &&
-          group.schemaName === this.dataItem.schemaName,
-        tables: tableNodes
+      csItem.schemas.forEach(combinedSchema => {
+        let tableNodes: SchemaGraphTableNode[] = combinedSchema.tables
+          .map(t => ({
+            tableFullId: tableKey({
+              connectionId: csItem.connectionId,
+              schemaName: combinedSchema.schemaName,
+              tableName: t.tableName
+            }),
+            connectionId: csItem.connectionId,
+            schemaName: combinedSchema.schemaName,
+            tableName: t.tableName,
+            checked:
+              csItem.connectionId === this.dataItem.connectionId &&
+              combinedSchema.schemaName === this.dataItem.schemaName
+          }))
+          .sort((a, b) => a.tableName.localeCompare(b.tableName));
+
+        this.schemaNodes.push({
+          connectionId: csItem.connectionId,
+          schemaName: combinedSchema.schemaName,
+          expanded:
+            csItem.connectionId === this.dataItem.connectionId &&
+            combinedSchema.schemaName === this.dataItem.schemaName,
+          tables: tableNodes
+        });
       });
     });
 
@@ -207,20 +183,27 @@ export class SchemaGraphDialogComponent implements OnInit {
     });
 
     let allTables: GraphTable[] = [];
-    this.dataItem.connectionSchemaItems.forEach(csItem => {
-      csItem.schema.tables.forEach(table => {
-        let fullId = tableKey({
-          connectionId: csItem.connectionId,
-          schemaName: table.schemaName,
-          tableName: table.tableName
-        });
-        if (checkedKeys.has(fullId)) {
-          allTables.push({
-            ...table,
-            tableFullId: fullId,
-            connectionId: csItem.connectionId
+    this.dataItem.combinedSchemaItems.forEach(csItem => {
+      if (isDefined(csItem.errorMessage)) {
+        return;
+      }
+
+      csItem.schemas.forEach(combinedSchema => {
+        combinedSchema.tables.forEach(table => {
+          let fullId = tableKey({
+            connectionId: csItem.connectionId,
+            schemaName: combinedSchema.schemaName,
+            tableName: table.tableName
           });
-        }
+          if (checkedKeys.has(fullId)) {
+            allTables.push({
+              ...table,
+              tableFullId: fullId,
+              connectionId: csItem.connectionId,
+              schemaName: combinedSchema.schemaName
+            });
+          }
+        });
       });
     });
 

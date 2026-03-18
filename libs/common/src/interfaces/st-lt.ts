@@ -10,7 +10,8 @@ import type {
   Todo
 } from '@opencode-ai/sdk/v2';
 import { ConnectionOptions } from './backend/connection-parts/connection-options';
-import { ConnectionSchema } from './backend/connection-schema';
+import { ExtraSchema } from './backend/connection-schemas/extra-schema';
+import { ConnectionRawSchema } from './backend/connection-schemas/raw-schema';
 import { Ev } from './backend/ev';
 import { MproveConfig } from './backend/mprove-config';
 import { Ui } from './backend/ui';
@@ -73,7 +74,7 @@ export class ConnectionSt {
   options: ConnectionOptions;
 }
 export class ConnectionLt {
-  schema?: ConnectionSchema;
+  rawSchema?: ConnectionRawSchema;
 }
 
 //
@@ -255,6 +256,7 @@ export class StructLt {
   errors: BmlError[];
   metrics: ModelMetric[];
   presets: Preset[];
+  extraSchemas: ExtraSchema[];
   mproveConfig: MproveConfig;
 }
 

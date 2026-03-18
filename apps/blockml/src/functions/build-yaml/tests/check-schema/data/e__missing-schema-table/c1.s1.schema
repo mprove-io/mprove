@@ -1,0 +1,4 @@
+schema: c1.s1
+tables:
+- columns:
+  - column: c1

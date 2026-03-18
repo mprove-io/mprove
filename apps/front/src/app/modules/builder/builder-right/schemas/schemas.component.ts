@@ -14,10 +14,9 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { makeCopy } from '#common/functions/make-copy';
 import {
   ColumnCombinedReference,
-  ConnectionSchemaItem,
-  SchemaForeignKey,
-  SchemaTable
-} from '#common/interfaces/backend/connection-schema';
+  CombinedSchemaItem
+} from '#common/interfaces/backend/connection-schemas/combined-schema';
+import { RawSchemaForeignKey } from '#common/interfaces/backend/connection-schemas/raw-schema';
 import { ToBackendGetConnectionSampleResponse } from '#common/interfaces/to-backend/connections/to-backend-get-connection-sample';
 import {
   ToBackendGetConnectionSchemasRequestPayload,
@@ -46,8 +45,10 @@ interface SchemaTreeNode {
   isNullable?: boolean;
   isPrimaryKey?: boolean;
   isUnique?: boolean;
-  foreignKeys?: SchemaForeignKey[];
-  combinedReferences?: ColumnCombinedReference[];
+  foreignKeys?: RawSchemaForeignKey[];
+  references?: ColumnCombinedReference[];
+  description?: string;
+  example?: string;
   errorMessage?: string;
 }
 
@@ -63,7 +64,7 @@ export class SchemasComponent implements OnInit {
   spinnerName = SCHEMAS_SPINNER_NAME;
   treeNodes: SchemaTreeNode[] = [];
   filteredTreeNodes: SchemaTreeNode[] = [];
-  connectionSchemaItems: ConnectionSchemaItem[] = [];
+  combinedSchemaItems: CombinedSchemaItem[] = [];
 
   searchWord: string;
   searchTimer: any;
@@ -116,9 +117,9 @@ export class SchemasComponent implements OnInit {
       .pipe(
         map((resp: ToBackendGetConnectionSchemasResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.connectionSchemaItems = resp.payload.connectionSchemaItems;
+            this.combinedSchemaItems = resp.payload.combinedSchemaItems;
             this.treeNodes = this.buildTreeNodes({
-              connectionSchemaItems: this.connectionSchemaItems
+              combinedSchemaItems: this.combinedSchemaItems
             });
             this.applyFilter();
           }
@@ -219,39 +220,27 @@ export class SchemasComponent implements OnInit {
   }
 
   buildTreeNodes(item: {
-    connectionSchemaItems: ConnectionSchemaItem[];
+    combinedSchemaItems: CombinedSchemaItem[];
   }): SchemaTreeNode[] {
-    let { connectionSchemaItems } = item;
+    let { combinedSchemaItems } = item;
 
     let nodes: SchemaTreeNode[] = [];
 
-    connectionSchemaItems.forEach(cs => {
-      let schema = cs.schema;
-
-      if (isDefined(schema.errorMessage)) {
+    combinedSchemaItems.forEach(cs => {
+      if (isDefined(cs.errorMessage)) {
         nodes.push({
           id: `${cs.connectionId}__error`,
-          name: `${cs.connectionId} - Error: ${schema.errorMessage}`,
+          name: `${cs.connectionId} - Error: ${cs.errorMessage}`,
           searchName: cs.connectionId,
           nodeType: 'error',
-          errorMessage: schema.errorMessage
+          errorMessage: cs.errorMessage
         });
         return;
       }
 
-      let schemaGroups = new Map<string, SchemaTable[]>();
+      cs.schemas.forEach(combinedSchema => {
+        let schemaName = combinedSchema.schemaName;
 
-      schema.tables.forEach(t => {
-        let key = t.schemaName;
-        let group = schemaGroups.get(key);
-        if (!group) {
-          group = [];
-          schemaGroups.set(key, group);
-        }
-        group.push(t);
-      });
-
-      schemaGroups.forEach((tables, schemaName) => {
         let connectionNode: SchemaTreeNode = {
           id: `${cs.connectionId}__${schemaName}`,
           name: `${cs.connectionId} - ${schemaName}`,
@@ -259,7 +248,8 @@ export class SchemasComponent implements OnInit {
           nodeType: 'connection',
           connectionId: cs.connectionId,
           schemaDisplayName: schemaName,
-          children: tables.map(table => {
+          description: combinedSchema.description,
+          children: combinedSchema.tables.map(table => {
             let columnChildren: SchemaTreeNode[] = table.columns
               .map((col, colIdx) => ({
                 id: `${cs.connectionId}__${schemaName}__${table.tableName}__col__${colIdx}`,
@@ -275,7 +265,9 @@ export class SchemasComponent implements OnInit {
                 isPrimaryKey: col.isPrimaryKey,
                 isUnique: col.isUnique,
                 foreignKeys: col.foreignKeys,
-                combinedReferences: col.combinedReferences
+                references: col.references,
+                description: col.description,
+                example: col.example
               }))
               .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -296,7 +288,7 @@ export class SchemasComponent implements OnInit {
               }
             );
 
-            return {
+            let tableNode: SchemaTreeNode = {
               id: `${cs.connectionId}__${schemaName}__${table.tableName}`,
               name: table.tableName,
               searchName: table.tableName,
@@ -305,8 +297,11 @@ export class SchemasComponent implements OnInit {
               schemaDisplayName: schemaName,
               tableName: table.tableName,
               tableType: table.tableType,
+              description: table.description,
               children: [...columnChildren, ...indexChildren]
             };
+
+            return tableNode;
           })
         };
 
@@ -327,7 +322,7 @@ export class SchemasComponent implements OnInit {
     let nav = this.navQuery.getValue();
 
     let dialogData: SchemaGraphDialogData = {
-      connectionSchemaItems: this.connectionSchemaItems,
+      combinedSchemaItems: this.combinedSchemaItems,
       connectionId: data.connectionId,
       schemaName: data.schemaDisplayName,
       tableName: undefined,

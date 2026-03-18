@@ -84,7 +84,7 @@ export enum FuncEnum {
   CheckSupportUdfs = 'build-yaml/check-support-udfs',
   SplitFiles = 'build-yaml/split-files',
   CheckProjectConfig = 'build-yaml/check-project-config',
-  CheckRelationships = 'build-yaml/check-relationships',
+  CheckSchema = 'build-yaml/check-schema',
 
   CollectFiles = 'extra/collect-files',
   CheckAccess = 'extra/check-access',

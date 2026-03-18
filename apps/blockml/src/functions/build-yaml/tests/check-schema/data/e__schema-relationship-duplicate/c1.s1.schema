@@ -1,0 +1,10 @@
+schema: c1.s1
+tables:
+- table: t1
+  columns:
+  - column: c1
+    relationships:
+    - to: t2.c2
+      type: one_to_one
+    - to: t2.c2
+      type: many_to_one

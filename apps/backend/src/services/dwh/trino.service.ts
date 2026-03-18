@@ -19,11 +19,11 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import {
-  ConnectionSchema,
-  SchemaColumn,
-  SchemaIndex,
-  SchemaTable
-} from '#common/interfaces/backend/connection-schema';
+  ConnectionRawSchema,
+  RawSchemaColumn,
+  RawSchemaIndex,
+  RawSchemaTable
+} from '#common/interfaces/backend/connection-schemas/raw-schema';
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
@@ -177,7 +177,7 @@ export class TrinoService {
 
   async fetchSchema(item: {
     connection: ConnectionTab;
-  }): Promise<ConnectionSchema> {
+  }): Promise<ConnectionRawSchema> {
     let { connection } = item;
 
     let trinoConnectionOptions = this.optionsToTrinoOptions({
@@ -335,8 +335,8 @@ export class TrinoService {
         }
       });
 
-      let tables: SchemaTable[] = allTablesRows.map(row => {
-        let columns: SchemaColumn[] = allColumnsRows
+      let tables: RawSchemaTable[] = allTablesRows.map(row => {
+        let columns: RawSchemaColumn[] = allColumnsRows
           .filter(
             c =>
               c.table_schema === row.table_schema &&
@@ -346,7 +346,7 @@ export class TrinoService {
             columnName: c.column_name,
             dataType: c.data_type,
             isNullable: c.is_nullable === 'YES',
-            foreignKeys: [] as SchemaColumn['foreignKeys']
+            foreignKeys: [] as RawSchemaColumn['foreignKeys']
           }));
 
         return {
@@ -354,7 +354,7 @@ export class TrinoService {
           tableName: row.table_name,
           tableType: row.table_type,
           columns: columns,
-          indexes: [] as SchemaIndex[]
+          indexes: [] as RawSchemaIndex[]
         };
       });
 

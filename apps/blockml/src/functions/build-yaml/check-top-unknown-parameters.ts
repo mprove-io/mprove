@@ -173,6 +173,34 @@ export function checkTopUnknownParameters(
             break;
           }
 
+          case FileExtensionEnum.Schema: {
+            if (
+              [
+                ParameterEnum.Schema.toString(),
+                ParameterEnum.Description.toString(),
+                ParameterEnum.Tables.toString()
+              ].indexOf(parameter) < 0
+            ) {
+              item.errors.push(
+                new BmError({
+                  title: ErTitleEnum.UNKNOWN_SCHEMA_PARAMETER,
+                  message:
+                    `parameter "${parameter}" cannot be used on top level of ` +
+                    `${FileExtensionEnum.Schema} file`,
+                  lines: [
+                    {
+                      line: file[parameter + LINE_NUM],
+                      name: file.name,
+                      path: file.path
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+            break;
+          }
+
           case FileExtensionEnum.Yml: {
             if (
               [
@@ -184,8 +212,7 @@ export function checkTopUnknownParameters(
                 ParameterEnum.CurrencyPrefix.toString(),
                 ParameterEnum.CurrencySuffix.toString(),
                 ParameterEnum.ThousandsSeparator.toString(),
-                ParameterEnum.CaseSensitiveStringFilters.toString(),
-                ParameterEnum.Relationships.toString()
+                ParameterEnum.CaseSensitiveStringFilters.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
@@ -221,7 +248,7 @@ export function checkTopUnknownParameters(
             ParameterEnum.Results.toString(),
             ParameterEnum.Rows.toString(),
             ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Relationships.toString()
+            ParameterEnum.Tables.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(
@@ -292,7 +319,7 @@ export function checkTopUnknownParameters(
             ParameterEnum.Results.toString(),
             ParameterEnum.Rows.toString(),
             ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Relationships.toString()
+            ParameterEnum.Tables.toString()
           ].indexOf(parameter) > -1
         ) {
           item.errors.push(

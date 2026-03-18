@@ -1,13 +1,6 @@
-import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { IsTimezone } from '#common/functions/is-timezone';
-import { MproveConfigRelationship } from './mprove-config-relationship';
 
 export class MproveConfig {
   @IsOptional()
@@ -45,8 +38,4 @@ export class MproveConfig {
   @IsOptional()
   @IsString()
   thousandsSeparator: string;
-
-  @IsOptional()
-  @IsArray()
-  relationships: MproveConfigRelationship[];
 }

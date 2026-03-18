@@ -151,6 +151,19 @@
               </div>
 
               <button
+                *ngIf="
+                  node.data.nodeType === 'connection' && node.data.description
+                "
+                type="button"
+                [tp]="node.data.description"
+                tpPlacement="top"
+                class="text-s500 invisible ml-2 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+                (click)="$event.stopPropagation()"
+              >
+                <m-info-icon></m-info-icon>
+              </button>
+
+              <button
                 *ngIf="node.data.nodeType === 'connection'"
                 type="button"
                 tp="Copy schema name"
@@ -173,6 +186,17 @@
                 (click)="graphOnClick({ node: node, event: $event })"
               >
                 Graph
+              </button>
+
+              <button
+                *ngIf="node.data.nodeType === 'table' && node.data.description"
+                type="button"
+                [tp]="node.data.description"
+                tpPlacement="top"
+                class="text-s500 invisible ml-2 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+                (click)="$event.stopPropagation()"
+              >
+                <m-info-icon></m-info-icon>
               </button>
 
               <button
@@ -228,7 +252,7 @@
                 >
 
                 <button
-                  *ngIf="node.data.combinedReferences?.length > 0"
+                  *ngIf="node.data.references?.length > 0"
                   class="hover:bg-m200 text-s1 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   [tp]="fkTemplate"
                   [tpHideOnEscape]="true"
@@ -244,7 +268,7 @@
                     class="border-s4 bg-m0 w-max rounded-md border-2 shadow-xl"
                   >
                     <div
-                      *ngFor="let ref of node.data.combinedReferences"
+                      *ngFor="let ref of node.data.references"
                       class="text-s1 w-full px-4 py-2 text-left text-base"
                     >
                       <span *ngIf="ref.isForeignKey" class="text-blue-400"
@@ -270,6 +294,37 @@
                         class="font-semibold"
                         >{{ ref.referencedColumnName }}</span
                       >
+                    </div>
+                  </div>
+                </ng-template>
+
+                <button
+                  *ngIf="node.data.description || node.data.example"
+                  class="text-s500 hover:bg-m200 ml-2 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  [tp]="infoTemplate"
+                  [tpHideOnEscape]="true"
+                  tpVariation="menu"
+                  className="my-menu"
+                  (click)="$event.stopPropagation()"
+                >
+                  <m-info-icon></m-info-icon>
+                </button>
+
+                <ng-template #infoTemplate>
+                  <div
+                    class="border-s4 bg-m0 w-max max-w-xs rounded-md border-2 shadow-xl"
+                  >
+                    <div
+                      *ngIf="node.data.description"
+                      class="text-s1 px-4 py-2 text-base"
+                    >
+                      {{ node.data.description }}
+                    </div>
+                    <div
+                      *ngIf="node.data.example"
+                      class="text-s400 px-4 py-2 text-base"
+                    >
+                      Example: {{ node.data.example }}
                     </div>
                   </div>
                 </ng-template>

@@ -1,0 +1,14 @@
+schema: c1.s1
+tables:
+- table: t1
+  columns:
+  - column: c1
+    relationships:
+    - to: t2.c2
+      type: one_to_one
+- table: t2
+  columns:
+  - column: c2
+    relationships:
+    - to: t1.c1
+      type: one_to_many

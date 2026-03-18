@@ -13,6 +13,7 @@ export enum LogTypeEnum {
   Reports = 'out_reports.log',
   Ds = 'out_dashboards.log',
   Charts = 'out_charts.log',
+  Schemas = 'out_schemas.log',
   ProjectConf = 'out_project_conf.log',
   Confs = 'out_confs.log',
   Metrics = 'out_metrics.log'

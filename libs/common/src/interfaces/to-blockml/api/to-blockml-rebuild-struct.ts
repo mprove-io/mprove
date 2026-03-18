@@ -6,6 +6,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { BaseConnection } from '#common/interfaces/backend/base-connection';
+import { ExtraSchema } from '#common/interfaces/backend/connection-schemas/extra-schema';
 import { Ev } from '#common/interfaces/backend/ev';
 import { MproveConfig } from '#common/interfaces/backend/mprove-config';
 import { BmlError } from '#common/interfaces/blockml/bml-error';
@@ -75,6 +76,10 @@ export class ToBlockmlRebuildStructRequest extends ToBlockmlRequest {
 }
 
 export class ToBlockmlRebuildStructResponsePayload {
+  @ValidateNested()
+  @Type(() => ExtraSchema)
+  extraSchemas: ExtraSchema[];
+
   @ValidateNested()
   @Type(() => MproveConfig)
   mproveConfig: MproveConfig;

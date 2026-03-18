@@ -12,9 +12,11 @@ import { FileDashboard } from '#common/interfaces/blockml/internal/file-dashboar
 import { FileMod } from '#common/interfaces/blockml/internal/file-mod';
 import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
 import { FileReport } from '#common/interfaces/blockml/internal/file-report';
+import { FileSchema } from '#common/interfaces/blockml/internal/file-schema';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { checkConnections } from './check-connections';
 import { checkProjectConfig } from './check-project-config';
+import { checkSchema } from './check-schema';
 import { checkTopUnknownParameters } from './check-top-unknown-parameters';
 import { checkTopValues } from './check-top-values';
 import { deduplicateFileNames } from './deduplicate-file-names';
@@ -37,6 +39,7 @@ export function buildYaml(
 ) {
   let mods: FileMod[];
   let stores: FileStore[];
+  let schemas: FileSchema[];
   let reports: FileReport[];
   let dashboards: FileDashboard[];
   let charts: FileChart[];
@@ -68,6 +71,7 @@ export function buildYaml(
         x =>
           [
             FileExtensionEnum.Store,
+            FileExtensionEnum.Schema,
             FileExtensionEnum.Report,
             FileExtensionEnum.Dashboard,
             FileExtensionEnum.Chart,
@@ -134,6 +138,7 @@ export function buildYaml(
 
   mods = splitFilesResult.mods;
   stores = splitFilesResult.stores;
+  schemas = splitFilesResult.schemas;
   confs = splitFilesResult.confs;
   dashboards = splitFilesResult.dashboards;
   reports = splitFilesResult.reports;
@@ -153,9 +158,22 @@ export function buildYaml(
         )
       : undefined;
 
+  if (item.isUseCache === false) {
+    checkSchema(
+      {
+        schemas: schemas,
+        errors: item.errors,
+        structId: item.structId,
+        caller: item.caller
+      },
+      cs
+    );
+  }
+
   return {
     mods: mods,
     stores: stores,
+    schemas: schemas,
     reports: reports,
     dashboards: dashboards,
     charts: charts,

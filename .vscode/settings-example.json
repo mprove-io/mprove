@@ -69,6 +69,7 @@
   "files.associations": {
     "*.env": "properties",
     "*.envrc": "properties",
+    "*.schema": "yaml",
     "*.chart": "yaml",
     "*.dashboard": "yaml",
     "*.report": "yaml",
