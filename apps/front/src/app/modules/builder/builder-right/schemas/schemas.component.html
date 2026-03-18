@@ -92,7 +92,7 @@
 
     <button
       *ngIf="schemasLoaded && treeNodes.length > 0"
-      tp="Graph all schemas"
+      tp="Graph"
       tpPlacement="top"
       type="button"
       class="hover:bg-m200 text-s500 mr-10 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
@@ -185,25 +185,12 @@
                 <button
                   *ngIf="showQuestionMarks && node.data.description"
                   type="button"
-                  [tp]="descriptionTemplate"
-                  [tpHideOnEscape]="true"
-                  tpVariation="menu"
-                  className="my-menu"
-                  class="hover:bg-m200 hover:text-s1 text-s400 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  [tp]="node.data.description"
+                  class="hover:text-s1 text-s400 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   (click)="$event.stopPropagation()"
                 >
                   <m-question-mark-circle-icon></m-question-mark-circle-icon>
                 </button>
-
-                <ng-template #descriptionTemplate>
-                  <div
-                    class="border-s4 bg-m0 w-max max-w-[800px] rounded-md border-2 shadow-xl"
-                  >
-                    <div class="text-s1 px-4 py-2 text-base">
-                      {{ node.data.description }}
-                    </div>
-                  </div>
-                </ng-template>
               </div>
 
               <button
@@ -315,25 +302,6 @@
                   </div>
                 </ng-template>
 
-                <ng-template #columnQuestionTemplate>
-                  <div
-                    class="border-s4 bg-m0 w-max max-w-[800px] rounded-md border-2 shadow-xl"
-                  >
-                    <div
-                      *ngIf="node.data.description"
-                      class="text-s1 px-4 py-2 text-base"
-                    >
-                      {{ node.data.description }}
-                    </div>
-                    <div
-                      *ngIf="node.data.example"
-                      class="text-s400 px-4 py-2 text-base"
-                    >
-                      Example: {{ node.data.example }}
-                    </div>
-                  </div>
-                </ng-template>
-
                 <span
                   *ngIf="node.data.isNullable === false"
                   class="text-s400 ml-3"
@@ -359,11 +327,16 @@
                     (node.data.description || node.data.example)
                   "
                   type="button"
-                  [tp]="columnQuestionTemplate"
-                  [tpHideOnEscape]="true"
-                  tpVariation="menu"
-                  className="my-menu"
-                  class="hover:bg-m200 hover:text-s1 text-s400 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  [tp]="
+                    node.data.description && node.data.example
+                      ? node.data.description +
+                        ' | Example: ' +
+                        node.data.example
+                      : node.data.example
+                        ? 'Example: ' + node.data.example
+                        : node.data.description
+                  "
+                  class="hover:text-s1 text-s400 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   (click)="$event.stopPropagation()"
                 >
                   <m-question-mark-circle-icon></m-question-mark-circle-icon>

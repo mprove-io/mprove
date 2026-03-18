@@ -221,10 +221,7 @@
                 @if (showQuestionMarks && ctx.data().tableDescription) {
                   <button
                     type="button"
-                    [tp]="tableDescriptionTemplate"
-                    [tpHideOnEscape]="true"
-                    tpVariation="menu"
-                    className="my-menu"
+                    [tp]="ctx.data().tableDescription"
                     class="text-s400 hover:text-s1 ml-1 flex h-4 w-4 flex-shrink-0 items-center justify-center"
                     (click)="$event.stopPropagation()"
                   >
@@ -232,18 +229,6 @@
                       class="scale-75"
                     ></m-question-mark-circle-icon>
                   </button>
-
-                  <ng-template #tableDescriptionTemplate>
-                    <div
-                      class="border-s4 bg-m0 max-w-[800px] rounded-md border-2 shadow-xl"
-                    >
-                      <div
-                        class="text-s1 whitespace-pre-wrap break-words px-4 py-2 text-base"
-                      >
-                        {{ ctx.data().tableDescription }}
-                      </div>
-                    </div>
-                  </ng-template>
                 }
               </div>
 
@@ -269,62 +254,41 @@
                     <span class="node-col-meta">
                       <span class="node-col-type">{{ col.dataType }}</span>
                       @if (col.isPrimaryKey) {
-                        <span
-                          class="node-col-badge-text text-[10px] text-blue-400"
-                          >PRIMARY</span
+                        <span class="node-col-badge-text text-s400 text-[10px]"
+                          >[PRIMARY]</span
                         >
                       }
                       @if (col.isUnique && !col.isPrimaryKey) {
-                        <span
-                          class="node-col-badge-text text-[10px] text-blue-400"
-                          >UNIQUE</span
+                        <span class="node-col-badge-text text-s400 text-[10px]"
+                          >[UNIQUE]</span
                         >
                       }
                       @if (col.foreignKeys?.length > 0) {
-                        <span
-                          class="node-col-badge-text text-[10px] text-blue-400"
-                          >FK</span
+                        <span class="node-col-badge-text text-s400 text-[10px]"
+                          >[FK]</span
                         >
-                      }
-                      @if (
-                        showQuestionMarks && (col.description || col.example)
-                      ) {
-                        <button
-                          type="button"
-                          [tp]="colDescriptionTemplate"
-                          [tpHideOnEscape]="true"
-                          tpVariation="menu"
-                          className="my-menu"
-                          class="text-s400 hover:text-s1 ml-1 flex h-4 w-4 flex-shrink-0 items-center justify-center"
-                          (click)="$event.stopPropagation()"
-                        >
-                          <m-question-mark-circle-icon
-                            class="scale-75"
-                          ></m-question-mark-circle-icon>
-                        </button>
-
-                        <ng-template #colDescriptionTemplate>
-                          <div
-                            class="border-s4 bg-m0 max-w-[800px] rounded-md border-2 shadow-xl"
-                          >
-                            @if (col.description) {
-                              <div
-                                class="text-s1 whitespace-pre-wrap break-words px-4 py-2 text-base"
-                              >
-                                {{ col.description }}
-                              </div>
-                            }
-                            @if (col.example) {
-                              <div
-                                class="text-s400 whitespace-pre-wrap break-words px-4 py-2 text-base"
-                              >
-                                Example: {{ col.example }}
-                              </div>
-                            }
-                          </div>
-                        </ng-template>
                       }
                     </span>
+                    @if (
+                      showQuestionMarks && (col.description || col.example)
+                    ) {
+                      <button
+                        type="button"
+                        [tp]="
+                          col.description && col.example
+                            ? col.description + ' | Example: ' + col.example
+                            : col.example
+                              ? 'Example: ' + col.example
+                              : col.description
+                        "
+                        class="text-s400 hover:text-s1 absolute right-[10px] flex h-4 w-4 flex-shrink-0 items-center justify-center"
+                        (click)="$event.stopPropagation()"
+                      >
+                        <m-question-mark-circle-icon
+                          class="scale-75"
+                        ></m-question-mark-circle-icon>
+                      </button>
+                    }
                     <handle
                       position="left"
                       type="source"
@@ -357,13 +321,13 @@
                       <span class="node-idx-name">{{ idx.indexName }}</span>
                       <span class="node-idx-meta">
                         @if (idx.isPrimaryKey) {
-                          <span class="node-idx-badge text-[10px] text-blue-400"
-                            >PRIMARY</span
+                          <span class="node-idx-badge text-s400 text-[10px]"
+                            >[PRIMARY]</span
                           >
                         }
                         @if (idx.isUnique && !idx.isPrimaryKey) {
-                          <span class="node-idx-badge text-[10px] text-blue-400"
-                            >UNIQUE</span
+                          <span class="node-idx-badge text-s400 text-[10px]"
+                            >[UNIQUE]</span
                           >
                         }
                         <span class="node-idx-columns">{{
