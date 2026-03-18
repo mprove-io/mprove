@@ -469,6 +469,11 @@ export class SessionsComponent implements OnInit {
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();
     this.sessionQuery.update({ ...session, firstMessage: undefined });
+    this.repoQuery.updatePart({
+      repoStatus: RepoStatusEnum.Ok, // for "Push to Remote" not flash during navigation
+      changesToCommit: [],
+      changesToPush: []
+    });
     this.navigateService.navigateToSession({
       sessionId: session.sessionId,
       repoId: session.repoId,
