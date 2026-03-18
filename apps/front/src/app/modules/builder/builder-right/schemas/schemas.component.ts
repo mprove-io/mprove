@@ -6,7 +6,7 @@ import {
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { map, take } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -22,7 +22,7 @@ import {
   ToBackendGetConnectionSchemasRequestPayload,
   ToBackendGetConnectionSchemasResponse
 } from '#common/interfaces/to-backend/connections/to-backend-get-connection-schemas';
-import { NavQuery } from '#front/app/queries/nav.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { SampleDialogData } from './sample-dialog/sample-dialog.component';
@@ -70,6 +70,31 @@ export class SchemasComponent implements OnInit {
   searchTimer: any;
   showIndexes = false;
   showQuestionMarks = false;
+
+  prevBranchId: string;
+  prevEnvId: string;
+
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+
+      let navChanged =
+        isDefined(this.prevEnvId) &&
+        isDefined(this.prevBranchId) &&
+        (this.prevEnvId !== this.nav.envId ||
+          this.prevBranchId !== this.nav.branchId);
+
+      this.prevEnvId = this.nav.envId;
+      this.prevBranchId = this.nav.branchId;
+
+      this.cd.detectChanges();
+
+      if (navChanged) {
+        this.loadSchemas();
+      }
+    })
+  );
 
   actionMapping: IActionMapping = {
     mouse: {}
