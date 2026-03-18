@@ -218,6 +218,33 @@
                 <span class="node-header-title">{{
                   ctx.data().tableName
                 }}</span>
+                @if (showQuestionMarks && ctx.data().tableDescription) {
+                  <button
+                    type="button"
+                    [tp]="tableDescriptionTemplate"
+                    [tpHideOnEscape]="true"
+                    tpVariation="menu"
+                    className="my-menu"
+                    class="text-s400 hover:text-s1 ml-1 flex h-4 w-4 flex-shrink-0 items-center justify-center"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <m-question-mark-circle-icon
+                      class="scale-75"
+                    ></m-question-mark-circle-icon>
+                  </button>
+
+                  <ng-template #tableDescriptionTemplate>
+                    <div
+                      class="border-s4 bg-m0 max-w-[800px] rounded-md border-2 shadow-xl"
+                    >
+                      <div
+                        class="text-s1 whitespace-pre-wrap break-words px-4 py-2 text-base"
+                      >
+                        {{ ctx.data().tableDescription }}
+                      </div>
+                    </div>
+                  </ng-template>
+                }
               </div>
 
               <!-- Columns list -->
@@ -258,6 +285,44 @@
                           class="node-col-badge-text text-[10px] text-blue-400"
                           >FK</span
                         >
+                      }
+                      @if (
+                        showQuestionMarks && (col.description || col.example)
+                      ) {
+                        <button
+                          type="button"
+                          [tp]="colDescriptionTemplate"
+                          [tpHideOnEscape]="true"
+                          tpVariation="menu"
+                          className="my-menu"
+                          class="text-s400 hover:text-s1 ml-1 flex h-4 w-4 flex-shrink-0 items-center justify-center"
+                          (click)="$event.stopPropagation()"
+                        >
+                          <m-question-mark-circle-icon
+                            class="scale-75"
+                          ></m-question-mark-circle-icon>
+                        </button>
+
+                        <ng-template #colDescriptionTemplate>
+                          <div
+                            class="border-s4 bg-m0 max-w-[800px] rounded-md border-2 shadow-xl"
+                          >
+                            @if (col.description) {
+                              <div
+                                class="text-s1 whitespace-pre-wrap break-words px-4 py-2 text-base"
+                              >
+                                {{ col.description }}
+                              </div>
+                            }
+                            @if (col.example) {
+                              <div
+                                class="text-s400 whitespace-pre-wrap break-words px-4 py-2 text-base"
+                              >
+                                Example: {{ col.example }}
+                              </div>
+                            }
+                          </div>
+                        </ng-template>
                       }
                     </span>
                     <handle
@@ -441,6 +506,29 @@
         <span class="text-s1 text-lg font-semibold">Relationships Graph</span>
         <div
           class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center"
+          [tp]="
+            showQuestionMarks
+              ? 'Show Descriptions: ON'
+              : 'Show Descriptions: OFF'
+          "
+          tpPlacement="top"
+        >
+          <button
+            type="button"
+            class="flex h-7 w-7 cursor-pointer items-center justify-center focus:outline-none"
+            [ngClass]="{
+              'text-green-600': showQuestionMarks,
+              'text-s500': !showQuestionMarks
+            }"
+            (click)="toggleQuestionMarks()"
+          >
+            <m-question-mark-circle-icon
+              class="scale-125"
+            ></m-question-mark-circle-icon>
+          </button>
+        </div>
+        <div
+          class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center"
           [tp]="showIndexes ? 'Show Indexes: ON' : 'Show Indexes: OFF'"
           tpPlacement="top"
         >

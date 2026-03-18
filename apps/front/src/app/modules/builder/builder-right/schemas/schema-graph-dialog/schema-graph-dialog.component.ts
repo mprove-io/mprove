@@ -93,6 +93,7 @@ export class SchemaGraphDialogComponent implements OnInit {
   graphOverlay = true;
   showNodeSubtitle = false;
   showIndexes = false;
+  showQuestionMarks = false;
 
   showSample = false;
   sampleTitle = '';
@@ -225,6 +226,10 @@ export class SchemaGraphDialogComponent implements OnInit {
   toggleIndexes() {
     this.showIndexes = !this.showIndexes;
     this.rebuildGraph();
+  }
+
+  toggleQuestionMarks() {
+    this.showQuestionMarks = !this.showQuestionMarks;
   }
 
   toggleSchemaExpanded(item: { schemaNode: SchemaGraphSchemaNode }) {

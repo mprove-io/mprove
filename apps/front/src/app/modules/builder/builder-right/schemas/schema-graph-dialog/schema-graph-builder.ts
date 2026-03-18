@@ -17,6 +17,7 @@ export interface MapNodeData {
   connectionId: string;
   schemaName: string;
   tableName: string;
+  tableDescription: string;
   columns: CombinedSchemaColumn[];
   indexes: RawSchemaIndex[];
   color: 'orange' | 'gray';
@@ -302,6 +303,7 @@ export async function buildAllTablesGraph(item: {
       connectionId: table.connectionId,
       schemaName: table.schemaName,
       tableName: table.tableName,
+      tableDescription: table.description,
       columns: table.columns,
       indexes: showIndexes ? table.indexes : [],
       color: 'gray',
