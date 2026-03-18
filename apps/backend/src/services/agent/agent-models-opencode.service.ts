@@ -170,9 +170,9 @@ export class AgentModelsOpencodeService {
     if (anthropicApiKey) {
       includeProviders.add('anthropic');
     }
-    if (zenApiKey) {
-      includeProviders.add('opencode');
-    }
+    // if (zenApiKey) {
+    //   includeProviders.add('opencode');
+    // }
 
     let allowedMap = new Map(
       MODEL_PROVIDERS.map(p => [p.provider_id, p.label])
