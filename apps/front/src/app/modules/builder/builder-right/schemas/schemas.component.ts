@@ -225,10 +225,12 @@ export class SchemasComponent implements OnInit {
   filterNode(item: { node: SchemaTreeNode; term: string }): boolean {
     let { node, term } = item;
 
-    let selfMatch = this.schemaSearchFn({
-      term: term,
-      searchName: node.searchName
-    });
+    let selfMatch =
+      node.nodeType === 'column' &&
+      this.schemaSearchFn({
+        term: term,
+        searchName: node.searchName
+      });
 
     if (node.children?.length > 0) {
       node.children = node.children.filter(child =>
