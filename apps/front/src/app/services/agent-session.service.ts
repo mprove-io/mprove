@@ -128,15 +128,16 @@ export class AgentSessionService {
   private startPolling(item: { sessionId: string }) {
     let { sessionId } = item;
 
+    let payload: ToBackendGetAgentSessionRequestPayload = {
+      sessionId: sessionId
+    };
+
     this.pollSubscription = interval(1000)
       .pipe(
         exhaustMap(() =>
           this.apiService.req({
             pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
-            payload: {
-              sessionId: sessionId,
-              includeMessagesAndParts: true
-            } as ToBackendGetAgentSessionRequestPayload
+            payload: payload
           })
         ),
         tap((resp: ToBackendGetAgentSessionResponse) => {
@@ -330,8 +331,7 @@ export class AgentSessionService {
     this.ssePhase = 'fetching-ticket';
 
     let payload: ToBackendGetAgentSessionRequestPayload = {
-      sessionId: sessionId,
-      includeMessagesAndParts: true
+      sessionId: sessionId
     };
 
     this.apiService

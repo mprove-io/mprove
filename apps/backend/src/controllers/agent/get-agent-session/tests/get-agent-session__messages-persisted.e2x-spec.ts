@@ -216,8 +216,7 @@ test('1', async t => {
         idempotencyKey: makeId()
       },
       payload: {
-        sessionId: sessionId,
-        includeMessagesAndParts: true
+        sessionId: sessionId
       }
     };
 

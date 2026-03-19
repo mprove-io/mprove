@@ -4,7 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import type {
   OpencodeClient,
   PermissionRequest,
-  QuestionRequest
+  QuestionRequest,
+  SessionPromptAsyncData
 } from '@opencode-ai/sdk/v2';
 import { sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
@@ -15,13 +16,16 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import {
+  CHANNEL_OPENCODE_INTERACT_REPLY,
   CHANNEL_OPENCODE_STREAM_COMMAND,
   KEY_OPENCODE_STREAM_OWNER
 } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { OpencodeStreamCommandEnum } from '#common/enums/opencode-stream-command.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
+import { splitModel } from '#common/functions/split-model';
 import { ServerError } from '#common/models/server-error';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
@@ -114,6 +118,42 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
               cs: this.cs
             });
           });
+        } else if (command === OpencodeStreamCommandEnum.Interact) {
+          let { replyTo, payload } = parsed;
+
+          console.log(
+            `[oc-stream] received interact for sessionId=${sessionId}`
+          );
+
+          this.executeInteraction({
+            sessionId: sessionId,
+            opencodeSessionId: payload.opencodeSessionId,
+            interactionType: payload.interactionType,
+            message: payload.message,
+            agent: payload.agent,
+            model: payload.model,
+            variant: payload.variant,
+            permissionId: payload.permissionId,
+            reply: payload.reply,
+            questionId: payload.questionId,
+            answers: payload.answers
+          })
+            .then(result => {
+              this.redisClient
+                .publish(replyTo, JSON.stringify(result))
+                .catch(() => {});
+            })
+            .catch(e => {
+              this.redisClient
+                .publish(
+                  replyTo,
+                  JSON.stringify({
+                    success: false,
+                    error: e?.message ?? 'interact failed'
+                  })
+                )
+                .catch(() => {});
+            });
         }
       } catch (e) {
         logToConsoleBackend({
@@ -633,6 +673,174 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         cs: this.cs
       });
     }
+  }
+
+  async executeInteraction(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+    interactionType: InteractionTypeEnum;
+    message?: string;
+    agent?: string;
+    model?: string;
+    variant?: string;
+    permissionId?: string;
+    reply?: string;
+    questionId?: string;
+    answers?: string[][];
+  }): Promise<{ success: boolean }> {
+    let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
+      sessionId: item.sessionId
+    });
+
+    if (item.interactionType === InteractionTypeEnum.Message) {
+      let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
+        parts: [{ type: 'text', text: item.message }]
+      };
+
+      if (item.agent) {
+        promptBody.agent = item.agent;
+      }
+
+      let split = splitModel(item.model);
+
+      if (split) {
+        promptBody.model = split;
+      }
+
+      if (item.variant) {
+        promptBody.variant = item.variant;
+      }
+
+      await opencodeClient.session.promptAsync(
+        {
+          sessionID: item.opencodeSessionId,
+          ...promptBody
+        },
+        { throwOnError: true }
+      );
+    } else if (item.interactionType === InteractionTypeEnum.Permission) {
+      await this.respondToPermission({
+        sessionId: item.sessionId,
+        opencodeSessionId: item.opencodeSessionId,
+        permissionId: item.permissionId,
+        reply: item.reply
+      });
+    } else if (item.interactionType === InteractionTypeEnum.Question) {
+      if (item.answers !== undefined) {
+        await this.respondToQuestion({
+          sessionId: item.sessionId,
+          opencodeSessionId: item.opencodeSessionId,
+          questionId: item.questionId,
+          answers: item.answers
+        });
+      } else {
+        await this.rejectQuestion({
+          sessionId: item.sessionId,
+          opencodeSessionId: item.opencodeSessionId,
+          questionId: item.questionId
+        });
+      }
+    } else if (item.interactionType === InteractionTypeEnum.Stop) {
+      await opencodeClient.session.abort(
+        {
+          sessionID: item.opencodeSessionId
+        },
+        { throwOnError: true }
+      );
+    }
+
+    await this.fetchSessionStateFromOpencode({
+      sessionId: item.sessionId,
+      opencodeSessionId: item.opencodeSessionId
+    });
+
+    return { success: true };
+  }
+
+  async publishInteractCommand(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+    interactionType: InteractionTypeEnum;
+    message?: string;
+    agent?: string;
+    model?: string;
+    variant?: string;
+    permissionId?: string;
+    reply?: string;
+    questionId?: string;
+    answers?: string[][];
+  }): Promise<{ success: boolean }> {
+    let correlationId = crypto.randomUUID();
+    let replyTo = `${CHANNEL_OPENCODE_INTERACT_REPLY}:${correlationId}`;
+
+    let sub = this.redisClient.duplicate();
+
+    await sub.subscribe(replyTo);
+
+    await this.redisClient.publish(
+      CHANNEL_OPENCODE_STREAM_COMMAND,
+      JSON.stringify({
+        command: OpencodeStreamCommandEnum.Interact,
+        sessionId: item.sessionId,
+        replyTo: replyTo,
+        payload: {
+          opencodeSessionId: item.opencodeSessionId,
+          interactionType: item.interactionType,
+          message: item.message,
+          agent: item.agent,
+          model: item.model,
+          variant: item.variant,
+          permissionId: item.permissionId,
+          reply: item.reply,
+          questionId: item.questionId,
+          answers: item.answers
+        }
+      })
+    );
+
+    let timeoutMs = 30_000;
+
+    return new Promise<{ success: boolean }>((resolve, reject) => {
+      let timer = setTimeout(() => {
+        sub.quit();
+        reject(
+          new ServerError({
+            message: ErEnum.BACKEND_AGENT_INTERACT_TIMEOUT,
+            customData: { sessionId: item.sessionId, timeoutMs: timeoutMs }
+          })
+        );
+      }, timeoutMs);
+
+      sub.on('message', (_channel, rawMessage) => {
+        clearTimeout(timer);
+        sub.quit();
+
+        try {
+          let result = JSON.parse(rawMessage);
+
+          if (result.success) {
+            resolve(result);
+          } else {
+            reject(
+              new ServerError({
+                message: ErEnum.BACKEND_AGENT_INTERACT_FAILED,
+                customData: {
+                  sessionId: item.sessionId,
+                  error: result.error
+                }
+              })
+            );
+          }
+        } catch {
+          reject(
+            new ServerError({
+              message: ErEnum.BACKEND_AGENT_INTERACT_FAILED,
+              customData: { sessionId: item.sessionId }
+            })
+          );
+        }
+      });
+    });
   }
 
   onModuleDestroy() {

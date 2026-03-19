@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import type { Event, SessionPromptAsyncData } from '@opencode-ai/sdk/v2';
+import type { Event } from '@opencode-ai/sdk/v2';
 import retry from 'async-retry';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
@@ -45,6 +45,7 @@ import { TabService } from '#backend/services/tab.service.js';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -545,38 +546,15 @@ export class CreateAgentSessionController {
         });
 
       if (firstMessage) {
-        let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
-          parts: [{ type: 'text', text: firstMessage }]
-        };
-
-        if (agent) {
-          promptBody.agent = agent;
-        }
-
-        let split = splitModel(model);
-
-        if (split) {
-          promptBody.model = split;
-        }
-
-        if (variant) {
-          promptBody.variant = variant;
-        }
-
-        await opencodeClient.session
-          .promptAsync(
-            {
-              sessionID: opencodeSessionId,
-              ...promptBody
-            },
-            { throwOnError: true }
-          )
-          .catch(e => {
-            throw new ServerError({
-              message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
-              originalError: e
-            });
-          });
+        await this.agentStreamOpencodeService.executeInteraction({
+          sessionId: sessionId,
+          opencodeSessionId: opencodeSessionId,
+          interactionType: InteractionTypeEnum.Message,
+          message: firstMessage,
+          agent: agent,
+          model: model,
+          variant: variant
+        });
       }
 
       if (isStreamStartedFresh) {

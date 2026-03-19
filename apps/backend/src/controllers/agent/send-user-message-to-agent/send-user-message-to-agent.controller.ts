@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import type { SessionPromptAsyncData } from '@opencode-ai/sdk/v2';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
@@ -238,13 +237,7 @@ export class SendUserMessageToAgentController {
     }
 
     if (session.status === SessionStatusEnum.Active) {
-      let isStreamStartedFresh =
-        await this.agentStreamOpencodeService.startEventStream({
-          sessionId: session.sessionId,
-          opencodeSessionId: session.opencodeSessionId
-        });
-
-      // execute interaction
+      // validate message interaction early
       if (interactionType === InteractionTypeEnum.Message) {
         if (agent === undefined) {
           throw new ServerError({
@@ -263,35 +256,51 @@ export class SendUserMessageToAgentController {
             message: ErEnum.BACKEND_AGENT_MESSAGE_VARIANT_REQUIRED
           });
         }
+      }
 
-        let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
-          sessionId: sessionId
+      let isStreamStartedFresh =
+        await this.agentStreamOpencodeService.startEventStream({
+          sessionId: session.sessionId,
+          opencodeSessionId: session.opencodeSessionId
         });
 
-        let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
-          parts: [{ type: 'text', text: message }]
-        };
+      if (isStreamStartedFresh) {
+        // this pod holds the stream — execute locally
+        await this.agentStreamOpencodeService.executeInteraction({
+          sessionId: session.sessionId,
+          opencodeSessionId: session.opencodeSessionId,
+          interactionType: interactionType,
+          message: message,
+          agent: agent,
+          model: model,
+          variant: variant,
+          permissionId: permissionId,
+          reply: reply,
+          questionId: questionId,
+          answers: answers
+        });
 
-        promptBody.agent = agent;
+        await this.agentStreamOpencodeService.processEventStream({
+          sessionId: session.sessionId
+        });
+      } else {
+        // another pod holds the stream — delegate via pub/sub
+        await this.agentStreamOpencodeService.publishInteractCommand({
+          sessionId: session.sessionId,
+          opencodeSessionId: session.opencodeSessionId,
+          interactionType: interactionType,
+          message: message,
+          agent: agent,
+          model: model,
+          variant: variant,
+          permissionId: permissionId,
+          reply: reply,
+          questionId: questionId,
+          answers: answers
+        });
+      }
 
-        let split = splitModel(model);
-
-        if (split) {
-          promptBody.model = split;
-        }
-
-        if (variant) {
-          promptBody.variant = variant;
-        }
-
-        await opencodeClient.session.promptAsync(
-          {
-            sessionID: session.opencodeSessionId,
-            ...promptBody
-          },
-          { throwOnError: true }
-        );
-
+      if (interactionType === InteractionTypeEnum.Message) {
         session = {
           ...session,
           agent: agent,
@@ -299,48 +308,9 @@ export class SendUserMessageToAgentController {
           lastMessageProviderModel: model,
           lastMessageVariant: variant
         };
-      } else if (interactionType === InteractionTypeEnum.Permission) {
-        await this.agentStreamOpencodeService.respondToPermission({
-          sessionId: sessionId,
-          opencodeSessionId: session.opencodeSessionId,
-          permissionId: permissionId,
-          reply: reply
-        });
-      } else if (interactionType === InteractionTypeEnum.Question) {
-        if (answers !== undefined) {
-          await this.agentStreamOpencodeService.respondToQuestion({
-            sessionId: sessionId,
-            opencodeSessionId: session.opencodeSessionId,
-            questionId: questionId,
-            answers: answers
-          });
-        } else {
-          await this.agentStreamOpencodeService.rejectQuestion({
-            sessionId: sessionId,
-            opencodeSessionId: session.opencodeSessionId,
-            questionId: questionId
-          });
-        }
-      } else if (interactionType === InteractionTypeEnum.Stop) {
-        let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
-          sessionId: sessionId
-        });
-
-        await opencodeClient.session.abort(
-          {
-            sessionID: session.opencodeSessionId
-          },
-          { throwOnError: true }
-        );
       }
 
       session.lastActivityTs = Date.now();
-
-      if (isStreamStartedFresh) {
-        await this.agentStreamOpencodeService.processEventStream({
-          sessionId: session.sessionId
-        });
-      }
     }
 
     await retry(

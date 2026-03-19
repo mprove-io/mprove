@@ -45,7 +45,7 @@ export class GetAgentSessionController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetAgentSession)
   async getAgentSession(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetAgentSessionRequest = request.body;
-    let { sessionId, includeMessagesAndParts } = reqValid.payload;
+    let { sessionId } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId
@@ -144,37 +144,35 @@ export class GetAgentSessionController {
     let messages: AgentMessageApi[] = [];
     let parts: AgentPartApi[] = [];
 
-    if (includeMessagesAndParts === true) {
-      let messageEnts = await this.db.drizzle.query.ocMessagesTable.findMany({
-        where: eq(ocMessagesTable.sessionId, sessionId),
-        orderBy: [asc(ocMessagesTable.messageId)]
-      });
+    let messageEnts = await this.db.drizzle.query.ocMessagesTable.findMany({
+      where: eq(ocMessagesTable.sessionId, sessionId),
+      orderBy: [asc(ocMessagesTable.messageId)]
+    });
 
-      messages = messageEnts.map(ent => {
-        let tab = this.tabService.ocMessageEntToTab(ent);
-        return {
-          messageId: tab.messageId,
-          sessionId: tab.sessionId,
-          role: tab.role,
-          ocMessage: tab.ocMessage
-        };
-      });
+    messages = messageEnts.map(ent => {
+      let tab = this.tabService.ocMessageEntToTab(ent);
+      return {
+        messageId: tab.messageId,
+        sessionId: tab.sessionId,
+        role: tab.role,
+        ocMessage: tab.ocMessage
+      };
+    });
 
-      let partEnts = await this.db.drizzle.query.ocPartsTable.findMany({
-        where: eq(ocPartsTable.sessionId, sessionId),
-        orderBy: [asc(ocPartsTable.partId)]
-      });
+    let partEnts = await this.db.drizzle.query.ocPartsTable.findMany({
+      where: eq(ocPartsTable.sessionId, sessionId),
+      orderBy: [asc(ocPartsTable.partId)]
+    });
 
-      parts = partEnts.map(ent => {
-        let tab = this.tabService.ocPartEntToTab(ent);
-        return {
-          partId: tab.partId,
-          messageId: tab.messageId,
-          sessionId: tab.sessionId,
-          ocPart: tab.ocPart
-        };
-      });
-    }
+    parts = partEnts.map(ent => {
+      let tab = this.tabService.ocPartEntToTab(ent);
+      return {
+        partId: tab.partId,
+        messageId: tab.messageId,
+        sessionId: tab.sessionId,
+        ocPart: tab.ocPart
+      };
+    });
 
     let result = await this.sessionsService.getBasicSessionsList({
       projectId: session.projectId,
