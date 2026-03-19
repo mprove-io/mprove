@@ -538,10 +538,11 @@ export class CreateAgentSessionController {
         getRetryOption(this.cs, this.logger)
       );
 
-      await this.agentStreamOpencodeService.startEventStream({
-        sessionId: sessionId,
-        opencodeSessionId: opencodeSessionId
-      });
+      let isStreamStartedFresh =
+        await this.agentStreamOpencodeService.startEventStream({
+          sessionId: sessionId,
+          opencodeSessionId: opencodeSessionId
+        });
 
       if (firstMessage) {
         let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
@@ -576,6 +577,12 @@ export class CreateAgentSessionController {
               originalError: e
             });
           });
+      }
+
+      if (isStreamStartedFresh) {
+        await this.agentStreamOpencodeService.processEventStream({
+          sessionId: sessionId
+        });
       }
     } catch (e: any) {
       logToConsoleBackend({

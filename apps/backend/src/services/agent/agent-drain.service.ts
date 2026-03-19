@@ -52,6 +52,8 @@ export class AgentDrainService {
 
   private partStates = new Map<string, Map<string, Part>>();
 
+  private fetchedPartIds = new Map<string, Set<string>>();
+
   constructor(
     private cs: ConfigService<BackendConfig>,
     private agentSseService: AgentSseService,
@@ -68,16 +70,41 @@ export class AgentDrainService {
     this.pendingEvents.delete(sessionId);
     this.eventCounters.delete(sessionId);
     this.partStates.delete(sessionId);
+    this.fetchedPartIds.delete(sessionId);
+  }
+
+  seedPartStates(item: { sessionId: string; parts: Part[] }): void {
+    let { sessionId, parts } = item;
+
+    let sessionParts = this.partStates.get(sessionId);
+    if (!sessionParts) {
+      sessionParts = new Map();
+      this.partStates.set(sessionId, sessionParts);
+    }
+
+    let fetched = this.fetchedPartIds.get(sessionId);
+    if (!fetched) {
+      fetched = new Set();
+      this.fetchedPartIds.set(sessionId, fetched);
+    }
+
+    parts.forEach(part => {
+      sessionParts.set(part.id as string, { ...part });
+      fetched.add(part.id as string);
+    });
   }
 
   async initEventCounter(item: { sessionId: string }): Promise<void> {
     let { sessionId } = item;
+
     if (!this.eventCounters.has(sessionId)) {
       let maxRow = await this.db.drizzle
         .select({ maxIndex: max(ocEventsTable.eventIndex) })
         .from(ocEventsTable)
         .where(eq(ocEventsTable.sessionId, sessionId));
+
       let eventIndex = maxRow[0]?.maxIndex != null ? maxRow[0].maxIndex + 1 : 0;
+
       this.eventCounters.set(sessionId, eventIndex);
     }
   }
@@ -169,13 +196,25 @@ export class AgentDrainService {
 
     let touchedPartIds = new Set<string>();
 
+    let fetched = this.fetchedPartIds.get(sessionId);
+
     items.forEach(item => {
       if (item.event.type === 'message.part.updated') {
         let props = (item.event as EventMessagePartUpdated).properties;
         sessionParts.set(props.part.id, { ...props.part });
         touchedPartIds.add(props.part.id);
+
+        if (fetched) {
+          fetched.delete(props.part.id);
+        }
       } else if (item.event.type === 'message.part.delta') {
         let props = (item.event as EventMessagePartDelta).properties;
+
+        let isFetched = fetched ? fetched.has(props.partID) : false;
+        if (isFetched) {
+          return;
+        }
+
         let existing = sessionParts.get(props.partID);
         if (existing) {
           let field = props.field as keyof typeof existing;

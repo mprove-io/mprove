@@ -49,6 +49,13 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
   private activeStreams = new Map<string, () => void>();
 
+  private pendingStreamData = new Map<
+    string,
+    {
+      response: Awaited<ReturnType<OpencodeClient['event']['subscribe']>>;
+    }
+  >();
+
   private lastEventTsMap = new Map<string, number>();
 
   constructor(
@@ -180,6 +187,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     await forEachSeries(sessionIds, async (sessionId: string) => {
       try {
         await this.stopEventStream({ sessionId: sessionId });
+
         await this.agentSandboxService.pauseSessionById({
           sessionId: sessionId,
           pauseReason: PauseReasonEnum.Safe
@@ -235,6 +243,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         );
 
         let stopFn = this.activeStreams.get(sessionId);
+
         if (stopFn) {
           stopFn();
           this.activeStreams.delete(sessionId);
@@ -248,6 +257,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
   private async releaseStreamLock(item: { sessionId: string }): Promise<void> {
     let { sessionId } = item;
+
     await this.redisClient.eval(
       `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end`,
       1,
@@ -261,26 +271,27 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   async startEventStream(item: {
     sessionId: string;
     opencodeSessionId: string;
-  }): Promise<void> {
+  }): Promise<boolean> {
     if (this.activeStreams.has(item.sessionId)) {
       console.log(
-        `[oc-stream] skip - already in activeStreams sessionId=${item.sessionId}`
+        `[oc-stream] skip startEventStream - already in activeStreams sessionId=${item.sessionId}`
       );
-      return;
+      return false;
     }
 
     let acquired = await this.tryAcquireStreamLock({
       sessionId: item.sessionId
     });
+
     if (!acquired) {
       console.log(
-        `[oc-stream] skip - lock not acquired sessionId=${item.sessionId}`
+        `[oc-stream] skip startEventStream - lock not acquired sessionId=${item.sessionId}`
       );
-      return;
+      return false;
     }
 
     console.log(
-      `[oc-stream] lock acquired, subscribing sessionId=${item.sessionId}`
+      `[oc-stream] startEventStream - lock acquired, subscribing sessionId=${item.sessionId}`
     );
 
     let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
@@ -299,16 +310,32 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     );
 
     console.log(
-      `[oc-stream] subscribed, starting refetch sessionId=${item.sessionId}`
+      `[oc-stream] startEventStream - subscribed sessionId=${item.sessionId}`
     );
 
-    await this.refetchFromOpenCode({
-      sessionId: item.sessionId,
-      opencodeSessionId: item.opencodeSessionId,
-      client: opencodeClient
+    this.activeStreams.set(item.sessionId, () => abortController.abort());
+    this.lastEventTsMap.set(item.sessionId, Date.now());
+    this.pendingStreamData.set(item.sessionId, {
+      response: response
     });
 
-    console.log(`[oc-stream] refetch complete sessionId=${item.sessionId}`);
+    await this.fetchSessionStateFromOpencode({
+      sessionId: item.sessionId,
+      opencodeSessionId: item.opencodeSessionId
+    });
+
+    return true;
+  }
+
+  async processEventStream(item: { sessionId: string }): Promise<void> {
+    let pending = this.pendingStreamData.get(item.sessionId);
+    if (!pending) {
+      return;
+    }
+
+    this.pendingStreamData.delete(item.sessionId);
+
+    let { response } = pending;
 
     let processStream = async () => {
       let streamFailed = false;
@@ -316,6 +343,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       try {
         for await (let event of response.stream) {
           this.lastEventTsMap.set(item.sessionId, Date.now());
+
           this.agentDrainService.enqueue({
             sessionId: item.sessionId,
             event: event
@@ -356,15 +384,18 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       }
     };
 
-    this.activeStreams.set(item.sessionId, () => abortController.abort());
-    this.lastEventTsMap.set(item.sessionId, Date.now());
+    console.log(
+      `[oc-stream] processEventStream started sessionId=${item.sessionId}`
+    );
 
     processStream();
   }
 
   async stopEventStream(item: { sessionId: string }): Promise<void> {
     let { sessionId } = item;
+
     console.log('[oc-stream] stopEventStream started');
+
     let stopFn = this.activeStreams.get(sessionId);
 
     if (stopFn) {
@@ -444,6 +475,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       }
 
       let elapsed = now - lastEventTs;
+
       let isStalled = elapsed > this.STREAM_STALL_THRESHOLD_MS;
 
       if (isStalled) {
@@ -485,12 +517,14 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     }
   }
 
-  async refetchFromOpenCode(item: {
+  async fetchSessionStateFromOpencode(item: {
     sessionId: string;
     opencodeSessionId: string;
-    client: OpencodeClient;
   }): Promise<void> {
     try {
+      let client = await this.agentOpencodeService.getOpenCodeClient({
+        sessionId: item.sessionId
+      });
       let [
         messagesResp,
         sessionResp,
@@ -499,14 +533,14 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         questionsResp,
         permissionsResp
       ] = await Promise.all([
-        item.client.session.messages({
+        client.session.messages({
           sessionID: item.opencodeSessionId
         }),
-        item.client.session.get({ sessionID: item.opencodeSessionId }),
-        item.client.session.todo({ sessionID: item.opencodeSessionId }),
-        item.client.session.status(),
-        item.client.question.list(),
-        item.client.permission.list()
+        client.session.get({ sessionID: item.opencodeSessionId }),
+        client.session.todo({ sessionID: item.opencodeSessionId }),
+        client.session.status(),
+        client.question.list(),
+        client.permission.list()
       ]);
 
       let messageTabs = (messagesResp.data ?? []).map(m =>
@@ -561,6 +595,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         let ocSessionStatus =
           statusResp.data[item.opencodeSessionId] ??
           Object.values(statusResp.data)[0];
+
         if (ocSessionStatus) {
           ocSessionTab = { ...ocSessionTab, ocSessionStatus };
         }
@@ -579,6 +614,13 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         await tx.execute(
           sql`UPDATE sessions SET last_activity_ts = ${Date.now()} WHERE session_id = ${item.sessionId}`
         );
+      });
+
+      let fetchedParts = (messagesResp.data ?? []).flatMap(m => m.parts);
+
+      this.agentDrainService.seedPartStates({
+        sessionId: item.sessionId,
+        parts: fetchedParts
       });
     } catch (e) {
       logToConsoleBackend({

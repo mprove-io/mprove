@@ -238,6 +238,12 @@ export class SendUserMessageToAgentController {
     }
 
     if (session.status === SessionStatusEnum.Active) {
+      let isStreamStartedFresh =
+        await this.agentStreamOpencodeService.startEventStream({
+          sessionId: session.sessionId,
+          opencodeSessionId: session.opencodeSessionId
+        });
+
       // execute interaction
       if (interactionType === InteractionTypeEnum.Message) {
         if (agent === undefined) {
@@ -330,10 +336,11 @@ export class SendUserMessageToAgentController {
 
       session.lastActivityTs = Date.now();
 
-      await this.agentStreamOpencodeService.startEventStream({
-        sessionId: session.sessionId,
-        opencodeSessionId: session.opencodeSessionId
-      });
+      if (isStreamStartedFresh) {
+        await this.agentStreamOpencodeService.processEventStream({
+          sessionId: session.sessionId
+        });
+      }
     }
 
     await retry(

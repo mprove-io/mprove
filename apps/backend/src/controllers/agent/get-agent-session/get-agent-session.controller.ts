@@ -96,10 +96,17 @@ export class GetAgentSessionController {
       session.status === SessionStatusEnum.Active &&
       session.opencodeSessionId
     ) {
-      await this.agentStreamOpencodeService.startEventStream({
-        sessionId,
-        opencodeSessionId: session.opencodeSessionId
-      });
+      let isStreamStartedFresh =
+        await this.agentStreamOpencodeService.startEventStream({
+          sessionId: sessionId,
+          opencodeSessionId: session.opencodeSessionId
+        });
+
+      if (isStreamStartedFresh) {
+        await this.agentStreamOpencodeService.processEventStream({
+          sessionId: sessionId
+        });
+      }
     }
 
     let ocSession = await this.sessionsService.getOcSessionBySessionId({
