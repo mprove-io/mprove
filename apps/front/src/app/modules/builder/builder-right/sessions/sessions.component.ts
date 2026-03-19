@@ -56,8 +56,9 @@ export class SessionsComponent implements OnInit {
   sessionStatusArchived = SessionStatusEnum.Archived;
   sessionTypeEnum = SessionTypeEnum;
   spinnerName = SESSIONS_SPINNER_NAME;
-  debugMode = false;
-  isShowDebugToggle = true;
+  showEvents = false;
+  eventsMode: 'live' | 'debug' = 'live';
+  isShowEventsToggle = true;
   allEventsExpanded = false;
   providerLabels: Record<string, string> = {
     opencode: 'Zen',
@@ -83,9 +84,16 @@ export class SessionsComponent implements OnInit {
     })
   );
 
-  debugMode$ = this.uiQuery.sessionDebugMode$.pipe(
+  showEvents$ = this.uiQuery.sessionShowEvents$.pipe(
     tap(x => {
-      this.debugMode = x;
+      this.showEvents = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  eventsMode$ = this.uiQuery.sessionEventsMode$.pipe(
+    tap(x => {
+      this.eventsMode = x;
       this.cd.detectChanges();
     })
   );
@@ -441,12 +449,20 @@ export class SessionsComponent implements OnInit {
     });
   }
 
-  toggleDebug() {
-    this.uiQuery.updatePart({ sessionDebugMode: !this.debugMode });
+  toggleShowEvents() {
+    this.uiQuery.updatePart({ sessionShowEvents: !this.showEvents });
+  }
+
+  toggleEventsMode() {
+    let newMode: 'live' | 'debug' =
+      this.eventsMode === 'live' ? 'debug' : 'live';
+    this.uiQuery.updatePart({ sessionEventsMode: newMode });
   }
 
   copyEventsJson() {
-    let events = this.sessionEventsQuery.getValue().events;
+    let state = this.sessionEventsQuery.getValue();
+    let events =
+      this.eventsMode === 'debug' ? state.debugEvents : state.liveEvents;
     let json = JSON.stringify(events, undefined, 2);
     navigator.clipboard.writeText(json);
   }

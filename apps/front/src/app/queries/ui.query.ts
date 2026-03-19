@@ -54,7 +54,8 @@ export class UiState {
   metricsTimeColumnsNarrowWidth: number;
   metricsTimeColumnsWideWidth: number;
   secondFileNodeId: string;
-  sessionDebugMode: boolean;
+  sessionShowEvents: boolean;
+  sessionEventsMode: 'live' | 'debug';
   sessionToggleAllEvents: number;
   sessionAllEventsExpanded: boolean;
   isNavigatingSession: boolean;
@@ -69,6 +70,7 @@ export class UiState {
   projectDashboardLinks: ProjectDashboardLink[];
   projectReportLinks: ProjectReportLink[];
   permissionsAutoAcceptSessionIds: string[];
+  isOptimisticLoading: boolean;
   newSessionPermissionsAutoAccept: boolean;
   newSessionExplorerProviderModel: string;
   newSessionEditorProviderModel: string;
@@ -111,11 +113,13 @@ let uiState: UiState = {
   metricsTimeColumnsNarrowWidth: DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   metricsTimeColumnsWideWidth: DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH,
   secondFileNodeId: undefined,
-  sessionDebugMode: false,
+  sessionShowEvents: false,
+  sessionEventsMode: 'live',
   sessionToggleAllEvents: 0,
   sessionAllEventsExpanded: false,
   isNavigatingSession: false,
   showContent: true,
+  isOptimisticLoading: false,
   //
   modelTreeLevels: undefined,
   timezone: undefined,
@@ -209,7 +213,13 @@ export class UiQuery extends BaseQuery<UiState> {
 
   secondFileNodeId$ = this.store.pipe(select(state => state.secondFileNodeId));
 
-  sessionDebugMode$ = this.store.pipe(select(state => state.sessionDebugMode));
+  sessionShowEvents$ = this.store.pipe(
+    select(state => state.sessionShowEvents)
+  );
+
+  sessionEventsMode$ = this.store.pipe(
+    select(state => state.sessionEventsMode)
+  );
 
   sessionToggleAllEvents$ = this.store.pipe(
     select(state => state.sessionToggleAllEvents)
@@ -227,6 +237,10 @@ export class UiQuery extends BaseQuery<UiState> {
 
   permissionsAutoAcceptSessionIds$ = this.store.pipe(
     select(state => state.permissionsAutoAcceptSessionIds)
+  );
+
+  isOptimisticLoading$ = this.store.pipe(
+    select(state => state.isOptimisticLoading)
   );
 
   newSessionPermissionsAutoAccept$ = this.store.pipe(

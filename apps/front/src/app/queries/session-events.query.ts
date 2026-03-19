@@ -4,16 +4,19 @@ import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { BaseQuery } from './base.query';
 
 export class SessionEventsState {
-  events: AgentEventApi[];
+  debugEvents: AgentEventApi[];
+  liveEvents: AgentEventApi[];
 }
 
 let sessionEventsState: SessionEventsState = {
-  events: []
+  debugEvents: [],
+  liveEvents: []
 };
 
 @Injectable({ providedIn: 'root' })
 export class SessionEventsQuery extends BaseQuery<SessionEventsState> {
-  events$ = this.store.pipe(select(state => state.events));
+  debugEvents$ = this.store.pipe(select(state => state.debugEvents));
+  liveEvents$ = this.store.pipe(select(state => state.liveEvents));
 
   constructor() {
     super(

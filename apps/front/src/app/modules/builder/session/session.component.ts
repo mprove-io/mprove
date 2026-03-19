@@ -63,7 +63,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   variant = 'default';
 
   session: SessionApi;
-  events: AgentEventApi[] = [];
+  debugEvents: AgentEventApi[] = [];
+  liveEvents: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
   permissions: PermissionRequest[] = [];
@@ -77,8 +78,10 @@ export class SessionComponent implements OnInit, OnDestroy {
   isAgentBusy = false;
   isWorking = false;
   isAborting = false;
+  isOptimisticLoading = false;
   isSessionError = false;
-  debugMode = false;
+  showEvents = false;
+  eventsMode: 'live' | 'debug' = 'live';
   allEventsExpanded = false;
   isLastErrorRecovered: boolean;
 
@@ -105,16 +108,37 @@ export class SessionComponent implements OnInit, OnDestroy {
       })
     );
 
-  debugEvents$ = this.sessionEventsQuery.events$.pipe(
+  debugEvents$ = this.sessionEventsQuery.debugEvents$.pipe(
     tap(x => {
-      this.events = x;
+      this.debugEvents = x;
       this.cd.detectChanges();
     })
   );
 
-  debugMode$ = this.uiQuery.sessionDebugMode$.pipe(
+  liveEvents$ = this.sessionEventsQuery.liveEvents$.pipe(
     tap(x => {
-      this.debugMode = x;
+      this.liveEvents = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  showEvents$ = this.uiQuery.sessionShowEvents$.pipe(
+    tap(x => {
+      this.showEvents = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  eventsMode$ = this.uiQuery.sessionEventsMode$.pipe(
+    tap(x => {
+      this.eventsMode = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  isOptimisticLoading$ = this.uiQuery.isOptimisticLoading$.pipe(
+    tap(x => {
+      this.isOptimisticLoading = x;
       this.cd.detectChanges();
     })
   );
@@ -244,7 +268,9 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.allEventsExpanded = !this.allEventsExpanded;
     let expanded: Record<string, boolean> = {};
     if (this.allEventsExpanded) {
-      this.events.forEach(event => {
+      let visibleEvents =
+        this.eventsMode === 'debug' ? this.debugEvents : this.liveEvents;
+      visibleEvents.forEach(event => {
         expanded[event.eventId] = true;
       });
     }
@@ -282,6 +308,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.isAgentBusy = true;
     this.isWorking = true;
+    this.uiQuery.updatePart({ isOptimisticLoading: true });
 
     this.updateWorkingSpinner();
 
@@ -307,6 +334,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.isAborting = true;
     this.isWorking = false;
+    this.uiQuery.updatePart({ isOptimisticLoading: false });
     this.cd.detectChanges();
 
     this.sessionMessages?.scrollToBottom();
@@ -412,15 +440,11 @@ export class SessionComponent implements OnInit, OnDestroy {
   enterSession(sessionData: SessionBundleState) {
     this.agent = this.session.agent;
     this.model = this.session.lastMessageProviderModel || this.session.model;
-    let loadedEvents = this.sessionEventsQuery.getValue().events;
-    let maxEventIndex = loadedEvents.reduce(
-      (max: number, e: AgentEventApi) => Math.max(max, e.eventIndex),
-      -1
-    );
     this.agentSessionService.initForSession({
-      lastProcessedEventIndex: maxEventIndex
+      lastProcessedEventIndex: sessionData.lastEventIndex
     });
     this.isAborting = false;
+    this.uiQuery.updatePart({ isOptimisticLoading: false });
     this.pendingUserMessages = [];
     this.lastKnownStoreUserCount = sessionData.messages.filter(
       m => m.role === 'user'
@@ -542,13 +566,20 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.archiveReason = this.session.archiveReason;
     this.pauseReason = this.session.pauseReason;
 
+    if (this.session?.status !== SessionStatusEnum.Active) {
+      this.isOptimisticLoading = false;
+      this.uiQuery.updatePart({ isOptimisticLoading: false });
+    }
+
     this.isAgentBusy =
-      this.questions.length === 0 &&
-      this.permissions.length === 0 &&
-      (this.pendingUserMessages.length > 0 ||
-        this.checkIsAgentBusy(sessionData.ocSessionStatus));
+      this.isOptimisticLoading ||
+      (this.questions.length === 0 &&
+        this.permissions.length === 0 &&
+        (this.pendingUserMessages.length > 0 ||
+          this.checkIsAgentBusy(sessionData.ocSessionStatus)));
 
     this.isWorking =
+      this.isOptimisticLoading ||
       (this.pendingUserMessages.length > 0 && !this.isAborting) ||
       this.checkIsWorking(sessionData.ocSessionStatus);
 

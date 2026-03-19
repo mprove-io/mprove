@@ -37,16 +37,18 @@
     <div class="flex flex-1"></div>
 
     <button
-      *ngIf="debugMode"
+      *ngIf="showEvents"
       type="button"
-      class="border-s400 text-s500 hover:bg-s100 ml-5 flex flex-shrink-0 select-none flex-row items-center rounded border p-4 py-2 focus:outline-none"
+      tp="Copy JSON"
+      tpPlacement="top"
+      class="text-s500 hover:bg-s100 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
       (click)="copyEventsJson()"
     >
-      <div>Copy JSON</div>
+      <m-copy-icon></m-copy-icon>
     </button>
 
     <button
-      *ngIf="debugMode"
+      *ngIf="showEvents"
       type="button"
       class="text-s500 hover:bg-s100 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
       (click)="toggleAllEvents()"
@@ -56,15 +58,33 @@
     </button>
 
     <button
-      *ngIf="isShowDebugToggle"
-      tp="Toggle debug mode"
+      *ngIf="showEvents"
+      [tp]="
+        eventsMode === 'live'
+          ? 'Switch to debug events'
+          : 'Switch to live events'
+      "
+      type="button"
+      class="ml-5 flex flex-shrink-0 select-none flex-row items-center rounded border p-4 py-2 focus:outline-none"
+      [ngClass]="{
+        'border-orange-400 text-orange-700': eventsMode === 'debug',
+        'border-s400 text-s500 hover:bg-s100': eventsMode === 'live'
+      }"
+      (click)="toggleEventsMode()"
+    >
+      <div>{{ eventsMode === 'live' ? 'Live' : 'Debug' }}</div>
+    </button>
+
+    <button
+      *ngIf="isShowEventsToggle"
+      tp="Toggle events"
       type="button"
       class="ml-5 mr-9 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
       [ngClass]="{
-        'bg-orange-100 text-orange-700': debugMode,
-        'text-s500 hover:bg-m200': !debugMode
+        'bg-orange-100 text-orange-700': showEvents,
+        'text-s500 hover:bg-m200': !showEvents
       }"
-      (click)="toggleDebug()"
+      (click)="toggleShowEvents()"
     >
       <m-scroll-icon></m-scroll-icon>
     </button>
@@ -229,5 +249,6 @@
 <div *ngIf="sessions$ | async"></div>
 <div *ngIf="hasMoreArchived$ | async"></div>
 <div *ngIf="session$ | async"></div>
-<div *ngIf="debugMode$ | async"></div>
+<div *ngIf="showEvents$ | async"></div>
+<div *ngIf="eventsMode$ | async"></div>
 <div *ngIf="allEventsExpanded$ | async"></div>

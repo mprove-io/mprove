@@ -70,7 +70,7 @@ export class SessionResolver {
             }
 
             this.sessionEventsQuery.updatePart({
-              events: resp.payload.events
+              debugEvents: resp.payload.debugEvents
             });
 
             this.sessionBundleQuery.updatePart({
@@ -83,7 +83,9 @@ export class SessionResolver {
               permissions: resp.payload.ocSession?.permissions ?? [],
               ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
               lastSessionError: resp.payload.ocSession?.lastSessionError,
-              isLastErrorRecovered: resp.payload.ocSession?.isLastErrorRecovered
+              isLastErrorRecovered:
+                resp.payload.ocSession?.isLastErrorRecovered,
+              lastEventIndex: resp.payload.lastEventIndex
             });
 
             return true;

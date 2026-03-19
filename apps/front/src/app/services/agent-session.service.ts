@@ -20,6 +20,7 @@ import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
+import { UiQuery } from '#front/app/queries/ui.query';
 import { AgentEventsService } from '#front/app/services/agent-events.service';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
@@ -56,7 +57,8 @@ export class AgentSessionService {
     private sessionsQuery: SessionsQuery,
     private agentEventsService: AgentEventsService,
     private myDialogService: MyDialogService,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private uiQuery: UiQuery
   ) {}
 
   initForSession(item: { lastProcessedEventIndex: number }) {
@@ -144,9 +146,9 @@ export class AgentSessionService {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.sessionQuery.update(resp.payload.session);
 
-            if (resp.payload.events.length > 0) {
+            if (resp.payload.debugEvents.length > 0) {
               this.sessionEventsQuery.updatePart({
-                events: resp.payload.events
+                debugEvents: resp.payload.debugEvents
               });
             }
 
@@ -160,7 +162,9 @@ export class AgentSessionService {
               permissions: resp.payload.ocSession?.permissions ?? [],
               ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
               lastSessionError: resp.payload.ocSession?.lastSessionError,
-              isLastErrorRecovered: resp.payload.ocSession?.isLastErrorRecovered
+              isLastErrorRecovered:
+                resp.payload.ocSession?.isLastErrorRecovered,
+              lastEventIndex: resp.payload.lastEventIndex
             });
 
             // Update session in the sessions list
@@ -348,17 +352,13 @@ export class AgentSessionService {
           this.ssePhase = 'idle';
 
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            if (resp.payload.events.length > 0) {
+            if (resp.payload.debugEvents.length > 0) {
               this.sessionEventsQuery.updatePart({
-                events: resp.payload.events
+                debugEvents: resp.payload.debugEvents
               });
-
-              let maxIndex = resp.payload.events.reduce(
-                (max, e) => Math.max(max, e.eventIndex),
-                -1
-              );
-              this.lastProcessedEventIndex = maxIndex;
             }
+
+            this.lastProcessedEventIndex = resp.payload.lastEventIndex;
 
             // Connect SSE BEFORE store updates to prevent re-entry
             // (store updates trigger managePollingAndSse synchronously;
@@ -379,7 +379,9 @@ export class AgentSessionService {
               permissions: resp.payload.ocSession?.permissions ?? [],
               ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
               lastSessionError: resp.payload.ocSession?.lastSessionError,
-              isLastErrorRecovered: resp.payload.ocSession?.isLastErrorRecovered
+              isLastErrorRecovered:
+                resp.payload.ocSession?.isLastErrorRecovered,
+              lastEventIndex: resp.payload.lastEventIndex
             });
 
             let sessions = this.sessionsQuery.getValue().sessions;
@@ -407,18 +409,29 @@ export class AgentSessionService {
 
     this.sseEventBuffer = [];
 
-    // Batch debug events store update
-    let currentEvents = this.sessionEventsQuery.getValue().events;
+    // Batch live events store update
+    let currentLiveEvents = this.sessionEventsQuery.getValue().liveEvents;
 
-    let updatedEvents = [...currentEvents, ...buffer].sort(
+    let updatedLiveEvents = [...currentLiveEvents, ...buffer].sort(
       (a, b) => a.eventIndex - b.eventIndex
     );
-    this.sessionEventsQuery.updatePart({ events: updatedEvents });
+    this.sessionEventsQuery.updatePart({ liveEvents: updatedLiveEvents });
 
     // Batch reducer events
     let ocEvents = buffer.filter(e => e.ocEvent).map(e => e.ocEvent);
     if (ocEvents.length > 0) {
       this.agentEventsService.applyEvents(ocEvents);
+    }
+
+    // Detect busy status event in batch
+    let hasBusy = buffer.some(
+      e =>
+        e.eventType === 'session.status' &&
+        (e.ocEvent?.properties as { status?: { type?: string } })?.status
+          ?.type === 'busy'
+    );
+    if (hasBusy) {
+      this.uiQuery.updatePart({ isOptimisticLoading: false });
     }
 
     // Update lastProcessedEventIndex from batch

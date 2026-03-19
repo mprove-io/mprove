@@ -1,6 +1,6 @@
 <div class="flex h-full w-full flex-col">
   <!-- Messages area (chat view) -->
-  <div *ngIf="!debugMode" class="mt-0.5 flex h-2 w-full flex-grow flex-row">
+  <div *ngIf="!showEvents" class="mt-0.5 flex h-2 w-full flex-grow flex-row">
     <div class="flex w-2 flex-1 flex-col overflow-y-auto">
       <m-session-messages class="h-full w-full" [scrollTrigger]="scrollTrigger">
         <m-session-messages-content
@@ -21,7 +21,7 @@
   <!-- Working indicator -->
   <div
     class="ml-[105px] flex h-[30px] flex-col justify-center"
-    *ngIf="!debugMode"
+    *ngIf="!showEvents"
   >
     <div
       *ngIf="isWorking"
@@ -42,12 +42,12 @@
     </div>
   </div>
 
-  <div *ngIf="debugMode" class="flex h-2 flex-grow flex-row">
+  <div *ngIf="showEvents" class="flex h-2 flex-grow flex-row">
     <div
       class="thin-scrollbar ml-16 mr-[60px] flex w-2 flex-1 flex-col overflow-y-auto"
     >
       <m-session-debug-events
-        [events]="events"
+        [events]="eventsMode === 'debug' ? debugEvents : liveEvents"
         [expandedEvents]="debugExpandedEvents"
         (expandedEventsChange)="debugExpandedEvents = $event"
       ></m-session-debug-events>
@@ -154,7 +154,7 @@
 
   <!-- Paused session message -->
   <div
-    *ngIf="session?.status === sessionStatusEnum.Paused"
+    *ngIf="session?.status === sessionStatusEnum.Paused && !isOptimisticLoading"
     class="flex-shrink-0 px-6 pb-8 pt-[6px]"
   >
     <div class="mx-auto flex max-w-[860px] items-center justify-center">
@@ -208,6 +208,9 @@
 <div *ngIf="permissionsAutoAcceptSessionIds$ | async"></div>
 <div *ngIf="sessionAndData$ | async"></div>
 <div *ngIf="debugEvents$ | async"></div>
-<div *ngIf="debugMode$ | async"></div>
+<div *ngIf="liveEvents$ | async"></div>
+<div *ngIf="showEvents$ | async"></div>
+<div *ngIf="eventsMode$ | async"></div>
 
 <div *ngIf="toggleAllEvents$ | async"></div>
+<div *ngIf="isOptimisticLoading$ | async"></div>

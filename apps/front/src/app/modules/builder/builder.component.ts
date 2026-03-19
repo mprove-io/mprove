@@ -163,10 +163,10 @@ export class BuilderComponent implements OnInit, OnDestroy {
     })
   );
 
-  debugMode = false;
-  debugMode$ = this.uiQuery.sessionDebugMode$.pipe(
+  showEvents = false;
+  showEvents$ = this.uiQuery.sessionShowEvents$.pipe(
     tap(x => {
-      this.debugMode = x;
+      this.showEvents = x;
       this.cd.detectChanges();
     })
   );
@@ -313,8 +313,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleDebug() {
-    this.uiQuery.updatePart({ sessionDebugMode: !this.debugMode });
+  toggleShowEvents() {
+    this.uiQuery.updatePart({ sessionShowEvents: !this.showEvents });
   }
 
   newFile() {

@@ -1,6 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { asc, eq } from 'drizzle-orm';
+import { asc, eq, max } from 'drizzle-orm';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -113,7 +113,14 @@ export class GetAgentSessionController {
       sessionId
     });
 
-    let events: AgentEventApi[] = [];
+    let maxRow = await this.db.drizzle
+      .select({ maxIndex: max(ocEventsTable.eventIndex) })
+      .from(ocEventsTable)
+      .where(eq(ocEventsTable.sessionId, sessionId));
+
+    let lastEventIndex = maxRow[0]?.maxIndex ?? -1;
+
+    let debugEvents: AgentEventApi[] = [];
 
     if (session.status !== SessionStatusEnum.Archived) {
       let eventEnts = await this.db.drizzle.query.ocEventsTable.findMany({
@@ -121,7 +128,7 @@ export class GetAgentSessionController {
         orderBy: [asc(ocEventsTable.eventIndex)]
       });
 
-      events = eventEnts.map(ent => {
+      debugEvents = eventEnts.map(ent => {
         let tab = this.tabService.ocEventEntToTab(ent);
         return {
           eventId: tab.eventId,
@@ -183,7 +190,8 @@ export class GetAgentSessionController {
     let payload: ToBackendGetAgentSessionResponsePayload = {
       session: sessionApi,
       ocSession: ocSessionApi,
-      events: events,
+      debugEvents: debugEvents,
+      lastEventIndex: lastEventIndex,
       messages: messages,
       parts: parts,
       sessions: result.sessions,

@@ -22,7 +22,8 @@ export class ToBackendGetAgentSessionRequest extends ToBackendRequest {
 export class ToBackendGetAgentSessionResponsePayload {
   session: SessionApi;
   ocSession?: OcSessionApi;
-  events: AgentEventApi[];
+  debugEvents: AgentEventApi[];
+  lastEventIndex: number;
   messages?: AgentMessageApi[];
   parts?: AgentPartApi[];
   sessions: SessionApi[];

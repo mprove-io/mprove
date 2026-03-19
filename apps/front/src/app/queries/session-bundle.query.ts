@@ -20,6 +20,7 @@ export class SessionBundleState {
   todos: Todo[];
   lastSessionError?: Record<string, unknown>;
   isLastErrorRecovered?: boolean;
+  lastEventIndex: number;
 }
 
 let sessionBundleState: SessionBundleState = {
@@ -31,7 +32,8 @@ let sessionBundleState: SessionBundleState = {
   sessionTitle: undefined,
   todos: [],
   lastSessionError: undefined,
-  isLastErrorRecovered: undefined
+  isLastErrorRecovered: undefined,
+  lastEventIndex: -1
 };
 
 @Injectable({ providedIn: 'root' })
