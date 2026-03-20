@@ -99,7 +99,8 @@ export class GetAgentSessionController {
       let isStreamStartedFresh =
         await this.agentStreamOpencodeService.startEventStream({
           sessionId: sessionId,
-          opencodeSessionId: session.opencodeSessionId
+          opencodeSessionId: session.opencodeSessionId,
+          skipReload: false
         });
 
       if (isStreamStartedFresh) {

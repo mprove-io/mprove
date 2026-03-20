@@ -329,6 +329,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   async startEventStream(item: {
     sessionId: string;
     opencodeSessionId: string;
+    skipReload: boolean;
   }): Promise<boolean> {
     if (this.activeStreams.has(item.sessionId)) {
       console.log(
@@ -380,7 +381,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     await this.fetchSessionStateFromOpencode({
       sessionId: item.sessionId,
       opencodeSessionId: item.opencodeSessionId,
-      publishReload: true
+      publishReload: item.skipReload === false
     });
 
     return true;

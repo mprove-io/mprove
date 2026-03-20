@@ -263,7 +263,8 @@ export class SendUserMessageToAgentController {
       let isStreamStartedFresh =
         await this.agentStreamOpencodeService.startEventStream({
           sessionId: session.sessionId,
-          opencodeSessionId: session.opencodeSessionId
+          opencodeSessionId: session.opencodeSessionId,
+          skipReload: false
         });
 
       if (isStreamStartedFresh) {

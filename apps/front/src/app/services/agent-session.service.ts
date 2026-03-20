@@ -304,6 +304,8 @@ export class AgentSessionService {
               withOptimisticMerge: true
             });
 
+            this.lastProcessedEventIndex = resp.payload.lastEventIndex;
+
             let sessions = this.sessionsQuery.getValue().sessions;
             let updated = sessions.map(s =>
               s.sessionId === sessionId ? resp.payload.session : s

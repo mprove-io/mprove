@@ -442,6 +442,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       lastProcessedEventIndex: sessionData.lastEventIndex
     });
     this.isAborting = false;
+    this.isOptimisticLoading = false;
     this.uiQuery.updatePart({ isOptimisticLoading: false });
     this.agentSessionService.clearOptimisticMessages();
     let savedVariant = this.session.lastMessageVariant || 'default';
@@ -541,15 +542,23 @@ export class SessionComponent implements OnInit, OnDestroy {
       messages: this.messages
     });
 
+    let wasActivating = this.isActivating;
     this.isActivating = this.session.status === SessionStatusEnum.New;
-    this.isArchived = this.session.status === SessionStatusEnum.Archived;
-    this.archiveReason = this.session.archiveReason;
-    this.pauseReason = this.session.pauseReason;
+    let justActivated = wasActivating && !this.isActivating;
+
+    if (justActivated && !this.isActivating && !!this.session.firstMessage) {
+      this.isOptimisticLoading = true;
+      this.uiQuery.updatePart({ isOptimisticLoading: true });
+    }
 
     if (this.session?.status !== SessionStatusEnum.Active) {
       this.isOptimisticLoading = false;
       this.uiQuery.updatePart({ isOptimisticLoading: false });
     }
+
+    this.isArchived = this.session.status === SessionStatusEnum.Archived;
+    this.archiveReason = this.session.archiveReason;
+    this.pauseReason = this.session.pauseReason;
 
     this.isAgentBusy =
       this.isOptimisticLoading ||
@@ -569,7 +578,9 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.updateWorkingSpinner();
 
-    this.agentSessionService.managePollingAndSse();
+    this.agentSessionService.managePollingAndSse({
+      skipRefresh: justActivated
+    });
 
     let shouldScroll = false;
 
