@@ -88,6 +88,7 @@ export class SessionsService {
       sandboxStartTs: item.sandboxStartTs,
       sandboxEndTs: item.sandboxEndTs,
       sandboxInfo: item.sandboxInfo,
+      lastFetchEventIndex: undefined,
       reloadRequestedTs: undefined,
       createdTs: item.createdTs,
       serverTs: undefined,

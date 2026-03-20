@@ -1,6 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { asc, eq, max } from 'drizzle-orm';
+import { and, asc, eq, gt, max } from 'drizzle-orm';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -45,7 +45,7 @@ export class GetAgentSessionController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetAgentSession)
   async getAgentSession(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetAgentSessionRequest = request.body;
-    let { sessionId } = reqValid.payload;
+    let { sessionId, skipFetchSessionState } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId
@@ -106,6 +106,11 @@ export class GetAgentSessionController {
         await this.agentStreamOpencodeService.processEventStream({
           sessionId: sessionId
         });
+      } else if (!skipFetchSessionState) {
+        await this.agentStreamOpencodeService.publishFetchCommand({
+          sessionId: sessionId,
+          opencodeSessionId: session.opencodeSessionId
+        });
       }
     }
 
@@ -162,8 +167,13 @@ export class GetAgentSessionController {
       };
     });
 
+    let lastFetchEventIndex = session.lastFetchEventIndex ?? -1;
+
     let eventEnts = await this.db.drizzle.query.ocEventsTable.findMany({
-      where: eq(ocEventsTable.sessionId, sessionId),
+      where: and(
+        eq(ocEventsTable.sessionId, sessionId),
+        gt(ocEventsTable.eventIndex, lastFetchEventIndex)
+      ),
       orderBy: [asc(ocEventsTable.eventIndex)]
     });
 

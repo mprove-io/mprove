@@ -7,7 +7,7 @@ import type {
   QuestionRequest,
   SessionPromptAsyncData
 } from '@opencode-ai/sdk/v2';
-import { and, eq, sql } from 'drizzle-orm';
+import { eq, max, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -16,6 +16,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import {
+  CHANNEL_OPENCODE_FETCH_REPLY,
   CHANNEL_OPENCODE_INTERACT_REPLY,
   CHANNEL_OPENCODE_STREAM_COMMAND,
   KEY_OPENCODE_STREAM_OWNER
@@ -150,6 +151,32 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
                   JSON.stringify({
                     success: false,
                     error: e?.message ?? 'interact failed'
+                  })
+                )
+                .catch(() => {});
+            });
+        } else if (command === OpencodeStreamCommandEnum.Fetch) {
+          let { replyTo, payload } = parsed;
+
+          console.log(`[oc-stream] received fetch for sessionId=${sessionId}`);
+
+          this.fetchSessionStateFromOpencode({
+            sessionId: sessionId,
+            opencodeSessionId: payload.opencodeSessionId,
+            publishReload: false
+          })
+            .then(() => {
+              this.redisClient
+                .publish(replyTo, JSON.stringify({ success: true }))
+                .catch(() => {});
+            })
+            .catch(e => {
+              this.redisClient
+                .publish(
+                  replyTo,
+                  JSON.stringify({
+                    success: false,
+                    error: e?.message ?? 'fetch failed'
                   })
                 )
                 .catch(() => {});
@@ -352,7 +379,8 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
     await this.fetchSessionStateFromOpencode({
       sessionId: item.sessionId,
-      opencodeSessionId: item.opencodeSessionId
+      opencodeSessionId: item.opencodeSessionId,
+      publishReload: true
     });
 
     return true;
@@ -540,6 +568,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   async fetchSessionStateFromOpencode(item: {
     sessionId: string;
     opencodeSessionId: string;
+    publishReload: boolean;
   }): Promise<void> {
     try {
       let client = await this.agentOpencodeService.getOpenCodeClient({
@@ -622,6 +651,13 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       }
 
       await this.db.drizzle.transaction(async tx => {
+        let maxRow = await tx
+          .select({ maxIndex: max(ocEventsTable.eventIndex) })
+          .from(ocEventsTable)
+          .where(eq(ocEventsTable.sessionId, item.sessionId));
+
+        let lastFetchEventIndex = maxRow[0]?.maxIndex ?? -1;
+
         await this.db.packer.write({
           tx: tx,
           insertOrUpdate: {
@@ -632,24 +668,15 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         });
 
         await tx.execute(
-          sql`UPDATE sessions SET last_activity_ts = ${Date.now()} WHERE session_id = ${item.sessionId}`
+          sql`UPDATE sessions SET last_activity_ts = ${Date.now()}, last_fetch_event_index = ${lastFetchEventIndex} WHERE session_id = ${item.sessionId}`
         );
-
-        await tx
-          .delete(ocEventsTable)
-          .where(and(eq(ocEventsTable.sessionId, item.sessionId)));
       });
 
-      await this.publishReloadSession({
-        sessionId: item.sessionId
-      });
-
-      let fetchedParts = (messagesResp.data ?? []).flatMap(m => m.parts);
-
-      this.agentDrainService.seedPartStates({
-        sessionId: item.sessionId,
-        parts: fetchedParts
-      });
+      if (item.publishReload !== false) {
+        await this.publishReloadSession({
+          sessionId: item.sessionId
+        });
+      }
     } catch (e) {
       logToConsoleBackend({
         log: new ServerError({
@@ -840,6 +867,99 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         }
       });
     });
+  }
+
+  async publishFetchCommand(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+  }): Promise<void> {
+    if (this.activeStreams.has(item.sessionId)) {
+      console.log(
+        `[oc-stream] skip publishFetchCommand - stream is local sessionId=${item.sessionId}`
+      );
+      return;
+    }
+
+    let correlationId = crypto.randomUUID();
+    let replyTo = `${CHANNEL_OPENCODE_FETCH_REPLY}:${correlationId}`;
+
+    let sub = this.redisClient.duplicate();
+
+    try {
+      await sub.subscribe(replyTo);
+
+      await this.redisClient.publish(
+        CHANNEL_OPENCODE_STREAM_COMMAND,
+        JSON.stringify({
+          command: OpencodeStreamCommandEnum.Fetch,
+          sessionId: item.sessionId,
+          replyTo: replyTo,
+          payload: {
+            opencodeSessionId: item.opencodeSessionId
+          }
+        })
+      );
+
+      let timeoutMs = 15_000;
+
+      await new Promise<void>((resolve, reject) => {
+        let timer = setTimeout(() => {
+          sub.quit();
+          reject(
+            new ServerError({
+              message: ErEnum.BACKEND_AGENT_FETCH_TIMEOUT,
+              customData: {
+                sessionId: item.sessionId,
+                timeoutMs: timeoutMs
+              }
+            })
+          );
+        }, timeoutMs);
+
+        sub.on('message', (_channel, rawMessage) => {
+          clearTimeout(timer);
+          sub.quit();
+
+          try {
+            let result = JSON.parse(rawMessage);
+
+            if (result.success) {
+              resolve();
+            } else {
+              reject(
+                new ServerError({
+                  message: ErEnum.BACKEND_AGENT_FETCH_FAILED,
+                  customData: {
+                    sessionId: item.sessionId,
+                    error: result.error
+                  }
+                })
+              );
+            }
+          } catch {
+            reject(
+              new ServerError({
+                message: ErEnum.BACKEND_AGENT_FETCH_FAILED,
+                customData: { sessionId: item.sessionId }
+              })
+            );
+          }
+        });
+      });
+    } catch (e) {
+      logToConsoleBackend({
+        log:
+          e instanceof ServerError
+            ? e
+            : new ServerError({
+                message: ErEnum.BACKEND_AGENT_FETCH_FAILED,
+                originalError: e
+              }),
+        logLevel: LogLevelEnum.Error,
+        logger: this.logger,
+        cs: this.cs
+      });
+    }
   }
 
   onModuleDestroy() {

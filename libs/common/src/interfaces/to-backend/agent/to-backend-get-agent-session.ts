@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
@@ -11,6 +11,9 @@ import { ToBackendRequest } from '../to-backend-request';
 export class ToBackendGetAgentSessionRequestPayload {
   @IsString()
   sessionId: string;
+
+  @IsBoolean()
+  skipFetchSessionState: boolean;
 }
 
 export class ToBackendGetAgentSessionRequest extends ToBackendRequest {
@@ -21,11 +24,11 @@ export class ToBackendGetAgentSessionRequest extends ToBackendRequest {
 
 export class ToBackendGetAgentSessionResponsePayload {
   session: SessionApi;
-  ocSession?: OcSessionApi;
+  ocSession: OcSessionApi;
   lastEventIndex: number;
-  messages?: AgentMessageApi[];
-  parts?: AgentPartApi[];
-  events?: AgentEventApi[];
+  messages: AgentMessageApi[];
+  parts: AgentPartApi[];
+  events: AgentEventApi[];
   sessions: SessionApi[];
   hasMoreArchived: boolean;
 }

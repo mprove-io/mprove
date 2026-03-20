@@ -14,6 +14,7 @@ export const APP_NAME_SCHEDULER = 'SCHEDULER';
 export const CHANNEL_RPC_REPLY = 'rpc-reply';
 export const CHANNEL_OPENCODE_STREAM_COMMAND = 'opencode-stream-command';
 export const CHANNEL_OPENCODE_INTERACT_REPLY = 'opencode-interact-reply';
+export const CHANNEL_OPENCODE_FETCH_REPLY = 'opencode-fetch-reply';
 export const CHANNEL_AI_STREAM_COMMAND = 'ai-stream-command';
 
 export const KEY_SSE_TICKET = 'sse-ticket';

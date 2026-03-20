@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ADD COLUMN "last_fetch_event_index" bigint;

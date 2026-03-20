@@ -1,4 +1,5 @@
 export enum OpencodeStreamCommandEnum {
   Stop = 'stop',
-  Interact = 'interact'
+  Interact = 'interact',
+  Fetch = 'fetch'
 }

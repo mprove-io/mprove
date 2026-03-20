@@ -56,6 +56,7 @@ export const sessionsTable = pgTable(
     sandboxStartTs: bigint('sandbox_start_ts', { mode: 'number' }),
     sandboxEndTs: bigint('sandbox_end_ts', { mode: 'number' }),
     sandboxInfo: json('sandbox_info'),
+    lastFetchEventIndex: bigint('last_fetch_event_index', { mode: 'number' }),
     reloadRequestedTs: bigint('reload_requested_ts', { mode: 'number' }),
     createdTs: bigint('created_ts', { mode: 'number' }).notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()

@@ -30,7 +30,8 @@ export class SessionResolver {
     let sessionId = route.params[PARAMETER_SESSION_ID];
 
     let payload: ToBackendGetAgentSessionRequestPayload = {
-      sessionId: sessionId
+      sessionId: sessionId,
+      skipFetchSessionState: false
     };
 
     return this.apiService

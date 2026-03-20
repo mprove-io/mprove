@@ -250,6 +250,7 @@ export class SeedRecordsController {
             sandboxStartTs: undefined,
             sandboxEndTs: undefined,
             sandboxInfo: undefined,
+            lastFetchEventIndex: undefined,
             reloadRequestedTs: undefined,
             keyTag: undefined,
             serverTs: undefined

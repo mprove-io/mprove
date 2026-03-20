@@ -4,11 +4,13 @@ export function groupPartsByMessageId(parts: AgentPartApi[]): {
   [messageId: string]: AgentPartApi[];
 } {
   let grouped: { [messageId: string]: AgentPartApi[] } = {};
+
   parts.forEach(part => {
     if (!grouped[part.messageId]) {
       grouped[part.messageId] = [];
     }
     grouped[part.messageId].push(part);
   });
+
   return grouped;
 }

@@ -2,7 +2,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
   Event,
-  EventMessagePartDelta,
   EventMessagePartUpdated,
   EventMessageUpdated,
   EventPermissionAsked,
@@ -14,7 +13,6 @@ import type {
   EventSessionStatus,
   EventSessionUpdated,
   EventTodoUpdated,
-  Part,
   PermissionRequest,
   QuestionRequest
 } from '@opencode-ai/sdk/v2';
@@ -49,10 +47,6 @@ export class AgentDrainService {
 
   eventCounters = new Map<string, number>();
 
-  private partStates = new Map<string, Map<string, Part>>();
-
-  private fetchedPartIds = new Map<string, Set<string>>();
-
   constructor(
     private cs: ConfigService<BackendConfig>,
     private sessionsService: SessionsService,
@@ -67,29 +61,6 @@ export class AgentDrainService {
     let { sessionId } = item;
     this.pendingEvents.delete(sessionId);
     this.eventCounters.delete(sessionId);
-    this.partStates.delete(sessionId);
-    this.fetchedPartIds.delete(sessionId);
-  }
-
-  seedPartStates(item: { sessionId: string; parts: Part[] }): void {
-    let { sessionId, parts } = item;
-
-    let sessionParts = this.partStates.get(sessionId);
-    if (!sessionParts) {
-      sessionParts = new Map();
-      this.partStates.set(sessionId, sessionParts);
-    }
-
-    let fetched = this.fetchedPartIds.get(sessionId);
-    if (!fetched) {
-      fetched = new Set();
-      this.fetchedPartIds.set(sessionId, fetched);
-    }
-
-    parts.forEach(part => {
-      sessionParts.set(part.id as string, { ...part });
-      fetched.add(part.id as string);
-    });
   }
 
   async initEventCounter(item: { sessionId: string }): Promise<void> {
@@ -179,64 +150,20 @@ export class AgentDrainService {
 
     let messageTabs = uniqueMessages;
 
-    // Accumulate part states across drain cycles (updates + deltas)
-    let sessionParts = this.partStates.get(sessionId);
-    if (!sessionParts) {
-      sessionParts = new Map();
-      this.partStates.set(sessionId, sessionParts);
-    }
-
-    // Snapshot partStates before delta accumulation for rollback on failure
-    let savedParts = new Map<string, Part>();
-    sessionParts.forEach((v, k) => {
-      savedParts.set(k, { ...v });
-    });
-
-    let touchedPartIds = new Set<string>();
-
-    let fetched = this.fetchedPartIds.get(sessionId);
-
-    items.forEach(item => {
-      if (item.event.type === 'message.part.updated') {
+    let uniqueParts = new Map<string, OcPartTab>();
+    items
+      .filter(i => i.event.type === 'message.part.updated')
+      .forEach(item => {
         let props = (item.event as EventMessagePartUpdated).properties;
-        sessionParts.set(props.part.id, { ...props.part });
-        touchedPartIds.add(props.part.id);
-
-        if (fetched) {
-          fetched.delete(props.part.id);
-        }
-      } else if (item.event.type === 'message.part.delta') {
-        let props = (item.event as EventMessagePartDelta).properties;
-
-        let isFetched = fetched ? fetched.has(props.partID) : false;
-        if (isFetched) {
-          return;
-        }
-
-        let existing = sessionParts.get(props.partID);
-        if (existing) {
-          let field = props.field as keyof typeof existing;
-          let current = existing[field] as string | undefined;
-          (existing[field] as string) = (current ?? '') + props.delta;
-          touchedPartIds.add(props.partID);
-        }
-      }
-    });
-
-    let partTabs: OcPartTab[] = [];
-    touchedPartIds.forEach(partId => {
-      let part = sessionParts.get(partId);
-      if (part) {
-        partTabs.push(
-          this.ocPartsService.makeOcPart({
-            partId: part.id as string,
-            messageId: part.messageID as string,
-            sessionId: sessionId,
-            ocPart: part as EventMessagePartUpdated['properties']['part']
-          })
-        );
-      }
-    });
+        let tab = this.ocPartsService.makeOcPart({
+          partId: props.part.id as string,
+          messageId: props.part.messageID as string,
+          sessionId: sessionId,
+          ocPart: props.part
+        });
+        uniqueParts.set(tab.partId, tab);
+      });
+    let partTabs = [...uniqueParts.values()];
 
     let ocSessionTabs: OcSessionTab[] = [];
 
@@ -463,9 +390,6 @@ export class AgentDrainService {
         }
       });
     } catch (e) {
-      // Restore partStates snapshot so deltas aren't doubled on retry
-      this.partStates.set(sessionId, savedParts);
-
       let eventIds = eventTabs.map(t => t.eventId);
       let queueLength = queue.length;
       logToConsoleBackend({

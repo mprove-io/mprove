@@ -11,6 +11,8 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class AgentEventsService {
+  private seenFirstDeltaPartIds: Set<string> = new Set();
+
   constructor(
     private sessionBundleQuery: SessionBundleQuery,
     private sessionQuery: SessionQuery
@@ -27,12 +29,45 @@ export class AgentEventsService {
   applyEvents(events: Event[]) {
     let state = this.sessionBundleQuery.getValue();
     events.forEach(event => {
-      state = this.reduceEvent(state, event);
+      if (event.type === 'message.part.delta') {
+        let props = event.properties;
+        let messageParts = state.parts[props.messageID];
+
+        let isFirstDelta = false;
+
+        if (messageParts) {
+          let result = binarySearch(messageParts, props.partID, p => p.partId);
+          if (result.found) {
+            let partData = messageParts[result.index].ocPart as Record<
+              string,
+              unknown
+            >;
+            let existing = partData[props.field] as string | undefined;
+            isFirstDelta = !existing;
+          }
+        }
+
+        if (isFirstDelta) {
+          this.seenFirstDeltaPartIds.add(props.partID);
+          state = this.reduceEvent(state, event);
+        } else if (this.seenFirstDeltaPartIds.has(props.partID)) {
+          state = this.reduceEvent(state, event);
+        } else {
+          // else: skip — part has content from stored state, no first delta seen
+        }
+      } else {
+        state = this.reduceEvent(state, event);
+      }
     });
     this.sessionBundleQuery.updatePart(state);
   }
 
+  resetDeltaGuard() {
+    this.seenFirstDeltaPartIds = new Set();
+  }
+
   resetAll() {
+    this.seenFirstDeltaPartIds = new Set();
     this.sessionBundleQuery.reset();
   }
 

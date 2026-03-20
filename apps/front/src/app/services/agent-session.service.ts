@@ -176,13 +176,17 @@ export class AgentSessionService {
 
     this.sessionQuery.update(payload.session);
 
-    let messages = payload.messages || [];
-    let parts = payload.parts ? groupPartsByMessageId(payload.parts) : {};
+    let messages = payload.messages;
+
+    let parts = groupPartsByMessageId(payload.parts);
 
     if (withOptimisticMerge) {
       let merged = this.mergeOptimistic({ messages: messages, parts: parts });
+
       merged.confirmed.forEach(id => this.optimisticMessages.delete(id));
+
       messages = merged.messages;
+
       parts = merged.parts;
     }
 
@@ -199,8 +203,16 @@ export class AgentSessionService {
     });
 
     this.sessionEventsQuery.updatePart({
-      liveEvents: payload.events || []
+      liveEvents: payload.events
     });
+
+    this.agentEventsService.resetDeltaGuard();
+
+    let ocEvents = payload.events.filter(e => e.ocEvent).map(e => e.ocEvent);
+
+    if (ocEvents.length > 0) {
+      this.agentEventsService.applyEvents(ocEvents);
+    }
   }
 
   initForSession(item: { lastProcessedEventIndex: number }) {
@@ -273,7 +285,8 @@ export class AgentSessionService {
     let { sessionId } = item;
 
     let payload: ToBackendGetAgentSessionRequestPayload = {
-      sessionId: sessionId
+      sessionId: sessionId,
+      skipFetchSessionState: true
     };
 
     this.pollSubscription = interval(1000)
@@ -458,7 +471,8 @@ export class AgentSessionService {
     this.ssePhase = 'fetching-ticket';
 
     let payload: ToBackendGetAgentSessionRequestPayload = {
-      sessionId: sessionId
+      sessionId: sessionId,
+      skipFetchSessionState: true
     };
 
     this.apiService
