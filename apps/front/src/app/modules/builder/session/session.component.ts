@@ -205,41 +205,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkIsAgentBusy(ocSessionStatus: SessionStatus): boolean {
-    if (this.session?.status !== SessionStatusEnum.Active) {
-      return false;
-    }
-
-    if (
-      isDefined(ocSessionStatus) &&
-      ['busy', 'retry'].indexOf(ocSessionStatus.type) > -1
-    ) {
-      return true;
-    }
-    return false;
-  }
-
-  checkIsWorking(ocSessionStatus: SessionStatus): boolean {
-    if (this.session?.status !== SessionStatusEnum.Active) {
-      return false;
-    }
-
-    if (ocSessionStatus) {
-      let isBusy = ['busy', 'retry'].indexOf(ocSessionStatus.type) > -1;
-
-      if (!isBusy) {
-        this.isAborting = false;
-      }
-
-      if (this.isAborting) {
-        return false;
-      }
-      return isBusy;
-    }
-    return false;
-  }
-
-  getRetryMessage(ocSessionStatus: SessionStatus): string {
+  makeRetryMessage(ocSessionStatus: SessionStatus): string {
     if (ocSessionStatus?.type === 'retry') {
       return `Retrying (attempt ${ocSessionStatus.attempt}): ${ocSessionStatus.message}`;
     }
@@ -438,15 +404,13 @@ export class SessionComponent implements OnInit, OnDestroy {
   enterSession(sessionData: SessionBundleState) {
     this.agent = this.session.agent;
     this.model = this.session.lastMessageProviderModel || this.session.model;
+    this.variant = this.session.lastMessageVariant || 'default';
+
     this.agentSessionService.initForSession({
       lastProcessedEventIndex: sessionData.lastEventIndex
     });
-    this.isAborting = false;
-    this.isOptimisticLoading = false;
-    this.uiQuery.updatePart({ isOptimisticLoading: false });
+
     this.agentSessionService.clearOptimisticMessages();
-    let savedVariant = this.session.lastMessageVariant || 'default';
-    this.variant = savedVariant;
 
     if (this.sessionInput) {
       let state = this.agentModelsQuery.getValue();
@@ -470,6 +434,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       agent: this.agent,
       variant: this.variant
     });
+
     this.turns = this.agentMessagesService.buildTurns({
       messages: this.messages
     });
@@ -478,12 +443,23 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
     this.archiveReason = this.session.archiveReason;
     this.pauseReason = this.session.pauseReason;
-    this.isAgentBusy = this.checkIsAgentBusy(sessionData.ocSessionStatus);
-    this.isWorking = this.checkIsWorking(sessionData.ocSessionStatus);
-    this.retryMessage = this.getRetryMessage(sessionData.ocSessionStatus);
+    this.retryMessage = this.makeRetryMessage(sessionData.ocSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
     this.lastSessionError = sessionData.lastSessionError;
     this.isLastErrorRecovered = sessionData.isLastErrorRecovered;
+
+    this.isAborting = false;
+    this.isOptimisticLoading = false;
+    this.uiQuery.updatePart({ isOptimisticLoading: false });
+
+    this.isAgentBusy =
+      this.session?.status === SessionStatusEnum.Active &&
+      ['busy', 'retry'].indexOf(sessionData.ocSessionStatus?.type) > -1;
+
+    this.isWorking =
+      this.session?.status === SessionStatusEnum.Active &&
+      isDefined(sessionData.ocSessionStatus) &&
+      ['busy', 'retry'].indexOf(sessionData.ocSessionStatus.type) > -1;
 
     this.updateWorkingSpinner();
 
@@ -521,7 +497,6 @@ export class SessionComponent implements OnInit, OnDestroy {
       ids.includes(this.session.sessionId) &&
       this.permissions.length > 0
     ) {
-      // auto respond
       this.permissions.forEach(permission => {
         this.respondToPermission({
           permissionId: permission.id,
@@ -538,9 +513,23 @@ export class SessionComponent implements OnInit, OnDestroy {
       agent: this.agent,
       variant: this.variant
     });
+
     this.turns = this.agentMessagesService.buildTurns({
       messages: this.messages
     });
+
+    this.isArchived = this.session.status === SessionStatusEnum.Archived;
+    this.archiveReason = this.session.archiveReason;
+    this.pauseReason = this.session.pauseReason;
+    this.retryMessage = this.makeRetryMessage(sessionData.ocSessionStatus);
+    this.isSessionError = this.session.status === SessionStatusEnum.Error;
+    this.lastSessionError = sessionData.lastSessionError;
+    this.isLastErrorRecovered = sessionData.isLastErrorRecovered;
+
+    if (this.session?.status !== SessionStatusEnum.Active) {
+      this.isOptimisticLoading = false;
+      this.uiQuery.updatePart({ isOptimisticLoading: false });
+    }
 
     let wasActivating = this.isActivating;
     this.isActivating = this.session.status === SessionStatusEnum.New;
@@ -551,30 +540,27 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.uiQuery.updatePart({ isOptimisticLoading: true });
     }
 
-    if (this.session?.status !== SessionStatusEnum.Active) {
-      this.isOptimisticLoading = false;
-      this.uiQuery.updatePart({ isOptimisticLoading: false });
-    }
-
-    this.isArchived = this.session.status === SessionStatusEnum.Archived;
-    this.archiveReason = this.session.archiveReason;
-    this.pauseReason = this.session.pauseReason;
-
     this.isAgentBusy =
       this.isOptimisticLoading ||
       (this.questions.length === 0 &&
         this.permissions.length === 0 &&
-        this.checkIsAgentBusy(sessionData.ocSessionStatus));
+        this.session?.status === SessionStatusEnum.Active &&
+        ['busy', 'retry'].indexOf(sessionData.ocSessionStatus?.type) > -1);
+
+    if (
+      this.session?.status === SessionStatusEnum.Active &&
+      isDefined(sessionData.ocSessionStatus) &&
+      ['busy', 'retry'].indexOf(sessionData.ocSessionStatus.type) < 0
+    ) {
+      this.isAborting = false;
+    }
 
     this.isWorking =
       this.isOptimisticLoading ||
-      (!this.isAborting && this.checkIsWorking(sessionData.ocSessionStatus));
-
-    this.retryMessage = this.getRetryMessage(sessionData.ocSessionStatus);
-
-    this.isSessionError = this.session.status === SessionStatusEnum.Error;
-    this.lastSessionError = sessionData.lastSessionError;
-    this.isLastErrorRecovered = sessionData.isLastErrorRecovered;
+      (this.session?.status === SessionStatusEnum.Active &&
+        isDefined(sessionData.ocSessionStatus) &&
+        ['busy', 'retry'].indexOf(sessionData.ocSessionStatus.type) > -1 &&
+        this.isAborting === false);
 
     this.updateWorkingSpinner();
 
