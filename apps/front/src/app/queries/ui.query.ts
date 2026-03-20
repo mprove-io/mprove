@@ -55,7 +55,6 @@ export class UiState {
   metricsTimeColumnsWideWidth: number;
   secondFileNodeId: string;
   sessionShowEvents: boolean;
-  sessionEventsMode: 'live' | 'debug';
   sessionToggleAllEvents: number;
   sessionAllEventsExpanded: boolean;
   isNavigatingSession: boolean;
@@ -114,7 +113,6 @@ let uiState: UiState = {
   metricsTimeColumnsWideWidth: DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH,
   secondFileNodeId: undefined,
   sessionShowEvents: false,
-  sessionEventsMode: 'live',
   sessionToggleAllEvents: 0,
   sessionAllEventsExpanded: false,
   isNavigatingSession: false,
@@ -215,10 +213,6 @@ export class UiQuery extends BaseQuery<UiState> {
 
   sessionShowEvents$ = this.store.pipe(
     select(state => state.sessionShowEvents)
-  );
-
-  sessionEventsMode$ = this.store.pipe(
-    select(state => state.sessionEventsMode)
   );
 
   sessionToggleAllEvents$ = this.store.pipe(

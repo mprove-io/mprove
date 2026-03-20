@@ -7,14 +7,14 @@ import type {
   QuestionRequest,
   SessionPromptAsyncData
 } from '@opencode-ai/sdk/v2';
-import { sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import {
   CHANNEL_OPENCODE_INTERACT_REPLY,
   CHANNEL_OPENCODE_STREAM_COMMAND,
@@ -33,7 +33,6 @@ import { SessionsService } from '../db/sessions.service';
 import { AgentDrainService } from './agent-drain.service';
 import { AgentOpencodeService } from './agent-opencode.service';
 import { AgentSandboxService } from './agent-sandbox.service';
-import { AgentSseService } from './agent-sse.service';
 
 const { forEachSeries } = pIteration;
 
@@ -65,7 +64,6 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private agentDrainService: AgentDrainService,
-    private agentSseService: AgentSseService,
     private agentSandboxService: AgentSandboxService,
     private agentOpencodeService: AgentOpencodeService,
     private sessionsService: SessionsService,
@@ -136,7 +134,9 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
             permissionId: payload.permissionId,
             reply: payload.reply,
             questionId: payload.questionId,
-            answers: payload.answers
+            answers: payload.answers,
+            messageId: payload.messageId,
+            partId: payload.partId
           })
             .then(result => {
               this.redisClient
@@ -196,18 +196,9 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         `[oc-stream] publishing reload for sessionId=${item.sessionId}`
       );
 
-      await this.agentSseService.publish({
-        sessionId: item.sessionId,
-        event: {
-          eventId: `${item.sessionId}_0`,
-          eventIndex: 0,
-          eventType: RELOAD_SESSION_EVENT_TYPE,
-          ocEvent: {
-            type: RELOAD_SESSION_EVENT_TYPE as any,
-            properties: {}
-          }
-        }
-      });
+      await this.db.drizzle.execute(
+        sql`UPDATE sessions SET reload_requested_ts = ${Date.now()} WHERE session_id = ${item.sessionId}`
+      );
     } catch (e) {
       logToConsoleBackend({
         log: new ServerError({
@@ -378,8 +369,6 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     let { response } = pending;
 
     let processStream = async () => {
-      let streamFailed = false;
-
       try {
         for await (let event of response.stream) {
           this.lastEventTsMap.set(item.sessionId, Date.now());
@@ -405,8 +394,6 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
             cs: this.cs
           });
 
-          streamFailed = true;
-
           console.log(
             `[oc-stream] stream failed sessionId=${item.sessionId} error=${e.message}`
           );
@@ -417,11 +404,9 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
       await this.stopEventStream({ sessionId: item.sessionId });
 
-      if (streamFailed) {
-        await this.publishReloadSession({
-          sessionId: item.sessionId
-        });
-      }
+      await this.publishReloadSession({
+        sessionId: item.sessionId
+      });
     };
 
     console.log(
@@ -444,13 +429,8 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     }
 
     this.lastEventTsMap.delete(sessionId);
-
-    try {
-      await this.agentDrainService.drainQueue({ sessionId: sessionId });
-    } finally {
-      this.agentDrainService.cleanup({ sessionId: sessionId });
-      await this.releaseStreamLock({ sessionId: sessionId });
-    }
+    this.agentDrainService.cleanup({ sessionId: sessionId });
+    await this.releaseStreamLock({ sessionId: sessionId });
 
     console.log('[oc-stream] stopEventStream completed');
   }
@@ -654,6 +634,14 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         await tx.execute(
           sql`UPDATE sessions SET last_activity_ts = ${Date.now()} WHERE session_id = ${item.sessionId}`
         );
+
+        await tx
+          .delete(ocEventsTable)
+          .where(and(eq(ocEventsTable.sessionId, item.sessionId)));
+      });
+
+      await this.publishReloadSession({
+        sessionId: item.sessionId
       });
 
       let fetchedParts = (messagesResp.data ?? []).flatMap(m => m.parts);
@@ -687,6 +675,8 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     reply?: string;
     questionId?: string;
     answers?: string[][];
+    messageId?: string;
+    partId?: string;
   }): Promise<{ success: boolean }> {
     let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
@@ -694,7 +684,13 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
     if (item.interactionType === InteractionTypeEnum.Message) {
       let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
-        parts: [{ type: 'text', text: item.message }]
+        parts: [
+          {
+            type: 'text',
+            text: item.message,
+            ...(item.partId ? { id: item.partId } : {})
+          }
+        ]
       };
 
       if (item.agent) {
@@ -709,6 +705,10 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
       if (item.variant) {
         promptBody.variant = item.variant;
+      }
+
+      if (item.messageId) {
+        promptBody.messageID = item.messageId;
       }
 
       await opencodeClient.session.promptAsync(
@@ -749,11 +749,6 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       );
     }
 
-    await this.fetchSessionStateFromOpencode({
-      sessionId: item.sessionId,
-      opencodeSessionId: item.opencodeSessionId
-    });
-
     return { success: true };
   }
 
@@ -769,6 +764,8 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     reply?: string;
     questionId?: string;
     answers?: string[][];
+    messageId?: string;
+    partId?: string;
   }): Promise<{ success: boolean }> {
     let correlationId = crypto.randomUUID();
     let replyTo = `${CHANNEL_OPENCODE_INTERACT_REPLY}:${correlationId}`;
@@ -793,7 +790,9 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
           permissionId: item.permissionId,
           reply: item.reply,
           questionId: item.questionId,
-          answers: item.answers
+          answers: item.answers,
+          messageId: item.messageId,
+          partId: item.partId
         }
       })
     );

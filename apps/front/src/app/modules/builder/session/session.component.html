@@ -47,7 +47,7 @@
       class="thin-scrollbar ml-16 mr-[60px] flex w-2 flex-1 flex-col overflow-y-auto"
     >
       <m-session-debug-events
-        [events]="eventsMode === 'debug' ? debugEvents : liveEvents"
+        [events]="liveEvents"
         [expandedEvents]="debugExpandedEvents"
         (expandedEventsChange)="debugExpandedEvents = $event"
       ></m-session-debug-events>
@@ -207,10 +207,7 @@
 </div>
 <div *ngIf="permissionsAutoAcceptSessionIds$ | async"></div>
 <div *ngIf="sessionAndData$ | async"></div>
-<div *ngIf="debugEvents$ | async"></div>
 <div *ngIf="liveEvents$ | async"></div>
 <div *ngIf="showEvents$ | async"></div>
-<div *ngIf="eventsMode$ | async"></div>
-
 <div *ngIf="toggleAllEvents$ | async"></div>
 <div *ngIf="isOptimisticLoading$ | async"></div>

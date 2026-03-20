@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ADD COLUMN "reload_requested_ts" bigint;

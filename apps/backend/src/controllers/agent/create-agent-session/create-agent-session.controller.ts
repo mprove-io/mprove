@@ -546,15 +546,29 @@ export class CreateAgentSessionController {
         });
 
       if (firstMessage) {
-        await this.agentStreamOpencodeService.executeInteraction({
-          sessionId: sessionId,
-          opencodeSessionId: opencodeSessionId,
-          interactionType: InteractionTypeEnum.Message,
-          message: firstMessage,
-          agent: agent,
-          model: model,
-          variant: variant
-        });
+        try {
+          await this.agentStreamOpencodeService.executeInteraction({
+            sessionId: sessionId,
+            opencodeSessionId: opencodeSessionId,
+            interactionType: InteractionTypeEnum.Message,
+            message: firstMessage,
+            agent: agent,
+            model: model,
+            variant: variant
+          });
+        } catch (e) {
+          if (isStreamStartedFresh) {
+            await this.agentStreamOpencodeService.stopEventStream({
+              sessionId: sessionId
+            });
+
+            await this.agentStreamOpencodeService.publishReloadSession({
+              sessionId: sessionId
+            });
+          }
+
+          throw e;
+        }
       }
 
       if (isStreamStartedFresh) {

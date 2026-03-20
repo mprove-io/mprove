@@ -68,7 +68,9 @@ export class SendUserMessageToAgentController {
       permissionId,
       reply,
       questionId,
-      answers
+      answers,
+      messageId,
+      partId
     } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
@@ -266,19 +268,33 @@ export class SendUserMessageToAgentController {
 
       if (isStreamStartedFresh) {
         // this pod holds the stream — execute locally
-        await this.agentStreamOpencodeService.executeInteraction({
-          sessionId: session.sessionId,
-          opencodeSessionId: session.opencodeSessionId,
-          interactionType: interactionType,
-          message: message,
-          agent: agent,
-          model: model,
-          variant: variant,
-          permissionId: permissionId,
-          reply: reply,
-          questionId: questionId,
-          answers: answers
-        });
+        try {
+          await this.agentStreamOpencodeService.executeInteraction({
+            sessionId: session.sessionId,
+            opencodeSessionId: session.opencodeSessionId,
+            interactionType: interactionType,
+            message: message,
+            agent: agent,
+            model: model,
+            variant: variant,
+            permissionId: permissionId,
+            reply: reply,
+            questionId: questionId,
+            answers: answers,
+            messageId: messageId,
+            partId: partId
+          });
+        } catch (e) {
+          await this.agentStreamOpencodeService.stopEventStream({
+            sessionId: session.sessionId
+          });
+
+          await this.agentStreamOpencodeService.publishReloadSession({
+            sessionId: session.sessionId
+          });
+
+          throw e;
+        }
 
         await this.agentStreamOpencodeService.processEventStream({
           sessionId: session.sessionId
@@ -296,7 +312,9 @@ export class SendUserMessageToAgentController {
           permissionId: permissionId,
           reply: reply,
           questionId: questionId,
-          answers: answers
+          answers: answers,
+          messageId: messageId,
+          partId: partId
         });
       }
 

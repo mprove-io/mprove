@@ -57,7 +57,6 @@ export class SessionsComponent implements OnInit {
   sessionTypeEnum = SessionTypeEnum;
   spinnerName = SESSIONS_SPINNER_NAME;
   showEvents = false;
-  eventsMode: 'live' | 'debug' = 'live';
   isShowEventsToggle = true;
   allEventsExpanded = false;
   providerLabels: Record<string, string> = {
@@ -87,13 +86,6 @@ export class SessionsComponent implements OnInit {
   showEvents$ = this.uiQuery.sessionShowEvents$.pipe(
     tap(x => {
       this.showEvents = x;
-      this.cd.detectChanges();
-    })
-  );
-
-  eventsMode$ = this.uiQuery.sessionEventsMode$.pipe(
-    tap(x => {
-      this.eventsMode = x;
       this.cd.detectChanges();
     })
   );
@@ -453,16 +445,9 @@ export class SessionsComponent implements OnInit {
     this.uiQuery.updatePart({ sessionShowEvents: !this.showEvents });
   }
 
-  toggleEventsMode() {
-    let newMode: 'live' | 'debug' =
-      this.eventsMode === 'live' ? 'debug' : 'live';
-    this.uiQuery.updatePart({ sessionEventsMode: newMode });
-  }
-
   copyEventsJson() {
     let state = this.sessionEventsQuery.getValue();
-    let events =
-      this.eventsMode === 'debug' ? state.debugEvents : state.liveEvents;
+    let events = state.liveEvents;
     let json = JSON.stringify(events, undefined, 2);
     navigator.clipboard.writeText(json);
   }

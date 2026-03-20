@@ -3,6 +3,7 @@ import type { Event } from '@opencode-ai/sdk/v2';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { binarySearch } from '../functions/binary-search';
+import { SessionQuery } from '../queries/session.query';
 import {
   SessionBundleQuery,
   SessionBundleState
@@ -10,7 +11,10 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class AgentEventsService {
-  constructor(private sessionBundleQuery: SessionBundleQuery) {}
+  constructor(
+    private sessionBundleQuery: SessionBundleQuery,
+    private sessionQuery: SessionQuery
+  ) {}
 
   applyEvent(event: Event) {
     let state = this.sessionBundleQuery.getValue();
@@ -40,17 +44,17 @@ export class AgentEventsService {
       case 'message.updated': {
         let raw = event.properties.info;
         let messageId: string = raw.id;
-        let sessionId: string = raw.sessionID;
         let role: string = raw.role;
+        let mproveSessionId = this.sessionQuery.getValue()?.sessionId || '';
 
         let messages = state.messages ? [...state.messages] : [];
 
         let result = binarySearch(messages, messageId, m => m.messageId);
 
         let msgApi: AgentMessageApi = {
-          messageId,
-          sessionId,
-          role,
+          messageId: messageId,
+          sessionId: mproveSessionId,
+          role: role,
           ocMessage: raw
         };
 
@@ -89,10 +93,12 @@ export class AgentEventsService {
 
         let result = binarySearch(messageParts, partId, p => p.partId);
 
+        let mproveSessionId2 = this.sessionQuery.getValue()?.sessionId || '';
+
         let partApi: AgentPartApi = {
           partId: partId,
           messageId: messageId,
-          sessionId: part.sessionID,
+          sessionId: mproveSessionId2,
           ocPart: part
         };
 

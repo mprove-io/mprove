@@ -22,10 +22,10 @@ export class ToBackendGetAgentSessionRequest extends ToBackendRequest {
 export class ToBackendGetAgentSessionResponsePayload {
   session: SessionApi;
   ocSession?: OcSessionApi;
-  debugEvents: AgentEventApi[];
   lastEventIndex: number;
   messages?: AgentMessageApi[];
   parts?: AgentPartApi[];
+  events?: AgentEventApi[];
   sessions: SessionApi[];
   hasMoreArchived: boolean;
 }

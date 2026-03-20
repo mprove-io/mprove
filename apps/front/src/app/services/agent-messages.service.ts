@@ -45,17 +45,8 @@ export class AgentMessagesService {
     model: string;
     agent: string;
     variant: string;
-    pendingUserMessages: string[];
   }): ChatMessage[] {
-    let {
-      storeMessages,
-      storeParts,
-      session,
-      model,
-      agent,
-      variant,
-      pendingUserMessages
-    } = item;
+    let { storeMessages, storeParts, session, model, agent, variant } = item;
 
     let chatMessages: ChatMessage[] = [];
 
@@ -187,22 +178,6 @@ export class AgentMessagesService {
         variant: variant !== 'default' ? variant : ''
       });
     }
-
-    // Append pending optimistic user messages
-    let optimisticModelId =
-      model !== 'default' && model.includes('/')
-        ? model.substring(model.indexOf('/') + 1)
-        : model;
-
-    pendingUserMessages.forEach(text => {
-      chatMessages.push({
-        role: 'user',
-        text: text,
-        agentName: agent,
-        modelId: optimisticModelId,
-        variant: variant !== 'default' ? variant : ''
-      });
-    });
 
     return chatMessages;
   }

@@ -9,23 +9,18 @@ import {
   ToBackendGetAgentSessionRequestPayload,
   ToBackendGetAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
-import { groupPartsByMessageId } from '../functions/group-parts-by-message-id';
-import { SessionQuery } from '../queries/session.query';
-import { SessionBundleQuery } from '../queries/session-bundle.query';
-import { SessionEventsQuery } from '../queries/session-events.query';
 import { SessionsQuery } from '../queries/sessions.query';
 import { AgentEventsService } from '../services/agent-events.service';
+import { AgentSessionService } from '../services/agent-session.service';
 import { ApiService } from '../services/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class SessionResolver {
   constructor(
     private apiService: ApiService,
-    private sessionQuery: SessionQuery,
     private sessionsQuery: SessionsQuery,
-    private sessionEventsQuery: SessionEventsQuery,
-    private sessionBundleQuery: SessionBundleQuery,
-    private agentEventsService: AgentEventsService
+    private agentEventsService: AgentEventsService,
+    private agentSessionService: AgentSessionService
   ) {}
 
   resolve(
@@ -48,8 +43,6 @@ export class SessionResolver {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.agentEventsService.resetAll();
 
-            this.sessionQuery.update(resp.payload.session);
-
             if (resp.payload.sessions.length > 0) {
               let existing = this.sessionsQuery.getValue().sessions;
               let merged = [...existing];
@@ -69,23 +62,9 @@ export class SessionResolver {
               });
             }
 
-            this.sessionEventsQuery.updatePart({
-              debugEvents: resp.payload.debugEvents
-            });
-
-            this.sessionBundleQuery.updatePart({
-              messages: resp.payload.messages || [],
-              parts: resp.payload.parts
-                ? groupPartsByMessageId(resp.payload.parts)
-                : {},
-              todos: resp.payload.ocSession?.todos ?? [],
-              questions: resp.payload.ocSession?.questions ?? [],
-              permissions: resp.payload.ocSession?.permissions ?? [],
-              ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
-              lastSessionError: resp.payload.ocSession?.lastSessionError,
-              isLastErrorRecovered:
-                resp.payload.ocSession?.isLastErrorRecovered,
-              lastEventIndex: resp.payload.lastEventIndex
+            this.agentSessionService.applySessionResponse({
+              payload: resp.payload,
+              withOptimisticMerge: false
             });
 
             return true;

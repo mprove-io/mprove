@@ -37,7 +37,6 @@ import { OcEventsService } from '../db/oc-events.service';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
 import { SessionsService } from '../db/sessions.service';
-import { AgentSseService } from './agent-sse.service';
 
 const { forEachSeries } = pIteration;
 
@@ -56,7 +55,6 @@ export class AgentDrainService {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private agentSseService: AgentSseService,
     private sessionsService: SessionsService,
     private ocEventsService: OcEventsService,
     private ocMessagesService: OcMessagesService,
@@ -490,19 +488,6 @@ export class AgentDrainService {
     }
 
     queue.splice(0, itemCount);
-
-    await forEachSeries(items, async item => {
-      let eventId = `${item.sessionId}_${item.eventIndex}`;
-      await this.agentSseService.publish({
-        sessionId: item.sessionId,
-        event: {
-          eventId: eventId,
-          eventIndex: item.eventIndex,
-          eventType: item.event.type,
-          ocEvent: item.event
-        }
-      });
-    });
 
     let needsSafePause = false;
 

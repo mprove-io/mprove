@@ -1048,6 +1048,7 @@ export class TabToEntService {
       sandboxStartTs: tab.sandboxStartTs,
       sandboxEndTs: tab.sandboxEndTs,
       sandboxInfo: tab.sandboxInfo,
+      reloadRequestedTs: tab.reloadRequestedTs,
       createdTs: tab.createdTs,
       serverTs: tab.serverTs
     };

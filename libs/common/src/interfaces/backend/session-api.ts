@@ -7,6 +7,10 @@ export class SessionApi {
   @IsString()
   sessionId: string;
 
+  @IsOptional()
+  @IsString()
+  opencodeSessionId?: string;
+
   @IsEnum(SessionTypeEnum)
   type: SessionTypeEnum;
 

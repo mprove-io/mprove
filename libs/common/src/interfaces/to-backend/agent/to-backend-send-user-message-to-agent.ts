@@ -15,6 +15,14 @@ export class ToBackendSendUserMessageToAgentRequestPayload {
   @IsString()
   sessionId: string;
 
+  @IsOptional()
+  @IsString()
+  messageId?: string;
+
+  @IsOptional()
+  @IsString()
+  partId?: string;
+
   @IsEnum(InteractionTypeEnum)
   interactionType: InteractionTypeEnum;
 

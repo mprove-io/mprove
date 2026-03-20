@@ -58,24 +58,6 @@
     </button>
 
     <button
-      *ngIf="showEvents"
-      [tp]="
-        eventsMode === 'live'
-          ? 'Switch to debug events'
-          : 'Switch to live events'
-      "
-      type="button"
-      class="ml-5 flex flex-shrink-0 select-none flex-row items-center rounded border p-4 py-2 focus:outline-none"
-      [ngClass]="{
-        'border-orange-400 text-orange-700': eventsMode === 'debug',
-        'border-s400 text-s500 hover:bg-s100': eventsMode === 'live'
-      }"
-      (click)="toggleEventsMode()"
-    >
-      <div>{{ eventsMode === 'live' ? 'Live' : 'Debug' }}</div>
-    </button>
-
-    <button
       *ngIf="isShowEventsToggle"
       tp="Toggle events"
       type="button"
@@ -250,5 +232,4 @@
 <div *ngIf="hasMoreArchived$ | async"></div>
 <div *ngIf="session$ | async"></div>
 <div *ngIf="showEvents$ | async"></div>
-<div *ngIf="eventsMode$ | async"></div>
 <div *ngIf="allEventsExpanded$ | async"></div>

@@ -63,7 +63,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   variant = 'default';
 
   session: SessionApi;
-  debugEvents: AgentEventApi[] = [];
   liveEvents: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
@@ -81,14 +80,11 @@ export class SessionComponent implements OnInit, OnDestroy {
   isOptimisticLoading = false;
   isSessionError = false;
   showEvents = false;
-  eventsMode: 'live' | 'debug' = 'live';
   allEventsExpanded = false;
   isLastErrorRecovered: boolean;
 
   scrollTrigger = 0;
   previousTurnsCount = 0;
-  lastKnownStoreUserCount = 0;
-
   previousSessionId: string;
   archiveReason: ArchiveReasonEnum;
   pauseReason: PauseReasonEnum;
@@ -97,8 +93,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   workingSpinnerName = 'sessionInProgress';
   workingSpinnerColor = '#0084d1';
   debugExpandedEvents: Record<string, boolean> = {};
-  pendingUserMessages: string[] = [];
-
   permissionsAutoAcceptSessionIds: string[] = [];
   permissionsAutoAcceptSessionIds$ =
     this.uiQuery.permissionsAutoAcceptSessionIds$.pipe(
@@ -107,13 +101,6 @@ export class SessionComponent implements OnInit, OnDestroy {
         this.cd.detectChanges();
       })
     );
-
-  debugEvents$ = this.sessionEventsQuery.debugEvents$.pipe(
-    tap(x => {
-      this.debugEvents = x;
-      this.cd.detectChanges();
-    })
-  );
 
   liveEvents$ = this.sessionEventsQuery.liveEvents$.pipe(
     tap(x => {
@@ -129,17 +116,12 @@ export class SessionComponent implements OnInit, OnDestroy {
     })
   );
 
-  eventsMode$ = this.uiQuery.sessionEventsMode$.pipe(
-    tap(x => {
-      this.eventsMode = x;
-      this.cd.detectChanges();
-    })
-  );
-
   isOptimisticLoading$ = this.uiQuery.isOptimisticLoading$.pipe(
     tap(x => {
-      this.isOptimisticLoading = x;
-      this.cd.detectChanges();
+      if (this.isOptimisticLoading !== x) {
+        this.isOptimisticLoading = x;
+        this.cd.detectChanges();
+      }
     })
   );
 
@@ -268,9 +250,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.allEventsExpanded = !this.allEventsExpanded;
     let expanded: Record<string, boolean> = {};
     if (this.allEventsExpanded) {
-      let visibleEvents =
-        this.eventsMode === 'debug' ? this.debugEvents : this.liveEvents;
-      visibleEvents.forEach(event => {
+      this.liveEvents.forEach(event => {
         expanded[event.eventId] = true;
       });
     }
@@ -287,19 +267,24 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.userSentMessage = true;
 
-    // Optimistic: show user message immediately
-    this.pendingUserMessages.push(text);
+    let { messageId, partId } = this.agentSessionService.optimisticAdd({
+      sessionId: this.session.sessionId,
+      ocSessionId: this.session.opencodeSessionId || '',
+      agent: this.agent,
+      model: this.model,
+      text: text,
+      variant: this.variant
+    });
 
-    let data = this.sessionBundleQuery.getValue();
-
+    // Rebuild chat messages and turns
+    let updatedData = this.sessionBundleQuery.getValue();
     this.messages = this.agentMessagesService.buildMessagesFromStores({
-      storeMessages: data.messages,
-      storeParts: data.parts,
+      storeMessages: updatedData.messages,
+      storeParts: updatedData.parts,
       session: this.session,
       model: this.model,
       agent: this.agent,
-      variant: this.variant,
-      pendingUserMessages: this.pendingUserMessages
+      variant: this.variant
     });
 
     this.turns = this.agentMessagesService.buildTurns({
@@ -323,7 +308,9 @@ export class SessionComponent implements OnInit, OnDestroy {
       message: text,
       model: this.model,
       variant: this.variant,
-      agent: this.agent
+      agent: this.agent,
+      messageId: messageId,
+      partId: partId
     });
   }
 
@@ -434,7 +421,18 @@ export class SessionComponent implements OnInit, OnDestroy {
         }),
         take(1)
       )
-      .subscribe();
+      .subscribe({
+        error: () => {
+          this.agentSessionService.optimisticRemove({
+            messageId: payload.messageId
+          });
+          this.isAgentBusy = false;
+          this.isWorking = false;
+          this.uiQuery.updatePart({ isOptimisticLoading: false });
+          this.updateWorkingSpinner();
+          this.cd.detectChanges();
+        }
+      });
   }
 
   enterSession(sessionData: SessionBundleState) {
@@ -445,10 +443,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     });
     this.isAborting = false;
     this.uiQuery.updatePart({ isOptimisticLoading: false });
-    this.pendingUserMessages = [];
-    this.lastKnownStoreUserCount = sessionData.messages.filter(
-      m => m.role === 'user'
-    ).length;
+    this.agentSessionService.clearOptimisticMessages();
     let savedVariant = this.session.lastMessageVariant || 'default';
     this.variant = savedVariant;
 
@@ -472,8 +467,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       session: this.session,
       model: this.model,
       agent: this.agent,
-      variant: this.variant,
-      pendingUserMessages: this.pendingUserMessages
+      variant: this.variant
     });
     this.turns = this.agentMessagesService.buildTurns({
       messages: this.messages
@@ -516,19 +510,6 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.sessionsQuery.updatePart({ sessions: updated });
     }
 
-    // Cleanup confirmed optimistic messages
-    let storeUserCount = sessionData.messages.filter(
-      m => m.role === 'user'
-    ).length;
-    let newUsers = storeUserCount - this.lastKnownStoreUserCount;
-    if (newUsers > 0 && this.pendingUserMessages.length > 0) {
-      this.pendingUserMessages.splice(
-        0,
-        Math.min(newUsers, this.pendingUserMessages.length)
-      );
-    }
-    this.lastKnownStoreUserCount = storeUserCount;
-
     this.permissions = sessionData.permissions || [];
     this.questions = sessionData.questions || [];
 
@@ -554,8 +535,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       session: this.session,
       model: this.model,
       agent: this.agent,
-      variant: this.variant,
-      pendingUserMessages: this.pendingUserMessages
+      variant: this.variant
     });
     this.turns = this.agentMessagesService.buildTurns({
       messages: this.messages
@@ -575,13 +555,11 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.isOptimisticLoading ||
       (this.questions.length === 0 &&
         this.permissions.length === 0 &&
-        (this.pendingUserMessages.length > 0 ||
-          this.checkIsAgentBusy(sessionData.ocSessionStatus)));
+        this.checkIsAgentBusy(sessionData.ocSessionStatus));
 
     this.isWorking =
       this.isOptimisticLoading ||
-      (this.pendingUserMessages.length > 0 && !this.isAborting) ||
-      this.checkIsWorking(sessionData.ocSessionStatus);
+      (!this.isAborting && this.checkIsWorking(sessionData.ocSessionStatus));
 
     this.retryMessage = this.getRetryMessage(sessionData.ocSessionStatus);
 

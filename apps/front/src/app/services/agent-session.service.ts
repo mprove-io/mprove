@@ -5,7 +5,10 @@ import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { splitModel } from '#common/functions/split-model';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
+import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
+import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { ErrorData } from '#common/interfaces/front/error-data';
 import {
   ToBackendCreateAgentSseTicketRequestPayload,
@@ -13,8 +16,11 @@ import {
 } from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
 import {
   ToBackendGetAgentSessionRequestPayload,
-  ToBackendGetAgentSessionResponse
+  ToBackendGetAgentSessionResponse,
+  ToBackendGetAgentSessionResponsePayload
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
+import { ascendingId } from '#front/app/functions/ascending-id';
+import { binarySearch } from '#front/app/functions/binary-search';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
@@ -49,6 +55,11 @@ export class AgentSessionService {
 
   private pollSubscription: Subscription;
 
+  private optimisticMessages: Map<
+    string,
+    { message: AgentMessageApi; parts: AgentPartApi[] }
+  > = new Map();
+
   constructor(
     private apiService: ApiService,
     private sessionQuery: SessionQuery,
@@ -60,6 +71,137 @@ export class AgentSessionService {
     private navigateService: NavigateService,
     private uiQuery: UiQuery
   ) {}
+
+  optimisticAdd(item: {
+    sessionId: string;
+    ocSessionId: string;
+    agent: string;
+    model: string;
+    text: string;
+    variant: string;
+  }): { messageId: string; partId: string } {
+    let { sessionId, ocSessionId, agent, model, text, variant } = item;
+
+    let messageId = ascendingId({ prefix: 'message' });
+    let partId = ascendingId({ prefix: 'part' });
+
+    let modelSplit = splitModel(model) || {
+      providerID: '',
+      modelID: model || ''
+    };
+
+    let optimisticMessage: AgentMessageApi = {
+      messageId: messageId,
+      sessionId: sessionId,
+      role: 'user',
+      ocMessage: {
+        id: messageId,
+        sessionID: ocSessionId,
+        role: 'user',
+        variant: variant,
+        time: { created: Date.now() },
+        agent: agent,
+        model: modelSplit
+      } as any
+    };
+
+    let optimisticPart: AgentPartApi = {
+      partId: partId,
+      messageId: messageId,
+      sessionId: sessionId,
+      ocPart: {
+        id: partId,
+        sessionID: ocSessionId,
+        messageID: messageId,
+        type: 'text',
+        text: text
+      } as any
+    };
+
+    this.optimisticMessages.set(messageId, {
+      message: optimisticMessage,
+      parts: [optimisticPart]
+    });
+
+    let data = this.sessionBundleQuery.getValue();
+    let messages = [...data.messages];
+    let parts = { ...data.parts };
+
+    let result = binarySearch(messages, messageId, m => m.messageId);
+    messages.splice(result.index, 0, optimisticMessage);
+    parts[messageId] = [optimisticPart];
+
+    this.sessionBundleQuery.updatePart({
+      messages: messages,
+      parts: parts
+    });
+
+    return { messageId: messageId, partId: partId };
+  }
+
+  optimisticRemove(item: { messageId: string }) {
+    let { messageId } = item;
+
+    if (!messageId || !this.optimisticMessages.has(messageId)) {
+      return;
+    }
+
+    this.optimisticMessages.delete(messageId);
+
+    let data = this.sessionBundleQuery.getValue();
+    let messages = [...data.messages];
+    let parts = { ...data.parts };
+
+    let result = binarySearch(messages, messageId, m => m.messageId);
+    if (result.found) {
+      messages.splice(result.index, 1);
+    }
+    delete parts[messageId];
+
+    this.sessionBundleQuery.updatePart({
+      messages: messages,
+      parts: parts
+    });
+  }
+
+  clearOptimisticMessages() {
+    this.optimisticMessages = new Map();
+  }
+
+  applySessionResponse(item: {
+    payload: ToBackendGetAgentSessionResponsePayload;
+    withOptimisticMerge: boolean;
+  }): void {
+    let { payload, withOptimisticMerge } = item;
+
+    this.sessionQuery.update(payload.session);
+
+    let messages = payload.messages || [];
+    let parts = payload.parts ? groupPartsByMessageId(payload.parts) : {};
+
+    if (withOptimisticMerge) {
+      let merged = this.mergeOptimistic({ messages: messages, parts: parts });
+      merged.confirmed.forEach(id => this.optimisticMessages.delete(id));
+      messages = merged.messages;
+      parts = merged.parts;
+    }
+
+    this.sessionBundleQuery.updatePart({
+      messages: messages,
+      parts: parts,
+      todos: payload.ocSession?.todos ?? [],
+      questions: payload.ocSession?.questions ?? [],
+      permissions: payload.ocSession?.permissions ?? [],
+      ocSessionStatus: payload.ocSession?.ocSessionStatus,
+      lastSessionError: payload.ocSession?.lastSessionError,
+      isLastErrorRecovered: payload.ocSession?.isLastErrorRecovered,
+      lastEventIndex: payload.lastEventIndex
+    });
+
+    this.sessionEventsQuery.updatePart({
+      liveEvents: payload.events || []
+    });
+  }
 
   initForSession(item: { lastProcessedEventIndex: number }) {
     let { lastProcessedEventIndex } = item;
@@ -144,30 +286,11 @@ export class AgentSessionService {
         ),
         tap((resp: ToBackendGetAgentSessionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.sessionQuery.update(resp.payload.session);
-
-            if (resp.payload.debugEvents.length > 0) {
-              this.sessionEventsQuery.updatePart({
-                debugEvents: resp.payload.debugEvents
-              });
-            }
-
-            this.sessionBundleQuery.updatePart({
-              messages: resp.payload.messages || [],
-              parts: resp.payload.parts
-                ? groupPartsByMessageId(resp.payload.parts)
-                : {},
-              todos: resp.payload.ocSession?.todos ?? [],
-              questions: resp.payload.ocSession?.questions ?? [],
-              permissions: resp.payload.ocSession?.permissions ?? [],
-              ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
-              lastSessionError: resp.payload.ocSession?.lastSessionError,
-              isLastErrorRecovered:
-                resp.payload.ocSession?.isLastErrorRecovered,
-              lastEventIndex: resp.payload.lastEventIndex
+            this.applySessionResponse({
+              payload: resp.payload,
+              withOptimisticMerge: true
             });
 
-            // Update session in the sessions list
             let sessions = this.sessionsQuery.getValue().sessions;
             let updated = sessions.map(s =>
               s.sessionId === sessionId ? resp.payload.session : s
@@ -352,12 +475,6 @@ export class AgentSessionService {
           this.ssePhase = 'idle';
 
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            if (resp.payload.debugEvents.length > 0) {
-              this.sessionEventsQuery.updatePart({
-                debugEvents: resp.payload.debugEvents
-              });
-            }
-
             this.lastProcessedEventIndex = resp.payload.lastEventIndex;
 
             // Connect SSE BEFORE store updates to prevent re-entry
@@ -367,21 +484,9 @@ export class AgentSessionService {
               this.connectSse({ sessionId: sessionId });
             }
 
-            this.sessionQuery.update(resp.payload.session);
-
-            this.sessionBundleQuery.updatePart({
-              messages: resp.payload.messages || [],
-              parts: resp.payload.parts
-                ? groupPartsByMessageId(resp.payload.parts)
-                : {},
-              todos: resp.payload.ocSession?.todos ?? [],
-              questions: resp.payload.ocSession?.questions ?? [],
-              permissions: resp.payload.ocSession?.permissions ?? [],
-              ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
-              lastSessionError: resp.payload.ocSession?.lastSessionError,
-              isLastErrorRecovered:
-                resp.payload.ocSession?.isLastErrorRecovered,
-              lastEventIndex: resp.payload.lastEventIndex
+            this.applySessionResponse({
+              payload: resp.payload,
+              withOptimisticMerge: true
             });
 
             let sessions = this.sessionsQuery.getValue().sessions;
@@ -396,6 +501,65 @@ export class AgentSessionService {
         take(1)
       )
       .subscribe();
+  }
+
+  mergeOptimistic(item: {
+    messages: AgentMessageApi[];
+    parts: { [messageId: string]: AgentPartApi[] };
+  }): {
+    messages: AgentMessageApi[];
+    parts: { [messageId: string]: AgentPartApi[] };
+    confirmed: string[];
+  } {
+    if (this.optimisticMessages.size === 0) {
+      return {
+        messages: item.messages,
+        parts: item.parts,
+        confirmed: []
+      };
+    }
+
+    let messages = [...item.messages];
+    let parts = { ...item.parts };
+    let confirmed: string[] = [];
+
+    this.optimisticMessages.forEach((entry, messageId) => {
+      let result = binarySearch(messages, messageId, m => m.messageId);
+
+      if (!result.found) {
+        // Message not in server data — insert optimistic message + parts
+        messages.splice(result.index, 0, entry.message);
+        parts[messageId] = entry.parts;
+      } else {
+        // Message exists in server data — check if all optimistic part IDs are present
+        let serverParts = parts[messageId] || [];
+        let hasAllParts = entry.parts.every(p => {
+          let r = binarySearch(serverParts, p.partId, sp => sp.partId);
+          return r.found;
+        });
+
+        if (hasAllParts) {
+          // Server has all optimistic parts — confirmed
+          confirmed.push(messageId);
+        } else {
+          // Server has message but missing some parts — merge optimistic parts in
+          let merged = serverParts ? [...serverParts] : [];
+          let changed = false;
+          entry.parts.forEach(p => {
+            let r = binarySearch(merged, p.partId, sp => sp.partId);
+            if (!r.found) {
+              merged.splice(r.index, 0, p);
+              changed = true;
+            }
+          });
+          if (changed || !serverParts) {
+            parts[messageId] = merged;
+          }
+        }
+      }
+    });
+
+    return { messages: messages, parts: parts, confirmed: confirmed };
   }
 
   private flushSseBuffer() {
@@ -423,15 +587,19 @@ export class AgentSessionService {
       this.agentEventsService.applyEvents(ocEvents);
     }
 
-    // Detect busy status event in batch
-    let hasBusy = buffer.some(
-      e =>
-        e.eventType === 'session.status' &&
-        (e.ocEvent?.properties as { status?: { type?: string } })?.status
-          ?.type === 'busy'
-    );
-    if (hasBusy) {
-      this.uiQuery.updatePart({ isOptimisticLoading: false });
+    if (
+      buffer.some(
+        e => e.eventType === 'session.status'
+        //  || e.eventType === 'session.idle'
+        //  &&
+        //   (e.ocEvent?.properties as { status?: { type?: string } })?.status
+        //     ?.type === 'busy'
+      )
+    ) {
+      setTimeout(() => {
+        console.log('isOptimisticLoading updated');
+        this.uiQuery.updatePart({ isOptimisticLoading: false });
+      }, 0);
     }
 
     // Update lastProcessedEventIndex from batch

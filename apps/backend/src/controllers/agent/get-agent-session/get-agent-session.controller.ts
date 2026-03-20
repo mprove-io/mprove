@@ -120,25 +120,6 @@ export class GetAgentSessionController {
 
     let lastEventIndex = maxRow[0]?.maxIndex ?? -1;
 
-    let debugEvents: AgentEventApi[] = [];
-
-    if (session.status !== SessionStatusEnum.Archived) {
-      let eventEnts = await this.db.drizzle.query.ocEventsTable.findMany({
-        where: eq(ocEventsTable.sessionId, sessionId),
-        orderBy: [asc(ocEventsTable.eventIndex)]
-      });
-
-      debugEvents = eventEnts.map(ent => {
-        let tab = this.tabService.ocEventEntToTab(ent);
-        return {
-          eventId: tab.eventId,
-          eventIndex: tab.eventIndex,
-          eventType: tab.type,
-          ocEvent: tab.ocEvent
-        };
-      });
-    }
-
     let sessionApi = this.sessionsService.tabToSessionApi({
       session,
       ocSession
@@ -181,6 +162,21 @@ export class GetAgentSessionController {
       };
     });
 
+    let eventEnts = await this.db.drizzle.query.ocEventsTable.findMany({
+      where: eq(ocEventsTable.sessionId, sessionId),
+      orderBy: [asc(ocEventsTable.eventIndex)]
+    });
+
+    let events: AgentEventApi[] = eventEnts.map(ent => {
+      let tab = this.tabService.ocEventEntToTab(ent);
+      return {
+        eventId: tab.eventId,
+        eventIndex: tab.eventIndex,
+        eventType: tab.type,
+        ocEvent: tab.ocEvent
+      };
+    });
+
     let result = await this.sessionsService.getBasicSessionsList({
       projectId: session.projectId,
       userId: user.userId,
@@ -190,10 +186,10 @@ export class GetAgentSessionController {
     let payload: ToBackendGetAgentSessionResponsePayload = {
       session: sessionApi,
       ocSession: ocSessionApi,
-      debugEvents: debugEvents,
       lastEventIndex: lastEventIndex,
       messages: messages,
       parts: parts,
+      events: events,
       sessions: result.sessions,
       hasMoreArchived: result.hasMoreArchived
     };

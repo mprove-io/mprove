@@ -88,6 +88,7 @@ export class SessionsService {
       sandboxStartTs: item.sandboxStartTs,
       sandboxEndTs: item.sandboxEndTs,
       sandboxInfo: item.sandboxInfo,
+      reloadRequestedTs: undefined,
       createdTs: item.createdTs,
       serverTs: undefined,
       keyTag: undefined
@@ -156,7 +157,8 @@ export class SessionsService {
       createdTs: session.createdTs,
       lastActivityTs: session.lastActivityTs,
       firstMessage: session.firstMessage,
-      title: ocSession?.openSession?.title
+      title: ocSession?.openSession?.title,
+      opencodeSessionId: session.opencodeSessionId
     };
   }
 
