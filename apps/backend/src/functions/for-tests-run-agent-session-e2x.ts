@@ -16,14 +16,13 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendCreateAgentSessionRequest,
-  ToBackendCreateAgentSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+  ToBackendCreateAgentEditorSessionRequest,
+  ToBackendCreateAgentEditorSessionResponse
+} from '#common/interfaces/to-backend/agent/to-backend-create-agent-editor-session';
 import {
   ToBackendDeleteAgentSessionRequest,
   ToBackendDeleteAgentSessionResponse
@@ -65,7 +64,7 @@ export async function forTestsRunAgentSessionE2x(item: {
   let sessionId: string | undefined;
   let sse: { events: AgentEvent[]; close: () => void } | undefined;
   let testError: unknown;
-  let createSessionResp: ToBackendCreateAgentSessionResponse;
+  let createSessionResp: ToBackendCreateAgentEditorSessionResponse;
   let sendFirstMessageResp: ToBackendSendUserMessageToAgentResponse;
   let sendMessageResp: ToBackendSendUserMessageToAgentResponse;
 
@@ -126,15 +125,14 @@ export async function forTestsRunAgentSessionE2x(item: {
     // Create agent session without firstMessage to avoid race condition:
     // SSE must be connected before messages are sent, otherwise events
     // published to Redis pub/sub before SSE subscription are lost.
-    let createSessionReq: ToBackendCreateAgentSessionRequest = {
+    let createSessionReq: ToBackendCreateAgentEditorSessionRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendCreateAgentSession,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateAgentEditorSession,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: {
         projectId: projectId,
-        type: SessionTypeEnum.Editor,
         sandboxType: SandboxTypeEnum.E2B,
         provider: 'opencode',
         model: item.model,
@@ -148,7 +146,7 @@ export async function forTestsRunAgentSessionE2x(item: {
     };
 
     createSessionResp =
-      await sendToBackend<ToBackendCreateAgentSessionResponse>({
+      await sendToBackend<ToBackendCreateAgentEditorSessionResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: createSessionReq,

@@ -16,7 +16,7 @@ test('1', async t => {
 
   await forTestsRunAgentSessionE2x({
     t,
-    testId: 'backend-create-agent-session__ok-openai',
+    testId: 'backend-create-agent-editor-session__ok-openai',
     inspectUI: false,
     projectApiKeys: {
       e2bApiKey,

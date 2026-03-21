@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import type { Event } from '@opencode-ai/sdk/v2';
 import retry from 'async-retry';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
@@ -19,7 +18,6 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   OcSessionTab,
-  ProjectTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -31,14 +29,12 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentOpencodeService } from '#backend/services/agent/agent-opencode.service.js';
-import { AgentStreamAiService } from '#backend/services/agent/agent-stream-ai.service';
 import { AgentStreamOpencodeService } from '#backend/services/agent/agent-stream-opencode.service';
 import { ApiKeyService } from '#backend/services/api-key.service';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { MembersService } from '#backend/services/db/members.service.js';
-import { OcEventsService } from '#backend/services/db/oc-events.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { RpcService } from '#backend/services/rpc.service';
@@ -55,11 +51,10 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { makeSessionId } from '#common/functions/make-session-id';
-import { splitModel } from '#common/functions/split-model';
 import {
-  ToBackendCreateAgentSessionRequest,
-  ToBackendCreateAgentSessionResponsePayload
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+  ToBackendCreateAgentEditorSessionRequest,
+  ToBackendCreateAgentEditorSessionResponsePayload
+} from '#common/interfaces/to-backend/agent/to-backend-create-agent-editor-session';
 import {
   ToDiskCreateDevRepoRequest,
   ToDiskCreateDevRepoResponse
@@ -71,15 +66,13 @@ const { forEachSeries } = pIteration;
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class CreateAgentSessionController {
+export class CreateAgentEditorSessionController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private sessionsService: SessionsService,
-    private ocEventsService: OcEventsService,
     private agentStreamOpencodeService: AgentStreamOpencodeService,
     private apiKeyService: ApiKeyService,
-    private agentStreamAiService: AgentStreamAiService,
     private agentOpencodeService: AgentOpencodeService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
@@ -91,12 +84,11 @@ export class CreateAgentSessionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateAgentSession)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateAgentEditorSession)
   async createSession(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateAgentSessionRequest = request.body;
+    let reqValid: ToBackendCreateAgentEditorSessionRequest = request.body;
     let {
       projectId,
-      type,
       sandboxType,
       provider,
       model,
@@ -112,219 +104,6 @@ export class CreateAgentSessionController {
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
-
-    let payload;
-
-    if (type === SessionTypeEnum.Explorer) {
-      payload = await this.createExplorerSession({
-        user: user,
-        projectId: projectId,
-        project: project,
-        provider: provider,
-        model: model,
-        variant: variant,
-        initialBranch: initialBranch,
-        firstMessage: firstMessage,
-        messageId: messageId,
-        partId: partId
-      });
-    } else {
-      payload = await this.createEditorSession({
-        user: user,
-        projectId: projectId,
-        project: project,
-        provider: provider,
-        model: model,
-        variant: variant,
-        initialBranch: initialBranch,
-        firstMessage: firstMessage,
-        messageId: messageId,
-        partId: partId,
-        agent: agent,
-        sandboxType: sandboxType,
-        envId: envId,
-        traceId: reqValid.info.traceId
-      });
-    }
-
-    return payload;
-  }
-
-  private async createExplorerSession(item: {
-    user: UserTab;
-    projectId: string;
-    project: any;
-    provider: string;
-    model: string;
-    variant: string;
-    initialBranch: string;
-    firstMessage?: string;
-    messageId: string;
-    partId: string;
-  }): Promise<ToBackendCreateAgentSessionResponsePayload> {
-    let {
-      user,
-      projectId,
-      project,
-      provider,
-      model,
-      variant,
-      initialBranch,
-      firstMessage,
-      messageId,
-      partId
-    } = item;
-
-    let now = Date.now();
-    let session: SessionTab;
-
-    await retry(
-      async () => {
-        let sessionId = makeSessionId();
-
-        session = this.sessionsService.makeSession({
-          sessionId: sessionId,
-          type: SessionTypeEnum.Explorer,
-          repoId: PROD_REPO_ID,
-          branchId: initialBranch,
-          userId: user.userId,
-          projectId: projectId,
-          sandboxType: undefined,
-          provider: provider,
-          model: model,
-          lastMessageProviderModel: model,
-          lastMessageVariant: variant,
-          agent: undefined,
-          firstMessage: firstMessage,
-          initialBranch: initialBranch,
-          initialCommit: undefined,
-          status: SessionStatusEnum.Active,
-          lastActivityTs: now,
-          createdTs: now
-        });
-
-        let ocSession = this.sessionsService.makeOcSession({
-          sessionId: sessionId
-        });
-
-        if (firstMessage) {
-          let busyEvent: Event = {
-            type: 'session.status',
-            properties: { status: { type: 'busy' } }
-          } as Event;
-
-          ocSession = {
-            ...ocSession,
-            ocSessionStatus: { type: 'busy' } as any
-          };
-
-          let busyEventTab = this.ocEventsService.makeOcEvent({
-            sessionId: sessionId,
-            event: busyEvent,
-            eventIndex: 0
-          });
-
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insert: {
-                  sessions: [session],
-                  ocSessions: [ocSession],
-                  ocEvents: [busyEventTab]
-                }
-              })
-          );
-        } else {
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insert: {
-                  sessions: [session],
-                  ocSessions: [ocSession]
-                }
-              })
-          );
-        }
-      },
-      getRetryOption(this.cs, this.logger)
-    );
-
-    // Fire-and-forget first message streaming
-    if (firstMessage) {
-      let split = splitModel(model);
-      let modelProvider = split ? split.providerID : provider;
-      let modelId = split ? split.modelID : model;
-
-      let apiKey = '';
-      if (modelProvider === 'openai') {
-        apiKey = project.openaiApiKey || '';
-      } else if (modelProvider === 'anthropic') {
-        apiKey = project.anthropicApiKey || '';
-      }
-
-      this.agentStreamAiService
-        .streamMessage({
-          sessionId: session.sessionId,
-          provider: modelProvider,
-          modelId: modelId,
-          apiKey: apiKey,
-          userMessage: firstMessage,
-          messageId: messageId,
-          partId: partId
-        })
-        .catch(e => {
-          logToConsoleBackend({
-            log: e,
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-        });
-    }
-
-    let payload: ToBackendCreateAgentSessionResponsePayload = {
-      sessionId: session.sessionId,
-      repoId: session.repoId,
-      branchId: session.branchId
-    };
-
-    return payload;
-  }
-
-  private async createEditorSession(item: {
-    user: UserTab;
-    projectId: string;
-    project: ProjectTab;
-    provider: string;
-    model: string;
-    variant: string;
-    initialBranch: string;
-    firstMessage?: string;
-    messageId: string;
-    partId: string;
-    agent: string;
-    envId: string;
-    traceId: string;
-    sandboxType: SandboxTypeEnum;
-  }): Promise<ToBackendCreateAgentSessionResponsePayload> {
-    let {
-      project,
-      user,
-      projectId,
-      provider,
-      model,
-      variant,
-      initialBranch,
-      firstMessage,
-      messageId,
-      partId,
-      sandboxType,
-      agent,
-      envId,
-      traceId
-    } = item;
 
     await this.membersService.getMemberCheckIsEditor({
       memberId: user.userId,
@@ -470,13 +249,13 @@ export class CreateAgentSessionController {
       project: project,
       envId: envId,
       initialBranch: initialBranch,
-      traceId: traceId
+      traceId: reqValid.info.traceId
     });
     console.log(
       `createSessionRepoAsync took ${(Date.now() - createSessionRepoStart) / 1000}s`
     );
 
-    let payload: ToBackendCreateAgentSessionResponsePayload = {
+    let payload: ToBackendCreateAgentEditorSessionResponsePayload = {
       sessionId: session.sessionId,
       repoId: repoId,
       branchId: branchId
@@ -811,6 +590,6 @@ export class CreateAgentSessionController {
       getRetryOption(this.cs, this.logger)
     );
 
-    return { repoId, branchId };
+    return { repoId: repoId, branchId: branchId };
   }
 }

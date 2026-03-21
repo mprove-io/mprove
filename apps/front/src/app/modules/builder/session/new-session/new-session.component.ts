@@ -12,9 +12,13 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
-  ToBackendCreateAgentSessionRequestPayload,
-  ToBackendCreateAgentSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+  ToBackendCreateAgentEditorSessionRequestPayload,
+  ToBackendCreateAgentEditorSessionResponse
+} from '#common/interfaces/to-backend/agent/to-backend-create-agent-editor-session';
+import {
+  ToBackendCreateAgentExplorerSessionRequestPayload,
+  ToBackendCreateAgentExplorerSessionResponse
+} from '#common/interfaces/to-backend/agent/to-backend-create-agent-explorer-session';
 import {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
@@ -152,86 +156,136 @@ export class NewSessionComponent implements OnInit {
     let messageId = makeAscendingId({ prefix: 'message' });
     let partId = makeAscendingId({ prefix: 'part' });
 
-    let payload: ToBackendCreateAgentSessionRequestPayload = {
-      projectId: nav.projectId,
-      type: this.sessionType,
-      sandboxType: isSessionExplorer ? undefined : SandboxTypeEnum.E2B,
-      provider: provider,
-      model: this.model,
-      agent: isSessionExplorer ? undefined : this.agent,
-      variant: this.variant,
-      envId: nav.envId,
-      initialBranch: this.initialBranch,
-      firstMessage: text,
-      messageId: messageId,
-      partId: partId
-    };
+    if (isSessionExplorer) {
+      let explorerPayload: ToBackendCreateAgentExplorerSessionRequestPayload = {
+        projectId: nav.projectId,
+        provider: provider,
+        model: this.model,
+        variant: this.variant,
+        initialBranch: this.initialBranch,
+        firstMessage: text,
+        messageId: messageId,
+        partId: partId
+      };
 
-    this.apiService
-      .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateAgentSession,
-        payload: payload
-      })
-      .pipe(
-        tap((resp2: ToBackendCreateAgentSessionResponse) => {
-          if (resp2.info?.status === ResponseInfoStatusEnum.Ok) {
-            let { sessionId, repoId, branchId } = resp2.payload;
-
-            if (!isSessionExplorer) {
-              // Type Editor: add new session to the sessions list
-              let currentSessions = this.sessionsQuery.getValue().sessions;
-              let newSession: SessionApi = {
-                sessionId: sessionId,
-                type: this.sessionType,
-                repoId: repoId,
-                branchId: branchId,
-                provider: provider,
-                agent: this.agent,
-                model: this.model,
-                lastMessageProviderModel: this.model,
-                lastMessageVariant: this.variant,
-                initialBranch: this.initialBranch,
-                initialCommit: undefined,
-                status: SessionStatusEnum.New,
-                createdTs: Date.now(),
-                lastActivityTs: Date.now(),
-                firstMessage: text
-              };
-              this.sessionsQuery.updatePart({
-                sessions: [newSession, ...currentSessions]
-              });
-            }
-
-            // Persist autoAccept for the new session
-            if (this.uiQuery.getValue().newSessionPermissionsAutoAccept) {
-              let sessionIds =
-                this.uiQuery.getValue().permissionsAutoAcceptSessionIds || [];
-              let newSessionIds = [...sessionIds, sessionId];
-              this.uiQuery.updatePart({
-                permissionsAutoAcceptSessionIds: newSessionIds
-              });
-              this.uiService.setUserUi({
-                permissionsAutoAcceptSessionIds: newSessionIds
-              });
-            }
-
-            this.navigateService.navigateToSession({
-              sessionId: sessionId,
-              repoId: repoId,
-              branchId: branchId
+      this.apiService
+        .req({
+          pathInfoName:
+            ToBackendRequestInfoNameEnum.ToBackendCreateAgentExplorerSession,
+          payload: explorerPayload
+        })
+        .pipe(
+          tap((resp: ToBackendCreateAgentExplorerSessionResponse) => {
+            this.processCreateSessionResponse({
+              resp: resp,
+              isSessionExplorer: isSessionExplorer,
+              provider: provider,
+              text: text
             });
+          }),
+          take(1)
+        )
+        .subscribe();
+    } else {
+      let editorPayload: ToBackendCreateAgentEditorSessionRequestPayload = {
+        projectId: nav.projectId,
+        sandboxType: SandboxTypeEnum.E2B,
+        provider: provider,
+        model: this.model,
+        agent: this.agent,
+        variant: this.variant,
+        envId: nav.envId,
+        initialBranch: this.initialBranch,
+        firstMessage: text,
+        messageId: messageId,
+        partId: partId
+      };
 
-            this.isSubmitting = false;
-            this.cd.detectChanges();
-          } else {
-            this.isSubmitting = false;
-            this.uiQuery.updatePart({ showContent: true });
-            this.spinner.hide(APP_SPINNER_NAME);
-            this.cd.detectChanges();
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
+      this.apiService
+        .req({
+          pathInfoName:
+            ToBackendRequestInfoNameEnum.ToBackendCreateAgentEditorSession,
+          payload: editorPayload
+        })
+        .pipe(
+          tap((resp: ToBackendCreateAgentEditorSessionResponse) => {
+            this.processCreateSessionResponse({
+              resp: resp,
+              isSessionExplorer: isSessionExplorer,
+              provider: provider,
+              text: text
+            });
+          }),
+          take(1)
+        )
+        .subscribe();
+    }
+  }
+
+  processCreateSessionResponse(item: {
+    resp:
+      | ToBackendCreateAgentExplorerSessionResponse
+      | ToBackendCreateAgentEditorSessionResponse;
+    isSessionExplorer: boolean;
+    provider: string;
+    text: string;
+  }) {
+    let { resp, isSessionExplorer, provider, text } = item;
+
+    if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+      let { sessionId, repoId, branchId } = resp.payload;
+
+      if (!isSessionExplorer) {
+        // Type Editor: add new session to the sessions list
+        let currentSessions = this.sessionsQuery.getValue().sessions;
+        let newSession: SessionApi = {
+          sessionId: sessionId,
+          type: this.sessionType,
+          repoId: repoId,
+          branchId: branchId,
+          provider: provider,
+          agent: this.agent,
+          model: this.model,
+          lastMessageProviderModel: this.model,
+          lastMessageVariant: this.variant,
+          initialBranch: this.initialBranch,
+          initialCommit: undefined,
+          status: SessionStatusEnum.New,
+          createdTs: Date.now(),
+          lastActivityTs: Date.now(),
+          firstMessage: text
+        };
+        this.sessionsQuery.updatePart({
+          sessions: [newSession, ...currentSessions]
+        });
+      }
+
+      // Persist autoAccept for the new session
+      if (this.uiQuery.getValue().newSessionPermissionsAutoAccept) {
+        let sessionIds =
+          this.uiQuery.getValue().permissionsAutoAcceptSessionIds || [];
+        let newSessionIds = [...sessionIds, sessionId];
+        this.uiQuery.updatePart({
+          permissionsAutoAcceptSessionIds: newSessionIds
+        });
+        this.uiService.setUserUi({
+          permissionsAutoAcceptSessionIds: newSessionIds
+        });
+      }
+
+      this.navigateService.navigateToSession({
+        sessionId: sessionId,
+        repoId: repoId,
+        branchId: branchId
+      });
+
+      this.isSubmitting = false;
+      this.cd.detectChanges();
+    } else {
+      this.isSubmitting = false;
+      this.uiQuery.updatePart({ showContent: true });
+      this.spinner.hide(APP_SPINNER_NAME);
+      this.cd.detectChanges();
+    }
   }
 }

@@ -1,20 +1,15 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
-export class ToBackendCreateAgentSessionRequestPayload {
+export class ToBackendCreateAgentEditorSessionRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsEnum(SessionTypeEnum)
-  type: SessionTypeEnum;
-
-  @IsOptional()
   @IsEnum(SandboxTypeEnum)
-  sandboxType?: SandboxTypeEnum;
+  sandboxType: SandboxTypeEnum;
 
   @IsString()
   provider: string;
@@ -22,9 +17,8 @@ export class ToBackendCreateAgentSessionRequestPayload {
   @IsString()
   model: string;
 
-  @IsOptional()
   @IsString()
-  agent?: string;
+  agent: string;
 
   @IsString()
   variant: string;
@@ -46,13 +40,13 @@ export class ToBackendCreateAgentSessionRequestPayload {
   partId: string;
 }
 
-export class ToBackendCreateAgentSessionRequest extends ToBackendRequest {
+export class ToBackendCreateAgentEditorSessionRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendCreateAgentSessionRequestPayload)
-  payload: ToBackendCreateAgentSessionRequestPayload;
+  @Type(() => ToBackendCreateAgentEditorSessionRequestPayload)
+  payload: ToBackendCreateAgentEditorSessionRequestPayload;
 }
 
-export class ToBackendCreateAgentSessionResponsePayload {
+export class ToBackendCreateAgentEditorSessionResponsePayload {
   @IsString()
   sessionId: string;
 
@@ -63,8 +57,8 @@ export class ToBackendCreateAgentSessionResponsePayload {
   branchId: string;
 }
 
-export class ToBackendCreateAgentSessionResponse extends MyResponse {
+export class ToBackendCreateAgentEditorSessionResponse extends MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendCreateAgentSessionResponsePayload)
-  payload: ToBackendCreateAgentSessionResponsePayload;
+  @Type(() => ToBackendCreateAgentEditorSessionResponsePayload)
+  payload: ToBackendCreateAgentEditorSessionResponsePayload;
 }

@@ -2,14 +2,14 @@ import type { ExecutionContext } from 'ava';
 import { Prep } from '#backend/interfaces/prep';
 import { AgentOpencodeService } from '#backend/services/agent/agent-opencode.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { ToBackendCreateAgentSessionResponse } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+import { ToBackendCreateAgentEditorSessionResponse } from '#common/interfaces/to-backend/agent/to-backend-create-agent-editor-session';
 
 export async function forTestsInspectUi(item: {
   t: ExecutionContext;
   prep: Prep;
   sessionId: string;
   testError: unknown;
-  createSessionResp: ToBackendCreateAgentSessionResponse;
+  createSessionResp: ToBackendCreateAgentEditorSessionResponse;
 }): Promise<void> {
   if (item.testError) {
     console.log('Test error (non-fatal for inspection):', item.testError);

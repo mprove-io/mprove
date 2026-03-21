@@ -13,14 +13,13 @@ import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendCreateAgentSessionRequest,
-  ToBackendCreateAgentSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+  ToBackendCreateAgentEditorSessionRequest,
+  ToBackendCreateAgentEditorSessionResponse
+} from '#common/interfaces/to-backend/agent/to-backend-create-agent-editor-session';
 import {
   ToBackendDeleteAgentSessionRequest,
   ToBackendDeleteAgentSessionResponse
@@ -111,15 +110,14 @@ test('1', async t => {
     });
 
     // Create session
-    let createSessionReq: ToBackendCreateAgentSessionRequest = {
+    let createSessionReq: ToBackendCreateAgentEditorSessionRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendCreateAgentSession,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateAgentEditorSession,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: {
         projectId: projectId,
-        type: SessionTypeEnum.Editor,
         sandboxType: SandboxTypeEnum.E2B,
         provider: 'opencode',
         model: 'opencode/big-pickle',
@@ -132,12 +130,13 @@ test('1', async t => {
       }
     };
 
-    let createResp = await sendToBackend<ToBackendCreateAgentSessionResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: createSessionReq,
-      checkIsOk: true
-    });
+    let createResp =
+      await sendToBackend<ToBackendCreateAgentEditorSessionResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: createSessionReq,
+        checkIsOk: true
+      });
 
     sessionId = createResp.payload.sessionId;
     console.log(`[test] session created: ${sessionId}`);

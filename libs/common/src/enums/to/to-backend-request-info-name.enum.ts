@@ -150,7 +150,8 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetAvatarBig = 'api/ToBackendGetAvatarBig',
   ToBackendSetAvatar = 'api/ToBackendSetAvatar',
   // agent
-  ToBackendCreateAgentSession = 'api/ToBackendCreateAgentSession',
+  ToBackendCreateAgentEditorSession = 'api/ToBackendCreateAgentEditorSession',
+  ToBackendCreateAgentExplorerSession = 'api/ToBackendCreateAgentExplorerSession',
   ToBackendSendUserMessageToAgent = 'api/ToBackendSendUserMessageToAgent',
   ToBackendDeleteAgentSession = 'api/ToBackendDeleteAgentSession',
   ToBackendArchiveAgentSession = 'api/ToBackendArchiveAgentSession',

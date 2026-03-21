@@ -3,24 +3,18 @@ import { forTestsRunAgentSessionE2x } from '#backend/functions/for-tests-run-age
 
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
+
   if (!e2bApiKey) {
     t.fail('BACKEND_DEMO_PROJECT_E2B_API_KEY not set');
     return;
   }
 
-  let anthropicApiKey = process.env.BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY;
-  if (!anthropicApiKey) {
-    t.fail('BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY not set');
-    return;
-  }
-
   await forTestsRunAgentSessionE2x({
     t,
-    testId: 'backend-create-agent-session__ok-anthropic',
+    testId: 'backend-create-agent-editor-session__ok-no-api-key',
     inspectUI: false,
     projectApiKeys: {
-      e2bApiKey,
-      anthropicApiKey
+      e2bApiKey
     },
     model: 'opencode/big-pickle',
     variant: 'default'

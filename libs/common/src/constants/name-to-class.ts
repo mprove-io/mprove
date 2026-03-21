@@ -1,6 +1,7 @@
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendArchiveAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-archive-agent-session';
-import { ToBackendCreateAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+import { ToBackendCreateAgentEditorSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-editor-session';
+import { ToBackendCreateAgentExplorerSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-explorer-session';
 import { ToBackendCreateAgentSseTicketRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
 import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
 import { ToBackendGetAgentProviderModelsRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
@@ -376,8 +377,10 @@ export const nameToClass = {
     ToBackendGetAvatarBigRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest,
   // agent
-  [ToBackendRequestInfoNameEnum.ToBackendCreateAgentSession]:
-    ToBackendCreateAgentSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendCreateAgentEditorSession]:
+    ToBackendCreateAgentEditorSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendCreateAgentExplorerSession]:
+    ToBackendCreateAgentExplorerSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent]:
     ToBackendSendUserMessageToAgentRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession]:

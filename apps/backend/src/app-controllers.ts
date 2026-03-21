@@ -1,5 +1,6 @@
 import { ArchiveAgentSessionController } from './controllers/agent/archive-agent-session/archive-agent-session.controller';
-import { CreateAgentSessionController } from './controllers/agent/create-agent-session/create-agent-session.controller';
+import { CreateAgentEditorSessionController } from './controllers/agent/create-agent-editor-session/create-agent-editor-session.controller';
+import { CreateAgentExplorerSessionController } from './controllers/agent/create-agent-explorer-session/create-agent-explorer-session.controller';
 import { CreateAgentSseTicketController } from './controllers/agent/create-agent-sse-ticket/create-agent-sse-ticket.controller';
 import { DeleteAgentSessionController } from './controllers/agent/delete-agent-session/delete-agent-session.controller';
 import { GetAgentEventsSseController } from './controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
@@ -132,7 +133,8 @@ import { SetUserUiController } from './controllers/users/set-user-ui/set-user-ui
 import { UpdateUserPasswordController } from './controllers/users/update-user-password/update-user-password.controller';
 
 export const appControllers = [
-  CreateAgentSessionController,
+  CreateAgentEditorSessionController,
+  CreateAgentExplorerSessionController,
   CreateAgentSseTicketController,
   SendUserMessageToAgentController,
   GetAgentEventsSseController,

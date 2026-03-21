@@ -8,19 +8,19 @@ test('1', async t => {
     return;
   }
 
-  let zenApiKey = process.env.BACKEND_DEMO_PROJECT_ZEN_API_KEY;
-  if (!zenApiKey) {
-    t.fail('BACKEND_DEMO_PROJECT_ZEN_API_KEY not set');
+  let anthropicApiKey = process.env.BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY;
+  if (!anthropicApiKey) {
+    t.fail('BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY not set');
     return;
   }
 
   await forTestsRunAgentSessionE2x({
     t,
-    testId: 'backend-create-agent-session__ok-zen',
+    testId: 'backend-create-agent-editor-session__ok-anthropic',
     inspectUI: false,
     projectApiKeys: {
       e2bApiKey,
-      zenApiKey
+      anthropicApiKey
     },
     model: 'opencode/big-pickle',
     variant: 'default'
