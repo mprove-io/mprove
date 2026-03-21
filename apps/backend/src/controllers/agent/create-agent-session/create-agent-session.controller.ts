@@ -19,6 +19,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   OcSessionTab,
+  ProjectTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -112,6 +113,219 @@ export class CreateAgentSessionController {
       projectId: projectId
     });
 
+    let payload;
+
+    if (type === SessionTypeEnum.Explorer) {
+      payload = await this.createExplorerSession({
+        user: user,
+        projectId: projectId,
+        project: project,
+        provider: provider,
+        model: model,
+        variant: variant,
+        initialBranch: initialBranch,
+        firstMessage: firstMessage,
+        messageId: messageId,
+        partId: partId
+      });
+    } else {
+      payload = await this.createEditorSession({
+        user: user,
+        projectId: projectId,
+        project: project,
+        provider: provider,
+        model: model,
+        variant: variant,
+        initialBranch: initialBranch,
+        firstMessage: firstMessage,
+        messageId: messageId,
+        partId: partId,
+        agent: agent,
+        sandboxType: sandboxType,
+        envId: envId,
+        traceId: reqValid.info.traceId
+      });
+    }
+
+    return payload;
+  }
+
+  private async createExplorerSession(item: {
+    user: UserTab;
+    projectId: string;
+    project: any;
+    provider: string;
+    model: string;
+    variant: string;
+    initialBranch: string;
+    firstMessage?: string;
+    messageId: string;
+    partId: string;
+  }): Promise<ToBackendCreateAgentSessionResponsePayload> {
+    let {
+      user,
+      projectId,
+      project,
+      provider,
+      model,
+      variant,
+      initialBranch,
+      firstMessage,
+      messageId,
+      partId
+    } = item;
+
+    let now = Date.now();
+    let session: SessionTab;
+
+    await retry(
+      async () => {
+        let sessionId = makeSessionId();
+
+        session = this.sessionsService.makeSession({
+          sessionId: sessionId,
+          type: SessionTypeEnum.Explorer,
+          repoId: PROD_REPO_ID,
+          branchId: initialBranch,
+          userId: user.userId,
+          projectId: projectId,
+          sandboxType: undefined,
+          provider: provider,
+          model: model,
+          lastMessageProviderModel: model,
+          lastMessageVariant: variant,
+          agent: undefined,
+          firstMessage: firstMessage,
+          initialBranch: initialBranch,
+          initialCommit: undefined,
+          status: SessionStatusEnum.Active,
+          lastActivityTs: now,
+          createdTs: now
+        });
+
+        let ocSession = this.sessionsService.makeOcSession({
+          sessionId: sessionId
+        });
+
+        if (firstMessage) {
+          let busyEvent: Event = {
+            type: 'session.status',
+            properties: { status: { type: 'busy' } }
+          } as Event;
+
+          ocSession = {
+            ...ocSession,
+            ocSessionStatus: { type: 'busy' } as any
+          };
+
+          let busyEventTab = this.ocEventsService.makeOcEvent({
+            sessionId: sessionId,
+            event: busyEvent,
+            eventIndex: 0
+          });
+
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insert: {
+                  sessions: [session],
+                  ocSessions: [ocSession],
+                  ocEvents: [busyEventTab]
+                }
+              })
+          );
+        } else {
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insert: {
+                  sessions: [session],
+                  ocSessions: [ocSession]
+                }
+              })
+          );
+        }
+      },
+      getRetryOption(this.cs, this.logger)
+    );
+
+    // Fire-and-forget first message streaming
+    if (firstMessage) {
+      let split = splitModel(model);
+      let modelProvider = split ? split.providerID : provider;
+      let modelId = split ? split.modelID : model;
+
+      let apiKey = '';
+      if (modelProvider === 'openai') {
+        apiKey = project.openaiApiKey || '';
+      } else if (modelProvider === 'anthropic') {
+        apiKey = project.anthropicApiKey || '';
+      }
+
+      this.agentStreamAiService
+        .streamMessage({
+          sessionId: session.sessionId,
+          provider: modelProvider,
+          modelId: modelId,
+          apiKey: apiKey,
+          userMessage: firstMessage,
+          messageId: messageId,
+          partId: partId
+        })
+        .catch(e => {
+          logToConsoleBackend({
+            log: e,
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
+        });
+    }
+
+    let payload: ToBackendCreateAgentSessionResponsePayload = {
+      sessionId: session.sessionId,
+      repoId: session.repoId,
+      branchId: session.branchId
+    };
+
+    return payload;
+  }
+
+  private async createEditorSession(item: {
+    user: UserTab;
+    projectId: string;
+    project: ProjectTab;
+    provider: string;
+    model: string;
+    variant: string;
+    initialBranch: string;
+    firstMessage?: string;
+    messageId: string;
+    partId: string;
+    agent: string;
+    envId: string;
+    traceId: string;
+    sandboxType: SandboxTypeEnum;
+  }): Promise<ToBackendCreateAgentSessionResponsePayload> {
+    let {
+      project,
+      user,
+      projectId,
+      provider,
+      model,
+      variant,
+      initialBranch,
+      firstMessage,
+      messageId,
+      partId,
+      sandboxType,
+      agent,
+      envId,
+      traceId
+    } = item;
+
     await this.membersService.getMemberCheckIsEditor({
       memberId: user.userId,
       projectId: projectId
@@ -137,21 +351,6 @@ export class CreateAgentSessionController {
     if (activeSessions.length >= maxActiveEditorSessionsPerProjectUser) {
       throw new ServerError({
         message: ErEnum.BACKEND_TOO_MANY_ACTIVE_EDITOR_SESSIONS
-      });
-    }
-
-    if (type === SessionTypeEnum.Explorer) {
-      return this.createSessionTypeA({
-        user: user,
-        projectId: projectId,
-        project: project,
-        provider: provider,
-        model: model,
-        variant: variant,
-        initialBranch: initialBranch,
-        firstMessage: firstMessage,
-        messageId: messageId,
-        partId: partId
       });
     }
 
@@ -271,7 +470,7 @@ export class CreateAgentSessionController {
       project: project,
       envId: envId,
       initialBranch: initialBranch,
-      traceId: reqValid.info.traceId
+      traceId: traceId
     });
     console.log(
       `createSessionRepoAsync took ${(Date.now() - createSessionRepoStart) / 1000}s`
@@ -281,149 +480,6 @@ export class CreateAgentSessionController {
       sessionId: session.sessionId,
       repoId: repoId,
       branchId: branchId
-    };
-
-    return payload;
-  }
-
-  private async createSessionTypeA(item: {
-    user: UserTab;
-    projectId: string;
-    project: any;
-    provider: string;
-    model: string;
-    variant: string;
-    initialBranch: string;
-    firstMessage?: string;
-    messageId: string;
-    partId: string;
-  }): Promise<ToBackendCreateAgentSessionResponsePayload> {
-    let {
-      user,
-      projectId,
-      project,
-      provider,
-      model,
-      variant,
-      initialBranch,
-      firstMessage,
-      messageId,
-      partId
-    } = item;
-
-    let now = Date.now();
-    let session!: SessionTab;
-
-    await retry(
-      async () => {
-        let sessionId = makeSessionId();
-
-        session = this.sessionsService.makeSession({
-          sessionId: sessionId,
-          type: SessionTypeEnum.Explorer,
-          repoId: PROD_REPO_ID,
-          branchId: initialBranch,
-          userId: user.userId,
-          projectId: projectId,
-          sandboxType: undefined,
-          provider: provider,
-          model: model,
-          lastMessageProviderModel: model,
-          lastMessageVariant: variant,
-          agent: undefined,
-          firstMessage: firstMessage,
-          initialBranch: initialBranch,
-          initialCommit: undefined,
-          status: SessionStatusEnum.Active,
-          lastActivityTs: now,
-          createdTs: now
-        });
-
-        let ocSession = this.sessionsService.makeOcSession({
-          sessionId: sessionId
-        });
-
-        if (firstMessage) {
-          let busyEvent: Event = {
-            type: 'session.status',
-            properties: { status: { type: 'busy' } }
-          } as Event;
-
-          ocSession = {
-            ...ocSession,
-            ocSessionStatus: { type: 'busy' } as any
-          };
-
-          let busyEventTab = this.ocEventsService.makeOcEvent({
-            sessionId: sessionId,
-            event: busyEvent,
-            eventIndex: 0
-          });
-
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insert: {
-                  sessions: [session],
-                  ocSessions: [ocSession],
-                  ocEvents: [busyEventTab]
-                }
-              })
-          );
-        } else {
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insert: {
-                  sessions: [session],
-                  ocSessions: [ocSession]
-                }
-              })
-          );
-        }
-      },
-      getRetryOption(this.cs, this.logger)
-    );
-
-    // Fire-and-forget first message streaming
-    if (firstMessage) {
-      let split = splitModel(model);
-      let modelProvider = split ? split.providerID : provider;
-      let modelId = split ? split.modelID : model;
-
-      let apiKey = '';
-      if (modelProvider === 'openai') {
-        apiKey = project.openaiApiKey || '';
-      } else if (modelProvider === 'anthropic') {
-        apiKey = project.anthropicApiKey || '';
-      }
-
-      this.agentStreamAiService
-        .streamMessage({
-          sessionId: session.sessionId,
-          provider: modelProvider,
-          modelId: modelId,
-          apiKey: apiKey,
-          userMessage: firstMessage,
-          messageId: messageId,
-          partId: partId
-        })
-        .catch(e => {
-          logToConsoleBackend({
-            log: e,
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-        });
-    }
-
-    let payload: ToBackendCreateAgentSessionResponsePayload = {
-      sessionId: session.sessionId,
-      repoId: session.repoId,
-      branchId: session.branchId
     };
 
     return payload;
