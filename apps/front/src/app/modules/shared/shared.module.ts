@@ -87,14 +87,14 @@ import { DocumentIconComponent } from './icons/document-icon/document-icon.compo
 import { DotsVerticalIconComponent } from './icons/dots-vertical-icon/dots-vertical-icon.component';
 import { DragIconComponent } from './icons/drag-icon/drag-icon.component';
 import { EditIconComponent } from './icons/edit-icon/edit-icon.component';
+import { EditorIconComponent } from './icons/editor-icon/editor-icon.component';
 import { ExclamationIconComponent } from './icons/exclamation-icon/exclamation-icon.component';
+import { ExplorerIconComponent } from './icons/explorer-icon/explorer-icon.component';
 import { FilterIconComponent } from './icons/filter-icon/filter-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
 import { FormulaIconComponent } from './icons/formula-icon/formula-icon.component';
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
-import { GraduationCapIconComponent } from './icons/graduation-cap-icon/graduation-cap-icon.component';
-import { LampDeskIconComponent } from './icons/lamp-desk-icon/lamp-desk-icon.component';
 import { LeftPanelIconComponent } from './icons/left-panel-icon/left-panel-icon.component';
 import { LinkIconComponent } from './icons/link-icon/link-icon.component';
 import { LinkOffIconComponent } from './icons/link-off-icon/link-off-icon.component';
@@ -251,8 +251,8 @@ let sharedComponents = [
   UserIconComponent,
   ChartIconComponent,
   WrenchIconComponent,
-  LampDeskIconComponent,
-  GraduationCapIconComponent,
+  ExplorerIconComponent,
+  EditorIconComponent,
   AdjustmentsIconComponent,
   TableCellsIconComponent,
   MiniChartsIconComponent,

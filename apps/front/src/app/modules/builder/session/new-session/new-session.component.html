@@ -15,13 +15,15 @@
       >
         <span class="flex flex-col items-center">
           <span class="flex flex-row items-center gap-x-3">
-            <span class="flex">
-              <m-lamp-desk-icon
+            <span class="flex w-6 items-center justify-center">
+              <span
                 *ngIf="st === sessionTypeEnum.Explorer"
-              ></m-lamp-desk-icon>
-              <m-graduation-cap-icon
+                class="flex [&_svg]:h-[22px] [&_svg]:w-[22px]"
+                ><m-explorer-icon></m-explorer-icon
+              ></span>
+              <m-editor-icon
                 *ngIf="st === sessionTypeEnum.Editor"
-              ></m-graduation-cap-icon>
+              ></m-editor-icon>
             </span>
             <span>{{ st }}</span>
           </span>

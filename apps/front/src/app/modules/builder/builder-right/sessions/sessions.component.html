@@ -82,7 +82,7 @@
           (click)="openSession(session)"
         >
           <div
-            class="mr-4 flex flex-shrink-0"
+            class="mr-4 flex w-6 flex-shrink-0 items-center justify-center"
             [ngClass]="{
               'text-m600': session.sessionId === currentSession?.sessionId,
               'text-s400':
@@ -93,12 +93,14 @@
                 session.status !== 'Archived'
             }"
           >
-            <m-lamp-desk-icon
+            <span
               *ngIf="session.type === sessionTypeEnum.Explorer"
-            ></m-lamp-desk-icon>
-            <m-graduation-cap-icon
+              class="flex [&_svg]:h-[22px] [&_svg]:w-[22px]"
+              ><m-explorer-icon></m-explorer-icon
+            ></span>
+            <m-editor-icon
               *ngIf="session.type === sessionTypeEnum.Editor"
-            ></m-graduation-cap-icon>
+            ></m-editor-icon>
           </div>
           <span
             class="min-w-0 flex-1 truncate text-[17px]"

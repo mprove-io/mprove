@@ -200,7 +200,8 @@ export class SessionsComponent implements OnInit {
 
     this.navigateService.navigateToBuilder({
       repoId: PROD_REPO_ID,
-      branchId: this.navQuery.getValue().projectDefaultBranch
+      branchId: this.navQuery.getValue().projectDefaultBranch,
+      newSession: true
     });
   }
 

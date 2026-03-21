@@ -84,6 +84,7 @@ export class NavigateService {
     left?: BuilderLeftEnum;
     right?: string;
     selectFile?: boolean;
+    newSession?: boolean;
   }) {
     let uiState = this.uiQuery.getValue();
 
@@ -93,10 +94,13 @@ export class NavigateService {
     let isChanges =
       left === BuilderLeftEnum.ChangesToCommit ||
       left === BuilderLeftEnum.ChangesToPush;
+
     let centerPath =
-      isChanges || item?.selectFile === true
-        ? PATH_SELECT_FILE
-        : PATH_NEW_SESSION;
+      item?.newSession === true
+        ? PATH_NEW_SESSION
+        : isChanges || item?.selectFile === true
+          ? PATH_SELECT_FILE
+          : PATH_NEW_SESSION;
 
     return this.router.navigate(
       [
