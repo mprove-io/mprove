@@ -7,7 +7,7 @@ import type {
   QuestionRequest,
   SessionPromptAsyncData
 } from '@opencode-ai/sdk/v2';
-import { eq, max, sql } from 'drizzle-orm';
+import { and, eq, lt, max, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -26,6 +26,7 @@ import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { OpencodeStreamCommandEnum } from '#common/enums/opencode-stream-command.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { splitModel } from '#common/functions/split-model';
 import { ServerError } from '#common/models/server-error';
 import { OcMessagesService } from '../db/oc-messages.service';
@@ -652,12 +653,14 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       }
 
       await this.db.drizzle.transaction(async tx => {
-        let maxRow = await tx
+        let maxEventIndexRow = await tx
           .select({ maxIndex: max(ocEventsTable.eventIndex) })
           .from(ocEventsTable)
           .where(eq(ocEventsTable.sessionId, item.sessionId));
 
-        let lastFetchEventIndex = maxRow[0]?.maxIndex ?? -1;
+        let lastFetchEventIndex = isDefined(maxEventIndexRow[0]?.maxIndex)
+          ? maxEventIndexRow[0].maxIndex
+          : -1;
 
         await this.db.packer.write({
           tx: tx,
@@ -671,6 +674,17 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         await tx.execute(
           sql`UPDATE sessions SET last_activity_ts = ${Date.now()}, last_fetch_event_index = ${lastFetchEventIndex} WHERE session_id = ${item.sessionId}`
         );
+
+        let oneHourAgo = Date.now() - 60 * 60 * 1000;
+
+        await tx
+          .delete(ocEventsTable)
+          .where(
+            and(
+              eq(ocEventsTable.sessionId, item.sessionId),
+              lt(ocEventsTable.serverTs, oneHourAgo)
+            )
+          );
       });
 
       if (item.publishReload !== false) {

@@ -9,7 +9,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
-import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
@@ -18,7 +17,6 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -104,10 +102,6 @@ export class ArchiveAgentSessionController {
               sessions: [updatedSession]
             }
           });
-
-          await tx
-            .delete(ocEventsTable)
-            .where(and(eq(ocEventsTable.sessionId, sessionId)));
         }),
       getRetryOption(this.cs, this.logger)
     );

@@ -30,6 +30,7 @@ import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
 import { OcEventsService } from '../db/oc-events.service';
 import { OcMessagesService } from '../db/oc-messages.service';
@@ -67,12 +68,14 @@ export class AgentDrainService {
     let { sessionId } = item;
 
     if (!this.eventCounters.has(sessionId)) {
-      let maxRow = await this.db.drizzle
+      let maxEventIndexRow = await this.db.drizzle
         .select({ maxIndex: max(ocEventsTable.eventIndex) })
         .from(ocEventsTable)
         .where(eq(ocEventsTable.sessionId, sessionId));
 
-      let eventIndex = maxRow[0]?.maxIndex != null ? maxRow[0].maxIndex + 1 : 0;
+      let eventIndex = isDefined(maxEventIndexRow[0]?.maxIndex)
+        ? maxEventIndexRow[0].maxIndex + 1
+        : 0;
 
       this.eventCounters.set(sessionId, eventIndex);
     }

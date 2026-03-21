@@ -102,7 +102,7 @@
               'text-s400': session.status === 'Archived',
               'text-s1': session.status !== 'Archived'
             }"
-            >{{ session.status }}</span
+            >{{ session.status === 'Active' ? '' : session.status }}</span
           >
 
           <div

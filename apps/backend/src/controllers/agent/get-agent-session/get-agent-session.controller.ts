@@ -20,6 +20,7 @@ import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
@@ -119,12 +120,14 @@ export class GetAgentSessionController {
       sessionId
     });
 
-    let maxRow = await this.db.drizzle
+    let maxEventIndexRow = await this.db.drizzle
       .select({ maxIndex: max(ocEventsTable.eventIndex) })
       .from(ocEventsTable)
       .where(eq(ocEventsTable.sessionId, sessionId));
 
-    let lastEventIndex = maxRow[0]?.maxIndex ?? -1;
+    let lastEventIndex = isDefined(maxEventIndexRow[0]?.maxIndex)
+      ? maxEventIndexRow[0].maxIndex
+      : -1;
 
     let sessionApi = this.sessionsService.tabToSessionApi({
       session,
