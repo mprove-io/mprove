@@ -35,41 +35,6 @@
     </div>
 
     <div class="flex flex-1"></div>
-
-    <button
-      *ngIf="showEvents"
-      type="button"
-      tp="Copy JSON"
-      tpPlacement="top"
-      class="text-s500 hover:bg-s100 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-      (click)="copyEventsJson()"
-    >
-      <m-copy-icon></m-copy-icon>
-    </button>
-
-    <button
-      *ngIf="showEvents"
-      type="button"
-      class="text-s500 hover:bg-s100 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-      (click)="toggleAllEvents()"
-    >
-      <m-folder-closed-icon *ngIf="allEventsExpanded"></m-folder-closed-icon>
-      <m-folder-open-icon *ngIf="!allEventsExpanded"></m-folder-open-icon>
-    </button>
-
-    <button
-      *ngIf="isShowEventsToggle"
-      tp="Toggle events"
-      type="button"
-      class="ml-5 mr-9 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-      [ngClass]="{
-        'bg-orange-100 text-orange-700': showEvents,
-        'text-s500 hover:bg-m200': !showEvents
-      }"
-      (click)="toggleShowEvents()"
-    >
-      <m-scroll-icon></m-scroll-icon>
-    </button>
   </div>
 
   <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
@@ -231,5 +196,3 @@
 <div *ngIf="sessions$ | async"></div>
 <div *ngIf="hasMoreArchived$ | async"></div>
 <div *ngIf="session$ | async"></div>
-<div *ngIf="showEvents$ | async"></div>
-<div *ngIf="allEventsExpanded$ | async"></div>

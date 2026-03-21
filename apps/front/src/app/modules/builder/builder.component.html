@@ -348,6 +348,19 @@
         >
           <div class="flex flex-row items-center">
             <button
+              tp="Toggle events"
+              type="button"
+              class="mr-7 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+              [ngClass]="{
+                'bg-orange-100 text-orange-700': showEvents,
+                'text-s500 hover:bg-m200': !showEvents
+              }"
+              (click)="toggleShowEvents()"
+            >
+              <m-scroll-icon></m-scroll-icon>
+            </button>
+
+            <button
               class="flex w-[90px] select-none items-center justify-center text-lg focus:outline-none"
               [ngClass]="{
                 'text-m500 font-semibold':

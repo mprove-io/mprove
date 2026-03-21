@@ -16,6 +16,7 @@ import { FilesRightPanelToggleComponent } from './builder-left/files-right-panel
 import { FolderOptionsComponent } from './builder-left/folder-options/folder-options.component';
 import { SessionInfoComponent } from './builder-left/session-info/session-info.component';
 import { BuilderRightComponent } from './builder-right/builder-right.component';
+import { DebugEventsPanelComponent } from './builder-right/debug-events-panel/debug-events-panel.component';
 import { SchemasComponent } from './builder-right/schemas/schemas.component';
 import { SecondFileComponent } from './builder-right/second-file/second-file.component';
 import { SessionsComponent } from './builder-right/sessions/sessions.component';
@@ -48,6 +49,7 @@ import { SessionWrapperComponent } from './session/session-wrapper/session-wrapp
     RepoOptionsComponent,
     SelectFileComponent,
     BuilderRightComponent,
+    DebugEventsPanelComponent,
     SecondFileComponent,
     SchemasComponent,
     SessionsComponent,

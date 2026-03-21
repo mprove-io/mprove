@@ -56,9 +56,6 @@ export class SessionsComponent implements OnInit {
   sessionStatusArchived = SessionStatusEnum.Archived;
   sessionTypeEnum = SessionTypeEnum;
   spinnerName = SESSIONS_SPINNER_NAME;
-  showEvents = false;
-  isShowEventsToggle = true;
-  allEventsExpanded = false;
   providerLabels: Record<string, string> = {
     opencode: 'Zen',
     openai: 'OpenAI',
@@ -79,20 +76,6 @@ export class SessionsComponent implements OnInit {
           let bArchived = b.status === SessionStatusEnum.Archived ? 1 : 0;
           return aArchived - bArchived || b.createdTs - a.createdTs;
         });
-      this.cd.detectChanges();
-    })
-  );
-
-  showEvents$ = this.uiQuery.sessionShowEvents$.pipe(
-    tap(x => {
-      this.showEvents = x;
-      this.cd.detectChanges();
-    })
-  );
-
-  allEventsExpanded$ = this.uiQuery.sessionAllEventsExpanded$.pipe(
-    tap(x => {
-      this.allEventsExpanded = x;
       this.cd.detectChanges();
     })
   );
@@ -439,22 +422,6 @@ export class SessionsComponent implements OnInit {
       sessionId: session.sessionId,
       title: makeTitle(session)
     });
-  }
-
-  toggleShowEvents() {
-    this.uiQuery.updatePart({ sessionShowEvents: !this.showEvents });
-  }
-
-  copyEventsJson() {
-    let state = this.sessionEventsQuery.getValue();
-    let events = state.liveEvents;
-    let json = JSON.stringify(events, undefined, 2);
-    navigator.clipboard.writeText(json);
-  }
-
-  toggleAllEvents() {
-    let newValue = this.uiQuery.getValue().sessionToggleAllEvents + 1;
-    this.uiQuery.updatePart({ sessionToggleAllEvents: newValue });
   }
 
   trackBySessionId(_index: number, session: SessionApiX) {

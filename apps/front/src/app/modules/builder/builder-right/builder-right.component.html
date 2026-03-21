@@ -1,15 +1,26 @@
+<m-debug-events-panel
+  *ngIf="showEvents && !secondFileNodeId"
+  class="flex w-full"
+></m-debug-events-panel>
+
 <m-sessions
-  *ngIf="builderRight === builderRightSessions && !secondFileNodeId"
+  *ngIf="
+    builderRight === builderRightSessions && !secondFileNodeId && !showEvents
+  "
   class="flex w-full"
 ></m-sessions>
 
 <m-schemas
-  *ngIf="builderRight === builderRightSchema && !secondFileNodeId"
+  *ngIf="
+    builderRight === builderRightSchema && !secondFileNodeId && !showEvents
+  "
   class="flex w-full"
 ></m-schemas>
 
 <m-validation-status
-  *ngIf="builderRight === builderRightValidation && !secondFileNodeId"
+  *ngIf="
+    builderRight === builderRightValidation && !secondFileNodeId && !showEvents
+  "
   class="flex w-full"
 ></m-validation-status>
 
@@ -17,3 +28,4 @@
 
 <div *ngIf="secondFileNodeId$ | async"></div>
 <div *ngIf="builderRight$ | async"></div>
+<div *ngIf="showEvents$ | async"></div>

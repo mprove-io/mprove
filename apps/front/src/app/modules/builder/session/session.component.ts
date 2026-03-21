@@ -80,8 +80,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   isAborting = false;
   isOptimisticLoading = false;
   isSessionError = false;
-  showEvents = false;
-  allEventsExpanded = false;
   isLastErrorRecovered: boolean;
 
   scrollTrigger = 0;
@@ -93,7 +91,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   lastSessionError: Record<string, unknown>;
   workingSpinnerName = 'sessionInProgress';
   workingSpinnerColor = '#0084d1';
-  debugExpandedEvents: Record<string, boolean> = {};
   permissionsAutoAcceptSessionIds: string[] = [];
   permissionsAutoAcceptSessionIds$ =
     this.uiQuery.permissionsAutoAcceptSessionIds$.pipe(
@@ -110,28 +107,11 @@ export class SessionComponent implements OnInit, OnDestroy {
     })
   );
 
-  showEvents$ = this.uiQuery.sessionShowEvents$.pipe(
-    tap(x => {
-      this.showEvents = x;
-      this.cd.detectChanges();
-    })
-  );
-
   isOptimisticLoading$ = this.uiQuery.isOptimisticLoading$.pipe(
     tap(x => {
       if (this.isOptimisticLoading !== x) {
         this.isOptimisticLoading = x;
         this.cd.detectChanges();
-      }
-    })
-  );
-
-  toggleAllEventsLastValue = 0;
-  toggleAllEvents$ = this.uiQuery.sessionToggleAllEvents$.pipe(
-    tap(x => {
-      if (x !== this.toggleAllEventsLastValue) {
-        this.toggleAllEventsLastValue = x;
-        this.toggleAllEvents();
       }
     })
   );
@@ -227,20 +207,6 @@ export class SessionComponent implements OnInit, OnDestroy {
       return `Retrying (attempt ${ocSessionStatus.attempt}): ${ocSessionStatus.message}`;
     }
     return undefined;
-  }
-
-  toggleAllEvents() {
-    this.allEventsExpanded = !this.allEventsExpanded;
-    let expanded: Record<string, boolean> = {};
-    if (this.allEventsExpanded) {
-      this.liveEvents.forEach(event => {
-        expanded[event.eventId] = true;
-      });
-    }
-    this.debugExpandedEvents = expanded;
-    this.uiQuery.updatePart({
-      sessionAllEventsExpanded: this.allEventsExpanded
-    });
   }
 
   sendFollowUp(text: string) {

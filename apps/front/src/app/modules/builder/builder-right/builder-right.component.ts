@@ -29,6 +29,14 @@ export class BuilderRightComponent {
     })
   );
 
+  showEvents = false;
+  showEvents$ = this.uiQuery.sessionShowEvents$.pipe(
+    tap(x => {
+      this.showEvents = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private uiQuery: UiQuery,
     private cd: ChangeDetectorRef
