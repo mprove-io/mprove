@@ -1,8 +1,4 @@
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendArchiveAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-archive-agent-session';
-import { ToBackendCreateAgentEditorSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-editor-session';
-import { ToBackendCreateAgentExplorerSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-explorer-session';
-import { ToBackendCreateAgentSseTicketRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
 import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
 import { ToBackendGetAgentProviderModelsRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
 import { ToBackendGetAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
@@ -110,6 +106,10 @@ import { ToBackendPushRepoRequest } from '#common/interfaces/to-backend/repos/to
 import { ToBackendRevertRepoToLastCommitRequest } from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-last-commit';
 import { ToBackendRevertRepoToRemoteRequest } from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-remote';
 import { ToBackendSyncRepoRequest } from '#common/interfaces/to-backend/repos/to-backend-sync-repo';
+import { ToBackendArchiveSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-archive-session';
+import { ToBackendCreateSessionEditorRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
+import { ToBackendCreateSessionExplorerRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-session-explorer';
+import { ToBackendCreateSessionSseTicketRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-session-sse-ticket';
 import { ToBackendSpecialRebuildStructsRequest } from '#common/interfaces/to-backend/special/to-backend-special-rebuild-structs';
 import { ToBackendGetStructRequest } from '#common/interfaces/to-backend/structs/to-backend-get-struct';
 import { ToBackendGetSuggestFieldsRequest } from '#common/interfaces/to-backend/suggest-fields/to-backend-get-suggest-fields';
@@ -378,22 +378,22 @@ export const nameToClass = {
     ToBackendGetAvatarBigRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest,
   // agent
-  [ToBackendRequestInfoNameEnum.ToBackendCreateAgentEditorSession]:
-    ToBackendCreateAgentEditorSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendCreateAgentExplorerSession]:
-    ToBackendCreateAgentExplorerSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendCreateSessionEditor]:
+    ToBackendCreateSessionEditorRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendCreateSessionExplorer]:
+    ToBackendCreateSessionExplorerRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToExplorerAgent]:
     ToBackendSendUserMessageToExplorerAgentRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToEditorAgent]:
     ToBackendSendUserMessageToEditorAgentRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession]:
     ToBackendDeleteAgentSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendArchiveAgentSession]:
-    ToBackendArchiveAgentSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendArchiveSession]:
+    ToBackendArchiveSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession]:
     ToBackendPauseAgentSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendCreateAgentSseTicket]:
-    ToBackendCreateAgentSseTicketRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendCreateSessionSseTicket]:
+    ToBackendCreateSessionSseTicketRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList]:
     ToBackendGetAgentSessionsListRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetAgentSession]:

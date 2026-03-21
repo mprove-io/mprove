@@ -35,15 +35,15 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
-  ToBackendArchiveAgentSessionRequest,
-  ToBackendArchiveAgentSessionResponsePayload
-} from '#common/interfaces/to-backend/agent/to-backend-archive-agent-session';
+  ToBackendArchiveSessionRequest,
+  ToBackendArchiveSessionResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-archive-session';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class ArchiveAgentSessionController {
+export class ArchiveSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
@@ -55,9 +55,9 @@ export class ArchiveAgentSessionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendArchiveAgentSession)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendArchiveSession)
   async archiveSession(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendArchiveAgentSessionRequest = request.body;
+    let reqValid: ToBackendArchiveSessionRequest = request.body;
     let { sessionId } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
@@ -140,7 +140,7 @@ export class ArchiveAgentSessionController {
       session: updatedSession
     });
 
-    let payload: ToBackendArchiveAgentSessionResponsePayload = {
+    let payload: ToBackendArchiveSessionResponsePayload = {
       session: sessionApi
     };
 

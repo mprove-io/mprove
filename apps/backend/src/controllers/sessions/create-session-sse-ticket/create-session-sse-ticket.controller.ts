@@ -11,23 +11,23 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendCreateAgentSseTicketRequest,
-  ToBackendCreateAgentSseTicketResponsePayload
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
+  ToBackendCreateSessionSseTicketRequest,
+  ToBackendCreateSessionSseTicketResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-create-session-sse-ticket';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class CreateAgentSseTicketController {
+export class CreateSessionSseTicketController {
   constructor(
     private sessionsService: SessionsService,
     private redisService: RedisService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateAgentSseTicket)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateSessionSseTicket)
   async createSseTicket(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateAgentSseTicketRequest = request.body;
+    let reqValid: ToBackendCreateSessionSseTicketRequest = request.body;
     let { sessionId } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
@@ -47,7 +47,7 @@ export class CreateAgentSseTicketController {
       sessionId: sessionId
     });
 
-    let payload: ToBackendCreateAgentSseTicketResponsePayload = {
+    let payload: ToBackendCreateSessionSseTicketResponsePayload = {
       sseTicket: sseTicket
     };
 

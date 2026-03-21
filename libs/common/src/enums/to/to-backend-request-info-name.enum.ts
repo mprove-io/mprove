@@ -150,16 +150,17 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetAvatarBig = 'api/ToBackendGetAvatarBig',
   ToBackendSetAvatar = 'api/ToBackendSetAvatar',
   // agent
-  ToBackendCreateAgentEditorSession = 'api/ToBackendCreateAgentEditorSession',
-  ToBackendCreateAgentExplorerSession = 'api/ToBackendCreateAgentExplorerSession',
   ToBackendSendUserMessageToExplorerAgent = 'api/ToBackendSendUserMessageToExplorerAgent',
   ToBackendSendUserMessageToEditorAgent = 'api/ToBackendSendUserMessageToEditorAgent',
   ToBackendDeleteAgentSession = 'api/ToBackendDeleteAgentSession',
-  ToBackendArchiveAgentSession = 'api/ToBackendArchiveAgentSession',
   ToBackendPauseAgentSession = 'api/ToBackendPauseAgentSession',
-  ToBackendCreateAgentSseTicket = 'api/ToBackendCreateAgentSseTicket',
   ToBackendGetAgentSessionsList = 'api/ToBackendGetAgentSessionsList',
   ToBackendGetAgentSession = 'api/ToBackendGetAgentSession',
   ToBackendSetAgentSessionTitle = 'api/ToBackendSetAgentSessionTitle',
-  ToBackendGetAgentProviderModels = 'api/ToBackendGetAgentProviderModels'
+  ToBackendGetAgentProviderModels = 'api/ToBackendGetAgentProviderModels',
+  // sessions
+  ToBackendArchiveSession = 'api/ToBackendArchiveSession',
+  ToBackendCreateSessionEditor = 'api/ToBackendCreateSessionEditor',
+  ToBackendCreateSessionExplorer = 'api/ToBackendCreateSessionExplorer',
+  ToBackendCreateSessionSseTicket = 'api/ToBackendCreateSessionSseTicket'
 }

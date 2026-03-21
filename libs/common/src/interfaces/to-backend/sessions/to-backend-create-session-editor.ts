@@ -4,7 +4,7 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
-export class ToBackendCreateAgentEditorSessionRequestPayload {
+export class ToBackendCreateSessionEditorRequestPayload {
   @IsString()
   projectId: string;
 
@@ -40,13 +40,13 @@ export class ToBackendCreateAgentEditorSessionRequestPayload {
   partId: string;
 }
 
-export class ToBackendCreateAgentEditorSessionRequest extends ToBackendRequest {
+export class ToBackendCreateSessionEditorRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendCreateAgentEditorSessionRequestPayload)
-  payload: ToBackendCreateAgentEditorSessionRequestPayload;
+  @Type(() => ToBackendCreateSessionEditorRequestPayload)
+  payload: ToBackendCreateSessionEditorRequestPayload;
 }
 
-export class ToBackendCreateAgentEditorSessionResponsePayload {
+export class ToBackendCreateSessionEditorResponsePayload {
   @IsString()
   sessionId: string;
 
@@ -57,8 +57,8 @@ export class ToBackendCreateAgentEditorSessionResponsePayload {
   branchId: string;
 }
 
-export class ToBackendCreateAgentEditorSessionResponse extends MyResponse {
+export class ToBackendCreateSessionEditorResponse extends MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendCreateAgentEditorSessionResponsePayload)
-  payload: ToBackendCreateAgentEditorSessionResponsePayload;
+  @Type(() => ToBackendCreateSessionEditorResponsePayload)
+  payload: ToBackendCreateSessionEditorResponsePayload;
 }

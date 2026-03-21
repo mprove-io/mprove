@@ -12,17 +12,17 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
-  ToBackendCreateAgentEditorSessionRequestPayload,
-  ToBackendCreateAgentEditorSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-editor-session';
-import {
-  ToBackendCreateAgentExplorerSessionRequestPayload,
-  ToBackendCreateAgentExplorerSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-explorer-session';
-import {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
 } from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
+import {
+  ToBackendCreateSessionEditorRequestPayload,
+  ToBackendCreateSessionEditorResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
+import {
+  ToBackendCreateSessionExplorerRequestPayload,
+  ToBackendCreateSessionExplorerResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-create-session-explorer';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -157,7 +157,7 @@ export class NewSessionComponent implements OnInit {
     let partId = makeAscendingId({ prefix: 'part' });
 
     if (isSessionExplorer) {
-      let explorerPayload: ToBackendCreateAgentExplorerSessionRequestPayload = {
+      let explorerPayload: ToBackendCreateSessionExplorerRequestPayload = {
         projectId: nav.projectId,
         provider: provider,
         model: this.model,
@@ -171,11 +171,11 @@ export class NewSessionComponent implements OnInit {
       this.apiService
         .req({
           pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendCreateAgentExplorerSession,
+            ToBackendRequestInfoNameEnum.ToBackendCreateSessionExplorer,
           payload: explorerPayload
         })
         .pipe(
-          tap((resp: ToBackendCreateAgentExplorerSessionResponse) => {
+          tap((resp: ToBackendCreateSessionExplorerResponse) => {
             this.processCreateSessionResponse({
               resp: resp,
               isSessionExplorer: isSessionExplorer,
@@ -187,7 +187,7 @@ export class NewSessionComponent implements OnInit {
         )
         .subscribe();
     } else {
-      let editorPayload: ToBackendCreateAgentEditorSessionRequestPayload = {
+      let editorPayload: ToBackendCreateSessionEditorRequestPayload = {
         projectId: nav.projectId,
         sandboxType: SandboxTypeEnum.E2B,
         provider: provider,
@@ -204,11 +204,11 @@ export class NewSessionComponent implements OnInit {
       this.apiService
         .req({
           pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendCreateAgentEditorSession,
+            ToBackendRequestInfoNameEnum.ToBackendCreateSessionEditor,
           payload: editorPayload
         })
         .pipe(
-          tap((resp: ToBackendCreateAgentEditorSessionResponse) => {
+          tap((resp: ToBackendCreateSessionEditorResponse) => {
             this.processCreateSessionResponse({
               resp: resp,
               isSessionExplorer: isSessionExplorer,
@@ -224,8 +224,8 @@ export class NewSessionComponent implements OnInit {
 
   processCreateSessionResponse(item: {
     resp:
-      | ToBackendCreateAgentExplorerSessionResponse
-      | ToBackendCreateAgentEditorSessionResponse;
+      | ToBackendCreateSessionExplorerResponse
+      | ToBackendCreateSessionEditorResponse;
     isSessionExplorer: boolean;
     provider: string;
     text: string;

@@ -17,10 +17,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendCreateAgentEditorSessionRequest,
-  ToBackendCreateAgentEditorSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-editor-session';
-import {
   ToBackendDeleteAgentSessionRequest,
   ToBackendDeleteAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
@@ -32,6 +28,10 @@ import {
   ToBackendSendUserMessageToEditorAgentRequest,
   ToBackendSendUserMessageToEditorAgentResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
+import {
+  ToBackendCreateSessionEditorRequest,
+  ToBackendCreateSessionEditorResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
 
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
@@ -110,9 +110,9 @@ test('1', async t => {
     });
 
     // Create session
-    let createSessionReq: ToBackendCreateAgentEditorSessionRequest = {
+    let createSessionReq: ToBackendCreateSessionEditorRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendCreateAgentEditorSession,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateSessionEditor,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -130,13 +130,12 @@ test('1', async t => {
       }
     };
 
-    let createResp =
-      await sendToBackend<ToBackendCreateAgentEditorSessionResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: createSessionReq,
-        checkIsOk: true
-      });
+    let createResp = await sendToBackend<ToBackendCreateSessionEditorResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: createSessionReq,
+      checkIsOk: true
+    });
 
     sessionId = createResp.payload.sessionId;
     console.log(`[test] session created: ${sessionId}`);

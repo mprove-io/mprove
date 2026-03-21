@@ -11,14 +11,14 @@ import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { ErrorData } from '#common/interfaces/front/error-data';
 import {
-  ToBackendCreateAgentSseTicketRequestPayload,
-  ToBackendCreateAgentSseTicketResponse
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
-import {
   ToBackendGetAgentSessionRequestPayload,
   ToBackendGetAgentSessionResponse,
   ToBackendGetAgentSessionResponsePayload
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
+import {
+  ToBackendCreateSessionSseTicketRequestPayload,
+  ToBackendCreateSessionSseTicketResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-create-session-sse-ticket';
 import { binarySearch } from '#front/app/functions/binary-search';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
@@ -328,18 +328,18 @@ export class AgentSessionService {
 
     this.ssePhase = 'fetching-ticket';
 
-    let payload: ToBackendCreateAgentSseTicketRequestPayload = {
+    let payload: ToBackendCreateSessionSseTicketRequestPayload = {
       sessionId: sessionId
     };
 
     this.apiService
       .req({
         pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendCreateAgentSseTicket,
+          ToBackendRequestInfoNameEnum.ToBackendCreateSessionSseTicket,
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateAgentSseTicketResponse) => {
+        tap((resp: ToBackendCreateSessionSseTicketResponse) => {
           if (this.initId !== initId) {
             return;
           }

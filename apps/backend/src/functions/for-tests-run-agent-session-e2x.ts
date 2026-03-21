@@ -20,10 +20,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendCreateAgentEditorSessionRequest,
-  ToBackendCreateAgentEditorSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-editor-session';
-import {
   ToBackendDeleteAgentSessionRequest,
   ToBackendDeleteAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
@@ -31,6 +27,10 @@ import {
   ToBackendSendUserMessageToEditorAgentRequest,
   ToBackendSendUserMessageToEditorAgentResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
+import {
+  ToBackendCreateSessionEditorRequest,
+  ToBackendCreateSessionEditorResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
 
 export async function forTestsRunAgentSessionE2x(item: {
   t: ExecutionContext;
@@ -64,7 +64,7 @@ export async function forTestsRunAgentSessionE2x(item: {
   let sessionId: string | undefined;
   let sse: { events: AgentEvent[]; close: () => void } | undefined;
   let testError: unknown;
-  let createSessionResp: ToBackendCreateAgentEditorSessionResponse;
+  let createSessionResp: ToBackendCreateSessionEditorResponse;
   let sendFirstMessageResp: ToBackendSendUserMessageToEditorAgentResponse;
   let sendMessageResp: ToBackendSendUserMessageToEditorAgentResponse;
 
@@ -125,9 +125,9 @@ export async function forTestsRunAgentSessionE2x(item: {
     // Create agent session without firstMessage to avoid race condition:
     // SSE must be connected before messages are sent, otherwise events
     // published to Redis pub/sub before SSE subscription are lost.
-    let createSessionReq: ToBackendCreateAgentEditorSessionRequest = {
+    let createSessionReq: ToBackendCreateSessionEditorRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendCreateAgentEditorSession,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateSessionEditor,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -146,7 +146,7 @@ export async function forTestsRunAgentSessionE2x(item: {
     };
 
     createSessionResp =
-      await sendToBackend<ToBackendCreateAgentEditorSessionResponse>({
+      await sendToBackend<ToBackendCreateSessionEditorResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: createSessionReq,

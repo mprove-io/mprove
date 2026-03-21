@@ -3,7 +3,7 @@ import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
-export class ToBackendCreateAgentExplorerSessionRequestPayload {
+export class ToBackendCreateSessionExplorerRequestPayload {
   @IsString()
   projectId: string;
 
@@ -30,13 +30,13 @@ export class ToBackendCreateAgentExplorerSessionRequestPayload {
   partId: string;
 }
 
-export class ToBackendCreateAgentExplorerSessionRequest extends ToBackendRequest {
+export class ToBackendCreateSessionExplorerRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendCreateAgentExplorerSessionRequestPayload)
-  payload: ToBackendCreateAgentExplorerSessionRequestPayload;
+  @Type(() => ToBackendCreateSessionExplorerRequestPayload)
+  payload: ToBackendCreateSessionExplorerRequestPayload;
 }
 
-export class ToBackendCreateAgentExplorerSessionResponsePayload {
+export class ToBackendCreateSessionExplorerResponsePayload {
   @IsString()
   sessionId: string;
 
@@ -47,8 +47,8 @@ export class ToBackendCreateAgentExplorerSessionResponsePayload {
   branchId: string;
 }
 
-export class ToBackendCreateAgentExplorerSessionResponse extends MyResponse {
+export class ToBackendCreateSessionExplorerResponse extends MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendCreateAgentExplorerSessionResponsePayload)
-  payload: ToBackendCreateAgentExplorerSessionResponsePayload;
+  @Type(() => ToBackendCreateSessionExplorerResponsePayload)
+  payload: ToBackendCreateSessionExplorerResponsePayload;
 }

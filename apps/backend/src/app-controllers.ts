@@ -1,7 +1,3 @@
-import { ArchiveAgentSessionController } from './controllers/agent/archive-agent-session/archive-agent-session.controller';
-import { CreateAgentEditorSessionController } from './controllers/agent/create-agent-editor-session/create-agent-editor-session.controller';
-import { CreateAgentExplorerSessionController } from './controllers/agent/create-agent-explorer-session/create-agent-explorer-session.controller';
-import { CreateAgentSseTicketController } from './controllers/agent/create-agent-sse-ticket/create-agent-sse-ticket.controller';
 import { DeleteAgentSessionController } from './controllers/agent/delete-agent-session/delete-agent-session.controller';
 import { GetAgentEventsSseController } from './controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
 import { GetAgentProviderModelsController } from './controllers/agent/get-agent-provider-models/get-agent-provider-models.controller';
@@ -109,6 +105,10 @@ import { PushRepoController } from './controllers/repos/push-repo/push-repo.cont
 import { RevertRepoToLastCommitController } from './controllers/repos/revert-repo-to-last-commit/revert-repo-to-last-commit.controller';
 import { RevertRepoToRemoteController } from './controllers/repos/revert-repo-to-remote/revert-repo-to-remote.controller';
 import { SyncRepoController } from './controllers/repos/sync-repo/sync-repo.controller';
+import { ArchiveSessionController } from './controllers/sessions/archive-session/archive-session.controller';
+import { CreateSessionEditorController } from './controllers/sessions/create-session-editor/create-session-editor.controller';
+import { CreateSessionExplorerController } from './controllers/sessions/create-session-explorer/create-session-explorer.controller';
+import { CreateSessionSseTicketController } from './controllers/sessions/create-session-sse-ticket/create-session-sse-ticket.controller';
 import { SpecialRebuildStructsController } from './controllers/special/special-rebuild-structs/special-rebuild-structs.controller';
 import { GetStructController } from './controllers/structs/get-struct/get-struct.controller';
 import { GetSuggestFieldsController } from './controllers/suggest-fields/get-suggest-fields/get-suggest-fields.controller';
@@ -134,14 +134,14 @@ import { SetUserUiController } from './controllers/users/set-user-ui/set-user-ui
 import { UpdateUserPasswordController } from './controllers/users/update-user-password/update-user-password.controller';
 
 export const appControllers = [
-  CreateAgentEditorSessionController,
-  CreateAgentExplorerSessionController,
-  CreateAgentSseTicketController,
+  CreateSessionEditorController,
+  CreateSessionExplorerController,
+  CreateSessionSseTicketController,
   SendUserMessageToExplorerAgentController,
   SendUserMessageToEditorAgentController,
   GetAgentEventsSseController,
   DeleteAgentSessionController,
-  ArchiveAgentSessionController,
+  ArchiveSessionController,
   PauseAgentSessionController,
   GetAgentSessionsListController,
   GetAgentSessionController,

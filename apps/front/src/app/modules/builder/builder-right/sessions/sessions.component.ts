@@ -10,10 +10,6 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
-  ToBackendArchiveAgentSessionRequestPayload,
-  ToBackendArchiveAgentSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-archive-agent-session';
-import {
   ToBackendGetAgentSessionsListRequestPayload,
   ToBackendGetAgentSessionsListResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
@@ -21,6 +17,10 @@ import {
   ToBackendPauseAgentSessionRequestPayload,
   ToBackendPauseAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
+import {
+  ToBackendArchiveSessionRequestPayload,
+  ToBackendArchiveSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-archive-session';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -265,18 +265,18 @@ export class SessionsComponent implements OnInit {
 
     let sessionId = session.sessionId;
 
-    let payload: ToBackendArchiveAgentSessionRequestPayload = {
+    let payload: ToBackendArchiveSessionRequestPayload = {
       sessionId: sessionId
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendArchiveAgentSession,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendArchiveSession,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        map((resp: ToBackendArchiveAgentSessionResponse) => {
+        map((resp: ToBackendArchiveSessionResponse) => {
           let respSession = resp.payload.session;
 
           this.updatedArchivedSessions({
