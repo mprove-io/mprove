@@ -24,13 +24,13 @@ import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
-  ToBackendSendUserMessageToExplorerAgentRequestPayload,
-  ToBackendSendUserMessageToExplorerAgentResponse
-} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-explorer-agent';
-import {
   ToBackendSendMessageToSessionEditorRequestPayload,
   ToBackendSendMessageToSessionEditorResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-editor';
+import {
+  ToBackendSendMessageToSessionExplorerRequestPayload,
+  ToBackendSendMessageToSessionExplorerResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-explorer';
 import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
@@ -571,7 +571,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     let isExplorer = this.session.type === SessionTypeEnum.Explorer;
 
     if (isExplorer) {
-      let explorerPayload: ToBackendSendUserMessageToExplorerAgentRequestPayload =
+      let explorerPayload: ToBackendSendMessageToSessionExplorerRequestPayload =
         {
           sessionId: item.sessionId,
           interactionType: item.interactionType,
@@ -585,11 +585,11 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.apiService
         .req({
           pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToExplorerAgent,
+            ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionExplorer,
           payload: explorerPayload
         })
         .pipe(
-          tap((resp: ToBackendSendUserMessageToExplorerAgentResponse) => {
+          tap((resp: ToBackendSendMessageToSessionExplorerResponse) => {
             this.processSendInteractionResponse({ resp: resp });
           }),
           take(1)
@@ -637,7 +637,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   processSendInteractionResponse(item: {
     resp:
-      | ToBackendSendUserMessageToExplorerAgentResponse
+      | ToBackendSendMessageToSessionExplorerResponse
       | ToBackendSendMessageToSessionEditorResponse;
   }) {
     let { resp } = item;

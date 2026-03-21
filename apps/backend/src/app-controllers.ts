@@ -1,4 +1,3 @@
-import { SendUserMessageToExplorerAgentController } from './controllers/agent/send-user-message-to-explorer-agent/send-user-message-to-explorer-agent.controller';
 import { GetAvatarBigController } from './controllers/avatars/get-avatar-big/get-avatar-big.controller';
 import { SetAvatarController } from './controllers/avatars/set-avatar/set-avatar.controller';
 import { CreateBranchController } from './controllers/branches/create-branch/create-branch.controller';
@@ -108,6 +107,7 @@ import { GetSessionProviderModelsController } from './controllers/sessions/get-s
 import { GetSessionsListController } from './controllers/sessions/get-sessions-list/get-sessions-list.controller';
 import { PauseEditorSessionController } from './controllers/sessions/pause-editor-session/pause-editor-session.controller';
 import { SendMessageToSessionEditorController } from './controllers/sessions/send-message-to-session-editor/send-message-to-session-editor.controller';
+import { SendMessageToSessionExplorerController } from './controllers/sessions/send-message-to-session-explorer/send-message-to-session-explorer.controller';
 import { SetSessionTitleController } from './controllers/sessions/set-session-title/set-session-title.controller';
 import { SpecialRebuildStructsController } from './controllers/special/special-rebuild-structs/special-rebuild-structs.controller';
 import { GetStructController } from './controllers/structs/get-struct/get-struct.controller';
@@ -137,7 +137,7 @@ export const appControllers = [
   CreateSessionEditorController,
   CreateSessionExplorerController,
   CreateSessionSseTicketController,
-  SendUserMessageToExplorerAgentController,
+  SendMessageToSessionExplorerController,
   SendMessageToSessionEditorController,
   GetSessionEventsSseController,
   DeleteSessionController,

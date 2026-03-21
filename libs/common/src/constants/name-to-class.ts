@@ -1,5 +1,4 @@
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendSendUserMessageToExplorerAgentRequest } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-explorer-agent';
 import { ToBackendGetAvatarBigRequest } from '#common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
 import { ToBackendSetAvatarRequest } from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
 import { ToBackendCreateBranchRequest } from '#common/interfaces/to-backend/branches/to-backend-create-branch';
@@ -109,6 +108,7 @@ import { ToBackendGetSessionProviderModelsRequest } from '#common/interfaces/to-
 import { ToBackendGetSessionsListRequest } from '#common/interfaces/to-backend/sessions/to-backend-get-sessions-list';
 import { ToBackendPauseEditorSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-pause-editor-session';
 import { ToBackendSendMessageToSessionEditorRequest } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-editor';
+import { ToBackendSendMessageToSessionExplorerRequest } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-explorer';
 import { ToBackendSetSessionTitleRequest } from '#common/interfaces/to-backend/sessions/to-backend-set-session-title';
 import { ToBackendSpecialRebuildStructsRequest } from '#common/interfaces/to-backend/special/to-backend-special-rebuild-structs';
 import { ToBackendGetStructRequest } from '#common/interfaces/to-backend/structs/to-backend-get-struct';
@@ -174,6 +174,10 @@ export const nameToClass = {
     ToBackendUpdateUserPasswordRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDeleteUser]:
     ToBackendDeleteUserRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendDeleteUserApiKey]:
+    ToBackendDeleteUserApiKeyRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey]:
+    ToBackendGenerateUserApiKeyRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendCreateOrg]: ToBackendCreateOrgRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetOrgsList]:
@@ -377,34 +381,29 @@ export const nameToClass = {
   [ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig]:
     ToBackendGetAvatarBigRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest,
-  // agent
+  //
+  [ToBackendRequestInfoNameEnum.ToBackendArchiveSession]:
+    ToBackendArchiveSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendCreateSessionEditor]:
     ToBackendCreateSessionEditorRequest,
   [ToBackendRequestInfoNameEnum.ToBackendCreateSessionExplorer]:
     ToBackendCreateSessionExplorerRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToExplorerAgent]:
-    ToBackendSendUserMessageToExplorerAgentRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionEditor]:
-    ToBackendSendMessageToSessionEditorRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendDeleteSession]:
-    ToBackendDeleteSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendArchiveSession]:
-    ToBackendArchiveSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendPauseEditorSession]:
-    ToBackendPauseEditorSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendCreateSessionSseTicket]:
     ToBackendCreateSessionSseTicketRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendGetSessionsList]:
-    ToBackendGetSessionsListRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendDeleteSession]:
+    ToBackendDeleteSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetSession]:
     ToBackendGetSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSetSessionTitle]:
-    ToBackendSetSessionTitleRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetSessionProviderModels]:
     ToBackendGetSessionProviderModelsRequest,
-  // user api key
-  [ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey]:
-    ToBackendGenerateUserApiKeyRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendDeleteUserApiKey]:
-    ToBackendDeleteUserApiKeyRequest
+  [ToBackendRequestInfoNameEnum.ToBackendGetSessionsList]:
+    ToBackendGetSessionsListRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendPauseEditorSession]:
+    ToBackendPauseEditorSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionEditor]:
+    ToBackendSendMessageToSessionEditorRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionExplorer]:
+    ToBackendSendMessageToSessionExplorerRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSetSessionTitle]:
+    ToBackendSetSessionTitleRequest
 };

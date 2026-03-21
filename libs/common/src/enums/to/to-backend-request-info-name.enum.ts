@@ -149,18 +149,17 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendGetAvatarBig = 'api/ToBackendGetAvatarBig',
   ToBackendSetAvatar = 'api/ToBackendSetAvatar',
-  // agent
-  ToBackendSendUserMessageToExplorerAgent = 'api/ToBackendSendUserMessageToExplorerAgent',
-  // sessions
-  ToBackendSendMessageToSessionEditor = 'api/ToBackendSendMessageToSessionEditor',
-  ToBackendPauseEditorSession = 'api/ToBackendPauseEditorSession',
-  ToBackendGetSessionsList = 'api/ToBackendGetSessionsList',
-  ToBackendSetSessionTitle = 'api/ToBackendSetSessionTitle',
-  ToBackendDeleteSession = 'api/ToBackendDeleteSession',
-  ToBackendGetSession = 'api/ToBackendGetSession',
-  ToBackendGetSessionProviderModels = 'api/ToBackendGetSessionProviderModels',
+  //
   ToBackendArchiveSession = 'api/ToBackendArchiveSession',
   ToBackendCreateSessionEditor = 'api/ToBackendCreateSessionEditor',
   ToBackendCreateSessionExplorer = 'api/ToBackendCreateSessionExplorer',
-  ToBackendCreateSessionSseTicket = 'api/ToBackendCreateSessionSseTicket'
+  ToBackendCreateSessionSseTicket = 'api/ToBackendCreateSessionSseTicket',
+  ToBackendDeleteSession = 'api/ToBackendDeleteSession',
+  ToBackendGetSession = 'api/ToBackendGetSession',
+  ToBackendGetSessionProviderModels = 'api/ToBackendGetSessionProviderModels',
+  ToBackendGetSessionsList = 'api/ToBackendGetSessionsList',
+  ToBackendPauseEditorSession = 'api/ToBackendPauseEditorSession',
+  ToBackendSendMessageToSessionEditor = 'api/ToBackendSendMessageToSessionEditor',
+  ToBackendSendMessageToSessionExplorer = 'api/ToBackendSendMessageToSessionExplorer',
+  ToBackendSetSessionTitle = 'api/ToBackendSetSessionTitle'
 }
