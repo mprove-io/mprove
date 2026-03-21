@@ -21,6 +21,7 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
+import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
   ToBackendSendUserMessageToAgentRequestPayload,
@@ -203,6 +204,22 @@ export class SessionComponent implements OnInit, OnDestroy {
     } else {
       this.spinner.hide(this.workingSpinnerName);
     }
+  }
+
+  isLastAssistantMessageCompleted(item: {
+    messages: AgentMessageApi[];
+  }): boolean {
+    let { messages } = item;
+    if (messages.length === 0) {
+      return false;
+    }
+    let lastMessage = messages[messages.length - 1];
+    if (lastMessage.role !== 'assistant') {
+      return false;
+    }
+    let time = (lastMessage.ocMessage as { time?: { completed?: number } })
+      ?.time;
+    return typeof time?.completed === 'number';
   }
 
   makeRetryMessage(ocSessionStatus: SessionStatus): string {
@@ -452,14 +469,20 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isOptimisticLoading = false;
     this.uiQuery.updatePart({ isOptimisticLoading: false });
 
+    let lastAssistantCompleted = this.isLastAssistantMessageCompleted({
+      messages: sessionData.messages
+    });
+
     this.isAgentBusy =
       this.session?.status === SessionStatusEnum.Active &&
-      ['busy', 'retry'].indexOf(sessionData.ocSessionStatus?.type) > -1;
+      ['busy', 'retry'].indexOf(sessionData.ocSessionStatus?.type) > -1 &&
+      !lastAssistantCompleted;
 
     this.isWorking =
       this.session?.status === SessionStatusEnum.Active &&
       isDefined(sessionData.ocSessionStatus) &&
-      ['busy', 'retry'].indexOf(sessionData.ocSessionStatus.type) > -1;
+      ['busy', 'retry'].indexOf(sessionData.ocSessionStatus.type) > -1 &&
+      !lastAssistantCompleted;
 
     this.updateWorkingSpinner();
 
@@ -540,12 +563,22 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.uiQuery.updatePart({ isOptimisticLoading: true });
     }
 
+    let lastAssistantCompleted = this.isLastAssistantMessageCompleted({
+      messages: sessionData.messages
+    });
+
+    if (lastAssistantCompleted && this.isOptimisticLoading) {
+      this.isOptimisticLoading = false;
+      this.uiQuery.updatePart({ isOptimisticLoading: false });
+    }
+
     this.isAgentBusy =
       this.isOptimisticLoading ||
       (this.questions.length === 0 &&
         this.permissions.length === 0 &&
         this.session?.status === SessionStatusEnum.Active &&
-        ['busy', 'retry'].indexOf(sessionData.ocSessionStatus?.type) > -1);
+        ['busy', 'retry'].indexOf(sessionData.ocSessionStatus?.type) > -1 &&
+        !lastAssistantCompleted);
 
     if (
       this.session?.status === SessionStatusEnum.Active &&
@@ -560,7 +593,8 @@ export class SessionComponent implements OnInit, OnDestroy {
       (this.session?.status === SessionStatusEnum.Active &&
         isDefined(sessionData.ocSessionStatus) &&
         ['busy', 'retry'].indexOf(sessionData.ocSessionStatus.type) > -1 &&
-        this.isAborting === false);
+        this.isAborting === false &&
+        !lastAssistantCompleted);
 
     this.updateWorkingSpinner();
 
