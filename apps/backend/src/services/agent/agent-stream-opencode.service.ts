@@ -746,6 +746,58 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         },
         { throwOnError: true }
       );
+
+      // fix for missing user message part in returned opencode state, if it was sent to paused session
+      if (item.messageId && item.partId) {
+        try {
+          let modelSplit = split || {
+            providerID: '',
+            modelID: item.model || ''
+          };
+
+          let userMessageTab = this.ocMessagesService.makeOcMessage({
+            messageId: item.messageId,
+            sessionId: item.sessionId,
+            role: 'user',
+            ocMessage: {
+              id: item.messageId,
+              sessionID: item.opencodeSessionId,
+              role: 'user',
+              variant: item.variant,
+              time: { created: Date.now() },
+              agent: item.agent,
+              model: modelSplit
+            } as any
+          });
+
+          let userPartTab = this.ocPartsService.makeOcPart({
+            partId: item.partId,
+            messageId: item.messageId,
+            sessionId: item.sessionId,
+            ocPart: {
+              id: item.partId,
+              sessionID: item.opencodeSessionId,
+              messageID: item.messageId,
+              type: 'text',
+              text: item.message
+            } as any
+          });
+
+          await this.db.drizzle.transaction(async tx => {
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                ocMessages: [userMessageTab],
+                ocParts: [userPartTab]
+              }
+            });
+          });
+        } catch (e: any) {
+          console.log(
+            `[oc-exec] failed to persist user message part sessionId=${item.sessionId} messageId=${item.messageId}: ${e?.message}`
+          );
+        }
+      }
     } else if (item.interactionType === InteractionTypeEnum.Permission) {
       await this.respondToPermission({
         sessionId: item.sessionId,
