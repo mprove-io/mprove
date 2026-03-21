@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output
+} from '@angular/core';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 
 @Component({
@@ -6,8 +12,15 @@ import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
   selector: 'm-session-debug-events',
   templateUrl: './session-debug-events.component.html'
 })
-export class SessionDebugEventsComponent {
+export class SessionDebugEventsComponent implements OnChanges {
   @Input() events: AgentEventApi[] = [];
+
+  reversedEvents: AgentEventApi[] = [];
+
+  ngOnChanges() {
+    this.reversedEvents = [...this.events].reverse();
+  }
+
   @Input() expandedEvents: Record<string, boolean> = {};
   @Output() expandedEventsChange = new EventEmitter<Record<string, boolean>>();
 
