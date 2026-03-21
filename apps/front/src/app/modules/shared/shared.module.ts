@@ -92,6 +92,8 @@ import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-clo
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
 import { FormulaIconComponent } from './icons/formula-icon/formula-icon.component';
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
+import { GraduationCapIconComponent } from './icons/graduation-cap-icon/graduation-cap-icon.component';
+import { LampDeskIconComponent } from './icons/lamp-desk-icon/lamp-desk-icon.component';
 import { LeftPanelIconComponent } from './icons/left-panel-icon/left-panel-icon.component';
 import { LinkIconComponent } from './icons/link-icon/link-icon.component';
 import { LinkOffIconComponent } from './icons/link-off-icon/link-off-icon.component';
@@ -247,6 +249,8 @@ let sharedComponents = [
   UserIconComponent,
   ChartIconComponent,
   WrenchIconComponent,
+  LampDeskIconComponent,
+  GraduationCapIconComponent,
   AdjustmentsIconComponent,
   TableCellsIconComponent,
   MiniChartsIconComponent,

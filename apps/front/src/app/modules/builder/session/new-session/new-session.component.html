@@ -1,7 +1,7 @@
 <div class="flex h-full w-full flex-col items-center">
   <div class="mb-6 mt-12 flex flex-shrink-0 flex-row items-center gap-x-6">
     <div
-      class="border-s200 bg-s100 flex w-[240px] select-none flex-row rounded-lg border p-0.5"
+      class="border-s200 bg-s100 flex w-[300px] select-none flex-row rounded-lg border p-0.5"
     >
       <button
         *ngFor="let st of sessionTypes"
@@ -14,7 +14,17 @@
         (click)="sessionType = st; onSessionTypeChange()"
       >
         <span class="flex flex-col items-center">
-          <span>{{ st }}</span>
+          <span class="flex flex-row items-center gap-x-3">
+            <span class="flex">
+              <m-lamp-desk-icon
+                *ngIf="st === sessionTypeEnum.Explorer"
+              ></m-lamp-desk-icon>
+              <m-graduation-cap-icon
+                *ngIf="st === sessionTypeEnum.Editor"
+              ></m-graduation-cap-icon>
+            </span>
+            <span>{{ st }}</span>
+          </span>
           <span class="invisible h-0 font-medium" aria-hidden="true">{{
             st
           }}</span>

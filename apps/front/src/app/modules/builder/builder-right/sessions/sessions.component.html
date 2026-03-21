@@ -81,6 +81,25 @@
           class="hover:bg-m50 group ml-6 mr-6 flex h-11 cursor-pointer select-none flex-row items-center rounded pl-5 pr-2"
           (click)="openSession(session)"
         >
+          <div
+            class="mr-4 flex flex-shrink-0"
+            [ngClass]="{
+              'text-m600': session.sessionId === currentSession?.sessionId,
+              'text-s400':
+                session.status === 'Archived' &&
+                session.sessionId !== currentSession?.sessionId,
+              'text-s1':
+                session.sessionId !== currentSession?.sessionId &&
+                session.status !== 'Archived'
+            }"
+          >
+            <m-lamp-desk-icon
+              *ngIf="session.type === sessionTypeEnum.Explorer"
+            ></m-lamp-desk-icon>
+            <m-graduation-cap-icon
+              *ngIf="session.type === sessionTypeEnum.Editor"
+            ></m-graduation-cap-icon>
+          </div>
           <span
             class="min-w-0 flex-1 truncate text-[17px]"
             [ngClass]="{

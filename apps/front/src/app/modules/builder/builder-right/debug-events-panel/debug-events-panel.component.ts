@@ -26,6 +26,8 @@ export class DebugEventsPanelComponent {
     })
   );
 
+  copied = false;
+
   debugExpandedEvents: Record<string, boolean> = {};
   toggleAllEventsLastValue = 0;
   toggleAllEvents$ = this.uiQuery.sessionToggleAllEvents$.pipe(
@@ -58,7 +60,10 @@ export class DebugEventsPanelComponent {
     let state = this.sessionEventsQuery.getValue();
     let events = state.liveEvents;
     let json = JSON.stringify(events, undefined, 2);
-    navigator.clipboard.writeText(json);
+    navigator.clipboard.writeText(json).then(() => {
+      this.copied = true;
+      this.cd.detectChanges();
+    });
   }
 
   toggleAllEvents() {

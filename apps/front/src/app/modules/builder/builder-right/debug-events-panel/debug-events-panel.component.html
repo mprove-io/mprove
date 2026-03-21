@@ -2,12 +2,10 @@
   <div class="mb-6 mt-6 flex h-11 flex-shrink-0 flex-row items-center">
     <button
       type="button"
-      tp="Copy JSON"
-      tpPlacement="top"
-      class="text-s500 hover:bg-s100 ml-10 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      class="border-s400 text-s500 hover:bg-s100 ml-10 flex select-none flex-row items-center rounded border p-4 py-2 focus:outline-none"
       (click)="copyEventsJson()"
     >
-      <m-copy-icon></m-copy-icon>
+      <div>Copy JSON</div>
     </button>
 
     <button
@@ -15,9 +13,11 @@
       class="text-s500 hover:bg-s100 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
       (click)="toggleAllEvents()"
     >
-      <m-folder-closed-icon *ngIf="allEventsExpanded"></m-folder-closed-icon>
-      <m-folder-open-icon *ngIf="!allEventsExpanded"></m-folder-open-icon>
+      <m-folder-open-icon *ngIf="allEventsExpanded"></m-folder-open-icon>
+      <m-folder-closed-icon *ngIf="!allEventsExpanded"></m-folder-closed-icon>
     </button>
+
+    <div *ngIf="copied" class="text-s1 ml-5 text-lg">Copied!</div>
 
     <div class="flex flex-1"></div>
   </div>
