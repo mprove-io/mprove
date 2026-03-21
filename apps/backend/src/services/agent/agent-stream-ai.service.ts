@@ -546,10 +546,46 @@ export class AgentStreamAiService implements OnModuleDestroy {
     }
 
     if (wasAborted) {
+      let finalPartEvent: Event = {
+        type: 'message.part.updated',
+        properties: {
+          part: {
+            id: assistantPartId,
+            messageID: assistantMessageId,
+            sessionID: sessionId,
+            type: 'text',
+            text: fullContent
+          }
+        }
+      } as Event;
+
+      this.agentDrainService.enqueue({
+        sessionId: sessionId,
+        event: finalPartEvent
+      });
+
+      let abortedMsgEvent: Event = {
+        type: 'message.updated',
+        properties: {
+          info: {
+            id: assistantMessageId,
+            sessionID: sessionId,
+            role: 'assistant',
+            error: { name: 'MessageAbortedError' }
+          }
+        }
+      } as Event;
+
+      this.agentDrainService.enqueue({
+        sessionId: sessionId,
+        event: abortedMsgEvent
+      });
+
       let idleEvent: Event = {
         type: 'session.status',
         properties: { status: { type: 'idle' } }
       } as Event;
+
       this.agentDrainService.enqueue({
         sessionId: sessionId,
         event: idleEvent
