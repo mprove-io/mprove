@@ -16,7 +16,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendSetAgentSessionTitleRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-set-agent-session-title';
+import { ToBackendSetSessionTitleRequestPayload } from '#common/interfaces/to-backend/sessions/to-backend-set-session-title';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
@@ -80,7 +80,7 @@ export class EditSessionTitleDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendSetAgentSessionTitleRequestPayload = {
+    let payload: ToBackendSetSessionTitleRequestPayload = {
       sessionId: this.ref.data.sessionId,
       title: newTitle
     };
@@ -89,8 +89,7 @@ export class EditSessionTitleDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetSessionTitle,
         payload: payload,
         showSpinner: true
       })

@@ -1,9 +1,5 @@
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendGetAgentSessionsListRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
-import { ToBackendPauseAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
-import { ToBackendSendUserMessageToEditorAgentRequest } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
 import { ToBackendSendUserMessageToExplorerAgentRequest } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-explorer-agent';
-import { ToBackendSetAgentSessionTitleRequest } from '#common/interfaces/to-backend/agent/to-backend-set-agent-session-title';
 import { ToBackendGetAvatarBigRequest } from '#common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
 import { ToBackendSetAvatarRequest } from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
 import { ToBackendCreateBranchRequest } from '#common/interfaces/to-backend/branches/to-backend-create-branch';
@@ -110,6 +106,10 @@ import { ToBackendCreateSessionSseTicketRequest } from '#common/interfaces/to-ba
 import { ToBackendDeleteSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
 import { ToBackendGetSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-get-session';
 import { ToBackendGetSessionProviderModelsRequest } from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
+import { ToBackendGetSessionsListRequest } from '#common/interfaces/to-backend/sessions/to-backend-get-sessions-list';
+import { ToBackendPauseEditorSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-pause-editor-session';
+import { ToBackendSendMessageToSessionEditorRequest } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-editor';
+import { ToBackendSetSessionTitleRequest } from '#common/interfaces/to-backend/sessions/to-backend-set-session-title';
 import { ToBackendSpecialRebuildStructsRequest } from '#common/interfaces/to-backend/special/to-backend-special-rebuild-structs';
 import { ToBackendGetStructRequest } from '#common/interfaces/to-backend/structs/to-backend-get-struct';
 import { ToBackendGetSuggestFieldsRequest } from '#common/interfaces/to-backend/suggest-fields/to-backend-get-suggest-fields';
@@ -384,22 +384,22 @@ export const nameToClass = {
     ToBackendCreateSessionExplorerRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToExplorerAgent]:
     ToBackendSendUserMessageToExplorerAgentRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToEditorAgent]:
-    ToBackendSendUserMessageToEditorAgentRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionEditor]:
+    ToBackendSendMessageToSessionEditorRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDeleteSession]:
     ToBackendDeleteSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendArchiveSession]:
     ToBackendArchiveSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession]:
-    ToBackendPauseAgentSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendPauseEditorSession]:
+    ToBackendPauseEditorSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendCreateSessionSseTicket]:
     ToBackendCreateSessionSseTicketRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList]:
-    ToBackendGetAgentSessionsListRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGetSessionsList]:
+    ToBackendGetSessionsListRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetSession]:
     ToBackendGetSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle]:
-    ToBackendSetAgentSessionTitleRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSetSessionTitle]:
+    ToBackendSetSessionTitleRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetSessionProviderModels]:
     ToBackendGetSessionProviderModelsRequest,
   // user api key

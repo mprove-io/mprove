@@ -13,24 +13,24 @@ import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
-  ToBackendPauseAgentSessionRequest,
-  ToBackendPauseAgentSessionResponsePayload
-} from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
+  ToBackendPauseEditorSessionRequest,
+  ToBackendPauseEditorSessionResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-pause-editor-session';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class PauseAgentSessionController {
+export class PauseEditorSessionController {
   constructor(
     private sessionsService: SessionsService,
     private agentSandboxService: AgentSandboxService,
     private agentStreamOpencodeService: AgentStreamOpencodeService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession)
-  async pauseSession(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendPauseAgentSessionRequest = request.body;
+  @Post(ToBackendRequestInfoNameEnum.ToBackendPauseEditorSession)
+  async pauseEditorSession(@AttachUser() user: UserTab, @Req() request: any) {
+    let reqValid: ToBackendPauseEditorSessionRequest = request.body;
     let { sessionId } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
@@ -66,7 +66,7 @@ export class PauseAgentSessionController {
       session: freshSession
     });
 
-    let payload: ToBackendPauseAgentSessionResponsePayload = {
+    let payload: ToBackendPauseEditorSessionResponsePayload = {
       session: freshSessionApi
     };
 

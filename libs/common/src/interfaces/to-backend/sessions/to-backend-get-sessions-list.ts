@@ -10,7 +10,7 @@ import { SessionApi } from '#common/interfaces/backend/session-api';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
-export class ToBackendGetAgentSessionsListRequestPayload {
+export class ToBackendGetSessionsListRequestPayload {
   @IsString()
   projectId: string;
 
@@ -31,19 +31,19 @@ export class ToBackendGetAgentSessionsListRequestPayload {
   archivedLastCreatedTs?: number;
 }
 
-export class ToBackendGetAgentSessionsListRequest extends ToBackendRequest {
+export class ToBackendGetSessionsListRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendGetAgentSessionsListRequestPayload)
-  payload: ToBackendGetAgentSessionsListRequestPayload;
+  @Type(() => ToBackendGetSessionsListRequestPayload)
+  payload: ToBackendGetSessionsListRequestPayload;
 }
 
-export class ToBackendGetAgentSessionsListResponsePayload {
+export class ToBackendGetSessionsListResponsePayload {
   sessions: SessionApi[];
   hasMoreArchived?: boolean;
 }
 
-export class ToBackendGetAgentSessionsListResponse extends MyResponse {
+export class ToBackendGetSessionsListResponse extends MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendGetAgentSessionsListResponsePayload)
-  payload: ToBackendGetAgentSessionsListResponsePayload;
+  @Type(() => ToBackendGetSessionsListResponsePayload)
+  payload: ToBackendGetSessionsListResponsePayload;
 }

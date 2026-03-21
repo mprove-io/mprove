@@ -17,10 +17,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendSendUserMessageToEditorAgentRequest,
-  ToBackendSendUserMessageToEditorAgentResponse
-} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
-import {
   ToBackendCreateSessionEditorRequest,
   ToBackendCreateSessionEditorResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
@@ -32,6 +28,10 @@ import {
   ToBackendGetSessionRequest,
   ToBackendGetSessionResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-get-session';
+import {
+  ToBackendSendMessageToSessionEditorRequest,
+  ToBackendSendMessageToSessionEditorResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-editor';
 
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
@@ -168,9 +168,9 @@ test('1', async t => {
 
     console.log('[test] SSE connected, sending message...');
 
-    let sendMessageReq: ToBackendSendUserMessageToEditorAgentRequest = {
+    let sendMessageReq: ToBackendSendMessageToSessionEditorRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToEditorAgent,
+        name: ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionEditor,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -184,7 +184,7 @@ test('1', async t => {
       }
     };
 
-    await sendToBackend<ToBackendSendUserMessageToEditorAgentResponse>({
+    await sendToBackend<ToBackendSendMessageToSessionEditorResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: sendMessageReq,

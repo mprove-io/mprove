@@ -20,14 +20,14 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
-  ToBackendGetAgentSessionsListRequest,
-  ToBackendGetAgentSessionsListResponsePayload
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
+  ToBackendGetSessionsListRequest,
+  ToBackendGetSessionsListResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-get-sessions-list';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class GetAgentSessionsListController {
+export class GetSessionsListController {
   constructor(
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
@@ -36,9 +36,9 @@ export class GetAgentSessionsListController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList)
-  async getAgentSessionsList(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetAgentSessionsListRequest = request.body;
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetSessionsList)
+  async getSessionsList(@AttachUser() user: UserTab, @Req() request: any) {
+    let reqValid: ToBackendGetSessionsListRequest = request.body;
     let {
       projectId,
       currentSessionId,
@@ -85,7 +85,7 @@ export class GetAgentSessionsListController {
 
     let allEnts: SessionEnt[] = [...sessionEnts];
 
-    let payload: ToBackendGetAgentSessionsListResponsePayload = {
+    let payload: ToBackendGetSessionsListResponsePayload = {
       sessions: []
     };
 

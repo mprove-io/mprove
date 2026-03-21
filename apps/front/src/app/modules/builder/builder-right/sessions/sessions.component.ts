@@ -10,17 +10,17 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
-  ToBackendGetAgentSessionsListRequestPayload,
-  ToBackendGetAgentSessionsListResponse
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
-import {
-  ToBackendPauseAgentSessionRequestPayload,
-  ToBackendPauseAgentSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
-import {
   ToBackendArchiveSessionRequestPayload,
   ToBackendArchiveSessionResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-archive-session';
+import {
+  ToBackendGetSessionsListRequestPayload,
+  ToBackendGetSessionsListResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-get-sessions-list';
+import {
+  ToBackendPauseEditorSessionRequestPayload,
+  ToBackendPauseEditorSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-pause-editor-session';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -129,7 +129,7 @@ export class SessionsComponent implements OnInit {
     let currentSessionId =
       this.currentSession?.sessionId ?? this.sessionQuery.getValue()?.sessionId;
 
-    let payload: ToBackendGetAgentSessionsListRequestPayload = {
+    let payload: ToBackendGetSessionsListRequestPayload = {
       projectId: projectId,
       currentSessionId: currentSessionId
     };
@@ -140,12 +140,11 @@ export class SessionsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSessionsList,
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetAgentSessionsListResponse) => {
+        map((resp: ToBackendGetSessionsListResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let sessions = resp.payload.sessions;
 
@@ -210,18 +209,18 @@ export class SessionsComponent implements OnInit {
 
     let sessionId = session.sessionId;
 
-    let payload: ToBackendPauseAgentSessionRequestPayload = {
+    let payload: ToBackendPauseEditorSessionRequestPayload = {
       sessionId: sessionId
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPauseEditorSession,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        map((resp: ToBackendPauseAgentSessionResponse) => {
+        map((resp: ToBackendPauseEditorSessionResponse) => {
           let respSession = resp.payload.session;
 
           if (respSession.status === 'Archived') {
@@ -350,7 +349,7 @@ export class SessionsComponent implements OnInit {
       projectId = x;
     });
 
-    let payload: ToBackendGetAgentSessionsListRequestPayload = {
+    let payload: ToBackendGetSessionsListRequestPayload = {
       projectId: projectId,
       includeArchived: true,
       archivedLimit: 10,
@@ -363,12 +362,11 @@ export class SessionsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSessionsList,
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetAgentSessionsListResponse) => {
+        map((resp: ToBackendGetSessionsListResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let sessions = resp.payload.sessions;
 

@@ -11,22 +11,22 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendSetAgentSessionTitleRequest } from '#common/interfaces/to-backend/agent/to-backend-set-agent-session-title';
+import { ToBackendSetSessionTitleRequest } from '#common/interfaces/to-backend/sessions/to-backend-set-session-title';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class SetAgentSessionTitleController {
+export class SetSessionTitleController {
   constructor(
     private sessionsService: SessionsService,
     private agentOpencodeService: AgentOpencodeService,
     private agentStreamAiService: AgentStreamAiService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle)
-  async setAgentSessionTitle(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSetAgentSessionTitleRequest = request.body;
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSetSessionTitle)
+  async setSessionTitle(@AttachUser() user: UserTab, @Req() request: any) {
+    let reqValid: ToBackendSetSessionTitleRequest = request.body;
     let { sessionId, title } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
