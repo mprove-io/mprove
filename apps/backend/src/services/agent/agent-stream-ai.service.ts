@@ -14,6 +14,7 @@ import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages.js
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import {
+  CHANNEL_AI_INTERACT_REPLY,
   CHANNEL_AI_STREAM_COMMAND,
   KEY_AI_STREAM_OWNER
 } from '#common/constants/top-backend';
@@ -45,6 +46,18 @@ export class AgentStreamAiService implements OnModuleDestroy {
   private activeStreams = new Set<string>();
 
   private abortControllers = new Map<string, AbortController>();
+
+  private pendingInteracts = new Map<
+    string,
+    Array<{
+      provider: string;
+      modelId: string;
+      apiKey: string;
+      userMessage: string;
+      messageId: string;
+      partId: string;
+    }>
+  >();
 
   constructor(
     private cs: ConfigService<BackendConfig>,
@@ -102,6 +115,32 @@ export class AgentStreamAiService implements OnModuleDestroy {
             sessionId: sessionId,
             event: titleEvent
           });
+        } else if (command === AiStreamCommandEnum.Interact) {
+          let { replyTo, payload } = parsed;
+
+          console.log(
+            `[ai-stream] received interact for sessionId=${sessionId}`
+          );
+
+          let queue = this.pendingInteracts.get(sessionId);
+
+          if (!queue) {
+            queue = [];
+            this.pendingInteracts.set(sessionId, queue);
+          }
+
+          queue.push({
+            provider: payload.provider,
+            modelId: payload.modelId,
+            apiKey: payload.apiKey,
+            userMessage: payload.userMessage,
+            messageId: payload.messageId,
+            partId: payload.partId
+          });
+
+          this.redisClient
+            .publish(replyTo, JSON.stringify({ success: true }))
+            .catch(() => {});
         }
       } catch (e) {
         logToConsoleBackend({
@@ -119,10 +158,9 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
   // --- Locking ---
 
-  private async tryAcquireStreamLock(item: {
-    sessionId: string;
-  }): Promise<boolean> {
+  async tryAcquireStreamLock(item: { sessionId: string }): Promise<boolean> {
     let { sessionId } = item;
+
     let result = await this.redisClient.set(
       `${KEY_AI_STREAM_OWNER}:${sessionId}`,
       this.podId,
@@ -130,6 +168,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
       this.STREAM_LOCK_TTL_SECONDS,
       'NX'
     );
+
     return result === 'OK';
   }
 
@@ -204,7 +243,9 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
   // --- Pub/sub commands ---
 
-  async publishStopStream(item: { sessionId: string }): Promise<boolean> {
+  async publishStopSessionStream(item: {
+    sessionId: string;
+  }): Promise<boolean> {
     let key = `${KEY_AI_STREAM_OWNER}:${item.sessionId}`;
     let exists = await this.redisClient.exists(key);
 
@@ -221,6 +262,85 @@ export class AgentStreamAiService implements OnModuleDestroy {
     );
 
     return true;
+  }
+
+  async publishInteractCommand(item: {
+    sessionId: string;
+    provider: string;
+    modelId: string;
+    apiKey: string;
+    userMessage: string;
+    messageId: string;
+    partId: string;
+  }): Promise<{ success: boolean }> {
+    let correlationId = crypto.randomUUID();
+
+    let replyTo = `${CHANNEL_AI_INTERACT_REPLY}:${correlationId}`;
+
+    let sub = this.redisClient.duplicate();
+
+    await sub.subscribe(replyTo);
+
+    await this.redisClient.publish(
+      CHANNEL_AI_STREAM_COMMAND,
+      JSON.stringify({
+        command: AiStreamCommandEnum.Interact,
+        sessionId: item.sessionId,
+        replyTo: replyTo,
+        payload: {
+          provider: item.provider,
+          modelId: item.modelId,
+          apiKey: item.apiKey,
+          userMessage: item.userMessage,
+          messageId: item.messageId,
+          partId: item.partId
+        }
+      })
+    );
+
+    let timeoutMs = 30_000;
+
+    return new Promise<{ success: boolean }>((resolve, reject) => {
+      let timer = setTimeout(() => {
+        sub.quit();
+        reject(
+          new ServerError({
+            message: ErEnum.BACKEND_AGENT_INTERACT_TIMEOUT,
+            customData: { sessionId: item.sessionId, timeoutMs: timeoutMs }
+          })
+        );
+      }, timeoutMs);
+
+      sub.on('message', (_channel: string, rawMessage: string) => {
+        clearTimeout(timer);
+        sub.quit();
+
+        try {
+          let result = JSON.parse(rawMessage);
+
+          if (result.success) {
+            resolve(result);
+          } else {
+            reject(
+              new ServerError({
+                message: ErEnum.BACKEND_AGENT_INTERACT_FAILED,
+                customData: {
+                  sessionId: item.sessionId,
+                  error: result.error
+                }
+              })
+            );
+          }
+        } catch {
+          reject(
+            new ServerError({
+              message: ErEnum.BACKEND_AGENT_INTERACT_FAILED,
+              customData: { sessionId: item.sessionId }
+            })
+          );
+        }
+      });
+    });
   }
 
   async setTitle(item: { sessionId: string; title: string }): Promise<void> {
@@ -288,95 +408,126 @@ export class AgentStreamAiService implements OnModuleDestroy {
     userMessage: string;
     messageId: string;
     partId: string;
+    isLockAcquired: boolean;
   }): Promise<void> {
-    let {
-      sessionId,
-      provider,
-      modelId,
-      apiKey,
-      userMessage,
-      messageId,
-      partId
-    } = item;
+    let { sessionId, isLockAcquired } = item;
 
-    // Acquire lock
-    let acquired = await this.waitForStreamLock({ sessionId: sessionId });
-    if (!acquired) {
-      logToConsoleBackend({
-        log: new ServerError({
-          message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
-          originalError: new Error(
-            `Failed to acquire stream lock for session ${sessionId}`
-          )
-        }),
-        logLevel: LogLevelEnum.Error,
-        logger: this.logger,
-        cs: this.cs
-      });
-      return;
+    if (isLockAcquired === false) {
+      // Acquire lock
+      let isAcquired = await this.waitForStreamLock({ sessionId: sessionId });
+
+      if (isAcquired === false) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
+            originalError: new Error(
+              `Failed to acquire stream lock for session ${sessionId}`
+            )
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+
+        return;
+      }
     }
 
-    let abortController = new AbortController();
     this.activeStreams.add(sessionId);
-    this.abortControllers.set(sessionId, abortController);
 
-    try {
-      await this.agentDrainService.initEventCounter({ sessionId: sessionId });
+    let currentParams = {
+      provider: item.provider,
+      modelId: item.modelId,
+      apiKey: item.apiKey,
+      userMessage: item.userMessage,
+      messageId: item.messageId,
+      partId: item.partId
+    };
 
-      await this.runProducer({
-        sessionId: sessionId,
-        provider: provider,
-        modelId: modelId,
-        apiKey: apiKey,
-        userMessage: userMessage,
-        abortController: abortController,
-        messageId: messageId,
-        partId: partId
-      });
-    } catch (e: any) {
-      logToConsoleBackend({
-        log: new ServerError({
-          message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
-          originalError: e
-        }),
-        logLevel: LogLevelEnum.Error,
-        logger: this.logger,
-        cs: this.cs
+    while (true) {
+      let abortController = new AbortController();
+
+      this.abortControllers.set(sessionId, abortController);
+
+      try {
+        await this.agentDrainService.initEventCounter({
+          sessionId: sessionId
+        });
+
+        await this.runProducer({
+          sessionId: sessionId,
+          provider: currentParams.provider,
+          modelId: currentParams.modelId,
+          apiKey: currentParams.apiKey,
+          userMessage: currentParams.userMessage,
+          abortController: abortController,
+          messageId: currentParams.messageId,
+          partId: currentParams.partId
+        });
+      } catch (e: any) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+
+        // Emit error + idle
+        let errorEvent = {
+          type: 'session.error',
+          properties: {
+            error: { message: e?.message || 'AI SDK streaming failed' }
+          }
+        } as unknown as Event;
+        this.agentDrainService.enqueue({
+          sessionId: sessionId,
+          event: errorEvent
+        });
+
+        let idleEvent: Event = {
+          type: 'session.status',
+          properties: { status: { type: 'idle' } }
+        } as Event;
+        this.agentDrainService.enqueue({
+          sessionId: sessionId,
+          event: idleEvent
+        });
+      }
+
+      // Wait for drain to flush all events before checking queue
+      await new Promise<void>(resolve => {
+        this.agentDrainService.markDoneProducing({
+          sessionId: sessionId,
+          callback: () => resolve()
+        });
       });
 
-      // Emit error + idle
-      let errorEvent = {
-        type: 'session.error',
-        properties: {
-          error: { message: e?.message || 'AI SDK streaming failed' }
-        }
-      } as unknown as Event;
-      this.agentDrainService.enqueue({
-        sessionId: sessionId,
-        event: errorEvent
-      });
+      // Check for queued interact
+      let queue = this.pendingInteracts.get(sessionId);
+      let nextInteract = queue?.shift();
 
-      let idleEvent: Event = {
-        type: 'session.status',
-        properties: { status: { type: 'idle' } }
-      } as Event;
-      this.agentDrainService.enqueue({
-        sessionId: sessionId,
-        event: idleEvent
-      });
+      if (!nextInteract) {
+        this.pendingInteracts.delete(sessionId);
+        break;
+      }
+
+      currentParams = {
+        provider: nextInteract.provider,
+        modelId: nextInteract.modelId,
+        apiKey: nextInteract.apiKey,
+        userMessage: nextInteract.userMessage,
+        messageId: nextInteract.messageId,
+        partId: nextInteract.partId
+      };
     }
 
-    // Let the drain timer flush remaining events, then cleanup + release lock
-    await new Promise<void>(resolve => {
-      this.agentDrainService.markDoneProducing({
-        sessionId: sessionId,
-        callback: () => {
-          this.activeStreams.delete(sessionId);
-          this.abortControllers.delete(sessionId);
-          this.releaseStreamLock({ sessionId: sessionId }).then(resolve);
-        }
-      });
-    });
+    // Cleanup + release lock
+    this.activeStreams.delete(sessionId);
+    this.abortControllers.delete(sessionId);
+    await this.releaseStreamLock({ sessionId: sessionId });
   }
 
   // --- Producer ---

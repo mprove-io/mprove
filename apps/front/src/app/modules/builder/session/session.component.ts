@@ -24,9 +24,13 @@ import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
-  ToBackendSendUserMessageToAgentRequestPayload,
-  ToBackendSendUserMessageToAgentResponse
-} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
+  ToBackendSendUserMessageToEditorAgentRequestPayload,
+  ToBackendSendUserMessageToEditorAgentResponse
+} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
+import {
+  ToBackendSendUserMessageToExplorerAgentRequestPayload,
+  ToBackendSendUserMessageToExplorerAgentResponse
+} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-explorer-agent';
 import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
@@ -200,188 +204,6 @@ export class SessionComponent implements OnInit, OnDestroy {
     let time = (lastMessage.ocMessage as { time?: { completed?: number } })
       ?.time;
     return typeof time?.completed === 'number';
-  }
-
-  makeRetryMessage(ocSessionStatus: SessionStatus): string {
-    if (ocSessionStatus?.type === 'retry') {
-      return `Retrying (attempt ${ocSessionStatus.attempt}): ${ocSessionStatus.message}`;
-    }
-    return undefined;
-  }
-
-  sendFollowUp(text: string) {
-    if (!this.session) {
-      return;
-    }
-
-    this.userSentMessage = true;
-
-    let { messageId, partId } = this.agentSessionService.optimisticAdd({
-      sessionId: this.session.sessionId,
-      ocSessionId: this.session.opencodeSessionId || '',
-      agent: this.agent,
-      model: this.model,
-      text: text,
-      variant: this.variant
-    });
-
-    // Rebuild chat messages and turns
-    let updatedData = this.sessionBundleQuery.getValue();
-    this.messages = this.agentMessagesService.buildMessagesFromStores({
-      storeMessages: updatedData.messages,
-      storeParts: updatedData.parts,
-      session: this.session,
-      model: this.model,
-      agent: this.agent,
-      variant: this.variant
-    });
-
-    this.turns = this.agentMessagesService.buildTurns({
-      messages: this.messages
-    });
-
-    this.isAgentBusy = true;
-    this.isWorking = true;
-    this.uiQuery.updatePart({ isOptimisticLoading: true });
-
-    this.updateWorkingSpinner();
-
-    this.scrollTrigger++;
-    this.sessionMessages?.scrollToBottom();
-
-    this.cd.detectChanges();
-
-    this.sendInteraction({
-      sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Message,
-      message: text,
-      model: this.model,
-      variant: this.variant,
-      agent: this.agent,
-      messageId: messageId,
-      partId: partId
-    });
-  }
-
-  stopSession() {
-    if (!this.session) {
-      return;
-    }
-
-    this.isAborting = true;
-    this.isWorking = false;
-    this.uiQuery.updatePart({ isOptimisticLoading: false });
-    this.cd.detectChanges();
-
-    this.sessionMessages?.scrollToBottom();
-
-    this.sendInteraction({
-      sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Stop
-    });
-  }
-
-  respondToPermission(event: { permissionId: string; reply: string }) {
-    if (!this.session) {
-      return;
-    }
-
-    // Optimistic: remove permission from store
-    let currentState = this.sessionBundleQuery.getValue();
-    this.sessionBundleQuery.updatePart({
-      permissions: currentState.permissions.filter(
-        p => p.id !== event.permissionId
-      )
-    });
-
-    this.sessionMessages?.scrollToBottom();
-
-    this.sendInteraction({
-      sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Permission,
-      permissionId: event.permissionId,
-      reply: event.reply
-    });
-  }
-
-  respondToQuestion(event: { questionId: string; answers: string[][] }) {
-    if (!this.session) {
-      return;
-    }
-
-    // Optimistic: remove question from store
-    let currentState = this.sessionBundleQuery.getValue();
-    this.sessionBundleQuery.updatePart({
-      questions: currentState.questions.filter(q => q.id !== event.questionId)
-    });
-
-    this.sessionMessages?.scrollToBottom();
-
-    this.sendInteraction({
-      sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Question,
-      questionId: event.questionId,
-      answers: event.answers
-    });
-  }
-
-  rejectQuestion(event: { questionId: string }) {
-    if (!this.session) {
-      return;
-    }
-
-    // Optimistic: remove question from store
-    let currentState = this.sessionBundleQuery.getValue();
-    this.sessionBundleQuery.updatePart({
-      questions: currentState.questions.filter(q => q.id !== event.questionId)
-    });
-
-    this.sessionMessages?.scrollToBottom();
-
-    this.sendInteraction({
-      sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Question,
-      questionId: event.questionId
-    });
-  }
-
-  sendInteraction(payload: ToBackendSendUserMessageToAgentRequestPayload) {
-    this.apiService
-      .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: ToBackendSendUserMessageToAgentResponse) => {
-          let session = resp?.payload?.session;
-
-          if (session.sessionId === this.session?.sessionId) {
-            this.sessionQuery.update(session);
-
-            let sessions = this.sessionsQuery.getValue().sessions;
-
-            this.sessionsQuery.updatePart({
-              sessions: sessions.map(x =>
-                x.sessionId === session.sessionId ? session : x
-              )
-            });
-          }
-        }),
-        take(1)
-      )
-      .subscribe({
-        error: () => {
-          this.agentSessionService.optimisticRemove({
-            messageId: payload.messageId
-          });
-          this.isAgentBusy = false;
-          this.isWorking = false;
-          this.uiQuery.updatePart({ isOptimisticLoading: false });
-          this.updateWorkingSpinner();
-          this.cd.detectChanges();
-        }
-      });
   }
 
   enterSession(sessionData: SessionBundleState) {
@@ -587,5 +409,262 @@ export class SessionComponent implements OnInit, OnDestroy {
     if (shouldScroll) {
       this.scrollTrigger++;
     }
+  }
+
+  makeRetryMessage(ocSessionStatus: SessionStatus): string {
+    if (ocSessionStatus?.type === 'retry') {
+      return `Retrying (attempt ${ocSessionStatus.attempt}): ${ocSessionStatus.message}`;
+    }
+    return undefined;
+  }
+
+  stopSession() {
+    if (!this.session) {
+      return;
+    }
+
+    this.isAborting = true;
+    this.isWorking = false;
+    this.uiQuery.updatePart({ isOptimisticLoading: false });
+    this.cd.detectChanges();
+
+    this.sessionMessages?.scrollToBottom();
+
+    this.sendInteraction({
+      sessionId: this.session.sessionId,
+      interactionType: InteractionTypeEnum.Stop
+    });
+  }
+
+  respondToPermission(event: { permissionId: string; reply: string }) {
+    if (!this.session) {
+      return;
+    }
+
+    // Optimistic: remove permission from store
+    let currentState = this.sessionBundleQuery.getValue();
+    this.sessionBundleQuery.updatePart({
+      permissions: currentState.permissions.filter(
+        p => p.id !== event.permissionId
+      )
+    });
+
+    this.sessionMessages?.scrollToBottom();
+
+    this.sendInteraction({
+      sessionId: this.session.sessionId,
+      interactionType: InteractionTypeEnum.Permission,
+      permissionId: event.permissionId,
+      reply: event.reply
+    });
+  }
+
+  respondToQuestion(event: { questionId: string; answers: string[][] }) {
+    if (!this.session) {
+      return;
+    }
+
+    // Optimistic: remove question from store
+    let currentState = this.sessionBundleQuery.getValue();
+    this.sessionBundleQuery.updatePart({
+      questions: currentState.questions.filter(q => q.id !== event.questionId)
+    });
+
+    this.sessionMessages?.scrollToBottom();
+
+    this.sendInteraction({
+      sessionId: this.session.sessionId,
+      interactionType: InteractionTypeEnum.Question,
+      questionId: event.questionId,
+      answers: event.answers
+    });
+  }
+
+  rejectQuestion(event: { questionId: string }) {
+    if (!this.session) {
+      return;
+    }
+
+    // Optimistic: remove question from store
+    let currentState = this.sessionBundleQuery.getValue();
+    this.sessionBundleQuery.updatePart({
+      questions: currentState.questions.filter(q => q.id !== event.questionId)
+    });
+
+    this.sessionMessages?.scrollToBottom();
+
+    this.sendInteraction({
+      sessionId: this.session.sessionId,
+      interactionType: InteractionTypeEnum.Question,
+      questionId: event.questionId
+    });
+  }
+
+  sendFollowUp(text: string) {
+    if (!this.session) {
+      return;
+    }
+
+    this.userSentMessage = true;
+
+    let { messageId, partId } = this.agentSessionService.optimisticAdd({
+      sessionId: this.session.sessionId,
+      ocSessionId: this.session.opencodeSessionId || '',
+      agent: this.agent,
+      model: this.model,
+      text: text,
+      variant: this.variant
+    });
+
+    // Rebuild chat messages and turns
+    let updatedData = this.sessionBundleQuery.getValue();
+    this.messages = this.agentMessagesService.buildMessagesFromStores({
+      storeMessages: updatedData.messages,
+      storeParts: updatedData.parts,
+      session: this.session,
+      model: this.model,
+      agent: this.agent,
+      variant: this.variant
+    });
+
+    this.turns = this.agentMessagesService.buildTurns({
+      messages: this.messages
+    });
+
+    this.isAgentBusy = true;
+    this.isWorking = true;
+    this.uiQuery.updatePart({ isOptimisticLoading: true });
+
+    this.updateWorkingSpinner();
+
+    this.scrollTrigger++;
+    this.sessionMessages?.scrollToBottom();
+
+    this.cd.detectChanges();
+
+    this.sendInteraction({
+      sessionId: this.session.sessionId,
+      interactionType: InteractionTypeEnum.Message,
+      message: text,
+      model: this.model,
+      variant: this.variant,
+      agent: this.agent,
+      messageId: messageId,
+      partId: partId
+    });
+  }
+
+  sendInteraction(item: {
+    sessionId: string;
+    interactionType: InteractionTypeEnum;
+    messageId?: string;
+    partId?: string;
+    message?: string;
+    model?: string;
+    variant?: string;
+    agent?: string;
+    permissionId?: string;
+    reply?: string;
+    questionId?: string;
+    answers?: string[][];
+  }) {
+    let isExplorer = this.session.type === SessionTypeEnum.Explorer;
+
+    if (isExplorer) {
+      let explorerPayload: ToBackendSendUserMessageToExplorerAgentRequestPayload =
+        {
+          sessionId: item.sessionId,
+          interactionType: item.interactionType,
+          messageId: item.messageId,
+          partId: item.partId,
+          message: item.message,
+          model: item.model,
+          variant: item.variant
+        };
+
+      this.apiService
+        .req({
+          pathInfoName:
+            ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToExplorerAgent,
+          payload: explorerPayload
+        })
+        .pipe(
+          tap((resp: ToBackendSendUserMessageToExplorerAgentResponse) => {
+            this.processSendInteractionResponse({ resp: resp });
+          }),
+          take(1)
+        )
+        .subscribe({
+          error: () => {
+            this.handleSendInteractionError({ messageId: item.messageId });
+          }
+        });
+    } else {
+      let editorPayload: ToBackendSendUserMessageToEditorAgentRequestPayload = {
+        sessionId: item.sessionId,
+        interactionType: item.interactionType,
+        messageId: item.messageId,
+        partId: item.partId,
+        message: item.message,
+        model: item.model,
+        variant: item.variant,
+        agent: item.agent,
+        permissionId: item.permissionId,
+        reply: item.reply,
+        questionId: item.questionId,
+        answers: item.answers
+      };
+
+      this.apiService
+        .req({
+          pathInfoName:
+            ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToEditorAgent,
+          payload: editorPayload
+        })
+        .pipe(
+          tap((resp: ToBackendSendUserMessageToEditorAgentResponse) => {
+            this.processSendInteractionResponse({ resp: resp });
+          }),
+          take(1)
+        )
+        .subscribe({
+          error: () => {
+            this.handleSendInteractionError({ messageId: item.messageId });
+          }
+        });
+    }
+  }
+
+  processSendInteractionResponse(item: {
+    resp:
+      | ToBackendSendUserMessageToExplorerAgentResponse
+      | ToBackendSendUserMessageToEditorAgentResponse;
+  }) {
+    let { resp } = item;
+    let session = resp?.payload?.session;
+
+    if (session.sessionId === this.session?.sessionId) {
+      this.sessionQuery.update(session);
+
+      let sessions = this.sessionsQuery.getValue().sessions;
+
+      this.sessionsQuery.updatePart({
+        sessions: sessions.map(x =>
+          x.sessionId === session.sessionId ? session : x
+        )
+      });
+    }
+  }
+
+  handleSendInteractionError(item: { messageId: string }) {
+    let { messageId } = item;
+    this.agentSessionService.optimisticRemove({
+      messageId: messageId
+    });
+    this.isAgentBusy = false;
+    this.isWorking = false;
+    this.uiQuery.updatePart({ isOptimisticLoading: false });
+    this.updateWorkingSpinner();
+    this.cd.detectChanges();
   }
 }

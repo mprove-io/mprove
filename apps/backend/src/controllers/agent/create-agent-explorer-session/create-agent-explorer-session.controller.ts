@@ -175,7 +175,8 @@ export class CreateAgentExplorerSessionController {
           apiKey: apiKey,
           userMessage: firstMessage,
           messageId: messageId,
-          partId: partId
+          partId: partId,
+          isLockAcquired: false
         })
         .catch(e => {
           logToConsoleBackend({

@@ -8,7 +8,8 @@ import { GetAgentProviderModelsController } from './controllers/agent/get-agent-
 import { GetAgentSessionController } from './controllers/agent/get-agent-session/get-agent-session.controller';
 import { GetAgentSessionsListController } from './controllers/agent/get-agent-sessions-list/get-agent-sessions-list.controller';
 import { PauseAgentSessionController } from './controllers/agent/pause-agent-session/pause-agent-session.controller';
-import { SendUserMessageToAgentController } from './controllers/agent/send-user-message-to-agent/send-user-message-to-agent.controller';
+import { SendUserMessageToEditorAgentController } from './controllers/agent/send-user-message-to-editor-agent/send-user-message-to-editor-agent.controller';
+import { SendUserMessageToExplorerAgentController } from './controllers/agent/send-user-message-to-explorer-agent/send-user-message-to-explorer-agent.controller';
 import { SetAgentSessionTitleController } from './controllers/agent/set-agent-session-title/set-agent-session-title.controller';
 import { GetAvatarBigController } from './controllers/avatars/get-avatar-big/get-avatar-big.controller';
 import { SetAvatarController } from './controllers/avatars/set-avatar/set-avatar.controller';
@@ -136,7 +137,8 @@ export const appControllers = [
   CreateAgentEditorSessionController,
   CreateAgentExplorerSessionController,
   CreateAgentSseTicketController,
-  SendUserMessageToAgentController,
+  SendUserMessageToExplorerAgentController,
+  SendUserMessageToEditorAgentController,
   GetAgentEventsSseController,
   DeleteAgentSessionController,
   ArchiveAgentSessionController,

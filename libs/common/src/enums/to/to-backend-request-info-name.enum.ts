@@ -152,7 +152,8 @@ export enum ToBackendRequestInfoNameEnum {
   // agent
   ToBackendCreateAgentEditorSession = 'api/ToBackendCreateAgentEditorSession',
   ToBackendCreateAgentExplorerSession = 'api/ToBackendCreateAgentExplorerSession',
-  ToBackendSendUserMessageToAgent = 'api/ToBackendSendUserMessageToAgent',
+  ToBackendSendUserMessageToExplorerAgent = 'api/ToBackendSendUserMessageToExplorerAgent',
+  ToBackendSendUserMessageToEditorAgent = 'api/ToBackendSendUserMessageToEditorAgent',
   ToBackendDeleteAgentSession = 'api/ToBackendDeleteAgentSession',
   ToBackendArchiveAgentSession = 'api/ToBackendArchiveAgentSession',
   ToBackendPauseAgentSession = 'api/ToBackendPauseAgentSession',

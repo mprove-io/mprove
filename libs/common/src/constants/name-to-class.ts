@@ -8,7 +8,8 @@ import { ToBackendGetAgentProviderModelsRequest } from '#common/interfaces/to-ba
 import { ToBackendGetAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
 import { ToBackendGetAgentSessionsListRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
 import { ToBackendPauseAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
-import { ToBackendSendUserMessageToAgentRequest } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
+import { ToBackendSendUserMessageToEditorAgentRequest } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
+import { ToBackendSendUserMessageToExplorerAgentRequest } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-explorer-agent';
 import { ToBackendSetAgentSessionTitleRequest } from '#common/interfaces/to-backend/agent/to-backend-set-agent-session-title';
 import { ToBackendGetAvatarBigRequest } from '#common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
 import { ToBackendSetAvatarRequest } from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
@@ -381,8 +382,10 @@ export const nameToClass = {
     ToBackendCreateAgentEditorSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendCreateAgentExplorerSession]:
     ToBackendCreateAgentExplorerSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent]:
-    ToBackendSendUserMessageToAgentRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToExplorerAgent]:
+    ToBackendSendUserMessageToExplorerAgentRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToEditorAgent]:
+    ToBackendSendUserMessageToEditorAgentRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession]:
     ToBackendDeleteAgentSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendArchiveAgentSession]:

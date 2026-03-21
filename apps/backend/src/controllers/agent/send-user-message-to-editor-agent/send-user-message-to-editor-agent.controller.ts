@@ -19,7 +19,6 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentOpencodeService } from '#backend/services/agent/agent-opencode.service';
 import { AgentSandboxService } from '#backend/services/agent/agent-sandbox.service.js';
-import { AgentStreamAiService } from '#backend/services/agent/agent-stream-ai.service';
 import { AgentStreamOpencodeService } from '#backend/services/agent/agent-stream-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
@@ -32,21 +31,19 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { splitModel } from '#common/functions/split-model';
 import {
-  ToBackendSendUserMessageToAgentRequest,
-  ToBackendSendUserMessageToAgentResponsePayload
-} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
+  ToBackendSendUserMessageToEditorAgentRequest,
+  ToBackendSendUserMessageToEditorAgentResponsePayload
+} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class SendUserMessageToAgentController {
+export class SendUserMessageToEditorAgentController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private agentStreamAiService: AgentStreamAiService,
     private agentStreamOpencodeService: AgentStreamOpencodeService,
     private agentOpencodeService: AgentOpencodeService,
     private agentSandboxService: AgentSandboxService,
@@ -55,9 +52,12 @@ export class SendUserMessageToAgentController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent)
-  async sendUserMessage(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSendUserMessageToAgentRequest = request.body;
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToEditorAgent)
+  async sendUserMessageToEditorAgent(
+    @AttachUser() user: UserTab,
+    @Req() request: any
+  ) {
+    let reqValid: ToBackendSendUserMessageToEditorAgentRequest = request.body;
     let {
       sessionId,
       interactionType,
@@ -74,7 +74,7 @@ export class SendUserMessageToAgentController {
     } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId
+      sessionId: sessionId
     });
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -84,6 +84,12 @@ export class SendUserMessageToAgentController {
     if (session.userId !== user.userId) {
       throw new ServerError({
         message: ErEnum.BACKEND_UNAUTHORIZED
+      });
+    }
+
+    if (session.type !== SessionTypeEnum.Editor) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_SESSION_TYPE_IS_NOT_EDITOR
       });
     }
 
@@ -105,83 +111,6 @@ export class SendUserMessageToAgentController {
       });
     }
 
-    // Explorer: direct AI SDK, no sandbox
-    if (session.type === SessionTypeEnum.Explorer) {
-      if (interactionType === InteractionTypeEnum.Message) {
-        let split = splitModel(model);
-        let modelProvider = split ? split.providerID : session.provider;
-        let modelId = split ? split.modelID : model;
-
-        let apiKey = '';
-        if (modelProvider === 'openai') {
-          apiKey = project.openaiApiKey || '';
-        } else if (modelProvider === 'anthropic') {
-          apiKey = project.anthropicApiKey || '';
-        }
-
-        session = {
-          ...session,
-          model: model,
-          lastMessageProviderModel: model,
-          lastMessageVariant: variant,
-          lastActivityTs: Date.now()
-        };
-
-        await retry(
-          async () =>
-            await this.db.drizzle.transaction(
-              async tx =>
-                await this.db.packer.write({
-                  tx: tx,
-                  insertOrUpdate: {
-                    sessions: [session]
-                  }
-                })
-            ),
-          getRetryOption(this.cs, this.logger)
-        );
-
-        // Fire-and-forget streaming
-        this.agentStreamAiService
-          .streamMessage({
-            sessionId: session.sessionId,
-            provider: modelProvider,
-            modelId: modelId,
-            apiKey: apiKey,
-            userMessage: message,
-            messageId: messageId,
-            partId: partId
-          })
-          .catch(() => {});
-      } else if (interactionType === InteractionTypeEnum.Stop) {
-        let isLockExist = await this.agentStreamAiService.publishStopStream({
-          sessionId: session.sessionId
-        });
-
-        if (isLockExist) {
-          await this.agentStreamAiService.waitForStreamLockRelease({
-            sessionId: session.sessionId
-          });
-        }
-      }
-
-      let ocSession = await this.sessionsService.getOcSessionBySessionId({
-        sessionId: session.sessionId
-      });
-
-      let sessionApi = this.sessionsService.tabToSessionApi({
-        session: session,
-        ocSession: ocSession
-      });
-
-      let payload: ToBackendSendUserMessageToAgentResponsePayload = {
-        session: sessionApi
-      };
-
-      return payload;
-    }
-
-    // Editor: sandboxed opencode flow
     let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
       sandboxId: session.sandboxId,
       e2bApiKey: project.e2bApiKey
@@ -353,11 +282,11 @@ export class SendUserMessageToAgentController {
     });
 
     let sessionApi = this.sessionsService.tabToSessionApi({
-      session,
-      ocSession
+      session: session,
+      ocSession: ocSession
     });
 
-    let payload: ToBackendSendUserMessageToAgentResponsePayload = {
+    let payload: ToBackendSendUserMessageToEditorAgentResponsePayload = {
       session: sessionApi
     };
 

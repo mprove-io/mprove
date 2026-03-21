@@ -11,7 +11,7 @@ import type { SessionApi } from '#common/interfaces/backend/session-api';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
-export class ToBackendSendUserMessageToAgentRequestPayload {
+export class ToBackendSendUserMessageToEditorAgentRequestPayload {
   @IsString()
   sessionId: string;
 
@@ -59,16 +59,16 @@ export class ToBackendSendUserMessageToAgentRequestPayload {
   answers?: string[][];
 }
 
-export class ToBackendSendUserMessageToAgentRequest extends ToBackendRequest {
+export class ToBackendSendUserMessageToEditorAgentRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendSendUserMessageToAgentRequestPayload)
-  payload: ToBackendSendUserMessageToAgentRequestPayload;
+  @Type(() => ToBackendSendUserMessageToEditorAgentRequestPayload)
+  payload: ToBackendSendUserMessageToEditorAgentRequestPayload;
 }
 
-export interface ToBackendSendUserMessageToAgentResponsePayload {
+export interface ToBackendSendUserMessageToEditorAgentResponsePayload {
   session: SessionApi;
 }
 
-export class ToBackendSendUserMessageToAgentResponse extends MyResponse {
-  payload: ToBackendSendUserMessageToAgentResponsePayload;
+export class ToBackendSendUserMessageToEditorAgentResponse extends MyResponse {
+  payload: ToBackendSendUserMessageToEditorAgentResponsePayload;
 }

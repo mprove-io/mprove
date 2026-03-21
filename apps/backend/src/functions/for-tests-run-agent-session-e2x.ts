@@ -28,9 +28,9 @@ import {
   ToBackendDeleteAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
 import {
-  ToBackendSendUserMessageToAgentRequest,
-  ToBackendSendUserMessageToAgentResponse
-} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
+  ToBackendSendUserMessageToEditorAgentRequest,
+  ToBackendSendUserMessageToEditorAgentResponse
+} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
 
 export async function forTestsRunAgentSessionE2x(item: {
   t: ExecutionContext;
@@ -65,8 +65,8 @@ export async function forTestsRunAgentSessionE2x(item: {
   let sse: { events: AgentEvent[]; close: () => void } | undefined;
   let testError: unknown;
   let createSessionResp: ToBackendCreateAgentEditorSessionResponse;
-  let sendFirstMessageResp: ToBackendSendUserMessageToAgentResponse;
-  let sendMessageResp: ToBackendSendUserMessageToAgentResponse;
+  let sendFirstMessageResp: ToBackendSendUserMessageToEditorAgentResponse;
+  let sendMessageResp: ToBackendSendUserMessageToEditorAgentResponse;
 
   try {
     console.log('[test] preparing test and seeding...');
@@ -192,9 +192,9 @@ export async function forTestsRunAgentSessionE2x(item: {
     console.log('[test] SSE connected, sending 1st message...');
 
     // Send 1st message (after SSE is connected)
-    let sendFirstMessageReq: ToBackendSendUserMessageToAgentRequest = {
+    let sendFirstMessageReq: ToBackendSendUserMessageToEditorAgentRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
+        name: ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToEditorAgent,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -209,7 +209,7 @@ export async function forTestsRunAgentSessionE2x(item: {
     };
 
     sendFirstMessageResp =
-      await sendToBackend<ToBackendSendUserMessageToAgentResponse>({
+      await sendToBackend<ToBackendSendUserMessageToEditorAgentResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: sendFirstMessageReq,
@@ -230,9 +230,9 @@ export async function forTestsRunAgentSessionE2x(item: {
     );
 
     // Send 2nd message
-    let sendMessageReq: ToBackendSendUserMessageToAgentRequest = {
+    let sendMessageReq: ToBackendSendUserMessageToEditorAgentRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
+        name: ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToEditorAgent,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -247,7 +247,7 @@ export async function forTestsRunAgentSessionE2x(item: {
     };
 
     sendMessageResp =
-      await sendToBackend<ToBackendSendUserMessageToAgentResponse>({
+      await sendToBackend<ToBackendSendUserMessageToEditorAgentResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: sendMessageReq,

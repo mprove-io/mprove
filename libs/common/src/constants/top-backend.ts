@@ -16,6 +16,7 @@ export const CHANNEL_OPENCODE_STREAM_COMMAND = 'opencode-stream-command';
 export const CHANNEL_OPENCODE_INTERACT_REPLY = 'opencode-interact-reply';
 export const CHANNEL_OPENCODE_FETCH_REPLY = 'opencode-fetch-reply';
 export const CHANNEL_AI_STREAM_COMMAND = 'ai-stream-command';
+export const CHANNEL_AI_INTERACT_REPLY = 'ai-interact-reply';
 
 export const KEY_SSE_TICKET = 'sse-ticket';
 export const KEY_OPENCODE_STREAM_OWNER = 'opencode-stream-owner';

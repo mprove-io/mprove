@@ -187,7 +187,7 @@ export class DeleteAgentSessionController {
     setTimeout(() => {
       if (session.type === SessionTypeEnum.Explorer) {
         this.agentStreamAiService
-          .publishStopStream({
+          .publishStopSessionStream({
             sessionId: sessionId
           })
           .catch(e => {

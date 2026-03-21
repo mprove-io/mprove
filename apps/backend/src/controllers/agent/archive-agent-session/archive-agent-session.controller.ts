@@ -109,7 +109,7 @@ export class ArchiveAgentSessionController {
     setTimeout(() => {
       if (session.type === SessionTypeEnum.Explorer) {
         this.agentStreamAiService
-          .publishStopStream({
+          .publishStopSessionStream({
             sessionId: sessionId
           })
           .catch(e => {
