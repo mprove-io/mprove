@@ -156,91 +156,6 @@ export class AgentStreamAiService implements OnModuleDestroy {
     });
   }
 
-  // --- Locking ---
-
-  async tryAcquireStreamLock(item: { sessionId: string }): Promise<boolean> {
-    let { sessionId } = item;
-
-    let result = await this.redisClient.set(
-      `${KEY_AI_STREAM_OWNER}:${sessionId}`,
-      this.podId,
-      'EX',
-      this.STREAM_LOCK_TTL_SECONDS,
-      'NX'
-    );
-
-    return result === 'OK';
-  }
-
-  private async refreshStreamLock(item: {
-    sessionId: string;
-  }): Promise<boolean> {
-    let { sessionId } = item;
-    let result = await this.redisClient.eval(
-      `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${this.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
-      1,
-      `${KEY_AI_STREAM_OWNER}:${sessionId}`,
-      this.podId
-    );
-    return result !== 0;
-  }
-
-  private async releaseStreamLock(item: { sessionId: string }): Promise<void> {
-    let { sessionId } = item;
-    await this.redisClient.eval(
-      `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end`,
-      1,
-      `${KEY_AI_STREAM_OWNER}:${sessionId}`,
-      this.podId
-    );
-  }
-
-  private async waitForStreamLock(item: {
-    sessionId: string;
-  }): Promise<boolean> {
-    let { sessionId } = item;
-    let startTs = Date.now();
-
-    while (true) {
-      let acquired = await this.tryAcquireStreamLock({ sessionId: sessionId });
-      if (acquired) {
-        return true;
-      }
-
-      let elapsed = Date.now() - startTs;
-      if (elapsed >= this.STREAM_LOCK_WAIT_TIMEOUT_MS) {
-        return false;
-      }
-
-      await new Promise(r => setTimeout(r, this.STREAM_LOCK_POLL_MS));
-    }
-  }
-
-  async waitForStreamLockRelease(item: { sessionId: string }): Promise<void> {
-    let key = `${KEY_AI_STREAM_OWNER}:${item.sessionId}`;
-    let startTs = Date.now();
-
-    while (true) {
-      let exists = await this.redisClient.exists(key);
-
-      if (exists === 0) {
-        return;
-      }
-
-      let elapsed = Date.now() - startTs;
-      let isTimedOut = elapsed >= this.STREAM_LOCK_WAIT_TIMEOUT_MS;
-
-      if (isTimedOut) {
-        console.log(
-          `[ai-stream] timed out after ${elapsed}ms for sessionId=${item.sessionId}`
-        );
-        return;
-      }
-
-      await new Promise(r => setTimeout(r, this.STREAM_LOCK_POLL_MS));
-    }
-  }
-
   // --- Pub/sub commands ---
 
   async publishStopSessionStream(item: {
@@ -395,6 +310,78 @@ export class AgentStreamAiService implements OnModuleDestroy {
           }
         });
       });
+    }
+  }
+
+  // --- Locking ---
+
+  async tryAcquireStreamLock(item: { sessionId: string }): Promise<boolean> {
+    let { sessionId } = item;
+
+    let result = await this.redisClient.set(
+      `${KEY_AI_STREAM_OWNER}:${sessionId}`,
+      this.podId,
+      'EX',
+      this.STREAM_LOCK_TTL_SECONDS,
+      'NX'
+    );
+
+    return result === 'OK';
+  }
+
+  private async releaseStreamLock(item: { sessionId: string }): Promise<void> {
+    let { sessionId } = item;
+    await this.redisClient.eval(
+      `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end`,
+      1,
+      `${KEY_AI_STREAM_OWNER}:${sessionId}`,
+      this.podId
+    );
+  }
+
+  async waitForStreamLockRelease(item: { sessionId: string }): Promise<void> {
+    let key = `${KEY_AI_STREAM_OWNER}:${item.sessionId}`;
+    let startTs = Date.now();
+
+    while (true) {
+      let exists = await this.redisClient.exists(key);
+
+      if (exists === 0) {
+        return;
+      }
+
+      let elapsed = Date.now() - startTs;
+      let isTimedOut = elapsed >= this.STREAM_LOCK_WAIT_TIMEOUT_MS;
+
+      if (isTimedOut) {
+        console.log(
+          `[ai-stream] timed out after ${elapsed}ms for sessionId=${item.sessionId}`
+        );
+        return;
+      }
+
+      await new Promise(r => setTimeout(r, this.STREAM_LOCK_POLL_MS));
+    }
+  }
+
+  private async waitForStreamLock(item: {
+    sessionId: string;
+  }): Promise<boolean> {
+    let { sessionId } = item;
+    let startTs = Date.now();
+
+    while (true) {
+      let acquired = await this.tryAcquireStreamLock({ sessionId: sessionId });
+      if (acquired) {
+        return true;
+      }
+
+      let elapsed = Date.now() - startTs;
+      if (elapsed >= this.STREAM_LOCK_WAIT_TIMEOUT_MS) {
+        return false;
+      }
+
+      await new Promise(r => setTimeout(r, this.STREAM_LOCK_POLL_MS));
     }
   }
 
@@ -887,7 +874,13 @@ Your output must be:
     let activeStreamSessionIds = [...this.activeStreams.keys()];
 
     await forEachSeries(activeStreamSessionIds, async sessionId => {
-      await this.refreshStreamLock({ sessionId: sessionId });
+      let result = await this.redisClient.eval(
+        `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${this.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
+        1,
+        `${KEY_AI_STREAM_OWNER}:${sessionId}`,
+        this.podId
+      );
+      return result !== 0;
     });
   }
 
