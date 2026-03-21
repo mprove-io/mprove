@@ -1,7 +1,4 @@
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
-import { ToBackendGetAgentProviderModelsRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
-import { ToBackendGetAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
 import { ToBackendGetAgentSessionsListRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
 import { ToBackendPauseAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
 import { ToBackendSendUserMessageToEditorAgentRequest } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
@@ -110,6 +107,9 @@ import { ToBackendArchiveSessionRequest } from '#common/interfaces/to-backend/se
 import { ToBackendCreateSessionEditorRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
 import { ToBackendCreateSessionExplorerRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-session-explorer';
 import { ToBackendCreateSessionSseTicketRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-session-sse-ticket';
+import { ToBackendDeleteSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
+import { ToBackendGetSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-get-session';
+import { ToBackendGetSessionProviderModelsRequest } from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
 import { ToBackendSpecialRebuildStructsRequest } from '#common/interfaces/to-backend/special/to-backend-special-rebuild-structs';
 import { ToBackendGetStructRequest } from '#common/interfaces/to-backend/structs/to-backend-get-struct';
 import { ToBackendGetSuggestFieldsRequest } from '#common/interfaces/to-backend/suggest-fields/to-backend-get-suggest-fields';
@@ -386,8 +386,8 @@ export const nameToClass = {
     ToBackendSendUserMessageToExplorerAgentRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToEditorAgent]:
     ToBackendSendUserMessageToEditorAgentRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession]:
-    ToBackendDeleteAgentSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendDeleteSession]:
+    ToBackendDeleteSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendArchiveSession]:
     ToBackendArchiveSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession]:
@@ -396,12 +396,12 @@ export const nameToClass = {
     ToBackendCreateSessionSseTicketRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList]:
     ToBackendGetAgentSessionsListRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendGetAgentSession]:
-    ToBackendGetAgentSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGetSession]:
+    ToBackendGetSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle]:
     ToBackendSetAgentSessionTitleRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendGetAgentProviderModels]:
-    ToBackendGetAgentProviderModelsRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGetSessionProviderModels]:
+    ToBackendGetSessionProviderModelsRequest,
   // user api key
   [ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey]:
     ToBackendGenerateUserApiKeyRequest,

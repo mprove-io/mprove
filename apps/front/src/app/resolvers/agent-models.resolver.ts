@@ -6,9 +6,9 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
-  ToBackendGetAgentProviderModelsRequestPayload,
-  ToBackendGetAgentProviderModelsResponse
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
+  ToBackendGetSessionProviderModelsRequestPayload,
+  ToBackendGetSessionProviderModelsResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
 import { AgentModelsQuery } from '../queries/agent-models.query';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
@@ -33,7 +33,7 @@ export class AgentModelsResolver {
         nav = x;
       });
 
-    let payload: ToBackendGetAgentProviderModelsRequestPayload = {
+    let payload: ToBackendGetSessionProviderModelsRequestPayload = {
       projectId: nav.projectId,
       sessionTypes: [SessionTypeEnum.Explorer, SessionTypeEnum.Editor],
       forceLoadFromCache: true
@@ -42,11 +42,11 @@ export class AgentModelsResolver {
     return this.apiService
       .req({
         pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendGetAgentProviderModels,
+          ToBackendRequestInfoNameEnum.ToBackendGetSessionProviderModels,
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetAgentProviderModelsResponse) => {
+        map((resp: ToBackendGetSessionProviderModelsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.agentModelsQuery.update({
               modelsOpencode: resp.payload.modelsOpencode,

@@ -8,7 +8,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendDeleteAgentSessionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
+import { ToBackendDeleteSessionRequestPayload } from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -55,7 +55,7 @@ export class DeleteSessionDialogComponent implements OnInit {
 
     let sessionId = this.ref.data.sessionId;
 
-    let payload: ToBackendDeleteAgentSessionRequestPayload = {
+    let payload: ToBackendDeleteSessionRequestPayload = {
       sessionId: sessionId
     };
 
@@ -63,7 +63,7 @@ export class DeleteSessionDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteSession,
         payload: payload,
         showSpinner: true
       })

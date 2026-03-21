@@ -9,20 +9,20 @@ import { RedisService } from '#backend/services/redis.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { ServerError } from '#common/models/server-error';
 
-export const SSE_AGENT_EVENTS_PATH = 'api/sse/agent-events';
+export const SSE_SESSION_EVENTS_PATH = 'api/sse/session-events';
 
 @SkipJwtCheck()
 @SkipThrottle()
 @Controller()
-export class GetAgentEventsSseController {
+export class GetSessionEventsSseController {
   constructor(
     private redisService: RedisService,
     private agentSseService: AgentSseService,
     private sessionsService: SessionsService
   ) {}
 
-  @Sse(SSE_AGENT_EVENTS_PATH)
-  agentEventsSse(
+  @Sse(SSE_SESSION_EVENTS_PATH)
+  sessionEventsSse(
     @Query('sessionId') sessionId: string,
     @Query('ticket') ticket: string,
     @Query('lastEventIndex') lastEventIndexStr?: string
@@ -54,7 +54,7 @@ export class GetAgentEventsSseController {
                 event =>
                   ({
                     id: event.eventIndex.toString(),
-                    type: 'agent-event',
+                    type: 'session-event',
                     data: JSON.stringify(event)
                   }) as MessageEvent
               )

@@ -11,14 +11,14 @@ import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { ErrorData } from '#common/interfaces/front/error-data';
 import {
-  ToBackendGetAgentSessionRequestPayload,
-  ToBackendGetAgentSessionResponse,
-  ToBackendGetAgentSessionResponsePayload
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
-import {
   ToBackendCreateSessionSseTicketRequestPayload,
   ToBackendCreateSessionSseTicketResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-create-session-sse-ticket';
+import {
+  ToBackendGetSessionRequestPayload,
+  ToBackendGetSessionResponse,
+  ToBackendGetSessionResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-get-session';
 import { binarySearch } from '#front/app/functions/binary-search';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
@@ -169,7 +169,7 @@ export class AgentSessionService {
   }
 
   applySessionResponse(item: {
-    payload: ToBackendGetAgentSessionResponsePayload;
+    payload: ToBackendGetSessionResponsePayload;
     withOptimisticMerge: boolean;
   }): void {
     let { payload, withOptimisticMerge } = item;
@@ -284,7 +284,7 @@ export class AgentSessionService {
   private startPolling(item: { sessionId: string }) {
     let { sessionId } = item;
 
-    let payload: ToBackendGetAgentSessionRequestPayload = {
+    let payload: ToBackendGetSessionRequestPayload = {
       sessionId: sessionId,
       skipFetchSessionState: true
     };
@@ -293,11 +293,11 @@ export class AgentSessionService {
       .pipe(
         exhaustMap(() =>
           this.apiService.req({
-            pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
+            pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSession,
             payload: payload
           })
         ),
-        tap((resp: ToBackendGetAgentSessionResponse) => {
+        tap((resp: ToBackendGetSessionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.applySessionResponse({
               payload: resp.payload,
@@ -377,7 +377,7 @@ export class AgentSessionService {
 
     let url =
       environment.httpUrl +
-      `/api/sse/agent-events?sessionId=${sessionId}&ticket=${sseTicket}&lastEventIndex=${this.lastProcessedEventIndex}`;
+      `/api/sse/session-events?sessionId=${sessionId}&ticket=${sseTicket}&lastEventIndex=${this.lastProcessedEventIndex}`;
 
     this.eventSource = new EventSource(url);
     this.ssePhase = 'connected';
@@ -386,29 +386,32 @@ export class AgentSessionService {
       console.log('eventSource - sse connected');
     };
 
-    this.eventSource.addEventListener('agent-event', (event: MessageEvent) => {
-      let agentEvent: AgentEventApi = JSON.parse(event.data);
+    this.eventSource.addEventListener(
+      'session-event',
+      (event: MessageEvent) => {
+        let agentEvent: AgentEventApi = JSON.parse(event.data);
 
-      if (agentEvent.eventType === RELOAD_SESSION_EVENT_TYPE) {
-        console.log('eventSource - reloading session...');
+        if (agentEvent.eventType === RELOAD_SESSION_EVENT_TYPE) {
+          console.log('eventSource - reloading session...');
+          this.reconnectCounter = 0;
+          this.scheduleReconnect({ sessionId: sessionId, delay: 0 });
+          return;
+        }
+
+        if (agentEvent.eventIndex <= this.lastProcessedEventIndex) {
+          return;
+        }
+
         this.reconnectCounter = 0;
-        this.scheduleReconnect({ sessionId: sessionId, delay: 0 });
-        return;
-      }
+        this.sseEventBuffer.push(agentEvent);
 
-      if (agentEvent.eventIndex <= this.lastProcessedEventIndex) {
-        return;
+        if (this.sseRafId === undefined) {
+          this.sseRafId = requestAnimationFrame(() => {
+            this.flushSseBuffer();
+          });
+        }
       }
-
-      this.reconnectCounter = 0;
-      this.sseEventBuffer.push(agentEvent);
-
-      if (this.sseRafId === undefined) {
-        this.sseRafId = requestAnimationFrame(() => {
-          this.flushSseBuffer();
-        });
-      }
-    });
+    );
 
     this.eventSource.onerror = () => {
       this.reconnectCounter++;
@@ -472,18 +475,18 @@ export class AgentSessionService {
     let initId = this.initId;
     this.ssePhase = 'fetching-ticket';
 
-    let payload: ToBackendGetAgentSessionRequestPayload = {
+    let payload: ToBackendGetSessionRequestPayload = {
       sessionId: sessionId,
       skipFetchSessionState: true
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSession,
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetAgentSessionResponse) => {
+        tap((resp: ToBackendGetSessionResponse) => {
           if (this.initId !== initId) {
             return;
           }

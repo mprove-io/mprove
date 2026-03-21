@@ -11,26 +11,26 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
-  ToBackendGetAgentProviderModelsRequest,
-  ToBackendGetAgentProviderModelsResponsePayload
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
+  ToBackendGetSessionProviderModelsRequest,
+  ToBackendGetSessionProviderModelsResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class GetAgentProviderModelsController {
+export class GetSessionProviderModelsController {
   constructor(
     private agentModelsAiSdkService: AgentModelsAiService,
     private agentModelsOpencodeService: AgentModelsOpencodeService,
     private projectsService: ProjectsService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetAgentProviderModels)
-  async getAgentProviderModels(
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetSessionProviderModels)
+  async getSessionProviderModels(
     @AttachUser() user: UserTab,
     @Req() request: any
   ) {
-    let reqValid: ToBackendGetAgentProviderModelsRequest = request.body;
+    let reqValid: ToBackendGetSessionProviderModelsRequest = request.body;
     let { sessionTypes, projectId, forceLoadFromCache } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -59,7 +59,7 @@ export class GetAgentProviderModelsController {
         : []
     ]);
 
-    let payload: ToBackendGetAgentProviderModelsResponsePayload = {
+    let payload: ToBackendGetSessionProviderModelsResponsePayload = {
       modelsOpencode: modelsOpencode,
       modelsAi: modelsAi
     };

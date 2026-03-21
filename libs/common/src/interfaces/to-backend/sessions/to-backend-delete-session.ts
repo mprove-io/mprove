@@ -3,17 +3,17 @@ import { IsString, ValidateNested } from 'class-validator';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
-export class ToBackendDeleteAgentSessionRequestPayload {
+export class ToBackendDeleteSessionRequestPayload {
   @IsString()
   sessionId: string;
 }
 
-export class ToBackendDeleteAgentSessionRequest extends ToBackendRequest {
+export class ToBackendDeleteSessionRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendDeleteAgentSessionRequestPayload)
-  payload: ToBackendDeleteAgentSessionRequestPayload;
+  @Type(() => ToBackendDeleteSessionRequestPayload)
+  payload: ToBackendDeleteSessionRequestPayload;
 }
 
-export class ToBackendDeleteAgentSessionResponse extends MyResponse {
+export class ToBackendDeleteSessionResponse extends MyResponse {
   payload: { [k in any]: never };
 }

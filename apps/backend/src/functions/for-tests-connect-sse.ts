@@ -1,4 +1,4 @@
-import { SSE_AGENT_EVENTS_PATH } from '#backend/controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
+import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
 import type { AgentEvent } from '#backend/services/agent/agent-sse.service';
 
 export async function forTestsConnectSse(item: {
@@ -10,7 +10,7 @@ export async function forTestsConnectSse(item: {
   let address = item.httpServer.address();
   let port = typeof address === 'string' ? address : address.port;
 
-  let url = `http://localhost:${port}/${SSE_AGENT_EVENTS_PATH}?sessionId=${item.sessionId}&ticket=${item.ticket}`;
+  let url = `http://localhost:${port}/${SSE_SESSION_EVENTS_PATH}?sessionId=${item.sessionId}&ticket=${item.ticket}`;
 
   // console.log('forTestsConnectSse url:', url);
 
@@ -23,8 +23,8 @@ export async function forTestsConnectSse(item: {
       reject(new Error(`SSE connection error: ${e?.message}`));
   });
 
-  es.addEventListener('agent-event', (event: MessageEvent) => {
-    // console.log('SSE agent-event received:', e.data?.substring(0, 200));
+  es.addEventListener('session-event', (event: MessageEvent) => {
+    // console.log('SSE session-event received:', e.data?.substring(0, 200));
     try {
       events.push(JSON.parse(event.data));
     } catch (e) {

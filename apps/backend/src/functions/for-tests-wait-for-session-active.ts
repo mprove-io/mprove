@@ -2,7 +2,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type { ToBackendGetAgentSessionResponse } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
+import type { ToBackendGetSessionResponse } from '#common/interfaces/to-backend/sessions/to-backend-get-session';
 
 export async function forTestsWaitForSessionActive(item: {
   httpServer: any;
@@ -14,12 +14,12 @@ export async function forTestsWaitForSessionActive(item: {
   let maxRetries = item.maxRetries ?? 60;
 
   for (let i = 0; i < maxRetries; i++) {
-    let resp = await sendToBackend<ToBackendGetAgentSessionResponse>({
+    let resp = await sendToBackend<ToBackendGetSessionResponse>({
       httpServer: item.httpServer,
       loginToken: item.loginToken,
       req: {
         info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
+          name: ToBackendRequestInfoNameEnum.ToBackendGetSession,
           traceId: item.traceId,
           idempotencyKey: makeId()
         },

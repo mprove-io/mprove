@@ -9,9 +9,9 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendGetAgentProviderModelsRequest,
-  ToBackendGetAgentProviderModelsResponse
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
+  ToBackendGetSessionProviderModelsRequest,
+  ToBackendGetSessionProviderModelsResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
 
 test('1', async t => {
   let testId = 'backend-get-agent-provider-models__ok';
@@ -73,9 +73,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: ToBackendGetAgentProviderModelsRequest = {
+    let req: ToBackendGetSessionProviderModelsRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetAgentProviderModels,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetSessionProviderModels,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -85,7 +85,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<ToBackendGetAgentProviderModelsResponse>({
+    resp = await sendToBackend<ToBackendGetSessionProviderModelsResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req,

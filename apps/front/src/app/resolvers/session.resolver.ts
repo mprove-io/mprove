@@ -6,9 +6,9 @@ import { PARAMETER_SESSION_ID } from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
-  ToBackendGetAgentSessionRequestPayload,
-  ToBackendGetAgentSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
+  ToBackendGetSessionRequestPayload,
+  ToBackendGetSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-get-session';
 import { SessionsQuery } from '../queries/sessions.query';
 import { AgentEventsService } from '../services/agent-events.service';
 import { AgentSessionService } from '../services/agent-session.service';
@@ -29,18 +29,18 @@ export class SessionResolver {
   ): Observable<boolean> {
     let sessionId = route.params[PARAMETER_SESSION_ID];
 
-    let payload: ToBackendGetAgentSessionRequestPayload = {
+    let payload: ToBackendGetSessionRequestPayload = {
       sessionId: sessionId,
       skipFetchSessionState: false
     };
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSession,
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetAgentSessionResponse) => {
+        map((resp: ToBackendGetSessionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.agentEventsService.resetAll();
 

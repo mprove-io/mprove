@@ -10,7 +10,7 @@ import retry from 'async-retry';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { BackendConfig } from '#backend/config/backend-config';
-import { SSE_AGENT_EVENTS_PATH } from '#backend/controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
+import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
 import { UNK_ST_ID } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -45,7 +45,7 @@ export class AppInterceptor implements NestInterceptor {
     let request = context.switchToHttp().getRequest();
 
     if (
-      request?.originalUrl?.startsWith('/' + SSE_AGENT_EVENTS_PATH) ||
+      request?.originalUrl?.startsWith('/' + SSE_SESSION_EVENTS_PATH) ||
       [
         ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs,
         ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics,

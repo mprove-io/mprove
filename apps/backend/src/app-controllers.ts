@@ -1,7 +1,3 @@
-import { DeleteAgentSessionController } from './controllers/agent/delete-agent-session/delete-agent-session.controller';
-import { GetAgentEventsSseController } from './controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
-import { GetAgentProviderModelsController } from './controllers/agent/get-agent-provider-models/get-agent-provider-models.controller';
-import { GetAgentSessionController } from './controllers/agent/get-agent-session/get-agent-session.controller';
 import { GetAgentSessionsListController } from './controllers/agent/get-agent-sessions-list/get-agent-sessions-list.controller';
 import { PauseAgentSessionController } from './controllers/agent/pause-agent-session/pause-agent-session.controller';
 import { SendUserMessageToEditorAgentController } from './controllers/agent/send-user-message-to-editor-agent/send-user-message-to-editor-agent.controller';
@@ -109,6 +105,10 @@ import { ArchiveSessionController } from './controllers/sessions/archive-session
 import { CreateSessionEditorController } from './controllers/sessions/create-session-editor/create-session-editor.controller';
 import { CreateSessionExplorerController } from './controllers/sessions/create-session-explorer/create-session-explorer.controller';
 import { CreateSessionSseTicketController } from './controllers/sessions/create-session-sse-ticket/create-session-sse-ticket.controller';
+import { DeleteSessionController } from './controllers/sessions/delete-session/delete-session.controller';
+import { GetSessionController } from './controllers/sessions/get-session/get-session.controller';
+import { GetSessionEventsSseController } from './controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
+import { GetSessionProviderModelsController } from './controllers/sessions/get-session-provider-models/get-session-provider-models.controller';
 import { SpecialRebuildStructsController } from './controllers/special/special-rebuild-structs/special-rebuild-structs.controller';
 import { GetStructController } from './controllers/structs/get-struct/get-struct.controller';
 import { GetSuggestFieldsController } from './controllers/suggest-fields/get-suggest-fields/get-suggest-fields.controller';
@@ -139,14 +139,14 @@ export const appControllers = [
   CreateSessionSseTicketController,
   SendUserMessageToExplorerAgentController,
   SendUserMessageToEditorAgentController,
-  GetAgentEventsSseController,
-  DeleteAgentSessionController,
+  GetSessionEventsSseController,
+  DeleteSessionController,
   ArchiveSessionController,
   PauseAgentSessionController,
   GetAgentSessionsListController,
-  GetAgentSessionController,
+  GetSessionController,
   SetAgentSessionTitleController,
-  GetAgentProviderModelsController,
+  GetSessionProviderModelsController,
 
   GetAvatarBigController,
   SetAvatarController,

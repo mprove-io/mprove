@@ -25,15 +25,15 @@ import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import {
-  ToBackendGetAgentSessionRequest,
-  ToBackendGetAgentSessionResponsePayload
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
+  ToBackendGetSessionRequest,
+  ToBackendGetSessionResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-get-session';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class GetAgentSessionController {
+export class GetSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
@@ -43,9 +43,9 @@ export class GetAgentSessionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetAgentSession)
-  async getAgentSession(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetAgentSessionRequest = request.body;
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetSession)
+  async getSession(@AttachUser() user: UserTab, @Req() request: any) {
+    let reqValid: ToBackendGetSessionRequest = request.body;
     let { sessionId, skipFetchSessionState } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
@@ -197,7 +197,7 @@ export class GetAgentSessionController {
       currentSessionId: sessionId
     });
 
-    let payload: ToBackendGetAgentSessionResponsePayload = {
+    let payload: ToBackendGetSessionResponsePayload = {
       session: sessionApi,
       ocSession: ocSessionApi,
       lastEventIndex: lastEventIndex,

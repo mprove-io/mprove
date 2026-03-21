@@ -17,14 +17,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendDeleteAgentSessionRequest,
-  ToBackendDeleteAgentSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
-import {
-  ToBackendGetAgentSessionRequest,
-  ToBackendGetAgentSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
-import {
   ToBackendSendUserMessageToEditorAgentRequest,
   ToBackendSendUserMessageToEditorAgentResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
@@ -32,6 +24,14 @@ import {
   ToBackendCreateSessionEditorRequest,
   ToBackendCreateSessionEditorResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
+import {
+  ToBackendDeleteSessionRequest,
+  ToBackendDeleteSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
+import {
+  ToBackendGetSessionRequest,
+  ToBackendGetSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-get-session';
 
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
@@ -210,9 +210,9 @@ test('1', async t => {
     sse.close();
 
     // Fetch session with messages and parts (simulates page reload)
-    let getSessionReq: ToBackendGetAgentSessionRequest = {
+    let getSessionReq: ToBackendGetSessionRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetSession,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -222,7 +222,7 @@ test('1', async t => {
       }
     };
 
-    let getResp = await sendToBackend<ToBackendGetAgentSessionResponse>({
+    let getResp = await sendToBackend<ToBackendGetSessionResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: getSessionReq,
@@ -277,9 +277,9 @@ test('1', async t => {
     });
 
     // Cleanup
-    let deleteSessionReq: ToBackendDeleteAgentSessionRequest = {
+    let deleteSessionReq: ToBackendDeleteSessionRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteSession,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -288,7 +288,7 @@ test('1', async t => {
       }
     };
 
-    await sendToBackend<ToBackendDeleteAgentSessionResponse>({
+    await sendToBackend<ToBackendDeleteSessionResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: deleteSessionReq,
@@ -310,12 +310,12 @@ test('1', async t => {
 
     if (sessionId && prep) {
       try {
-        await sendToBackend<ToBackendDeleteAgentSessionResponse>({
+        await sendToBackend<ToBackendDeleteSessionResponse>({
           httpServer: prep.httpServer,
           loginToken: prep.loginToken,
           req: {
             info: {
-              name: ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession,
+              name: ToBackendRequestInfoNameEnum.ToBackendDeleteSession,
               traceId: traceId,
               idempotencyKey: makeId()
             },

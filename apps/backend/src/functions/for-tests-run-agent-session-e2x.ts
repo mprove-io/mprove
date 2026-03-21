@@ -20,10 +20,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendDeleteAgentSessionRequest,
-  ToBackendDeleteAgentSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
-import {
   ToBackendSendUserMessageToEditorAgentRequest,
   ToBackendSendUserMessageToEditorAgentResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-editor-agent';
@@ -31,6 +27,10 @@ import {
   ToBackendCreateSessionEditorRequest,
   ToBackendCreateSessionEditorResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
+import {
+  ToBackendDeleteSessionRequest,
+  ToBackendDeleteSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
 
 export async function forTestsRunAgentSessionE2x(item: {
   t: ExecutionContext;
@@ -298,9 +298,9 @@ export async function forTestsRunAgentSessionE2x(item: {
     // Cleanup
     if (sessionId && prep) {
       try {
-        let deleteSessionReq: ToBackendDeleteAgentSessionRequest = {
+        let deleteSessionReq: ToBackendDeleteSessionRequest = {
           info: {
-            name: ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession,
+            name: ToBackendRequestInfoNameEnum.ToBackendDeleteSession,
             traceId: traceId,
             idempotencyKey: makeId()
           },
@@ -309,7 +309,7 @@ export async function forTestsRunAgentSessionE2x(item: {
           }
         };
 
-        await sendToBackend<ToBackendDeleteAgentSessionResponse>({
+        await sendToBackend<ToBackendDeleteSessionResponse>({
           httpServer: prep.httpServer,
           loginToken: prep.loginToken,
           req: deleteSessionReq,

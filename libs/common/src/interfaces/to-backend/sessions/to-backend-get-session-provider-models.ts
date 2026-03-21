@@ -12,7 +12,7 @@ import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
-export class ToBackendGetAgentProviderModelsRequestPayload {
+export class ToBackendGetSessionProviderModelsRequestPayload {
   @IsString()
   projectId: string;
 
@@ -25,19 +25,19 @@ export class ToBackendGetAgentProviderModelsRequestPayload {
   forceLoadFromCache?: boolean;
 }
 
-export class ToBackendGetAgentProviderModelsRequest extends ToBackendRequest {
+export class ToBackendGetSessionProviderModelsRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendGetAgentProviderModelsRequestPayload)
-  payload: ToBackendGetAgentProviderModelsRequestPayload;
+  @Type(() => ToBackendGetSessionProviderModelsRequestPayload)
+  payload: ToBackendGetSessionProviderModelsRequestPayload;
 }
 
-export class ToBackendGetAgentProviderModelsResponsePayload {
+export class ToBackendGetSessionProviderModelsResponsePayload {
   modelsOpencode: AgentModelApi[];
   modelsAi: AgentModelApi[];
 }
 
-export class ToBackendGetAgentProviderModelsResponse extends MyResponse {
+export class ToBackendGetSessionProviderModelsResponse extends MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendGetAgentProviderModelsResponsePayload)
-  payload: ToBackendGetAgentProviderModelsResponsePayload;
+  @Type(() => ToBackendGetSessionProviderModelsResponsePayload)
+  payload: ToBackendGetSessionProviderModelsResponsePayload;
 }

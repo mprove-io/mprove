@@ -8,7 +8,7 @@ import { SessionApi } from '#common/interfaces/backend/session-api';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
-export class ToBackendGetAgentSessionRequestPayload {
+export class ToBackendGetSessionRequestPayload {
   @IsString()
   sessionId: string;
 
@@ -16,13 +16,13 @@ export class ToBackendGetAgentSessionRequestPayload {
   skipFetchSessionState: boolean;
 }
 
-export class ToBackendGetAgentSessionRequest extends ToBackendRequest {
+export class ToBackendGetSessionRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendGetAgentSessionRequestPayload)
-  payload: ToBackendGetAgentSessionRequestPayload;
+  @Type(() => ToBackendGetSessionRequestPayload)
+  payload: ToBackendGetSessionRequestPayload;
 }
 
-export class ToBackendGetAgentSessionResponsePayload {
+export class ToBackendGetSessionResponsePayload {
   session: SessionApi;
   ocSession: OcSessionApi;
   lastEventIndex: number;
@@ -33,8 +33,8 @@ export class ToBackendGetAgentSessionResponsePayload {
   hasMoreArchived: boolean;
 }
 
-export class ToBackendGetAgentSessionResponse extends MyResponse {
+export class ToBackendGetSessionResponse extends MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendGetAgentSessionResponsePayload)
-  payload: ToBackendGetAgentSessionResponsePayload;
+  @Type(() => ToBackendGetSessionResponsePayload)
+  payload: ToBackendGetSessionResponsePayload;
 }

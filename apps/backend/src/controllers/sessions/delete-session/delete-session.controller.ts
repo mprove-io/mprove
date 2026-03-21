@@ -43,7 +43,7 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
+import { ToBackendDeleteSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
 import {
   ToDiskDeleteDevRepoRequest,
   ToDiskDeleteDevRepoResponse
@@ -53,7 +53,7 @@ import { ServerError } from '#common/models/server-error';
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class DeleteAgentSessionController {
+export class DeleteSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
@@ -67,9 +67,9 @@ export class DeleteAgentSessionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteSession)
   async deleteSession(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteAgentSessionRequest = request.body;
+    let reqValid: ToBackendDeleteSessionRequest = request.body;
     let { traceId } = reqValid.info;
     let { sessionId } = reqValid.payload;
 
