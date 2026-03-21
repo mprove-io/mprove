@@ -48,6 +48,8 @@ export class AgentDrainService {
 
   eventCounters = new Map<string, number>();
 
+  private doneCallbacks = new Map<string, () => void>();
+
   constructor(
     private cs: ConfigService<BackendConfig>,
     private sessionsService: SessionsService,
@@ -62,6 +64,18 @@ export class AgentDrainService {
     let { sessionId } = item;
     this.pendingEvents.delete(sessionId);
     this.eventCounters.delete(sessionId);
+  }
+
+  markDoneProducing(item: { sessionId: string; callback: () => void }): void {
+    let { sessionId, callback } = item;
+
+    let queue = this.pendingEvents.get(sessionId);
+    if (!queue || queue.length === 0) {
+      this.cleanup({ sessionId: sessionId });
+      callback();
+      return;
+    }
+    this.doneCallbacks.set(sessionId, callback);
   }
 
   async initEventCounter(item: { sessionId: string }): Promise<void> {
@@ -103,6 +117,17 @@ export class AgentDrainService {
 
     await forEachSeries(pendingSessionIds, async sessionId => {
       let result = await this.drainQueue({ sessionId: sessionId });
+
+      let doneCb = this.doneCallbacks.get(sessionId);
+      if (doneCb) {
+        let queue = this.pendingEvents.get(sessionId);
+        if (!queue || queue.length === 0) {
+          this.doneCallbacks.delete(sessionId);
+          this.cleanup({ sessionId: sessionId });
+          doneCb();
+        }
+      }
+
       if (result.needsSafePause) {
         safePauseSessionIds.push(sessionId);
       }

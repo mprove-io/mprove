@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import type { Event } from '@opencode-ai/sdk/v2';
 import type { CoreMessage } from 'ai';
 import { generateText, streamText } from 'ai';
-import { asc, eq, sql } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -253,26 +253,28 @@ export class AgentStreamAiService implements OnModuleDestroy {
         return;
       }
 
-      try {
-        await this.agentDrainService.initEventCounter({
-          sessionId: item.sessionId
-        });
+      await this.agentDrainService.initEventCounter({
+        sessionId: item.sessionId
+      });
 
-        let titleEvent: Event = {
-          type: 'session.updated',
-          properties: { info: { title: item.title } }
-        } as Event;
+      let titleEvent: Event = {
+        type: 'session.updated',
+        properties: { info: { title: item.title } }
+      } as Event;
 
-        this.agentDrainService.enqueue({
+      this.agentDrainService.enqueue({
+        sessionId: item.sessionId,
+        event: titleEvent
+      });
+
+      await new Promise<void>(resolve => {
+        this.agentDrainService.markDoneProducing({
           sessionId: item.sessionId,
-          event: titleEvent
+          callback: () => {
+            this.releaseStreamLock({ sessionId: item.sessionId }).then(resolve);
+          }
         });
-
-        await this.agentDrainService.drainQueue({ sessionId: item.sessionId });
-      } finally {
-        this.agentDrainService.cleanup({ sessionId: item.sessionId });
-        await this.releaseStreamLock({ sessionId: item.sessionId });
-      }
+      });
     }
   }
 
@@ -331,15 +333,6 @@ export class AgentStreamAiService implements OnModuleDestroy {
         messageId: messageId,
         partId: partId
       });
-
-      await this.agentDrainService.drainQueue({ sessionId: sessionId });
-
-      // Update last_activity_ts
-      await this.db.drizzle.transaction(async tx => {
-        await tx.execute(
-          sql`UPDATE sessions SET last_activity_ts = ${Date.now()} WHERE session_id = ${sessionId}`
-        );
-      });
     } catch (e: any) {
       logToConsoleBackend({
         log: new ServerError({
@@ -352,46 +345,38 @@ export class AgentStreamAiService implements OnModuleDestroy {
       });
 
       // Emit error + idle
-      try {
-        let errorEvent = {
-          type: 'session.error',
-          properties: {
-            error: { message: e?.message || 'AI SDK streaming failed' }
-          }
-        } as unknown as Event;
-        this.agentDrainService.enqueue({
-          sessionId: sessionId,
-          event: errorEvent
-        });
+      let errorEvent = {
+        type: 'session.error',
+        properties: {
+          error: { message: e?.message || 'AI SDK streaming failed' }
+        }
+      } as unknown as Event;
+      this.agentDrainService.enqueue({
+        sessionId: sessionId,
+        event: errorEvent
+      });
 
-        let idleEvent: Event = {
-          type: 'session.status',
-          properties: { status: { type: 'idle' } }
-        } as Event;
-        this.agentDrainService.enqueue({
-          sessionId: sessionId,
-          event: idleEvent
-        });
-
-        await this.agentDrainService.drainQueue({ sessionId: sessionId });
-      } catch (drainError) {
-        logToConsoleBackend({
-          log: new ServerError({
-            message: ErEnum.BACKEND_AGENT_DRAIN_QUEUE_FAILED,
-            originalError: drainError
-          }),
-          logLevel: LogLevelEnum.Error,
-          logger: this.logger,
-          cs: this.cs
-        });
-      }
-    } finally {
-      this.activeStreams.delete(sessionId);
-      this.abortControllers.delete(sessionId);
-
-      this.agentDrainService.cleanup({ sessionId: sessionId });
-      await this.releaseStreamLock({ sessionId: sessionId });
+      let idleEvent: Event = {
+        type: 'session.status',
+        properties: { status: { type: 'idle' } }
+      } as Event;
+      this.agentDrainService.enqueue({
+        sessionId: sessionId,
+        event: idleEvent
+      });
     }
+
+    // Let the drain timer flush remaining events, then cleanup + release lock
+    await new Promise<void>(resolve => {
+      this.agentDrainService.markDoneProducing({
+        sessionId: sessionId,
+        callback: () => {
+          this.activeStreams.delete(sessionId);
+          this.abortControllers.delete(sessionId);
+          this.releaseStreamLock({ sessionId: sessionId }).then(resolve);
+        }
+      });
+    });
   }
 
   // --- Producer ---
