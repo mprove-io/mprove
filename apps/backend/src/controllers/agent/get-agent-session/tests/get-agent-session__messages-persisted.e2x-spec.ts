@@ -15,6 +15,7 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
 import {
   ToBackendCreateAgentSessionRequest,
@@ -125,7 +126,9 @@ test('1', async t => {
         agent: 'plan',
         variant: 'default',
         envId: PROJECT_ENV_PROD,
-        initialBranch: BRANCH_MAIN
+        initialBranch: BRANCH_MAIN,
+        messageId: makeAscendingId({ prefix: 'msg' }),
+        partId: makeAscendingId({ prefix: 'prt' })
       }
     };
 

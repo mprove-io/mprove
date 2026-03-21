@@ -148,7 +148,9 @@ export class SendUserMessageToAgentController {
             provider: modelProvider,
             modelId: modelId,
             apiKey: apiKey,
-            userMessage: message
+            userMessage: message,
+            messageId: messageId,
+            partId: partId
           })
           .catch(() => {});
       } else if (interactionType === InteractionTypeEnum.Stop) {

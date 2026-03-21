@@ -38,6 +38,12 @@ export class ToBackendCreateAgentSessionRequestPayload {
   @IsOptional()
   @IsString()
   firstMessage?: string;
+
+  @IsString()
+  messageId: string;
+
+  @IsString()
+  partId: string;
 }
 
 export class ToBackendCreateAgentSessionRequest extends ToBackendRequest {

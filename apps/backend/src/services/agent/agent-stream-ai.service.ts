@@ -284,8 +284,18 @@ export class AgentStreamAiService implements OnModuleDestroy {
     modelId: string;
     apiKey: string;
     userMessage: string;
+    messageId: string;
+    partId: string;
   }): Promise<void> {
-    let { sessionId, provider, modelId, apiKey, userMessage } = item;
+    let {
+      sessionId,
+      provider,
+      modelId,
+      apiKey,
+      userMessage,
+      messageId,
+      partId
+    } = item;
 
     // Acquire lock
     let acquired = await this.waitForStreamLock({ sessionId: sessionId });
@@ -317,7 +327,9 @@ export class AgentStreamAiService implements OnModuleDestroy {
         modelId: modelId,
         apiKey: apiKey,
         userMessage: userMessage,
-        abortController: abortController
+        abortController: abortController,
+        messageId: messageId,
+        partId: partId
       });
 
       await this.agentDrainService.drainQueue({ sessionId: sessionId });
@@ -391,9 +403,19 @@ export class AgentStreamAiService implements OnModuleDestroy {
     apiKey: string;
     userMessage: string;
     abortController: AbortController;
+    messageId: string;
+    partId: string;
   }): Promise<void> {
-    let { sessionId, provider, modelId, apiKey, userMessage, abortController } =
-      item;
+    let {
+      sessionId,
+      provider,
+      modelId,
+      apiKey,
+      userMessage,
+      abortController,
+      messageId,
+      partId
+    } = item;
 
     let history = await this.loadMessageHistory({
       sessionId: sessionId
@@ -406,7 +428,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
     } as Event;
     this.agentDrainService.enqueue({ sessionId: sessionId, event: busyEvent });
 
-    let userMessageId = makeAscendingId({ prefix: 'msg' });
+    let userMessageId = messageId;
 
     let userMsgEvent: Event = {
       type: 'message.updated',
@@ -424,7 +446,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
       event: userMsgEvent
     });
 
-    let userPartId = makeAscendingId({ prefix: 'prt' });
+    let userPartId = partId;
 
     let userPartEvent: Event = {
       type: 'message.part.updated',

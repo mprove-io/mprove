@@ -19,9 +19,9 @@ import {
   ToBackendGetAgentSessionResponse,
   ToBackendGetAgentSessionResponsePayload
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
-import { ascendingId } from '#front/app/functions/ascending-id';
 import { binarySearch } from '#front/app/functions/binary-search';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
+import { makeAscendingId } from '#front/app/functions/make-ascending-id';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
@@ -82,8 +82,8 @@ export class AgentSessionService {
   }): { messageId: string; partId: string } {
     let { sessionId, ocSessionId, agent, model, text, variant } = item;
 
-    let messageId = ascendingId({ prefix: 'message' });
-    let partId = ascendingId({ prefix: 'part' });
+    let messageId = makeAscendingId({ prefix: 'message' });
+    let partId = makeAscendingId({ prefix: 'part' });
 
     let modelSplit = splitModel(model) || {
       providerID: '',

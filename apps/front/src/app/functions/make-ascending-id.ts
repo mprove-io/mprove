@@ -9,7 +9,7 @@ const ID_LENGTH = 26;
 let lastTimestamp = 0;
 let counter = 0;
 
-export function ascendingId(item: { prefix: Prefix }): string {
+export function makeAscendingId(item: { prefix: Prefix }): string {
   let { prefix } = item;
 
   let currentTimestamp = Date.now();

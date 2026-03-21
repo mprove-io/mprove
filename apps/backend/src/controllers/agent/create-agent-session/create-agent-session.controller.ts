@@ -103,7 +103,9 @@ export class CreateAgentSessionController {
       variant,
       envId,
       initialBranch,
-      firstMessage
+      firstMessage,
+      messageId,
+      partId
     } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -147,7 +149,9 @@ export class CreateAgentSessionController {
         model: model,
         variant: variant,
         initialBranch: initialBranch,
-        firstMessage: firstMessage
+        firstMessage: firstMessage,
+        messageId: messageId,
+        partId: partId
       });
     }
 
@@ -247,7 +251,9 @@ export class CreateAgentSessionController {
       sandboxEnvs: sandboxEnvs,
       project: project,
       variant: variant,
-      firstMessage: firstMessage
+      firstMessage: firstMessage,
+      messageId: messageId,
+      partId: partId
     }).catch(e => {
       logToConsoleBackend({
         log: e,
@@ -289,6 +295,8 @@ export class CreateAgentSessionController {
     variant: string;
     initialBranch: string;
     firstMessage?: string;
+    messageId: string;
+    partId: string;
   }): Promise<ToBackendCreateAgentSessionResponsePayload> {
     let {
       user,
@@ -298,7 +306,9 @@ export class CreateAgentSessionController {
       model,
       variant,
       initialBranch,
-      firstMessage
+      firstMessage,
+      messageId,
+      partId
     } = item;
 
     let now = Date.now();
@@ -396,7 +406,9 @@ export class CreateAgentSessionController {
           provider: modelProvider,
           modelId: modelId,
           apiKey: apiKey,
-          userMessage: firstMessage
+          userMessage: firstMessage,
+          messageId: messageId,
+          partId: partId
         })
         .catch(e => {
           logToConsoleBackend({
@@ -426,6 +438,8 @@ export class CreateAgentSessionController {
     project: any;
     variant?: string;
     firstMessage?: string;
+    messageId: string;
+    partId: string;
   }) {
     let {
       sessionId,
@@ -435,7 +449,9 @@ export class CreateAgentSessionController {
       sandboxEnvs,
       project,
       variant,
-      firstMessage
+      firstMessage,
+      messageId,
+      partId
     } = item;
 
     try {
@@ -555,7 +571,9 @@ export class CreateAgentSessionController {
             message: firstMessage,
             agent: agent,
             model: model,
-            variant: variant
+            variant: variant,
+            messageId: messageId,
+            partId: partId
           });
         } catch (e) {
           if (isStreamStartedFresh) {

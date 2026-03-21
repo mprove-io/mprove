@@ -19,6 +19,7 @@ import {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
 } from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
+import { makeAscendingId } from '#front/app/functions/make-ascending-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
@@ -148,6 +149,9 @@ export class NewSessionComponent implements OnInit {
 
     let isSessionExplorer = this.sessionType === SessionTypeEnum.Explorer;
 
+    let messageId = makeAscendingId({ prefix: 'message' });
+    let partId = makeAscendingId({ prefix: 'part' });
+
     let payload: ToBackendCreateAgentSessionRequestPayload = {
       projectId: nav.projectId,
       type: this.sessionType,
@@ -158,7 +162,9 @@ export class NewSessionComponent implements OnInit {
       variant: this.variant,
       envId: nav.envId,
       initialBranch: this.initialBranch,
-      firstMessage: text
+      firstMessage: text,
+      messageId: messageId,
+      partId: partId
     };
 
     this.apiService
