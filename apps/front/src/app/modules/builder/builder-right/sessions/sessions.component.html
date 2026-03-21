@@ -125,6 +125,24 @@
           >
 
           <div
+            *ngIf="session.status !== 'Archived'"
+            class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center"
+          >
+            <button
+              class="hover:bg-m200 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+              [ngClass]="{
+                'text-s400 cursor-default': session.status === 'New'
+              }"
+              [disabled]="session.status === 'New'"
+              (click)="archiveSession($event, session)"
+            >
+              <span class="flex [&_svg]:h-[20px] [&_svg]:w-[20px]"
+                ><m-archive-icon></m-archive-icon
+              ></span>
+            </button>
+          </div>
+
+          <div
             class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center"
           >
             <button

@@ -61,6 +61,7 @@ import { TypeOnOffIconComponent } from './icons/2-type-icons/type-on-off-icon/ty
 import { TypeStringIconComponent } from './icons/2-type-icons/type-string-icon/type-string-icon.component';
 import { AddIconComponent } from './icons/add-icon/add-icon.component';
 import { AdjustmentsIconComponent } from './icons/adjustments-icon/adjustments-icon.component';
+import { ArchiveIconComponent } from './icons/archive-icon/archive-icon.component';
 import { ArrowDropDownIconComponent } from './icons/arrow-drop-down-icon/arrow-drop-down-icon.component';
 import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.component';
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
@@ -175,6 +176,7 @@ let sharedComponents = [
   //
   SettingsIconComponent,
   StopIconComponent,
+  ArchiveIconComponent,
   DeleteIconComponent,
   DeleteBigIconComponent,
   EditIconComponent,
