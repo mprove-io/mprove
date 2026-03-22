@@ -1,8 +1,8 @@
 import test from 'ava';
-import { forTestsConnectSse } from '#backend/functions/for-tests-connect-sse';
-import { forTestsGetSseTicket } from '#backend/functions/for-tests-get-sse-ticket';
-import { forTestsWaitForSessionActive } from '#backend/functions/for-tests-wait-for-session-active';
-import { forTestsWaitForTurnEnded } from '#backend/functions/for-tests-wait-for-turn-ended';
+import { forTestsConnectSse } from '#backend/functions/for-tests/for-tests-connect-sse';
+import { forTestsGetSseTicket } from '#backend/functions/for-tests/for-tests-get-sse-ticket';
+import { forTestsWaitForSessionActive } from '#backend/functions/for-tests/for-tests-wait-for-session-active';
+import { forTestsWaitForTurnEnded } from '#backend/functions/for-tests/for-tests-wait-for-turn-ended';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';

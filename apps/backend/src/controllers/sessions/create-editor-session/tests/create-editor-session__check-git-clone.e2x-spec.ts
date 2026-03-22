@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import test from 'ava';
 import { Sandbox } from 'e2b';
 import { BackendConfig } from '#backend/config/backend-config';
-import { forTestsStartOpencodeServer } from '#backend/functions/for-tests-start-opencode-server';
+import { forTestsStartOpencodeServer } from '#backend/functions/for-tests/for-tests-start-opencode-server';
 import { prepareTest } from '#backend/functions/prepare-test';
 import { Prep } from '#backend/interfaces/prep';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
