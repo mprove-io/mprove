@@ -31,13 +31,13 @@ import {
   ToBackendSendMessageToSessionExplorerRequestPayload,
   ToBackendSendMessageToSessionExplorerResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-explorer';
-import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
   SessionBundleQuery,
   SessionBundleState
 } from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
+import { SessionModelsQuery } from '#front/app/queries/session-models.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -169,7 +169,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     private sessionEventsQuery: SessionEventsQuery,
     private sessionBundleQuery: SessionBundleQuery,
     private uiQuery: UiQuery,
-    private agentModelsQuery: AgentModelsQuery,
+    private sessionModelsQuery: SessionModelsQuery,
     private sessionService: SessionService,
     private sessionMessagesService: SessionMessagesService,
     private spinner: NgxSpinnerService
@@ -218,7 +218,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.sessionService.clearOptimisticMessages();
 
     if (this.sessionInput) {
-      let state = this.agentModelsQuery.getValue();
+      let state = this.sessionModelsQuery.getValue();
 
       let models =
         this.session.type === SessionTypeEnum.Explorer

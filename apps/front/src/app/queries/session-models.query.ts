@@ -3,26 +3,26 @@ import { createStore, select, withProps } from '@ngneat/elf';
 import { SessionModelApi } from '#common/interfaces/backend/session-model-api';
 import { BaseQuery } from './base.query';
 
-export class AgentModelsState {
+export class SessionModelsState {
   modelsOpencode: SessionModelApi[];
   modelsAi: SessionModelApi[];
 }
 
-let agentModelsState: AgentModelsState = {
+let sessionModelsState: SessionModelsState = {
   modelsOpencode: [],
   modelsAi: []
 };
 
 @Injectable({ providedIn: 'root' })
-export class AgentModelsQuery extends BaseQuery<AgentModelsState> {
+export class SessionModelsQuery extends BaseQuery<SessionModelsState> {
   modelsOpencode$ = this.store.pipe(select(state => state.modelsOpencode));
   modelsAi$ = this.store.pipe(select(state => state.modelsAi));
 
   constructor() {
     super(
       createStore(
-        { name: 'agentModels' },
-        withProps<AgentModelsState>(agentModelsState)
+        { name: 'sessionModels' },
+        withProps<SessionModelsState>(sessionModelsState)
       )
     );
   }

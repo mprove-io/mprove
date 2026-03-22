@@ -16,9 +16,9 @@ import {
   ToBackendGetSessionProviderModelsRequestPayload,
   ToBackendGetSessionProviderModelsResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
-import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
+import { SessionModelsQuery } from '#front/app/queries/session-models.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { UiService } from '#front/app/services/ui.service';
@@ -75,9 +75,9 @@ export class SessionInputComponent implements OnChanges {
     private apiService: ApiService,
     private uiQuery: UiQuery,
     private uiService: UiService,
-    private agentModelsQuery: AgentModelsQuery
+    private sessionModelsQuery: SessionModelsQuery
   ) {
-    let state = this.agentModelsQuery.getValue();
+    let state = this.sessionModelsQuery.getValue();
 
     let models =
       this.sessionType === SessionTypeEnum.Explorer
@@ -89,7 +89,7 @@ export class SessionInputComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['sessionType']) {
-      let state = this.agentModelsQuery.getValue();
+      let state = this.sessionModelsQuery.getValue();
 
       let models =
         this.sessionType === SessionTypeEnum.Explorer
@@ -270,7 +270,7 @@ export class SessionInputComponent implements OnChanges {
       .pipe(
         tap((resp: ToBackendGetSessionProviderModelsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let state = this.agentModelsQuery.getValue();
+            let state = this.sessionModelsQuery.getValue();
 
             let updatedModelsOpencode =
               this.sessionType === SessionTypeEnum.Editor
@@ -282,7 +282,7 @@ export class SessionInputComponent implements OnChanges {
                 ? resp.payload.modelsAi
                 : state.modelsAi;
 
-            this.agentModelsQuery.update({
+            this.sessionModelsQuery.update({
               modelsOpencode: updatedModelsOpencode,
               modelsAi: updatedModelsAi
             });

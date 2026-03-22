@@ -9,15 +9,15 @@ import {
   ToBackendGetSessionProviderModelsRequestPayload,
   ToBackendGetSessionProviderModelsResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
-import { AgentModelsQuery } from '../queries/agent-models.query';
 import { NavQuery } from '../queries/nav.query';
+import { SessionModelsQuery } from '../queries/session-models.query';
 import { ApiService } from '../services/api.service';
 
 @Injectable({ providedIn: 'root' })
-export class AgentModelsResolver {
+export class SessionModelsResolver {
   constructor(
     private apiService: ApiService,
-    private agentModelsQuery: AgentModelsQuery,
+    private sessionModelsQuery: SessionModelsQuery,
     private navQuery: NavQuery
   ) {}
 
@@ -48,7 +48,7 @@ export class AgentModelsResolver {
       .pipe(
         map((resp: ToBackendGetSessionProviderModelsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.agentModelsQuery.update({
+            this.sessionModelsQuery.update({
               modelsOpencode: resp.payload.modelsOpencode,
               modelsAi: resp.payload.modelsAi
             });

@@ -100,7 +100,6 @@ import { NotFoundComponent } from './modules/special/not-found/not-found.compone
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
-import { AgentModelsResolver } from './resolvers/agent-models.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgUsersResolver } from './resolvers/org-users.resolver';
@@ -116,6 +115,7 @@ import { RepoIdResolver } from './resolvers/repo-id.resolver';
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver';
 import { SessionResolver } from './resolvers/session.resolver';
+import { SessionModelsResolver } from './resolvers/session-models.resolver';
 import { StructChartResolver } from './resolvers/struct-chart.resolver';
 import { StructChartsResolver } from './resolvers/struct-charts.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
@@ -269,7 +269,7 @@ export const appRoutes: Routes = [
                             path: PATH_BUILDER,
                             resolve: [
                               RepoStructFilesResolver,
-                              AgentModelsResolver
+                              SessionModelsResolver
                             ],
                             children: [
                               {

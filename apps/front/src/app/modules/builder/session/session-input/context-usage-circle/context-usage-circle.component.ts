@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import type { AssistantMessage } from '@opencode-ai/sdk/v2';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
+import { SessionModelsQuery } from '#front/app/queries/session-models.query';
 
 @Component({
   standalone: false,
@@ -24,7 +24,7 @@ export class ContextUsageCircleComponent {
 
   contextUsage$ = combineLatest([
     this.sessionBundleQuery.messages$,
-    this.agentModelsQuery.modelsOpencode$
+    this.sessionModelsQuery.modelsOpencode$
   ]).pipe(
     tap(([messages, models]) => {
       this.percentage = 0;
@@ -83,7 +83,7 @@ export class ContextUsageCircleComponent {
 
   constructor(
     private sessionBundleQuery: SessionBundleQuery,
-    private agentModelsQuery: AgentModelsQuery,
+    private sessionModelsQuery: SessionModelsQuery,
     private cd: ChangeDetectorRef
   ) {}
 }
