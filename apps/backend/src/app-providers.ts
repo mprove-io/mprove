@@ -43,7 +43,6 @@ import { EditorSandboxService } from './services/editor/editor-sandbox.service';
 import { EditorStreamService } from './services/editor/editor-stream.service';
 import { EmailService } from './services/email.service';
 import { ExplorerEventsMakerService } from './services/explorer/explorer-events-maker.service';
-import { ExplorerMessageHistoryService } from './services/explorer/explorer-message-history.service';
 import { ExplorerModelsService } from './services/explorer/explorer-models.service';
 import { ExplorerPromptsService } from './services/explorer/explorer-prompts.service';
 import { ExplorerStreamService } from './services/explorer/explorer-stream.service';
@@ -129,7 +128,6 @@ export const appProviders = [
   EditorStreamService,
   EditorSandboxService,
   ExplorerEventsMakerService,
-  ExplorerMessageHistoryService,
   ExplorerPromptsService,
   ExplorerTitleService,
   ExplorerToolsService,

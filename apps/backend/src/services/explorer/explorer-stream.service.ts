@@ -1,10 +1,16 @@
 import crypto from 'node:crypto';
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type { CoreMessage } from 'ai';
 import { streamText } from 'ai';
+import { asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages.js';
+import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import {
   CHANNEL_AI_INTERACT_REPLY,
@@ -16,14 +22,13 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { ServerError } from '#common/models/server-error';
-
-const { forEachSeries } = pIteration;
-
 import { SessionDrainService } from '../session/session-drain.service';
+import { TabService } from '../tab.service';
 import { ExplorerEventsMakerService } from './explorer-events-maker.service';
-import { ExplorerMessageHistoryService } from './explorer-message-history.service';
 import { ExplorerModelsService } from './explorer-models.service';
 import { ExplorerTitleService } from './explorer-title.service';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class ExplorerStreamService implements OnModuleDestroy {
@@ -60,8 +65,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
     private explorerModelsService: ExplorerModelsService,
     private explorerEventsMakerService: ExplorerEventsMakerService,
     private explorerTitleService: ExplorerTitleService,
-    private explorerMessageHistoryService: ExplorerMessageHistoryService,
-    private logger: Logger
+    private tabService: TabService,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {
     let valkeyHost =
       this.cs.get<BackendConfig['backendValkeyHost']>('backendValkeyHost');
@@ -542,7 +548,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       partId
     } = item;
 
-    let history = await this.explorerMessageHistoryService.loadMessageHistory({
+    let history = await this.loadMessageHistory({
       sessionId: sessionId
     });
 
@@ -723,6 +729,57 @@ export class ExplorerStreamService implements OnModuleDestroy {
         }
       }
     }
+  }
+
+  async loadMessageHistory(item: {
+    sessionId: string;
+  }): Promise<CoreMessage[]> {
+    let { sessionId } = item;
+
+    let messageEnts = await this.db.drizzle.query.ocMessagesTable.findMany({
+      where: eq(ocMessagesTable.sessionId, sessionId),
+      orderBy: [asc(ocMessagesTable.createdTs)]
+    });
+
+    let messageTabs = messageEnts.map(m =>
+      this.tabService.ocMessageEntToTab(m)
+    );
+
+    let partEnts = await this.db.drizzle.query.ocPartsTable.findMany({
+      where: eq(ocPartsTable.sessionId, sessionId),
+      orderBy: [asc(ocPartsTable.createdTs)]
+    });
+
+    let partTabs = partEnts.map(p => this.tabService.ocPartEntToTab(p));
+
+    let partsByMessageId = new Map<string, typeof partTabs>();
+
+    partTabs.forEach(part => {
+      let existing = partsByMessageId.get(part.messageId);
+      if (existing) {
+        existing.push(part);
+      } else {
+        partsByMessageId.set(part.messageId, [part]);
+      }
+    });
+
+    let coreMessages: CoreMessage[] = [];
+
+    messageTabs.forEach(msg => {
+      let msgParts = partsByMessageId.get(msg.messageId) || [];
+      let textContent = msgParts
+        .filter(p => p.type === 'text')
+        .map(p => ((p.ocPart as Record<string, unknown>).text as string) || '')
+        .join('');
+
+      if (msg.role === 'user') {
+        coreMessages.push({ role: 'user', content: textContent });
+      } else if (msg.role === 'assistant') {
+        coreMessages.push({ role: 'assistant', content: textContent });
+      }
+    });
+
+    return coreMessages;
   }
 
   onModuleDestroy() {
