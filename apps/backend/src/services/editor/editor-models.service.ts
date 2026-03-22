@@ -147,7 +147,7 @@ export class EditorModelsService {
     } catch (e: any) {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_AGENT_MODELS_CACHE_PROVIDER_MODELS_ERROR,
+          message: ErEnum.BACKEND_MODELS_CACHE_PROVIDER_MODELS_ERROR,
           originalError: e
         }),
         logLevel: LogLevelEnum.Info,

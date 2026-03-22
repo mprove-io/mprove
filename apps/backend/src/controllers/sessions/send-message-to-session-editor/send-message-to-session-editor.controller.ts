@@ -95,19 +95,19 @@ export class SendMessageToSessionEditorController {
 
     if (session.status === SessionStatusEnum.New) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SESSION_NOT_READY
+        message: ErEnum.BACKEND_SESSION_NOT_READY
       });
     }
 
     if (session.status === SessionStatusEnum.Archived) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SESSION_IS_ARCHIVED
+        message: ErEnum.BACKEND_SESSION_IS_ARCHIVED
       });
     }
 
     if (session.status === SessionStatusEnum.Error) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SESSION_IS_IN_ERROR_STATE
+        message: ErEnum.BACKEND_SESSION_IS_IN_ERROR_STATE
       });
     }
 
@@ -174,19 +174,19 @@ export class SendMessageToSessionEditorController {
       if (interactionType === InteractionTypeEnum.Message) {
         if (agent === undefined) {
           throw new ServerError({
-            message: ErEnum.BACKEND_AGENT_MESSAGE_AGENT_REQUIRED
+            message: ErEnum.BACKEND_MESSAGE_AGENT_REQUIRED
           });
         }
 
         if (model === undefined) {
           throw new ServerError({
-            message: ErEnum.BACKEND_AGENT_MESSAGE_MODEL_REQUIRED
+            message: ErEnum.BACKEND_MESSAGE_MODEL_REQUIRED
           });
         }
 
         if (variant === undefined) {
           throw new ServerError({
-            message: ErEnum.BACKEND_AGENT_MESSAGE_VARIANT_REQUIRED
+            message: ErEnum.BACKEND_MESSAGE_VARIANT_REQUIRED
           });
         }
       }

@@ -103,7 +103,7 @@ export class SessionSseService {
         } catch (err) {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_SSE_POLL_DB_FAILED,
+              message: ErEnum.BACKEND_SSE_POLL_DB_FAILED,
               originalError: err
             }),
             logLevel: LogLevelEnum.Error,

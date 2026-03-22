@@ -86,19 +86,19 @@ export class SendMessageToSessionExplorerController {
 
     if (session.status === SessionStatusEnum.New) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SESSION_NOT_READY
+        message: ErEnum.BACKEND_SESSION_NOT_READY
       });
     }
 
     if (session.status === SessionStatusEnum.Archived) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SESSION_IS_ARCHIVED
+        message: ErEnum.BACKEND_SESSION_IS_ARCHIVED
       });
     }
 
     if (session.status === SessionStatusEnum.Error) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SESSION_IS_IN_ERROR_STATE
+        message: ErEnum.BACKEND_SESSION_IS_IN_ERROR_STATE
       });
     }
 

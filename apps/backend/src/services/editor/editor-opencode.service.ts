@@ -150,14 +150,14 @@ export class EditorOpencodeService {
         }
         default:
           throw new ServerError({
-            message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
+            message: ErEnum.BACKEND_UNKNOWN_SANDBOX_TYPE
           });
       }
 
       return createSandboxResult;
     } catch (e) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SANDBOX_CREATE_FAILED,
+        message: ErEnum.BACKEND_SANDBOX_CREATE_FAILED,
         originalError: e
       });
     }
@@ -195,7 +195,7 @@ export class EditorOpencodeService {
 
     if (!healthy) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
+        message: ErEnum.BACKEND_SANDBOX_HEALTH_CHECK_FAILED
       });
     }
   }
@@ -248,7 +248,7 @@ export class EditorOpencodeService {
 
       if (cloneResult.exitCode !== 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_SANDBOX_GIT_CLONE_FAILED,
+          message: ErEnum.BACKEND_SANDBOX_GIT_CLONE_FAILED,
           originalError: cloneResult.stderr
         });
       }
@@ -259,7 +259,7 @@ export class EditorOpencodeService {
 
       if (checkoutResult.exitCode !== 0) {
         throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_SANDBOX_GIT_CHECKOUT_FAILED,
+          message: ErEnum.BACKEND_SANDBOX_GIT_CHECKOUT_FAILED,
           originalError: checkoutResult.stderr
         });
       }

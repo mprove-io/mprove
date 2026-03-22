@@ -59,7 +59,7 @@ export class ExplorerTitleService {
     } catch (e) {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
+          message: ErEnum.BACKEND_PROMPT_FAILED,
           originalError: e
         }),
         logLevel: LogLevelEnum.Info,

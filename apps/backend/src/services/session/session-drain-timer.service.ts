@@ -38,7 +38,7 @@ export class SessionDrainTimerService implements OnModuleDestroy {
         } catch (e) {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_DRAIN_QUEUES_FAILED,
+              message: ErEnum.BACKEND_DRAIN_QUEUES_FAILED,
               originalError: e
             }),
             logLevel: LogLevelEnum.Error,
@@ -50,7 +50,7 @@ export class SessionDrainTimerService implements OnModuleDestroy {
         this.editorStreamService.checkStreamStalls().catch(e => {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_STREAM_STALL_CHECK_FAILED,
+              message: ErEnum.BACKEND_STREAM_STALL_CHECK_FAILED,
               originalError: e
             }),
             logLevel: LogLevelEnum.Error,
@@ -67,7 +67,7 @@ export class SessionDrainTimerService implements OnModuleDestroy {
       this.explorerStreamService.refreshActiveLocks().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
+            message: ErEnum.BACKEND_REFRESH_STREAM_LOCKS_FAILED,
             originalError: e
           }),
           logLevel: LogLevelEnum.Error,
@@ -79,7 +79,7 @@ export class SessionDrainTimerService implements OnModuleDestroy {
       this.editorStreamService.refreshActiveLocks().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
+            message: ErEnum.BACKEND_REFRESH_STREAM_LOCKS_FAILED,
             originalError: e
           }),
           logLevel: LogLevelEnum.Error,

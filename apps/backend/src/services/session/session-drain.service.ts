@@ -422,7 +422,7 @@ export class SessionDrainService {
       let queueLength = queue.length;
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_AGENT_DRAIN_QUEUE_FAILED,
+          message: ErEnum.BACKEND_DRAIN_QUEUE_FAILED,
           customData: {
             sessionId: sessionId,
             eventCount: eventIds.length,

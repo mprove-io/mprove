@@ -64,7 +64,7 @@ export class GetSessionController {
 
     if (session.status === SessionStatusEnum.Deleted) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SESSION_NOT_FOUND
+        message: ErEnum.BACKEND_SESSION_NOT_FOUND
       });
     }
 

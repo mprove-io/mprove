@@ -140,7 +140,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_AGENT_AI_SDK_STREAM_COMMAND_FAILED,
+            message: ErEnum.BACKEND_AI_SDK_STREAM_COMMAND_FAILED,
             originalError: e
           }),
           logLevel: LogLevelEnum.Error,
@@ -215,7 +215,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         sub.quit();
         reject(
           new ServerError({
-            message: ErEnum.BACKEND_AGENT_INTERACT_TIMEOUT,
+            message: ErEnum.BACKEND_INTERACT_TIMEOUT,
             customData: { sessionId: item.sessionId, timeoutMs: timeoutMs }
           })
         );
@@ -233,7 +233,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
           } else {
             reject(
               new ServerError({
-                message: ErEnum.BACKEND_AGENT_INTERACT_FAILED,
+                message: ErEnum.BACKEND_INTERACT_FAILED,
                 customData: {
                   sessionId: item.sessionId,
                   error: result.error
@@ -244,7 +244,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         } catch {
           reject(
             new ServerError({
-              message: ErEnum.BACKEND_AGENT_INTERACT_FAILED,
+              message: ErEnum.BACKEND_INTERACT_FAILED,
               customData: { sessionId: item.sessionId }
             })
           );
@@ -400,7 +400,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       if (isAcquired === false) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
+            message: ErEnum.BACKEND_PROMPT_FAILED,
             originalError: new Error(
               `Failed to acquire stream lock for session ${sessionId}`
             )
@@ -448,7 +448,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       } catch (e: any) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
+            message: ErEnum.BACKEND_PROMPT_FAILED,
             originalError: e
           }),
           logLevel: LogLevelEnum.Error,

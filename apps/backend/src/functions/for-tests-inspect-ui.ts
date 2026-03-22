@@ -22,12 +22,12 @@ export async function forTestsInspectUi(item: {
   item.t.pass('Session created for inspection');
 
   // Periodic health check
-  let agentSandboxOpencodeService = item.prep.app.get(EditorOpencodeService);
+  let editorOpencodeService = item.prep.app.get(EditorOpencodeService);
   let sessionsService = item.prep.app.get(SessionsService);
   let session = await sessionsService.getSessionByIdCheckExists({
     sessionId: item.sessionId
   });
-  let client = await agentSandboxOpencodeService.getOpenCodeClient({
+  let client = await editorOpencodeService.getOpenCodeClient({
     sessionId: item.sessionId
   });
 

@@ -110,7 +110,7 @@ export class EditorStreamService implements OnModuleDestroy {
           this.stopEventStream({ sessionId: sessionId }).catch(e => {
             logToConsoleBackend({
               log: new ServerError({
-                message: ErEnum.BACKEND_AGENT_STOP_STREAM_PUBSUB_FAILED,
+                message: ErEnum.BACKEND_STOP_STREAM_PUBSUB_FAILED,
                 originalError: e
               }),
               logLevel: LogLevelEnum.Error,
@@ -186,7 +186,7 @@ export class EditorStreamService implements OnModuleDestroy {
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_AGENT_STOP_STREAM_PUBSUB_FAILED,
+            message: ErEnum.BACKEND_STOP_STREAM_PUBSUB_FAILED,
             originalError: e
           }),
           logLevel: LogLevelEnum.Error,
@@ -258,7 +258,7 @@ export class EditorStreamService implements OnModuleDestroy {
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_AGENT_SAFE_PAUSE_SESSION_FAILED,
+            message: ErEnum.BACKEND_SAFE_PAUSE_SESSION_FAILED,
             originalError: e
           }),
           logLevel: LogLevelEnum.Error,
@@ -416,7 +416,7 @@ export class EditorStreamService implements OnModuleDestroy {
         if (e.name !== 'AbortError') {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_SSE_STREAM_FAILED,
+              message: ErEnum.BACKEND_SSE_STREAM_FAILED,
               originalError: e
             }),
             logLevel: LogLevelEnum.Error,
@@ -695,7 +695,7 @@ export class EditorStreamService implements OnModuleDestroy {
     } catch (e) {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_AGENT_REFETCH_FROM_OPENCODE_FAILED,
+          message: ErEnum.BACKEND_REFETCH_FROM_OPENCODE_FAILED,
           originalError: e
         }),
         logLevel: LogLevelEnum.Error,
@@ -898,7 +898,7 @@ export class EditorStreamService implements OnModuleDestroy {
         sub.quit();
         reject(
           new ServerError({
-            message: ErEnum.BACKEND_AGENT_INTERACT_TIMEOUT,
+            message: ErEnum.BACKEND_INTERACT_TIMEOUT,
             customData: { sessionId: item.sessionId, timeoutMs: timeoutMs }
           })
         );
@@ -916,7 +916,7 @@ export class EditorStreamService implements OnModuleDestroy {
           } else {
             reject(
               new ServerError({
-                message: ErEnum.BACKEND_AGENT_INTERACT_FAILED,
+                message: ErEnum.BACKEND_INTERACT_FAILED,
                 customData: {
                   sessionId: item.sessionId,
                   error: result.error
@@ -927,7 +927,7 @@ export class EditorStreamService implements OnModuleDestroy {
         } catch {
           reject(
             new ServerError({
-              message: ErEnum.BACKEND_AGENT_INTERACT_FAILED,
+              message: ErEnum.BACKEND_INTERACT_FAILED,
               customData: { sessionId: item.sessionId }
             })
           );
@@ -974,7 +974,7 @@ export class EditorStreamService implements OnModuleDestroy {
           sub.quit();
           reject(
             new ServerError({
-              message: ErEnum.BACKEND_AGENT_FETCH_TIMEOUT,
+              message: ErEnum.BACKEND_FETCH_TIMEOUT,
               customData: {
                 sessionId: item.sessionId,
                 timeoutMs: timeoutMs
@@ -995,7 +995,7 @@ export class EditorStreamService implements OnModuleDestroy {
             } else {
               reject(
                 new ServerError({
-                  message: ErEnum.BACKEND_AGENT_FETCH_FAILED,
+                  message: ErEnum.BACKEND_FETCH_FAILED,
                   customData: {
                     sessionId: item.sessionId,
                     error: result.error
@@ -1006,7 +1006,7 @@ export class EditorStreamService implements OnModuleDestroy {
           } catch {
             reject(
               new ServerError({
-                message: ErEnum.BACKEND_AGENT_FETCH_FAILED,
+                message: ErEnum.BACKEND_FETCH_FAILED,
                 customData: { sessionId: item.sessionId }
               })
             );
@@ -1019,7 +1019,7 @@ export class EditorStreamService implements OnModuleDestroy {
           e instanceof ServerError
             ? e
             : new ServerError({
-                message: ErEnum.BACKEND_AGENT_FETCH_FAILED,
+                message: ErEnum.BACKEND_FETCH_FAILED,
                 originalError: e
               }),
         logLevel: LogLevelEnum.Error,

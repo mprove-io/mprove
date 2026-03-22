@@ -71,7 +71,7 @@ export class EditorSandboxService {
         break;
       default:
         throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
+          message: ErEnum.BACKEND_UNKNOWN_SANDBOX_TYPE
         });
     }
   }
@@ -88,7 +88,7 @@ export class EditorSandboxService {
         break;
       default:
         throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
+          message: ErEnum.BACKEND_UNKNOWN_SANDBOX_TYPE
         });
     }
   }
@@ -110,7 +110,7 @@ export class EditorSandboxService {
         break;
       default:
         throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
+          message: ErEnum.BACKEND_UNKNOWN_SANDBOX_TYPE
         });
     }
   }

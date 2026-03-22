@@ -319,7 +319,7 @@ export class CreateSessionEditorController {
         .create({}, { throwOnError: true })
         .catch(e => {
           throw new ServerError({
-            message: ErEnum.BACKEND_AGENT_CREATE_SESSION_FAILED,
+            message: ErEnum.BACKEND_CREATE_SESSION_FAILED,
             originalError: e
           });
         });
@@ -344,7 +344,7 @@ export class CreateSessionEditorController {
           );
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_FAILED_TO_GET_INITIAL_COMMIT
+              message: ErEnum.BACKEND_FAILED_TO_GET_INITIAL_COMMIT
             }),
             logLevel: LogLevelEnum.Error,
             logger: this.logger,
