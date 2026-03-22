@@ -19,14 +19,14 @@ import { ServerError } from '#common/models/server-error';
 
 const { forEachSeries } = pIteration;
 
-import { AgentAiEventsService } from './agent-ai/agent-ai-events.service';
-import { AgentAiHistoryService } from './agent-ai/agent-ai-history.service';
-import { AgentAiTitleService } from './agent-ai/agent-ai-title.service';
-import { AgentDrainService } from './agent-drain.service';
-import { AgentModelsAiService } from './agent-models-ai.service';
+import { EventsDrainService } from '../events/events-drain.service';
+import { ExplorerEventsMakerService } from './explorer-events-maker.service';
+import { ExplorerMessageHistoryService } from './explorer-message-history.service';
+import { ExplorerModelsService } from './explorer-models.service';
+import { ExplorerTitleService } from './explorer-title.service';
 
 @Injectable()
-export class AgentStreamAiService implements OnModuleDestroy {
+export class ExplorerStreamService implements OnModuleDestroy {
   private podId = crypto.randomUUID();
 
   private STREAM_LOCK_POLL_MS = 500;
@@ -56,11 +56,11 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private agentDrainService: AgentDrainService,
-    private agentModelsAiService: AgentModelsAiService,
-    private agentAiEventsService: AgentAiEventsService,
-    private agentAiTitleService: AgentAiTitleService,
-    private agentAiHistoryService: AgentAiHistoryService,
+    private eventsDrainService: EventsDrainService,
+    private explorerModelsService: ExplorerModelsService,
+    private explorerEventsMakerService: ExplorerEventsMakerService,
+    private explorerTitleService: ExplorerTitleService,
+    private explorerMessageHistoryService: ExplorerMessageHistoryService,
     private logger: Logger
   ) {
     let valkeyHost =
@@ -103,10 +103,10 @@ export class AgentStreamAiService implements OnModuleDestroy {
             `[ai-stream] received set-title for sessionId=${sessionId}`
           );
 
-          let titleEvent = this.agentAiEventsService.makeTitleEvent({
+          let titleEvent = this.explorerEventsMakerService.makeTitleEvent({
             title: parsed.title
           });
-          this.agentDrainService.enqueue({
+          this.eventsDrainService.enqueue({
             sessionId: sessionId,
             event: titleEvent
           });
@@ -283,21 +283,21 @@ export class AgentStreamAiService implements OnModuleDestroy {
         return;
       }
 
-      await this.agentDrainService.initEventCounter({
+      await this.eventsDrainService.initEventCounter({
         sessionId: item.sessionId
       });
 
-      let titleEvent = this.agentAiEventsService.makeTitleEvent({
+      let titleEvent = this.explorerEventsMakerService.makeTitleEvent({
         title: item.title
       });
 
-      this.agentDrainService.enqueue({
+      this.eventsDrainService.enqueue({
         sessionId: item.sessionId,
         event: titleEvent
       });
 
       await new Promise<void>(resolve => {
-        this.agentDrainService.markDoneProducing({
+        this.eventsDrainService.markDoneProducing({
           sessionId: item.sessionId,
           callback: () => {
             this.releaseStreamLock({ sessionId: item.sessionId }).then(resolve);
@@ -431,7 +431,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
       this.abortControllers.set(sessionId, abortController);
 
       try {
-        await this.agentDrainService.initEventCounter({
+        await this.eventsDrainService.initEventCounter({
           sessionId: sessionId
         });
 
@@ -457,16 +457,16 @@ export class AgentStreamAiService implements OnModuleDestroy {
         });
 
         // Emit error + idle
-        let errorEvent = this.agentAiEventsService.makeErrorEvent({
+        let errorEvent = this.explorerEventsMakerService.makeErrorEvent({
           errorMessage: e?.message || 'AI SDK streaming failed'
         });
-        this.agentDrainService.enqueue({
+        this.eventsDrainService.enqueue({
           sessionId: sessionId,
           event: errorEvent
         });
 
-        let idleEvent = this.agentAiEventsService.makeIdleEvent();
-        this.agentDrainService.enqueue({
+        let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
+        this.eventsDrainService.enqueue({
           sessionId: sessionId,
           event: idleEvent
         });
@@ -474,7 +474,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
       // Wait for drain to flush all events before checking queue
       await new Promise<void>(resolve => {
-        this.agentDrainService.markDoneProducing({
+        this.eventsDrainService.markDoneProducing({
           sessionId: sessionId,
           callback: () => resolve()
         });
@@ -528,61 +528,61 @@ export class AgentStreamAiService implements OnModuleDestroy {
       partId
     } = item;
 
-    let history = await this.agentAiHistoryService.loadMessageHistory({
+    let history = await this.explorerMessageHistoryService.loadMessageHistory({
       sessionId: sessionId
     });
 
     // Pre-streaming events
-    let busyEvent = this.agentAiEventsService.makeBusyEvent();
-    this.agentDrainService.enqueue({ sessionId: sessionId, event: busyEvent });
+    let busyEvent = this.explorerEventsMakerService.makeBusyEvent();
+    this.eventsDrainService.enqueue({ sessionId: sessionId, event: busyEvent });
 
     let userMessageId = messageId;
 
-    let userMsgEvent = this.agentAiEventsService.makeUserMessageEvent({
+    let userMsgEvent = this.explorerEventsMakerService.makeUserMessageEvent({
       messageId: userMessageId,
       sessionId: sessionId,
       provider: provider,
       modelId: modelId
     });
-    this.agentDrainService.enqueue({
+    this.eventsDrainService.enqueue({
       sessionId: sessionId,
       event: userMsgEvent
     });
 
     let userPartId = partId;
 
-    let userPartEvent = this.agentAiEventsService.makeUserPartEvent({
+    let userPartEvent = this.explorerEventsMakerService.makeUserPartEvent({
       partId: userPartId,
       messageId: userMessageId,
       sessionId: sessionId,
       text: userMessage
     });
-    this.agentDrainService.enqueue({
+    this.eventsDrainService.enqueue({
       sessionId: sessionId,
       event: userPartEvent
     });
 
     let assistantMessageId = makeAscendingId({ prefix: 'msg' });
 
-    let assistantMsgEvent = this.agentAiEventsService.makeAssistantMessageEvent(
-      {
+    let assistantMsgEvent =
+      this.explorerEventsMakerService.makeAssistantMessageEvent({
         messageId: assistantMessageId,
         sessionId: sessionId
-      }
-    );
-    this.agentDrainService.enqueue({
+      });
+    this.eventsDrainService.enqueue({
       sessionId: sessionId,
       event: assistantMsgEvent
     });
 
     let assistantPartId = makeAscendingId({ prefix: 'prt' });
 
-    let assistantPartEvent = this.agentAiEventsService.makeAssistantPartEvent({
-      partId: assistantPartId,
-      messageId: assistantMessageId,
-      sessionId: sessionId
-    });
-    this.agentDrainService.enqueue({
+    let assistantPartEvent =
+      this.explorerEventsMakerService.makeAssistantPartEvent({
+        partId: assistantPartId,
+        messageId: assistantMessageId,
+        sessionId: sessionId
+      });
+    this.eventsDrainService.enqueue({
       sessionId: sessionId,
       event: assistantPartEvent
     });
@@ -591,7 +591,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
     let isFirstMessage = history.length === 0;
 
     let titlePromise = isFirstMessage
-      ? this.agentAiTitleService.generateTitleText({
+      ? this.explorerTitleService.generateTitleText({
           provider: provider,
           modelId: modelId,
           apiKey: apiKey,
@@ -600,7 +600,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
       : undefined;
 
     // Stream AI response
-    let model = this.agentModelsAiService.getModel({
+    let model = this.explorerModelsService.getModel({
       provider: provider,
       modelId: modelId,
       apiKey: apiKey
@@ -624,12 +624,12 @@ export class AgentStreamAiService implements OnModuleDestroy {
       for await (let chunk of result.textStream) {
         fullContent += chunk;
 
-        let deltaEvent = this.agentAiEventsService.makeTextDeltaEvent({
+        let deltaEvent = this.explorerEventsMakerService.makeTextDeltaEvent({
           messageId: assistantMessageId,
           partId: assistantPartId,
           delta: chunk
         });
-        this.agentDrainService.enqueue({
+        this.eventsDrainService.enqueue({
           sessionId: sessionId,
           event: deltaEvent
         });
@@ -643,48 +643,49 @@ export class AgentStreamAiService implements OnModuleDestroy {
     }
 
     if (wasAborted) {
-      let finalPartEvent = this.agentAiEventsService.makeFinalPartEvent({
+      let finalPartEvent = this.explorerEventsMakerService.makeFinalPartEvent({
         partId: assistantPartId,
         messageId: assistantMessageId,
         sessionId: sessionId,
         text: fullContent
       });
 
-      this.agentDrainService.enqueue({
+      this.eventsDrainService.enqueue({
         sessionId: sessionId,
         event: finalPartEvent
       });
 
-      let abortedMsgEvent = this.agentAiEventsService.makeAbortedMessageEvent({
-        messageId: assistantMessageId,
-        sessionId: sessionId
-      });
+      let abortedMsgEvent =
+        this.explorerEventsMakerService.makeAbortedMessageEvent({
+          messageId: assistantMessageId,
+          sessionId: sessionId
+        });
 
-      this.agentDrainService.enqueue({
+      this.eventsDrainService.enqueue({
         sessionId: sessionId,
         event: abortedMsgEvent
       });
 
-      let idleEvent = this.agentAiEventsService.makeIdleEvent();
+      let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
 
-      this.agentDrainService.enqueue({
+      this.eventsDrainService.enqueue({
         sessionId: sessionId,
         event: idleEvent
       });
     } else {
-      let finalPartEvent = this.agentAiEventsService.makeFinalPartEvent({
+      let finalPartEvent = this.explorerEventsMakerService.makeFinalPartEvent({
         partId: assistantPartId,
         messageId: assistantMessageId,
         sessionId: sessionId,
         text: fullContent
       });
-      this.agentDrainService.enqueue({
+      this.eventsDrainService.enqueue({
         sessionId: sessionId,
         event: finalPartEvent
       });
 
-      let idleEvent = this.agentAiEventsService.makeIdleEvent();
-      this.agentDrainService.enqueue({
+      let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
+      this.eventsDrainService.enqueue({
         sessionId: sessionId,
         event: idleEvent
       });
@@ -694,10 +695,10 @@ export class AgentStreamAiService implements OnModuleDestroy {
         let title = await titlePromise;
 
         if (title) {
-          let titleEvent = this.agentAiEventsService.makeTitleEvent({
+          let titleEvent = this.explorerEventsMakerService.makeTitleEvent({
             title: title
           });
-          this.agentDrainService.enqueue({
+          this.eventsDrainService.enqueue({
             sessionId: sessionId,
             event: titleEvent
           });

@@ -24,7 +24,7 @@ import { TabService } from '../tab.service';
 const { forEachSeries } = pIteration;
 
 @Injectable()
-export class AgentSandboxService {
+export class EditorSandboxService {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private sessionsService: SessionsService,

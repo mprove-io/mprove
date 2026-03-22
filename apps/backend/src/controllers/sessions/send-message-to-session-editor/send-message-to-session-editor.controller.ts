@@ -17,11 +17,11 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentOpencodeService } from '#backend/services/agent/agent-opencode.service';
-import { AgentSandboxService } from '#backend/services/agent/agent-sandbox.service.js';
-import { AgentStreamOpencodeService } from '#backend/services/agent/agent-stream-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
+import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -44,9 +44,9 @@ export class SendMessageToSessionEditorController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private agentStreamOpencodeService: AgentStreamOpencodeService,
-    private agentOpencodeService: AgentOpencodeService,
-    private agentSandboxService: AgentSandboxService,
+    private editorStreamService: EditorStreamService,
+    private editorOpencodeService: EditorOpencodeService,
+    private editorSandboxService: EditorSandboxService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -111,7 +111,7 @@ export class SendMessageToSessionEditorController {
       });
     }
 
-    let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
+    let sandboxInfo = await this.editorSandboxService.getSandboxInfo({
       sandboxId: session.sandboxId,
       e2bApiKey: project.e2bApiKey
     });
@@ -119,17 +119,17 @@ export class SendMessageToSessionEditorController {
     if (isDefined(sandboxInfo) === true) {
       if (sandboxInfo.state === 'paused') {
         let isLockExist =
-          await this.agentStreamOpencodeService.publishStopSessionStream({
+          await this.editorStreamService.publishStopSessionStream({
             sessionId: session.sessionId
           });
 
         if (isLockExist) {
-          await this.agentStreamOpencodeService.waitForStreamLockRelease({
+          await this.editorStreamService.waitForStreamLockRelease({
             sessionId: session.sessionId
           });
         }
 
-        await this.agentSandboxService.resumeSandbox({
+        await this.editorSandboxService.resumeSandbox({
           sandboxType: session.sandboxType as SandboxTypeEnum,
           sandboxId: session.sandboxId,
           e2bApiKey: project.e2bApiKey,
@@ -139,20 +139,20 @@ export class SendMessageToSessionEditorController {
             ) * 60_000
         });
 
-        sandboxInfo = await this.agentSandboxService.getSandboxInfo({
+        sandboxInfo = await this.editorSandboxService.getSandboxInfo({
           sandboxId: session.sandboxId,
           e2bApiKey: project.e2bApiKey
         });
       }
 
       if (sandboxInfo.state === 'running') {
-        await this.agentOpencodeService.getOpenCodeClient({
+        await this.editorOpencodeService.getOpenCodeClient({
           sessionId: session.sessionId,
           sandboxBaseUrl: session.sandboxBaseUrl,
           opencodePassword: session.opencodePassword
         });
 
-        await this.agentOpencodeService.healthCheckOpenCode({
+        await this.editorOpencodeService.healthCheckOpenCode({
           sandboxBaseUrl: session.sandboxBaseUrl
         });
 
@@ -192,7 +192,7 @@ export class SendMessageToSessionEditorController {
       }
 
       let isStreamStartedFresh =
-        await this.agentStreamOpencodeService.startEventStream({
+        await this.editorStreamService.startEventStream({
           sessionId: session.sessionId,
           opencodeSessionId: session.opencodeSessionId,
           skipReload: false
@@ -201,7 +201,7 @@ export class SendMessageToSessionEditorController {
       if (isStreamStartedFresh) {
         // this pod holds the stream — execute locally
         try {
-          await this.agentStreamOpencodeService.executeInteraction({
+          await this.editorStreamService.executeInteraction({
             sessionId: session.sessionId,
             opencodeSessionId: session.opencodeSessionId,
             interactionType: interactionType,
@@ -217,23 +217,23 @@ export class SendMessageToSessionEditorController {
             partId: partId
           });
         } catch (e) {
-          await this.agentStreamOpencodeService.stopEventStream({
+          await this.editorStreamService.stopEventStream({
             sessionId: session.sessionId
           });
 
-          await this.agentStreamOpencodeService.publishReloadSession({
+          await this.editorStreamService.publishReloadSession({
             sessionId: session.sessionId
           });
 
           throw e;
         }
 
-        await this.agentStreamOpencodeService.processEventStream({
+        await this.editorStreamService.processEventStream({
           sessionId: session.sessionId
         });
       } else {
         // another pod holds the stream — delegate via pub/sub
-        await this.agentStreamOpencodeService.publishInteractCommand({
+        await this.editorStreamService.publishInteractCommand({
           sessionId: session.sessionId,
           opencodeSessionId: session.opencodeSessionId,
           interactionType: interactionType,

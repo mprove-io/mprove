@@ -40,7 +40,7 @@ import { SessionsService } from '../db/sessions.service';
 const { forEachSeries } = pIteration;
 
 @Injectable()
-export class AgentDrainService {
+export class EventsDrainService {
   pendingEvents = new Map<
     string,
     { sessionId: string; event: Event; eventIndex: number }[]

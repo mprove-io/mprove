@@ -21,7 +21,7 @@ import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
 import { ServerError } from '#common/models/server-error';
 
 @Injectable()
-export class AgentModelsOpencodeService {
+export class EditorModelsService {
   private MODELS_DEV_TTL_MS = 60 * 60 * 1000; // 1 hour
 
   constructor(

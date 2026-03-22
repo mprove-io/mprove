@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class AgentAiToolsService {
+export class ExplorerToolsService {
   getTools(): Record<string, never> {
     return {};
   }

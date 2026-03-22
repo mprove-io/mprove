@@ -28,11 +28,11 @@ import { getRetryOption } from '#backend/functions/get-retry-option.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxService } from '#backend/services/agent/agent-sandbox.service.js';
-import { AgentStreamAiService } from '#backend/services/agent/agent-stream-ai.service';
-import { AgentStreamOpencodeService } from '#backend/services/agent/agent-stream-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
+import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -57,9 +57,9 @@ export class DeleteSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private agentSandboxService: AgentSandboxService,
-    private agentStreamOpencodeService: AgentStreamOpencodeService,
-    private agentStreamAiService: AgentStreamAiService,
+    private editorSandboxService: EditorSandboxService,
+    private editorStreamService: EditorStreamService,
+    private explorerStreamService: ExplorerStreamService,
     private tabService: TabService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
@@ -93,7 +93,7 @@ export class DeleteSessionController {
         session.status
       ) > -1
     ) {
-      await this.agentSandboxService.stopSandbox({
+      await this.editorSandboxService.stopSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,
         sandboxId: session.sandboxId,
         e2bApiKey: project.e2bApiKey
@@ -186,7 +186,7 @@ export class DeleteSessionController {
 
     setTimeout(() => {
       if (session.type === SessionTypeEnum.Explorer) {
-        this.agentStreamAiService
+        this.explorerStreamService
           .publishStopSessionStream({
             sessionId: sessionId
           })
@@ -199,7 +199,7 @@ export class DeleteSessionController {
             });
           });
       } else if (session.type === SessionTypeEnum.Editor) {
-        this.agentStreamOpencodeService
+        this.editorStreamService
           .publishStopSessionStream({
             sessionId: sessionId
           })

@@ -4,9 +4,9 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentOpencodeService } from '#backend/services/agent/agent-opencode.service';
-import { AgentStreamAiService } from '#backend/services/agent/agent-stream-ai.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
+import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
@@ -20,8 +20,8 @@ import { ServerError } from '#common/models/server-error';
 export class SetSessionTitleController {
   constructor(
     private sessionsService: SessionsService,
-    private agentOpencodeService: AgentOpencodeService,
-    private agentStreamAiService: AgentStreamAiService
+    private editorOpencodeService: EditorOpencodeService,
+    private explorerStreamService: ExplorerStreamService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetSessionTitle)
@@ -41,7 +41,7 @@ export class SetSessionTitleController {
 
     if (session.type === SessionTypeEnum.Editor) {
       // Type Editor: proxy to OpenCode
-      let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
+      let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
         sessionId: sessionId
       });
 
@@ -54,7 +54,7 @@ export class SetSessionTitleController {
       );
     } else {
       // Type Explorer: set title via lock-holding pod (or acquire lock if none)
-      await this.agentStreamAiService.setTitle({
+      await this.explorerStreamService.setTitle({
         sessionId: sessionId,
         title: title
       });

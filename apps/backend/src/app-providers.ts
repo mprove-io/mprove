@@ -3,20 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
-import { AgentAiEventsService } from './services/agent/agent-ai/agent-ai-events.service';
-import { AgentAiHistoryService } from './services/agent/agent-ai/agent-ai-history.service';
-import { AgentAiPromptsService } from './services/agent/agent-ai/agent-ai-prompts.service';
-import { AgentAiTitleService } from './services/agent/agent-ai/agent-ai-title.service';
-import { AgentAiToolsService } from './services/agent/agent-ai/agent-ai-tools.service';
-import { AgentDrainService } from './services/agent/agent-drain.service';
-import { AgentDrainTimerService } from './services/agent/agent-drain-timer.service';
-import { AgentModelsAiService } from './services/agent/agent-models-ai.service';
-import { AgentModelsOpencodeService } from './services/agent/agent-models-opencode.service';
-import { AgentOpencodeService } from './services/agent/agent-opencode.service';
-import { AgentSandboxService } from './services/agent/agent-sandbox.service';
-import { AgentSseService } from './services/agent/agent-sse.service';
-import { AgentStreamAiService } from './services/agent/agent-stream-ai.service';
-import { AgentStreamOpencodeService } from './services/agent/agent-stream-opencode.service';
 import { ApiKeyService } from './services/api-key.service';
 import { BlockmlService } from './services/blockml.service';
 import { AvatarsService } from './services/db/avatars.service';
@@ -51,7 +37,21 @@ import { PgService } from './services/dwh/pg.service';
 import { PrestoService } from './services/dwh/presto.service';
 import { SnowFlakeService } from './services/dwh/snowflake.service';
 import { TrinoService } from './services/dwh/trino.service';
+import { EditorModelsService } from './services/editor/editor-models.service';
+import { EditorOpencodeService } from './services/editor/editor-opencode.service';
+import { EditorSandboxService } from './services/editor/editor-sandbox.service';
+import { EditorStreamService } from './services/editor/editor-stream.service';
 import { EmailService } from './services/email.service';
+import { EventsDrainService } from './services/events/events-drain.service';
+import { EventsDrainTimerService } from './services/events/events-drain-timer.service';
+import { EventsSseService } from './services/events/events-sse.service';
+import { ExplorerEventsMakerService } from './services/explorer/explorer-events-maker.service';
+import { ExplorerMessageHistoryService } from './services/explorer/explorer-message-history.service';
+import { ExplorerModelsService } from './services/explorer/explorer-models.service';
+import { ExplorerPromptsService } from './services/explorer/explorer-prompts.service';
+import { ExplorerStreamService } from './services/explorer/explorer-stream.service';
+import { ExplorerTitleService } from './services/explorer/explorer-title.service';
+import { ExplorerToolsService } from './services/explorer/explorer-tools.service';
 import { HashService } from './services/hash.service';
 import { MalloyService } from './services/malloy.service';
 import { ParentService } from './services/parent.service';
@@ -122,20 +122,20 @@ export const appProviders = [
   TabService,
   //
   SessionsService,
-  AgentOpencodeService,
-  AgentDrainService,
-  AgentDrainTimerService,
-  AgentSseService,
-  AgentStreamOpencodeService,
-  AgentSandboxService,
-  AgentAiEventsService,
-  AgentAiHistoryService,
-  AgentAiPromptsService,
-  AgentAiTitleService,
-  AgentAiToolsService,
-  AgentModelsAiService,
-  AgentModelsOpencodeService,
-  AgentStreamAiService,
+  EditorOpencodeService,
+  EventsDrainService,
+  EventsDrainTimerService,
+  EventsSseService,
+  EditorStreamService,
+  EditorSandboxService,
+  ExplorerEventsMakerService,
+  ExplorerMessageHistoryService,
+  ExplorerPromptsService,
+  ExplorerTitleService,
+  ExplorerToolsService,
+  ExplorerModelsService,
+  EditorModelsService,
+  ExplorerStreamService,
   ApiKeyService,
   {
     provide: TasksService,
@@ -144,8 +144,8 @@ export const appProviders = [
       queriesService: QueriesService,
       structsService: StructsService,
       notesService: NotesService,
-      agentSandboxService: AgentSandboxService,
-      agentStreamOpencodeService: AgentStreamOpencodeService,
+      editorSandboxService: EditorSandboxService,
+      editorStreamService: EditorStreamService,
       logger: Logger
     ) =>
       cs.get<BackendConfig['isScheduler']>('isScheduler') === true
@@ -154,8 +154,8 @@ export const appProviders = [
             queriesService,
             structsService,
             notesService,
-            agentSandboxService,
-            agentStreamOpencodeService,
+            editorSandboxService,
+            editorStreamService,
             logger
           )
         : {},
@@ -164,8 +164,8 @@ export const appProviders = [
       QueriesService,
       StructsService,
       NotesService,
-      AgentSandboxService,
-      AgentStreamOpencodeService,
+      EditorSandboxService,
+      EditorStreamService,
       Logger
     ]
   },

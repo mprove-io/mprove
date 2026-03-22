@@ -18,9 +18,9 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentStreamAiService } from '#backend/services/agent/agent-stream-ai.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
@@ -42,7 +42,7 @@ export class SendMessageToSessionExplorerController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private agentStreamAiService: AgentStreamAiService,
+    private explorerStreamService: ExplorerStreamService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -136,13 +136,13 @@ export class SendMessageToSessionExplorerController {
         getRetryOption(this.cs, this.logger)
       );
 
-      let lockAcquired = await this.agentStreamAiService.tryAcquireStreamLock({
+      let lockAcquired = await this.explorerStreamService.tryAcquireStreamLock({
         sessionId: session.sessionId
       });
 
       if (lockAcquired) {
         // This pod acquired the lock - fire-and-forget streaming
-        this.agentStreamAiService
+        this.explorerStreamService
           .streamMessage({
             sessionId: session.sessionId,
             provider: modelProvider,
@@ -163,7 +163,7 @@ export class SendMessageToSessionExplorerController {
           });
       } else {
         // Another pod holds the lock - delegate via pub/sub
-        await this.agentStreamAiService.publishInteractCommand({
+        await this.explorerStreamService.publishInteractCommand({
           sessionId: session.sessionId,
           provider: modelProvider,
           modelId: modelId,
@@ -175,12 +175,12 @@ export class SendMessageToSessionExplorerController {
       }
     } else if (interactionType === InteractionTypeEnum.Stop) {
       let isLockExist =
-        await this.agentStreamAiService.publishStopSessionStream({
+        await this.explorerStreamService.publishStopSessionStream({
           sessionId: session.sessionId
         });
 
       if (isLockExist) {
-        await this.agentStreamAiService.waitForStreamLockRelease({
+        await this.explorerStreamService.waitForStreamLockRelease({
           sessionId: session.sessionId
         });
       }

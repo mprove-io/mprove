@@ -4,9 +4,9 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxService } from '#backend/services/agent/agent-sandbox.service';
-import { AgentStreamOpencodeService } from '#backend/services/agent/agent-stream-opencode.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
@@ -24,8 +24,8 @@ import { ServerError } from '#common/models/server-error';
 export class PauseEditorSessionController {
   constructor(
     private sessionsService: SessionsService,
-    private agentSandboxService: AgentSandboxService,
-    private agentStreamOpencodeService: AgentStreamOpencodeService
+    private editorSandboxService: EditorSandboxService,
+    private editorStreamService: EditorStreamService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendPauseEditorSession)
@@ -49,11 +49,11 @@ export class PauseEditorSessionController {
       });
     }
 
-    await this.agentStreamOpencodeService.publishStopSessionStream({
+    await this.editorStreamService.publishStopSessionStream({
       sessionId: sessionId
     });
 
-    await this.agentSandboxService.pauseSessionById({
+    await this.editorSandboxService.pauseSessionById({
       sessionId: sessionId,
       pauseReason: PauseReasonEnum.User
     });

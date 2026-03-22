@@ -22,11 +22,11 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentStreamAiService } from '#backend/services/agent/agent-stream-ai.service';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { OcEventsService } from '#backend/services/db/oc-events.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -49,7 +49,7 @@ export class CreateSessionExplorerController {
     private sessionsService: SessionsService,
     private membersService: MembersService,
     private ocEventsService: OcEventsService,
-    private agentStreamAiService: AgentStreamAiService,
+    private explorerStreamService: ExplorerStreamService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -167,7 +167,7 @@ export class CreateSessionExplorerController {
         apiKey = project.anthropicApiKey || '';
       }
 
-      this.agentStreamAiService
+      this.explorerStreamService
         .streamMessage({
           sessionId: session.sessionId,
           provider: modelProvider,

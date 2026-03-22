@@ -24,7 +24,7 @@ export interface AgentEvent {
 }
 
 @Injectable()
-export class AgentSseService {
+export class EventsSseService {
   private POLL_INTERVAL_MS = 1000;
 
   constructor(

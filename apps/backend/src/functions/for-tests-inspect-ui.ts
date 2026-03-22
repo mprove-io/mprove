@@ -1,7 +1,7 @@
 import type { ExecutionContext } from 'ava';
 import { Prep } from '#backend/interfaces/prep';
-import { AgentOpencodeService } from '#backend/services/agent/agent-opencode.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
 import { ToBackendCreateSessionEditorResponse } from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
 
 export async function forTestsInspectUi(item: {
@@ -22,7 +22,7 @@ export async function forTestsInspectUi(item: {
   item.t.pass('Session created for inspection');
 
   // Periodic health check
-  let agentSandboxOpencodeService = item.prep.app.get(AgentOpencodeService);
+  let agentSandboxOpencodeService = item.prep.app.get(EditorOpencodeService);
   let sessionsService = item.prep.app.get(SessionsService);
   let session = await sessionsService.getSessionByIdCheckExists({
     sessionId: item.sessionId

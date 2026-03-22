@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import type { Event } from '@opencode-ai/sdk/v2';
 
 @Injectable()
-export class AgentAiEventsService {
+export class ExplorerEventsMakerService {
   makeBusyEvent(): Event {
     return {
       type: 'session.status',

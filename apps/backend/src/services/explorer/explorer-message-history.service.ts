@@ -5,10 +5,10 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages.js';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts.js';
-import { TabService } from '../../tab.service';
+import { TabService } from '../tab.service';
 
 @Injectable()
-export class AgentAiHistoryService {
+export class ExplorerMessageHistoryService {
   constructor(
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db

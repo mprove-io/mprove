@@ -5,12 +5,12 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ServerError } from '#common/models/server-error';
-import { AgentDrainService } from './agent-drain.service';
-import { AgentStreamAiService } from './agent-stream-ai.service';
-import { AgentStreamOpencodeService } from './agent-stream-opencode.service';
+import { EditorStreamService } from '../editor/editor-stream.service';
+import { ExplorerStreamService } from '../explorer/explorer-stream.service';
+import { EventsDrainService } from './events-drain.service';
 
 @Injectable()
-export class AgentDrainTimerService implements OnModuleDestroy {
+export class EventsDrainTimerService implements OnModuleDestroy {
   private isRunningDrain = false;
 
   private drainTimer: ReturnType<typeof setInterval>;
@@ -19,9 +19,9 @@ export class AgentDrainTimerService implements OnModuleDestroy {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private agentDrainService: AgentDrainService,
-    private agentStreamOpencodeService: AgentStreamOpencodeService,
-    private agentStreamAiService: AgentStreamAiService,
+    private eventsDrainService: EventsDrainService,
+    private editorStreamService: EditorStreamService,
+    private explorerStreamService: ExplorerStreamService,
     private logger: Logger
   ) {
     this.drainTimer = setInterval(async () => {
@@ -30,9 +30,9 @@ export class AgentDrainTimerService implements OnModuleDestroy {
 
         try {
           let safePauseSessionIds =
-            await this.agentDrainService.drainAllQueues();
+            await this.eventsDrainService.drainAllQueues();
 
-          await this.agentStreamOpencodeService.processSafePause({
+          await this.editorStreamService.processSafePause({
             sessionIds: safePauseSessionIds
           });
         } catch (e) {
@@ -47,7 +47,7 @@ export class AgentDrainTimerService implements OnModuleDestroy {
           });
         }
 
-        this.agentStreamOpencodeService.checkStreamStalls().catch(e => {
+        this.editorStreamService.checkStreamStalls().catch(e => {
           logToConsoleBackend({
             log: new ServerError({
               message: ErEnum.BACKEND_AGENT_STREAM_STALL_CHECK_FAILED,
@@ -64,7 +64,7 @@ export class AgentDrainTimerService implements OnModuleDestroy {
     }, 1000);
 
     this.lockTimer = setInterval(() => {
-      this.agentStreamAiService.refreshActiveLocks().catch(e => {
+      this.explorerStreamService.refreshActiveLocks().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
@@ -76,7 +76,7 @@ export class AgentDrainTimerService implements OnModuleDestroy {
         });
       });
 
-      this.agentStreamOpencodeService.refreshActiveLocks().catch(e => {
+      this.editorStreamService.refreshActiveLocks().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,

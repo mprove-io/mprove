@@ -10,10 +10,10 @@ import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxService } from '#backend/services/agent/agent-sandbox.service.js';
-import { AgentStreamOpencodeService } from '#backend/services/agent/agent-stream-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
@@ -38,8 +38,8 @@ export class GetSessionController {
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private tabService: TabService,
-    private agentSandboxService: AgentSandboxService,
-    private agentStreamOpencodeService: AgentStreamOpencodeService,
+    private editorSandboxService: EditorSandboxService,
+    private editorStreamService: EditorStreamService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -69,7 +69,7 @@ export class GetSessionController {
     }
 
     if (session.sandboxId) {
-      let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
+      let sandboxInfo = await this.editorSandboxService.getSandboxInfo({
         sandboxId: session.sandboxId,
         e2bApiKey: project.e2bApiKey
       });
@@ -98,18 +98,18 @@ export class GetSessionController {
       session.opencodeSessionId
     ) {
       let isStreamStartedFresh =
-        await this.agentStreamOpencodeService.startEventStream({
+        await this.editorStreamService.startEventStream({
           sessionId: sessionId,
           opencodeSessionId: session.opencodeSessionId,
           skipReload: false
         });
 
       if (isStreamStartedFresh) {
-        await this.agentStreamOpencodeService.processEventStream({
+        await this.editorStreamService.processEventStream({
           sessionId: sessionId
         });
       } else if (!skipFetchSessionState) {
-        await this.agentStreamOpencodeService.publishFetchCommand({
+        await this.editorStreamService.publishFetchCommand({
           sessionId: sessionId,
           opencodeSessionId: session.opencodeSessionId
         });

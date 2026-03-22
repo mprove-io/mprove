@@ -4,9 +4,9 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentModelsAiService } from '#backend/services/agent/agent-models-ai.service';
-import { AgentModelsOpencodeService } from '#backend/services/agent/agent-models-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
+import { EditorModelsService } from '#backend/services/editor/editor-models.service';
+import { ExplorerModelsService } from '#backend/services/explorer/explorer-models.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -20,8 +20,8 @@ import {
 @Controller()
 export class GetSessionProviderModelsController {
   constructor(
-    private agentModelsAiSdkService: AgentModelsAiService,
-    private agentModelsOpencodeService: AgentModelsOpencodeService,
+    private explorerModelsService: ExplorerModelsService,
+    private editorModelsService: EditorModelsService,
     private projectsService: ProjectsService
   ) {}
 
@@ -39,7 +39,7 @@ export class GetSessionProviderModelsController {
 
     let [modelsAi, modelsOpencode] = await Promise.all([
       sessionTypes.includes(SessionTypeEnum.Explorer)
-        ? this.agentModelsAiSdkService.getAiModels({
+        ? this.explorerModelsService.getAiModels({
             projectId: projectId,
             openaiApiKey: project.openaiApiKey,
             anthropicApiKey: project.anthropicApiKey,
@@ -48,7 +48,7 @@ export class GetSessionProviderModelsController {
           })
         : [],
       sessionTypes.includes(SessionTypeEnum.Editor)
-        ? this.agentModelsOpencodeService.getOpencodeModels({
+        ? this.editorModelsService.getOpencodeModels({
             projectId: projectId,
             openaiApiKey: project.openaiApiKey,
             anthropicApiKey: project.anthropicApiKey,

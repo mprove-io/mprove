@@ -21,7 +21,7 @@ export interface CreateSandboxResult {
 }
 
 @Injectable()
-export class AgentOpencodeService {
+export class EditorOpencodeService {
   private opencodeClients: { sessionId: string; client: OpencodeClient }[] = [];
 
   constructor(

@@ -11,9 +11,9 @@ import {
 } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxService } from '#backend/services/agent/agent-sandbox.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -31,7 +31,7 @@ export class GetSessionsListController {
   constructor(
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
-    private agentSandboxService: AgentSandboxService,
+    private editorSandboxService: EditorSandboxService,
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -65,7 +65,7 @@ export class GetSessionsListController {
         })
         .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
 
-      await this.agentSandboxService.syncEditorSessionsStatus({
+      await this.editorSandboxService.syncEditorSessionsStatus({
         editorSessions: editorSessions,
         e2bApiKey: project.e2bApiKey
       });

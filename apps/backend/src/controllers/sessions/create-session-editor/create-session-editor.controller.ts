@@ -28,8 +28,6 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentOpencodeService } from '#backend/services/agent/agent-opencode.service.js';
-import { AgentStreamOpencodeService } from '#backend/services/agent/agent-stream-opencode.service';
 import { ApiKeyService } from '#backend/services/api-key.service';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
@@ -37,6 +35,8 @@ import { BridgesService } from '#backend/services/db/bridges.service';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
+import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service.js';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
@@ -71,9 +71,9 @@ export class CreateSessionEditorController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private sessionsService: SessionsService,
-    private agentStreamOpencodeService: AgentStreamOpencodeService,
+    private editorStreamService: EditorStreamService,
     private apiKeyService: ApiKeyService,
-    private agentOpencodeService: AgentOpencodeService,
+    private editorOpencodeService: EditorOpencodeService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
@@ -299,7 +299,7 @@ export class CreateSessionEditorController {
       // console.log('starting opencode server...');
 
       let { sandboxId, sandboxBaseUrl, opencodePassword, sandboxInfo } =
-        await this.agentOpencodeService.startOpencodeServer({
+        await this.editorOpencodeService.startOpencodeServer({
           sandboxType: sandboxType,
           sandboxTimeoutMs: sandboxTimeoutMs,
           sandboxEnvs: sandboxEnvs,
@@ -309,7 +309,7 @@ export class CreateSessionEditorController {
 
       // console.log('opencode server started');
 
-      let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
+      let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
         sessionId: sessionId,
         sandboxBaseUrl: sandboxBaseUrl,
         opencodePassword: opencodePassword
@@ -391,7 +391,7 @@ export class CreateSessionEditorController {
       );
 
       let isStreamStartedFresh =
-        await this.agentStreamOpencodeService.startEventStream({
+        await this.editorStreamService.startEventStream({
           sessionId: sessionId,
           opencodeSessionId: opencodeSessionId,
           skipReload: true
@@ -399,7 +399,7 @@ export class CreateSessionEditorController {
 
       if (firstMessage) {
         try {
-          await this.agentStreamOpencodeService.executeInteraction({
+          await this.editorStreamService.executeInteraction({
             sessionId: sessionId,
             opencodeSessionId: opencodeSessionId,
             interactionType: InteractionTypeEnum.Message,
@@ -412,11 +412,11 @@ export class CreateSessionEditorController {
           });
         } catch (e) {
           if (isStreamStartedFresh) {
-            await this.agentStreamOpencodeService.stopEventStream({
+            await this.editorStreamService.stopEventStream({
               sessionId: sessionId
             });
 
-            await this.agentStreamOpencodeService.publishReloadSession({
+            await this.editorStreamService.publishReloadSession({
               sessionId: sessionId
             });
           }
@@ -426,7 +426,7 @@ export class CreateSessionEditorController {
       }
 
       if (isStreamStartedFresh) {
-        await this.agentStreamOpencodeService.processEventStream({
+        await this.editorStreamService.processEventStream({
           sessionId: sessionId
         });
       }

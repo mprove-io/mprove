@@ -8,11 +8,11 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { ServerError } from '#common/models/server-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
-import { AgentSandboxService } from './agent/agent-sandbox.service';
-import { AgentStreamOpencodeService } from './agent/agent-stream-opencode.service';
 import { NotesService } from './db/notes.service';
 import { QueriesService } from './db/queries.service';
 import { StructsService } from './db/structs.service';
+import { EditorSandboxService } from './editor/editor-sandbox.service';
+import { EditorStreamService } from './editor/editor-stream.service';
 
 const { forEachSeries } = pIteration;
 
@@ -30,8 +30,8 @@ export class TasksService {
     private queriesService: QueriesService,
     private structsService: StructsService,
     private notesService: NotesService,
-    private agentSandboxService: AgentSandboxService,
-    private agentStreamOpencodeService: AgentStreamOpencodeService,
+    private editorSandboxService: EditorSandboxService,
+    private editorStreamService: EditorStreamService,
     private logger: Logger
   ) {}
 
@@ -131,20 +131,20 @@ export class TasksService {
 
       try {
         let sessionIdsToPause =
-          await this.agentSandboxService.getEditorSessionsToPause();
+          await this.editorSandboxService.getEditorSessionsToPause();
 
         await forEachSeries(sessionIdsToPause, async sessionId => {
           try {
-            await this.agentStreamOpencodeService.publishStopSessionStream({
+            await this.editorStreamService.publishStopSessionStream({
               sessionId: sessionId
             });
 
-            await this.agentSandboxService.pauseSessionById({
+            await this.editorSandboxService.pauseSessionById({
               sessionId: sessionId,
               pauseReason: PauseReasonEnum.Idle
             });
 
-            await this.agentStreamOpencodeService.publishReloadSession({
+            await this.editorStreamService.publishReloadSession({
               sessionId: sessionId
             });
           } catch (e) {
@@ -184,10 +184,10 @@ export class TasksService {
 
       try {
         let pausedSessionIds =
-          await this.agentSandboxService.syncAllEditorSessionsStatus();
+          await this.editorSandboxService.syncAllEditorSessionsStatus();
 
         await forEachSeries(pausedSessionIds, async sessionId => {
-          await this.agentStreamOpencodeService.publishReloadSession({
+          await this.editorStreamService.publishReloadSession({
             sessionId: sessionId
           });
         });

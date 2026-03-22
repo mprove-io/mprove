@@ -32,14 +32,14 @@ import { ServerError } from '#common/models/server-error';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
 import { SessionsService } from '../db/sessions.service';
-import { AgentDrainService } from './agent-drain.service';
-import { AgentOpencodeService } from './agent-opencode.service';
-import { AgentSandboxService } from './agent-sandbox.service';
+import { EventsDrainService } from '../events/events-drain.service';
+import { EditorOpencodeService } from './editor-opencode.service';
+import { EditorSandboxService } from './editor-sandbox.service';
 
 const { forEachSeries } = pIteration;
 
 @Injectable()
-export class AgentStreamOpencodeService implements OnModuleDestroy {
+export class EditorStreamService implements OnModuleDestroy {
   private podId = crypto.randomUUID();
 
   // OpenCode sends heartbeat every 10s (hardcoded in workspace-server/routes.ts) + 4s buffer
@@ -65,9 +65,9 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private agentDrainService: AgentDrainService,
-    private agentSandboxService: AgentSandboxService,
-    private agentOpencodeService: AgentOpencodeService,
+    private eventsDrainService: EventsDrainService,
+    private editorSandboxService: EditorSandboxService,
+    private editorOpencodeService: EditorOpencodeService,
     private sessionsService: SessionsService,
     private ocMessagesService: OcMessagesService,
     private ocPartsService: OcPartsService,
@@ -247,7 +247,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       try {
         await this.stopEventStream({ sessionId: sessionId });
 
-        await this.agentSandboxService.pauseSessionById({
+        await this.editorSandboxService.pauseSessionById({
           sessionId: sessionId,
           pauseReason: PauseReasonEnum.Safe
         });
@@ -309,7 +309,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         }
 
         this.lastEventTsMap.delete(sessionId);
-        this.agentDrainService.cleanup({ sessionId: sessionId });
+        this.eventsDrainService.cleanup({ sessionId: sessionId });
       }
     });
   }
@@ -354,13 +354,13 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       `[oc-stream] startEventStream - lock acquired, subscribing sessionId=${item.sessionId}`
     );
 
-    let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
+    let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
     let abortController = new AbortController();
 
-    await this.agentDrainService.initEventCounter({
+    await this.eventsDrainService.initEventCounter({
       sessionId: item.sessionId
     });
 
@@ -403,7 +403,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         for await (let event of response.stream) {
           this.lastEventTsMap.set(item.sessionId, Date.now());
 
-          this.agentDrainService.enqueue({
+          this.eventsDrainService.enqueue({
             sessionId: item.sessionId,
             event: event
           });
@@ -459,7 +459,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     }
 
     this.lastEventTsMap.delete(sessionId);
-    this.agentDrainService.cleanup({ sessionId: sessionId });
+    this.eventsDrainService.cleanup({ sessionId: sessionId });
     await this.releaseStreamLock({ sessionId: sessionId });
 
     console.log('[oc-stream] stopEventStream completed');
@@ -471,7 +471,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     permissionId: string;
     reply: string;
   }): Promise<void> {
-    let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
+    let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
@@ -488,7 +488,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     questionId: string;
     answers: string[][];
   }): Promise<void> {
-    let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
+    let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
@@ -503,7 +503,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     opencodeSessionId: string;
     questionId: string;
   }): Promise<void> {
-    let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
+    let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
@@ -573,7 +573,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     publishReload: boolean;
   }): Promise<void> {
     try {
-      let client = await this.agentOpencodeService.getOpenCodeClient({
+      let client = await this.editorOpencodeService.getOpenCodeClient({
         sessionId: item.sessionId
       });
       let [
@@ -720,7 +720,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     messageId?: string;
     partId?: string;
   }): Promise<{ success: boolean }> {
-    let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
+    let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 

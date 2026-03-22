@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class AgentAiPromptsService {
+export class ExplorerPromptsService {
   getTitleSystemPrompt(): string {
     return `You are a title generator. You output ONLY a thread title. Nothing else.
 

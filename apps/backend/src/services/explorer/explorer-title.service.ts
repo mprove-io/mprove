@@ -6,14 +6,14 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ServerError } from '#common/models/server-error';
-import { AgentModelsAiService } from '../agent-models-ai.service';
-import { AgentAiPromptsService } from './agent-ai-prompts.service';
+import { ExplorerModelsService } from './explorer-models.service';
+import { ExplorerPromptsService } from './explorer-prompts.service';
 
 @Injectable()
-export class AgentAiTitleService {
+export class ExplorerTitleService {
   constructor(
-    private agentModelsAiService: AgentModelsAiService,
-    private agentAiPromptsService: AgentAiPromptsService,
+    private explorerModelsService: ExplorerModelsService,
+    private explorerPromptsService: ExplorerPromptsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {}
@@ -26,13 +26,13 @@ export class AgentAiTitleService {
   }): Promise<string | undefined> {
     let { provider, modelId, apiKey, userMessage } = item;
 
-    let model = this.agentModelsAiService.getModel({
+    let model = this.explorerModelsService.getModel({
       provider: provider,
       modelId: modelId,
       apiKey: apiKey
     });
 
-    let systemPrompt = this.agentAiPromptsService.getTitleSystemPrompt();
+    let systemPrompt = this.explorerPromptsService.getTitleSystemPrompt();
 
     try {
       let result = await generateText({
