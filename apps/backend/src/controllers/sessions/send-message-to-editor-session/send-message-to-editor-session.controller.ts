@@ -32,15 +32,15 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import {
-  ToBackendSendMessageToSessionEditorRequest,
-  ToBackendSendMessageToSessionEditorResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-editor';
+  ToBackendSendMessageToEditorSessionRequest,
+  ToBackendSendMessageToEditorSessionResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-editor-session';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class SendMessageToSessionEditorController {
+export class SendMessageToEditorSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
@@ -52,12 +52,12 @@ export class SendMessageToSessionEditorController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionEditor)
-  async sendMessageToSessionEditor(
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSendMessageToEditorSession)
+  async sendMessageToEditorSession(
     @AttachUser() user: UserTab,
     @Req() request: any
   ) {
-    let reqValid: ToBackendSendMessageToSessionEditorRequest = request.body;
+    let reqValid: ToBackendSendMessageToEditorSessionRequest = request.body;
     let {
       sessionId,
       interactionType,
@@ -286,7 +286,7 @@ export class SendMessageToSessionEditorController {
       ocSession: ocSession
     });
 
-    let payload: ToBackendSendMessageToSessionEditorResponsePayload = {
+    let payload: ToBackendSendMessageToEditorSessionResponsePayload = {
       session: sessionApi
     };
 

@@ -37,15 +37,15 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { makeSessionId } from '#common/functions/make-session-id';
 import { splitModel } from '#common/functions/split-model';
 import {
-  ToBackendCreateSessionExplorerRequest,
-  ToBackendCreateSessionExplorerResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-create-session-explorer';
+  ToBackendCreateExplorerSessionRequest,
+  ToBackendCreateExplorerSessionResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-create-explorer-session';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class CreateSessionExplorerController {
+export class CreateExplorerSessionController {
   constructor(
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
@@ -57,9 +57,12 @@ export class CreateSessionExplorerController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateSessionExplorer)
-  async createSession(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateSessionExplorerRequest = request.body;
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateExplorerSession)
+  async createExplorerSession(
+    @AttachUser() user: UserTab,
+    @Req() request: any
+  ) {
+    let reqValid: ToBackendCreateExplorerSessionRequest = request.body;
     let {
       projectId,
       provider,
@@ -196,7 +199,7 @@ export class CreateSessionExplorerController {
         });
     }
 
-    let payload: ToBackendCreateSessionExplorerResponsePayload = {
+    let payload: ToBackendCreateExplorerSessionResponsePayload = {
       sessionId: session.sessionId,
       repoId: session.repoId,
       branchId: session.branchId

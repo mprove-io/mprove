@@ -99,16 +99,16 @@ import { ToBackendRevertRepoToLastCommitRequest } from '#common/interfaces/to-ba
 import { ToBackendRevertRepoToRemoteRequest } from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-remote';
 import { ToBackendSyncRepoRequest } from '#common/interfaces/to-backend/repos/to-backend-sync-repo';
 import { ToBackendArchiveSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-archive-session';
-import { ToBackendCreateSessionEditorRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
-import { ToBackendCreateSessionExplorerRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-session-explorer';
+import { ToBackendCreateEditorSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-editor-session';
+import { ToBackendCreateExplorerSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-explorer-session';
 import { ToBackendCreateSessionSseTicketRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-session-sse-ticket';
 import { ToBackendDeleteSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
 import { ToBackendGetSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-get-session';
 import { ToBackendGetSessionProviderModelsRequest } from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
 import { ToBackendGetSessionsListRequest } from '#common/interfaces/to-backend/sessions/to-backend-get-sessions-list';
 import { ToBackendPauseEditorSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-pause-editor-session';
-import { ToBackendSendMessageToSessionEditorRequest } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-editor';
-import { ToBackendSendMessageToSessionExplorerRequest } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-explorer';
+import { ToBackendSendMessageToEditorSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-editor-session';
+import { ToBackendSendMessageToExplorerSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-explorer-session';
 import { ToBackendSetSessionTitleRequest } from '#common/interfaces/to-backend/sessions/to-backend-set-session-title';
 import { ToBackendSpecialRebuildStructsRequest } from '#common/interfaces/to-backend/special/to-backend-special-rebuild-structs';
 import { ToBackendGetStructRequest } from '#common/interfaces/to-backend/structs/to-backend-get-struct';
@@ -384,10 +384,10 @@ export const nameToClass = {
   //
   [ToBackendRequestInfoNameEnum.ToBackendArchiveSession]:
     ToBackendArchiveSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendCreateSessionEditor]:
-    ToBackendCreateSessionEditorRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendCreateSessionExplorer]:
-    ToBackendCreateSessionExplorerRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendCreateEditorSession]:
+    ToBackendCreateEditorSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendCreateExplorerSession]:
+    ToBackendCreateExplorerSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendCreateSessionSseTicket]:
     ToBackendCreateSessionSseTicketRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDeleteSession]:
@@ -400,10 +400,10 @@ export const nameToClass = {
     ToBackendGetSessionsListRequest,
   [ToBackendRequestInfoNameEnum.ToBackendPauseEditorSession]:
     ToBackendPauseEditorSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionEditor]:
-    ToBackendSendMessageToSessionEditorRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionExplorer]:
-    ToBackendSendMessageToSessionExplorerRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSendMessageToEditorSession]:
+    ToBackendSendMessageToEditorSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSendMessageToExplorerSession]:
+    ToBackendSendMessageToExplorerSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSetSessionTitle]:
     ToBackendSetSessionTitleRequest
 };

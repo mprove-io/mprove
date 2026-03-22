@@ -52,9 +52,9 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { makeId } from '#common/functions/make-id';
 import { makeSessionId } from '#common/functions/make-session-id';
 import {
-  ToBackendCreateSessionEditorRequest,
-  ToBackendCreateSessionEditorResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
+  ToBackendCreateEditorSessionRequest,
+  ToBackendCreateEditorSessionResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-create-editor-session';
 import {
   ToDiskCreateDevRepoRequest,
   ToDiskCreateDevRepoResponse
@@ -66,7 +66,7 @@ const { forEachSeries } = pIteration;
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class CreateSessionEditorController {
+export class CreateEditorSessionController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
@@ -84,9 +84,9 @@ export class CreateSessionEditorController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateSessionEditor)
-  async createSession(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateSessionEditorRequest = request.body;
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateEditorSession)
+  async createEditorSession(@AttachUser() user: UserTab, @Req() request: any) {
+    let reqValid: ToBackendCreateEditorSessionRequest = request.body;
     let {
       projectId,
       sandboxType,
@@ -255,7 +255,7 @@ export class CreateSessionEditorController {
       `createSessionRepoAsync took ${(Date.now() - createSessionRepoStart) / 1000}s`
     );
 
-    let payload: ToBackendCreateSessionEditorResponsePayload = {
+    let payload: ToBackendCreateEditorSessionResponsePayload = {
       sessionId: session.sessionId,
       repoId: repoId,
       branchId: branchId

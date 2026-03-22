@@ -97,8 +97,8 @@ import { RevertRepoToLastCommitController } from './controllers/repos/revert-rep
 import { RevertRepoToRemoteController } from './controllers/repos/revert-repo-to-remote/revert-repo-to-remote.controller';
 import { SyncRepoController } from './controllers/repos/sync-repo/sync-repo.controller';
 import { ArchiveSessionController } from './controllers/sessions/archive-session/archive-session.controller';
-import { CreateSessionEditorController } from './controllers/sessions/create-session-editor/create-session-editor.controller';
-import { CreateSessionExplorerController } from './controllers/sessions/create-session-explorer/create-session-explorer.controller';
+import { CreateEditorSessionController } from './controllers/sessions/create-editor-session/create-editor-session.controller';
+import { CreateExplorerSessionController } from './controllers/sessions/create-explorer-session/create-explorer-session.controller';
 import { CreateSessionSseTicketController } from './controllers/sessions/create-session-sse-ticket/create-session-sse-ticket.controller';
 import { DeleteSessionController } from './controllers/sessions/delete-session/delete-session.controller';
 import { GetSessionController } from './controllers/sessions/get-session/get-session.controller';
@@ -106,8 +106,8 @@ import { GetSessionEventsSseController } from './controllers/sessions/get-sessio
 import { GetSessionProviderModelsController } from './controllers/sessions/get-session-provider-models/get-session-provider-models.controller';
 import { GetSessionsListController } from './controllers/sessions/get-sessions-list/get-sessions-list.controller';
 import { PauseEditorSessionController } from './controllers/sessions/pause-editor-session/pause-editor-session.controller';
-import { SendMessageToSessionEditorController } from './controllers/sessions/send-message-to-session-editor/send-message-to-session-editor.controller';
-import { SendMessageToSessionExplorerController } from './controllers/sessions/send-message-to-session-explorer/send-message-to-session-explorer.controller';
+import { SendMessageToEditorSessionController } from './controllers/sessions/send-message-to-editor-session/send-message-to-editor-session.controller';
+import { SendMessageToExplorerSessionController } from './controllers/sessions/send-message-to-explorer-session/send-message-to-explorer-session.controller';
 import { SetSessionTitleController } from './controllers/sessions/set-session-title/set-session-title.controller';
 import { SpecialRebuildStructsController } from './controllers/special/special-rebuild-structs/special-rebuild-structs.controller';
 import { GetStructController } from './controllers/structs/get-struct/get-struct.controller';
@@ -134,11 +134,11 @@ import { SetUserUiController } from './controllers/users/set-user-ui/set-user-ui
 import { UpdateUserPasswordController } from './controllers/users/update-user-password/update-user-password.controller';
 
 export const appControllers = [
-  CreateSessionEditorController,
-  CreateSessionExplorerController,
+  CreateEditorSessionController,
+  CreateExplorerSessionController,
   CreateSessionSseTicketController,
-  SendMessageToSessionExplorerController,
-  SendMessageToSessionEditorController,
+  SendMessageToExplorerSessionController,
+  SendMessageToEditorSessionController,
   GetSessionEventsSseController,
   DeleteSessionController,
   ArchiveSessionController,

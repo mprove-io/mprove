@@ -30,15 +30,15 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { splitModel } from '#common/functions/split-model';
 import {
-  ToBackendSendMessageToSessionExplorerRequest,
-  ToBackendSendMessageToSessionExplorerResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-explorer';
+  ToBackendSendMessageToExplorerSessionRequest,
+  ToBackendSendMessageToExplorerSessionResponsePayload
+} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-explorer-session';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class SendMessageToSessionExplorerController {
+export class SendMessageToExplorerSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
@@ -48,12 +48,12 @@ export class SendMessageToSessionExplorerController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionExplorer)
-  async sendMessageToSessionExplorer(
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSendMessageToExplorerSession)
+  async sendMessageToExplorerSession(
     @AttachUser() user: UserTab,
     @Req() request: any
   ) {
-    let reqValid: ToBackendSendMessageToSessionExplorerRequest = request.body;
+    let reqValid: ToBackendSendMessageToExplorerSessionRequest = request.body;
     let {
       sessionId,
       interactionType,
@@ -195,7 +195,7 @@ export class SendMessageToSessionExplorerController {
       ocSession: ocSession
     });
 
-    let payload: ToBackendSendMessageToSessionExplorerResponsePayload = {
+    let payload: ToBackendSendMessageToExplorerSessionResponsePayload = {
       session: sessionApi
     };
 

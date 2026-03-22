@@ -151,15 +151,15 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendSetAvatar = 'api/ToBackendSetAvatar',
   //
   ToBackendArchiveSession = 'api/ToBackendArchiveSession',
-  ToBackendCreateSessionEditor = 'api/ToBackendCreateSessionEditor',
-  ToBackendCreateSessionExplorer = 'api/ToBackendCreateSessionExplorer',
+  ToBackendCreateEditorSession = 'api/ToBackendCreateEditorSession',
+  ToBackendCreateExplorerSession = 'api/ToBackendCreateExplorerSession',
   ToBackendCreateSessionSseTicket = 'api/ToBackendCreateSessionSseTicket',
   ToBackendDeleteSession = 'api/ToBackendDeleteSession',
   ToBackendGetSession = 'api/ToBackendGetSession',
   ToBackendGetSessionProviderModels = 'api/ToBackendGetSessionProviderModels',
   ToBackendGetSessionsList = 'api/ToBackendGetSessionsList',
   ToBackendPauseEditorSession = 'api/ToBackendPauseEditorSession',
-  ToBackendSendMessageToSessionEditor = 'api/ToBackendSendMessageToSessionEditor',
-  ToBackendSendMessageToSessionExplorer = 'api/ToBackendSendMessageToSessionExplorer',
+  ToBackendSendMessageToEditorSession = 'api/ToBackendSendMessageToEditorSession',
+  ToBackendSendMessageToExplorerSession = 'api/ToBackendSendMessageToExplorerSession',
   ToBackendSetSessionTitle = 'api/ToBackendSetSessionTitle'
 }

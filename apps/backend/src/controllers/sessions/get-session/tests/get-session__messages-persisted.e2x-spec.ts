@@ -17,9 +17,9 @@ import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
 import type { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 import {
-  ToBackendCreateSessionEditorRequest,
-  ToBackendCreateSessionEditorResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
+  ToBackendCreateEditorSessionRequest,
+  ToBackendCreateEditorSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-create-editor-session';
 import {
   ToBackendDeleteSessionRequest,
   ToBackendDeleteSessionResponse
@@ -29,9 +29,9 @@ import {
   ToBackendGetSessionResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-get-session';
 import {
-  ToBackendSendMessageToSessionEditorRequest,
-  ToBackendSendMessageToSessionEditorResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-editor';
+  ToBackendSendMessageToEditorSessionRequest,
+  ToBackendSendMessageToEditorSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-editor-session';
 
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
@@ -110,9 +110,9 @@ test('1', async t => {
     });
 
     // Create session
-    let createSessionReq: ToBackendCreateSessionEditorRequest = {
+    let createSessionReq: ToBackendCreateEditorSessionRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendCreateSessionEditor,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateEditorSession,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -130,7 +130,7 @@ test('1', async t => {
       }
     };
 
-    let createResp = await sendToBackend<ToBackendCreateSessionEditorResponse>({
+    let createResp = await sendToBackend<ToBackendCreateEditorSessionResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: createSessionReq,
@@ -168,9 +168,9 @@ test('1', async t => {
 
     console.log('[test] SSE connected, sending message...');
 
-    let sendMessageReq: ToBackendSendMessageToSessionEditorRequest = {
+    let sendMessageReq: ToBackendSendMessageToEditorSessionRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionEditor,
+        name: ToBackendRequestInfoNameEnum.ToBackendSendMessageToEditorSession,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -184,7 +184,7 @@ test('1', async t => {
       }
     };
 
-    await sendToBackend<ToBackendSendMessageToSessionEditorResponse>({
+    await sendToBackend<ToBackendSendMessageToEditorSessionResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: sendMessageReq,

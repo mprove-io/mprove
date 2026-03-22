@@ -16,13 +16,13 @@ import {
   ToBackendGetBranchesListResponse
 } from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
 import {
-  ToBackendCreateSessionEditorRequestPayload,
-  ToBackendCreateSessionEditorResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-create-session-editor';
+  ToBackendCreateEditorSessionRequestPayload,
+  ToBackendCreateEditorSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-create-editor-session';
 import {
-  ToBackendCreateSessionExplorerRequestPayload,
-  ToBackendCreateSessionExplorerResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-create-session-explorer';
+  ToBackendCreateExplorerSessionRequestPayload,
+  ToBackendCreateExplorerSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-create-explorer-session';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -157,7 +157,7 @@ export class NewSessionComponent implements OnInit {
     let partId = makeAscendingId({ prefix: 'part' });
 
     if (isSessionExplorer) {
-      let explorerPayload: ToBackendCreateSessionExplorerRequestPayload = {
+      let explorerPayload: ToBackendCreateExplorerSessionRequestPayload = {
         projectId: nav.projectId,
         provider: provider,
         model: this.model,
@@ -171,11 +171,11 @@ export class NewSessionComponent implements OnInit {
       this.apiService
         .req({
           pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendCreateSessionExplorer,
+            ToBackendRequestInfoNameEnum.ToBackendCreateExplorerSession,
           payload: explorerPayload
         })
         .pipe(
-          tap((resp: ToBackendCreateSessionExplorerResponse) => {
+          tap((resp: ToBackendCreateExplorerSessionResponse) => {
             this.processCreateSessionResponse({
               resp: resp,
               isSessionExplorer: isSessionExplorer,
@@ -187,7 +187,7 @@ export class NewSessionComponent implements OnInit {
         )
         .subscribe();
     } else {
-      let editorPayload: ToBackendCreateSessionEditorRequestPayload = {
+      let editorPayload: ToBackendCreateEditorSessionRequestPayload = {
         projectId: nav.projectId,
         sandboxType: SandboxTypeEnum.E2B,
         provider: provider,
@@ -204,11 +204,11 @@ export class NewSessionComponent implements OnInit {
       this.apiService
         .req({
           pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendCreateSessionEditor,
+            ToBackendRequestInfoNameEnum.ToBackendCreateEditorSession,
           payload: editorPayload
         })
         .pipe(
-          tap((resp: ToBackendCreateSessionEditorResponse) => {
+          tap((resp: ToBackendCreateEditorSessionResponse) => {
             this.processCreateSessionResponse({
               resp: resp,
               isSessionExplorer: isSessionExplorer,
@@ -224,8 +224,8 @@ export class NewSessionComponent implements OnInit {
 
   processCreateSessionResponse(item: {
     resp:
-      | ToBackendCreateSessionExplorerResponse
-      | ToBackendCreateSessionEditorResponse;
+      | ToBackendCreateExplorerSessionResponse
+      | ToBackendCreateEditorSessionResponse;
     isSessionExplorer: boolean;
     provider: string;
     text: string;

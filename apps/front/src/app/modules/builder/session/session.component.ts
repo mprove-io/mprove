@@ -24,13 +24,13 @@ import { SessionApi } from '#common/interfaces/backend/session-api';
 import { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
 import {
-  ToBackendSendMessageToSessionEditorRequestPayload,
-  ToBackendSendMessageToSessionEditorResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-editor';
+  ToBackendSendMessageToEditorSessionRequestPayload,
+  ToBackendSendMessageToEditorSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-editor-session';
 import {
-  ToBackendSendMessageToSessionExplorerRequestPayload,
-  ToBackendSendMessageToSessionExplorerResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-session-explorer';
+  ToBackendSendMessageToExplorerSessionRequestPayload,
+  ToBackendSendMessageToExplorerSessionResponse
+} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-explorer-session';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
   SessionBundleQuery,
@@ -571,7 +571,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     let isExplorer = this.session.type === SessionTypeEnum.Explorer;
 
     if (isExplorer) {
-      let explorerPayload: ToBackendSendMessageToSessionExplorerRequestPayload =
+      let explorerPayload: ToBackendSendMessageToExplorerSessionRequestPayload =
         {
           sessionId: item.sessionId,
           interactionType: item.interactionType,
@@ -585,11 +585,11 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.apiService
         .req({
           pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionExplorer,
+            ToBackendRequestInfoNameEnum.ToBackendSendMessageToExplorerSession,
           payload: explorerPayload
         })
         .pipe(
-          tap((resp: ToBackendSendMessageToSessionExplorerResponse) => {
+          tap((resp: ToBackendSendMessageToExplorerSessionResponse) => {
             this.processSendInteractionResponse({ resp: resp });
           }),
           take(1)
@@ -600,7 +600,7 @@ export class SessionComponent implements OnInit, OnDestroy {
           }
         });
     } else {
-      let editorPayload: ToBackendSendMessageToSessionEditorRequestPayload = {
+      let editorPayload: ToBackendSendMessageToEditorSessionRequestPayload = {
         sessionId: item.sessionId,
         interactionType: item.interactionType,
         messageId: item.messageId,
@@ -618,11 +618,11 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.apiService
         .req({
           pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendSendMessageToSessionEditor,
+            ToBackendRequestInfoNameEnum.ToBackendSendMessageToEditorSession,
           payload: editorPayload
         })
         .pipe(
-          tap((resp: ToBackendSendMessageToSessionEditorResponse) => {
+          tap((resp: ToBackendSendMessageToEditorSessionResponse) => {
             this.processSendInteractionResponse({ resp: resp });
           }),
           take(1)
@@ -637,8 +637,8 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   processSendInteractionResponse(item: {
     resp:
-      | ToBackendSendMessageToSessionExplorerResponse
-      | ToBackendSendMessageToSessionEditorResponse;
+      | ToBackendSendMessageToExplorerSessionResponse
+      | ToBackendSendMessageToEditorSessionResponse;
   }) {
     let { resp } = item;
     let session = resp?.payload?.session;
