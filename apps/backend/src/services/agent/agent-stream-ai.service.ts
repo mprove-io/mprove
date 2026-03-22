@@ -1,17 +1,10 @@
 import crypto from 'node:crypto';
-import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Event } from '@opencode-ai/sdk/v2';
-import type { CoreMessage } from 'ai';
-import { generateText, streamText } from 'ai';
-import { asc, eq } from 'drizzle-orm';
+import { streamText } from 'ai';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages.js';
-import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import {
   CHANNEL_AI_INTERACT_REPLY,
@@ -26,7 +19,9 @@ import { ServerError } from '#common/models/server-error';
 
 const { forEachSeries } = pIteration;
 
-import { TabService } from '../tab.service';
+import { AgentAiEventsService } from './agent-ai/agent-ai-events.service';
+import { AgentAiHistoryService } from './agent-ai/agent-ai-history.service';
+import { AgentAiTitleService } from './agent-ai/agent-ai-title.service';
 import { AgentDrainService } from './agent-drain.service';
 import { AgentModelsAiService } from './agent-models-ai.service';
 
@@ -63,9 +58,10 @@ export class AgentStreamAiService implements OnModuleDestroy {
     private cs: ConfigService<BackendConfig>,
     private agentDrainService: AgentDrainService,
     private agentModelsAiService: AgentModelsAiService,
-    private logger: Logger,
-    private tabService: TabService,
-    @Inject(DRIZZLE) private db: Db
+    private agentAiEventsService: AgentAiEventsService,
+    private agentAiTitleService: AgentAiTitleService,
+    private agentAiHistoryService: AgentAiHistoryService,
+    private logger: Logger
   ) {
     let valkeyHost =
       this.cs.get<BackendConfig['backendValkeyHost']>('backendValkeyHost');
@@ -107,10 +103,9 @@ export class AgentStreamAiService implements OnModuleDestroy {
             `[ai-stream] received set-title for sessionId=${sessionId}`
           );
 
-          let titleEvent: Event = {
-            type: 'session.updated',
-            properties: { info: { title: parsed.title } }
-          } as Event;
+          let titleEvent = this.agentAiEventsService.makeTitleEvent({
+            title: parsed.title
+          });
           this.agentDrainService.enqueue({
             sessionId: sessionId,
             event: titleEvent
@@ -292,10 +287,9 @@ export class AgentStreamAiService implements OnModuleDestroy {
         sessionId: item.sessionId
       });
 
-      let titleEvent: Event = {
-        type: 'session.updated',
-        properties: { info: { title: item.title } }
-      } as Event;
+      let titleEvent = this.agentAiEventsService.makeTitleEvent({
+        title: item.title
+      });
 
       this.agentDrainService.enqueue({
         sessionId: item.sessionId,
@@ -463,21 +457,15 @@ export class AgentStreamAiService implements OnModuleDestroy {
         });
 
         // Emit error + idle
-        let errorEvent = {
-          type: 'session.error',
-          properties: {
-            error: { message: e?.message || 'AI SDK streaming failed' }
-          }
-        } as unknown as Event;
+        let errorEvent = this.agentAiEventsService.makeErrorEvent({
+          errorMessage: e?.message || 'AI SDK streaming failed'
+        });
         this.agentDrainService.enqueue({
           sessionId: sessionId,
           event: errorEvent
         });
 
-        let idleEvent: Event = {
-          type: 'session.status',
-          properties: { status: { type: 'idle' } }
-        } as Event;
+        let idleEvent = this.agentAiEventsService.makeIdleEvent();
         this.agentDrainService.enqueue({
           sessionId: sessionId,
           event: idleEvent
@@ -540,30 +528,22 @@ export class AgentStreamAiService implements OnModuleDestroy {
       partId
     } = item;
 
-    let history = await this.loadMessageHistory({
+    let history = await this.agentAiHistoryService.loadMessageHistory({
       sessionId: sessionId
     });
 
     // Pre-streaming events
-    let busyEvent: Event = {
-      type: 'session.status',
-      properties: { status: { type: 'busy' } }
-    } as Event;
+    let busyEvent = this.agentAiEventsService.makeBusyEvent();
     this.agentDrainService.enqueue({ sessionId: sessionId, event: busyEvent });
 
     let userMessageId = messageId;
 
-    let userMsgEvent: Event = {
-      type: 'message.updated',
-      properties: {
-        info: {
-          id: userMessageId,
-          sessionID: sessionId,
-          role: 'user',
-          model: { providerID: provider, modelID: modelId }
-        }
-      }
-    } as Event;
+    let userMsgEvent = this.agentAiEventsService.makeUserMessageEvent({
+      messageId: userMessageId,
+      sessionId: sessionId,
+      provider: provider,
+      modelId: modelId
+    });
     this.agentDrainService.enqueue({
       sessionId: sessionId,
       event: userMsgEvent
@@ -571,18 +551,12 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
     let userPartId = partId;
 
-    let userPartEvent: Event = {
-      type: 'message.part.updated',
-      properties: {
-        part: {
-          id: userPartId,
-          messageID: userMessageId,
-          sessionID: sessionId,
-          type: 'text',
-          text: userMessage
-        }
-      }
-    } as Event;
+    let userPartEvent = this.agentAiEventsService.makeUserPartEvent({
+      partId: userPartId,
+      messageId: userMessageId,
+      sessionId: sessionId,
+      text: userMessage
+    });
     this.agentDrainService.enqueue({
       sessionId: sessionId,
       event: userPartEvent
@@ -590,16 +564,12 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
     let assistantMessageId = makeAscendingId({ prefix: 'msg' });
 
-    let assistantMsgEvent: Event = {
-      type: 'message.updated',
-      properties: {
-        info: {
-          id: assistantMessageId,
-          sessionID: sessionId,
-          role: 'assistant'
-        }
+    let assistantMsgEvent = this.agentAiEventsService.makeAssistantMessageEvent(
+      {
+        messageId: assistantMessageId,
+        sessionId: sessionId
       }
-    } as Event;
+    );
     this.agentDrainService.enqueue({
       sessionId: sessionId,
       event: assistantMsgEvent
@@ -607,18 +577,11 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
     let assistantPartId = makeAscendingId({ prefix: 'prt' });
 
-    let assistantPartEvent: Event = {
-      type: 'message.part.updated',
-      properties: {
-        part: {
-          id: assistantPartId,
-          messageID: assistantMessageId,
-          sessionID: sessionId,
-          type: 'text',
-          text: ''
-        }
-      }
-    } as Event;
+    let assistantPartEvent = this.agentAiEventsService.makeAssistantPartEvent({
+      partId: assistantPartId,
+      messageId: assistantMessageId,
+      sessionId: sessionId
+    });
     this.agentDrainService.enqueue({
       sessionId: sessionId,
       event: assistantPartEvent
@@ -628,7 +591,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
     let isFirstMessage = history.length === 0;
 
     let titlePromise = isFirstMessage
-      ? this.generateTitleText({
+      ? this.agentAiTitleService.generateTitleText({
           provider: provider,
           modelId: modelId,
           apiKey: apiKey,
@@ -661,15 +624,11 @@ export class AgentStreamAiService implements OnModuleDestroy {
       for await (let chunk of result.textStream) {
         fullContent += chunk;
 
-        let deltaEvent: Event = {
-          type: 'message.part.delta',
-          properties: {
-            messageID: assistantMessageId,
-            partID: assistantPartId,
-            field: 'text',
-            delta: chunk
-          }
-        } as Event;
+        let deltaEvent = this.agentAiEventsService.makeTextDeltaEvent({
+          messageId: assistantMessageId,
+          partId: assistantPartId,
+          delta: chunk
+        });
         this.agentDrainService.enqueue({
           sessionId: sessionId,
           event: deltaEvent
@@ -684,72 +643,47 @@ export class AgentStreamAiService implements OnModuleDestroy {
     }
 
     if (wasAborted) {
-      let finalPartEvent: Event = {
-        type: 'message.part.updated',
-        properties: {
-          part: {
-            id: assistantPartId,
-            messageID: assistantMessageId,
-            sessionID: sessionId,
-            type: 'text',
-            text: fullContent
-          }
-        }
-      } as Event;
+      let finalPartEvent = this.agentAiEventsService.makeFinalPartEvent({
+        partId: assistantPartId,
+        messageId: assistantMessageId,
+        sessionId: sessionId,
+        text: fullContent
+      });
 
       this.agentDrainService.enqueue({
         sessionId: sessionId,
         event: finalPartEvent
       });
 
-      let abortedMsgEvent: Event = {
-        type: 'message.updated',
-        properties: {
-          info: {
-            id: assistantMessageId,
-            sessionID: sessionId,
-            role: 'assistant',
-            error: { name: 'MessageAbortedError' }
-          }
-        }
-      } as Event;
+      let abortedMsgEvent = this.agentAiEventsService.makeAbortedMessageEvent({
+        messageId: assistantMessageId,
+        sessionId: sessionId
+      });
 
       this.agentDrainService.enqueue({
         sessionId: sessionId,
         event: abortedMsgEvent
       });
 
-      let idleEvent: Event = {
-        type: 'session.status',
-        properties: { status: { type: 'idle' } }
-      } as Event;
+      let idleEvent = this.agentAiEventsService.makeIdleEvent();
 
       this.agentDrainService.enqueue({
         sessionId: sessionId,
         event: idleEvent
       });
     } else {
-      let finalPartEvent: Event = {
-        type: 'message.part.updated',
-        properties: {
-          part: {
-            id: assistantPartId,
-            messageID: assistantMessageId,
-            sessionID: sessionId,
-            type: 'text',
-            text: fullContent
-          }
-        }
-      } as Event;
+      let finalPartEvent = this.agentAiEventsService.makeFinalPartEvent({
+        partId: assistantPartId,
+        messageId: assistantMessageId,
+        sessionId: sessionId,
+        text: fullContent
+      });
       this.agentDrainService.enqueue({
         sessionId: sessionId,
         event: finalPartEvent
       });
 
-      let idleEvent: Event = {
-        type: 'session.status',
-        properties: { status: { type: 'idle' } }
-      } as Event;
+      let idleEvent = this.agentAiEventsService.makeIdleEvent();
       this.agentDrainService.enqueue({
         sessionId: sessionId,
         event: idleEvent
@@ -757,117 +691,19 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
       // Await title generation
       if (titlePromise) {
-        try {
-          let title = await titlePromise;
+        let title = await titlePromise;
 
-          if (title) {
-            let titleEvent: Event = {
-              type: 'session.updated',
-              properties: { info: { title: title } }
-            } as Event;
-            this.agentDrainService.enqueue({
-              sessionId: sessionId,
-              event: titleEvent
-            });
-          }
-        } catch (titleError) {
-          logToConsoleBackend({
-            log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
-              originalError: titleError
-            }),
-            logLevel: LogLevelEnum.Info,
-            logger: this.logger,
-            cs: this.cs
+        if (title) {
+          let titleEvent = this.agentAiEventsService.makeTitleEvent({
+            title: title
+          });
+          this.agentDrainService.enqueue({
+            sessionId: sessionId,
+            event: titleEvent
           });
         }
       }
     }
-  }
-
-  // --- Title generation ---
-
-  private TITLE_SYSTEM_PROMPT =
-    `You are a title generator. You output ONLY a thread title. Nothing else.
-
-<task>
-Generate a brief title that would help the user find this conversation later.
-
-Follow all rules in <rules>
-Use the <examples> so you know what a good title looks like.
-Your output must be:
-- A single line
-- ≤50 characters
-- No explanations
-</task>
-
-<rules>
-- you MUST use the same language as the user message you are summarizing
-- Title must be grammatically correct and read naturally - no word salad
-- Never include tool names in the title (e.g. "read tool", "bash tool", "edit tool")
-- Focus on the main topic or question the user needs to retrieve
-- Vary your phrasing - avoid repetitive patterns like always starting with "Analyzing"
-- When a file is mentioned, focus on WHAT the user wants to do WITH the file, not just that they shared it
-- Keep exact: technical terms, numbers, filenames, HTTP codes
-- Remove: the, this, my, a, an
-- Never assume tech stack
-- Never use tools
-- NEVER respond to questions, just generate a title for the conversation
-- The title should NEVER include "summarizing" or "generating" when generating a title
-- DO NOT SAY YOU CANNOT GENERATE A TITLE OR COMPLAIN ABOUT THE INPUT
-- Always output something meaningful, even if the input is minimal.
-- If the user message is short or conversational (e.g. "hello", "lol", "what's up", "hey"):
-  → create a title that reflects the user's tone or intent (such as Greeting, Quick check-in, Light chat, Intro message, etc.)
-</rules>
-
-<examples>
-"debug 500 errors in production" → Debugging production 500 errors
-"refactor user service" → Refactoring user service
-"why is app.js failing" → app.js failure investigation
-"implement rate limiting" → Rate limiting implementation
-"how do I connect postgres to my API" → Postgres API connection
-"best practices for React hooks" → React hooks best practices
-"@src/auth.ts can you add refresh token support" → Auth refresh token support
-"@utils/parser.ts this is broken" → Parser bug fix
-"look at @config.json" → Config review
-"@App.tsx add dark mode toggle" → Dark mode toggle in App
-</examples>`;
-
-  private async generateTitleText(item: {
-    provider: string;
-    modelId: string;
-    apiKey: string;
-    userMessage: string;
-  }): Promise<string | undefined> {
-    let { provider, modelId, apiKey, userMessage } = item;
-
-    let model = this.agentModelsAiService.getModel({
-      provider: provider,
-      modelId: modelId,
-      apiKey: apiKey
-    });
-
-    let result = await generateText({
-      model: model,
-      system: this.TITLE_SYSTEM_PROMPT,
-      prompt: `Generate a title for this conversation:\n${userMessage}`
-    });
-
-    let text = result.text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
-
-    let firstLine = text.split('\n').find(line => line.trim().length > 0);
-
-    if (!firstLine) {
-      return undefined;
-    }
-
-    let title = firstLine.trim();
-
-    if (title.length > 100) {
-      title = title.slice(0, 97) + '...';
-    }
-
-    return title;
   }
 
   async refreshActiveLocks(): Promise<void> {
@@ -882,57 +718,6 @@ Your output must be:
       );
       return result !== 0;
     });
-  }
-
-  async loadMessageHistory(item: {
-    sessionId: string;
-  }): Promise<CoreMessage[]> {
-    let { sessionId } = item;
-
-    let messageEnts = await this.db.drizzle.query.ocMessagesTable.findMany({
-      where: eq(ocMessagesTable.sessionId, sessionId),
-      orderBy: [asc(ocMessagesTable.createdTs)]
-    });
-
-    let messageTabs = messageEnts.map(m =>
-      this.tabService.ocMessageEntToTab(m)
-    );
-
-    let partEnts = await this.db.drizzle.query.ocPartsTable.findMany({
-      where: eq(ocPartsTable.sessionId, sessionId),
-      orderBy: [asc(ocPartsTable.createdTs)]
-    });
-
-    let partTabs = partEnts.map(p => this.tabService.ocPartEntToTab(p));
-
-    let partsByMessageId = new Map<string, typeof partTabs>();
-
-    partTabs.forEach(part => {
-      let existing = partsByMessageId.get(part.messageId);
-      if (existing) {
-        existing.push(part);
-      } else {
-        partsByMessageId.set(part.messageId, [part]);
-      }
-    });
-
-    let coreMessages: CoreMessage[] = [];
-
-    messageTabs.forEach(msg => {
-      let msgParts = partsByMessageId.get(msg.messageId) || [];
-      let textContent = msgParts
-        .filter(p => p.type === 'text')
-        .map(p => ((p.ocPart as Record<string, unknown>).text as string) || '')
-        .join('');
-
-      if (msg.role === 'user') {
-        coreMessages.push({ role: 'user', content: textContent });
-      } else if (msg.role === 'assistant') {
-        coreMessages.push({ role: 'assistant', content: textContent });
-      }
-    });
-
-    return coreMessages;
   }
 
   onModuleDestroy() {

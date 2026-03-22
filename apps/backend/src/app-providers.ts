@@ -3,6 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
+import { AgentAiEventsService } from './services/agent/agent-ai/agent-ai-events.service';
+import { AgentAiHistoryService } from './services/agent/agent-ai/agent-ai-history.service';
+import { AgentAiPromptsService } from './services/agent/agent-ai/agent-ai-prompts.service';
+import { AgentAiTitleService } from './services/agent/agent-ai/agent-ai-title.service';
+import { AgentAiToolsService } from './services/agent/agent-ai/agent-ai-tools.service';
 import { AgentDrainService } from './services/agent/agent-drain.service';
 import { AgentDrainTimerService } from './services/agent/agent-drain-timer.service';
 import { AgentModelsAiService } from './services/agent/agent-models-ai.service';
@@ -123,6 +128,11 @@ export const appProviders = [
   AgentSseService,
   AgentStreamOpencodeService,
   AgentSandboxService,
+  AgentAiEventsService,
+  AgentAiHistoryService,
+  AgentAiPromptsService,
+  AgentAiTitleService,
+  AgentAiToolsService,
   AgentModelsAiService,
   AgentModelsOpencodeService,
   AgentStreamAiService,
