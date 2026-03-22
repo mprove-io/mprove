@@ -14,6 +14,12 @@ import {
 } from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
 
 test('1', async t => {
+  let openaiApiKey = process.env.BACKEND_DEMO_PROJECT_OPENAI_API_KEY;
+  if (!openaiApiKey) {
+    t.fail('BACKEND_DEMO_PROJECT_OPENAI_API_KEY not set');
+    return;
+  }
+
   let testId = 'backend-get-session-provider-models__ok';
   let traceId = testId;
   let email = `${testId}@example.com`;
@@ -38,8 +44,8 @@ test('1', async t => {
       seedRecordsPayload: {
         users: [
           {
-            email,
-            password,
+            email: email,
+            password: password,
             isEmailVerified: true
           }
         ],
@@ -52,25 +58,26 @@ test('1', async t => {
         ],
         projects: [
           {
-            orgId,
-            projectId,
+            orgId: orgId,
+            projectId: projectId,
             name: projectName,
             remoteType: ProjectRemoteTypeEnum.Managed,
-            defaultBranch: BRANCH_MAIN
+            defaultBranch: BRANCH_MAIN,
+            openaiApiKey: openaiApiKey
           }
         ],
         members: [
           {
             memberId: makeId(),
-            email,
-            projectId,
+            email: email,
+            projectId: projectId,
             isAdmin: true,
             isEditor: true,
             isExplorer: true
           }
         ]
       },
-      loginUserPayload: { email, password }
+      loginUserPayload: { email: email, password: password }
     });
 
     let req: ToBackendGetSessionProviderModelsRequest = {

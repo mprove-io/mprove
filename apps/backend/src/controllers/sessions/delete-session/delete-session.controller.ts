@@ -36,6 +36,7 @@ import { ExplorerStreamService } from '#backend/services/explorer/explorer-strea
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
@@ -184,6 +185,10 @@ export class DeleteSessionController {
       getRetryOption(this.cs, this.logger)
     );
 
+    let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+
+    let stopDelay = backendEnv === BackendEnvEnum.TEST ? 0 : 10_000;
+
     setTimeout(() => {
       if (session.type === SessionTypeEnum.Explorer) {
         this.explorerStreamService
@@ -212,7 +217,7 @@ export class DeleteSessionController {
             });
           });
       }
-    }, 10_000);
+    }, stopDelay);
 
     let payload = {};
 

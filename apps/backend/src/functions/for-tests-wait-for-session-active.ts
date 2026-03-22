@@ -24,7 +24,8 @@ export async function forTestsWaitForSessionActive(item: {
           idempotencyKey: makeId()
         },
         payload: {
-          sessionId: item.sessionId
+          sessionId: item.sessionId,
+          skipFetchSessionState: false
         }
       },
       checkIsOk: true

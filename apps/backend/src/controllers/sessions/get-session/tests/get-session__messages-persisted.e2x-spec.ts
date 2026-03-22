@@ -6,7 +6,6 @@ import { forTestsWaitForTurnEnded } from '#backend/functions/for-tests-wait-for-
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
-import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -15,7 +14,6 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
-import type { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 import {
   ToBackendCreateEditorSessionRequest,
   ToBackendCreateEditorSessionResponse
@@ -40,9 +38,9 @@ test('1', async t => {
     return;
   }
 
-  let zenApiKey = process.env.BACKEND_DEMO_PROJECT_ZEN_API_KEY;
-  if (!zenApiKey) {
-    t.fail('BACKEND_DEMO_PROJECT_ZEN_API_KEY not set');
+  let openaiApiKey = process.env.BACKEND_DEMO_PROJECT_OPENAI_API_KEY;
+  if (!openaiApiKey) {
+    t.fail('BACKEND_DEMO_PROJECT_OPENAI_API_KEY not set');
     return;
   }
 
@@ -56,9 +54,9 @@ test('1', async t => {
   let projectId = makeId();
   let projectName = testId;
 
-  let prep: Prep;
-  let sessionId: string | undefined;
-  let sse: { events: SessionEventApi[]; close: () => void } | undefined;
+  let prep: Awaited<ReturnType<typeof prepareTestAndSeed>>;
+  let messages;
+  let parts;
 
   try {
     prep = await prepareTestAndSeed({
@@ -72,8 +70,8 @@ test('1', async t => {
       seedRecordsPayload: {
         users: [
           {
-            email,
-            password,
+            email: email,
+            password: password,
             isEmailVerified: true
           }
         ],
@@ -86,27 +84,27 @@ test('1', async t => {
         ],
         projects: [
           {
-            orgId,
-            projectId,
+            orgId: orgId,
+            projectId: projectId,
             name: projectName,
             remoteType: ProjectRemoteTypeEnum.Managed,
             defaultBranch: BRANCH_MAIN,
             e2bApiKey: e2bApiKey,
-            zenApiKey: zenApiKey
+            openaiApiKey: openaiApiKey
           }
         ],
         members: [
           {
             memberId: userId,
-            email,
-            projectId,
+            email: email,
+            projectId: projectId,
             isAdmin: true,
             isEditor: true,
             isExplorer: true
           }
         ]
       },
-      loginUserPayload: { email, password }
+      loginUserPayload: { email: email, password: password }
     });
 
     // Create session
@@ -120,7 +118,7 @@ test('1', async t => {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
         provider: 'opencode',
-        model: 'opencode/big-pickle',
+        model: 'openai/gpt-5.1-codex-mini',
         agent: 'plan',
         variant: 'default',
         envId: PROJECT_ENV_PROD,
@@ -137,7 +135,7 @@ test('1', async t => {
       checkIsOk: true
     });
 
-    sessionId = createResp.payload.sessionId;
+    let sessionId = createResp.payload.sessionId;
     console.log(`[test] session created: ${sessionId}`);
 
     await new Promise<void>(resolve => {
@@ -160,7 +158,7 @@ test('1', async t => {
       sessionId: sessionId
     });
 
-    sse = await forTestsConnectSse({
+    let sse = await forTestsConnectSse({
       httpServer: prep.httpServer,
       sessionId: sessionId,
       ticket: sseTicket
@@ -179,7 +177,7 @@ test('1', async t => {
         interactionType: InteractionTypeEnum.Message,
         message: 'what is 10 + 20?',
         agent: 'plan',
-        model: 'opencode/big-pickle',
+        model: 'openai/gpt-5.1-codex-mini',
         variant: 'default'
       }
     };
@@ -229,54 +227,13 @@ test('1', async t => {
       checkIsOk: true
     });
 
-    let { messages, parts } = getResp.payload;
+    messages = getResp.payload.messages;
+    parts = getResp.payload.parts;
 
     console.log(
-      `[test] GetAgentSession: messages=${messages?.length}, parts=${parts?.length}`
-    );
-    console.log(
-      `[test] messages: ${JSON.stringify(messages?.map(m => ({ id: m.messageId, role: m.role })))}`
-    );
-    console.log(
-      `[test] parts: ${JSON.stringify(parts?.map(p => ({ id: p.partId, msgId: p.messageId, type: p.ocPart?.type, textLen: p.ocPart?.type === 'text' ? (p.ocPart as any).text?.length : undefined })))}`
+      `[test] GetSession: messages=${messages?.length}, parts=${parts?.length}`
     );
 
-    // Bug 1: messages must be returned (sessionId was wrong before fix)
-    t.true(messages.length > 0, 'Expected messages to be returned from DB');
-
-    let userMessages = messages.filter(m => m.role === 'user');
-    let assistantMessages = messages.filter(m => m.role === 'assistant');
-
-    t.true(userMessages.length > 0, 'Expected at least one user message');
-    t.true(
-      assistantMessages.length > 0,
-      'Expected at least one assistant message'
-    );
-
-    // Bug 2: text parts must have non-empty text (deltas were not persisted before fix)
-    let textParts = parts.filter(p => p.ocPart?.type === 'text');
-    t.true(textParts.length > 0, 'Expected at least one text part');
-
-    let assistantTextParts = textParts.filter(p =>
-      assistantMessages.some(m => m.messageId === p.messageId)
-    );
-    t.true(
-      assistantTextParts.length > 0,
-      'Expected at least one assistant text part'
-    );
-
-    assistantTextParts.forEach(part => {
-      let text = (part.ocPart as any).text;
-      console.log(
-        `[test] assistant text part ${part.partId}: "${text?.substring(0, 100)}"`
-      );
-      t.true(
-        typeof text === 'string' && text.length > 0,
-        `Expected assistant text part ${part.partId} to have non-empty text`
-      );
-    });
-
-    // Cleanup
     let deleteSessionReq: ToBackendDeleteSessionRequest = {
       info: {
         name: ToBackendRequestInfoNameEnum.ToBackendDeleteSession,
@@ -295,48 +252,51 @@ test('1', async t => {
       checkIsOk: true
     });
 
+    // Wait for stream stop to complete (stopDelay=0 in TEST env)
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     await prep.app.close();
   } catch (e) {
-    console.log(`[test] ERROR: ${e instanceof Error ? e.message : e}`);
-    if (sse) {
-      sse.close();
-    }
     logToConsoleBackend({
       log: e,
       logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
-
-    if (sessionId && prep) {
-      try {
-        await sendToBackend<ToBackendDeleteSessionResponse>({
-          httpServer: prep.httpServer,
-          loginToken: prep.loginToken,
-          req: {
-            info: {
-              name: ToBackendRequestInfoNameEnum.ToBackendDeleteSession,
-              traceId: traceId,
-              idempotencyKey: makeId()
-            },
-            payload: { sessionId }
-          },
-          checkIsOk: true
-        });
-      } catch (err) {
-        logToConsoleBackend({
-          log: err,
-          logLevel: LogLevelEnum.Error,
-          logger: prep.logger,
-          cs: prep.cs
-        });
-      }
-    }
-
-    if (prep) {
-      await prep.app.close();
-    }
-
-    t.fail(`Test failed: ${e instanceof Error ? e.message : e}`);
   }
+
+  // Bug 1: messages must be returned (sessionId was wrong before fix)
+  t.true(messages.length > 0, 'Expected messages to be returned from DB');
+
+  let userMessages = messages.filter(m => m.role === 'user');
+  let assistantMessages = messages.filter(m => m.role === 'assistant');
+
+  t.true(userMessages.length > 0, 'Expected at least one user message');
+  t.true(
+    assistantMessages.length > 0,
+    'Expected at least one assistant message'
+  );
+
+  // Bug 2: text parts must have non-empty text (deltas were not persisted before fix)
+  let textParts = parts.filter(p => p.ocPart?.type === 'text');
+  t.true(textParts.length > 0, 'Expected at least one text part');
+
+  let assistantTextParts = textParts.filter(p =>
+    assistantMessages.some(m => m.messageId === p.messageId)
+  );
+  t.true(
+    assistantTextParts.length > 0,
+    'Expected at least one assistant text part'
+  );
+
+  assistantTextParts.forEach(part => {
+    let text = (part.ocPart as any).text;
+    console.log(
+      `[test] assistant text part ${part.partId}: "${text?.substring(0, 100)}"`
+    );
+    t.true(
+      typeof text === 'string' && text.length > 0,
+      `Expected assistant text part ${part.partId} to have non-empty text`
+    );
+  });
 });
