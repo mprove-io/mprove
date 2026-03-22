@@ -7,10 +7,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ServerError } from '#common/models/server-error';
 import { EditorStreamService } from '../editor/editor-stream.service';
 import { ExplorerStreamService } from '../explorer/explorer-stream.service';
-import { EventsDrainService } from './events-drain.service';
+import { SessionDrainService } from './session-drain.service';
 
 @Injectable()
-export class EventsDrainTimerService implements OnModuleDestroy {
+export class SessionDrainTimerService implements OnModuleDestroy {
   private isRunningDrain = false;
 
   private drainTimer: ReturnType<typeof setInterval>;
@@ -19,7 +19,7 @@ export class EventsDrainTimerService implements OnModuleDestroy {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private eventsDrainService: EventsDrainService,
+    private sessionDrainService: SessionDrainService,
     private editorStreamService: EditorStreamService,
     private explorerStreamService: ExplorerStreamService,
     private logger: Logger
@@ -30,7 +30,7 @@ export class EventsDrainTimerService implements OnModuleDestroy {
 
         try {
           let safePauseSessionIds =
-            await this.eventsDrainService.drainAllQueues();
+            await this.sessionDrainService.drainAllQueues();
 
           await this.editorStreamService.processSafePause({
             sessionIds: safePauseSessionIds

@@ -1,6 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Event } from '@opencode-ai/sdk/v2';
 import { and, asc, eq, gt } from 'drizzle-orm';
 import { Observable } from 'rxjs';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -13,18 +12,12 @@ import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
+import type { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 import { ServerError } from '#common/models/server-error';
 import { TabService } from '../tab.service';
 
-export interface AgentEvent {
-  eventId: string;
-  eventIndex: number;
-  eventType: string;
-  ocEvent: Event;
-}
-
 @Injectable()
-export class EventsSseService {
+export class SessionSseService {
   private POLL_INTERVAL_MS = 1000;
 
   constructor(
@@ -37,10 +30,10 @@ export class EventsSseService {
   subscribeWithBackfill(item: {
     sessionId: string;
     lastEventIndex: number;
-  }): Observable<AgentEvent> {
+  }): Observable<SessionEventApi> {
     let { sessionId, lastEventIndex } = item;
 
-    return new Observable<AgentEvent>(observer => {
+    return new Observable<SessionEventApi>(observer => {
       let lastEmittedIndex = lastEventIndex;
       let lastReloadCheckTs = Date.now();
       let pollTimer: ReturnType<typeof setInterval> | undefined;
@@ -71,7 +64,7 @@ export class EventsSseService {
 
           eventEnts.forEach(ent => {
             let tab = this.tabService.ocEventEntToTab(ent);
-            let event: AgentEvent = {
+            let event: SessionEventApi = {
               eventId: tab.eventId,
               eventIndex: tab.eventIndex,
               eventType: tab.type,

@@ -4,8 +4,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { EventsSseService } from '#backend/services/events/events-sse.service';
 import { RedisService } from '#backend/services/redis.service';
+import { SessionSseService } from '#backend/services/session/session-sse.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { ServerError } from '#common/models/server-error';
 
@@ -17,7 +17,7 @@ export const SSE_SESSION_EVENTS_PATH = 'api/sse/session-events';
 export class GetSessionEventsSseController {
   constructor(
     private redisService: RedisService,
-    private eventsSseService: EventsSseService,
+    private sessionSseService: SessionSseService,
     private sessionsService: SessionsService
   ) {}
 
@@ -44,7 +44,7 @@ export class GetSessionEventsSseController {
           let lastEventIndex =
             lastEventIndexStr != null ? parseInt(lastEventIndexStr, 10) : -1;
 
-          let subscription = this.eventsSseService
+          let subscription = this.sessionSseService
             .subscribeWithBackfill({
               sessionId: sessionId,
               lastEventIndex: lastEventIndex

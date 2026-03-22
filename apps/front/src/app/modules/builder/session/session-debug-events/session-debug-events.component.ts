@@ -5,7 +5,7 @@ import {
   OnChanges,
   Output
 } from '@angular/core';
-import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
+import { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 
 @Component({
   standalone: false,
@@ -13,9 +13,9 @@ import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
   templateUrl: './session-debug-events.component.html'
 })
 export class SessionDebugEventsComponent implements OnChanges {
-  @Input() events: AgentEventApi[] = [];
+  @Input() events: SessionEventApi[] = [];
 
-  reversedEvents: AgentEventApi[] = [];
+  reversedEvents: SessionEventApi[] = [];
 
   ngOnChanges() {
     this.reversedEvents = [...this.events].reverse();
@@ -32,24 +32,24 @@ export class SessionDebugEventsComponent implements OnChanges {
     this.expandedEventsChange.emit(this.expandedEvents);
   }
 
-  getEventRole(event: AgentEventApi): string | undefined {
+  getEventRole(event: SessionEventApi): string | undefined {
     if (event.ocEvent?.type === 'message.updated') {
       return event.ocEvent.properties.info.role;
     }
     return undefined;
   }
 
-  getPartType(event: AgentEventApi): string | undefined {
+  getPartType(event: SessionEventApi): string | undefined {
     let ocEvent = event.ocEvent as any;
     return ocEvent?.properties?.part?.type;
   }
 
-  getPartTool(event: AgentEventApi): string | undefined {
+  getPartTool(event: SessionEventApi): string | undefined {
     let ocEvent = event.ocEvent as any;
     return ocEvent?.properties?.part?.tool;
   }
 
-  getPayloadJson(event: AgentEventApi): string {
+  getPayloadJson(event: SessionEventApi): string {
     try {
       return JSON.stringify(event.ocEvent, undefined, 2);
     } catch {

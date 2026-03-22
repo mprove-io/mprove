@@ -19,7 +19,7 @@ import { ServerError } from '#common/models/server-error';
 
 const { forEachSeries } = pIteration;
 
-import { EventsDrainService } from '../events/events-drain.service';
+import { SessionDrainService } from '../session/session-drain.service';
 import { ExplorerEventsMakerService } from './explorer-events-maker.service';
 import { ExplorerMessageHistoryService } from './explorer-message-history.service';
 import { ExplorerModelsService } from './explorer-models.service';
@@ -56,7 +56,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private eventsDrainService: EventsDrainService,
+    private sessionDrainService: SessionDrainService,
     private explorerModelsService: ExplorerModelsService,
     private explorerEventsMakerService: ExplorerEventsMakerService,
     private explorerTitleService: ExplorerTitleService,
@@ -106,7 +106,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
           let titleEvent = this.explorerEventsMakerService.makeTitleEvent({
             title: parsed.title
           });
-          this.eventsDrainService.enqueue({
+          this.sessionDrainService.enqueue({
             sessionId: sessionId,
             event: titleEvent
           });
@@ -283,7 +283,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         return;
       }
 
-      await this.eventsDrainService.initEventCounter({
+      await this.sessionDrainService.initEventCounter({
         sessionId: item.sessionId
       });
 
@@ -291,13 +291,13 @@ export class ExplorerStreamService implements OnModuleDestroy {
         title: item.title
       });
 
-      this.eventsDrainService.enqueue({
+      this.sessionDrainService.enqueue({
         sessionId: item.sessionId,
         event: titleEvent
       });
 
       await new Promise<void>(resolve => {
-        this.eventsDrainService.markDoneProducing({
+        this.sessionDrainService.markDoneProducing({
           sessionId: item.sessionId,
           callback: () => {
             this.releaseStreamLock({ sessionId: item.sessionId }).then(resolve);
@@ -431,7 +431,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       this.abortControllers.set(sessionId, abortController);
 
       try {
-        await this.eventsDrainService.initEventCounter({
+        await this.sessionDrainService.initEventCounter({
           sessionId: sessionId
         });
 
@@ -460,13 +460,13 @@ export class ExplorerStreamService implements OnModuleDestroy {
         let errorEvent = this.explorerEventsMakerService.makeErrorEvent({
           errorMessage: e?.message || 'AI SDK streaming failed'
         });
-        this.eventsDrainService.enqueue({
+        this.sessionDrainService.enqueue({
           sessionId: sessionId,
           event: errorEvent
         });
 
         let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
-        this.eventsDrainService.enqueue({
+        this.sessionDrainService.enqueue({
           sessionId: sessionId,
           event: idleEvent
         });
@@ -474,7 +474,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
       // Wait for drain to flush all events before checking queue
       await new Promise<void>(resolve => {
-        this.eventsDrainService.markDoneProducing({
+        this.sessionDrainService.markDoneProducing({
           sessionId: sessionId,
           callback: () => resolve()
         });
@@ -503,6 +503,20 @@ export class ExplorerStreamService implements OnModuleDestroy {
     this.activeStreams.delete(sessionId);
     this.abortControllers.delete(sessionId);
     await this.releaseStreamLock({ sessionId: sessionId });
+  }
+
+  async refreshActiveLocks(): Promise<void> {
+    let activeStreamSessionIds = [...this.activeStreams.keys()];
+
+    await forEachSeries(activeStreamSessionIds, async sessionId => {
+      let result = await this.redisClient.eval(
+        `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${this.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
+        1,
+        `${KEY_AI_STREAM_OWNER}:${sessionId}`,
+        this.podId
+      );
+      return result !== 0;
+    });
   }
 
   // --- Producer ---
@@ -534,7 +548,11 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     // Pre-streaming events
     let busyEvent = this.explorerEventsMakerService.makeBusyEvent();
-    this.eventsDrainService.enqueue({ sessionId: sessionId, event: busyEvent });
+
+    this.sessionDrainService.enqueue({
+      sessionId: sessionId,
+      event: busyEvent
+    });
 
     let userMessageId = messageId;
 
@@ -544,7 +562,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       provider: provider,
       modelId: modelId
     });
-    this.eventsDrainService.enqueue({
+    this.sessionDrainService.enqueue({
       sessionId: sessionId,
       event: userMsgEvent
     });
@@ -557,7 +575,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       sessionId: sessionId,
       text: userMessage
     });
-    this.eventsDrainService.enqueue({
+    this.sessionDrainService.enqueue({
       sessionId: sessionId,
       event: userPartEvent
     });
@@ -569,7 +587,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         messageId: assistantMessageId,
         sessionId: sessionId
       });
-    this.eventsDrainService.enqueue({
+    this.sessionDrainService.enqueue({
       sessionId: sessionId,
       event: assistantMsgEvent
     });
@@ -582,7 +600,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         messageId: assistantMessageId,
         sessionId: sessionId
       });
-    this.eventsDrainService.enqueue({
+    this.sessionDrainService.enqueue({
       sessionId: sessionId,
       event: assistantPartEvent
     });
@@ -629,7 +647,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
           partId: assistantPartId,
           delta: chunk
         });
-        this.eventsDrainService.enqueue({
+        this.sessionDrainService.enqueue({
           sessionId: sessionId,
           event: deltaEvent
         });
@@ -650,7 +668,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
         text: fullContent
       });
 
-      this.eventsDrainService.enqueue({
+      this.sessionDrainService.enqueue({
         sessionId: sessionId,
         event: finalPartEvent
       });
@@ -661,14 +679,14 @@ export class ExplorerStreamService implements OnModuleDestroy {
           sessionId: sessionId
         });
 
-      this.eventsDrainService.enqueue({
+      this.sessionDrainService.enqueue({
         sessionId: sessionId,
         event: abortedMsgEvent
       });
 
       let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
 
-      this.eventsDrainService.enqueue({
+      this.sessionDrainService.enqueue({
         sessionId: sessionId,
         event: idleEvent
       });
@@ -679,13 +697,13 @@ export class ExplorerStreamService implements OnModuleDestroy {
         sessionId: sessionId,
         text: fullContent
       });
-      this.eventsDrainService.enqueue({
+      this.sessionDrainService.enqueue({
         sessionId: sessionId,
         event: finalPartEvent
       });
 
       let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
-      this.eventsDrainService.enqueue({
+      this.sessionDrainService.enqueue({
         sessionId: sessionId,
         event: idleEvent
       });
@@ -698,27 +716,13 @@ export class ExplorerStreamService implements OnModuleDestroy {
           let titleEvent = this.explorerEventsMakerService.makeTitleEvent({
             title: title
           });
-          this.eventsDrainService.enqueue({
+          this.sessionDrainService.enqueue({
             sessionId: sessionId,
             event: titleEvent
           });
         }
       }
     }
-  }
-
-  async refreshActiveLocks(): Promise<void> {
-    let activeStreamSessionIds = [...this.activeStreams.keys()];
-
-    await forEachSeries(activeStreamSessionIds, async sessionId => {
-      let result = await this.redisClient.eval(
-        `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${this.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
-        1,
-        `${KEY_AI_STREAM_OWNER}:${sessionId}`,
-        this.podId
-      );
-      return result !== 0;
-    });
   }
 
   onModuleDestroy() {

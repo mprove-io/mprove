@@ -21,9 +21,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
+import { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 import {
   ToBackendGetSessionRequest,
   ToBackendGetSessionResponsePayload
@@ -181,7 +181,7 @@ export class GetSessionController {
       orderBy: [asc(ocEventsTable.eventIndex)]
     });
 
-    let events: AgentEventApi[] = eventEnts.map(ent => {
+    let events: SessionEventApi[] = eventEnts.map(ent => {
       let tab = this.tabService.ocEventEntToTab(ent);
       return {
         eventId: tab.eventId,

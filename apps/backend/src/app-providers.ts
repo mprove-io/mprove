@@ -42,9 +42,6 @@ import { EditorOpencodeService } from './services/editor/editor-opencode.service
 import { EditorSandboxService } from './services/editor/editor-sandbox.service';
 import { EditorStreamService } from './services/editor/editor-stream.service';
 import { EmailService } from './services/email.service';
-import { EventsDrainService } from './services/events/events-drain.service';
-import { EventsDrainTimerService } from './services/events/events-drain-timer.service';
-import { EventsSseService } from './services/events/events-sse.service';
 import { ExplorerEventsMakerService } from './services/explorer/explorer-events-maker.service';
 import { ExplorerMessageHistoryService } from './services/explorer/explorer-message-history.service';
 import { ExplorerModelsService } from './services/explorer/explorer-models.service';
@@ -60,6 +57,9 @@ import { ReportDataService } from './services/report-data.service';
 import { ReportRowService } from './services/report-row.service';
 import { ReportTimeColumnsService } from './services/report-time-columns.service';
 import { RpcService } from './services/rpc.service';
+import { SessionDrainService } from './services/session/session-drain.service';
+import { SessionDrainTimerService } from './services/session/session-drain-timer.service';
+import { SessionSseService } from './services/session/session-sse.service';
 import { StoreService } from './services/store.service';
 import { TabService } from './services/tab.service';
 import { TabCheckerService } from './services/tab-checker.service';
@@ -123,9 +123,9 @@ export const appProviders = [
   //
   SessionsService,
   EditorOpencodeService,
-  EventsDrainService,
-  EventsDrainTimerService,
-  EventsSseService,
+  SessionDrainService,
+  SessionDrainTimerService,
+  SessionSseService,
   EditorStreamService,
   EditorSandboxService,
   ExplorerEventsMakerService,

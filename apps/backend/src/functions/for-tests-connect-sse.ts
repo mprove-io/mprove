@@ -1,12 +1,12 @@
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
-import type { AgentEvent } from '#backend/services/events/events-sse.service';
+import type { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 
 export async function forTestsConnectSse(item: {
   httpServer: any;
   sessionId: string;
   ticket: string;
-}): Promise<{ events: AgentEvent[]; close: () => void }> {
-  let events: AgentEvent[] = [];
+}): Promise<{ events: SessionEventApi[]; close: () => void }> {
+  let events: SessionEventApi[] = [];
   let address = item.httpServer.address();
   let port = typeof address === 'string' ? address : address.port;
 

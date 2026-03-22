@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
+import { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 
@@ -10,7 +10,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
   templateUrl: './debug-events-panel.component.html'
 })
 export class DebugEventsPanelComponent {
-  liveEvents: AgentEventApi[] = [];
+  liveEvents: SessionEventApi[] = [];
   liveEvents$ = this.sessionEventsQuery.liveEvents$.pipe(
     tap(x => {
       this.liveEvents = x;

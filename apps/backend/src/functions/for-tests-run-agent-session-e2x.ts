@@ -9,7 +9,6 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
-import type { AgentEvent } from '#backend/services/events/events-sse.service';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -19,6 +18,7 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
+import type { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 import {
   ToBackendCreateSessionEditorRequest,
   ToBackendCreateSessionEditorResponse
@@ -62,7 +62,7 @@ export async function forTestsRunAgentSessionE2x(item: {
 
   let prep: Prep;
   let sessionId: string | undefined;
-  let sse: { events: AgentEvent[]; close: () => void } | undefined;
+  let sse: { events: SessionEventApi[]; close: () => void } | undefined;
   let testError: unknown;
   let createSessionResp: ToBackendCreateSessionEditorResponse;
   let sendFirstMessageResp: ToBackendSendMessageToSessionEditorResponse;

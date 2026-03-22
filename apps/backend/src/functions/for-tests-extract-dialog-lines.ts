@@ -1,7 +1,7 @@
-import type { AgentEvent } from '#backend/services/events/events-sse.service';
+import type { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 
 export function forTestsExtractDialogLines(item: {
-  events: AgentEvent[];
+  events: SessionEventApi[];
 }): string[] {
   // First pass: collect messageID → role from message.updated events
   let messageRoles = new Map<string, string>();

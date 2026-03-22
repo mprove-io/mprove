@@ -20,9 +20,9 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { SessionApi } from '#common/interfaces/backend/session-api';
+import { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 import {
   ToBackendSendMessageToSessionEditorRequestPayload,
   ToBackendSendMessageToSessionEditorResponse
@@ -68,7 +68,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   variant = 'default';
 
   session: SessionApi;
-  liveEvents: AgentEventApi[] = [];
+  liveEvents: SessionEventApi[] = [];
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
   permissions: PermissionRequest[] = [];

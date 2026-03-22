@@ -32,7 +32,7 @@ import { ServerError } from '#common/models/server-error';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
 import { SessionsService } from '../db/sessions.service';
-import { EventsDrainService } from '../events/events-drain.service';
+import { SessionDrainService } from '../session/session-drain.service';
 import { EditorOpencodeService } from './editor-opencode.service';
 import { EditorSandboxService } from './editor-sandbox.service';
 
@@ -65,7 +65,7 @@ export class EditorStreamService implements OnModuleDestroy {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private eventsDrainService: EventsDrainService,
+    private sessionDrainService: SessionDrainService,
     private editorSandboxService: EditorSandboxService,
     private editorOpencodeService: EditorOpencodeService,
     private sessionsService: SessionsService,
@@ -309,7 +309,7 @@ export class EditorStreamService implements OnModuleDestroy {
         }
 
         this.lastEventTsMap.delete(sessionId);
-        this.eventsDrainService.cleanup({ sessionId: sessionId });
+        this.sessionDrainService.cleanup({ sessionId: sessionId });
       }
     });
   }
@@ -360,7 +360,7 @@ export class EditorStreamService implements OnModuleDestroy {
 
     let abortController = new AbortController();
 
-    await this.eventsDrainService.initEventCounter({
+    await this.sessionDrainService.initEventCounter({
       sessionId: item.sessionId
     });
 
@@ -403,7 +403,7 @@ export class EditorStreamService implements OnModuleDestroy {
         for await (let event of response.stream) {
           this.lastEventTsMap.set(item.sessionId, Date.now());
 
-          this.eventsDrainService.enqueue({
+          this.sessionDrainService.enqueue({
             sessionId: item.sessionId,
             event: event
           });
@@ -459,7 +459,7 @@ export class EditorStreamService implements OnModuleDestroy {
     }
 
     this.lastEventTsMap.delete(sessionId);
-    this.eventsDrainService.cleanup({ sessionId: sessionId });
+    this.sessionDrainService.cleanup({ sessionId: sessionId });
     await this.releaseStreamLock({ sessionId: sessionId });
 
     console.log('[oc-stream] stopEventStream completed');

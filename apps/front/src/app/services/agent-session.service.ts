@@ -6,9 +6,9 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { splitModel } from '#common/functions/split-model';
-import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
+import { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 import { ErrorData } from '#common/interfaces/front/error-data';
 import {
   ToBackendCreateSessionSseTicketRequestPayload,
@@ -50,7 +50,7 @@ export class AgentSessionService {
 
   private SSE_RECONNECT_DELAY_MS = 3000;
 
-  private sseEventBuffer: AgentEventApi[] = [];
+  private sseEventBuffer: SessionEventApi[] = [];
   private sseRafId: number;
 
   private pollSubscription: Subscription;
@@ -389,21 +389,21 @@ export class AgentSessionService {
     this.eventSource.addEventListener(
       'session-event',
       (event: MessageEvent) => {
-        let agentEvent: AgentEventApi = JSON.parse(event.data);
+        let sessionEvent: SessionEventApi = JSON.parse(event.data);
 
-        if (agentEvent.eventType === RELOAD_SESSION_EVENT_TYPE) {
+        if (sessionEvent.eventType === RELOAD_SESSION_EVENT_TYPE) {
           console.log('eventSource - reloading session...');
           this.reconnectCounter = 0;
           this.scheduleReconnect({ sessionId: sessionId, delay: 0 });
           return;
         }
 
-        if (agentEvent.eventIndex <= this.lastProcessedEventIndex) {
+        if (sessionEvent.eventIndex <= this.lastProcessedEventIndex) {
           return;
         }
 
         this.reconnectCounter = 0;
-        this.sseEventBuffer.push(agentEvent);
+        this.sseEventBuffer.push(sessionEvent);
 
         if (this.sseRafId === undefined) {
           this.sseRafId = requestAnimationFrame(() => {

@@ -1,7 +1,7 @@
 import type { EventSessionStatus } from '@opencode-ai/sdk/v2';
-import type { AgentEvent } from '#backend/services/events/events-sse.service';
+import type { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 
-function isIdleEvent(agentEvent: AgentEvent): boolean {
+function isIdleEvent(agentEvent: SessionEventApi): boolean {
   // 'session.idle' is deprecated but still emitted by opencode server.
   // 'session.status' with status.type === 'idle' is the new format.
   if (agentEvent.eventType === 'session.idle') {
@@ -15,7 +15,7 @@ function isIdleEvent(agentEvent: AgentEvent): boolean {
 }
 
 export async function forTestsWaitForTurnEnded(item: {
-  events: AgentEvent[];
+  events: SessionEventApi[];
   count: number;
   maxRetries: number;
 }): Promise<void> {
