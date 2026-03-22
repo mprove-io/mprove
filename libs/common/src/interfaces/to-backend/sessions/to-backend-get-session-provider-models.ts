@@ -8,7 +8,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
+import { SessionModelApi } from '#common/interfaces/backend/session-model-api';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -32,8 +32,8 @@ export class ToBackendGetSessionProviderModelsRequest extends ToBackendRequest {
 }
 
 export class ToBackendGetSessionProviderModelsResponsePayload {
-  modelsOpencode: AgentModelApi[];
-  modelsAi: AgentModelApi[];
+  modelsOpencode: SessionModelApi[];
+  modelsAi: SessionModelApi[];
 }
 
 export class ToBackendGetSessionProviderModelsResponse extends MyResponse {

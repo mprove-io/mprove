@@ -1,7 +1,7 @@
 import type { Message } from '@opencode-ai/sdk/v2';
 import { IsString } from 'class-validator';
 
-export class AgentMessageApi {
+export class SessionMessageApi {
   @IsString()
   messageId: string;
 

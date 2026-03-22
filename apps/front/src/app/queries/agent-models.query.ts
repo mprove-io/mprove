@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
+import { SessionModelApi } from '#common/interfaces/backend/session-model-api';
 import { BaseQuery } from './base.query';
 
 export class AgentModelsState {
-  modelsOpencode: AgentModelApi[];
-  modelsAi: AgentModelApi[];
+  modelsOpencode: SessionModelApi[];
+  modelsAi: SessionModelApi[];
 }
 
 let agentModelsState: AgentModelsState = {

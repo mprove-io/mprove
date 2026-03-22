@@ -21,9 +21,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
-import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { SessionEventApi } from '#common/interfaces/backend/session-event-api';
+import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
+import { SessionPartApi } from '#common/interfaces/backend/session-part-api';
 import {
   ToBackendGetSessionRequest,
   ToBackendGetSessionResponsePayload
@@ -138,8 +138,8 @@ export class GetSessionController {
       ? this.sessionsService.tabToOcSessionApi({ ocSession })
       : undefined;
 
-    let messages: AgentMessageApi[] = [];
-    let parts: AgentPartApi[] = [];
+    let messages: SessionMessageApi[] = [];
+    let parts: SessionPartApi[] = [];
 
     let messageEnts = await this.db.drizzle.query.ocMessagesTable.findMany({
       where: eq(ocMessagesTable.sessionId, sessionId),

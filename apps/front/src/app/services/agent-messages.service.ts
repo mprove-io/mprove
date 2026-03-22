@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import type { ToolPart } from '@opencode-ai/sdk/v2';
-import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
-import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { SessionApi } from '#common/interfaces/backend/session-api';
+import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
+import { SessionPartApi } from '#common/interfaces/backend/session-part-api';
 import { unwrapErrorMessage } from '#front/app/functions/unwrap-error-message';
 import {
   ChatMessage,
@@ -39,8 +39,8 @@ export class AgentMessagesService {
   }
 
   buildMessagesFromStores(item: {
-    storeMessages: AgentMessageApi[];
-    storeParts: { [messageId: string]: AgentPartApi[] };
+    storeMessages: SessionMessageApi[];
+    storeParts: { [messageId: string]: SessionPartApi[] };
     session: SessionApi;
     model: string;
     agent: string;

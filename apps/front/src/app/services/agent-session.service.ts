@@ -6,9 +6,9 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { splitModel } from '#common/functions/split-model';
-import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
-import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { SessionEventApi } from '#common/interfaces/backend/session-event-api';
+import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
+import { SessionPartApi } from '#common/interfaces/backend/session-part-api';
 import { ErrorData } from '#common/interfaces/front/error-data';
 import {
   ToBackendCreateSessionSseTicketRequestPayload,
@@ -57,7 +57,7 @@ export class AgentSessionService {
 
   private optimisticMessages: Map<
     string,
-    { message: AgentMessageApi; parts: AgentPartApi[] }
+    { message: SessionMessageApi; parts: SessionPartApi[] }
   > = new Map();
 
   constructor(
@@ -90,7 +90,7 @@ export class AgentSessionService {
       modelID: model || ''
     };
 
-    let optimisticMessage: AgentMessageApi = {
+    let optimisticMessage: SessionMessageApi = {
       messageId: messageId,
       sessionId: sessionId,
       role: 'user',
@@ -105,7 +105,7 @@ export class AgentSessionService {
       } as any
     };
 
-    let optimisticPart: AgentPartApi = {
+    let optimisticPart: SessionPartApi = {
       partId: partId,
       messageId: messageId,
       sessionId: sessionId,
@@ -523,11 +523,11 @@ export class AgentSessionService {
   }
 
   mergeOptimistic(item: {
-    messages: AgentMessageApi[];
-    parts: { [messageId: string]: AgentPartApi[] };
+    messages: SessionMessageApi[];
+    parts: { [messageId: string]: SessionPartApi[] };
   }): {
-    messages: AgentMessageApi[];
-    parts: { [messageId: string]: AgentPartApi[] };
+    messages: SessionMessageApi[];
+    parts: { [messageId: string]: SessionPartApi[] };
     confirmed: string[];
   } {
     if (this.optimisticMessages.size === 0) {

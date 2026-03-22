@@ -1,6 +1,6 @@
 import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class AgentModelApi {
+export class SessionModelApi {
   @IsString()
   id: string;
 

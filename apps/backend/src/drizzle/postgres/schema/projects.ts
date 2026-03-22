@@ -9,7 +9,7 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
+import { SessionModelApi } from '#common/interfaces/backend/session-model-api';
 import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
 
 export const projectsTable = pgTable(
@@ -28,12 +28,12 @@ export const projectsTable = pgTable(
     nameHash: varchar('name_hash').notNull(), // name is unique across org projects
     gitUrlHash: varchar('git_url_hash'),
     providerModelsOpencode: json('provider_models_opencode').$type<
-      AgentModelApi[]
+      SessionModelApi[]
     >(),
     providerModelsOpencodeTs: bigint('provider_models_opencode_ts', {
       mode: 'number'
     }),
-    providerModelsAi: json('provider_models_ai').$type<AgentModelApi[]>(),
+    providerModelsAi: json('provider_models_ai').$type<SessionModelApi[]>(),
     providerModelsAiTs: bigint('provider_models_ai_ts', { mode: 'number' }),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

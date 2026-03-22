@@ -14,7 +14,7 @@ import { ALLOWED_MODEL_KEYWORDS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
+import { SessionModelApi } from '#common/interfaces/backend/session-model-api';
 import { ServerError } from '#common/models/server-error';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class ExplorerModelsService {
     anthropicApiKey?: string;
     enableLoadFromCache: boolean;
     forceLoadFromCache: boolean;
-  }): Promise<AgentModelApi[]> {
+  }): Promise<SessionModelApi[]> {
     let {
       projectId,
       openaiApiKey,
@@ -85,7 +85,7 @@ export class ExplorerModelsService {
   private async readCache(item: {
     projectId: string;
     ignoreTtl: boolean;
-  }): Promise<AgentModelApi[] | undefined> {
+  }): Promise<SessionModelApi[] | undefined> {
     let { projectId, ignoreTtl } = item;
 
     let row = await this.db.drizzle.query.projectsTable.findFirst({
@@ -126,7 +126,7 @@ export class ExplorerModelsService {
 
   private async writeCache(item: {
     projectId: string;
-    models: AgentModelApi[];
+    models: SessionModelApi[];
   }): Promise<void> {
     let { projectId, models } = item;
 
@@ -153,7 +153,7 @@ export class ExplorerModelsService {
   private async fetchModels(item: {
     openaiApiKey?: string;
     anthropicApiKey?: string;
-  }): Promise<AgentModelApi[]> {
+  }): Promise<SessionModelApi[]> {
     let { openaiApiKey, anthropicApiKey } = item;
 
     let openaiPromise = openaiApiKey
@@ -174,7 +174,7 @@ export class ExplorerModelsService {
       capMapPromise
     ]);
 
-    let models: AgentModelApi[] = [];
+    let models: SessionModelApi[] = [];
     models.push(...openaiModels, ...anthropicModels);
 
     if (capMap) {
@@ -198,7 +198,7 @@ export class ExplorerModelsService {
 
   private async fetchOpenaiModels(item: {
     apiKey: string;
-  }): Promise<AgentModelApi[]> {
+  }): Promise<SessionModelApi[]> {
     try {
       let response = await fetch('https://api.openai.com/v1/models', {
         headers: { Authorization: `Bearer ${item.apiKey}` }
@@ -236,7 +236,7 @@ export class ExplorerModelsService {
 
   private async fetchAnthropicModels(item: {
     apiKey: string;
-  }): Promise<AgentModelApi[]> {
+  }): Promise<SessionModelApi[]> {
     try {
       let response = await fetch('https://api.anthropic.com/v1/models', {
         headers: {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import type { Event } from '@opencode-ai/sdk/v2';
-import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
-import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
+import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
+import { SessionPartApi } from '#common/interfaces/backend/session-part-api';
 import { binarySearch } from '../functions/binary-search';
 import { SessionQuery } from '../queries/session.query';
 import {
@@ -86,7 +86,7 @@ export class AgentEventsService {
 
         let result = binarySearch(messages, messageId, m => m.messageId);
 
-        let msgApi: AgentMessageApi = {
+        let msgApi: SessionMessageApi = {
           messageId: messageId,
           sessionId: mproveSessionId,
           role: role,
@@ -130,7 +130,7 @@ export class AgentEventsService {
 
         let mproveSessionId2 = this.sessionQuery.getValue()?.sessionId || '';
 
-        let partApi: AgentPartApi = {
+        let partApi: SessionPartApi = {
           partId: partId,
           messageId: messageId,
           sessionId: mproveSessionId2,
@@ -180,7 +180,7 @@ export class AgentEventsService {
         let partData: Record<string, unknown> = { ...existingPart.ocPart };
         let existing = partData[props.field] as string | undefined;
         partData[props.field] = (existing ?? '') + props.delta;
-        existingPart.ocPart = partData as AgentPartApi['ocPart'];
+        existingPart.ocPart = partData as SessionPartApi['ocPart'];
         updatedParts[result.index] = existingPart;
 
         let allParts = { ...state.parts };

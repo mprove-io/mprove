@@ -6,13 +6,13 @@ import type {
   SessionStatus,
   Todo
 } from '@opencode-ai/sdk/v2';
-import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
-import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
+import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
+import { SessionPartApi } from '#common/interfaces/backend/session-part-api';
 import { BaseQuery } from './base.query';
 
 export class SessionBundleState {
-  messages: AgentMessageApi[];
-  parts: { [messageId: string]: AgentPartApi[] };
+  messages: SessionMessageApi[];
+  parts: { [messageId: string]: SessionPartApi[] };
   permissions: PermissionRequest[];
   questions: QuestionRequest[];
   ocSessionStatus: SessionStatus;

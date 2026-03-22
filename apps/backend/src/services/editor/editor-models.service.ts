@@ -17,7 +17,7 @@ import {
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
+import { SessionModelApi } from '#common/interfaces/backend/session-model-api';
 import { ServerError } from '#common/models/server-error';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class EditorModelsService {
     zenApiKey?: string;
     enableLoadFromCache: boolean;
     forceLoadFromCache: boolean;
-  }): Promise<AgentModelApi[]> {
+  }): Promise<SessionModelApi[]> {
     let {
       projectId,
       openaiApiKey,
@@ -91,7 +91,7 @@ export class EditorModelsService {
   private async readCache(item: {
     projectId: string;
     ignoreTtl: boolean;
-  }): Promise<AgentModelApi[] | undefined> {
+  }): Promise<SessionModelApi[] | undefined> {
     let { projectId, ignoreTtl } = item;
 
     let row = await this.db.drizzle.query.projectsTable.findFirst({
@@ -133,7 +133,7 @@ export class EditorModelsService {
 
   private async writeCache(item: {
     projectId: string;
-    models: AgentModelApi[];
+    models: SessionModelApi[];
   }): Promise<void> {
     let { projectId, models } = item;
 
@@ -161,7 +161,7 @@ export class EditorModelsService {
     openaiApiKey?: string;
     anthropicApiKey?: string;
     zenApiKey?: string;
-  }): Promise<AgentModelApi[]> {
+  }): Promise<SessionModelApi[]> {
     let { openaiApiKey, anthropicApiKey, zenApiKey } = item;
 
     let response = await fetch('https://models.dev/api.json', {
@@ -186,7 +186,7 @@ export class EditorModelsService {
       MODEL_PROVIDERS.map(p => [p.provider_id, p.label])
     );
 
-    let models: AgentModelApi[] = [];
+    let models: SessionModelApi[] = [];
 
     Object.entries(modelsDevResponse).forEach(([providerId, mdProvider]) => {
       let label = allowedMap.get(providerId);
