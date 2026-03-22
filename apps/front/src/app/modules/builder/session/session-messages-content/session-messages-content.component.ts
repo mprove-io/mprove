@@ -33,7 +33,7 @@ export class SessionMessagesContentComponent {
   @Input() session: SessionApi;
   @Input() isActivating = false;
   @Input() isArchived = false;
-  @Input() isAgentBusy = false;
+  @Input() isSessionBusy = false;
   @Input() retryMessage: string;
   @Input() isSessionError = false;
   @Input() lastSessionError: Record<string, unknown> | undefined;

@@ -79,7 +79,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   isActivating = false;
   isArchived = false;
 
-  isAgentBusy = false;
+  isSessionBusy = false;
   isWorking = false;
   isAborting = false;
   isOptimisticLoading = false;
@@ -261,7 +261,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       messages: sessionData.messages
     });
 
-    this.isAgentBusy =
+    this.isSessionBusy =
       this.session?.status === SessionStatusEnum.Active &&
       ['busy', 'retry'].indexOf(sessionData.ocSessionStatus?.type) > -1 &&
       !lastAssistantCompleted;
@@ -360,7 +360,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.uiQuery.updatePart({ isOptimisticLoading: false });
     }
 
-    this.isAgentBusy =
+    this.isSessionBusy =
       this.isOptimisticLoading ||
       (this.questions.length === 0 &&
         this.permissions.length === 0 &&
@@ -531,7 +531,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       messages: this.messages
     });
 
-    this.isAgentBusy = true;
+    this.isSessionBusy = true;
     this.isWorking = true;
     this.uiQuery.updatePart({ isOptimisticLoading: true });
 
@@ -661,7 +661,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.sessionService.optimisticRemove({
       messageId: messageId
     });
-    this.isAgentBusy = false;
+    this.isSessionBusy = false;
     this.isWorking = false;
     this.uiQuery.updatePart({ isOptimisticLoading: false });
     this.updateWorkingSpinner();
