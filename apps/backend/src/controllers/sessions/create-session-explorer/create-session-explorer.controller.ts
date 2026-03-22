@@ -29,6 +29,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
@@ -39,6 +40,7 @@ import {
   ToBackendCreateSessionExplorerRequest,
   ToBackendCreateSessionExplorerResponsePayload
 } from '#common/interfaces/to-backend/sessions/to-backend-create-session-explorer';
+import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -73,10 +75,16 @@ export class CreateSessionExplorerController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckExists({
-      memberId: user.userId,
-      projectId: projectId
+    let userMember = await this.membersService.getMemberCheckExists({
+      projectId: projectId,
+      memberId: user.userId
     });
+
+    if (userMember.isExplorer === false) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      });
+    }
 
     let now = Date.now();
     let session: SessionTab;

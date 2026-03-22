@@ -4,6 +4,7 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { EditorModelsService } from '#backend/services/editor/editor-models.service';
 import { ExplorerModelsService } from '#backend/services/explorer/explorer-models.service';
@@ -22,6 +23,7 @@ export class GetSessionProviderModelsController {
   constructor(
     private explorerModelsService: ExplorerModelsService,
     private editorModelsService: EditorModelsService,
+    private membersService: MembersService,
     private projectsService: ProjectsService
   ) {}
 
@@ -35,6 +37,11 @@ export class GetSessionProviderModelsController {
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
+    });
+
+    await this.membersService.getMemberCheckExists({
+      projectId: projectId,
+      memberId: user.userId
     });
 
     let [modelsAi, modelsOpencode] = await Promise.all([

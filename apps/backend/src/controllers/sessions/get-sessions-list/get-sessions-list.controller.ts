@@ -11,6 +11,7 @@ import {
 } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
@@ -32,6 +33,7 @@ export class GetSessionsListController {
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
     private editorSandboxService: EditorSandboxService,
+    private membersService: MembersService,
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -51,11 +53,17 @@ export class GetSessionsListController {
       projectId: projectId
     });
 
+    await this.membersService.getMemberCheckExists({
+      projectId: projectId,
+      memberId: user.userId
+    });
+
     if (project.e2bApiKey) {
       let editorSessions = await this.db.drizzle.query.sessionsTable
         .findMany({
           where: and(
             eq(sessionsTable.projectId, projectId),
+            eq(sessionsTable.userId, user.userId),
             eq(sessionsTable.type, SessionTypeEnum.Editor),
             inArray(sessionsTable.status, [
               SessionStatusEnum.Active,
