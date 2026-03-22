@@ -6,7 +6,6 @@ import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
-// import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { TimeService } from '#front/app/services/time.service';

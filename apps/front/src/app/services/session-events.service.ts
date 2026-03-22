@@ -10,7 +10,7 @@ import {
 } from '../queries/session-bundle.query';
 
 @Injectable({ providedIn: 'root' })
-export class AgentEventsService {
+export class SessionEventsService {
   private seenFirstDeltaPartIds: Set<string> = new Set();
 
   constructor(

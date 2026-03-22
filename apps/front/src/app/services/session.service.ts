@@ -27,10 +27,10 @@ import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
-import { AgentEventsService } from '#front/app/services/agent-events.service';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SessionEventsService } from '#front/app/services/session-events.service';
 import { environment } from '#front/environments/environment';
 
 type SsePhase =
@@ -40,7 +40,7 @@ type SsePhase =
   | 'waiting-to-reconnect';
 
 @Injectable({ providedIn: 'root' })
-export class AgentSessionService {
+export class SessionService {
   private initId = 0;
   private ssePhase: SsePhase = 'idle';
   private reconnectCounter = 0;
@@ -66,7 +66,7 @@ export class AgentSessionService {
     private sessionEventsQuery: SessionEventsQuery,
     private sessionBundleQuery: SessionBundleQuery,
     private sessionsQuery: SessionsQuery,
-    private agentEventsService: AgentEventsService,
+    private sessionEventsService: SessionEventsService,
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
     private uiQuery: UiQuery
@@ -206,12 +206,12 @@ export class AgentSessionService {
       liveEvents: payload.events
     });
 
-    this.agentEventsService.resetDeltaGuard();
+    this.sessionEventsService.resetDeltaGuard();
 
     let ocEvents = payload.events.filter(e => e.ocEvent).map(e => e.ocEvent);
 
     if (ocEvents.length > 0) {
-      this.agentEventsService.applyEvents(ocEvents);
+      this.sessionEventsService.applyEvents(ocEvents);
     }
   }
 
@@ -603,7 +603,7 @@ export class AgentSessionService {
     // Batch reducer events
     let ocEvents = buffer.filter(e => e.ocEvent).map(e => e.ocEvent);
     if (ocEvents.length > 0) {
-      this.agentEventsService.applyEvents(ocEvents);
+      this.sessionEventsService.applyEvents(ocEvents);
     }
 
     if (

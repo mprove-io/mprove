@@ -40,9 +40,9 @@ import {
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
-import { AgentMessagesService } from '#front/app/services/agent-messages.service';
-import { AgentSessionService } from '#front/app/services/agent-session.service';
 import { ApiService } from '#front/app/services/api.service';
+import { SessionService } from '#front/app/services/session.service';
+import { SessionMessagesService } from '#front/app/services/session-messages.service';
 import { ChatMessage, ChatTurn } from './session-chat.interfaces';
 import { SessionInputComponent } from './session-input/session-input.component';
 import { SessionMessagesComponent } from './session-messages/session-messages.component';
@@ -170,15 +170,15 @@ export class SessionComponent implements OnInit, OnDestroy {
     private sessionBundleQuery: SessionBundleQuery,
     private uiQuery: UiQuery,
     private agentModelsQuery: AgentModelsQuery,
-    private agentSessionService: AgentSessionService,
-    private agentMessagesService: AgentMessagesService,
+    private sessionService: SessionService,
+    private sessionMessagesService: SessionMessagesService,
     private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit() {}
 
   ngOnDestroy() {
-    this.agentSessionService.destroy();
+    this.sessionService.destroy();
   }
 
   updateWorkingSpinner() {
@@ -211,11 +211,11 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.model = this.session.lastMessageProviderModel || this.session.model;
     this.variant = this.session.lastMessageVariant || 'default';
 
-    this.agentSessionService.initForSession({
+    this.sessionService.initForSession({
       lastProcessedEventIndex: sessionData.lastEventIndex
     });
 
-    this.agentSessionService.clearOptimisticMessages();
+    this.sessionService.clearOptimisticMessages();
 
     if (this.sessionInput) {
       let state = this.agentModelsQuery.getValue();
@@ -231,7 +231,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.permissions = sessionData.permissions || [];
     this.questions = sessionData.questions || [];
 
-    this.messages = this.agentMessagesService.buildMessagesFromStores({
+    this.messages = this.sessionMessagesService.buildMessagesFromStores({
       storeMessages: sessionData.messages,
       storeParts: sessionData.parts,
       session: this.session,
@@ -240,7 +240,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       variant: this.variant
     });
 
-    this.turns = this.agentMessagesService.buildTurns({
+    this.turns = this.sessionMessagesService.buildTurns({
       messages: this.messages
     });
 
@@ -278,7 +278,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.previousLastTurnResponsesExist =
       this.turns[this.turns.length - 1]?.responses?.length > 0;
 
-    this.agentSessionService.managePollingAndSse({ skipRefresh: true });
+    this.sessionService.managePollingAndSse({ skipRefresh: true });
   }
 
   updateSessionData(sessionData: SessionBundleState) {
@@ -316,7 +316,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.messages = this.agentMessagesService.buildMessagesFromStores({
+    this.messages = this.sessionMessagesService.buildMessagesFromStores({
       storeMessages: sessionData.messages,
       storeParts: sessionData.parts,
       session: this.session,
@@ -325,7 +325,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       variant: this.variant
     });
 
-    this.turns = this.agentMessagesService.buildTurns({
+    this.turns = this.sessionMessagesService.buildTurns({
       messages: this.messages
     });
 
@@ -386,7 +386,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.updateWorkingSpinner();
 
-    this.agentSessionService.managePollingAndSse({
+    this.sessionService.managePollingAndSse({
       skipRefresh: justActivated
     });
 
@@ -507,7 +507,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.userSentMessage = true;
 
-    let { messageId, partId } = this.agentSessionService.optimisticAdd({
+    let { messageId, partId } = this.sessionService.optimisticAdd({
       sessionId: this.session.sessionId,
       ocSessionId: this.session.opencodeSessionId || '',
       agent: this.agent,
@@ -518,7 +518,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     // Rebuild chat messages and turns
     let updatedData = this.sessionBundleQuery.getValue();
-    this.messages = this.agentMessagesService.buildMessagesFromStores({
+    this.messages = this.sessionMessagesService.buildMessagesFromStores({
       storeMessages: updatedData.messages,
       storeParts: updatedData.parts,
       session: this.session,
@@ -527,7 +527,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       variant: this.variant
     });
 
-    this.turns = this.agentMessagesService.buildTurns({
+    this.turns = this.sessionMessagesService.buildTurns({
       messages: this.messages
     });
 
@@ -658,7 +658,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   handleSendInteractionError(item: { messageId: string }) {
     let { messageId } = item;
-    this.agentSessionService.optimisticRemove({
+    this.sessionService.optimisticRemove({
       messageId: messageId
     });
     this.isAgentBusy = false;

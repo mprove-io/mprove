@@ -11,7 +11,7 @@ import {
 } from '../modules/builder/session/session-chat.interfaces';
 
 @Injectable({ providedIn: 'root' })
-export class AgentMessagesService {
+export class SessionMessagesService {
   buildTurns(item: { messages: ChatMessage[] }): ChatTurn[] {
     let { messages } = item;
 

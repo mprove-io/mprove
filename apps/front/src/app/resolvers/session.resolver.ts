@@ -10,17 +10,17 @@ import {
   ToBackendGetSessionResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-get-session';
 import { SessionsQuery } from '../queries/sessions.query';
-import { AgentEventsService } from '../services/agent-events.service';
-import { AgentSessionService } from '../services/agent-session.service';
 import { ApiService } from '../services/api.service';
+import { SessionService } from '../services/session.service';
+import { SessionEventsService } from '../services/session-events.service';
 
 @Injectable({ providedIn: 'root' })
 export class SessionResolver {
   constructor(
     private apiService: ApiService,
     private sessionsQuery: SessionsQuery,
-    private agentEventsService: AgentEventsService,
-    private agentSessionService: AgentSessionService
+    private sessionEventsService: SessionEventsService,
+    private sessionService: SessionService
   ) {}
 
   resolve(
@@ -42,7 +42,7 @@ export class SessionResolver {
       .pipe(
         map((resp: ToBackendGetSessionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.agentEventsService.resetAll();
+            this.sessionEventsService.resetAll();
 
             if (resp.payload.sessions.length > 0) {
               let existing = this.sessionsQuery.getValue().sessions;
@@ -63,7 +63,7 @@ export class SessionResolver {
               });
             }
 
-            this.agentSessionService.applySessionResponse({
+            this.sessionService.applySessionResponse({
               payload: resp.payload,
               withOptimisticMerge: false
             });
