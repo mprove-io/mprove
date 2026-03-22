@@ -1,14 +1,15 @@
 import type { EventSessionStatus } from '@opencode-ai/sdk/v2';
 import type { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 
-function isIdleEvent(agentEvent: SessionEventApi): boolean {
+function isIdleEvent(sessionEvent: SessionEventApi): boolean {
   // 'session.idle' is deprecated but still emitted by opencode server.
   // 'session.status' with status.type === 'idle' is the new format.
-  if (agentEvent.eventType === 'session.idle') {
+  if (sessionEvent.eventType === 'session.idle') {
     return true;
   }
-  if (agentEvent.eventType === 'session.status') {
-    let status = (agentEvent.ocEvent as EventSessionStatus).properties?.status;
+  if (sessionEvent.eventType === 'session.status') {
+    let status = (sessionEvent.ocEvent as EventSessionStatus).properties
+      ?.status;
     return status?.type === 'idle';
   }
   return false;

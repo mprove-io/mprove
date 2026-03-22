@@ -46,7 +46,7 @@ test('1', async t => {
     return;
   }
 
-  let testId = 'backend-get-agent-session__messages-persisted';
+  let testId = 'backend-get-session__messages-persisted';
   let traceId = testId;
   let email = `${testId}@example.com`;
   let userId = makeId();

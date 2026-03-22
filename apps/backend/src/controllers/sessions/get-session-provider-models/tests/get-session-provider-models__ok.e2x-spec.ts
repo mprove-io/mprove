@@ -14,7 +14,7 @@ import {
 } from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
 
 test('1', async t => {
-  let testId = 'backend-get-agent-provider-models__ok';
+  let testId = 'backend-get-session-provider-models__ok';
   let traceId = testId;
   let email = `${testId}@example.com`;
   let password = '123456';
