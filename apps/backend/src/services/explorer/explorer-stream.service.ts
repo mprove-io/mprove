@@ -63,8 +63,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
     private cs: ConfigService<BackendConfig>,
     private sessionDrainService: SessionDrainService,
     private explorerModelsService: ExplorerModelsService,
-    private explorerEventsMakerService: ExplorerEventsMakerService,
     private explorerTitleService: ExplorerTitleService,
+    private explorerEventsMakerService: ExplorerEventsMakerService,
     private tabService: TabService,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
