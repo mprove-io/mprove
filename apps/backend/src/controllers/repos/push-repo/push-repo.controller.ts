@@ -35,7 +35,11 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
+import {
+  EMPTY_STRUCT_ID,
+  PROD_REPO_ID,
+  PROJECT_ENV_PROD
+} from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
@@ -189,7 +193,7 @@ export class PushRepoController {
     }
 
     await forEachSeries(prodBranchBridges, async x => {
-      if (x.envId === envId) {
+      if (x.envId === PROJECT_ENV_PROD || x.envId === envId) {
         let structId = makeId();
 
         await this.blockmlService.rebuildStruct({

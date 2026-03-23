@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
@@ -66,6 +67,7 @@ export class AddEnvUserDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<AddEnvUserDialogData>,
     private fb: FormBuilder,
+    private cd: ChangeDetectorRef,
     private memberQuery: MemberQuery,
     private environmentsQuery: EnvironmentsQuery
   ) {}
@@ -82,6 +84,7 @@ export class AddEnvUserDialogComponent implements OnInit {
 
   openUserSelect() {
     this.membersListLoading = true;
+    this.cd.detectChanges();
 
     let env: Env = this.ref.data.env;
 
@@ -104,6 +107,7 @@ export class AddEnvUserDialogComponent implements OnInit {
           this.membersList = x;
           this.membersListLoading = false;
           this.membersListLength = x.length - 1;
+          this.cd.detectChanges();
         }),
         take(1)
       )

@@ -19,8 +19,7 @@ import {
   PATH_REPORTS,
   PATH_SELECT_FILE,
   PATH_SESSION,
-  PROD_REPO_ID,
-  PROJECT_ENV_PROD
+  PROD_REPO_ID
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
@@ -309,11 +308,6 @@ export class BranchSelectComponent {
       x => x.extraId === this.selectedBranchExtraId
     );
 
-    let envId =
-      newSelectedBranchItem.repoType === RepoTypeEnum.Production
-        ? PROJECT_ENV_PROD
-        : this.nav.envId;
-
     let urlParts = this.router.url.split('?')[0].split('/');
 
     if (urlParts[11] === PATH_REPORTS) {
@@ -331,7 +325,7 @@ export class BranchSelectComponent {
       PATH_BRANCH,
       newSelectedBranchItem.branchId,
       PATH_ENV,
-      envId
+      this.nav.envId
     ];
 
     if (urlParts[11] === PATH_BUILDER) {

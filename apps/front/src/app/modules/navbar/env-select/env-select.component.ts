@@ -4,9 +4,9 @@ import {
   HostListener,
   ViewChild
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { filter, map, take, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
   PATH_ENV,
@@ -78,16 +78,6 @@ export class EnvSelectComponent {
     })
   );
 
-  showEmptySelector = false;
-
-  routerEvents$ = this.router.events.pipe(
-    filter(ev => ev instanceof NavigationEnd),
-    tap((x: any) => {
-      this.showEmptySelector = false;
-      this.cd.detectChanges();
-    })
-  );
-
   constructor(
     private uiQuery: UiQuery,
     private userQuery: UserQuery,
@@ -124,9 +114,6 @@ export class EnvSelectComponent {
   }
 
   envChange() {
-    this.showEmptySelector = true;
-    this.cd.detectChanges();
-
     let urlParts = this.router.url.split('/');
 
     let uiState = this.uiQuery.getValue();

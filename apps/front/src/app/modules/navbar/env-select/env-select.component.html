@@ -1,53 +1,32 @@
 <ng-select
-  #emptyEnvSelect
-  [fixNgSelectBottom]="emptyEnvSelect"
-  *ngIf="showEmptySelector === true"
-  class="w-[150px] text-base"
+  #envSelect
+  [fixNgSelectBottom]="envSelect"
+  data-cy="envSelect"
+  class="w-[150px] select-none text-base"
+  (open)="openEnvSelect()"
+  [loading]="envsListLoading"
+  [items]="envsList"
+  [clearable]="false"
+  [searchable]="false"
+  [disabled]="selectedProjectId === undefined || needSave === true"
+  [(ngModel)]="selectedEnvId"
+  (change)="envChange()"
+  (keyup.esc)="$event.stopImmediatePropagation(); envSelect.blur()"
+  (keyup.enter)="$event.stopImmediatePropagation(); envSelect.blur()"
   appendTo="body"
-></ng-select>
-
-<div
-  tp="Environment can only be selected for Dev repo branches"
-  [tpIsEnabled]="
-    showEmptySelector === false && nav?.repoType === repoTypeEnum.Production
-  "
+  placeholder="Env"
+  bindLabel="envId"
+  bindValue="envId"
 >
-  <ng-select
-    #envSelect
-    [fixNgSelectBottom]="envSelect"
-    *ngIf="showEmptySelector === false"
-    data-cy="envSelect"
-    class="w-[150px] select-none text-base"
-    (open)="openEnvSelect()"
-    [loading]="envsListLoading"
-    [items]="envsList"
-    [clearable]="false"
-    [searchable]="false"
-    [disabled]="
-      nav?.repoType === repoTypeEnum.Production ||
-      selectedProjectId === undefined ||
-      needSave === true
-    "
-    [(ngModel)]="selectedEnvId"
-    (change)="envChange()"
-    (keyup.esc)="$event.stopImmediatePropagation(); envSelect.blur()"
-    (keyup.enter)="$event.stopImmediatePropagation(); envSelect.blur()"
-    appendTo="body"
-    placeholder="Env"
-    bindLabel="envId"
-    bindValue="envId"
-  >
-    <ng-template ng-label-tmp let-item="item">
-      <div class="ml-1 truncate"> {{ item.envId }}</div>
-    </ng-template>
+  <ng-template ng-label-tmp let-item="item">
+    <div class="ml-1 truncate"> {{ item.envId }}</div>
+  </ng-template>
 
-    <ng-template ng-option-tmp let-item="item">
-      <div class="ml-1 truncate">{{ item.envId }}</div>
-    </ng-template>
-  </ng-select>
-</div>
+  <ng-template ng-option-tmp let-item="item">
+    <div class="ml-1 truncate">{{ item.envId }}</div>
+  </ng-template>
+</ng-select>
 
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="user$ | async"></div>
-<div *ngIf="routerEvents$ | async"></div>
