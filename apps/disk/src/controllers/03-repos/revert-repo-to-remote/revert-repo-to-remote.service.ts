@@ -8,11 +8,13 @@ import {
   ToDiskRevertRepoToRemoteRequest,
   ToDiskRevertRepoToRemoteResponsePayload
 } from '#common/interfaces/to-disk/03-repos/to-disk-revert-repo-to-remote';
+import { ServerError } from '#common/models/server-error';
 import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
 import { revertRepoToRemote } from '#disk/functions/git/revert-repo-to-remote';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
@@ -124,11 +126,23 @@ export class RevertRepoToRemoteService {
       isFetch: true
     });
 
-    //
+    let isRemoteBranchExistResult = await isRemoteBranchExist({
+      repoDir: repoDir,
+      remoteBranch: branch,
+      git: git,
+      isFetch: false
+    });
+
+    if (isRemoteBranchExistResult === false) {
+      throw new ServerError({
+        message: ErEnum.DISK_REMOTE_BRANCH_IS_NOT_EXIST
+      });
+    }
 
     await revertRepoToRemote({
       repoDir: repoDir,
-      remoteBranch: branch
+      remoteBranch: branch,
+      git: git
     });
 
     let {
