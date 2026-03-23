@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ADD COLUMN "env_id" varchar(255);

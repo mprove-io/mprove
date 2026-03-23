@@ -16,6 +16,7 @@ import { Member } from '#common/interfaces/backend/member';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
+import { SessionQuery, SessionState } from '#front/app/queries/session.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
@@ -74,10 +75,19 @@ export class NavbarComponent implements OnInit {
     })
   );
 
+  session: SessionState;
+  session$ = this.sessionQuery.select().pipe(
+    tap(x => {
+      this.session = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private router: Router,
     private navQuery: NavQuery,
     private repoQuery: RepoQuery,
+    private sessionQuery: SessionQuery,
     private structQuery: StructQuery,
     private navigateService: NavigateService,
     private uiQuery: UiQuery,
@@ -113,9 +123,10 @@ export class NavbarComponent implements OnInit {
 
     if (this.nav.repoType === RepoTypeEnum.Session) {
       this.navigateService.navigateToSession({
-        sessionId: this.nav.repoId,
-        repoId: this.nav.repoId,
-        branchId: this.nav.branchId,
+        sessionId: this.session.sessionId,
+        repoId: this.session.repoId,
+        branchId: this.session.branchId,
+        envId: this.session.envId,
         left: BuilderLeftEnum.Info,
         right: BuilderRightEnum.Sessions
       });

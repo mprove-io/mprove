@@ -19,6 +19,9 @@ export class ToBackendCreateExplorerSessionRequestPayload {
   @IsString()
   initialBranch: string;
 
+  @IsString()
+  envId: string;
+
   @IsOptional()
   @IsString()
   firstMessage?: string;
@@ -45,6 +48,9 @@ export class ToBackendCreateExplorerSessionResponsePayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  envId: string;
 }
 
 export class ToBackendCreateExplorerSessionResponse extends MyResponse {

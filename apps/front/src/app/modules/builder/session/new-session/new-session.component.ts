@@ -10,11 +10,16 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { EnvsItem } from '#common/interfaces/backend/envs-item';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
 } from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
+import {
+  ToBackendGetEnvsListRequestPayload,
+  ToBackendGetEnvsListResponse
+} from '#common/interfaces/to-backend/envs/to-backend-get-envs-list';
 import {
   ToBackendCreateEditorSessionRequestPayload,
   ToBackendCreateEditorSessionResponse
@@ -56,9 +61,12 @@ export class NewSessionComponent implements OnInit {
   }
 
   initialBranch: string;
-
   branches: { branchId: string; extraName: string }[] = [];
   branchesLoading = false;
+
+  baseEnvId: string;
+  envs: EnvsItem[] = [];
+  envsLoading = false;
 
   isSubmitting = false;
 
@@ -75,6 +83,7 @@ export class NewSessionComponent implements OnInit {
     let nav = this.navQuery.getValue();
     let isProduction = nav.repoId === PROD_REPO_ID;
     this.initialBranch = isProduction ? nav.branchId : nav.projectDefaultBranch;
+    this.baseEnvId = nav.envId;
   }
 
   ngOnInit() {
@@ -85,6 +94,7 @@ export class NewSessionComponent implements OnInit {
     let nav = this.navQuery.getValue();
 
     this.branchesLoading = true;
+    this.envsLoading = true;
 
     let payload: ToBackendGetBranchesListRequestPayload = {
       projectId: nav.projectId
@@ -110,6 +120,28 @@ export class NewSessionComponent implements OnInit {
               }));
           }
           this.branchesLoading = false;
+          this.cd.detectChanges();
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let envsPayload: ToBackendGetEnvsListRequestPayload = {
+      projectId: nav.projectId,
+      isFilter: true
+    };
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        payload: envsPayload
+      })
+      .pipe(
+        tap((resp: ToBackendGetEnvsListResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.envs = resp.payload.envsList;
+          }
+          this.envsLoading = false;
           this.cd.detectChanges();
         }),
         take(1)
@@ -163,6 +195,7 @@ export class NewSessionComponent implements OnInit {
         model: this.model,
         variant: this.variant,
         initialBranch: this.initialBranch,
+        envId: this.baseEnvId,
         firstMessage: text,
         messageId: messageId,
         partId: partId
@@ -194,7 +227,7 @@ export class NewSessionComponent implements OnInit {
         model: this.model,
         agent: this.agent,
         variant: this.variant,
-        envId: nav.envId,
+        envId: this.baseEnvId,
         initialBranch: this.initialBranch,
         firstMessage: text,
         messageId: messageId,
@@ -233,7 +266,7 @@ export class NewSessionComponent implements OnInit {
     let { resp, isSessionExplorer, provider, text } = item;
 
     if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-      let { sessionId, repoId, branchId } = resp.payload;
+      let { sessionId, repoId, branchId, envId } = resp.payload;
 
       if (!isSessionExplorer) {
         // Type Editor: add new session to the sessions list
@@ -249,6 +282,7 @@ export class NewSessionComponent implements OnInit {
           lastMessageProviderModel: this.model,
           lastMessageVariant: this.variant,
           initialBranch: this.initialBranch,
+          envId: envId,
           initialCommit: undefined,
           status: SessionStatusEnum.New,
           createdTs: Date.now(),
@@ -276,7 +310,8 @@ export class NewSessionComponent implements OnInit {
       this.navigateService.navigateToSession({
         sessionId: sessionId,
         repoId: repoId,
-        branchId: branchId
+        branchId: branchId,
+        envId: envId
       });
 
       this.isSubmitting = false;

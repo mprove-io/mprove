@@ -54,6 +54,10 @@ export class SessionApi {
 
   @IsOptional()
   @IsString()
+  envId?: string;
+
+  @IsOptional()
+  @IsString()
   initialCommit?: string;
 
   @IsInt()

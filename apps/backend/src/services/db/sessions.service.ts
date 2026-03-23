@@ -50,6 +50,7 @@ export class SessionsService {
     apiKeySecretHash?: string;
     apiKeySalt?: string;
     initialBranch: string;
+    envId?: string;
     initialCommit?: string;
     status: SessionStatusEnum;
     lastActivityTs: number;
@@ -80,6 +81,7 @@ export class SessionsService {
       apiKeySecretHash: item.apiKeySecretHash,
       apiKeySalt: item.apiKeySalt,
       initialBranch: item.initialBranch,
+      envId: item.envId,
       initialCommit: item.initialCommit,
       status: item.status,
       archiveReason: undefined,
@@ -154,6 +156,7 @@ export class SessionsService {
       archiveReason: session.archiveReason,
       pauseReason: session.pauseReason,
       initialBranch: session.initialBranch,
+      envId: session.envId,
       initialCommit: session.initialCommit,
       createdTs: session.createdTs,
       lastActivityTs: session.lastActivityTs,

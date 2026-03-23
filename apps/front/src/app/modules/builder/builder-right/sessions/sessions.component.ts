@@ -444,7 +444,8 @@ export class SessionsComponent implements OnInit {
     this.navigateService.navigateToSession({
       sessionId: session.sessionId,
       repoId: session.repoId,
-      branchId: session.branchId
+      branchId: session.branchId,
+      envId: session.envId
     });
   }
 }

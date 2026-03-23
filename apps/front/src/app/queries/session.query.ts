@@ -14,6 +14,7 @@ let sessionState: SessionState = {
   agent: undefined,
   status: undefined,
   initialBranch: undefined,
+  envId: undefined,
   initialCommit: undefined,
   createdTs: undefined,
   lastActivityTs: undefined,

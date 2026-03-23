@@ -183,6 +183,7 @@ export class CreateEditorSessionController {
           apiKeySecretHash: apiKeyParts.secretHash,
           apiKeySalt: apiKeyParts.salt,
           initialBranch: initialBranch,
+          envId: envId,
           initialCommit: undefined,
           status: SessionStatusEnum.New,
           lastActivityTs: now,
@@ -258,7 +259,8 @@ export class CreateEditorSessionController {
     let payload: ToBackendCreateEditorSessionResponsePayload = {
       sessionId: session.sessionId,
       repoId: repoId,
-      branchId: branchId
+      branchId: branchId,
+      envId: session.envId
     };
 
     return payload;

@@ -35,7 +35,7 @@ import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
-import { SessionQuery } from '#front/app/queries/session.query';
+import { SessionQuery, SessionState } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
@@ -171,10 +171,10 @@ export class BuilderComponent implements OnInit, OnDestroy {
     })
   );
 
-  sessionId: string;
+  session: SessionState;
   sessionId$ = this.sessionQuery.select().pipe(
     tap(x => {
-      this.sessionId = x?.sessionId;
+      this.session = x;
       this.cd.detectChanges();
     })
   );
@@ -299,10 +299,13 @@ export class BuilderComponent implements OnInit, OnDestroy {
     } else if (x === BuilderLeftEnum.Tree || x === BuilderLeftEnum.Info) {
       if (
         this.nav.repoType === RepoTypeEnum.Session &&
-        isDefined(this.sessionId)
+        isDefined(this.session?.sessionId)
       ) {
         this.navigateService.navigateToSession({
-          sessionId: this.sessionId,
+          sessionId: this.session.sessionId,
+          repoId: this.session.repoId,
+          branchId: this.session.branchId,
+          envId: this.session.envId,
           left: x
         });
       } else {

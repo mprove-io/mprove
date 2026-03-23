@@ -377,21 +377,18 @@ export class NavigateService {
 
   async navigateToSession(item: {
     sessionId: string;
-    repoId?: string;
-    branchId?: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
     left?: BuilderLeftEnum;
     right?: string;
   }) {
-    let { sessionId } = item;
+    let { sessionId, repoId, branchId, envId } = item;
 
     let uiState = this.uiQuery.getValue();
 
     let left = item.left || uiState.builderLeft;
     let right = item.right || uiState.builderRight;
-
-    let repoId = item.repoId || this.nav.repoId;
-
-    let branchId = item.branchId || this.nav.branchId;
 
     return this.router.navigate(
       [
@@ -404,7 +401,7 @@ export class NavigateService {
         PATH_BRANCH,
         branchId,
         PATH_ENV,
-        this.nav.envId,
+        envId,
         PATH_BUILDER,
         PATH_SESSION,
         sessionId

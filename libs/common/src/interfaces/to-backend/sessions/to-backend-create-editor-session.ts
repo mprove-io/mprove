@@ -55,6 +55,9 @@ export class ToBackendCreateEditorSessionResponsePayload {
 
   @IsString()
   branchId: string;
+
+  @IsString()
+  envId: string;
 }
 
 export class ToBackendCreateEditorSessionResponse extends MyResponse {

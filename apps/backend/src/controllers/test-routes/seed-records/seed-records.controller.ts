@@ -239,6 +239,7 @@ export class SeedRecordsController {
             archiveReason: undefined,
             pauseReason: undefined,
             initialBranch: BRANCH_MAIN,
+            envId: PROJECT_ENV_PROD,
             initialCommit: undefined,
             sandboxId: undefined,
             sandboxBaseUrl: undefined,

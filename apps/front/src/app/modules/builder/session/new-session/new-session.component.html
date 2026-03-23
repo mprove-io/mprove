@@ -34,7 +34,7 @@
       </button>
     </div>
     <div class="grid grid-cols-[auto_1fr] items-center gap-x-3">
-      <div class="text-s400 text-right text-base">Base branch</div>
+      <div class="text-s400 text-right text-base">Base Branch</div>
       <ng-select
         class="w-[240px] select-none text-base"
         [items]="branches"
@@ -46,6 +46,20 @@
         placeholder="Initial Branch"
         bindLabel="extraName"
         bindValue="branchId"
+      ></ng-select>
+    </div>
+    <div class="grid grid-cols-[auto_1fr] items-center gap-x-3">
+      <div class="text-s400 text-right text-base">Base Env</div>
+      <ng-select
+        class="w-[240px] select-none text-base"
+        [items]="envs"
+        [clearable]="false"
+        [searchable]="false"
+        [(ngModel)]="baseEnvId"
+        [loading]="envsLoading"
+        placeholder="Env"
+        bindLabel="envId"
+        bindValue="envId"
       ></ng-select>
     </div>
   </div>

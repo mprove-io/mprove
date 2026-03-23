@@ -1038,6 +1038,7 @@ export class TabToEntService {
       archiveReason: tab.archiveReason,
       pauseReason: tab.pauseReason,
       initialBranch: tab.initialBranch,
+      envId: tab.envId,
       initialCommit: tab.initialCommit,
       ...this.getEntProps({
         dataSt: sessionSt,

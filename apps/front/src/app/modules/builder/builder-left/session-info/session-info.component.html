@@ -62,6 +62,11 @@
             </div>
 
             <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Env</div>
+              <div class="text-s400 text-base">{{ session?.envId || '-' }}</div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
               <div class="text-s400 text-base font-medium">Branch</div>
               <div class="text-s400 text-base">{{ session?.sessionId }}</div>
             </div>

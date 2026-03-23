@@ -69,6 +69,7 @@ export class CreateExplorerSessionController {
       model,
       variant,
       initialBranch,
+      envId,
       firstMessage,
       messageId,
       partId
@@ -111,6 +112,7 @@ export class CreateExplorerSessionController {
           agent: undefined,
           firstMessage: firstMessage,
           initialBranch: initialBranch,
+          envId: envId,
           initialCommit: undefined,
           status: SessionStatusEnum.Active,
           lastActivityTs: now,
@@ -202,7 +204,8 @@ export class CreateExplorerSessionController {
     let payload: ToBackendCreateExplorerSessionResponsePayload = {
       sessionId: session.sessionId,
       repoId: session.repoId,
-      branchId: session.branchId
+      branchId: session.branchId,
+      envId: session.envId
     };
 
     return payload;
