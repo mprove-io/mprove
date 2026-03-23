@@ -25,5 +25,6 @@ RUN npm install -g @e2b/cli
 RUN curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/local/bin/cloudflared \
     && chmod +x /usr/local/bin/cloudflared
 
+RUN npm install -g @malloydata/cli
 
 
