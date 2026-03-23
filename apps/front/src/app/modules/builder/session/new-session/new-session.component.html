@@ -1,5 +1,5 @@
 <div class="flex h-full w-full flex-col items-center">
-  <div class="mb-6 mt-12 flex flex-shrink-0 flex-row items-center gap-x-6">
+  <div class="mb-6 mt-32 flex flex-shrink-0 flex-row items-start gap-x-14">
     <div
       class="border-s200 bg-s100 flex w-[300px] select-none flex-row rounded-lg border p-0.5"
     >
@@ -33,7 +33,7 @@
         </span>
       </button>
     </div>
-    <div class="grid grid-cols-[auto_1fr] items-center gap-x-3">
+    <div class="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-3">
       <div class="text-s400 text-right text-base">Base Branch</div>
       <ng-select
         class="w-[240px] select-none text-base"
@@ -47,9 +47,7 @@
         bindLabel="extraName"
         bindValue="branchId"
       ></ng-select>
-    </div>
-    <div class="grid grid-cols-[auto_1fr] items-center gap-x-3">
-      <div class="text-s400 text-right text-base">Base Env</div>
+      <div class="text-s400 text-right text-base">Env</div>
       <ng-select
         class="w-[240px] select-none text-base"
         [items]="envs"
@@ -64,7 +62,7 @@
     </div>
   </div>
 
-  <div class="h-[30%] flex-shrink-0"></div>
+  <div class="h-[17%] flex-shrink-0"></div>
   <div class="flex w-full max-w-[860px] flex-col px-6">
     <div class="mb-10 flex items-center justify-center">
       <img class="w-40" src="assets/logo/mprove_logo_web-01-b-gray.svg" />
