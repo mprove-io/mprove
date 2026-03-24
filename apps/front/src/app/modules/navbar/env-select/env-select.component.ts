@@ -59,7 +59,14 @@ export class EnvSelectComponent {
     tap(x => {
       this.nav = x;
 
-      this.envsList = [x];
+      let envsItem: EnvsItem = {
+        envId: x.envId,
+        projectId: x.projectId
+      };
+      let alreadyPresent = this.envsList.some(
+        item => item.envId === envsItem.envId
+      );
+      this.envsList = alreadyPresent ? this.envsList : [envsItem];
       this.selectedProjectId = x.projectId;
       this.selectedEnvId = x.envId;
 

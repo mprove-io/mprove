@@ -33,6 +33,7 @@ import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
@@ -77,6 +78,7 @@ export class NewSessionComponent implements OnInit {
     private apiService: ApiService,
     private sessionsQuery: SessionsQuery,
     private uiQuery: UiQuery,
+    private userQuery: UserQuery,
     private navigateService: NavigateService,
     private uiService: UiService
   ) {
@@ -84,17 +86,39 @@ export class NewSessionComponent implements OnInit {
     let isProduction = nav.repoId === PROD_REPO_ID;
     this.initialBranch = isProduction ? nav.branchId : nav.projectDefaultBranch;
     this.baseEnvId = nav.envId;
+
+    let user = this.userQuery.getValue();
+
+    let extraName = makeBranchExtraName({
+      repoType: RepoTypeEnum.Production,
+      branchId: this.initialBranch,
+      alias: user.alias
+    });
+    let branchItem = { branchId: this.initialBranch, extraName: extraName };
+    let branchAlreadyPresent = this.branches.some(
+      b => b.branchId === branchItem.branchId
+    );
+    this.branches = branchAlreadyPresent ? this.branches : [branchItem];
+
+    let envsItem: EnvsItem = {
+      envId: this.baseEnvId,
+      projectId: nav.projectId
+    };
+    let envAlreadyPresent = this.envs.some(e => e.envId === envsItem.envId);
+    this.envs = envAlreadyPresent ? this.envs : [envsItem];
   }
 
   ngOnInit() {
     let uiState = this.uiQuery.getValue();
     this.model = uiState.newSessionExplorerProviderModel;
     this.variant = uiState.newSessionEditorVariant || 'default';
+  }
+
+  openBranchSelect() {
+    this.branchesLoading = true;
 
     let nav = this.navQuery.getValue();
-
-    this.branchesLoading = true;
-    this.envsLoading = true;
+    let user = this.userQuery.getValue();
 
     let payload: ToBackendGetBranchesListRequestPayload = {
       projectId: nav.projectId
@@ -115,7 +139,7 @@ export class NewSessionComponent implements OnInit {
                 extraName: makeBranchExtraName({
                   repoType: b.repoType,
                   branchId: b.branchId,
-                  alias: ''
+                  alias: user.alias
                 })
               }));
           }
@@ -125,8 +149,14 @@ export class NewSessionComponent implements OnInit {
         take(1)
       )
       .subscribe();
+  }
 
-    let envsPayload: ToBackendGetEnvsListRequestPayload = {
+  openEnvSelect() {
+    this.envsLoading = true;
+
+    let nav = this.navQuery.getValue();
+
+    let payload: ToBackendGetEnvsListRequestPayload = {
       projectId: nav.projectId,
       isFilter: true
     };
@@ -134,7 +164,7 @@ export class NewSessionComponent implements OnInit {
     this.apiService
       .req({
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
-        payload: envsPayload
+        payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetEnvsListResponse) => {
@@ -155,6 +185,16 @@ export class NewSessionComponent implements OnInit {
       let isProduction = nav.repoId === PROD_REPO_ID;
       if (isProduction) {
         this.initialBranch = branchId;
+
+        let user = this.userQuery.getValue();
+        let extraName = makeBranchExtraName({
+          repoType: RepoTypeEnum.Production,
+          branchId: branchId,
+          alias: user.alias
+        });
+        let newBranchItem = { branchId: branchId, extraName: extraName };
+        let alreadyPresent = this.branches.some(b => b.branchId === branchId);
+        this.branches = alreadyPresent ? this.branches : [newBranchItem];
       }
     })
   );

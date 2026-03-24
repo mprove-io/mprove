@@ -29,11 +29,13 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
@@ -46,6 +48,7 @@ import {
   ToDiskMergeRepoRequest,
   ToDiskMergeRepoResponse
 } from '#common/interfaces/to-disk/03-repos/to-disk-merge-repo';
+import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -57,6 +60,7 @@ export class MergeRepoController {
     private membersService: MembersService,
     private modelsService: ModelsService,
     private rpcService: RpcService,
+    private sessionsService: SessionsService,
     private structsService: StructsService,
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
@@ -77,6 +81,18 @@ export class MergeRepoController {
       request.apiKeyRepoType === RepoTypeEnum.Session
         ? request.apiKeySessionId
         : user.userId;
+
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
+
+    if (repoType === RepoTypeEnum.Session) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_SESSION_BRANCH_CANNOT_BE_MERGED
+      });
+    }
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
