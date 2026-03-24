@@ -46,15 +46,19 @@ export class EditorConnectionsService {
     let { projectId, envId } = item;
 
     let malloyConnectionEnvs: Record<string, string> = {};
+
     let malloySandboxFiles: { path: string; data: string }[] = [];
 
     let apiEnvs = await this.envsService.getApiEnvs({
       projectId: projectId
     });
+
     let apiEnv = apiEnvs.find(x => x.envId === envId);
 
     let connections: ConnectionTab[] = [];
+
     let apiEnvIsDefined = isDefined(apiEnv);
+
     if (apiEnvIsDefined) {
       connections = await this.db.drizzle.query.connectionsTable
         .findMany({

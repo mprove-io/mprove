@@ -55,17 +55,21 @@ export class DuckDbService {
         dbValue = `md:${dbValue}`;
       }
 
-      envs[`${envPrefix}_DATABASE`] = dbValue;
+      // attach_mode and saas_mode are baked into databasePath
+      // because Malloy passes it directly to DuckDBInstance.create()
+      let dbPath =
+        opts.attachModeSingle === true && dbValue.length > 3
+          ? `${dbValue}?attach_mode=single&saas_mode=true`
+          : `${dbValue}?saas_mode=true`;
+
+      envs[`${envPrefix}_DATABASE`] = dbPath;
     }
 
     if (isDefined(opts.motherduckToken)) {
       envs[`${envPrefix}_MOTHERDUCK_TOKEN`] = String(opts.motherduckToken);
     }
 
-    if (isDefined(opts.attachModeSingle)) {
-      envs[`${envPrefix}_ATTACH_MODE_SINGLE`] = String(opts.attachModeSingle);
-    }
-
+    // accessModeReadOnly is consumed via readOnly in malloy config entry
     if (isDefined(opts.accessModeReadOnly)) {
       envs[`${envPrefix}_ACCESS_MODE_READ_ONLY`] = String(
         opts.accessModeReadOnly
@@ -75,7 +79,8 @@ export class DuckDbService {
     let malloyConnectionConfigEntry: ConnectionConfigEntry = {
       is: 'duckdb',
       databasePath: { env: `${envPrefix}_DATABASE` },
-      motherDuckToken: { env: `${envPrefix}_MOTHERDUCK_TOKEN` }
+      motherDuckToken: { env: `${envPrefix}_MOTHERDUCK_TOKEN` },
+      readOnly: { env: `${envPrefix}_ACCESS_MODE_READ_ONLY` }
     };
 
     return {
