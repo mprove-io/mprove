@@ -35,6 +35,7 @@ import { BridgesService } from '#backend/services/db/bridges.service';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorConnectionsService } from '#backend/services/editor/editor-connections.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { RpcService } from '#backend/services/rpc.service';
@@ -78,6 +79,7 @@ export class CreateEditorSessionController {
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
+    private editorConnectionsService: EditorConnectionsService,
     private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -222,12 +224,21 @@ export class CreateEditorSessionController {
       BackendConfig['sandboxMproveCliHost']
     >('sandboxMproveCliHost');
 
+    let { malloyConnectionEnvs, malloySandboxFiles } =
+      await this.editorConnectionsService.getMalloySandboxEnvsAndFiles({
+        projectId: projectId,
+        envId: envId
+      });
+
+    Object.assign(sandboxEnvs, malloyConnectionEnvs);
+
     this.activateSessionAsync({
       sessionId: session.sessionId,
       model: session.model,
       agent: session.agent,
       sandboxType: sandboxType,
       sandboxEnvs: sandboxEnvs,
+      sandboxFiles: malloySandboxFiles,
       project: project,
       variant: variant,
       firstMessage: firstMessage,
@@ -272,6 +283,7 @@ export class CreateEditorSessionController {
     agent?: string;
     sandboxType: SandboxTypeEnum;
     sandboxEnvs: Record<string, string>;
+    sandboxFiles: { path: string; data: string }[];
     project: any;
     variant?: string;
     firstMessage?: string;
@@ -284,6 +296,7 @@ export class CreateEditorSessionController {
       agent,
       sandboxType,
       sandboxEnvs,
+      sandboxFiles,
       project,
       variant,
       firstMessage,
@@ -305,6 +318,7 @@ export class CreateEditorSessionController {
           sandboxType: sandboxType,
           sandboxTimeoutMs: sandboxTimeoutMs,
           sandboxEnvs: sandboxEnvs,
+          sandboxFiles: sandboxFiles,
           project: project,
           sessionBranch: sessionId
         });

@@ -1,5 +1,6 @@
 import { type DuckDBConnection, DuckDBInstance, Json } from '@duckdb/node-api';
 import { DuckDBResultReader } from '@duckdb/node-api/lib/DuckDBResultReader';
+import type { ConnectionConfigEntry } from '@malloydata/malloy';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
@@ -23,6 +24,7 @@ import {
   RawSchemaIndex,
   RawSchemaTable
 } from '#common/interfaces/backend/connection-schemas/raw-schema';
+import type { MalloyConfigPart } from '#common/interfaces/backend/malloy-config-part';
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
@@ -36,6 +38,52 @@ export class DuckDbService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  makeMalloyConfigPart(item: {
+    connection: ConnectionTab;
+    envPrefix: string;
+  }): MalloyConfigPart {
+    let { connection, envPrefix } = item;
+    let opts = connection.options.motherduck;
+    let envs: Record<string, string> = {};
+    let files: { path: string; data: string }[] = [];
+
+    if (isDefined(opts.database)) {
+      let dbValue = String(opts.database);
+
+      if (!dbValue.startsWith('md:')) {
+        dbValue = `md:${dbValue}`;
+      }
+
+      envs[`${envPrefix}_DATABASE`] = dbValue;
+    }
+
+    if (isDefined(opts.motherduckToken)) {
+      envs[`${envPrefix}_MOTHERDUCK_TOKEN`] = String(opts.motherduckToken);
+    }
+
+    if (isDefined(opts.attachModeSingle)) {
+      envs[`${envPrefix}_ATTACH_MODE_SINGLE`] = String(opts.attachModeSingle);
+    }
+
+    if (isDefined(opts.accessModeReadOnly)) {
+      envs[`${envPrefix}_ACCESS_MODE_READ_ONLY`] = String(
+        opts.accessModeReadOnly
+      );
+    }
+
+    let malloyConnectionConfigEntry: ConnectionConfigEntry = {
+      is: 'duckdb',
+      databasePath: { env: `${envPrefix}_DATABASE` },
+      motherDuckToken: { env: `${envPrefix}_MOTHERDUCK_TOKEN` }
+    };
+
+    return {
+      malloyConnectionConfigEntry: malloyConnectionConfigEntry,
+      envs: envs,
+      files: files
+    };
+  }
 
   optionsToDuckDbOptions(item: { connection: ConnectionTab }) {
     let { connection } = item;

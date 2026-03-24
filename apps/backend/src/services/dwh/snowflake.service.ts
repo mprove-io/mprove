@@ -1,3 +1,4 @@
+import type { ConnectionConfigEntry } from '@malloydata/malloy';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
@@ -22,6 +23,7 @@ import {
   RawSchemaIndex,
   RawSchemaTable
 } from '#common/interfaces/backend/connection-schemas/raw-schema';
+import type { MalloyConfigPart } from '#common/interfaces/backend/malloy-config-part';
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
@@ -36,6 +38,47 @@ export class SnowFlakeService {
     @Inject(DRIZZLE) private db: Db
   ) {
     snowflake.configure({ logLevel: 'OFF' });
+  }
+
+  makeMalloyConfigPart(item: {
+    connection: ConnectionTab;
+    envPrefix: string;
+  }): MalloyConfigPart {
+    let { connection, envPrefix } = item;
+    let opts = connection.options.snowflake;
+    let envs: Record<string, string> = {};
+    let files: { path: string; data: string }[] = [];
+
+    if (isDefined(opts.account)) {
+      envs[`${envPrefix}_ACCOUNT`] = String(opts.account);
+    }
+    if (isDefined(opts.warehouse)) {
+      envs[`${envPrefix}_WAREHOUSE`] = String(opts.warehouse);
+    }
+    if (isDefined(opts.database)) {
+      envs[`${envPrefix}_DATABASE`] = String(opts.database);
+    }
+    if (isDefined(opts.username)) {
+      envs[`${envPrefix}_USERNAME`] = String(opts.username);
+    }
+    if (isDefined(opts.password)) {
+      envs[`${envPrefix}_PASSWORD`] = String(opts.password);
+    }
+
+    let malloyConnectionConfigEntry: ConnectionConfigEntry = {
+      is: 'snowflake',
+      account: { env: `${envPrefix}_ACCOUNT` },
+      warehouse: { env: `${envPrefix}_WAREHOUSE` },
+      database: { env: `${envPrefix}_DATABASE` },
+      username: { env: `${envPrefix}_USERNAME` },
+      password: { env: `${envPrefix}_PASSWORD` }
+    };
+
+    return {
+      malloyConnectionConfigEntry: malloyConnectionConfigEntry,
+      envs: envs,
+      files: files
+    };
   }
 
   optionsToSnowFlakeOptions(item: { connection: ConnectionTab }) {

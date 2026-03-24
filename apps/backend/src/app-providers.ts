@@ -37,6 +37,7 @@ import { PgService } from './services/dwh/pg.service';
 import { PrestoService } from './services/dwh/presto.service';
 import { SnowFlakeService } from './services/dwh/snowflake.service';
 import { TrinoService } from './services/dwh/trino.service';
+import { EditorConnectionsService } from './services/editor/editor-connections.service';
 import { EditorModelsService } from './services/editor/editor-models.service';
 import { EditorOpencodeService } from './services/editor/editor-opencode.service';
 import { EditorSandboxService } from './services/editor/editor-sandbox.service';
@@ -132,6 +133,7 @@ export const appProviders = [
   ExplorerTitleService,
   ExplorerToolsService,
   ExplorerModelsService,
+  EditorConnectionsService,
   EditorModelsService,
   ExplorerStreamService,
   ApiKeyService,

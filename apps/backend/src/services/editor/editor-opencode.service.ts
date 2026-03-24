@@ -3,7 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
 import { Sandbox, type SandboxInfo } from 'e2b';
+import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
+
+const { forEachSeries } = pIteration;
+
 import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
@@ -78,6 +82,7 @@ export class EditorOpencodeService {
     sandboxType: SandboxTypeEnum;
     sandboxTimeoutMs: number;
     sandboxEnvs: Record<string, string>;
+    sandboxFiles: { path: string; data: string }[];
     project: ProjectTab;
     sessionBranch: string;
   }): Promise<CreateSandboxResult> {
@@ -110,6 +115,22 @@ export class EditorOpencodeService {
               passPhrase: item.project.passPhrase,
               cloneDir: '/home/user/project',
               sessionBranch: item.sessionBranch
+            });
+          }
+
+          if (item.sandboxFiles.length > 0) {
+            let uniqueDirPaths = [
+              ...new Set(
+                item.sandboxFiles.map(f =>
+                  f.path.substring(0, f.path.lastIndexOf('/'))
+                )
+              )
+            ];
+
+            await sandbox.commands.run(`mkdir -p ${uniqueDirPaths.join(' ')}`);
+
+            await forEachSeries(item.sandboxFiles, async f => {
+              await sandbox.files.write(f.path, f.data);
             });
           }
 

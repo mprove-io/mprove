@@ -1,4 +1,5 @@
 import { DBSQLClient, DBSQLLogger, LogLevel } from '@databricks/sql';
+import type { ConnectionConfigEntry } from '@malloydata/malloy';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
@@ -23,6 +24,7 @@ import {
   RawSchemaIndex,
   RawSchemaTable
 } from '#common/interfaces/backend/connection-schemas/raw-schema';
+import type { MalloyConfigPart } from '#common/interfaces/backend/malloy-config-part';
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
@@ -38,6 +40,58 @@ export class DatabricksService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  makeMalloyConfigPart(item: {
+    connection: ConnectionTab;
+    envPrefix: string;
+  }): MalloyConfigPart {
+    let { connection, envPrefix } = item;
+    let opts = connection.options.databricks;
+    let envs: Record<string, string> = {};
+    let files: { path: string; data: string }[] = [];
+
+    if (isDefined(opts.host)) {
+      envs[`${envPrefix}_HOST`] = String(opts.host);
+    }
+    if (isDefined(opts.path)) {
+      envs[`${envPrefix}_PATH`] = String(opts.path);
+    }
+    if (isDefined(opts.token)) {
+      envs[`${envPrefix}_TOKEN`] = String(opts.token);
+    }
+    if (isDefined(opts.oauthClientId)) {
+      envs[`${envPrefix}_OAUTH_CLIENT_ID`] = String(opts.oauthClientId);
+    }
+    if (isDefined(opts.oauthClientSecret)) {
+      envs[`${envPrefix}_OAUTH_CLIENT_SECRET`] = String(opts.oauthClientSecret);
+    }
+    if (isDefined(opts.defaultCatalog)) {
+      envs[`${envPrefix}_DEFAULT_CATALOG`] = String(opts.defaultCatalog);
+    }
+    if (isDefined(opts.defaultSchema)) {
+      envs[`${envPrefix}_DEFAULT_SCHEMA`] = String(opts.defaultSchema);
+    }
+    if (isDefined(opts.authType)) {
+      envs[`${envPrefix}_AUTH_TYPE`] = String(opts.authType);
+    }
+
+    let malloyConnectionConfigEntry: ConnectionConfigEntry = {
+      is: 'databricks',
+      host: { env: `${envPrefix}_HOST` },
+      path: { env: `${envPrefix}_PATH` },
+      token: { env: `${envPrefix}_TOKEN` },
+      oauthClientId: { env: `${envPrefix}_OAUTH_CLIENT_ID` },
+      oauthClientSecret: { env: `${envPrefix}_OAUTH_CLIENT_SECRET` },
+      defaultCatalog: { env: `${envPrefix}_DEFAULT_CATALOG` },
+      defaultSchema: { env: `${envPrefix}_DEFAULT_SCHEMA` }
+    };
+
+    return {
+      malloyConnectionConfigEntry: malloyConnectionConfigEntry,
+      envs: envs,
+      files: files
+    };
+  }
 
   optionsToDatabricksConfig(item: { connection: ConnectionTab }) {
     let { connection } = item;

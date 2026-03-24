@@ -1,4 +1,5 @@
 import { BigQuery, BigQueryOptions, JobResponse } from '@google-cloud/bigquery';
+import type { ConnectionConfigEntry } from '@malloydata/malloy';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import pIteration from 'p-iteration';
@@ -20,6 +21,7 @@ import {
   RawSchemaIndex,
   RawSchemaTable
 } from '#common/interfaces/backend/connection-schemas/raw-schema';
+import type { MalloyConfigPart } from '#common/interfaces/backend/malloy-config-part';
 import { QueryEstimate } from '#common/interfaces/backend/query-estimate';
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
@@ -33,6 +35,54 @@ export class BigQueryService {
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {}
+
+  makeMalloyConfigPart(item: {
+    connection: ConnectionTab;
+    envPrefix: string;
+  }): MalloyConfigPart {
+    let { connection, envPrefix } = item;
+    let opts = connection.options.bigquery;
+    let envs: Record<string, string> = {};
+    let files: { path: string; data: string }[] = [];
+
+    if (isDefined(opts.googleCloudProject)) {
+      envs[`${envPrefix}_GOOGLE_CLOUD_PROJECT`] = String(
+        opts.googleCloudProject
+      );
+    }
+    if (isDefined(opts.bigqueryQuerySizeLimitGb)) {
+      envs[`${envPrefix}_BIGQUERY_QUERY_SIZE_LIMIT_GB`] = String(
+        opts.bigqueryQuerySizeLimitGb
+      );
+    }
+
+    let malloyConnectionConfigEntry: ConnectionConfigEntry = {
+      is: 'bigquery',
+      projectId: { env: `${envPrefix}_GOOGLE_CLOUD_PROJECT` }
+    };
+
+    if (isDefined(opts.serviceAccountCredentials)) {
+      let credPath = `/home/user/.config/mprove/connections/${connection.connectionId}/service-account-credentials.json`;
+
+      envs[`${envPrefix}_SERVICE_ACCOUNT_CREDENTIALS_PATH`] = credPath;
+
+      files.push({
+        path: credPath,
+        data:
+          typeof opts.serviceAccountCredentials === 'string'
+            ? opts.serviceAccountCredentials
+            : JSON.stringify(opts.serviceAccountCredentials, null, 2)
+      });
+
+      malloyConnectionConfigEntry.serviceAccountKeyPath = credPath;
+    }
+
+    return {
+      malloyConnectionConfigEntry: malloyConnectionConfigEntry,
+      envs: envs,
+      files: files
+    };
+  }
 
   optionsToBigQueryOptions(item: { connection: ConnectionTab }) {
     let { connection } = item;

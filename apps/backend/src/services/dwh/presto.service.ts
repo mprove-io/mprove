@@ -1,3 +1,4 @@
+import type { ConnectionConfigEntry } from '@malloydata/malloy';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
@@ -26,6 +27,7 @@ import {
   RawSchemaIndex,
   RawSchemaTable
 } from '#common/interfaces/backend/connection-schemas/raw-schema';
+import type { MalloyConfigPart } from '#common/interfaces/backend/malloy-config-part';
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
@@ -44,6 +46,51 @@ export class PrestoService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  makeMalloyConfigPart(item: {
+    connection: ConnectionTab;
+    envPrefix: string;
+  }): MalloyConfigPart {
+    let { connection, envPrefix } = item;
+    let opts = connection.options.presto;
+    let envs: Record<string, string> = {};
+    let files: { path: string; data: string }[] = [];
+
+    if (isDefined(opts.server)) {
+      envs[`${envPrefix}_SERVER`] = String(opts.server);
+    }
+    if (isDefined(opts.port)) {
+      envs[`${envPrefix}_PORT`] = String(opts.port);
+    }
+    if (isDefined(opts.catalog)) {
+      envs[`${envPrefix}_CATALOG`] = String(opts.catalog);
+    }
+    if (isDefined(opts.schema)) {
+      envs[`${envPrefix}_SCHEMA`] = String(opts.schema);
+    }
+    if (isDefined(opts.user)) {
+      envs[`${envPrefix}_USER`] = String(opts.user);
+    }
+    if (isDefined(opts.password)) {
+      envs[`${envPrefix}_PASSWORD`] = String(opts.password);
+    }
+
+    let malloyConnectionConfigEntry: ConnectionConfigEntry = {
+      is: 'presto',
+      server: { env: `${envPrefix}_SERVER` },
+      port: { env: `${envPrefix}_PORT` },
+      catalog: { env: `${envPrefix}_CATALOG` },
+      schema: { env: `${envPrefix}_SCHEMA` },
+      user: { env: `${envPrefix}_USER` },
+      password: { env: `${envPrefix}_PASSWORD` }
+    };
+
+    return {
+      malloyConnectionConfigEntry: malloyConnectionConfigEntry,
+      envs: envs,
+      files: files
+    };
+  }
 
   optionsToPrestoClientConfig(item: { connection: ConnectionTab }) {
     let { connection } = item;

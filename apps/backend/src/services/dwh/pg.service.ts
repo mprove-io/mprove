@@ -1,3 +1,4 @@
+import type { ConnectionConfigEntry } from '@malloydata/malloy';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
@@ -23,6 +24,7 @@ import {
   RawSchemaIndex,
   RawSchemaTable
 } from '#common/interfaces/backend/connection-schemas/raw-schema';
+import type { MalloyConfigPart } from '#common/interfaces/backend/malloy-config-part';
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
@@ -36,6 +38,50 @@ export class PgService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  makeMalloyConfigPart(item: {
+    connection: ConnectionTab;
+    envPrefix: string;
+  }): MalloyConfigPart {
+    let { connection, envPrefix } = item;
+    let opts = connection.options.postgres;
+    let envs: Record<string, string> = {};
+    let files: { path: string; data: string }[] = [];
+
+    if (isDefined(opts.host)) {
+      envs[`${envPrefix}_HOST`] = String(opts.host);
+    }
+    if (isDefined(opts.port)) {
+      envs[`${envPrefix}_PORT`] = String(opts.port);
+    }
+    if (isDefined(opts.database)) {
+      envs[`${envPrefix}_DATABASE`] = String(opts.database);
+    }
+    if (isDefined(opts.username)) {
+      envs[`${envPrefix}_USERNAME`] = String(opts.username);
+    }
+    if (isDefined(opts.password)) {
+      envs[`${envPrefix}_PASSWORD`] = String(opts.password);
+    }
+    if (isDefined(opts.isSSL)) {
+      envs[`${envPrefix}_IS_SSL`] = String(opts.isSSL);
+    }
+
+    let malloyConnectionConfigEntry: ConnectionConfigEntry = {
+      is: 'postgres',
+      host: { env: `${envPrefix}_HOST` },
+      port: { env: `${envPrefix}_PORT` },
+      databaseName: { env: `${envPrefix}_DATABASE` },
+      username: { env: `${envPrefix}_USERNAME` },
+      password: { env: `${envPrefix}_PASSWORD` }
+    };
+
+    return {
+      malloyConnectionConfigEntry: malloyConnectionConfigEntry,
+      envs: envs,
+      files: files
+    };
+  }
 
   optionsToPostgresOptions(item: { connection: ConnectionTab }) {
     let { connection } = item;
