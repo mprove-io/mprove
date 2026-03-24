@@ -41,6 +41,8 @@
     "@malloydata/malloy-interfaces": "catalog:",
     "@malloydata/malloy-query-builder": "catalog:",
     "@malloydata/malloy-tag": "catalog:",
+    "@modelcontextprotocol/sdk": "catalog:",
+    "zod": "catalog:",
     "@mprove/common": "workspace:*",
     "@mprove/node-common": "workspace:*",
     "@nest-lab/throttler-storage-redis": "catalog:",

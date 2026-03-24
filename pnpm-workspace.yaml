@@ -55,6 +55,7 @@ catalog:
   '@malloydata/malloy-query-builder': 0.0.365
   '@malloydata/malloy-tag': 0.0.365
   '@malloydata/render': 0.0.365
+  '@modelcontextprotocol/sdk': 1.27.1
   '@nest-lab/throttler-storage-redis': 1.1.0
   '@nestjs/common': 11.1.0
   '@nestjs/config': 3.0.1
