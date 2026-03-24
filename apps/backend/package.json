@@ -42,6 +42,7 @@
     "@malloydata/malloy-query-builder": "catalog:",
     "@malloydata/malloy-tag": "catalog:",
     "@modelcontextprotocol/sdk": "catalog:",
+    "@rekog/mcp-nest": "catalog:",
     "zod": "catalog:",
     "@mprove/common": "workspace:*",
     "@mprove/node-common": "workspace:*",

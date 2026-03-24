@@ -51,7 +51,7 @@
     "js-yaml": "4.1.1",
     "nanoid": "3.3.10",
     "nest-winston": "1.9.4",
-    "simple-git": "3.30.0",
+    "simple-git": "3.33.0",
     "p-iteration": "1.1.8",
     "prettyjson": "1.2.5",
     "reflect-metadata": "0.2.2",

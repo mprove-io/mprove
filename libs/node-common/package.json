@@ -39,7 +39,7 @@
     "date-fns-tz": "3.2.0",
     "fs-extra": "11.2.0",
     "js-yaml": "4.1.1",
-    "simple-git": "3.30.0",
+    "simple-git": "3.33.0",
     "ipaddr.js": "2.3.0",
     "neoip": "3.0.1",
     "dayjs": "1.11.19",
