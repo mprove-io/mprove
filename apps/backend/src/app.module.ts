@@ -14,6 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { seconds, ThrottlerModule } from '@nestjs/throttler';
+import { McpModule, McpTransportType } from '@rekog/mcp-nest';
 import retry from 'async-retry';
 import { and, DefaultLogger, eq, isNotNull } from 'drizzle-orm';
 import {
@@ -81,6 +82,12 @@ import { HashService } from './services/hash.service';
 import { TabService } from './services/tab.service';
 import { TabCheckerService } from './services/tab-checker.service';
 
+let __dirname = dirname(fileURLToPath(import.meta.url));
+
+let backendPackageJson = fse.readJsonSync(
+  resolve(__dirname, '../package.json')
+);
+
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
   isGlobal: true
@@ -146,6 +153,15 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
   }
 });
 
+let mcpModule = McpModule.forRoot({
+  name: 'mprove',
+  version: backendPackageJson.version,
+  transport: McpTransportType.STREAMABLE_HTTP,
+  streamableHttp: {
+    statelessMode: true
+  }
+});
+
 @Module({
   imports: [
     configModule,
@@ -153,7 +169,8 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
     jwtModule,
     customThrottlerModule,
     PassportModule,
-    DrizzleModule
+    DrizzleModule,
+    mcpModule
   ],
   controllers: appControllers,
   providers: [

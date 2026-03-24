@@ -36,6 +36,19 @@ export class AppFilter implements ExceptionFilter {
       const response = ctx.getResponse();
       const request = ctx.getRequest();
 
+      if (request?.url?.startsWith('/mcp')) {
+        let errorMessage =
+          exception instanceof ServerError
+            ? String(exception.message)
+            : 'INTERNAL_ERROR';
+
+        response.status(400).json({
+          jsonrpc: '2.0',
+          error: { code: -32600, message: errorMessage }
+        });
+        return;
+      }
+
       if (request?.url?.startsWith('/' + SSE_SESSION_EVENTS_PATH)) {
         if (!response.headersSent) {
           response.status(401).json({ message: 'Unauthorized' });

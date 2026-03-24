@@ -5,6 +5,7 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { ApiKeyService } from './services/api-key.service';
 import { BlockmlService } from './services/blockml.service';
+import { ConnectionSchemasService } from './services/connection-schemas.service';
 import { AvatarsService } from './services/db/avatars.service';
 import { BranchesService } from './services/db/branches.service';
 import { BridgesService } from './services/db/bridges.service';
@@ -66,6 +67,7 @@ import { TabCheckerService } from './services/tab-checker.service';
 import { TabToEntService } from './services/tab-to-ent.service';
 import { TasksService } from './services/tasks.service';
 import { UserCodeService } from './services/user-code.service';
+import { McpGetConnectionSchemasTool } from './tools/mcp-get-connection-schemas.tool';
 
 export const appProviders = [
   LocalStrategy,
@@ -137,6 +139,10 @@ export const appProviders = [
   EditorModelsService,
   ExplorerStreamService,
   ApiKeyService,
+  //
+  ConnectionSchemasService,
+  //
+  McpGetConnectionSchemasTool,
   {
     provide: TasksService,
     useFactory: (

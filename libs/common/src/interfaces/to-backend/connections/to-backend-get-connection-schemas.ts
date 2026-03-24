@@ -1,10 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { CombinedSchemaItem } from '#common/interfaces/backend/connection-schemas/combined-schema';
 import { Member } from '#common/interfaces/backend/member';
 import { MyResponse } from '#common/interfaces/to/my-response';
@@ -23,9 +18,8 @@ export class ToBackendGetConnectionSchemasRequestPayload {
   @IsString()
   branchId: string;
 
-  @IsOptional()
   @IsBoolean()
-  isRefresh?: boolean;
+  isRefresh: boolean;
 }
 
 export class ToBackendGetConnectionSchemasRequest extends ToBackendRequest {

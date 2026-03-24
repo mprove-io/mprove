@@ -82,20 +82,22 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       });
     }
 
-    if (parsed.type === ApiKeyTypeEnum.PK) {
-      let userEnt = await this.db.drizzle.query.usersTable.findFirst({
-        where: eq(usersTable.apiKeyPrefix, parsed.prefix)
-      });
+    request.apiKeyType = parsed.type;
 
-      if (!userEnt) {
+    if (parsed.type === ApiKeyTypeEnum.PK) {
+      let user = await this.db.drizzle.query.usersTable
+        .findFirst({
+          where: eq(usersTable.apiKeyPrefix, parsed.prefix)
+        })
+        .then(x => this.tabService.userEntToTab(x));
+
+      if (!user) {
         throw new ServerError({
           message: ErEnum.BACKEND_API_KEY_NOT_FOUND
         });
       }
 
-      let userTab = this.tabService.userEntToTab(userEnt);
-
-      if (!userTab.apiKeySecretHash) {
+      if (!user.apiKeySecretHash) {
         throw new ServerError({
           message: ErEnum.BACKEND_API_KEY_NOT_FOUND
         });
@@ -103,8 +105,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       let isValid = await this.apiKeyService.validateApiKeySecret({
         secret: parsed.secret,
-        storedHash: userTab.apiKeySecretHash,
-        salt: userTab.apiKeySalt
+        storedHash: user.apiKeySecretHash,
+        salt: user.apiKeySalt
       });
 
       if (!isValid) {
@@ -113,7 +115,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         });
       }
 
+      request.user = user;
+
       let path = request.url?.substring(1);
+
+      let isMcpRequest = path === 'mcp' || path.startsWith('mcp/');
+
+      if (isMcpRequest === true) {
+        return true;
+      }
 
       if (MCLI_USER_ALLOWED_REQUEST_NAMES.indexOf(path) < 0) {
         throw new ServerError({
@@ -122,31 +132,31 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       }
 
       let repoId = request.body?.payload?.repoId;
+
       if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
         throw new ServerError({
           message: ErEnum.BACKEND_API_KEY_FORBIDDEN_REPO_ID
         });
       }
 
-      request.user = userTab;
       request.apiKeyRepoType =
         repoId === PROD_REPO_ID ? RepoTypeEnum.Production : RepoTypeEnum.Dev;
 
       return true;
     } else if (parsed.type === ApiKeyTypeEnum.SK) {
-      let sessionEnt = await this.db.drizzle.query.sessionsTable.findFirst({
-        where: eq(sessionsTable.apiKeyPrefix, parsed.prefix)
-      });
+      let session = await this.db.drizzle.query.sessionsTable
+        .findFirst({
+          where: eq(sessionsTable.apiKeyPrefix, parsed.prefix)
+        })
+        .then(x => this.tabService.sessionEntToTab(x));
 
-      if (!sessionEnt) {
+      if (!session) {
         throw new ServerError({
           message: ErEnum.BACKEND_API_KEY_NOT_FOUND
         });
       }
 
-      let sessionTab = this.tabService.sessionEntToTab(sessionEnt);
-
-      if (!sessionTab.apiKeySecretHash) {
+      if (!session.apiKeySecretHash) {
         throw new ServerError({
           message: ErEnum.BACKEND_API_KEY_NOT_FOUND
         });
@@ -154,8 +164,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       let isValid = await this.apiKeyService.validateApiKeySecret({
         secret: parsed.secret,
-        storedHash: sessionTab.apiKeySecretHash,
-        salt: sessionTab.apiKeySalt
+        storedHash: session.apiKeySecretHash,
+        salt: session.apiKeySalt
       });
 
       if (!isValid) {
@@ -164,17 +174,28 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         });
       }
 
-      let userEnt = await this.db.drizzle.query.usersTable.findFirst({
-        where: eq(usersTable.userId, sessionTab.userId)
-      });
+      let user = await this.db.drizzle.query.usersTable
+        .findFirst({
+          where: eq(usersTable.userId, session.userId)
+        })
+        .then(x => this.tabService.userEntToTab(x));
 
-      if (!userEnt) {
+      if (!user) {
         throw new ServerError({
           message: ErEnum.BACKEND_API_KEY_NOT_FOUND
         });
       }
 
+      request.user = user;
+
       let url = request.url?.substring(1);
+
+      let isMcpRequest = url === 'mcp' || url.startsWith('mcp/');
+
+      if (isMcpRequest === true) {
+        request.apiKeyToValidateSessionId = parsed.entityId;
+        return true;
+      }
 
       if (MCLI_SESSION_ALLOWED_REQUEST_NAMES.indexOf(url) < 0) {
         throw new ServerError({
@@ -183,18 +204,19 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       }
 
       let repoId = request.body?.payload?.repoId;
+
       if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
         throw new ServerError({
           message: ErEnum.BACKEND_API_KEY_FORBIDDEN_REPO_ID
         });
       }
 
-      request.user = this.tabService.userEntToTab(userEnt);
       request.apiKeyRepoType =
         repoId === PROD_REPO_ID
           ? RepoTypeEnum.Production
           : RepoTypeEnum.Session;
-      request.apiKeySessionId = sessionTab.sessionId;
+
+      request.apiKeySessionId = session.sessionId;
 
       return true;
     }
