@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-import { BasicAuth, Trino } from 'trino-client';
+import { BasicAuth, ConnectionOptions, Trino } from 'trino-client';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -59,7 +59,7 @@ export class TrinoService {
         prepConnectionOptions.user,
         prepConnectionOptions.password
       ),
-      ...prepConnectionOptions.extraConfig
+      ...(prepConnectionOptions.extraConfig as Partial<ConnectionOptions>)
     };
 
     return connectionOptions;

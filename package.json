@@ -201,8 +201,8 @@
       "husky",
       "isolated-vm",
       "lmdb",
-      "lz4",
       "msgpackr-extract",
+      "opencode-ai",
       "protobufjs"
     ]
   },

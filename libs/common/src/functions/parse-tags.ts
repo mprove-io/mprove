@@ -1,4 +1,4 @@
-import { parseTag, Tag } from '@malloydata/malloy-tag';
+import { parseAnnotation, Tag } from '@malloydata/malloy-tag';
 import { KeyTagPair } from '#common/interfaces/blockml/key-tag-pair';
 import { KeyValuePair } from '#common/interfaces/blockml/key-value-pair';
 import { isDefined } from './is-defined';
@@ -39,7 +39,7 @@ export function parseTags(item: { inputs: string[] }): ParseResult {
     let lines = inputs.filter(l => l.startsWith(x.prefix));
 
     if (lines.length > 0) {
-      let t1: Tag = parseTag(lines).tag;
+      let t1: Tag = parseAnnotation(lines).tag;
 
       if (isDefined(t1?.properties)) {
         Object.keys(t1.properties).forEach(key1 => {
