@@ -217,6 +217,26 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.sessionService.clearOptimisticMessages();
 
+    let pending = this.sessionService.consumePendingFirstMessage({
+      sessionId: this.session.sessionId
+    });
+    if (pending) {
+      let hasUserMessage = sessionData.messages.some(m => m.role === 'user');
+      if (!hasUserMessage) {
+        this.sessionService.optimisticAdd({
+          sessionId: this.session.sessionId,
+          ocSessionId: this.session.opencodeSessionId || '',
+          agent: pending.agent,
+          model: pending.model,
+          text: pending.text,
+          variant: pending.variant,
+          messageId: pending.messageId,
+          partId: pending.partId
+        });
+        sessionData = this.sessionBundleQuery.getValue();
+      }
+    }
+
     if (this.sessionInput) {
       let state = this.sessionModelsQuery.getValue();
 
@@ -278,7 +298,9 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.previousLastTurnResponsesExist =
       this.turns[this.turns.length - 1]?.responses?.length > 0;
 
-    this.sessionService.managePollingAndSse({ skipRefresh: true });
+    this.sessionService.managePollingAndSse({
+      isGetSessionForPhaseIdle: false
+    });
   }
 
   updateSessionData(sessionData: SessionBundleState) {
@@ -387,7 +409,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.updateWorkingSpinner();
 
     this.sessionService.managePollingAndSse({
-      skipRefresh: justActivated
+      isGetSessionForPhaseIdle: justActivated === false
     });
 
     let shouldScroll = false;

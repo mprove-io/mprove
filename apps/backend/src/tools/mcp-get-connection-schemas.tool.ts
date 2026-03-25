@@ -70,6 +70,15 @@ export class McpGetConnectionSchemasTool {
           message: ErEnum.BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION
         });
       }
+
+      let apiKeyToValidateBranchId = (request as any)
+        .apiKeyToValidateBranchId as string;
+
+      if (item.branchId !== apiKeyToValidateBranchId) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION
+        });
+      }
     }
 
     let result = await this.connectionSchemasService.getConnectionSchemas({

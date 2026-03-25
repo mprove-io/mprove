@@ -216,7 +216,7 @@ test('1', async t => {
       },
       payload: {
         sessionId: sessionId,
-        skipFetchSessionState: false
+        isFetchFromOpencode: true
       }
     };
 

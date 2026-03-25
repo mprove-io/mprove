@@ -60,6 +60,18 @@ export class SessionService {
     { message: SessionMessageApi; parts: SessionPartApi[] }
   > = new Map();
 
+  private pendingFirstMessage:
+    | {
+        sessionId: string;
+        messageId: string;
+        partId: string;
+        text: string;
+        agent: string;
+        model: string;
+        variant: string;
+      }
+    | undefined;
+
   constructor(
     private apiService: ApiService,
     private sessionQuery: SessionQuery,
@@ -72,6 +84,36 @@ export class SessionService {
     private uiQuery: UiQuery
   ) {}
 
+  setPendingFirstMessage(item: {
+    sessionId: string;
+    messageId: string;
+    partId: string;
+    text: string;
+    agent: string;
+    model: string;
+    variant: string;
+  }) {
+    this.pendingFirstMessage = item;
+  }
+
+  consumePendingFirstMessage(item: { sessionId: string }):
+    | {
+        messageId: string;
+        partId: string;
+        text: string;
+        agent: string;
+        model: string;
+        variant: string;
+      }
+    | undefined {
+    if (this.pendingFirstMessage?.sessionId === item.sessionId) {
+      let result = this.pendingFirstMessage;
+      this.pendingFirstMessage = undefined;
+      return result;
+    }
+    return undefined;
+  }
+
   optimisticAdd(item: {
     sessionId: string;
     ocSessionId: string;
@@ -79,11 +121,13 @@ export class SessionService {
     model: string;
     text: string;
     variant: string;
+    messageId?: string;
+    partId?: string;
   }): { messageId: string; partId: string } {
     let { sessionId, ocSessionId, agent, model, text, variant } = item;
 
-    let messageId = makeAscendingId({ prefix: 'message' });
-    let partId = makeAscendingId({ prefix: 'part' });
+    let messageId = item.messageId || makeAscendingId({ prefix: 'message' });
+    let partId = item.partId || makeAscendingId({ prefix: 'part' });
 
     let modelSplit = splitModel(model) || {
       providerID: '',
@@ -224,7 +268,9 @@ export class SessionService {
     this.lastProcessedEventIndex = lastProcessedEventIndex;
   }
 
-  managePollingAndSse(item?: { skipRefresh?: boolean }) {
+  managePollingAndSse(item: { isGetSessionForPhaseIdle: boolean }) {
+    let { isGetSessionForPhaseIdle } = item;
+
     let session = this.sessionQuery.getValue();
 
     if (session.status === SessionStatusEnum.New && !this.pollSubscription) {
@@ -246,10 +292,12 @@ export class SessionService {
       session.status === SessionStatusEnum.Active &&
       this.ssePhase === 'idle'
     ) {
-      if (item?.skipRefresh) {
-        this.connectSse({ sessionId: session.sessionId });
+      if (isGetSessionForPhaseIdle === true) {
+        this.getSessionAndConnectSse({
+          sessionId: session.sessionId
+        });
       } else {
-        this.refreshAndConnectSse({ sessionId: session.sessionId });
+        this.connectSse({ sessionId: session.sessionId });
       }
     }
   }
@@ -286,7 +334,7 @@ export class SessionService {
 
     let payload: ToBackendGetSessionRequestPayload = {
       sessionId: sessionId,
-      skipFetchSessionState: true
+      isFetchFromOpencode: false
     };
 
     this.pollSubscription = interval(1000)
@@ -307,9 +355,11 @@ export class SessionService {
             this.lastProcessedEventIndex = resp.payload.lastEventIndex;
 
             let sessions = this.sessionsQuery.getValue().sessions;
+
             let updated = sessions.map(s =>
               s.sessionId === sessionId ? resp.payload.session : s
             );
+
             this.sessionsQuery.updatePart({ sessions: updated });
           }
         })
@@ -348,6 +398,7 @@ export class SessionService {
 
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             console.log('connectSse - get ticket - ok');
+
             this.connectSseWithTicket({
               sessionId: sessionId,
               sseTicket: resp.payload.sseTicket,
@@ -380,6 +431,7 @@ export class SessionService {
       `/api/sse/session-events?sessionId=${sessionId}&ticket=${sseTicket}&lastEventIndex=${this.lastProcessedEventIndex}`;
 
     this.eventSource = new EventSource(url);
+
     this.ssePhase = 'connected';
 
     this.eventSource.onopen = () => {
@@ -393,8 +445,11 @@ export class SessionService {
 
         if (sessionEvent.eventType === RELOAD_SESSION_EVENT_TYPE) {
           console.log('eventSource - reloading session...');
+
           this.reconnectCounter = 0;
+
           this.scheduleReconnect({ sessionId: sessionId, delay: 0 });
+
           return;
         }
 
@@ -459,25 +514,30 @@ export class SessionService {
       }
 
       let session = this.sessionQuery.getValue();
+
       if (
         session?.sessionId === sessionId &&
         session?.status === SessionStatusEnum.Active
       ) {
-        this.refreshAndConnectSse({ sessionId: sessionId });
+        this.getSessionAndConnectSse({
+          sessionId: sessionId
+        });
       } else {
         this.ssePhase = 'idle';
       }
     }, delay);
   }
 
-  private refreshAndConnectSse(item: { sessionId: string }) {
+  private getSessionAndConnectSse(item: { sessionId: string }) {
     let { sessionId } = item;
+
     let initId = this.initId;
+
     this.ssePhase = 'fetching-ticket';
 
     let payload: ToBackendGetSessionRequestPayload = {
       sessionId: sessionId,
-      skipFetchSessionState: true
+      isFetchFromOpencode: false
     };
 
     this.apiService
@@ -509,12 +569,14 @@ export class SessionService {
             });
 
             let sessions = this.sessionsQuery.getValue().sessions;
-            let updated = sessions.map(s =>
-              s.sessionId === sessionId ? resp.payload.session : s
-            );
-            this.sessionsQuery.updatePart({ sessions: updated });
 
-            console.log('refreshAndConnectSse - get session - ok');
+            this.sessionsQuery.updatePart({
+              sessions: sessions.map(x =>
+                x.sessionId === sessionId ? resp.payload.session : x
+              )
+            });
+
+            console.log('getSessionAndConnectSse - get session - ok');
           }
         }),
         take(1)

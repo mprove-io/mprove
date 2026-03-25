@@ -195,7 +195,7 @@ export class SendMessageToEditorSessionController {
         await this.editorStreamService.startEventStream({
           sessionId: session.sessionId,
           opencodeSessionId: session.opencodeSessionId,
-          skipReload: false
+          isSetReload: false
         });
 
       if (isStreamStartedFresh) {
@@ -221,7 +221,7 @@ export class SendMessageToEditorSessionController {
             sessionId: session.sessionId
           });
 
-          await this.editorStreamService.publishReloadSession({
+          await this.editorStreamService.setSessionRequestedReloadTs({
             sessionId: session.sessionId
           });
 

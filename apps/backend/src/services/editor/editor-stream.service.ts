@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
+  AssistantMessage,
   OpencodeClient,
   PermissionRequest,
   QuestionRequest,
@@ -159,12 +160,14 @@ export class EditorStreamService implements OnModuleDestroy {
         } else if (command === OpencodeStreamCommandEnum.Fetch) {
           let { replyTo, payload } = parsed;
 
-          console.log(`[oc-stream] received fetch for sessionId=${sessionId}`);
+          console.log(
+            `[oc-stream] command - fetchSessionStateFromOpencode for sessionId=${sessionId}`
+          );
 
           this.fetchSessionStateFromOpencode({
             sessionId: sessionId,
             opencodeSessionId: payload.opencodeSessionId,
-            publishReload: false
+            isSetReload: true
           })
             .then(() => {
               this.redisClient
@@ -218,10 +221,12 @@ export class EditorStreamService implements OnModuleDestroy {
     return true;
   }
 
-  async publishReloadSession(item: { sessionId: string }): Promise<void> {
+  async setSessionRequestedReloadTs(item: {
+    sessionId: string;
+  }): Promise<void> {
     try {
       console.log(
-        `[oc-stream] publishing reload for sessionId=${item.sessionId}`
+        `[oc-stream] setSessionRequestedReloadTs for sessionId=${item.sessionId}`
       );
 
       await this.db.drizzle.execute(
@@ -252,7 +257,7 @@ export class EditorStreamService implements OnModuleDestroy {
           pauseReason: PauseReasonEnum.Safe
         });
 
-        await this.publishReloadSession({
+        await this.setSessionRequestedReloadTs({
           sessionId: sessionId
         });
       } catch (e) {
@@ -330,8 +335,10 @@ export class EditorStreamService implements OnModuleDestroy {
   async startEventStream(item: {
     sessionId: string;
     opencodeSessionId: string;
-    skipReload: boolean;
+    isSetReload: boolean;
   }): Promise<boolean> {
+    let { isSetReload } = item;
+
     if (this.activeStreams.has(item.sessionId)) {
       console.log(
         `[oc-stream] skip startEventStream - already in activeStreams sessionId=${item.sessionId}`
@@ -379,10 +386,14 @@ export class EditorStreamService implements OnModuleDestroy {
       response: response
     });
 
+    console.log(
+      `[oc-stream] startEventStream - fetchSessionStateFromOpencode for sessionId=${item.sessionId}`
+    );
+
     await this.fetchSessionStateFromOpencode({
       sessionId: item.sessionId,
       opencodeSessionId: item.opencodeSessionId,
-      publishReload: item.skipReload === false
+      isSetReload: isSetReload
     });
 
     return true;
@@ -434,7 +445,7 @@ export class EditorStreamService implements OnModuleDestroy {
 
       await this.stopEventStream({ sessionId: item.sessionId });
 
-      await this.publishReloadSession({
+      await this.setSessionRequestedReloadTs({
         sessionId: item.sessionId
       });
     };
@@ -535,7 +546,7 @@ export class EditorStreamService implements OnModuleDestroy {
 
         await this.stopEventStream({ sessionId: sessionId });
 
-        await this.publishReloadSession({
+        await this.setSessionRequestedReloadTs({
           sessionId: sessionId
         });
       }
@@ -570,12 +581,24 @@ export class EditorStreamService implements OnModuleDestroy {
   async fetchSessionStateFromOpencode(item: {
     sessionId: string;
     opencodeSessionId: string;
-    publishReload: boolean;
+    isSetReload: boolean;
   }): Promise<void> {
+    let { isSetReload } = item;
+
     try {
+      let maxEventIndexRow = await this.db.drizzle
+        .select({ maxIndex: max(ocEventsTable.eventIndex) })
+        .from(ocEventsTable)
+        .where(eq(ocEventsTable.sessionId, item.sessionId));
+
+      let lastFetchEventIndex = isDefined(maxEventIndexRow[0]?.maxIndex)
+        ? maxEventIndexRow[0].maxIndex
+        : -1;
+
       let client = await this.editorOpencodeService.getOpenCodeClient({
         sessionId: item.sessionId
       });
+
       let [
         messagesResp,
         sessionResp,
@@ -594,7 +617,32 @@ export class EditorStreamService implements OnModuleDestroy {
         client.permission.list()
       ]);
 
-      let messageTabs = (messagesResp.data ?? []).map(m =>
+      let messages = messagesResp.data ?? [];
+
+      let lastActivityTs: number | undefined;
+
+      messages.forEach(m => {
+        let created = m.info.time.created;
+
+        if (lastActivityTs === undefined || created > lastActivityTs) {
+          lastActivityTs = created;
+        }
+
+        let isAssistant = m.info.role === 'assistant';
+
+        if (isAssistant) {
+          let completed = (m.info as AssistantMessage).time.completed;
+
+          if (
+            isDefined(completed) &&
+            (lastActivityTs === undefined || completed > lastActivityTs)
+          ) {
+            lastActivityTs = completed;
+          }
+        }
+      });
+
+      let messageTabs = messages.map(m =>
         this.ocMessagesService.makeOcMessage({
           messageId: m.info.id,
           sessionId: item.sessionId,
@@ -603,7 +651,7 @@ export class EditorStreamService implements OnModuleDestroy {
         })
       );
 
-      let partTabs = (messagesResp.data ?? []).flatMap(m =>
+      let partTabs = messages.flatMap(m =>
         m.parts.map(p =>
           this.ocPartsService.makeOcPart({
             partId: p.id as string,
@@ -653,15 +701,6 @@ export class EditorStreamService implements OnModuleDestroy {
       }
 
       await this.db.drizzle.transaction(async tx => {
-        let maxEventIndexRow = await tx
-          .select({ maxIndex: max(ocEventsTable.eventIndex) })
-          .from(ocEventsTable)
-          .where(eq(ocEventsTable.sessionId, item.sessionId));
-
-        let lastFetchEventIndex = isDefined(maxEventIndexRow[0]?.maxIndex)
-          ? maxEventIndexRow[0].maxIndex
-          : -1;
-
         await this.db.packer.write({
           tx: tx,
           insertOrUpdate: {
@@ -671,9 +710,15 @@ export class EditorStreamService implements OnModuleDestroy {
           }
         });
 
-        await tx.execute(
-          sql`UPDATE sessions SET last_activity_ts = ${Date.now()}, last_fetch_event_index = ${lastFetchEventIndex} WHERE session_id = ${item.sessionId}`
-        );
+        if (isDefined(lastActivityTs)) {
+          await tx.execute(
+            sql`UPDATE sessions SET last_fetch_event_index = ${lastFetchEventIndex}, last_activity_ts = GREATEST(last_activity_ts, ${lastActivityTs}) WHERE session_id = ${item.sessionId}`
+          );
+        } else {
+          await tx.execute(
+            sql`UPDATE sessions SET last_fetch_event_index = ${lastFetchEventIndex} WHERE session_id = ${item.sessionId}`
+          );
+        }
 
         let oneHourAgo = Date.now() - 60 * 60 * 1000;
 
@@ -687,10 +732,8 @@ export class EditorStreamService implements OnModuleDestroy {
           );
       });
 
-      if (item.publishReload !== false) {
-        await this.publishReloadSession({
-          sessionId: item.sessionId
-        });
+      if (isSetReload === true) {
+        await this.setSessionRequestedReloadTs({ sessionId: item.sessionId });
       }
     } catch (e) {
       logToConsoleBackend({
@@ -936,17 +979,10 @@ export class EditorStreamService implements OnModuleDestroy {
     });
   }
 
-  async publishFetchCommand(item: {
+  async publishFetchFromOpencodeCommand(item: {
     sessionId: string;
     opencodeSessionId: string;
   }): Promise<void> {
-    if (this.activeStreams.has(item.sessionId)) {
-      console.log(
-        `[oc-stream] skip publishFetchCommand - stream is local sessionId=${item.sessionId}`
-      );
-      return;
-    }
-
     let correlationId = crypto.randomUUID();
     let replyTo = `${CHANNEL_OPENCODE_FETCH_REPLY}:${correlationId}`;
 

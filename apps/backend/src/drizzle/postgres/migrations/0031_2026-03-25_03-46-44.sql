@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ALTER COLUMN "env_id" SET NOT NULL;

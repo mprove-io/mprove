@@ -144,7 +144,7 @@ export class TasksService {
               pauseReason: PauseReasonEnum.Idle
             });
 
-            await this.editorStreamService.publishReloadSession({
+            await this.editorStreamService.setSessionRequestedReloadTs({
               sessionId: sessionId
             });
           } catch (e) {
@@ -187,7 +187,7 @@ export class TasksService {
           await this.editorSandboxService.syncAllEditorSessionsStatus();
 
         await forEachSeries(pausedSessionIds, async sessionId => {
-          await this.editorStreamService.publishReloadSession({
+          await this.editorStreamService.setSessionRequestedReloadTs({
             sessionId: sessionId
           });
         });

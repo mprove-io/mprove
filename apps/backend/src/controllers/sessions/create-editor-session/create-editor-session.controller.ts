@@ -410,7 +410,7 @@ export class CreateEditorSessionController {
         await this.editorStreamService.startEventStream({
           sessionId: sessionId,
           opencodeSessionId: opencodeSessionId,
-          skipReload: true
+          isSetReload: false
         });
 
       if (firstMessage) {
@@ -432,7 +432,7 @@ export class CreateEditorSessionController {
               sessionId: sessionId
             });
 
-            await this.editorStreamService.publishReloadSession({
+            await this.editorStreamService.setSessionRequestedReloadTs({
               sessionId: sessionId
             });
           }

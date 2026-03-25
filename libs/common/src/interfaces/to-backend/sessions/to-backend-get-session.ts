@@ -13,7 +13,7 @@ export class ToBackendGetSessionRequestPayload {
   sessionId: string;
 
   @IsBoolean()
-  skipFetchSessionState: boolean;
+  isFetchFromOpencode: boolean;
 }
 
 export class ToBackendGetSessionRequest extends ToBackendRequest {

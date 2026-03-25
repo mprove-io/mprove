@@ -21,6 +21,7 @@ export const sessionsTable = pgTable(
     type: varchar('type', { length: 32 }).notNull().$type<SessionTypeEnum>(),
     repoId: varchar('repo_id', { length: 255 }).notNull(),
     branchId: varchar('branch_id', { length: 255 }).notNull(),
+    envId: varchar('env_id', { length: 255 }).notNull(),
     userId: varchar('user_id', { length: 32 }).notNull(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     sandboxType: varchar('sandbox_type', { length: 32 }),
@@ -49,7 +50,6 @@ export const sessionsTable = pgTable(
       .$type<{ encrypted: string; decrypted: SessionLt }>()
       .notNull(),
     initialBranch: varchar('initial_branch', { length: 255 }).notNull(),
-    envId: varchar('env_id', { length: 255 }),
     initialCommit: varchar('initial_commit', { length: 64 }),
     apiKeyPrefix: varchar('api_key_prefix', { length: 32 }),
     keyTag: text('key_tag'),

@@ -31,7 +31,7 @@ export class SessionResolver {
 
     let payload: ToBackendGetSessionRequestPayload = {
       sessionId: sessionId,
-      skipFetchSessionState: false
+      isFetchFromOpencode: true
     };
 
     return this.apiService

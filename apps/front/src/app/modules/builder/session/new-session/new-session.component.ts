@@ -36,6 +36,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SessionService } from '#front/app/services/session.service';
 import { UiService } from '#front/app/services/ui.service';
 
 @Component({
@@ -80,6 +81,7 @@ export class NewSessionComponent implements OnInit {
     private uiQuery: UiQuery,
     private userQuery: UserQuery,
     private navigateService: NavigateService,
+    private sessionService: SessionService,
     private uiService: UiService
   ) {
     let nav = this.navQuery.getValue();
@@ -253,7 +255,9 @@ export class NewSessionComponent implements OnInit {
               resp: resp,
               isSessionExplorer: isSessionExplorer,
               provider: provider,
-              text: text
+              text: text,
+              messageId: messageId,
+              partId: partId
             });
           }),
           take(1)
@@ -286,7 +290,9 @@ export class NewSessionComponent implements OnInit {
               resp: resp,
               isSessionExplorer: isSessionExplorer,
               provider: provider,
-              text: text
+              text: text,
+              messageId: messageId,
+              partId: partId
             });
           }),
           take(1)
@@ -302,8 +308,10 @@ export class NewSessionComponent implements OnInit {
     isSessionExplorer: boolean;
     provider: string;
     text: string;
+    messageId: string;
+    partId: string;
   }) {
-    let { resp, isSessionExplorer, provider, text } = item;
+    let { resp, isSessionExplorer, provider, text, messageId, partId } = item;
 
     if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
       let { sessionId, repoId, branchId, envId } = resp.payload;
@@ -346,6 +354,16 @@ export class NewSessionComponent implements OnInit {
           permissionsAutoAcceptSessionIds: newSessionIds
         });
       }
+
+      this.sessionService.setPendingFirstMessage({
+        sessionId: sessionId,
+        messageId: messageId,
+        partId: partId,
+        text: text,
+        agent: this.agent,
+        model: this.model,
+        variant: this.variant
+      });
 
       this.navigateService.navigateToSession({
         sessionId: sessionId,

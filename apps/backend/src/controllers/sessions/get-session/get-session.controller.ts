@@ -46,7 +46,7 @@ export class GetSessionController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetSession)
   async getSession(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetSessionRequest = request.body;
-    let { sessionId, skipFetchSessionState } = reqValid.payload;
+    let { sessionId, isFetchFromOpencode } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId
@@ -101,15 +101,15 @@ export class GetSessionController {
         await this.editorStreamService.startEventStream({
           sessionId: sessionId,
           opencodeSessionId: session.opencodeSessionId,
-          skipReload: false
+          isSetReload: false
         });
 
       if (isStreamStartedFresh) {
         await this.editorStreamService.processEventStream({
           sessionId: sessionId
         });
-      } else if (!skipFetchSessionState) {
-        await this.editorStreamService.publishFetchCommand({
+      } else if (isFetchFromOpencode === true) {
+        await this.editorStreamService.publishFetchFromOpencodeCommand({
           sessionId: sessionId,
           opencodeSessionId: session.opencodeSessionId
         });

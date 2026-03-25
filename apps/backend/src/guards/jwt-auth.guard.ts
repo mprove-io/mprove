@@ -195,6 +195,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       if (isMcpRequest === true) {
         request.apiKeyToValidateSessionId = parsed.entityId;
         request.apiKeyToValidateEnvId = session.envId;
+        request.apiKeyToValidateBranchId = session.branchId;
         return true;
       }
 
@@ -217,6 +218,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       if (envId && session.envId && envId !== session.envId) {
         throw new ServerError({
           message: ErEnum.BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION
+        });
+      }
+
+      let branchId = request.body?.payload?.branchId;
+
+      if (branchId && session.branchId && branchId !== session.branchId) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION
         });
       }
 
