@@ -29,6 +29,11 @@ export class GetConnectionSampleTool {
       tableName: z.string(),
       columnName: z.string().optional(),
       offset: z.number().int().min(0).optional()
+    }),
+    outputSchema: z.object({
+      columnNames: z.array(z.string()),
+      rows: z.array(z.array(z.string())),
+      errorMessage: z.string().optional()
     })
   })
   async getConnectionSample(
@@ -66,13 +71,6 @@ export class GetConnectionSampleTool {
       offset: item.offset
     });
 
-    return {
-      content: [
-        {
-          type: 'text' as const,
-          text: JSON.stringify(result)
-        }
-      ]
-    };
+    return result;
   }
 }
