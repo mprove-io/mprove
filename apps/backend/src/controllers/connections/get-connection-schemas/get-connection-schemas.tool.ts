@@ -3,18 +3,19 @@ import type { Context } from '@rekog/mcp-nest';
 import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { z } from 'zod';
+import { GetConnectionSchemasService } from '#backend/controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { ConnectionSchemasService } from '#backend/services/connection-schemas.service';
-import { PROD_REPO_ID } from '#common/constants/top';
+import { ToolService } from '#backend/services/tool.service';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
-export class McpGetConnectionSchemasTool {
-  constructor(private connectionSchemasService: ConnectionSchemasService) {}
+export class GetConnectionSchemasTool {
+  constructor(
+    private getConnectionSchemasService: GetConnectionSchemasService,
+    private toolService: ToolService
+  ) {}
 
   @Tool({
     name: 'get-connection-schemas',
@@ -44,44 +45,26 @@ export class McpGetConnectionSchemasTool {
     let apiKeyType = (request as any).apiKeyType as ApiKeyTypeEnum;
 
     if (apiKeyType === ApiKeyTypeEnum.PK) {
-      if (item.repoId !== user.userId && item.repoId !== PROD_REPO_ID) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_USER
-        });
-      }
+      this.toolService.validateUserRepoId({
+        repoId: item.repoId,
+        userId: user.userId
+      });
     } else if (apiKeyType === ApiKeyTypeEnum.SK) {
-      let apiKeyToValidateSessionId = (request as any)
-        .apiKeyToValidateSessionId as string;
-
-      if (
-        item.repoId !== apiKeyToValidateSessionId &&
-        item.repoId !== PROD_REPO_ID
-      ) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION
-        });
-      }
-
-      let apiKeyToValidateEnvId = (request as any)
-        .apiKeyToValidateEnvId as string;
-
-      if (item.envId !== apiKeyToValidateEnvId) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION
-        });
-      }
-
-      let apiKeyToValidateBranchId = (request as any)
-        .apiKeyToValidateBranchId as string;
-
-      if (item.branchId !== apiKeyToValidateBranchId) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION
-        });
-      }
+      this.toolService.validateSessionRepoId({
+        repoId: item.repoId,
+        request: request
+      });
+      this.toolService.validateSessionBranchId({
+        branchId: item.branchId,
+        request: request
+      });
+      this.toolService.validateSessionEnvId({
+        envId: item.envId,
+        request: request
+      });
     }
 
-    let result = await this.connectionSchemasService.getConnectionSchemas({
+    let result = await this.getConnectionSchemasService.getConnectionSchemas({
       userId: user.userId,
       projectId: item.projectId,
       envId: item.envId,

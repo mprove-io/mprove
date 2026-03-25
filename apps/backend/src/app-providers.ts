@@ -3,9 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
+import { GetConnectionSampleService } from './controllers/connections/get-connection-sample/get-connection-sample.service';
+import { GetConnectionSampleTool } from './controllers/connections/get-connection-sample/get-connection-sample.tool';
+import { GetConnectionSchemasService } from './controllers/connections/get-connection-schemas/get-connection-schemas.service';
+import { GetConnectionSchemasTool } from './controllers/connections/get-connection-schemas/get-connection-schemas.tool';
 import { ApiKeyService } from './services/api-key.service';
 import { BlockmlService } from './services/blockml.service';
-import { ConnectionSchemasService } from './services/connection-schemas.service';
 import { AvatarsService } from './services/db/avatars.service';
 import { BranchesService } from './services/db/branches.service';
 import { BridgesService } from './services/db/bridges.service';
@@ -66,8 +69,8 @@ import { TabService } from './services/tab.service';
 import { TabCheckerService } from './services/tab-checker.service';
 import { TabToEntService } from './services/tab-to-ent.service';
 import { TasksService } from './services/tasks.service';
+import { ToolService } from './services/tool.service';
 import { UserCodeService } from './services/user-code.service';
-import { McpGetConnectionSchemasTool } from './tools/mcp-get-connection-schemas.tool';
 
 export const appProviders = [
   LocalStrategy,
@@ -140,9 +143,12 @@ export const appProviders = [
   ExplorerStreamService,
   ApiKeyService,
   //
-  ConnectionSchemasService,
+  ToolService,
+  GetConnectionSampleService,
+  GetConnectionSchemasService,
   //
-  McpGetConnectionSchemasTool,
+  GetConnectionSampleTool,
+  GetConnectionSchemasTool,
   {
     provide: TasksService,
     useFactory: (

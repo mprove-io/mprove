@@ -42,7 +42,7 @@ import type { Member } from '#common/interfaces/backend/member';
 import { ConnectionLt, ConnectionSt } from '#common/interfaces/st-lt';
 
 @Injectable()
-export class ConnectionSchemasService {
+export class GetConnectionSchemasService {
   constructor(
     private tabService: TabService,
     private tabToEntService: TabToEntService,
