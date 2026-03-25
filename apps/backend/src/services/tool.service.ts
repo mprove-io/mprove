@@ -16,6 +16,19 @@ export class ToolService {
     }
   }
 
+  validateSessionProjectId(item: { projectId: string; request: Request }) {
+    let { projectId, request } = item;
+
+    let apiKeyToValidateProjectId = (request as any)
+      .apiKeyToValidateProjectId as string;
+
+    if (projectId !== apiKeyToValidateProjectId) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROJECT_ID_DOES_NOT_MATCH_SESSION
+      });
+    }
+  }
+
   validateSessionRepoId(item: { repoId: string; request: Request }) {
     let { repoId, request } = item;
 

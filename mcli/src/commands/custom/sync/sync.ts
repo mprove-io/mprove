@@ -11,6 +11,7 @@ import { POSSIBLE_TIME_DIFF_MS } from '#common/constants/top-mcli';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { sleep } from '#common/functions/sleep';
@@ -22,7 +23,6 @@ import {
 } from '#common/interfaces/to-backend/repos/to-backend-sync-repo';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
-import { getBuilderUrl } from '#mcli/functions/get-builder-url';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeSyncTime } from '#mcli/functions/make-sync-time';
 import { mreq } from '#mcli/functions/mreq';

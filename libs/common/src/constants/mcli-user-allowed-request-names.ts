@@ -13,6 +13,7 @@ export const MCLI_USER_ALLOWED_REQUEST_NAMES: ToBackendRequestInfoNameEnum[] = [
   ToBackendRequestInfoNameEnum.ToBackendGetProject, // get-query, run
   ToBackendRequestInfoNameEnum.ToBackendGetQueries, // run
   ToBackendRequestInfoNameEnum.ToBackendGetRepo, // get-query, get-state, run
+  ToBackendRequestInfoNameEnum.ToBackendGetState, // get-state
   ToBackendRequestInfoNameEnum.ToBackendGetReport, // get-query
   ToBackendRequestInfoNameEnum.ToBackendGetReports, // get-state
   ToBackendRequestInfoNameEnum.ToBackendMergeRepo, // merge

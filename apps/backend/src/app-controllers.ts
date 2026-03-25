@@ -110,6 +110,7 @@ import { SendMessageToEditorSessionController } from './controllers/sessions/sen
 import { SendMessageToExplorerSessionController } from './controllers/sessions/send-message-to-explorer-session/send-message-to-explorer-session.controller';
 import { SetSessionTitleController } from './controllers/sessions/set-session-title/set-session-title.controller';
 import { SpecialRebuildStructsController } from './controllers/special/special-rebuild-structs/special-rebuild-structs.controller';
+import { GetStateController } from './controllers/state/get-state/get-state.controller';
 import { GetStructController } from './controllers/structs/get-struct/get-struct.controller';
 import { GetSuggestFieldsController } from './controllers/suggest-fields/get-suggest-fields/get-suggest-fields.controller';
 import { TelemetryLogsController } from './controllers/telemetry/telemetry-logs/telemetry-logs.controller';
@@ -243,6 +244,8 @@ export const appControllers = [
   SyncRepoController,
 
   SpecialRebuildStructsController,
+
+  GetStateController,
 
   GetStructController,
 

@@ -23,7 +23,8 @@ export function getReportUrl(item: {
     timeRange
   } = item;
 
+  let tz = timezone.split('/').join('-');
   let timeRangeUnderscore = timeRange.split(' ').join('_');
-  // TODO: mcli getReportUrl
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/reports/report/${reportId}?timezone=${timezone}&timeSpec=${timeSpec}&timeRange=${timeRangeUnderscore}`;
+
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/reports/report/${reportId}?timezone=${tz}&timeSpec=${timeSpec}&timeRange=${timeRangeUnderscore}`;
 }

@@ -8,32 +8,11 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import {
-  ToBackendGetChartsRequestPayload,
-  ToBackendGetChartsResponse
-} from '#common/interfaces/to-backend/charts/to-backend-get-charts';
-import {
-  ToBackendGetDashboardsRequestPayload,
-  ToBackendGetDashboardsResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
-import {
-  ToBackendGetModelsRequestPayload,
-  ToBackendGetModelsResponse
-} from '#common/interfaces/to-backend/models/to-backend-get-models';
-import {
-  ToBackendGetReportsRequestPayload,
-  ToBackendGetReportsResponse
-} from '#common/interfaces/to-backend/reports/to-backend-get-reports';
-import {
-  ToBackendGetRepoRequestPayload,
-  ToBackendGetRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
+  ToBackendGetStateRequestPayload,
+  ToBackendGetStateResponse
+} from '#common/interfaces/to-backend/state/to-backend-get-state';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
-import { getBuilderUrl } from '#mcli/functions/get-builder-url';
-import { getChartUrl } from '#mcli/functions/get-chart-url';
-import { getDashboardUrl } from '#mcli/functions/get-dashboard-url';
-import { getModelUrl } from '#mcli/functions/get-model-url';
-import { getReportUrl } from '#mcli/functions/get-report-url';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
@@ -140,7 +119,7 @@ export class GetStateCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getRepoReqPayload: ToBackendGetRepoRequestPayload = {
+    let getStateReqPayload: ToBackendGetStateRequestPayload = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
@@ -148,205 +127,59 @@ export class GetStateCommand extends CustomCommand {
       isFetch: true
     };
 
-    let getRepoResp = await mreq<ToBackendGetRepoResponse>({
+    let getStateResp = await mreq<ToBackendGetStateResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
-      payload: getRepoReqPayload,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetState,
+      payload: getStateReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let getModelsReqPayload: ToBackendGetModelsRequestPayload = {
-      projectId: this.projectId,
-      repoId: repoId,
-      branchId: this.branch,
-      envId: this.env
-    };
-
-    let getModelsResp = await mreq<ToBackendGetModelsResponse>({
-      apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
-      payload: getModelsReqPayload,
-      host: this.context.config.mproveCliHost
-    });
-
-    let getChartsReqPayload: ToBackendGetChartsRequestPayload = {
-      projectId: this.projectId,
-      repoId: repoId,
-      branchId: this.branch,
-      envId: this.env
-    };
-
-    let getChartsResp = await mreq<ToBackendGetChartsResponse>({
-      apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetCharts,
-      payload: getChartsReqPayload,
-      host: this.context.config.mproveCliHost
-    });
-
-    let getDashboardsReqPayload: ToBackendGetDashboardsRequestPayload = {
-      projectId: this.projectId,
-      repoId: repoId,
-      branchId: this.branch,
-      envId: this.env
-    };
-
-    let getDashboardsResp = await mreq<ToBackendGetDashboardsResponse>({
-      apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
-      payload: getDashboardsReqPayload,
-      host: this.context.config.mproveCliHost
-    });
-
-    let getReportsReqPayload: ToBackendGetReportsRequestPayload = {
-      projectId: this.projectId,
-      repoId: repoId,
-      branchId: this.branch,
-      envId: this.env
-    };
-
-    let getReportsResp = await mreq<ToBackendGetReportsResponse>({
-      apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetReports,
-      payload: getReportsReqPayload,
-      host: this.context.config.mproveCliHost
-    });
-
-    let builderUrl = getBuilderUrl({
-      host: this.context.config.mproveCliHost,
-      orgId: getRepoResp.payload.repo.orgId,
-      projectId: this.projectId,
-      repoId: getRepoResp.payload.repo.repoId,
-      branch: this.branch,
-      env: this.env
-    });
+    let p = getStateResp.payload;
 
     let log: any = {
-      validationErrorsTotal: getRepoResp.payload.struct.errors.length,
-      modelsTotal: getModelsResp.payload.models.length,
-      dashboardsTotal: getDashboardsResp.payload.dashboardParts.length,
-      chartsTotal: getChartsResp.payload.charts.length,
-      needValidate: getRepoResp.payload.needValidate,
-      structId: getRepoResp.payload.struct.structId
+      validationErrorsTotal: p.errorsTotal,
+      modelsTotal: p.modelsTotal,
+      dashboardsTotal: p.dashboardsTotal,
+      chartsTotal: p.chartsTotal,
+      needValidate: p.needValidate,
+      structId: p.structId
     };
 
     if (this.getCharts === true) {
-      log.charts = getChartsResp.payload.charts.map(x => {
-        let url = getChartUrl({
-          host: this.context.config.mproveCliHost,
-          orgId: getRepoResp.payload.repo.orgId,
-          projectId: this.projectId,
-          repoId: getRepoResp.payload.repo.repoId,
-          branch: this.branch,
-          env: this.env,
-          chartId: x.chartId,
-          timezone: getRepoResp.payload.struct.mproveConfig.defaultTimezone
-        });
-
-        let chart: any = {
-          chartId: x.chartId,
-          url: url
-        };
-
-        return chart;
-      });
+      log.charts = p.charts;
     }
 
     if (this.getMetrics === true) {
-      log.metrics = getReportsResp.payload.struct.metrics.map(x => {
-        let metric: any = {
-          metricId: x.metricId,
-          name: `${x.partNodeLabel} ${x.partFieldLabel} by ${x.timeNodeLabel} ${x.timeFieldLabel} - ${x.topLabel}`
-        };
-
-        return metric;
-      });
+      log.metrics = p.metrics;
     }
 
     if (this.getReports === true) {
-      log.reports = getReportsResp.payload.reports.map(x => {
-        let url = getReportUrl({
-          host: this.context.config.mproveCliHost,
-          orgId: getRepoResp.payload.repo.orgId,
-          projectId: this.projectId,
-          repoId: getRepoResp.payload.repo.repoId,
-          branch: this.branch,
-          env: this.env,
-          reportId: x.reportId,
-          timezone: getRepoResp.payload.struct.mproveConfig.defaultTimezone,
-          timeSpec: 'days',
-          timeRange: 'f`last 5 days`'
-        });
-
-        let report: any = {
-          reportId: x.reportId,
-          url: url
-        };
-
-        return report;
-      });
+      log.reports = p.reports;
     }
 
     if (this.getDashboards === true) {
-      log.dashboards = getDashboardsResp.payload.dashboardParts.map(x => {
-        let url = getDashboardUrl({
-          host: this.context.config.mproveCliHost,
-          orgId: getRepoResp.payload.repo.orgId,
-          projectId: this.projectId,
-          repoId: getRepoResp.payload.repo.repoId,
-          branch: this.branch,
-          env: this.env,
-          dashboardId: x.dashboardId,
-          timezone: getRepoResp.payload.struct.mproveConfig.defaultTimezone
-        });
-
-        let dashboard: any = {
-          dashboardId: x.dashboardId,
-          url: url
-        };
-
-        return dashboard;
-      });
+      log.dashboards = p.dashboards;
     }
 
     if (this.getModels === true) {
-      log.models = getModelsResp.payload.models.map(x => {
-        let url = getModelUrl({
-          host: this.context.config.mproveCliHost,
-          orgId: getRepoResp.payload.repo.orgId,
-          projectId: this.projectId,
-          repoId: getRepoResp.payload.repo.repoId,
-          branch: this.branch,
-          env: this.env,
-          modelId: x.modelId
-        });
-
-        let model: any = {
-          modelId: x.modelId,
-          url: url
-        };
-
-        return model;
-      });
+      log.models = p.models;
     }
 
     if (this.getRepo === true) {
-      let repo = getRepoResp.payload.repo;
+      let repo = p.repo;
 
       if (this.getRepoNodes === false) {
         delete repo.nodes;
       }
 
-      delete repo.changesToCommit;
-      delete repo.changesToPush;
-
       log.repo = repo;
     }
 
     if (this.getErrors === true) {
-      log.validationErrors = getRepoResp.payload.struct.errors;
+      log.validationErrors = p.errors;
     }
 
-    log.builderUrl = builderUrl;
+    log.builderUrl = p.builderUrl;
 
     logToConsoleMcli({
       log: log,

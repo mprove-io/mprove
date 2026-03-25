@@ -7,6 +7,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { getChartUrl } from '#common/functions/get-chart-url';
+import { getDashboardUrl } from '#common/functions/get-dashboard-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { sleep } from '#common/functions/sleep';
@@ -37,8 +39,6 @@ import {
 } from '#common/interfaces/to-backend/repos/to-backend-get-repo';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
-import { getChartUrl } from '#mcli/functions/get-chart-url';
-import { getDashboardUrl } from '#mcli/functions/get-dashboard-url';
 import { queriesToStats } from '#mcli/functions/get-query-stats';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
@@ -300,6 +300,7 @@ export class RunCommand extends CustomCommand {
             repoId: getRepoResp.payload.repo.repoId,
             branch: this.branch,
             env: this.env,
+            modelId: x.modelId,
             chartId: x.chartId,
             timezone: getRepoResp.payload.struct.mproveConfig.defaultTimezone
           });

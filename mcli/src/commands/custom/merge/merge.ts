@@ -2,6 +2,7 @@ import { Command, Option } from 'clipanion';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined';
 import {
   ToBackendMergeRepoRequestPayload,
@@ -9,7 +10,6 @@ import {
 } from '#common/interfaces/to-backend/repos/to-backend-merge-repo';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
-import { getBuilderUrl } from '#mcli/functions/get-builder-url';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';

@@ -89,6 +89,8 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendMergeRepo = 'api/ToBackendMergeRepo',
   ToBackendSyncRepo = 'api/ToBackendSyncRepo',
   //
+  ToBackendGetState = 'api/ToBackendGetState',
+  //
   ToBackendGetStruct = 'api/ToBackendGetStruct',
   //
   ToBackendMoveCatalogNode = 'api/ToBackendMoveCatalogNode',

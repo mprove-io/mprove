@@ -194,6 +194,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (isMcpRequest === true) {
         request.apiKeyToValidateSessionId = parsed.entityId;
+        request.apiKeyToValidateProjectId = session.projectId;
         request.apiKeyToValidateEnvId = session.envId;
         request.apiKeyToValidateBranchId = session.branchId;
         return true;

@@ -111,6 +111,7 @@ import { ToBackendSendMessageToEditorSessionRequest } from '#common/interfaces/t
 import { ToBackendSendMessageToExplorerSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-explorer-session';
 import { ToBackendSetSessionTitleRequest } from '#common/interfaces/to-backend/sessions/to-backend-set-session-title';
 import { ToBackendSpecialRebuildStructsRequest } from '#common/interfaces/to-backend/special/to-backend-special-rebuild-structs';
+import { ToBackendGetStateRequest } from '#common/interfaces/to-backend/state/to-backend-get-state';
 import { ToBackendGetStructRequest } from '#common/interfaces/to-backend/structs/to-backend-get-struct';
 import { ToBackendGetSuggestFieldsRequest } from '#common/interfaces/to-backend/suggest-fields/to-backend-get-suggest-fields';
 import { ToBackendDeleteRecordsRequest } from '#common/interfaces/to-backend/test-routes/to-backend-delete-records';
@@ -281,6 +282,8 @@ export const nameToClass = {
     ToBackendRevertRepoToRemoteRequest,
   [ToBackendRequestInfoNameEnum.ToBackendMergeRepo]: ToBackendMergeRepoRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSyncRepo]: ToBackendSyncRepoRequest,
+  //
+  [ToBackendRequestInfoNameEnum.ToBackendGetState]: ToBackendGetStateRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetStruct]: ToBackendGetStructRequest,
   //

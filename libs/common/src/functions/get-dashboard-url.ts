@@ -10,6 +10,8 @@ export function getDashboardUrl(item: {
 }) {
   let { host, orgId, projectId, repoId, branch, env, dashboardId, timezone } =
     item;
-  // TODO: mcli getDashboardUrl
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/dashboard/${dashboardId}?timezone=${timezone}`;
+
+  let tz = timezone.split('/').join('-');
+
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/dashboards/dashboard/${dashboardId}?timezone=${tz}`;
 }
