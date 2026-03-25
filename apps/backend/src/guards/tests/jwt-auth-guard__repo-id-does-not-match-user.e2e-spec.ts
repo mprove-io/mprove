@@ -19,7 +19,7 @@ import {
   ToBackendGenerateUserApiKeyResponse
 } from '#common/interfaces/to-backend/users/to-backend-generate-user-api-key';
 
-let testId = 'backend-jwt-auth-guard__api-key-forbidden-repo-id';
+let testId = 'backend-jwt-auth-guard__repo-id-does-not-match-user';
 
 let traceId = testId;
 
@@ -138,5 +138,5 @@ test('1', async t => {
   }
 
   t.is(resp.info.status, ResponseInfoStatusEnum.Error);
-  t.is(resp.info.error.message, ErEnum.BACKEND_API_KEY_FORBIDDEN_REPO_ID);
+  t.is(resp.info.error.message, ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_USER);
 });

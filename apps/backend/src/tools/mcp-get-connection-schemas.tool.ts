@@ -46,7 +46,7 @@ export class McpGetConnectionSchemasTool {
     if (apiKeyType === ApiKeyTypeEnum.PK) {
       if (item.repoId !== user.userId && item.repoId !== PROD_REPO_ID) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_FORBIDDEN_REPO_ID
+          message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_USER
         });
       }
     } else if (apiKeyType === ApiKeyTypeEnum.SK) {
@@ -54,7 +54,7 @@ export class McpGetConnectionSchemasTool {
 
       if (item.repoId !== sessionId && item.repoId !== PROD_REPO_ID) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_FORBIDDEN_REPO_ID
+          message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION
         });
       }
     }

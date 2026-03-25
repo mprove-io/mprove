@@ -135,7 +135,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_FORBIDDEN_REPO_ID
+          message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_USER
         });
       }
 
@@ -207,7 +207,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
         throw new ServerError({
-          message: ErEnum.BACKEND_API_KEY_FORBIDDEN_REPO_ID
+          message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION
         });
       }
 
