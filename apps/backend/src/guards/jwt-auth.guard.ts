@@ -194,6 +194,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       if (isMcpRequest === true) {
         request.apiKeyToValidateSessionId = parsed.entityId;
+        request.apiKeyToValidateEnvId = session.envId;
         return true;
       }
 
@@ -208,6 +209,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
         throw new ServerError({
           message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION
+        });
+      }
+
+      let envId = request.body?.payload?.envId;
+
+      if (envId && session.envId && envId !== session.envId) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION
         });
       }
 

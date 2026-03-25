@@ -50,11 +50,24 @@ export class McpGetConnectionSchemasTool {
         });
       }
     } else if (apiKeyType === ApiKeyTypeEnum.SK) {
-      let sessionId = (request as any).apiKeyToValidateSessionId as string;
+      let apiKeyToValidateSessionId = (request as any)
+        .apiKeyToValidateSessionId as string;
 
-      if (item.repoId !== sessionId && item.repoId !== PROD_REPO_ID) {
+      if (
+        item.repoId !== apiKeyToValidateSessionId &&
+        item.repoId !== PROD_REPO_ID
+      ) {
         throw new ServerError({
           message: ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_SESSION
+        });
+      }
+
+      let apiKeyToValidateEnvId = (request as any)
+        .apiKeyToValidateEnvId as string;
+
+      if (item.envId !== apiKeyToValidateEnvId) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_ENV_ID_DOES_NOT_MATCH_SESSION
         });
       }
     }
