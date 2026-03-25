@@ -7,6 +7,8 @@ import { GetConnectionSampleService } from './controllers/connections/get-connec
 import { GetConnectionSampleTool } from './controllers/connections/get-connection-sample/get-connection-sample.tool';
 import { GetConnectionSchemasService } from './controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import { GetConnectionSchemasTool } from './controllers/connections/get-connection-schemas/get-connection-schemas.tool';
+import { ValidateFilesService } from './controllers/files/validate-files/validate-files.service';
+import { ValidateFilesTool } from './controllers/files/validate-files/validate-files.tool';
 import { ApiKeyService } from './services/api-key.service';
 import { BlockmlService } from './services/blockml.service';
 import { AvatarsService } from './services/db/avatars.service';
@@ -146,9 +148,11 @@ export const appProviders = [
   ToolService,
   GetConnectionSampleService,
   GetConnectionSchemasService,
+  ValidateFilesService,
   //
   GetConnectionSampleTool,
   GetConnectionSchemasTool,
+  ValidateFilesTool,
   {
     provide: TasksService,
     useFactory: (
