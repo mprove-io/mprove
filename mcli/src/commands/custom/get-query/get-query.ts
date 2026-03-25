@@ -2,102 +2,22 @@ import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { getChartUrl } from '#common/functions/get-chart-url';
-import { getDashboardUrl } from '#common/functions/get-dashboard-url';
-import { getReportUrl } from '#common/functions/get-report-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { Parameter } from '#common/interfaces/blockml/parameter';
 import {
-  ToBackendGetChartRequestPayload,
-  ToBackendGetChartResponse
-} from '#common/interfaces/to-backend/charts/to-backend-get-chart';
-import {
-  ToBackendGetDashboardRequestPayload,
-  ToBackendGetDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
-import {
-  ToBackendGetProjectRequestPayload,
-  ToBackendGetProjectResponse
-} from '#common/interfaces/to-backend/projects/to-backend-get-project';
-import {
-  ToBackendGetReportRequestPayload,
-  ToBackendGetReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-get-report';
-import {
-  ToBackendGetRepoRequestPayload,
-  ToBackendGetRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
+  ToBackendGetQueryInfoRequestPayload,
+  ToBackendGetQueryInfoResponse
+} from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
-
-interface ChartPartQ {
-  title: string;
-  chartId: string;
-  url: string;
-  query: QueryPartQ;
-}
-
-interface DashboardPartQ {
-  title: string;
-  dashboardId: string;
-  url: string;
-  tiles: TilePartQ[];
-}
-
-interface TilePartQ {
-  title: string;
-  query: QueryPartQ;
-}
-
-interface ReportPartQ {
-  title: string;
-  reportId: string;
-  url: string;
-  rows: RowPartQ[];
-}
-
-interface RowPartQ {
-  rowId: string;
-  name: string;
-  rowType: RowTypeEnum;
-  metricId: string;
-  formula: string;
-  parameters: Parameter[];
-  query: QueryPartQ;
-  records: any[];
-}
-
-interface QueryPartQ {
-  connectionId: string;
-  connectionType: ConnectionTypeEnum;
-  queryId: string;
-  status: QueryStatusEnum;
-  lastRunBy: string;
-  lastRunTs: number;
-  lastCancelTs: number;
-  lastCompleteTs: number;
-  lastCompleteDuration: number;
-  lastErrorMessage: string;
-  lastErrorTs: number;
-  data: any;
-  sql: string;
-  sqlArray: string[];
-  apiMethod: string;
-  apiUrl: string;
-  apiBody: string;
-}
 
 export class GetQueryCommand extends CustomCommand {
   static paths = [['get-query']];
@@ -259,304 +179,45 @@ export class GetQueryCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getProjectReqPayload: ToBackendGetProjectRequestPayload = {
-      projectId: this.projectId
-    };
-
-    let getProjectResp = await mreq<ToBackendGetProjectResponse>({
-      apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProject,
-      payload: getProjectReqPayload,
-      host: this.context.config.mproveCliHost
-    });
-
-    let getRepoReqPayload: ToBackendGetRepoRequestPayload = {
+    let getQueryInfoReqPayload: ToBackendGetQueryInfoRequestPayload = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
       envId: this.env,
+      chartId: this.chartId,
+      dashboardId: this.dashboardId,
+      tileIndex: this.tileIndex,
+      reportId: this.reportId,
+      rowId: this.rowId,
+      timezone: this.timezone,
+      timeSpec: this.timeSpec as TimeSpecEnum,
+      timeRangeFractionBrick: this.timeRange,
+      getSql: this.getSql,
+      getData: this.getData,
       isFetch: true
     };
 
-    let getRepoResp = await mreq<ToBackendGetRepoResponse>({
+    let getQueryInfoResp = await mreq<ToBackendGetQueryInfoResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
-      payload: getRepoReqPayload,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo,
+      payload: getQueryInfoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let chartPartQ: ChartPartQ;
-
-    if (isDefined(this.chartId)) {
-      let getChartReqPayload: ToBackendGetChartRequestPayload = {
-        projectId: this.projectId,
-        repoId: repoId,
-        branchId: this.branch,
-        envId: this.env,
-        chartId: this.chartId,
-        timezone: this.timezone
-      };
-
-      let getChartResp = await mreq<ToBackendGetChartResponse>({
-        apiKey: apiKey,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetChart,
-        payload: getChartReqPayload,
-        host: this.context.config.mproveCliHost
-      });
-
-      let chartX = getChartResp.payload.chart;
-      let tileX = chartX.tiles[0];
-
-      let queryPartQ: QueryPartQ = {
-        connectionId: tileX.query.connectionId,
-        connectionType: tileX.query.connectionType,
-        queryId: tileX.query.queryId,
-        status: tileX.query.status,
-        lastRunBy: tileX.query.lastRunBy,
-        lastRunTs: tileX.query.lastRunTs,
-        lastCancelTs: tileX.query.lastCancelTs,
-        lastCompleteTs: tileX.query.lastCompleteTs,
-        lastCompleteDuration: tileX.query.lastCompleteDuration,
-        lastErrorMessage: tileX.query.lastErrorMessage,
-        lastErrorTs: tileX.query.lastErrorTs,
-        data: undefined,
-        sql: undefined,
-        sqlArray: undefined,
-        apiMethod: undefined,
-        apiUrl: undefined,
-        apiBody: undefined
-      };
-
-      if (this.getData) {
-        queryPartQ.data = tileX.query.data;
-      }
-
-      if (this.getSql) {
-        // TODO: getApi
-        queryPartQ.sql = tileX.query.sql;
-      }
-
-      let url = getChartUrl({
-        host: this.context.config.mproveCliHost,
-        orgId: getProjectResp.payload.project.orgId,
-        projectId: this.projectId,
-        repoId: getRepoResp.payload.repo.repoId,
-        branch: this.branch,
-        env: this.env,
-        modelId: chartX.modelId,
-        chartId: chartX.chartId,
-        timezone: this.timezone
-      });
-
-      chartPartQ = {
-        title: tileX.mconfig.chart.title,
-        chartId: chartX.chartId,
-        url: url,
-        query: queryPartQ
-      };
-    }
-
-    let dashboardPartQ: DashboardPartQ;
-
-    if (isDefined(this.dashboardId)) {
-      let getDashboardReqPayload: ToBackendGetDashboardRequestPayload = {
-        projectId: this.projectId,
-        repoId: repoId,
-        branchId: this.branch,
-        envId: this.env,
-        dashboardId: this.dashboardId,
-        timezone: this.timezone
-      };
-
-      let getDashboardResp = await mreq<ToBackendGetDashboardResponse>({
-        apiKey: apiKey,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-        payload: getDashboardReqPayload,
-        host: this.context.config.mproveCliHost
-      });
-
-      let dashboardX = getDashboardResp.payload.dashboard;
-
-      let tilePartQs = dashboardX.tiles
-        .filter((tile, i) => {
-          if (isDefined(this.tileIndex)) {
-            return i === this.tileIndex;
-          }
-
-          return true;
-        })
-        .map(tileX => {
-          let queryPartQ: QueryPartQ = {
-            connectionId: tileX.query.connectionId,
-            connectionType: tileX.query.connectionType,
-            queryId: tileX.query.queryId,
-            status: tileX.query.status,
-            lastRunBy: tileX.query.lastRunBy,
-            lastRunTs: tileX.query.lastRunTs,
-            lastCancelTs: tileX.query.lastCancelTs,
-            lastCompleteTs: tileX.query.lastCompleteTs,
-            lastCompleteDuration: tileX.query.lastCompleteDuration,
-            lastErrorMessage: tileX.query.lastErrorMessage,
-            lastErrorTs: tileX.query.lastErrorTs,
-            data: undefined,
-            sql: undefined,
-            sqlArray: undefined,
-            apiMethod: undefined,
-            apiUrl: undefined,
-            apiBody: undefined
-          };
-
-          if (this.getData) {
-            queryPartQ.data = tileX.query.data;
-          }
-
-          if (this.getSql) {
-            // TODO: getApi
-            queryPartQ.sql = tileX.query.sql;
-          }
-
-          let tilePartQ: TilePartQ = {
-            title: tileX.mconfig.chart.title,
-            query: queryPartQ
-          };
-
-          return tilePartQ;
-        });
-
-      let url = getDashboardUrl({
-        host: this.context.config.mproveCliHost,
-        orgId: getProjectResp.payload.project.orgId,
-        projectId: this.projectId,
-        repoId: getRepoResp.payload.repo.repoId,
-        branch: this.branch,
-        env: this.env,
-        dashboardId: dashboardX.dashboardId,
-        timezone: this.timezone
-      });
-
-      dashboardPartQ = {
-        title: dashboardX.title,
-        dashboardId: dashboardX.dashboardId,
-        url: url,
-        tiles: tilePartQs
-      };
-    }
-
-    let reportPartQ: ReportPartQ;
-
-    if (isDefined(this.reportId)) {
-      let getRepReqPayload: ToBackendGetReportRequestPayload = {
-        projectId: this.projectId,
-        repoId: repoId,
-        branchId: this.branch,
-        envId: this.env,
-        reportId: this.reportId,
-        timezone: this.timezone,
-        timeSpec: this.timeSpec as TimeSpecEnum,
-        timeRangeFractionBrick: this.timeRange
-      };
-
-      let getRepResp = await mreq<ToBackendGetReportResponse>({
-        apiKey: apiKey,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetReport,
-        payload: getRepReqPayload,
-        host: this.context.config.mproveCliHost
-      });
-
-      let repX = getRepResp.payload.report;
-
-      let rowPartQs = repX.rows
-        .filter(row => {
-          if (isDefined(this.rowId)) {
-            return row.rowId === this.rowId;
-          }
-
-          return true;
-        })
-        .map(row => {
-          let queryPartQ: QueryPartQ;
-
-          if (row.rowType === RowTypeEnum.Metric) {
-            queryPartQ = {
-              connectionId: row.query.connectionId,
-              connectionType: row.query.connectionType,
-              queryId: row.query.queryId,
-              status: row.query.status,
-              lastRunBy: row.query.lastRunBy,
-              lastRunTs: row.query.lastRunTs,
-              lastCancelTs: row.query.lastCancelTs,
-              lastCompleteTs: row.query.lastCompleteTs,
-              lastCompleteDuration: row.query.lastCompleteDuration,
-              lastErrorMessage: row.query.lastErrorMessage,
-              lastErrorTs: row.query.lastErrorTs,
-              data: undefined,
-              sql: undefined,
-              sqlArray: undefined,
-              apiMethod: undefined,
-              apiUrl: undefined,
-              apiBody: undefined
-            };
-
-            if (this.getData) {
-              queryPartQ.data = row.query?.data;
-            }
-
-            if (this.getSql) {
-              // TODO: getApi
-              queryPartQ.sql = row.query?.sql;
-            }
-          }
-
-          let rowPartQ: RowPartQ = {
-            rowId: row.rowId,
-            name:
-              row.rowType === RowTypeEnum.Metric
-                ? `${row.partNodeLabel} ${row.partFieldLabel} by ${row.timeNodeLabel} ${row.timeFieldLabel} - ${row.topLabel}`
-                : row.name,
-            rowType: row.rowType,
-            metricId: row.metricId,
-            formula: row.formula,
-            parameters: row.parameters,
-            query: queryPartQ,
-            records: this.getData === true ? row.records : undefined
-          };
-
-          return rowPartQ;
-        });
-
-      let url = getReportUrl({
-        host: this.context.config.mproveCliHost,
-        orgId: getProjectResp.payload.project.orgId,
-        projectId: this.projectId,
-        repoId: getRepoResp.payload.repo.repoId,
-        branch: this.branch,
-        env: this.env,
-        reportId: repX.reportId,
-        timezone: this.timezone,
-        timeSpec: this.timeSpec,
-        timeRange: this.timeRange
-      });
-
-      reportPartQ = {
-        title: repX.title,
-        reportId: repX.reportId,
-        url: url,
-        rows: rowPartQs
-      };
-    }
+    let p = getQueryInfoResp.payload;
 
     let log: any = {};
 
-    if (isDefined(this.chartId)) {
-      log.chart = chartPartQ;
+    if (isDefined(p.chart)) {
+      log.chart = p.chart;
     }
 
-    if (isDefined(this.dashboardId)) {
-      log.dashboard = dashboardPartQ;
+    if (isDefined(p.dashboard)) {
+      log.dashboard = p.dashboard;
     }
 
-    if (isDefined(this.reportId)) {
-      log.report = reportPartQ;
+    if (isDefined(p.report)) {
+      log.report = p.report;
     }
 
     logToConsoleMcli({

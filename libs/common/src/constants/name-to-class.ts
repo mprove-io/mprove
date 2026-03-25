@@ -82,6 +82,7 @@ import { ToBackendGetQueriesRequest } from '#common/interfaces/to-backend/querie
 import { ToBackendGetQueryRequest } from '#common/interfaces/to-backend/queries/to-backend-get-query';
 import { ToBackendRunQueriesRequest } from '#common/interfaces/to-backend/queries/to-backend-run-queries';
 import { ToBackendRunQueriesDryRequest } from '#common/interfaces/to-backend/queries/to-backend-run-queries-dry';
+import { ToBackendGetQueryInfoRequest } from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
 import { ToBackendCreateDraftReportRequest } from '#common/interfaces/to-backend/reports/to-backend-create-draft-report';
 import { ToBackendDeleteDraftReportsRequest } from '#common/interfaces/to-backend/reports/to-backend-delete-draft-reports';
 import { ToBackendDeleteReportRequest } from '#common/interfaces/to-backend/reports/to-backend-delete-report';
@@ -282,6 +283,9 @@ export const nameToClass = {
     ToBackendRevertRepoToRemoteRequest,
   [ToBackendRequestInfoNameEnum.ToBackendMergeRepo]: ToBackendMergeRepoRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSyncRepo]: ToBackendSyncRepoRequest,
+  //
+  [ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo]:
+    ToBackendGetQueryInfoRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetState]: ToBackendGetStateRequest,
   //

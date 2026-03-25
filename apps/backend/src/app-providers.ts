@@ -9,6 +9,8 @@ import { GetConnectionSchemasService } from './controllers/connections/get-conne
 import { GetConnectionSchemasTool } from './controllers/connections/get-connection-schemas/get-connection-schemas.tool';
 import { ValidateFilesService } from './controllers/files/validate-files/validate-files.service';
 import { ValidateFilesTool } from './controllers/files/validate-files/validate-files.tool';
+import { GetQueryInfoService } from './controllers/query-info/get-query-info/get-query-info.service';
+import { GetQueryInfoTool } from './controllers/query-info/get-query-info/get-query-info.tool';
 import { GetStateService } from './controllers/state/get-state/get-state.service';
 import { GetStateTool } from './controllers/state/get-state/get-state.tool';
 import { ApiKeyService } from './services/api-key.service';
@@ -60,6 +62,9 @@ import { ExplorerToolsService } from './services/explorer/explorer-tools.service
 import { HashService } from './services/hash.service';
 import { MalloyService } from './services/malloy.service';
 import { ParentService } from './services/parent.service';
+import { QueryInfoChartService } from './services/query-info-chart.service';
+import { QueryInfoDashboardService } from './services/query-info-dashboard.service';
+import { QueryInfoReportService } from './services/query-info-report.service';
 import { RedisService } from './services/redis.service';
 import { ReportDataService } from './services/report-data.service';
 import { ReportRowService } from './services/report-row.service';
@@ -151,11 +156,16 @@ export const appProviders = [
   GetConnectionSampleService,
   GetConnectionSchemasService,
   ValidateFilesService,
+  QueryInfoChartService,
+  QueryInfoDashboardService,
+  QueryInfoReportService,
+  GetQueryInfoService,
   GetStateService,
   //
   GetConnectionSampleTool,
   GetConnectionSchemasTool,
   ValidateFilesTool,
+  GetQueryInfoTool,
   GetStateTool,
   {
     provide: TasksService,

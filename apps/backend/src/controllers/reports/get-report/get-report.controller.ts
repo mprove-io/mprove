@@ -1,40 +1,19 @@
-import {
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  Req,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { seconds, Throttle } from '@nestjs/throttler';
-import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
-import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
-import { ReportsService } from '#backend/services/db/reports.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { StructsService } from '#backend/services/db/structs.service';
-import { ReportDataService } from '#backend/services/report-data.service';
-import { TabService } from '#backend/services/tab.service';
-import {
-  DEFAULT_SRV_UI,
-  THROTTLE_MULTIPLIER
-} from '#common/constants/top-backend';
+import { QueryInfoReportService } from '#backend/services/query-info-report.service';
+import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeCopy } from '#common/functions/make-copy';
-import {
+import type {
   ToBackendGetReportRequest,
   ToBackendGetReportResponsePayload
 } from '#common/interfaces/to-backend/reports/to-backend-get-report';
@@ -59,20 +38,13 @@ import {
 @Controller()
 export class GetReportController {
   constructor(
-    private tabService: TabService,
     private membersService: MembersService,
-    private modelsService: ModelsService,
-    private projectsService: ProjectsService,
-    private reportsService: ReportsService,
     private sessionsService: SessionsService,
-    private reportDataService: ReportDataService,
+    private projectsService: ProjectsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
-    private structsService: StructsService,
     private envsService: EnvsService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private queryInfoReportService: QueryInfoReportService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetReport)
@@ -112,7 +84,7 @@ export class GetReportController {
       branchId: branchId
     });
 
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
+    await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
       member: userMember
@@ -125,69 +97,21 @@ export class GetReportController {
       envId: envId
     });
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
-    let report = await this.reportsService.getReportCheckExistsAndAccess({
-      projectId: projectId,
-      reportId: reportId,
-      structId: bridge.structId,
-      user: user,
-      userMember: userMember
-    });
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
-    let apiReport = await this.reportDataService.getReportData({
-      report: report,
-      traceId: traceId,
-      project: project,
-      apiUserMember: apiUserMember,
-      userMember: userMember,
-      user: user,
-      envId: envId,
-      struct: struct,
-      metrics: struct.metrics,
-      timeSpec: timeSpec,
-      timeRangeFractionBrick: timeRangeFractionBrick,
-      timezone: timezone
-    });
-
-    user.ui = user.ui || makeCopy(DEFAULT_SRV_UI);
-    user.ui.timezone = timezone;
-    user.ui.timeSpec = timeSpec;
-    user.ui.timeRangeFraction = apiReport.timeRangeFraction;
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                users: [user]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
-
-    let modelPartXs = await this.modelsService.getModelPartXs({
-      structId: struct.structId,
-      apiUserMember: apiUserMember
-    });
-
-    let payload: ToBackendGetReportResponsePayload = {
-      needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({
-        struct: struct,
-        modelPartXs: modelPartXs
-      }),
-      userMember: apiUserMember,
-      report: apiReport
-    };
+    let payload: ToBackendGetReportResponsePayload =
+      await this.queryInfoReportService.getReportData({
+        traceId: traceId,
+        user: user,
+        userMember: userMember,
+        project: project,
+        bridge: bridge,
+        projectId: projectId,
+        envId: envId,
+        reportId: reportId,
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFractionBrick: timeRangeFractionBrick,
+        skipUi: false
+      });
 
     return payload;
   }
