@@ -36,6 +36,7 @@ export class GetQueryInfoController {
       timezone,
       timeSpec,
       timeRangeFractionBrick,
+      getMalloy,
       getSql,
       getData,
       isFetch
@@ -57,6 +58,7 @@ export class GetQueryInfoController {
         timezone: timezone,
         timeSpec: timeSpec,
         timeRangeFractionBrick: timeRangeFractionBrick,
+        getMalloy: getMalloy,
         getSql: getSql,
         getData: getData,
         isFetch: isFetch

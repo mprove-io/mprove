@@ -39,6 +39,7 @@ export class GetQueryInfoTool {
       timezone: z.string(),
       timeSpec: z.string().optional(),
       timeRangeFractionBrick: z.string().optional(),
+      getMalloy: z.boolean(),
       getSql: z.boolean(),
       getData: z.boolean(),
       isFetch: z.boolean()
@@ -63,6 +64,7 @@ export class GetQueryInfoTool {
       timezone: string;
       timeSpec?: string;
       timeRangeFractionBrick?: string;
+      getMalloy: boolean;
       getSql: boolean;
       getData: boolean;
       isFetch: boolean;
@@ -116,6 +118,7 @@ export class GetQueryInfoTool {
         timezone: item.timezone,
         timeSpec: item.timeSpec as any,
         timeRangeFractionBrick: item.timeRangeFractionBrick,
+        getMalloy: item.getMalloy,
         getSql: item.getSql,
         getData: item.getData,
         isFetch: item.isFetch

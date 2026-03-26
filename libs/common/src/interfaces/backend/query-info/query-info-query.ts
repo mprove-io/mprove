@@ -41,5 +41,9 @@ export class QueryInfoQuery {
 
   @IsOptional()
   @IsString()
+  malloy: string;
+
+  @IsOptional()
+  @IsString()
   sql: string;
 }

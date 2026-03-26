@@ -13,5 +13,6 @@ export let zQueryInfoQuery = z.object({
   lastErrorMessage: z.string(),
   lastErrorTs: z.number(),
   data: z.any().optional(),
+  malloy: z.string().optional(),
   sql: z.string().optional()
 });

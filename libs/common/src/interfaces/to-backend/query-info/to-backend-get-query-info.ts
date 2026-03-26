@@ -60,6 +60,9 @@ export class ToBackendGetQueryInfoRequestPayload {
   timeRangeFractionBrick: string;
 
   @IsBoolean()
+  getMalloy: boolean;
+
+  @IsBoolean()
   getSql: boolean;
 
   @IsBoolean()

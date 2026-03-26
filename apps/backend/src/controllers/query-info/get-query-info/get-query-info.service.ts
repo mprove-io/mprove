@@ -55,6 +55,7 @@ export class GetQueryInfoService {
     timezone: string;
     timeSpec: TimeSpecEnum;
     timeRangeFractionBrick: string;
+    getMalloy: boolean;
     getSql: boolean;
     getData: boolean;
     isFetch: boolean;
@@ -74,6 +75,7 @@ export class GetQueryInfoService {
       timezone,
       timeSpec,
       timeRangeFractionBrick,
+      getMalloy,
       getSql,
       getData,
       isFetch
@@ -145,7 +147,9 @@ export class GetQueryInfoService {
       let tileX = chartX.tiles[0];
 
       let queryPartQ = this.buildQueryInfoQuery({
+        mconfig: tileX.mconfig,
         query: tileX.query,
+        getMalloy: getMalloy,
         getSql: getSql,
         getData: getData
       });
@@ -201,7 +205,9 @@ export class GetQueryInfoService {
         })
         .map(tileX => {
           let queryPartQ = this.buildQueryInfoQuery({
+            mconfig: tileX.mconfig,
             query: tileX.query,
+            getMalloy: getMalloy,
             getSql: getSql,
             getData: getData
           });
@@ -266,7 +272,9 @@ export class GetQueryInfoService {
 
           if (row.rowType === RowTypeEnum.Metric) {
             queryPartQ = this.buildQueryInfoQuery({
+              mconfig: row.mconfig,
               query: row.query,
+              getMalloy: getMalloy,
               getSql: getSql,
               getData: getData
             });
@@ -316,11 +324,13 @@ export class GetQueryInfoService {
   }
 
   private buildQueryInfoQuery(item: {
+    mconfig: any;
     query: any;
+    getMalloy: boolean;
     getSql: boolean;
     getData: boolean;
   }): QueryInfoQuery {
-    let { query, getSql, getData } = item;
+    let { mconfig, query, getMalloy, getSql, getData } = item;
 
     let queryPartQ: QueryInfoQuery = {
       connectionId: query.connectionId,
@@ -335,11 +345,16 @@ export class GetQueryInfoService {
       lastErrorMessage: query.lastErrorMessage,
       lastErrorTs: query.lastErrorTs,
       data: undefined,
+      malloy: undefined,
       sql: undefined
     };
 
     if (getData) {
       queryPartQ.data = query.data;
+    }
+
+    if (getMalloy) {
+      queryPartQ.malloy = mconfig?.malloyQueryExtra;
     }
 
     if (getSql) {

@@ -97,6 +97,10 @@ export class GetQueryCommand extends CustomCommand {
     description: '(default "f`last 5 days`") Ts Filter Expression'
   });
 
+  getMalloy = Option.Boolean('--get-malloy', false, {
+    description: '(default false), show malloy query in output'
+  });
+
   getSql = Option.Boolean('--get-sql', false, {
     description: '(default false), show query sql in output'
   });
@@ -192,6 +196,7 @@ export class GetQueryCommand extends CustomCommand {
       timezone: this.timezone,
       timeSpec: this.timeSpec as TimeSpecEnum,
       timeRangeFractionBrick: this.timeRange,
+      getMalloy: this.getMalloy,
       getSql: this.getSql,
       getData: this.getData,
       isFetch: true
