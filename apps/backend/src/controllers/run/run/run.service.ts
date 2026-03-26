@@ -66,6 +66,8 @@ export class RunService {
     chartIds?: string;
     noDashboards: boolean;
     noCharts: boolean;
+    getDashboards: boolean;
+    getCharts: boolean;
   }): Promise<ToBackendRunResponsePayload> {
     let {
       traceId,
@@ -79,8 +81,54 @@ export class RunService {
       dashboardIds,
       chartIds,
       noDashboards,
-      noCharts
+      noCharts,
+      getDashboards,
+      getCharts
     } = item;
+
+    if (noDashboards === true && getDashboards === true) {
+      let serverError = new ServerError({
+        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        displayData: `noDashboards and getDashboards`,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (noDashboards === true && isDefined(dashboardIds)) {
+      let serverError = new ServerError({
+        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        displayData: `noDashboards and dashboardIds`,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (noCharts === true && getCharts === true) {
+      let serverError = new ServerError({
+        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        displayData: `noCharts and getCharts`,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (noCharts === true && isDefined(chartIds)) {
+      let serverError = new ServerError({
+        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        displayData: `noCharts and chartIds`,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (isDefined(item.sleep) && wait === false) {
+      let serverError = new ServerError({
+        message: ErEnum.BACKEND_SLEEP_DOES_NOT_WORK_WITHOUT_WAIT,
+        originalError: null
+      });
+      throw serverError;
+    }
 
     let sleepSeconds = isDefined(item.sleep) ? item.sleep : 3;
 
@@ -407,9 +455,52 @@ export class RunService {
       ).length
     };
 
+    let errorCharts: RunChart[] =
+      queriesStats.error === 0
+        ? []
+        : chartParts
+            .filter(x => x.query.status === QueryStatusEnum.Error)
+            .map(v => ({
+              title: v.title,
+              chartId: v.chartId,
+              url: v.url,
+              query: {
+                lastErrorMessage: v.query.lastErrorMessage,
+                status: v.query.status,
+                queryId: v.query.queryId
+              } as Query
+            }));
+
+    let errorDashboards: RunDashboard[] =
+      queriesStats.error === 0
+        ? []
+        : dashboardParts
+            .filter(
+              x =>
+                x.tiles.filter(y => y.query.status === QueryStatusEnum.Error)
+                  .length > 0
+            )
+            .map(d => ({
+              title: d.title,
+              dashboardId: d.dashboardId,
+              url: d.url,
+              tiles: d.tiles
+                .filter(q => q.query.status === QueryStatusEnum.Error)
+                .map(r => ({
+                  title: r.title,
+                  query: {
+                    lastErrorMessage: r.query.lastErrorMessage,
+                    status: r.query.status,
+                    queryId: r.query.queryId
+                  } as Query
+                }))
+            }));
+
     let payload: ToBackendRunResponsePayload = {
-      charts: chartParts,
-      dashboards: dashboardParts,
+      charts: getCharts === true ? chartParts : [],
+      dashboards: getDashboards === true ? dashboardParts : [],
+      errorCharts: errorCharts,
+      errorDashboards: errorDashboards,
       queriesStats: queriesStats
     };
 

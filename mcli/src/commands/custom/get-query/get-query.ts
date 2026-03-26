@@ -7,7 +7,6 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import {
   ToBackendGetQueryInfoRequestPayload,
@@ -132,48 +131,6 @@ export class GetQueryCommand extends CustomCommand {
       throw serverError;
     }
 
-    if (
-      isDefined(this.dashboardId) &&
-      isDefined(this.chartId) &&
-      isDefined(this.reportId)
-    ) {
-      let serverError = new ServerError({
-        message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
-        displayData: `dashboard-id, chart-id, report-id`,
-        originalError: null
-      });
-      throw serverError;
-    }
-
-    if (
-      isUndefined(this.dashboardId) &&
-      isUndefined(this.chartId) &&
-      isUndefined(this.reportId)
-    ) {
-      let serverError = new ServerError({
-        message:
-          ErEnum.MCLI_DASHBOARD_ID_CHART_ID_AND_REPORT_ID_ARE_NOT_DEFINED,
-        originalError: null
-      });
-      throw serverError;
-    }
-
-    if (isDefined(this.tileIndex) && isUndefined(this.dashboardId)) {
-      let serverError = new ServerError({
-        message: ErEnum.MCLI_TILE_INDEX_DOES_NOT_WORK_WITHOUT_DASHBOARD_ID,
-        originalError: null
-      });
-      throw serverError;
-    }
-
-    if (isDefined(this.rowId) && isUndefined(this.reportId)) {
-      let serverError = new ServerError({
-        message: ErEnum.MCLI_ROW_ID_DOES_NOT_WORK_WITHOUT_REPORT_ID,
-        originalError: null
-      });
-      throw serverError;
-    }
-
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
@@ -209,24 +166,8 @@ export class GetQueryCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let p = getQueryInfoResp.payload;
-
-    let log: any = {};
-
-    if (isDefined(p.chart)) {
-      log.chart = p.chart;
-    }
-
-    if (isDefined(p.dashboard)) {
-      log.dashboard = p.dashboard;
-    }
-
-    if (isDefined(p.report)) {
-      log.report = p.report;
-    }
-
     logToConsoleMcli({
-      log: log,
+      log: getQueryInfoResp.payload,
       logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json

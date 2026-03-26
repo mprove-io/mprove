@@ -37,11 +37,15 @@ export class RunTool {
       dashboardIds: z.string().optional(),
       chartIds: z.string().optional(),
       noDashboards: z.boolean(),
-      noCharts: z.boolean()
+      noCharts: z.boolean(),
+      getDashboards: z.boolean(),
+      getCharts: z.boolean()
     }),
     outputSchema: z.object({
       charts: z.array(zRunChart),
       dashboards: z.array(zRunDashboard),
+      errorCharts: z.array(zRunChart),
+      errorDashboards: z.array(zRunDashboard),
       queriesStats: zRunQueriesStats
     })
   })
@@ -58,6 +62,8 @@ export class RunTool {
       chartIds?: string;
       noDashboards: boolean;
       noCharts: boolean;
+      getDashboards: boolean;
+      getCharts: boolean;
     },
     context: Context,
     request: Request
@@ -104,7 +110,9 @@ export class RunTool {
       dashboardIds: item.dashboardIds,
       chartIds: item.chartIds,
       noDashboards: item.noDashboards,
-      noCharts: item.noCharts
+      noCharts: item.noCharts,
+      getDashboards: item.getDashboards,
+      getCharts: item.getCharts
     });
 
     return payload;

@@ -52,6 +52,12 @@ export class ToBackendRunRequestPayload {
 
   @IsBoolean()
   noCharts: boolean;
+
+  @IsBoolean()
+  getDashboards: boolean;
+
+  @IsBoolean()
+  getCharts: boolean;
 }
 
 export class ToBackendRunRequest extends ToBackendRequest {
@@ -68,6 +74,14 @@ export class ToBackendRunResponsePayload {
   @ValidateNested()
   @Type(() => RunDashboard)
   dashboards: RunDashboard[];
+
+  @ValidateNested()
+  @Type(() => RunChart)
+  errorCharts: RunChart[];
+
+  @ValidateNested()
+  @Type(() => RunDashboard)
+  errorDashboards: RunDashboard[];
 
   queriesStats: McliQueriesStats;
 }

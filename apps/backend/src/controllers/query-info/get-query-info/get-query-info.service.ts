@@ -11,12 +11,14 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { QueryInfoChartService } from '#backend/services/query-info-chart.service';
 import { QueryInfoDashboardService } from '#backend/services/query-info-dashboard.service';
 import { QueryInfoReportService } from '#backend/services/query-info-report.service';
+import { ErEnum } from '#common/enums/er.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { getChartUrl } from '#common/functions/get-chart-url';
 import { getDashboardUrl } from '#common/functions/get-dashboard-url';
 import { getReportUrl } from '#common/functions/get-report-url';
 import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
 import type { QueryInfoChart } from '#common/interfaces/backend/query-info/query-info-chart';
 import type { QueryInfoDashboard } from '#common/interfaces/backend/query-info/query-info-dashboard';
 import type { QueryInfoQuery } from '#common/interfaces/backend/query-info/query-info-query';
@@ -24,6 +26,7 @@ import type { QueryInfoReport } from '#common/interfaces/backend/query-info/quer
 import type { QueryInfoRow } from '#common/interfaces/backend/query-info/query-info-row';
 import type { QueryInfoTile } from '#common/interfaces/backend/query-info/query-info-tile';
 import type { ToBackendGetQueryInfoResponsePayload } from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
+import { ServerError } from '#common/models/server-error';
 
 @Injectable()
 export class GetQueryInfoService {
@@ -80,6 +83,44 @@ export class GetQueryInfoService {
       getData,
       isFetch
     } = item;
+
+    if (isDefined(dashboardId) && isDefined(chartId) && isDefined(reportId)) {
+      let serverError = new ServerError({
+        message: ErEnum.BACKEND_MUTUALLY_EXCLUSIVE_PARAMS,
+        displayData: `dashboardId, chartId, reportId`,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (
+      isUndefined(dashboardId) &&
+      isUndefined(chartId) &&
+      isUndefined(reportId)
+    ) {
+      let serverError = new ServerError({
+        message:
+          ErEnum.BACKEND_DASHBOARD_ID_CHART_ID_AND_REPORT_ID_ARE_NOT_DEFINED,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (isDefined(tileIndex) && isUndefined(dashboardId)) {
+      let serverError = new ServerError({
+        message: ErEnum.BACKEND_TILE_INDEX_DOES_NOT_WORK_WITHOUT_DASHBOARD_ID,
+        originalError: null
+      });
+      throw serverError;
+    }
+
+    if (isDefined(rowId) && isUndefined(reportId)) {
+      let serverError = new ServerError({
+        message: ErEnum.BACKEND_ROW_ID_DOES_NOT_WORK_WITHOUT_REPORT_ID,
+        originalError: null
+      });
+      throw serverError;
+    }
 
     let userId = user.userId;
 
