@@ -9,6 +9,7 @@ import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { zGetModel } from '#common/zod/z-get-model/z-get-model';
+import { processGetModelPayload } from '#node-common/functions/process-get-model-payload';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
@@ -82,9 +83,8 @@ export class GetModelTool {
       modelId: item.modelId
     });
 
-    return {
-      needValidate: result.needValidate,
-      model: result.model
-    };
+    return processGetModelPayload({
+      payload: result
+    });
   }
 }

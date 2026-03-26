@@ -32,22 +32,17 @@ export class GetConnectionSampleController {
       offset
     } = reqValid.payload;
 
-    let result = await this.connectionSampleService.getConnectionSample({
-      userId: user.userId,
-      projectId: projectId,
-      envId: envId,
-      connectionId: connectionId,
-      schemaName: schemaName,
-      tableName: tableName,
-      columnName: columnName,
-      offset: offset
-    });
-
-    let payload: ToBackendGetConnectionSampleResponsePayload = {
-      columnNames: result.columnNames,
-      rows: result.rows,
-      errorMessage: result.errorMessage
-    };
+    let payload: ToBackendGetConnectionSampleResponsePayload =
+      await this.connectionSampleService.getConnectionSample({
+        userId: user.userId,
+        projectId: projectId,
+        envId: envId,
+        connectionId: connectionId,
+        schemaName: schemaName,
+        tableName: tableName,
+        columnName: columnName,
+        offset: offset
+      });
 
     return payload;
   }

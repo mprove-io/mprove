@@ -21,21 +21,15 @@ export class GetModelController {
 
     let { projectId, repoId, branchId, modelId, envId } = reqValid.payload;
 
-    let result = await this.getModelService.getModel({
-      userId: user.userId,
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId,
-      envId: envId,
-      modelId: modelId
-    });
-
-    let payload: ToBackendGetModelResponsePayload = {
-      needValidate: result.needValidate,
-      struct: result.struct,
-      userMember: result.userMember,
-      model: result.model
-    };
+    let payload: ToBackendGetModelResponsePayload =
+      await this.getModelService.getModel({
+        userId: user.userId,
+        projectId: projectId,
+        repoId: repoId,
+        branchId: branchId,
+        envId: envId,
+        modelId: modelId
+      });
 
     return payload;
   }

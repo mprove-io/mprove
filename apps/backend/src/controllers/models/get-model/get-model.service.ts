@@ -11,6 +11,7 @@ import { StructsService } from '#backend/services/db/structs.service';
 import type { Member } from '#common/interfaces/backend/member';
 import type { ModelX } from '#common/interfaces/backend/model-x';
 import type { StructX } from '#common/interfaces/backend/struct-x';
+import { ToBackendGetModelResponsePayload } from '#common/interfaces/to-backend/models/to-backend-get-model';
 
 @Injectable()
 export class GetModelService {
@@ -92,7 +93,7 @@ export class GetModelService {
       apiUserMember: apiUserMember
     });
 
-    return {
+    let payload: ToBackendGetModelResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,
@@ -107,5 +108,7 @@ export class GetModelService {
         })
       })
     };
+
+    return payload;
   }
 }

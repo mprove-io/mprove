@@ -8,6 +8,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
+import { ToBackendGetConnectionSampleResponsePayload } from '#common/interfaces/to-backend/connections/to-backend-get-connection-sample';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
@@ -60,17 +61,18 @@ export class GetConnectionSampleTool {
       });
     }
 
-    let result = await this.getConnectionSampleService.getConnectionSample({
-      userId: user.userId,
-      projectId: item.projectId,
-      envId: item.envId,
-      connectionId: item.connectionId,
-      schemaName: item.schemaName,
-      tableName: item.tableName,
-      columnName: item.columnName,
-      offset: item.offset
-    });
+    let payload: ToBackendGetConnectionSampleResponsePayload =
+      await this.getConnectionSampleService.getConnectionSample({
+        userId: user.userId,
+        projectId: item.projectId,
+        envId: item.envId,
+        connectionId: item.connectionId,
+        schemaName: item.schemaName,
+        tableName: item.tableName,
+        columnName: item.columnName,
+        offset: item.offset
+      });
 
-    return result;
+    return payload;
   }
 }

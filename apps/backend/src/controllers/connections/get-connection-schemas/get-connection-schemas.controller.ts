@@ -26,19 +26,15 @@ export class GetConnectionSchemasController {
 
     let { projectId, envId, repoId, branchId, isRefresh } = reqValid.payload;
 
-    let result = await this.getConnectionSchemasService.getConnectionSchemas({
-      userId: user.userId,
-      projectId: projectId,
-      envId: envId,
-      repoId: repoId,
-      branchId: branchId,
-      isRefresh: isRefresh
-    });
-
-    let payload: ToBackendGetConnectionSchemasResponsePayload = {
-      userMember: result.userMember,
-      combinedSchemaItems: result.combinedSchemaItems
-    };
+    let payload: ToBackendGetConnectionSchemasResponsePayload =
+      await this.getConnectionSchemasService.getConnectionSchemas({
+        userId: user.userId,
+        projectId: projectId,
+        envId: envId,
+        repoId: repoId,
+        branchId: branchId,
+        isRefresh: isRefresh
+      });
 
     return payload;
   }

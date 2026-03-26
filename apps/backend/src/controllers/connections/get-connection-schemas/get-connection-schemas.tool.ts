@@ -9,6 +9,7 @@ import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { zCombinedSchemaItem } from '#common/zod/z-connection-schemas/z-combined-schema';
+import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
@@ -77,8 +78,8 @@ export class GetConnectionSchemasTool {
       isRefresh: item.isRefresh !== false
     });
 
-    return {
-      combinedSchemaItems: result.combinedSchemaItems
-    };
+    return processGetConnectionSchemasPayload({
+      payload: result
+    });
   }
 }

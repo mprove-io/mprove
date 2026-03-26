@@ -11,7 +11,10 @@ import { CommitCommand } from './commands/custom/commit/commit';
 import { CreateBranchCommand } from './commands/custom/create-branch/create-branch';
 import { DeleteBranchCommand } from './commands/custom/delete-branch/delete-branch';
 import { GetBranchesCommand } from './commands/custom/get-branches/get-branches';
+import { GetModelCommand } from './commands/custom/get-model/get-model';
 import { GetQueryCommand } from './commands/custom/get-query/get-query';
+import { GetSampleCommand } from './commands/custom/get-sample/get-sample';
+import { GetSchemasCommand } from './commands/custom/get-schemas/get-schemas';
 import { GetStateCommand } from './commands/custom/get-state/get-state';
 import { MergeCommand } from './commands/custom/merge/merge';
 import { PullCommand } from './commands/custom/pull/pull';
@@ -41,7 +44,10 @@ let appCommands = [
   CreateBranchCommand,
   DeleteBranchCommand,
   GetBranchesCommand,
+  GetModelCommand,
   GetQueryCommand,
+  GetSampleCommand,
+  GetSchemasCommand,
   GetStateCommand,
   MergeCommand,
   PullCommand,
