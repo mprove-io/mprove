@@ -4,6 +4,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined';
+import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
 import {
   ToBackendMergeRepoRequestPayload,
   ToBackendMergeRepoResponse
@@ -117,7 +118,9 @@ export class MergeCommand extends CustomCommand {
     }
 
     if (this.getErrors === true) {
-      log.validationErrors = mergeRepoResp.payload.struct.errors;
+      log.validationErrors = mapBmlErrorsToMproveValidationErrors({
+        errors: mergeRepoResp.payload.struct.errors
+      });
     }
 
     log.url = builderUrl;

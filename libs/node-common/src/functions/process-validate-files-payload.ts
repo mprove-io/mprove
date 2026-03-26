@@ -1,4 +1,5 @@
 import { getBuilderUrl } from '#common/functions/get-builder-url';
+import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
 import type { ToBackendValidateFilesResponsePayload } from '#common/interfaces/to-backend/files/to-backend-validate-files';
 
 export function processValidateFilesPayload(item: {
@@ -13,10 +14,9 @@ export function processValidateFilesPayload(item: {
   return {
     needValidate: payload.needValidate,
     validationErrorsTotal: payload.struct.errors.length,
-    validationErrors: payload.struct.errors.map(e => ({
-      title: e.title,
-      message: e.message
-    })),
+    validationErrors: mapBmlErrorsToMproveValidationErrors({
+      errors: payload.struct.errors
+    }),
     repo: {
       orgId: payload.repo.orgId,
       projectId: payload.repo.projectId,

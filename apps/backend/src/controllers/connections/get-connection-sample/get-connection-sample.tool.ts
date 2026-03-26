@@ -18,7 +18,7 @@ export class GetConnectionSampleTool {
   ) {}
 
   @Tool({
-    name: 'get-connection-sample',
+    name: 'get-sample',
     description:
       'Fetch sample data rows from a database table or column for a project connection',
     parameters: z.object({

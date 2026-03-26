@@ -19,7 +19,7 @@ export class GetConnectionSchemasTool {
   ) {}
 
   @Tool({
-    name: 'get-connection-schemas',
+    name: 'get-schemas',
     description:
       'Fetch database schemas (tables, columns, relationships, indexes) for project connections',
     parameters: z.object({

@@ -6,9 +6,9 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
+import { MproveValidationError } from '#common/interfaces/backend/state/mprove-validation-error';
 import { StateChartItem } from '#common/interfaces/backend/state/state-chart-item';
 import { StateDashboardItem } from '#common/interfaces/backend/state/state-dashboard-item';
-import { StateErrorItem } from '#common/interfaces/backend/state/state-error-item';
 import { StateMetricItem } from '#common/interfaces/backend/state/state-metric-item';
 import { StateModelItem } from '#common/interfaces/backend/state/state-model-item';
 import { StateReportItem } from '#common/interfaces/backend/state/state-report-item';
@@ -89,8 +89,8 @@ export class ToBackendGetStateResponsePayload {
   builderUrl: string;
 
   @ValidateNested()
-  @Type(() => StateErrorItem)
-  validationErrors: StateErrorItem[];
+  @Type(() => MproveValidationError)
+  validationErrors: MproveValidationError[];
 
   @ValidateNested()
   @Type(() => StateModelItem)

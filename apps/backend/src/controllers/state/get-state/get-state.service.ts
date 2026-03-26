@@ -26,6 +26,7 @@ import { getChartUrl } from '#common/functions/get-chart-url';
 import { getDashboardUrl } from '#common/functions/get-dashboard-url';
 import { getModelUrl } from '#common/functions/get-model-url';
 import { getReportUrl } from '#common/functions/get-report-url';
+import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
 import type { ToBackendGetStateResponsePayload } from '#common/interfaces/to-backend/state/to-backend-get-state';
 import type {
   ToDiskGetCatalogNodesRequest,
@@ -286,10 +287,9 @@ export class GetStateService {
       builderUrl: builderUrl,
       validationErrors:
         getErrors === true
-          ? struct.errors.map(e => ({
-              title: e.title,
-              message: e.message
-            }))
+          ? mapBmlErrorsToMproveValidationErrors({
+              errors: struct.errors
+            })
           : [],
       modelItems:
         getModels === true

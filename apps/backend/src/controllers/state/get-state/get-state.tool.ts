@@ -9,9 +9,9 @@ import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
+import { zMproveValidationError } from '#common/zod/z-state/z-mprove-validation-error';
 import { zStateChartItem } from '#common/zod/z-state/z-state-chart-item';
 import { zStateDashboardItem } from '#common/zod/z-state/z-state-dashboard-item';
-import { zStateErrorItem } from '#common/zod/z-state/z-state-error-item';
 import { zStateMetricItem } from '#common/zod/z-state/z-state-metric-item';
 import { zStateModelItem } from '#common/zod/z-state/z-state-model-item';
 import { zStateRepo } from '#common/zod/z-state/z-state-repo';
@@ -53,7 +53,7 @@ export class GetStateTool {
       dashboardsTotal: z.number(),
       reportsTotal: z.number(),
       builderUrl: z.string(),
-      validationErrors: z.array(zStateErrorItem),
+      validationErrors: z.array(zMproveValidationError),
       modelItems: z.array(zStateModelItem),
       chartItems: z.array(zStateChartItem),
       dashboardItems: z.array(zStateDashboardItem),

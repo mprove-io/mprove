@@ -14,6 +14,7 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
+import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
 import { sleep } from '#common/functions/sleep';
 import { DiskSyncFile } from '#common/interfaces/disk/disk-sync-file';
 import { McliSyncConfig } from '#common/interfaces/mcli/mcli-sync-config';
@@ -264,7 +265,9 @@ export class SyncCommand extends CustomCommand {
     }
 
     if (this.getErrors === true) {
-      log.validationErrors = syncRepoResp.payload.struct.errors;
+      log.validationErrors = mapBmlErrorsToMproveValidationErrors({
+        errors: syncRepoResp.payload.struct.errors
+      });
     }
 
     if (this.debug === true) {

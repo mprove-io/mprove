@@ -8,6 +8,7 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined';
+import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
 import {
   ToBackendPullRepoRequestPayload,
   ToBackendPullRepoResponse
@@ -135,7 +136,9 @@ export class PullCommand extends CustomCommand {
     }
 
     if (this.getErrors === true) {
-      log.validationErrors = pullRepoResp.payload.struct.errors;
+      log.validationErrors = mapBmlErrorsToMproveValidationErrors({
+        errors: pullRepoResp.payload.struct.errors
+      });
     }
 
     log.url = builderUrl;

@@ -11,6 +11,7 @@ import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
+import { zMproveValidationError } from '#common/zod/z-state/z-mprove-validation-error';
 import { zValidateFilesRepo } from '#common/zod/z-validate-files/z-validate-files-repo';
 import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload';
 
@@ -24,7 +25,7 @@ export class ValidateFilesTool {
   ) {}
 
   @Tool({
-    name: 'validate-files',
+    name: 'validate',
     description:
       'Validate (rebuild) Mprove files for a project branch and environment',
     parameters: z.object({
@@ -36,12 +37,7 @@ export class ValidateFilesTool {
     outputSchema: z.object({
       needValidate: z.boolean(),
       validationErrorsTotal: z.number(),
-      validationErrors: z.array(
-        z.object({
-          title: z.string(),
-          message: z.string()
-        })
-      ),
+      validationErrors: z.array(zMproveValidationError),
       repo: zValidateFilesRepo,
       url: z.string()
     })
