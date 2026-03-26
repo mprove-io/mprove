@@ -97,6 +97,7 @@ import { PushRepoController } from './controllers/repos/push-repo/push-repo.cont
 import { RevertRepoToLastCommitController } from './controllers/repos/revert-repo-to-last-commit/revert-repo-to-last-commit.controller';
 import { RevertRepoToRemoteController } from './controllers/repos/revert-repo-to-remote/revert-repo-to-remote.controller';
 import { SyncRepoController } from './controllers/repos/sync-repo/sync-repo.controller';
+import { RunController } from './controllers/run/run/run.controller';
 import { ArchiveSessionController } from './controllers/sessions/archive-session/archive-session.controller';
 import { CreateEditorSessionController } from './controllers/sessions/create-editor-session/create-editor-session.controller';
 import { CreateExplorerSessionController } from './controllers/sessions/create-explorer-session/create-explorer-session.controller';
@@ -247,6 +248,8 @@ export const appControllers = [
   SpecialRebuildStructsController,
 
   GetQueryInfoController,
+
+  RunController,
 
   GetStateController,
 

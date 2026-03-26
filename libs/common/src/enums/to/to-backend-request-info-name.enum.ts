@@ -91,6 +91,8 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendGetQueryInfo = 'api/ToBackendGetQueryInfo',
   //
+  ToBackendRun = 'api/ToBackendRun',
+  //
   ToBackendGetState = 'api/ToBackendGetState',
   //
   ToBackendGetStruct = 'api/ToBackendGetStruct',

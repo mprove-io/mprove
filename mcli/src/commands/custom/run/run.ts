@@ -7,61 +7,20 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { getChartUrl } from '#common/functions/get-chart-url';
-import { getDashboardUrl } from '#common/functions/get-dashboard-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { sleep } from '#common/functions/sleep';
-import { Query } from '#common/interfaces/blockml/query';
+import type { Query } from '#common/interfaces/blockml/query';
+import type { RunChart } from '#common/interfaces/to-backend/run/run-chart';
+import type { RunDashboard } from '#common/interfaces/to-backend/run/run-dashboard';
 import {
-  ToBackendGetChartsRequestPayload,
-  ToBackendGetChartsResponse
-} from '#common/interfaces/to-backend/charts/to-backend-get-charts';
-import {
-  ToBackendGetDashboardsRequestPayload,
-  ToBackendGetDashboardsResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
-import {
-  ToBackendGetProjectRequestPayload,
-  ToBackendGetProjectResponse
-} from '#common/interfaces/to-backend/projects/to-backend-get-project';
-import {
-  ToBackendGetQueriesRequestPayload,
-  ToBackendGetQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-get-queries';
-import {
-  ToBackendRunQueriesRequestPayload,
-  ToBackendRunQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
-import {
-  ToBackendGetRepoRequestPayload,
-  ToBackendGetRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
+  ToBackendRunRequestPayload,
+  ToBackendRunResponse
+} from '#common/interfaces/to-backend/run/to-backend-run';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
-import { queriesToStats } from '#mcli/functions/get-query-stats';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
-
-interface McliChartPart {
-  title: string;
-  chartId: string;
-  url: string;
-  query: Query;
-}
-
-interface McliTilePart {
-  title: string;
-  query: Query;
-}
-
-interface McliDashboardPart {
-  title: string;
-  dashboardId: string;
-  url: string;
-  tiles: McliTilePart[];
-}
 
 export class RunCommand extends CustomCommand {
   static paths = [['run']];
@@ -220,319 +179,33 @@ export class RunCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getProjectReqPayload: ToBackendGetProjectRequestPayload = {
-      projectId: this.projectId
-    };
-
-    let getProjectResp = await mreq<ToBackendGetProjectResponse>({
-      apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProject,
-      payload: getProjectReqPayload,
-      host: this.context.config.mproveCliHost
-    });
-
-    let getRepoReqPayload: ToBackendGetRepoRequestPayload = {
+    let runReqPayload: ToBackendRunRequestPayload = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
       envId: this.env,
-      isFetch: true
+      concurrency: this.concurrency,
+      wait: this.wait,
+      sleep: this.sleep,
+      dashboardIds: this.dashboardIds,
+      chartIds: this.chartIds,
+      noDashboards: this.noDashboards,
+      noCharts: this.noCharts
     };
 
-    let getRepoResp = await mreq<ToBackendGetRepoResponse>({
+    let runResp = await mreq<ToBackendRunResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
-      payload: getRepoReqPayload,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRun,
+      payload: runReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let mconfigParts: {
-      mconfigId: string;
-      queryId: string;
-    }[] = [];
+    let p = runResp.payload;
 
-    let chartParts: McliChartPart[] = [];
-
-    if (this.noCharts === false) {
-      let getChartsReqPayload: ToBackendGetChartsRequestPayload = {
-        projectId: this.projectId,
-        repoId: repoId,
-        branchId: this.branch,
-        envId: this.env
-      };
-
-      let getChartsResp = await mreq<ToBackendGetChartsResponse>({
-        apiKey: apiKey,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetCharts,
-        payload: getChartsReqPayload,
-        host: this.context.config.mproveCliHost
-      });
-
-      let chartIds = this.chartIds?.split(',');
-
-      if (isDefined(chartIds)) {
-        chartIds.forEach(chartId => {
-          if (
-            getChartsResp.payload.charts
-              .map(chart => chart.chartId)
-              .indexOf(chartId) < 0
-          ) {
-            let serverError = new ServerError({
-              message: ErEnum.MCLI_CHART_NOT_FOUND,
-              displayData: { id: chartId },
-              originalError: null
-            });
-            throw serverError;
-          }
-        });
-      }
-
-      chartParts = getChartsResp.payload.charts
-        .filter(
-          chartPart =>
-            isUndefined(chartIds) || chartIds.indexOf(chartPart.chartId) > -1
-        )
-        .map(x => {
-          let url = getChartUrl({
-            host: this.context.config.mproveCliHost,
-            orgId: getProjectResp.payload.project.orgId,
-            projectId: this.projectId,
-            repoId: getRepoResp.payload.repo.repoId,
-            branch: this.branch,
-            env: this.env,
-            modelId: x.modelId,
-            chartId: x.chartId,
-            timezone: getRepoResp.payload.struct.mproveConfig.defaultTimezone
-          });
-
-          let chartPart: McliChartPart = {
-            title: x.title,
-            chartId: x.chartId,
-            url: url,
-            query: { queryId: x.tiles[0].queryId } as Query
-          };
-
-          mconfigParts.push({
-            mconfigId: x.tiles[0].mconfigId,
-            queryId: x.tiles[0].queryId
-          });
-
-          return chartPart;
-        });
-    }
-
-    let dashboardParts: McliDashboardPart[] = [];
-
-    if (this.noDashboards === false) {
-      let getDashboardsReqPayload: ToBackendGetDashboardsRequestPayload = {
-        projectId: this.projectId,
-        repoId: repoId,
-        branchId: this.branch,
-        envId: this.env
-      };
-
-      let getDashboardsResp = await mreq<ToBackendGetDashboardsResponse>({
-        apiKey: apiKey,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
-        payload: getDashboardsReqPayload,
-        host: this.context.config.mproveCliHost
-      });
-
-      let dashboardIds = this.dashboardIds?.split(',');
-
-      if (isDefined(dashboardIds)) {
-        dashboardIds.forEach(dashboardId => {
-          if (
-            getDashboardsResp.payload.dashboardParts
-              .map(dashboard => dashboard.dashboardId)
-              .indexOf(dashboardId) < 0
-          ) {
-            let serverError = new ServerError({
-              message: ErEnum.MCLI_DASHBOARD_NOT_FOUND,
-              displayData: { id: dashboardId },
-              originalError: null
-            });
-            throw serverError;
-          }
-        });
-      }
-
-      dashboardParts = getDashboardsResp.payload.dashboardParts
-        .filter(
-          dashboard =>
-            isUndefined(dashboardIds) ||
-            dashboardIds.indexOf(dashboard.dashboardId) > -1
-        )
-        .map(dashboard => {
-          let tileParts: McliTilePart[] = [];
-
-          dashboard.tiles.forEach(tile => {
-            let tilePart: McliTilePart = {
-              title: tile.title,
-              query: {
-                queryId: tile.queryId
-              } as Query
-            };
-
-            tileParts.push(tilePart);
-            mconfigParts.push({
-              mconfigId: tile.mconfigId,
-              queryId: tile.queryId
-            });
-          });
-
-          let url = getDashboardUrl({
-            host: this.context.config.mproveCliHost,
-            orgId: getProjectResp.payload.project.orgId,
-            projectId: this.projectId,
-            repoId: getRepoResp.payload.repo.repoId,
-            branch: this.branch,
-            env: this.env,
-            dashboardId: dashboard.dashboardId,
-            timezone: getRepoResp.payload.struct.mproveConfig.defaultTimezone
-          });
-
-          let dashboardPart: McliDashboardPart = {
-            title: dashboard.title,
-            dashboardId: dashboard.dashboardId,
-            url: url,
-            tiles: tileParts
-          };
-
-          return dashboardPart;
-        });
-    }
-
-    //
-    let getQueriesReqPayloadStart: ToBackendGetQueriesRequestPayload = {
-      projectId: this.projectId,
-      repoId: repoId,
-      branchId: this.branch,
-      envId: this.env,
-      mconfigIds: mconfigParts.map(x => x.mconfigId),
-      skipData: true
-    };
-
-    let getQueriesRespStart = await mreq<ToBackendGetQueriesResponse>({
-      apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQueries,
-      payload: getQueriesReqPayloadStart,
-      host: this.context.config.mproveCliHost
-    });
-
-    let queriesStart = getQueriesRespStart.payload.queries;
-    //
-
-    let runQueriesReqPayload: ToBackendRunQueriesRequestPayload = {
-      projectId: this.projectId,
-      repoId: repoId,
-      branchId: this.branch,
-      envId: this.env,
-      mconfigIds: mconfigParts.map(x => x.mconfigId),
-      poolSize: this.concurrency
-    };
-
-    let runQueriesResp = await mreq<ToBackendRunQueriesResponse>({
-      apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-      payload: runQueriesReqPayload,
-      host: this.context.config.mproveCliHost
-    });
-
-    if (this.noCharts === false && isUndefined(this.concurrency)) {
-      chartParts.forEach(v => {
-        let query = runQueriesResp.payload.runningQueries.find(
-          q => q.queryId === v.query.queryId
-        );
-        v.query = query;
-      });
-    }
-
-    if (this.noDashboards === false && isUndefined(this.concurrency)) {
-      dashboardParts.forEach(dashboardPart => {
-        dashboardPart.tiles.forEach(tilePart => {
-          let query = runQueriesResp.payload.runningQueries.find(
-            q => q.queryId === tilePart.query.queryId
-          );
-          tilePart.query.status = query.status;
-        });
-      });
-    }
-
-    let mconfigPartsToGet = [...mconfigParts];
-
-    let waitQueries: Query[] = [];
-
-    if (this.wait === true) {
-      this.sleep = isDefined(this.sleep) ? this.sleep : 3;
-
-      await sleep(this.sleep * 1000);
-
-      while (mconfigPartsToGet.length > 0) {
-        let getQueriesReqPayload: ToBackendGetQueriesRequestPayload = {
-          projectId: this.projectId,
-          repoId: repoId,
-          branchId: this.branch,
-          envId: this.env,
-          mconfigIds: mconfigPartsToGet.map(x => x.mconfigId),
-          skipData: true
-        };
-
-        let getQueriesResp = await mreq<ToBackendGetQueriesResponse>({
-          apiKey: apiKey,
-          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQueries,
-          payload: getQueriesReqPayload,
-          host: this.context.config.mproveCliHost
-        });
-
-        getQueriesResp.payload.queries.forEach(query => {
-          let queryStart = queriesStart.find(y => y.queryId === query.queryId);
-
-          if (
-            query.status !== QueryStatusEnum.Running &&
-            query.serverTs > queryStart.serverTs
-          ) {
-            waitQueries.push(query);
-
-            if (this.noCharts === false) {
-              chartParts
-                .filter(chartPart => chartPart.query.queryId === query.queryId)
-                .forEach(x => (x.query = query));
-            }
-
-            if (this.noDashboards === false) {
-              dashboardParts.forEach(dp => {
-                dp.tiles
-                  .filter(tilePart => tilePart.query.queryId === query.queryId)
-                  .forEach(x => (x.query = query));
-              });
-            }
-
-            mconfigPartsToGet = mconfigPartsToGet.filter(
-              x => x.queryId !== query.queryId
-            );
-          }
-        });
-
-        if (mconfigPartsToGet.length > 0) {
-          await sleep(this.sleep * 1000);
-        }
-      }
-    }
-
-    let queriesStats = queriesToStats({
-      queries:
-        this.wait === true
-          ? waitQueries
-          : runQueriesResp.payload.runningQueries,
-      started:
-        this.wait === true ? 0 : runQueriesResp.payload.startedQueryIds.length
-    });
-
-    let errorCharts: McliChartPart[] =
-      queriesStats.error === 0
+    let errorCharts: RunChart[] =
+      p.queriesStats.error === 0
         ? []
-        : chartParts
+        : p.charts
             .filter(x => x.query.status === QueryStatusEnum.Error)
             .map(v => ({
               title: v.title,
@@ -545,10 +218,10 @@ export class RunCommand extends CustomCommand {
               } as Query
             }));
 
-    let errorDashboards: McliDashboardPart[] =
-      queriesStats.error === 0
+    let errorDashboards: RunDashboard[] =
+      p.queriesStats.error === 0
         ? []
-        : dashboardParts
+        : p.dashboards
             .filter(
               x =>
                 x.tiles.filter(y => y.query.status === QueryStatusEnum.Error)
@@ -573,16 +246,16 @@ export class RunCommand extends CustomCommand {
     let log: any = {};
 
     if (this.getDashboards === true) {
-      log.dashboards = dashboardParts;
+      log.dashboards = p.dashboards;
     }
 
     if (this.getCharts === true) {
-      log.charts = chartParts;
+      log.charts = p.charts;
     }
 
     log.errorCharts = errorCharts;
     log.errorDashboards = errorDashboards;
-    log.queriesStats = queriesStats;
+    log.queriesStats = p.queriesStats;
 
     logToConsoleMcli({
       log: log,

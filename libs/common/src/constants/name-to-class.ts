@@ -99,6 +99,7 @@ import { ToBackendPushRepoRequest } from '#common/interfaces/to-backend/repos/to
 import { ToBackendRevertRepoToLastCommitRequest } from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-last-commit';
 import { ToBackendRevertRepoToRemoteRequest } from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-remote';
 import { ToBackendSyncRepoRequest } from '#common/interfaces/to-backend/repos/to-backend-sync-repo';
+import { ToBackendRunRequest } from '#common/interfaces/to-backend/run/to-backend-run';
 import { ToBackendArchiveSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-archive-session';
 import { ToBackendCreateEditorSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-editor-session';
 import { ToBackendCreateExplorerSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-create-explorer-session';
@@ -286,6 +287,8 @@ export const nameToClass = {
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo]:
     ToBackendGetQueryInfoRequest,
+  //
+  [ToBackendRequestInfoNameEnum.ToBackendRun]: ToBackendRunRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetState]: ToBackendGetStateRequest,
   //

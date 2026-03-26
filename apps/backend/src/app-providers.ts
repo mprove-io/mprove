@@ -9,8 +9,11 @@ import { GetConnectionSchemasService } from './controllers/connections/get-conne
 import { GetConnectionSchemasTool } from './controllers/connections/get-connection-schemas/get-connection-schemas.tool';
 import { ValidateFilesService } from './controllers/files/validate-files/validate-files.service';
 import { ValidateFilesTool } from './controllers/files/validate-files/validate-files.tool';
+import { RunQueriesService } from './controllers/queries/run-queries/run-queries.service';
 import { GetQueryInfoService } from './controllers/query-info/get-query-info/get-query-info.service';
 import { GetQueryInfoTool } from './controllers/query-info/get-query-info/get-query-info.tool';
+import { RunService } from './controllers/run/run/run.service';
+import { RunTool } from './controllers/run/run/run.tool';
 import { GetStateService } from './controllers/state/get-state/get-state.service';
 import { GetStateTool } from './controllers/state/get-state/get-state.tool';
 import { ApiKeyService } from './services/api-key.service';
@@ -159,13 +162,16 @@ export const appProviders = [
   QueryInfoChartService,
   QueryInfoDashboardService,
   QueryInfoReportService,
+  RunQueriesService,
   GetQueryInfoService,
+  RunService,
   GetStateService,
   //
   GetConnectionSampleTool,
   GetConnectionSchemasTool,
   ValidateFilesTool,
   GetQueryInfoTool,
+  RunTool,
   GetStateTool,
   {
     provide: TasksService,
