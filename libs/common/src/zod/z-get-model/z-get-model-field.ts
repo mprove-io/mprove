@@ -1,0 +1,30 @@
+import { z } from 'zod';
+
+export let zGetModelField = z.object({
+  id: z.string(),
+  malloyFieldName: z.string().optional(),
+  malloyFieldPath: z.array(z.string()).optional(),
+  malloyTags: z.array(z.any()).optional(),
+  mproveTags: z.array(z.any()).optional(),
+  hidden: z.boolean(),
+  required: z.boolean(),
+  maxFractions: z.number().optional(),
+  label: z.string(),
+  fieldClass: z.string(),
+  result: z.string().optional(),
+  suggestModelDimension: z.string().optional(),
+  sqlName: z.string(),
+  topId: z.string(),
+  topLabel: z.string(),
+  description: z.string().optional(),
+  type: z.string().optional(),
+  groupId: z.string().optional(),
+  groupLabel: z.string().optional(),
+  groupDescription: z.string().optional(),
+  formatNumber: z.string().optional(),
+  currencyPrefix: z.string().optional(),
+  currencySuffix: z.string().optional(),
+  buildMetrics: z.boolean().optional(),
+  timeframe: z.string().optional(),
+  detail: z.string().optional()
+});

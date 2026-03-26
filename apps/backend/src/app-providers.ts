@@ -9,6 +9,8 @@ import { GetConnectionSchemasService } from './controllers/connections/get-conne
 import { GetConnectionSchemasTool } from './controllers/connections/get-connection-schemas/get-connection-schemas.tool';
 import { ValidateFilesService } from './controllers/files/validate-files/validate-files.service';
 import { ValidateFilesTool } from './controllers/files/validate-files/validate-files.tool';
+import { GetModelService } from './controllers/models/get-model/get-model.service';
+import { GetModelTool } from './controllers/models/get-model/get-model.tool';
 import { RunQueriesService } from './controllers/queries/run-queries/run-queries.service';
 import { GetQueryInfoService } from './controllers/query-info/get-query-info/get-query-info.service';
 import { GetQueryInfoTool } from './controllers/query-info/get-query-info/get-query-info.tool';
@@ -164,6 +166,7 @@ export const appProviders = [
   QueryInfoReportService,
   RunQueriesService,
   GetQueryInfoService,
+  GetModelService,
   RunService,
   GetStateService,
   //
@@ -171,6 +174,7 @@ export const appProviders = [
   GetConnectionSchemasTool,
   ValidateFilesTool,
   GetQueryInfoTool,
+  GetModelTool,
   RunTool,
   GetStateTool,
   {
