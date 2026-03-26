@@ -94,23 +94,23 @@ export class ToBackendGetStateResponsePayload {
 
   @ValidateNested()
   @Type(() => StateModelItem)
-  models: StateModelItem[];
+  modelItems: StateModelItem[];
 
   @ValidateNested()
   @Type(() => StateChartItem)
-  charts: StateChartItem[];
+  chartItems: StateChartItem[];
 
   @ValidateNested()
   @Type(() => StateDashboardItem)
-  dashboards: StateDashboardItem[];
+  dashboardItems: StateDashboardItem[];
 
   @ValidateNested()
   @Type(() => StateReportItem)
-  reports: StateReportItem[];
+  reportItems: StateReportItem[];
 
   @ValidateNested()
   @Type(() => StateMetricItem)
-  metrics: StateMetricItem[];
+  metricItems: StateMetricItem[];
 
   @IsOptional()
   @ValidateNested()

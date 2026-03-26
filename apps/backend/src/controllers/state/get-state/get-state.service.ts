@@ -291,7 +291,7 @@ export class GetStateService {
               message: e.message
             }))
           : [],
-      models:
+      modelItems:
         getModels === true
           ? modelsWithAccess.map(m => ({
               modelId: m.modelId,
@@ -307,7 +307,7 @@ export class GetStateService {
               })
             }))
           : [],
-      charts:
+      chartItems:
         getCharts === true
           ? chartsGrantedAccess.map(c => ({
               chartId: c.chartId,
@@ -324,7 +324,7 @@ export class GetStateService {
               })
             }))
           : [],
-      dashboards:
+      dashboardItems:
         getDashboards === true
           ? dashboardParts.map(d => ({
               dashboardId: d.dashboardId,
@@ -340,7 +340,7 @@ export class GetStateService {
               })
             }))
           : [],
-      reports:
+      reportItems:
         getReports === true
           ? reports.map(r => ({
               reportId: r.reportId,
@@ -358,7 +358,7 @@ export class GetStateService {
               })
             }))
           : [],
-      metrics:
+      metricItems:
         getMetrics === true
           ? struct.metrics.map(x => ({
               metricId: x.metricId,

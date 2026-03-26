@@ -54,11 +54,11 @@ export class GetStateTool {
       reportsTotal: z.number(),
       builderUrl: z.string(),
       validationErrors: z.array(zStateErrorItem),
-      models: z.array(zStateModelItem),
-      charts: z.array(zStateChartItem),
-      dashboards: z.array(zStateDashboardItem),
-      reports: z.array(zStateReportItem),
-      metrics: z.array(zStateMetricItem),
+      modelItems: z.array(zStateModelItem),
+      chartItems: z.array(zStateChartItem),
+      dashboardItems: z.array(zStateDashboardItem),
+      reportItems: z.array(zStateReportItem),
+      metricItems: z.array(zStateMetricItem),
       repo: zStateRepo.optional()
     })
   })
