@@ -9,10 +9,10 @@ import {
 } from 'class-validator';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { IsTimezone } from '#common/functions/is-timezone';
+import { QueryInfoChart } from '#common/interfaces/backend/query-info/query-info-chart';
+import { QueryInfoDashboard } from '#common/interfaces/backend/query-info/query-info-dashboard';
+import { QueryInfoReport } from '#common/interfaces/backend/query-info/query-info-report';
 import { MyResponse } from '#common/interfaces/to/my-response';
-import { QueryInfoChart } from '#common/interfaces/to-backend/query-info/query-info-chart';
-import { QueryInfoDashboard } from '#common/interfaces/to-backend/query-info/query-info-dashboard';
-import { QueryInfoReport } from '#common/interfaces/to-backend/query-info/query-info-report';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendGetQueryInfoRequestPayload {

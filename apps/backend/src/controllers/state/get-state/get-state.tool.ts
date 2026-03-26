@@ -10,12 +10,12 @@ import { ToolService } from '#backend/services/tool.service';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import { ToBackendGetStateResponsePayload } from '#common/interfaces/to-backend/state/to-backend-get-state';
-import { zStateChartItem } from '#common/zod/z-state-chart-item';
-import { zStateDashboardItem } from '#common/zod/z-state-dashboard-item';
-import { zStateErrorItem } from '#common/zod/z-state-error-item';
-import { zStateMetricItem } from '#common/zod/z-state-metric-item';
-import { zStateModelItem } from '#common/zod/z-state-model-item';
-import { zStateReportItem } from '#common/zod/z-state-report-item';
+import { zStateChartItem } from '#common/zod/z-state/z-state-chart-item';
+import { zStateDashboardItem } from '#common/zod/z-state/z-state-dashboard-item';
+import { zStateErrorItem } from '#common/zod/z-state/z-state-error-item';
+import { zStateMetricItem } from '#common/zod/z-state/z-state-metric-item';
+import { zStateModelItem } from '#common/zod/z-state/z-state-model-item';
+import { zStateReportItem } from '#common/zod/z-state/z-state-report-item';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

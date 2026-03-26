@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import {
+  zRawSchemaForeignKey,
+  zRawSchemaIndex
+} from '#common/zod/z-connection-schemas/z-raw-schema';
 
 export let zColumnCombinedReference = z.object({
   relationshipType: z

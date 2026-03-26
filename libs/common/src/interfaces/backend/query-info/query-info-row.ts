@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
+import { QueryInfoQuery } from '#common/interfaces/backend/query-info/query-info-query';
 import { Parameter } from '#common/interfaces/blockml/parameter';
-import { QueryInfoQuery } from '#common/interfaces/to-backend/query-info/query-info-query';
 
 export class QueryInfoRow {
   @IsString()

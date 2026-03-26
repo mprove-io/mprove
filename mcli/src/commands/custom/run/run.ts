@@ -9,9 +9,9 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
+import type { RunChart } from '#common/interfaces/backend/run/run-chart';
+import type { RunDashboard } from '#common/interfaces/backend/run/run-dashboard';
 import type { Query } from '#common/interfaces/blockml/query';
-import type { RunChart } from '#common/interfaces/to-backend/run/run-chart';
-import type { RunDashboard } from '#common/interfaces/to-backend/run/run-dashboard';
 import {
   ToBackendRunRequestPayload,
   ToBackendRunResponse

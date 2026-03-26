@@ -17,12 +17,12 @@ import { getChartUrl } from '#common/functions/get-chart-url';
 import { getDashboardUrl } from '#common/functions/get-dashboard-url';
 import { getReportUrl } from '#common/functions/get-report-url';
 import { isDefined } from '#common/functions/is-defined';
-import type { QueryInfoChart } from '#common/interfaces/to-backend/query-info/query-info-chart';
-import type { QueryInfoDashboard } from '#common/interfaces/to-backend/query-info/query-info-dashboard';
-import type { QueryInfoQuery } from '#common/interfaces/to-backend/query-info/query-info-query';
-import type { QueryInfoReport } from '#common/interfaces/to-backend/query-info/query-info-report';
-import type { QueryInfoRow } from '#common/interfaces/to-backend/query-info/query-info-row';
-import type { QueryInfoTile } from '#common/interfaces/to-backend/query-info/query-info-tile';
+import type { QueryInfoChart } from '#common/interfaces/backend/query-info/query-info-chart';
+import type { QueryInfoDashboard } from '#common/interfaces/backend/query-info/query-info-dashboard';
+import type { QueryInfoQuery } from '#common/interfaces/backend/query-info/query-info-query';
+import type { QueryInfoReport } from '#common/interfaces/backend/query-info/query-info-report';
+import type { QueryInfoRow } from '#common/interfaces/backend/query-info/query-info-row';
+import type { QueryInfoTile } from '#common/interfaces/backend/query-info/query-info-tile';
 import type { ToBackendGetQueryInfoResponsePayload } from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
 
 @Injectable()

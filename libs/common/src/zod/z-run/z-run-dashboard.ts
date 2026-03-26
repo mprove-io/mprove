@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zRunTile } from '#common/zod/z-run-tile';
+import { zRunTile } from '#common/zod/z-run/z-run-tile';
 
 export let zRunDashboard = z.object({
   title: z.string(),

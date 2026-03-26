@@ -8,10 +8,10 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
+import { RunChart } from '#common/interfaces/backend/run/run-chart';
+import { RunDashboard } from '#common/interfaces/backend/run/run-dashboard';
 import { McliQueriesStats } from '#common/interfaces/mcli/mcli-queries-stats';
 import { MyResponse } from '#common/interfaces/to/my-response';
-import { RunChart } from '#common/interfaces/to-backend/run/run-chart';
-import { RunDashboard } from '#common/interfaces/to-backend/run/run-dashboard';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendRunRequestPayload {

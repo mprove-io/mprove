@@ -10,9 +10,9 @@ import { ToolService } from '#backend/services/tool.service';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import { ToBackendGetQueryInfoResponsePayload } from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
-import { zQueryInfoChart } from '#common/zod/z-query-info-chart';
-import { zQueryInfoDashboard } from '#common/zod/z-query-info-dashboard';
-import { zQueryInfoReport } from '#common/zod/z-query-info-report';
+import { zQueryInfoChart } from '#common/zod/z-query-info/z-query-info-chart';
+import { zQueryInfoDashboard } from '#common/zod/z-query-info/z-query-info-dashboard';
+import { zQueryInfoReport } from '#common/zod/z-query-info/z-query-info-report';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

@@ -10,9 +10,9 @@ import { ToolService } from '#backend/services/tool.service';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendRunResponsePayload } from '#common/interfaces/to-backend/run/to-backend-run';
-import { zRunChart } from '#common/zod/z-run-chart';
-import { zRunDashboard } from '#common/zod/z-run-dashboard';
-import { zRunQueriesStats } from '#common/zod/z-run-queries-stats';
+import { zRunChart } from '#common/zod/z-run/z-run-chart';
+import { zRunDashboard } from '#common/zod/z-run/z-run-dashboard';
+import { zRunQueriesStats } from '#common/zod/z-run/z-run-queries-stats';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

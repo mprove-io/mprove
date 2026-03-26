@@ -26,11 +26,11 @@ import { getDashboardUrl } from '#common/functions/get-dashboard-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { sleep } from '#common/functions/sleep';
+import type { RunChart } from '#common/interfaces/backend/run/run-chart';
+import type { RunDashboard } from '#common/interfaces/backend/run/run-dashboard';
+import type { RunTile } from '#common/interfaces/backend/run/run-tile';
 import type { Query } from '#common/interfaces/blockml/query';
 import type { McliQueriesStats } from '#common/interfaces/mcli/mcli-queries-stats';
-import type { RunChart } from '#common/interfaces/to-backend/run/run-chart';
-import type { RunDashboard } from '#common/interfaces/to-backend/run/run-dashboard';
-import type { RunTile } from '#common/interfaces/to-backend/run/run-tile';
 import type { ToBackendRunResponsePayload } from '#common/interfaces/to-backend/run/to-backend-run';
 import { ServerError } from '#common/models/server-error';
 
