@@ -14,6 +14,7 @@ import { zStateDashboardItem } from '#common/zod/z-state/z-state-dashboard-item'
 import { zStateErrorItem } from '#common/zod/z-state/z-state-error-item';
 import { zStateMetricItem } from '#common/zod/z-state/z-state-metric-item';
 import { zStateModelItem } from '#common/zod/z-state/z-state-model-item';
+import { zStateRepo } from '#common/zod/z-state/z-state-repo';
 import { zStateReportItem } from '#common/zod/z-state/z-state-report-item';
 
 @Injectable()
@@ -33,18 +34,32 @@ export class GetStateTool {
       repoId: z.string(),
       branchId: z.string(),
       envId: z.string(),
-      isFetch: z.boolean()
+      isFetch: z.boolean(),
+      getErrors: z.boolean(),
+      getRepo: z.boolean(),
+      getRepoNodes: z.boolean(),
+      getModels: z.boolean(),
+      getDashboards: z.boolean(),
+      getCharts: z.boolean(),
+      getMetrics: z.boolean(),
+      getReports: z.boolean()
     }),
     outputSchema: z.object({
       needValidate: z.boolean(),
-      errorsTotal: z.number(),
-      errors: z.array(zStateErrorItem),
+      structId: z.string(),
+      validationErrorsTotal: z.number(),
+      modelsTotal: z.number(),
+      chartsTotal: z.number(),
+      dashboardsTotal: z.number(),
+      reportsTotal: z.number(),
+      builderUrl: z.string(),
+      validationErrors: z.array(zStateErrorItem),
       models: z.array(zStateModelItem),
       charts: z.array(zStateChartItem),
       dashboards: z.array(zStateDashboardItem),
       reports: z.array(zStateReportItem),
       metrics: z.array(zStateMetricItem),
-      builderUrl: z.string()
+      repo: zStateRepo.optional()
     })
   })
   async getState(
@@ -54,6 +69,14 @@ export class GetStateTool {
       branchId: string;
       envId: string;
       isFetch: boolean;
+      getErrors: boolean;
+      getRepo: boolean;
+      getRepoNodes: boolean;
+      getModels: boolean;
+      getDashboards: boolean;
+      getCharts: boolean;
+      getMetrics: boolean;
+      getReports: boolean;
     },
     context: Context,
     request: Request
@@ -95,7 +118,15 @@ export class GetStateTool {
       repoId: item.repoId,
       branchId: item.branchId,
       envId: item.envId,
-      isFetch: item.isFetch
+      isFetch: item.isFetch,
+      getErrors: item.getErrors,
+      getRepo: item.getRepo,
+      getRepoNodes: item.getRepoNodes,
+      getModels: item.getModels,
+      getDashboards: item.getDashboards,
+      getCharts: item.getCharts,
+      getMetrics: item.getMetrics,
+      getReports: item.getReports
     });
   }
 }

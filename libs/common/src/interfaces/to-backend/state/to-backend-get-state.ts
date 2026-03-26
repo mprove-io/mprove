@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { StateChartItem } from '#common/interfaces/backend/state/state-chart-item';
 import { StateDashboardItem } from '#common/interfaces/backend/state/state-dashboard-item';
 import { StateErrorItem } from '#common/interfaces/backend/state/state-error-item';
@@ -25,6 +31,30 @@ export class ToBackendGetStateRequestPayload {
 
   @IsBoolean()
   isFetch: boolean;
+
+  @IsBoolean()
+  getErrors: boolean;
+
+  @IsBoolean()
+  getRepo: boolean;
+
+  @IsBoolean()
+  getRepoNodes: boolean;
+
+  @IsBoolean()
+  getModels: boolean;
+
+  @IsBoolean()
+  getDashboards: boolean;
+
+  @IsBoolean()
+  getCharts: boolean;
+
+  @IsBoolean()
+  getMetrics: boolean;
+
+  @IsBoolean()
+  getReports: boolean;
 }
 
 export class ToBackendGetStateRequest extends ToBackendRequest {
@@ -40,43 +70,39 @@ export class ToBackendGetStateResponsePayload {
   @IsString()
   structId: string;
 
-  @IsString()
-  defaultTimezone: string;
-
-  @ValidateNested()
-  @Type(() => Repo)
-  repo: Repo;
-
   @IsInt()
-  errorsTotal: number;
-
-  @ValidateNested()
-  @Type(() => StateErrorItem)
-  errors: StateErrorItem[];
+  validationErrorsTotal: number;
 
   @IsInt()
   modelsTotal: number;
+
+  @IsInt()
+  chartsTotal: number;
+
+  @IsInt()
+  dashboardsTotal: number;
+
+  @IsInt()
+  reportsTotal: number;
+
+  @IsString()
+  builderUrl: string;
+
+  @ValidateNested()
+  @Type(() => StateErrorItem)
+  validationErrors: StateErrorItem[];
 
   @ValidateNested()
   @Type(() => StateModelItem)
   models: StateModelItem[];
 
-  @IsInt()
-  chartsTotal: number;
-
   @ValidateNested()
   @Type(() => StateChartItem)
   charts: StateChartItem[];
 
-  @IsInt()
-  dashboardsTotal: number;
-
   @ValidateNested()
   @Type(() => StateDashboardItem)
   dashboards: StateDashboardItem[];
-
-  @IsInt()
-  reportsTotal: number;
 
   @ValidateNested()
   @Type(() => StateReportItem)
@@ -86,8 +112,10 @@ export class ToBackendGetStateResponsePayload {
   @Type(() => StateMetricItem)
   metrics: StateMetricItem[];
 
-  @IsString()
-  builderUrl: string;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => Repo)
+  repo?: Repo;
 }
 
 export class ToBackendGetStateResponse extends MyResponse {

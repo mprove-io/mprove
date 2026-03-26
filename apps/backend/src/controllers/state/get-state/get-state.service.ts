@@ -57,8 +57,32 @@ export class GetStateService {
     branchId: string;
     envId: string;
     isFetch: boolean;
+    getErrors: boolean;
+    getRepo: boolean;
+    getRepoNodes: boolean;
+    getModels: boolean;
+    getDashboards: boolean;
+    getCharts: boolean;
+    getMetrics: boolean;
+    getReports: boolean;
   }): Promise<ToBackendGetStateResponsePayload> {
-    let { traceId, user, projectId, repoId, branchId, envId, isFetch } = item;
+    let {
+      traceId,
+      user,
+      projectId,
+      repoId,
+      branchId,
+      envId,
+      isFetch,
+      getErrors,
+      getRepo,
+      getRepoNodes,
+      getModels,
+      getDashboards,
+      getCharts,
+      getMetrics,
+      getReports
+    } = item;
 
     let userId = user.userId;
 
@@ -96,33 +120,37 @@ export class GetStateService {
       envId: envId
     });
 
-    // get repo (disk RPC)
-    let baseProject = this.tabService.projectTabToBaseProject({
-      project: project
-    });
+    // get repo (disk RPC) - skip if not needed
+    let diskResponse: ToDiskGetCatalogNodesResponse;
 
-    let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
-        traceId: traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        isFetch: isFetch
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskGetCatalogNodesResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskGetCatalogNodesRequest,
-        checkIsOk: true
+    if (getRepo === true) {
+      let baseProject = this.tabService.projectTabToBaseProject({
+        project: project
       });
+
+      let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
+        info: {
+          name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
+          traceId: traceId
+        },
+        payload: {
+          orgId: project.orgId,
+          baseProject: baseProject,
+          repoId: repoId,
+          branch: branchId,
+          isFetch: isFetch
+        }
+      };
+
+      diskResponse =
+        await this.rpcService.sendToDisk<ToDiskGetCatalogNodesResponse>({
+          orgId: project.orgId,
+          projectId: projectId,
+          repoId: repoId,
+          message: toDiskGetCatalogNodesRequest,
+          checkIsOk: true
+        });
+    }
 
     // get struct
     let struct = await this.structsService.getStructCheckExists({
@@ -223,11 +251,6 @@ export class GetStateService {
     let orgId = project.orgId;
     let defaultTimezone = struct.mproveConfig.defaultTimezone;
 
-    let repo = diskResponse.payload.repo;
-
-    delete repo.changesToCommit;
-    delete repo.changesToPush;
-
     let builderUrl = getBuilderUrl({
       host: hostUrl,
       orgId: orgId,
@@ -237,80 +260,112 @@ export class GetStateService {
       env: envId
     });
 
+    let repo: ToBackendGetStateResponsePayload['repo'];
+
+    if (getRepo === true && diskResponse) {
+      let diskRepo = diskResponse.payload.repo;
+
+      delete diskRepo.changesToCommit;
+      delete diskRepo.changesToPush;
+
+      if (getRepoNodes === false) {
+        delete diskRepo.nodes;
+      }
+
+      repo = diskRepo;
+    }
+
     let payload: ToBackendGetStateResponsePayload = {
       needValidate: bridge.needValidate,
       structId: struct.structId,
-      defaultTimezone: defaultTimezone,
-      repo: repo,
-      errorsTotal: struct.errors.length,
-      errors: struct.errors.map(e => ({
-        title: e.title,
-        message: e.message
-      })),
+      validationErrorsTotal: struct.errors.length,
       modelsTotal: modelsWithAccess.length,
-      models: modelsWithAccess.map(m => ({
-        modelId: m.modelId,
-        url: getModelUrl({
-          host: hostUrl,
-          orgId: orgId,
-          projectId: projectId,
-          repoId: repoId,
-          branch: branchId,
-          env: envId,
-          modelId: m.modelId,
-          timezone: defaultTimezone
-        })
-      })),
       chartsTotal: chartsGrantedAccess.length,
-      charts: chartsGrantedAccess.map(c => ({
-        chartId: c.chartId,
-        url: getChartUrl({
-          host: hostUrl,
-          orgId: orgId,
-          projectId: projectId,
-          repoId: repoId,
-          branch: branchId,
-          env: envId,
-          modelId: c.modelId,
-          chartId: c.chartId,
-          timezone: defaultTimezone
-        })
-      })),
       dashboardsTotal: dashboardParts.length,
-      dashboards: dashboardParts.map(d => ({
-        dashboardId: d.dashboardId,
-        url: getDashboardUrl({
-          host: hostUrl,
-          orgId: orgId,
-          projectId: projectId,
-          repoId: repoId,
-          branch: branchId,
-          env: envId,
-          dashboardId: d.dashboardId,
-          timezone: defaultTimezone
-        })
-      })),
       reportsTotal: reports.length,
-      reports: reports.map(r => ({
-        reportId: r.reportId,
-        url: getReportUrl({
-          host: hostUrl,
-          orgId: orgId,
-          projectId: projectId,
-          repoId: repoId,
-          branch: branchId,
-          env: envId,
-          reportId: r.reportId,
-          timezone: defaultTimezone,
-          timeSpec: 'days',
-          timeRange: 'f`last 5 days`'
-        })
-      })),
-      metrics: struct.metrics.map(x => ({
-        metricId: x.metricId,
-        name: `${x.partNodeLabel} ${x.partFieldLabel} by ${x.timeNodeLabel} ${x.timeFieldLabel} - ${x.topLabel}`
-      })),
-      builderUrl: builderUrl
+      builderUrl: builderUrl,
+      validationErrors:
+        getErrors === true
+          ? struct.errors.map(e => ({
+              title: e.title,
+              message: e.message
+            }))
+          : [],
+      models:
+        getModels === true
+          ? modelsWithAccess.map(m => ({
+              modelId: m.modelId,
+              url: getModelUrl({
+                host: hostUrl,
+                orgId: orgId,
+                projectId: projectId,
+                repoId: repoId,
+                branch: branchId,
+                env: envId,
+                modelId: m.modelId,
+                timezone: defaultTimezone
+              })
+            }))
+          : [],
+      charts:
+        getCharts === true
+          ? chartsGrantedAccess.map(c => ({
+              chartId: c.chartId,
+              url: getChartUrl({
+                host: hostUrl,
+                orgId: orgId,
+                projectId: projectId,
+                repoId: repoId,
+                branch: branchId,
+                env: envId,
+                modelId: c.modelId,
+                chartId: c.chartId,
+                timezone: defaultTimezone
+              })
+            }))
+          : [],
+      dashboards:
+        getDashboards === true
+          ? dashboardParts.map(d => ({
+              dashboardId: d.dashboardId,
+              url: getDashboardUrl({
+                host: hostUrl,
+                orgId: orgId,
+                projectId: projectId,
+                repoId: repoId,
+                branch: branchId,
+                env: envId,
+                dashboardId: d.dashboardId,
+                timezone: defaultTimezone
+              })
+            }))
+          : [],
+      reports:
+        getReports === true
+          ? reports.map(r => ({
+              reportId: r.reportId,
+              url: getReportUrl({
+                host: hostUrl,
+                orgId: orgId,
+                projectId: projectId,
+                repoId: repoId,
+                branch: branchId,
+                env: envId,
+                reportId: r.reportId,
+                timezone: defaultTimezone,
+                timeSpec: 'days',
+                timeRange: 'f`last 5 days`'
+              })
+            }))
+          : [],
+      metrics:
+        getMetrics === true
+          ? struct.metrics.map(x => ({
+              metricId: x.metricId,
+              name: `${x.partNodeLabel} ${x.partFieldLabel} by ${x.timeNodeLabel} ${x.timeFieldLabel} - ${x.topLabel}`
+            }))
+          : [],
+      repo: repo
     };
 
     return payload;

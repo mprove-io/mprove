@@ -124,7 +124,15 @@ export class GetStateCommand extends CustomCommand {
       repoId: repoId,
       branchId: this.branch,
       envId: this.env,
-      isFetch: true
+      isFetch: true,
+      getErrors: this.getErrors,
+      getRepo: this.getRepo,
+      getRepoNodes: this.getRepoNodes,
+      getModels: this.getModels,
+      getDashboards: this.getDashboards,
+      getCharts: this.getCharts,
+      getMetrics: this.getMetrics,
+      getReports: this.getReports
     };
 
     let getStateResp = await mreq<ToBackendGetStateResponse>({
@@ -134,55 +142,8 @@ export class GetStateCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let p = getStateResp.payload;
-
-    let log: any = {
-      validationErrorsTotal: p.errorsTotal,
-      modelsTotal: p.modelsTotal,
-      dashboardsTotal: p.dashboardsTotal,
-      chartsTotal: p.chartsTotal,
-      needValidate: p.needValidate,
-      structId: p.structId
-    };
-
-    if (this.getCharts === true) {
-      log.charts = p.charts;
-    }
-
-    if (this.getMetrics === true) {
-      log.metrics = p.metrics;
-    }
-
-    if (this.getReports === true) {
-      log.reports = p.reports;
-    }
-
-    if (this.getDashboards === true) {
-      log.dashboards = p.dashboards;
-    }
-
-    if (this.getModels === true) {
-      log.models = p.models;
-    }
-
-    if (this.getRepo === true) {
-      let repo = p.repo;
-
-      if (this.getRepoNodes === false) {
-        delete repo.nodes;
-      }
-
-      log.repo = repo;
-    }
-
-    if (this.getErrors === true) {
-      log.validationErrors = p.errors;
-    }
-
-    log.builderUrl = p.builderUrl;
-
     logToConsoleMcli({
-      log: log,
+      log: getStateResp.payload,
       logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json

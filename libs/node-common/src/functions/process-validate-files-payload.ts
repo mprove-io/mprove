@@ -12,8 +12,8 @@ export function processValidateFilesPayload(item: {
 
   return {
     needValidate: payload.needValidate,
-    errorsTotal: payload.struct.errors.length,
-    errors: payload.struct.errors.map(e => ({
+    validationErrorsTotal: payload.struct.errors.length,
+    validationErrors: payload.struct.errors.map(e => ({
       title: e.title,
       message: e.message
     })),

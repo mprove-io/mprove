@@ -23,7 +23,21 @@ export class GetStateController {
     let reqValid: ToBackendGetStateRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, envId, isFetch } = reqValid.payload;
+    let {
+      projectId,
+      repoId,
+      branchId,
+      envId,
+      isFetch,
+      getErrors,
+      getRepo,
+      getRepoNodes,
+      getModels,
+      getDashboards,
+      getCharts,
+      getMetrics,
+      getReports
+    } = reqValid.payload;
 
     let payload: ToBackendGetStateResponsePayload =
       await this.getStateService.getState({
@@ -33,7 +47,15 @@ export class GetStateController {
         repoId: repoId,
         branchId: branchId,
         envId: envId,
-        isFetch: isFetch
+        isFetch: isFetch,
+        getErrors: getErrors,
+        getRepo: getRepo,
+        getRepoNodes: getRepoNodes,
+        getModels: getModels,
+        getDashboards: getDashboards,
+        getCharts: getCharts,
+        getMetrics: getMetrics,
+        getReports: getReports
       });
 
     return payload;

@@ -35,8 +35,8 @@ export class ValidateFilesTool {
     }),
     outputSchema: z.object({
       needValidate: z.boolean(),
-      errorsTotal: z.number(),
-      errors: z.array(
+      validationErrorsTotal: z.number(),
+      validationErrors: z.array(
         z.object({
           title: z.string(),
           message: z.string()

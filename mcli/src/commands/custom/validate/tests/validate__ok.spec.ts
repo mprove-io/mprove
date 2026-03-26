@@ -126,9 +126,9 @@ test('1', async () => {
 
     assert.equal(code === 0, true, `code === 0`);
     assert.equal(
-      isDefined(parsedOutput?.errorsTotal),
+      isDefined(parsedOutput?.validationErrorsTotal),
       true,
-      `isDefined(parsedOutput?.errorsTotal)`
+      `isDefined(parsedOutput?.validationErrorsTotal)`
     );
 
     isPass = true;
