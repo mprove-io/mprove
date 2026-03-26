@@ -6,7 +6,6 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined';
 import {
   ToBackendValidateFilesRequestPayload,
@@ -17,6 +16,7 @@ import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
+import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload';
 
 export class ValidateCommand extends CustomCommand {
   static paths = [['validate']];
@@ -53,14 +53,6 @@ export class ValidateCommand extends CustomCommand {
   env = Option.String('--env', {
     required: true,
     description: '(required) Environment'
-  });
-
-  getErrors = Option.Boolean('--get-errors', false, {
-    description: '(default false), show validation errors in output'
-  });
-
-  getRepo = Option.Boolean('--get-repo', false, {
-    description: '(default false), show repo in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -109,35 +101,13 @@ export class ValidateCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let builderUrl = getBuilderUrl({
+    let log = processValidateFilesPayload({
+      payload: validateFilesResp.payload,
       host: this.context.config.mproveCliHost,
-      orgId: validateFilesResp.payload.repo.orgId,
       projectId: this.projectId,
-      repoId: validateFilesResp.payload.repo.repoId,
       branch: this.branch,
       env: this.env
     });
-
-    let log: any = {
-      message: `Validation completed`,
-      validationErrorsTotal: validateFilesResp.payload.struct.errors.length
-    };
-
-    if (this.getRepo === true) {
-      let repo = validateFilesResp.payload.repo;
-
-      delete repo.nodes;
-      delete repo.changesToCommit;
-      delete repo.changesToPush;
-
-      log.repo = repo;
-    }
-
-    if (this.getErrors === true) {
-      log.validationErrors = validateFilesResp.payload.struct.errors;
-    }
-
-    log.url = builderUrl;
 
     logToConsoleMcli({
       log: log,

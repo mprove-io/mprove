@@ -32,8 +32,6 @@ test('1', async () => {
 --repo dev \
 --branch ${defaultBranch} \
 --env prod \
---get-errors \
---get-repo \
 --json`;
 
     let userId = makeId();
@@ -128,9 +126,9 @@ test('1', async () => {
 
     assert.equal(code === 0, true, `code === 0`);
     assert.equal(
-      isDefined(parsedOutput?.validationErrorsTotal),
+      isDefined(parsedOutput?.errorsTotal),
       true,
-      `isDefined(parsedOutput?.validationErrorsTotal)`
+      `isDefined(parsedOutput?.errorsTotal)`
     );
 
     isPass = true;
