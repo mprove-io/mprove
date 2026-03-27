@@ -202,11 +202,29 @@ export class ToBackendSeedRecordsRequestPayloadSessionsItem {
   @IsString()
   apiKey: string;
 
+  @IsString()
+  apiKeyPrefix: string;
+
+  @IsString()
+  apiKeySecretHash: string;
+
+  @IsString()
+  apiKeySalt: string;
+
   @IsEnum(SessionStatusEnum)
   status: SessionStatusEnum;
 
   @IsEnum(SessionTypeEnum)
   type: SessionTypeEnum;
+
+  @IsString()
+  repoId: string;
+
+  @IsString()
+  branchId: string;
+
+  @IsString()
+  envId: string;
 }
 
 export class ToBackendSeedRecordsRequestPayload {

@@ -49,11 +49,13 @@
     "@malloydata/malloy-interfaces": "0.0.365",
     "@malloydata/malloy-query-builder": "0.0.365",
     "p-iteration": "1.1.8",
+    "bcrypt": "5.1.1",
     "rxjs": "7.8.1",
     "winston": "3.14.2"
   },
   "devDependencies": {
     "@swc/helpers": "0.5.18",
+    "@types/bcrypt": "3.0.1",
     "@types/fs-extra": "9.0.13",
     "@types/js-yaml": "4.0.9"
   }

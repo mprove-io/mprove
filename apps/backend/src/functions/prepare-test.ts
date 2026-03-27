@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 
 const { json, urlencoded } = bodyParser;
 
-import { AppModule } from '#backend/app.module';
+import { AppModule, mcpModuleOptions } from '#backend/app.module';
 import { BackendConfig } from '#backend/config/backend-config';
 import { getConfig } from '#backend/config/get.config';
 import { Prep } from '#backend/interfaces/prep';
@@ -53,6 +53,8 @@ export async function prepareTest(item: {
   })
     .overrideProvider(ConfigService)
     .useValue({ get: (key: any) => mockConfig[key as keyof BackendConfig] })
+    .overrideProvider('MCP_OPTIONS')
+    .useValue({ ...mcpModuleOptions, logging: false })
     .overrideProvider(EmailService)
     .useValue({
       sendVerification: async () => {},

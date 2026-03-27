@@ -69,6 +69,14 @@ export const THROTTLE_TELEMETRY = {
   }
 };
 
+export const MCP_TOOL_RUN = 'run';
+export const MCP_TOOL_GET_STATE = 'get-state';
+export const MCP_TOOL_GET_MODEL = 'get-model';
+export const MCP_TOOL_GET_QUERY = 'get-query';
+export const MCP_TOOL_VALIDATE = 'validate';
+export const MCP_TOOL_GET_SAMPLE = 'get-sample';
+export const MCP_TOOL_GET_SCHEMAS = 'get-schemas';
+
 export const DEFAULT_QUERY_SIZE_LIMIT = 1;
 
 export const UNK_ST_ID = 'unk';

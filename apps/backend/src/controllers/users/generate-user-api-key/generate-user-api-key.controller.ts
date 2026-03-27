@@ -17,18 +17,18 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { ApiKeyService } from '#backend/services/api-key.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendGenerateUserApiKeyResponsePayload } from '#common/interfaces/to-backend/users/to-backend-generate-user-api-key';
+import { buildUserApiKey } from '#node-common/functions/api-key/build-user-api-key';
+import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GenerateUserApiKeyController {
   constructor(
-    private apiKeyService: ApiKeyService,
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -48,7 +48,7 @@ export class GenerateUserApiKeyController {
 
     await retry(
       async () => {
-        apiKeyParts = await this.apiKeyService.generateApiKeyParts();
+        apiKeyParts = await generateApiKeyParts();
 
         user.apiKeyPrefix = apiKeyParts.prefix;
         user.apiKeySecretHash = apiKeyParts.secretHash;
@@ -67,7 +67,7 @@ export class GenerateUserApiKeyController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let apiKey = this.apiKeyService.buildUserApiKey({
+    let apiKey = buildUserApiKey({
       prefix: apiKeyParts.prefix,
       userId: user.userId,
       secret: apiKeyParts.secret

@@ -21,7 +21,6 @@ import { RunDashboardService } from './controllers/run/run/run-dashboard.service
 import { RunReportService } from './controllers/run/run/run-report.service';
 import { GetStateService } from './controllers/state/get-state/get-state.service';
 import { GetStateTool } from './controllers/state/get-state/get-state.tool';
-import { ApiKeyService } from './services/api-key.service';
 import { BlockmlService } from './services/blockml.service';
 import { AvatarsService } from './services/db/avatars.service';
 import { BranchesService } from './services/db/branches.service';
@@ -158,7 +157,6 @@ export const appProviders = [
   EditorConnectionsService,
   EditorModelsService,
   ExplorerStreamService,
-  ApiKeyService,
   //
   ToolService,
   GetConnectionSampleService,

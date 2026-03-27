@@ -7,6 +7,7 @@ import { GetModelService } from '#backend/controllers/models/get-model/get-model
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
+import { MCP_TOOL_GET_MODEL } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { zGetModel } from '#common/zod/z-get-model/z-get-model';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload';
@@ -20,7 +21,7 @@ export class GetModelTool {
   ) {}
 
   @Tool({
-    name: 'get-model',
+    name: MCP_TOOL_GET_MODEL,
     description:
       'Get a model definition including its fields, dimensions, measures, and access info',
     parameters: z.object({

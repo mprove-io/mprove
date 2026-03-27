@@ -6,7 +6,6 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
-import { ApiKeyService } from '#backend/services/api-key.service';
 import { TabService } from '#backend/services/tab.service';
 import { MCLI_SESSION_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-session-allowed-request-names';
 import { MCLI_USER_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-user-allowed-request-names';
@@ -17,12 +16,13 @@ import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
+import { parseApiKey } from '#node-common/functions/api-key/parse-api-key';
+import { validateApiKeySecret } from '#node-common/functions/api-key/validate-api-key-secret';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
     private reflector: Reflector,
-    private apiKeyService: ApiKeyService,
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {
@@ -71,7 +71,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   async validateApiKey(request: any, fullKey: string): Promise<boolean> {
-    let parsed = this.apiKeyService.parseApiKey(fullKey);
+    let parsed = parseApiKey({ fullKey: fullKey });
 
     if (
       parsed.type !== ApiKeyTypeEnum.PK &&
@@ -103,10 +103,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         });
       }
 
-      let isValid = await this.apiKeyService.validateApiKeySecret({
+      let isValid = await validateApiKeySecret({
         secret: parsed.secret,
         storedHash: user.apiKeySecretHash,
-        salt: user.apiKeySalt
+        storedSalt: user.apiKeySalt
       });
 
       if (!isValid) {
@@ -162,10 +162,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         });
       }
 
-      let isValid = await this.apiKeyService.validateApiKeySecret({
+      let isValid = await validateApiKeySecret({
         secret: parsed.secret,
         storedHash: session.apiKeySecretHash,
-        salt: session.apiKeySalt
+        storedSalt: session.apiKeySalt
       });
 
       if (!isValid) {

@@ -1,26 +1,21 @@
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
-import { sendToBackend } from '#backend/functions/send-to-backend';
+import { sendToMcp } from '#backend/functions/send-to-mcp';
 import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
+import { MCP_TOOL_GET_STATE } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { makeSessionId } from '#common/functions/make-session-id';
-import {
-  ToBackendCommitRepoRequest,
-  ToBackendCommitRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
 import { buildSessionApiKey } from '#node-common/functions/api-key/build-session-api-key';
 import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 
-let testId = 'backend-jwt-auth-guard__session-key-request-not-allowed';
+let testId = 'backend-mcp__project-id-does-not-match-session';
 
 let traceId = testId;
 
@@ -39,7 +34,7 @@ let sessionId = makeSessionId();
 let prep: Prep;
 
 test('1', async t => {
-  let resp: ToBackendCommitRepoResponse;
+  let response: any;
 
   try {
     let apiKeyParts = await generateApiKeyParts();
@@ -61,23 +56,23 @@ test('1', async t => {
       seedRecordsPayload: {
         users: [
           {
-            userId,
-            email,
-            password,
+            userId: userId,
+            email: email,
+            password: password,
             isEmailVerified: true
           }
         ],
         orgs: [
           {
-            orgId,
+            orgId: orgId,
             name: orgName,
             ownerEmail: email
           }
         ],
         projects: [
           {
-            orgId,
-            projectId,
+            orgId: orgId,
+            projectId: projectId,
             name: projectName,
             remoteType: ProjectRemoteTypeEnum.Managed,
             defaultBranch: BRANCH_MAIN
@@ -86,8 +81,8 @@ test('1', async t => {
         members: [
           {
             memberId: userId,
-            email,
-            projectId,
+            email: email,
+            projectId: projectId,
             isAdmin: true,
             isEditor: true,
             isExplorer: true
@@ -112,25 +107,28 @@ test('1', async t => {
       }
     });
 
-    // not session-allowed
-    let commitReq: ToBackendCommitRepoRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        projectId: projectId,
-        repoId: sessionId,
-        branchId: BRANCH_MAIN,
-        commitMessage: 'test commit'
-      }
-    };
-
-    resp = await sendToBackend<ToBackendCommitRepoResponse>({
+    response = await sendToMcp({
       httpServer: prep.httpServer,
-      apiKey: sessionApiKey,
-      req: commitReq
+      method: 'tools/call',
+      params: {
+        name: MCP_TOOL_GET_STATE,
+        arguments: {
+          projectId: 'wrong-project-id',
+          repoId: sessionId,
+          branchId: BRANCH_MAIN,
+          envId: PROJECT_ENV_PROD,
+          isFetch: false,
+          getErrors: false,
+          getRepo: false,
+          getRepoNodes: false,
+          getModels: false,
+          getDashboards: false,
+          getCharts: false,
+          getMetrics: false,
+          getReports: false
+        }
+      },
+      apiKey: sessionApiKey
     });
 
     await prep.app.close();
@@ -143,9 +141,10 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.info.status, ResponseInfoStatusEnum.Error);
-  t.is(
-    resp.info.error.message,
-    ErEnum.BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED
-  );
+  t.is(response.status, 200);
+  t.is(response.body.result.isError, true);
+
+  let errorText = response.body.result.content[0].text;
+  let errorObj = JSON.parse(errorText);
+  t.is(errorObj.error, ErEnum.BACKEND_PROJECT_ID_DOES_NOT_MATCH_SESSION);
 });

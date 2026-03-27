@@ -7,6 +7,7 @@ import { GetQueryInfoService } from '#backend/controllers/query-info/get-query-i
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
+import { MCP_TOOL_GET_QUERY } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import { ToBackendGetQueryInfoResponsePayload } from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
@@ -23,7 +24,7 @@ export class GetQueryInfoTool {
   ) {}
 
   @Tool({
-    name: 'get-query',
+    name: MCP_TOOL_GET_QUERY,
     description:
       'Get query info for a chart, dashboard, or report. Returns query status, SQL, and data.',
     parameters: z.object({

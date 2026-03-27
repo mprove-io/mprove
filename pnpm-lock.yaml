@@ -1732,6 +1732,9 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: 1.38.0
         version: 1.38.0
+      bcrypt:
+        specifier: 5.1.1
+        version: 5.1.1(encoding@0.1.13)
       class-transformer-validator:
         specifier: 0.9.1
         version: 0.9.1(class-transformer@0.3.1)(class-validator@0.14.2)
@@ -1781,6 +1784,9 @@ importers:
       '@swc/helpers':
         specifier: 0.5.18
         version: 0.5.18
+      '@types/bcrypt':
+        specifier: 3.0.1
+        version: 3.0.1
       '@types/fs-extra':
         specifier: 9.0.13
         version: 9.0.13

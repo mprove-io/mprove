@@ -28,7 +28,6 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { ApiKeyService } from '#backend/services/api-key.service';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -61,6 +60,8 @@ import {
   ToDiskCreateDevRepoResponse
 } from '#common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
 import { ServerError } from '#common/models/server-error';
+import { buildSessionApiKey } from '#node-common/functions/api-key/build-session-api-key';
+import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 
 const { forEachSeries } = pIteration;
 
@@ -73,7 +74,6 @@ export class CreateEditorSessionController {
     private membersService: MembersService,
     private sessionsService: SessionsService,
     private editorStreamService: EditorStreamService,
-    private apiKeyService: ApiKeyService,
     private editorOpencodeService: EditorOpencodeService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
@@ -163,7 +163,7 @@ export class CreateEditorSessionController {
 
     await retry(
       async () => {
-        apiKeyParts = await this.apiKeyService.generateApiKeyParts();
+        apiKeyParts = await generateApiKeyParts();
 
         let sessionId = makeSessionId();
 
@@ -212,7 +212,7 @@ export class CreateEditorSessionController {
 
     // Phase 2: Activate session asynchronously (fire-and-forget)
 
-    let sessionApiKey = this.apiKeyService.buildSessionApiKey({
+    let sessionApiKey = buildSessionApiKey({
       prefix: apiKeyParts.prefix,
       sessionId: session.sessionId,
       secret: apiKeyParts.secret

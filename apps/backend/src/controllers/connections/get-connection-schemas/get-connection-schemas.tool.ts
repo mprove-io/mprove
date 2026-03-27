@@ -7,6 +7,7 @@ import { GetConnectionSchemasService } from '#backend/controllers/connections/ge
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
+import { MCP_TOOL_GET_SCHEMAS } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { zCombinedSchemaItem } from '#common/zod/z-connection-schemas/z-combined-schema';
 import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload';
@@ -20,7 +21,7 @@ export class GetConnectionSchemasTool {
   ) {}
 
   @Tool({
-    name: 'get-schemas',
+    name: MCP_TOOL_GET_SCHEMAS,
     description:
       'Fetch database schemas (tables, columns, relationships, indexes) for project connections',
     parameters: z.object({

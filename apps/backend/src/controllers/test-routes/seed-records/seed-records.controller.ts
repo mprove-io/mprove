@@ -37,7 +37,6 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now';
 import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { ApiKeyService } from '#backend/services/api-key.service';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -88,6 +87,7 @@ import {
   ToDiskSeedProjectRequest,
   ToDiskSeedProjectResponse
 } from '#common/interfaces/to-disk/08-seed/to-disk-seed-project';
+import { parseApiKey } from '#node-common/functions/api-key/parse-api-key';
 
 @SkipJwtCheck()
 @SkipThrottle()
@@ -95,7 +95,6 @@ import {
 @Controller()
 export class SeedRecordsController {
   constructor(
-    private apiKeyService: ApiKeyService,
     private tabService: TabService,
     private hashService: HashService,
     private branchesService: BranchesService,
@@ -170,7 +169,7 @@ export class SeedRecordsController {
           let apiKeySalt: string | undefined;
 
           if (isDefined(x.apiKey)) {
-            let parsed = this.apiKeyService.parseApiKey(x.apiKey);
+            let parsed = parseApiKey({ fullKey: x.apiKey });
             apiKeyPrefix = parsed.prefix;
             apiKeySalt = await bcrypt.genSalt();
             apiKeySecretHash = await bcrypt.hash(parsed.secret, apiKeySalt);
@@ -215,20 +214,16 @@ export class SeedRecordsController {
         1,
         payloadSessions,
         async (x: ToBackendSeedRecordsRequestPayloadSessionsItem) => {
-          let parsed = this.apiKeyService.parseApiKey(x.apiKey);
-          let apiKeySalt = await bcrypt.genSalt();
-          let apiKeySecretHash = await bcrypt.hash(parsed.secret, apiKeySalt);
-
           let newSession: SessionTab = {
             sessionId: x.sessionId,
             type: x.type,
-            repoId: x.sessionId,
-            branchId: x.sessionId,
+            repoId: x.repoId,
+            branchId: x.branchId,
             userId: x.userId,
             projectId: x.projectId,
-            apiKeyPrefix: parsed.prefix,
-            apiKeySecretHash: apiKeySecretHash,
-            apiKeySalt: apiKeySalt,
+            apiKeyPrefix: x.apiKeyPrefix,
+            apiKeySecretHash: x.apiKeySecretHash,
+            apiKeySalt: x.apiKeySalt,
             sandboxType: SandboxTypeEnum.E2B,
             provider: 'openai',
             model: undefined,
@@ -239,7 +234,7 @@ export class SeedRecordsController {
             archiveReason: undefined,
             pauseReason: undefined,
             initialBranch: BRANCH_MAIN,
-            envId: PROJECT_ENV_PROD,
+            envId: x.envId,
             initialCommit: undefined,
             sandboxId: undefined,
             sandboxBaseUrl: undefined,

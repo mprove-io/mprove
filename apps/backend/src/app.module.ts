@@ -14,7 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { seconds, ThrottlerModule } from '@nestjs/throttler';
-import { McpModule, McpTransportType } from '@rekog/mcp-nest';
+import { McpModule, type McpOptions, McpTransportType } from '@rekog/mcp-nest';
 import retry from 'async-retry';
 import { and, DefaultLogger, eq, isNotNull } from 'drizzle-orm';
 import {
@@ -153,14 +153,17 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
   }
 });
 
-let mcpModule = McpModule.forRoot({
+export let mcpModuleOptions: McpOptions = {
   name: 'mprove',
   version: backendPackageJson.version,
   transport: McpTransportType.STREAMABLE_HTTP,
   streamableHttp: {
+    enableJsonResponse: true,
     statelessMode: true
   }
-});
+};
+
+let mcpModule = McpModule.forRoot(mcpModuleOptions);
 
 @Module({
   imports: [

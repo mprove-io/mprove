@@ -7,6 +7,7 @@ import { RunService } from '#backend/controllers/run/run/run.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
+import { MCP_TOOL_RUN } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendRunResponsePayload } from '#common/interfaces/to-backend/run/to-backend-run';
@@ -24,7 +25,7 @@ export class RunTool {
   ) {}
 
   @Tool({
-    name: 'run',
+    name: MCP_TOOL_RUN,
     description:
       'Run dashboards, charts, and reports queries. Returns query statuses and statistics.',
     parameters: z.object({

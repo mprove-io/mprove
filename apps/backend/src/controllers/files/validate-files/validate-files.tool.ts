@@ -9,6 +9,7 @@ import { ValidateFilesService } from '#backend/controllers/files/validate-files/
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
+import { MCP_TOOL_VALIDATE } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import { zMproveValidationError } from '#common/zod/z-state/z-mprove-validation-error';
@@ -25,7 +26,7 @@ export class ValidateFilesTool {
   ) {}
 
   @Tool({
-    name: 'validate',
+    name: MCP_TOOL_VALIDATE,
     description:
       'Validate (rebuild) Mprove files for a project branch and environment',
     parameters: z.object({

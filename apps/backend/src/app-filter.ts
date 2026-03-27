@@ -36,11 +36,17 @@ export class AppFilter implements ExceptionFilter {
       const response = ctx.getResponse();
       const request = ctx.getRequest();
 
+      let e =
+        (exception as any).message === 'Unauthorized'
+          ? new ServerError({
+              message: ErEnum.BACKEND_UNAUTHORIZED,
+              originalError: exception
+            })
+          : exception;
+
       if (request?.url?.startsWith('/mcp')) {
         let errorMessage =
-          exception instanceof ServerError
-            ? String(exception.message)
-            : 'INTERNAL_ERROR';
+          e instanceof ServerError ? String(e.message) : 'INTERNAL_ERROR';
 
         response.status(400).json({
           jsonrpc: '2.0',
@@ -55,14 +61,6 @@ export class AppFilter implements ExceptionFilter {
         }
         return;
       }
-
-      let e =
-        (exception as any).message === 'Unauthorized'
-          ? new ServerError({
-              message: ErEnum.BACKEND_UNAUTHORIZED,
-              originalError: exception
-            })
-          : exception;
 
       let req: ToBackendRequest = request.body;
 
