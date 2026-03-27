@@ -22,6 +22,7 @@ export const MCLI_USER_ALLOWED_REQUEST_NAMES: ToBackendRequestInfoNameEnum[] = [
   ToBackendRequestInfoNameEnum.ToBackendPushRepo, // push
   ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit, // revert
   ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote, // revert
+  ToBackendRequestInfoNameEnum.ToBackendRun, // run
   ToBackendRequestInfoNameEnum.ToBackendRunQueries, // run
   ToBackendRequestInfoNameEnum.ToBackendSyncRepo, // sync
   ToBackendRequestInfoNameEnum.ToBackendValidateFiles // validate

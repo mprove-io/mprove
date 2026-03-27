@@ -120,6 +120,7 @@ export async function prepareSeed(item: {
       req: deleteRecordsRequest
     }).catch(e => {
       console.log(e);
+      throw e;
     });
   }
 
@@ -139,6 +140,7 @@ export async function prepareSeed(item: {
       req: seedRecordsRequest
     }).catch(e => {
       console.log(e);
+      throw e;
     });
   }
 
@@ -160,6 +162,7 @@ export async function prepareSeed(item: {
       req: loginUserRequest
     }).catch(e => {
       console.log(e);
+      throw e;
     })) as ToBackendLoginUserResponse;
   }
 
