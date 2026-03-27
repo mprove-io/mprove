@@ -6,11 +6,17 @@ import { RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
+import {
+  ToBackendGetConnectionSchemasRequestPayload,
+  ToBackendGetConnectionSchemasResponse
+} from '#common/interfaces/to-backend/connections/to-backend-get-connection-schemas';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
+import { mreq } from '#mcli/functions/mreq';
 import { prepareTest } from '#mcli/functions/prepare-test';
 import { CustomContext } from '#mcli/models/custom-command';
 import { GetSampleCommand } from '../get-sample';
@@ -79,6 +85,7 @@ test('1', async () => {
               orgId: orgId,
               projectId: projectId,
               name: projectName,
+              testProjectId: 't5-mcli',
               defaultBranch: defaultBranch,
               remoteType: ProjectRemoteTypeEnum.Managed,
               gitUrl: undefined,
@@ -119,6 +126,22 @@ test('1', async () => {
           ]
         },
         apiKey: apiKey
+      });
+
+      let repoId = apiKey.split('-')[2];
+
+      await mreq<ToBackendGetConnectionSchemasResponse>({
+        apiKey: apiKey,
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendGetConnectionSchemas,
+        payload: {
+          projectId: projectId,
+          envId: PROJECT_ENV_PROD,
+          repoId: repoId,
+          branchId: defaultBranch,
+          isRefresh: true
+        } as ToBackendGetConnectionSchemasRequestPayload,
+        host: config.mproveCliHost
       });
 
       context = mockContext as any;
