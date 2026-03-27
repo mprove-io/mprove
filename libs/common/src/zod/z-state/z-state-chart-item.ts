@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
 export let zStateChartItem = z.object({
-  chartId: z.string(),
-  url: z.string()
+  chartId: z.string().nullish(),
+  url: z.string().nullish()
 });

@@ -4,21 +4,21 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { zGetModelField } from '#common/zod/z-get-model/z-get-model-field';
 
 export let zGetModel = z.object({
-  structId: z.string(),
-  modelId: z.string(),
-  type: z.enum(ModelTypeEnum),
-  source: z.string().optional(),
-  connectionId: z.string(),
-  connectionType: z.enum(ConnectionTypeEnum),
-  filePath: z.string(),
-  fileText: z.string(),
-  storeContent: z.any(),
-  dateRangeIncludesRightSide: z.boolean(),
-  accessRoles: z.array(z.string()),
-  label: z.string(),
-  fields: z.array(zGetModelField),
-  nodes: z.array(z.any()),
-  malloyModelDef: z.any(),
-  serverTs: z.number(),
-  hasAccess: z.boolean()
+  structId: z.string().nullish(),
+  modelId: z.string().nullish(),
+  type: z.enum(ModelTypeEnum).nullish(),
+  source: z.string().nullish(),
+  connectionId: z.string().nullish(),
+  connectionType: z.enum(ConnectionTypeEnum).nullish(),
+  filePath: z.string().nullish(),
+  fileText: z.string().nullish(),
+  storeContent: z.any().nullish(),
+  dateRangeIncludesRightSide: z.boolean().nullish(),
+  accessRoles: z.array(z.string()).nullish(),
+  label: z.string().nullish(),
+  fields: z.array(zGetModelField).nullish(),
+  nodes: z.array(z.any()).nullish(),
+  malloyModelDef: z.any().nullish(),
+  serverTs: z.number().nullish(),
+  hasAccess: z.boolean().nullish()
 });

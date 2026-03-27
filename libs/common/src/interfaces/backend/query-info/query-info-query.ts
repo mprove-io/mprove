@@ -15,24 +15,31 @@ export class QueryInfoQuery {
   @IsEnum(QueryStatusEnum)
   status: QueryStatusEnum;
 
+  @IsOptional()
   @IsString()
   lastRunBy: string;
 
+  @IsOptional()
   @IsNumber()
   lastRunTs: number;
 
+  @IsOptional()
   @IsNumber()
   lastCancelTs: number;
 
+  @IsOptional()
   @IsNumber()
   lastCompleteTs: number;
 
+  @IsOptional()
   @IsNumber()
   lastCompleteDuration: number;
 
+  @IsOptional()
   @IsString()
   lastErrorMessage: string;
 
+  @IsOptional()
   @IsNumber()
   lastErrorTs: number;
 

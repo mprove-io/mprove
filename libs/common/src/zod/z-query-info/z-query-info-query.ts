@@ -3,18 +3,18 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 
 export let zQueryInfoQuery = z.object({
-  connectionId: z.string(),
-  connectionType: z.enum(ConnectionTypeEnum),
-  queryId: z.string(),
-  status: z.enum(QueryStatusEnum),
-  lastRunBy: z.string(),
-  lastRunTs: z.number(),
-  lastCancelTs: z.number(),
-  lastCompleteTs: z.number(),
-  lastCompleteDuration: z.number(),
-  lastErrorMessage: z.string(),
-  lastErrorTs: z.number(),
-  data: z.any().optional(),
-  malloy: z.string().optional(),
-  sql: z.string().optional()
+  connectionId: z.string().nullish(),
+  connectionType: z.enum(ConnectionTypeEnum).nullish(),
+  queryId: z.string().nullish(),
+  status: z.enum(QueryStatusEnum).nullish(),
+  lastRunBy: z.string().nullish(),
+  lastRunTs: z.number().nullish(),
+  lastCancelTs: z.number().nullish(),
+  lastCompleteTs: z.number().nullish(),
+  lastCompleteDuration: z.number().nullish(),
+  lastErrorMessage: z.string().nullish(),
+  lastErrorTs: z.number().nullish(),
+  data: z.any().nullish(),
+  malloy: z.string().nullish(),
+  sql: z.string().nullish()
 });
