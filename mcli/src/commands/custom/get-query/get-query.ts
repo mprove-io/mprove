@@ -25,16 +25,16 @@ export class GetQueryCommand extends CustomCommand {
     description: 'Get query',
     examples: [
       [
-        'Get query for Dev repo Chart',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --chart-id v1 --get-sql --get-data'
+        'Get Query for Chart',
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --chart-id v1 --get-malloy --get-sql --get-data'
       ],
       [
-        'Get query for Dev repo Dashboard',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --dashboard-id d1 --get-sql --get-data'
+        'Get Query for Dashboard',
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --dashboard-id d1 --get-malloy --get-sql --get-data'
       ],
       [
-        'Get query for Dev repo Report',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --report-id r1 --get-sql --get-data'
+        'Get Query for Report',
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --report-id r1 --get-malloy --get-sql --get-data'
       ]
     ]
   });
@@ -89,11 +89,11 @@ export class GetQueryCommand extends CustomCommand {
 
   timeSpec = Option.String('--detail', 'days', {
     description:
-      '(default "days") "timestamps" | "seconds" | "minutes" | "hours" | "days" | "weeks" | "months" | "quarters" | "years"'
+      '(default "days") for Report -  "timestamps" | "seconds" | "minutes" | "hours" | "days" | "weeks" | "months" | "quarters" | "years"'
   });
 
   timeRange = Option.String('--range', 'f`last 5 days`', {
-    description: '(default "f`last 5 days`") Ts Filter Expression'
+    description: '(default "f`last 5 days`") for Report - Ts Filter Expression'
   });
 
   getMalloy = Option.Boolean('--get-malloy', false, {
