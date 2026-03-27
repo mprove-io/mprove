@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { RunQuery } from '#common/interfaces/backend/run/run-query';
 
-export class RunTile {
+export class RunReportRow {
   @IsString()
   title: string;
 

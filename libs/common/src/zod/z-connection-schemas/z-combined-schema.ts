@@ -1,13 +1,12 @@
 import { z } from 'zod';
+import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import {
   zRawSchemaForeignKey,
   zRawSchemaIndex
 } from '#common/zod/z-connection-schemas/z-raw-schema';
 
 export let zColumnCombinedReference = z.object({
-  relationshipType: z
-    .enum(['one_to_one', 'one_to_many', 'many_to_one', 'many_to_many'])
-    .optional(),
+  relationshipType: z.enum(RelationshipTypeEnum).optional(),
   isForeignKey: z.boolean(),
   referencedSchemaName: z.string().optional(),
   referencedTableName: z.string(),

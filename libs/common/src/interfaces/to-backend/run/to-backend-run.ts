@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import { RunChart } from '#common/interfaces/backend/run/run-chart';
 import { RunDashboard } from '#common/interfaces/backend/run/run-dashboard';
+import { RunReport } from '#common/interfaces/backend/run/run-report';
 import { McliQueriesStats } from '#common/interfaces/mcli/mcli-queries-stats';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -58,6 +59,16 @@ export class ToBackendRunRequestPayload {
 
   @IsBoolean()
   getCharts: boolean;
+
+  @IsOptional()
+  @IsString()
+  reportIds?: string;
+
+  @IsBoolean()
+  noReports: boolean;
+
+  @IsBoolean()
+  getReports: boolean;
 }
 
 export class ToBackendRunRequest extends ToBackendRequest {
@@ -82,6 +93,14 @@ export class ToBackendRunResponsePayload {
   @ValidateNested()
   @Type(() => RunDashboard)
   errorDashboards: RunDashboard[];
+
+  @ValidateNested()
+  @Type(() => RunReport)
+  reports: RunReport[];
+
+  @ValidateNested()
+  @Type(() => RunReport)
+  errorReports: RunReport[];
 
   queriesStats: McliQueriesStats;
 }

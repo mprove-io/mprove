@@ -13,6 +13,7 @@ import type { ToBackendRunResponsePayload } from '#common/interfaces/to-backend/
 import { zRunChart } from '#common/zod/z-run/z-run-chart';
 import { zRunDashboard } from '#common/zod/z-run/z-run-dashboard';
 import { zRunQueriesStats } from '#common/zod/z-run/z-run-queries-stats';
+import { zRunReport } from '#common/zod/z-run/z-run-report';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
@@ -25,7 +26,7 @@ export class RunTool {
   @Tool({
     name: 'run',
     description:
-      'Run dashboards and charts queries. Returns query statuses and statistics.',
+      'Run dashboards, charts, and reports queries. Returns query statuses and statistics.',
     parameters: z.object({
       projectId: z.string(),
       repoId: z.string(),
@@ -39,13 +40,18 @@ export class RunTool {
       noDashboards: z.boolean(),
       noCharts: z.boolean(),
       getDashboards: z.boolean(),
-      getCharts: z.boolean()
+      getCharts: z.boolean(),
+      reportIds: z.string().optional(),
+      noReports: z.boolean(),
+      getReports: z.boolean()
     }),
     outputSchema: z.object({
       charts: z.array(zRunChart),
       dashboards: z.array(zRunDashboard),
+      reports: z.array(zRunReport),
       errorCharts: z.array(zRunChart),
       errorDashboards: z.array(zRunDashboard),
+      errorReports: z.array(zRunReport),
       queriesStats: zRunQueriesStats
     })
   })
@@ -64,6 +70,9 @@ export class RunTool {
       noCharts: boolean;
       getDashboards: boolean;
       getCharts: boolean;
+      reportIds?: string;
+      noReports: boolean;
+      getReports: boolean;
     },
     context: Context,
     request: Request
@@ -112,7 +121,10 @@ export class RunTool {
       noDashboards: item.noDashboards,
       noCharts: item.noCharts,
       getDashboards: item.getDashboards,
-      getCharts: item.getCharts
+      getCharts: item.getCharts,
+      reportIds: item.reportIds,
+      noReports: item.noReports,
+      getReports: item.getReports
     });
 
     return payload;

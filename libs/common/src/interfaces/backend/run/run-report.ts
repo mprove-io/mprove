@@ -1,18 +1,18 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import { RunQuery } from '#common/interfaces/backend/run/run-query';
+import { RunReportRow } from '#common/interfaces/backend/run/run-report-row';
 
-export class RunChart {
+export class RunReport {
   @IsString()
   title: string;
 
   @IsString()
-  chartId: string;
+  reportId: string;
 
   @IsString()
   url: string;
 
   @ValidateNested()
-  @Type(() => RunQuery)
-  query: RunQuery;
+  @Type(() => RunReportRow)
+  rows: RunReportRow[];
 }

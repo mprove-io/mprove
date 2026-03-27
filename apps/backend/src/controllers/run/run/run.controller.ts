@@ -36,7 +36,10 @@ export class RunController {
       noDashboards,
       noCharts,
       getDashboards,
-      getCharts
+      getCharts,
+      reportIds,
+      noReports,
+      getReports
     } = reqValid.payload;
 
     let payload: ToBackendRunResponsePayload = await this.runService.run({
@@ -54,7 +57,10 @@ export class RunController {
       noDashboards: noDashboards,
       noCharts: noCharts,
       getDashboards: getDashboards,
-      getCharts: getCharts
+      getCharts: getCharts,
+      reportIds: reportIds,
+      noReports: noReports,
+      getReports: getReports
     });
 
     return payload;

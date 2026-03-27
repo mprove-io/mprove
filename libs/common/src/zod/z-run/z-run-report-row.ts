@@ -1,9 +1,7 @@
 import { z } from 'zod';
 import { zRunQuery } from '#common/zod/z-run/z-run-query';
 
-export let zRunChart = z.object({
+export let zRunReportRow = z.object({
   title: z.string(),
-  chartId: z.string(),
-  url: z.string(),
   query: zRunQuery
 });

@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { FieldTypeEnum } from '#common/enums/field-type.enum';
 
 export let zGetModelField = z.object({
   id: z.string(),
@@ -10,14 +14,14 @@ export let zGetModelField = z.object({
   required: z.boolean(),
   maxFractions: z.number().optional(),
   label: z.string(),
-  fieldClass: z.string(),
-  result: z.string().optional(),
+  fieldClass: z.enum(FieldClassEnum),
+  result: z.enum(FieldResultEnum).optional(),
   suggestModelDimension: z.string().optional(),
   sqlName: z.string(),
   topId: z.string(),
   topLabel: z.string(),
   description: z.string().optional(),
-  type: z.string().optional(),
+  type: z.enum(FieldTypeEnum).optional(),
   groupId: z.string().optional(),
   groupLabel: z.string().optional(),
   groupDescription: z.string().optional(),
@@ -26,5 +30,5 @@ export let zGetModelField = z.object({
   currencySuffix: z.string().optional(),
   buildMetrics: z.boolean().optional(),
   timeframe: z.string().optional(),
-  detail: z.string().optional()
+  detail: z.enum(DetailUnitEnum).optional()
 });

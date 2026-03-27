@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 
 let zDiskCatalogNode: z.ZodType<any> = z.lazy(() =>
   z.object({
@@ -15,7 +16,7 @@ export let zStateRepo = z.object({
   projectId: z.string(),
   repoId: z.string(),
   currentBranchId: z.string(),
-  repoStatus: z.string(),
+  repoStatus: z.enum(RepoStatusEnum),
   conflicts: z.array(
     z.object({
       fileId: z.string(),

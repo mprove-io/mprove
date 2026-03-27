@@ -21,7 +21,7 @@ export class RunCommand extends CustomCommand {
   static paths = [['run']];
 
   static usage = Command.Usage({
-    description: 'Run dashboards and charts',
+    description: 'Run dashboards, charts, and reports',
     examples: [
       [
         'Run for Dev repo and wait for completion',
@@ -98,6 +98,19 @@ export class RunCommand extends CustomCommand {
     description: '(default false), show charts in output'
   });
 
+  reportIds = Option.String('--report-ids', {
+    description:
+      '(optional) Filter reports to run by report names, separated by comma'
+  });
+
+  noReports = Option.Boolean('--no-reports', false, {
+    description: '(default false) Do not run reports'
+  });
+
+  getReports = Option.Boolean('--get-reports', false, {
+    description: '(default false), show reports in output'
+  });
+
   json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
@@ -143,7 +156,10 @@ export class RunCommand extends CustomCommand {
       noDashboards: this.noDashboards,
       noCharts: this.noCharts,
       getDashboards: this.getDashboards,
-      getCharts: this.getCharts
+      getCharts: this.getCharts,
+      reportIds: this.reportIds,
+      noReports: this.noReports,
+      getReports: this.getReports
     };
 
     let runResp = await mreq<ToBackendRunResponse>({

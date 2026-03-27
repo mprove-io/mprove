@@ -16,6 +16,9 @@ import { GetQueryInfoService } from './controllers/query-info/get-query-info/get
 import { GetQueryInfoTool } from './controllers/query-info/get-query-info/get-query-info.tool';
 import { RunService } from './controllers/run/run/run.service';
 import { RunTool } from './controllers/run/run/run.tool';
+import { RunChartService } from './controllers/run/run/run-chart.service';
+import { RunDashboardService } from './controllers/run/run/run-dashboard.service';
+import { RunReportService } from './controllers/run/run/run-report.service';
 import { GetStateService } from './controllers/state/get-state/get-state.service';
 import { GetStateTool } from './controllers/state/get-state/get-state.tool';
 import { ApiKeyService } from './services/api-key.service';
@@ -167,6 +170,9 @@ export const appProviders = [
   RunQueriesService,
   GetQueryInfoService,
   GetModelService,
+  RunChartService,
+  RunDashboardService,
+  RunReportService,
   RunService,
   GetStateService,
   //
