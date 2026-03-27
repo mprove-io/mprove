@@ -23,11 +23,11 @@ export class GetSampleCommand extends CustomCommand {
     examples: [
       [
         'Get sample data from a table',
-        'mprove get-sample --project-id DXYE72ODCP5LWPWH2EXQ --env prod --connection-id c1_postgres --schema-name public --table-name users'
+        'mprove get-sample --project-id DXYE72ODCP5LWPWH2EXQ --env prod --connection-id c1_postgres --schema public --table users'
       ],
       [
         'Get sample data from a specific column with offset',
-        'mprove get-sample --project-id DXYE72ODCP5LWPWH2EXQ --env prod --connection-id c1_postgres --schema-name public --table-name users --column-name user_id --offset 10'
+        'mprove get-sample --project-id DXYE72ODCP5LWPWH2EXQ --env prod --connection-id c1_postgres --schema public --table users --column user_id --offset 10'
       ]
     ]
   });
@@ -46,17 +46,17 @@ export class GetSampleCommand extends CustomCommand {
     description: '(required) Connection Id'
   });
 
-  schemaName = Option.String('--schema-name', {
+  schema = Option.String('--schema', {
     required: true,
     description: '(required) Schema Name'
   });
 
-  tableName = Option.String('--table-name', {
+  table = Option.String('--table', {
     required: true,
     description: '(required) Table Name'
   });
 
-  columnName = Option.String('--column-name', {
+  column = Option.String('--column', {
     description: '(optional) Column Name'
   });
 
@@ -94,9 +94,9 @@ export class GetSampleCommand extends CustomCommand {
       projectId: this.projectId,
       envId: this.env,
       connectionId: this.connectionId,
-      schemaName: this.schemaName,
-      tableName: this.tableName,
-      columnName: this.columnName,
+      schemaName: this.schema,
+      tableName: this.table,
+      columnName: this.column,
       offset: this.offset
     };
 
