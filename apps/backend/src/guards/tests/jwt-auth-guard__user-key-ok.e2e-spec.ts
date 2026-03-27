@@ -10,9 +10,9 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendGetRepoRequest,
-  ToBackendGetRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
+  ToBackendGetStateRequest,
+  ToBackendGetStateResponse
+} from '#common/interfaces/to-backend/state/to-backend-get-state';
 import {
   ToBackendGenerateUserApiKeyRequest,
   ToBackendGenerateUserApiKeyResponse
@@ -35,7 +35,7 @@ let projectName = testId;
 let prep: Prep;
 
 test('1', async t => {
-  let resp: ToBackendGetRepoResponse;
+  let resp: ToBackendGetStateResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -103,9 +103,9 @@ test('1', async t => {
       }
     );
 
-    let getRepoReq: ToBackendGetRepoRequest = {
+    let getStateReq: ToBackendGetStateRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetState,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -114,14 +114,22 @@ test('1', async t => {
         repoId: userId,
         branchId: BRANCH_MAIN,
         envId: PROJECT_ENV_PROD,
-        isFetch: false
+        isFetch: false,
+        getErrors: false,
+        getRepo: false,
+        getRepoNodes: false,
+        getModels: false,
+        getDashboards: false,
+        getCharts: false,
+        getMetrics: false,
+        getReports: false
       }
     };
 
-    resp = await sendToBackend<ToBackendGetRepoResponse>({
+    resp = await sendToBackend<ToBackendGetStateResponse>({
       httpServer: prep.httpServer,
       apiKey: generateResp.payload.apiKey,
-      req: getRepoReq
+      req: getStateReq
     });
 
     await prep.app.close();

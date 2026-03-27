@@ -10,9 +10,9 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import {
-  ToBackendGetRepoRequest,
-  ToBackendGetRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
+  ToBackendGetStateRequest,
+  ToBackendGetStateResponse
+} from '#common/interfaces/to-backend/state/to-backend-get-state';
 
 let testId = 'backend-jwt-auth-guard__wrong-api-key-format';
 
@@ -24,7 +24,7 @@ let password = '123456';
 let prep: Prep;
 
 test('1', async t => {
-  let resp: ToBackendGetRepoResponse;
+  let resp: ToBackendGetStateResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -46,9 +46,9 @@ test('1', async t => {
     // Use a key with wrong format (2 parts instead of 4)
     let badFormatKey = 'PK-WRONG-FORMAT';
 
-    let req: ToBackendGetRepoRequest = {
+    let req: ToBackendGetStateRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetState,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -57,11 +57,19 @@ test('1', async t => {
         repoId: 'unk',
         branchId: BRANCH_MAIN,
         envId: PROJECT_ENV_PROD,
-        isFetch: false
+        isFetch: false,
+        getErrors: false,
+        getRepo: false,
+        getRepoNodes: false,
+        getModels: false,
+        getDashboards: false,
+        getCharts: false,
+        getMetrics: false,
+        getReports: false
       }
     };
 
-    resp = await sendToBackend<ToBackendGetRepoResponse>({
+    resp = await sendToBackend<ToBackendGetStateResponse>({
       httpServer: prep.httpServer,
       apiKey: badFormatKey,
       req: req
