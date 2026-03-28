@@ -1,6 +1,6 @@
 {
   "name": "@mprove/blockml",
-  "version": "11.0.102-dev",
+  "version": "11.0.103-dev",
   "private": true,
   "type": "module",
   "imports": {
