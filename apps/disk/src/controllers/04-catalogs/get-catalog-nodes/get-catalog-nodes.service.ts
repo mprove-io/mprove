@@ -17,6 +17,7 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
+import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 
 @Injectable()
@@ -107,6 +108,18 @@ export class GetCatalogNodesService {
       passPhrase: passPhrase
     });
 
+    let effectiveIsFetch = isFetch;
+
+    if (isFetch === true) {
+      let changesToCommitEarly = await getChangesToCommit({
+        repoDir: repoDir
+      });
+
+      let repoHasChanges = changesToCommitEarly.length > 0;
+
+      effectiveIsFetch = repoHasChanges === true ? false : isFetch;
+    }
+
     let isFetched = false;
 
     if (branch !== null && typeof branch !== 'undefined') {
@@ -127,7 +140,7 @@ export class GetCatalogNodesService {
         repoDir: repoDir,
         branchName: branch,
         git: git,
-        isFetch: isFetch
+        isFetch: effectiveIsFetch
       });
 
       isFetched = true;
@@ -155,7 +168,7 @@ export class GetCatalogNodesService {
       repoId: repoId,
       repoDir: repoDir,
       git: git,
-      isFetch: isFetched === true ? false : isFetch,
+      isFetch: isFetched === true ? false : effectiveIsFetch,
       isCheckConflicts: true
     });
 
