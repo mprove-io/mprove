@@ -77,6 +77,7 @@ import { ReportDataService } from './services/report-data.service';
 import { ReportRowService } from './services/report-row.service';
 import { ReportTimeColumnsService } from './services/report-time-columns.service';
 import { RpcService } from './services/rpc.service';
+import { SessionArchiveService } from './services/session/session-archive.service';
 import { SessionDrainService } from './services/session/session-drain.service';
 import { SessionDrainTimerService } from './services/session/session-drain-timer.service';
 import { SessionSseService } from './services/session/session-sse.service';
@@ -144,6 +145,7 @@ export const appProviders = [
   //
   SessionsService,
   EditorOpencodeService,
+  SessionArchiveService,
   SessionDrainService,
   SessionDrainTimerService,
   SessionSseService,

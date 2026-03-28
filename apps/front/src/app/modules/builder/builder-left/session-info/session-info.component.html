@@ -34,7 +34,9 @@
                 session?.status === sessionStatusEnum.Archived
                   ? session?.archiveReason === archiveReasonEnum.Expire
                     ? 'Archived (sandbox expired)'
-                    : 'Archived by User'
+                    : session?.archiveReason === archiveReasonEnum.Commit
+                      ? 'Archived (commit by User)'
+                      : 'Archived by User'
                   : session?.status === sessionStatusEnum.Paused
                     ? session?.pauseReason === pauseReasonEnum.User
                       ? 'Paused by User'

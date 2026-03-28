@@ -1,7 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -11,8 +9,10 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { RpcService } from '#backend/services/rpc.service';
+import { SessionArchiveService } from '#backend/services/session/session-archive.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -38,7 +38,7 @@ export class CommitRepoController {
     private sessionsService: SessionsService,
     private rpcService: RpcService,
     private branchesService: BranchesService,
-    private cs: ConfigService<BackendConfig>
+    private sessionArchiveService: SessionArchiveService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
@@ -111,6 +111,20 @@ export class CommitRepoController {
     let payload: ToBackendCommitRepoResponsePayload = {
       repo: diskResponse.payload.repo
     };
+
+    if (repoType === RepoTypeEnum.Session) {
+      let session = await this.sessionsService.getSessionByIdCheckExists({
+        sessionId: repoId
+      });
+
+      let sessionApi = await this.sessionArchiveService.archiveSession({
+        session: session,
+        archiveReason: ArchiveReasonEnum.Commit,
+        e2bApiKey: project.e2bApiKey
+      });
+
+      payload.session = sessionApi;
+    }
 
     return payload;
   }

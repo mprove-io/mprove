@@ -1,37 +1,15 @@
-import {
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  Req,
-  UseGuards
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type {
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
-import { getRetryOption } from '#backend/functions/get-retry-option';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
-import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
-import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
+import { SessionArchiveService } from '#backend/services/session/session-archive.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -47,12 +25,7 @@ export class ArchiveSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private editorSandboxService: EditorSandboxService,
-    private editorStreamService: EditorStreamService,
-    private explorerStreamService: ExplorerStreamService,
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private sessionArchiveService: SessionArchiveService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendArchiveSession)
@@ -61,7 +34,7 @@ export class ArchiveSessionController {
     let { sessionId } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId
+      sessionId: sessionId
     });
 
     if (session.userId !== user.userId) {
@@ -70,74 +43,20 @@ export class ArchiveSessionController {
       });
     }
 
-    if (
-      session.type === SessionTypeEnum.Editor &&
-      [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
-        session.status
-      ) > -1
-    ) {
-      let project = await this.projectsService.getProjectCheckExists({
-        projectId: session.projectId
-      });
-
-      await this.editorSandboxService.stopSandbox({
-        sandboxType: session.sandboxType as SandboxTypeEnum,
-        sandboxId: session.sandboxId,
-        e2bApiKey: project.e2bApiKey
+    if (session.type !== SessionTypeEnum.Editor) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_SESSION_TYPE_IS_NOT_EDITOR
       });
     }
 
-    let updatedSession: SessionTab = {
-      ...session,
-      status: SessionStatusEnum.Archived,
-      archiveReason: ArchiveReasonEnum.User
-    };
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: session.projectId
+    });
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await this.db.packer.write({
-            tx: tx,
-            insertOrUpdate: {
-              sessions: [updatedSession]
-            }
-          });
-        }),
-      getRetryOption(this.cs, this.logger)
-    );
-
-    setTimeout(() => {
-      if (session.type === SessionTypeEnum.Explorer) {
-        this.explorerStreamService
-          .publishStopSessionStream({
-            sessionId: sessionId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: e,
-              logLevel: LogLevelEnum.Error,
-              logger: this.logger,
-              cs: this.cs
-            });
-          });
-      } else if (session.type === SessionTypeEnum.Editor) {
-        this.editorStreamService
-          .publishStopSessionStream({
-            sessionId: sessionId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: e,
-              logLevel: LogLevelEnum.Error,
-              logger: this.logger,
-              cs: this.cs
-            });
-          });
-      }
-    }, 10_000);
-
-    let sessionApi = this.sessionsService.tabToSessionApi({
-      session: updatedSession
+    let sessionApi = await this.sessionArchiveService.archiveSession({
+      session: session,
+      archiveReason: ArchiveReasonEnum.User,
+      e2bApiKey: project.e2bApiKey
     });
 
     let payload: ToBackendArchiveSessionResponsePayload = {

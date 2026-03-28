@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import type { SessionApi } from '#common/interfaces/backend/session-api';
 import { Repo } from '#common/interfaces/disk/repo';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -28,6 +29,9 @@ export class ToBackendCommitRepoResponsePayload {
   @ValidateNested()
   @Type(() => Repo)
   repo: Repo;
+
+  @IsOptional()
+  session?: SessionApi;
 }
 
 export class ToBackendCommitRepoResponse extends MyResponse {

@@ -28,6 +28,8 @@ import {
   ToBackendCommitRepoResponse
 } from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
 import { RepoQuery } from '#front/app/queries/repo.query';
+import { SessionQuery } from '#front/app/queries/session.query';
+import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { ApiService } from '#front/app/services/api.service';
 import { FileService } from '#front/app/services/file.service';
 import { SharedModule } from '../../shared/shared.module';
@@ -59,15 +61,21 @@ export class CommitDialogComponent implements OnInit {
 
   commitForm: FormGroup;
 
+  isSessionRepo = false;
+
   constructor(
     public ref: DialogRef<CommitDialogDialogData>,
     private fb: FormBuilder,
     private spinner: NgxSpinnerService,
     private fileService: FileService,
-    private repoQuery: RepoQuery
+    private repoQuery: RepoQuery,
+    private sessionQuery: SessionQuery,
+    private sessionsQuery: SessionsQuery
   ) {}
 
   ngOnInit() {
+    this.isSessionRepo = this.ref.data.repoType === RepoTypeEnum.Session;
+
     let epochTs = Math.floor(new Date().getTime() / 1000);
 
     this.commitForm = this.fb.group({
@@ -108,6 +116,29 @@ export class CommitDialogComponent implements OnInit {
         map((resp: ToBackendCommitRepoResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
+
+            let respSession = resp.payload.session;
+
+            if (isDefined(respSession)) {
+              this.sessionQuery.updatePart({
+                status: respSession.status,
+                archiveReason: respSession.archiveReason
+              });
+
+              let sessions = this.sessionsQuery.getValue().sessions;
+
+              this.sessionsQuery.updatePart({
+                sessions: sessions.map(s =>
+                  s.sessionId === respSession.sessionId
+                    ? {
+                        ...s,
+                        status: respSession.status,
+                        archiveReason: respSession.archiveReason
+                      }
+                    : s
+                )
+              });
+            }
 
             return true;
           } else {

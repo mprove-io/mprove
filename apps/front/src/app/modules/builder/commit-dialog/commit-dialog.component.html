@@ -5,6 +5,10 @@
     >Write a Commit Message</div
   >
 
+  <div *ngIf="isSessionRepo" class="text-s1 mt-4 text-base">
+    Session will be archived after commit.
+  </div>
+
   <form
     class="flex w-full flex-col"
     [formGroup]="commitForm"

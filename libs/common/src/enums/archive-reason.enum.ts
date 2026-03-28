@@ -1,4 +1,5 @@
 export enum ArchiveReasonEnum {
   User = 'User',
-  Expire = 'Expire'
+  Expire = 'Expire',
+  Commit = 'Commit'
 }
