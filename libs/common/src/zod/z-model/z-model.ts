@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { zGetModelField } from '#common/zod/z-get-model/z-get-model-field';
+import { zModelField } from '#common/zod/z-model/z-model-field';
+import { zModelNode } from '#common/zod/z-model/z-model-node';
 
-export let zGetModel = z.object({
+export let zModel = z.object({
   structId: z.string().nullish(),
   modelId: z.string().nullish(),
   type: z.enum(ModelTypeEnum).nullish(),
@@ -16,8 +17,8 @@ export let zGetModel = z.object({
   dateRangeIncludesRightSide: z.boolean().nullish(),
   accessRoles: z.array(z.string()).nullish(),
   label: z.string().nullish(),
-  fields: z.array(zGetModelField).nullish(),
-  nodes: z.array(z.any()).nullish(),
+  fields: z.array(zModelField).nullish(),
+  nodes: z.array(zModelNode).nullish(),
   malloyModelDef: z.any().nullish(),
   serverTs: z.number().nullish(),
   hasAccess: z.boolean().nullish()

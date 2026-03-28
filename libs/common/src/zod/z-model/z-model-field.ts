@@ -3,13 +3,14 @@ import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { FieldTypeEnum } from '#common/enums/field-type.enum';
+import { zKeyValuePair } from '#common/zod/z-model/z-key-value-pair';
 
-export let zGetModelField = z.object({
+export let zModelField = z.object({
   id: z.string().nullish(),
   malloyFieldName: z.string().nullish(),
   malloyFieldPath: z.array(z.string()).nullish(),
-  malloyTags: z.array(z.any()).nullish(),
-  mproveTags: z.array(z.any()).nullish(),
+  malloyTags: z.array(zKeyValuePair).nullish(),
+  mproveTags: z.array(zKeyValuePair).nullish(),
   hidden: z.boolean().nullish(),
   required: z.boolean().nullish(),
   maxFractions: z.number().nullish(),

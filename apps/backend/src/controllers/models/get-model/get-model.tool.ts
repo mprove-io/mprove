@@ -9,7 +9,7 @@ import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_MODEL } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { zGetModel } from '#common/zod/z-get-model/z-get-model';
+import { zModel } from '#common/zod/z-model/z-model';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class GetModelTool {
     }),
     outputSchema: z.object({
       needValidate: z.boolean(),
-      model: zGetModel
+      model: zModel
     })
   })
   async getModel(
