@@ -21,6 +21,9 @@ export class ToBackendGetModelRequestPayload {
 
   @IsString()
   modelId: string;
+
+  @IsBoolean()
+  getMalloy: boolean;
 }
 
 export class ToBackendGetModelRequest extends ToBackendRequest {

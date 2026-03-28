@@ -446,7 +446,8 @@ export class ReportAddFilterDialogComponent implements OnInit {
       repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
-      modelId: this.storeModelForm.controls['storeModel'].value
+      modelId: this.storeModelForm.controls['storeModel'].value,
+      getMalloy: false
     };
 
     apiService

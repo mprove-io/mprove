@@ -85,7 +85,8 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
       repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
-      modelId: parametersModelId
+      modelId: parametersModelId,
+      getMalloy: false
     };
 
     return this.apiService

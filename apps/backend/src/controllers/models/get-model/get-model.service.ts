@@ -33,13 +33,15 @@ export class GetModelService {
     branchId: string;
     envId: string;
     modelId: string;
+    getMalloy: boolean;
   }): Promise<{
     needValidate: boolean;
     struct: StructX;
     userMember: Member;
     model: ModelX;
   }> {
-    let { userId, projectId, repoId, branchId, envId, modelId } = item;
+    let { userId, projectId, repoId, branchId, envId, modelId, getMalloy } =
+      item;
 
     await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -108,6 +110,10 @@ export class GetModelService {
         })
       })
     };
+
+    if (getMalloy === false) {
+      delete payload.model.malloyModelDef;
+    }
 
     return payload;
   }

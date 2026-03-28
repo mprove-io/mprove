@@ -29,7 +29,8 @@ export class GetModelTool {
       repoId: z.string(),
       branchId: z.string(),
       envId: z.string(),
-      modelId: z.string()
+      modelId: z.string(),
+      getMalloy: z.boolean().default(false)
     }),
     outputSchema: z.object({
       needValidate: z.boolean(),
@@ -43,6 +44,7 @@ export class GetModelTool {
       branchId: string;
       envId: string;
       modelId: string;
+      getMalloy: boolean;
     },
     context: Context,
     request: Request
@@ -81,7 +83,8 @@ export class GetModelTool {
       repoId: item.repoId,
       branchId: item.branchId,
       envId: item.envId,
-      modelId: item.modelId
+      modelId: item.modelId,
+      getMalloy: item.getMalloy
     });
 
     return processGetModelPayload({

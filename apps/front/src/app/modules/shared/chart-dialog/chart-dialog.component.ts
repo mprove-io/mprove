@@ -452,7 +452,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
-      modelId: metric.modelId
+      modelId: metric.modelId,
+      getMalloy: false
     };
 
     let apiService = this.ref.data.apiService;

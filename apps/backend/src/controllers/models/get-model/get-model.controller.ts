@@ -19,7 +19,8 @@ export class GetModelController {
   async getModel(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetModelRequest = request.body;
 
-    let { projectId, repoId, branchId, modelId, envId } = reqValid.payload;
+    let { projectId, repoId, branchId, modelId, envId, getMalloy } =
+      reqValid.payload;
 
     let payload: ToBackendGetModelResponsePayload =
       await this.getModelService.getModel({
@@ -28,7 +29,8 @@ export class GetModelController {
         repoId: repoId,
         branchId: branchId,
         envId: envId,
-        modelId: modelId
+        modelId: modelId,
+        getMalloy: getMalloy
       });
 
     return payload;

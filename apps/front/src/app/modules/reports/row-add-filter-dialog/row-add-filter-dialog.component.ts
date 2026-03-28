@@ -118,7 +118,8 @@ export class RowAddFilterDialogComponent implements OnInit {
       repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
-      modelId: metric.modelId
+      modelId: metric.modelId,
+      getMalloy: false
     };
 
     this.apiService

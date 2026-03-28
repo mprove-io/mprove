@@ -111,7 +111,8 @@ test('1', async t => {
         repoId: userId,
         branchId: BRANCH_MAIN,
         envId: PROJECT_ENV_PROD,
-        modelId: 'google_analytics'
+        modelId: 'google_analytics',
+        getMalloy: false
       }
     };
 

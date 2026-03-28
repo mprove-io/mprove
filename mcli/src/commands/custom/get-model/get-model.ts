@@ -60,6 +60,10 @@ export class GetModelCommand extends CustomCommand {
     description: '(required) Model Id'
   });
 
+  getMalloy = Option.Boolean('--get-malloy', false, {
+    description: '(default false), show malloyModelDef in output'
+  });
+
   json = Option.Boolean('--json', false, {
     description: '(default false)'
   });
@@ -97,7 +101,8 @@ export class GetModelCommand extends CustomCommand {
       repoId: repoId,
       branchId: this.branch,
       envId: this.env,
-      modelId: this.modelId
+      modelId: this.modelId,
+      getMalloy: this.getMalloy
     };
 
     let getModelResp = await mreq<ToBackendGetModelResponse>({
