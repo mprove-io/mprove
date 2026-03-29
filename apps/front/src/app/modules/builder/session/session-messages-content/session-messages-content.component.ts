@@ -8,6 +8,14 @@ import {
   FileDiffInfo
 } from '../session-chat.interfaces';
 
+// eslint-disable-next-line no-control-regex
+const ANSI_REGEX = /\x1b\[[0-9;]*[A-Za-z]/g;
+
+function stripAnsi(item: { text: string }): string {
+  let { text } = item;
+  return text.replace(ANSI_REGEX, '');
+}
+
 const TOOL_TITLE_MAP: Record<string, string> = {
   bash: 'Shell',
   read: 'Read',
@@ -71,8 +79,10 @@ export class SessionMessagesContentComponent {
 
   getToolOutput(toolPart: ToolPart): string {
     if (!toolPart.state) return '';
-    if (toolPart.state.status === 'completed') return toolPart.state.output;
-    if (toolPart.state.status === 'error') return toolPart.state.error;
+    if (toolPart.state.status === 'completed')
+      return stripAnsi({ text: toolPart.state.output });
+    if (toolPart.state.status === 'error')
+      return stripAnsi({ text: toolPart.state.error });
     return '';
   }
 

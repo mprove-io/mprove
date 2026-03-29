@@ -116,7 +116,7 @@
           }"
         ></span>
         <button
-          class="border-s200 max-w-[90%] overflow-hidden rounded-lg border text-left hover:bg-gray-50 focus:outline-none disabled:hover:bg-transparent"
+          class="border-s200 hover:bg-m50 max-w-[90%] overflow-hidden rounded-lg border bg-gray-50 text-left focus:outline-none disabled:bg-transparent disabled:hover:bg-transparent"
           [disabled]="!hasToolContent(msg.toolPart)"
           (click)="openToolOutput(msg.toolPart)"
         >
@@ -167,7 +167,7 @@
         ></span>
         <div class="border-s200 max-w-[90%] overflow-hidden rounded-lg border">
           <button
-            class="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 focus:outline-none disabled:hover:bg-transparent"
+            class="hover:bg-m50 flex w-full items-center gap-2 bg-gray-50 px-3 py-2 text-left focus:outline-none disabled:bg-transparent disabled:hover:bg-transparent"
             [disabled]="!hasToolContent(msg.toolPart)"
             (click)="openToolOutput(msg.toolPart)"
           >

@@ -1,7 +1,6 @@
 import { DiffEditor } from '@acrodata/code-editor';
 import { CommonModule } from '@angular/common';
 import {
-  AfterViewInit,
   ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -13,12 +12,22 @@ import {
 import { FormsModule } from '@angular/forms';
 import { defaultKeymap } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
-import * as languageData from '@codemirror/language-data';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { EditorState, Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { DialogRef } from '@ngneat/dialog';
-import { VS_LIGHT_THEME_EXTRA_DIFF_READ } from '#common/constants/code-themes/themes';
+import { Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import {
+  LIGHT_PLUS_THEME_EXTRA_DIFF_READ,
+  VS_LIGHT_THEME_EXTRA_DIFF_READ
+} from '#common/constants/code-themes/themes';
+import { LIGHT_PLUS_LANGUAGES } from '#common/constants/top-front';
+import { UiQuery } from '#front/app/queries/ui.query';
+import {
+  HighLightService,
+  PlaceNameEnum
+} from '#front/app/services/highlight.service';
 import { SharedModule } from '../../../shared/shared.module';
 
 export interface FileDiffDialogItem {
@@ -41,9 +50,7 @@ export interface FileDiffsDialogData {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, SharedModule, DiffEditor, FormsModule]
 })
-export class FileDiffsDialogComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
+export class FileDiffsDialogComponent implements OnInit, OnDestroy {
   @ViewChild('diffEditor', { static: false })
   diffEditorRef: DiffEditor;
 
@@ -58,6 +65,27 @@ export class FileDiffsDialogComponent
   originalExtensions: Extension[];
   modifiedExtensions: Extension[];
 
+  originalLanguages: LanguageDescription[] = [];
+  modifiedLanguages: LanguageDescription[] = [];
+  lang: string;
+  isEditorOptionsInitComplete = false;
+
+  isHighlighterReady: boolean;
+  isHighlighterReady$ = this.uiQuery.select().pipe(
+    tap(x => {
+      this.isHighlighterReady = x.isHighlighterReady;
+
+      if (
+        this.isHighlighterReady === true &&
+        this.isEditorOptionsInitComplete === false
+      ) {
+        this.initEditorOptions();
+      }
+    })
+  );
+
+  workerTaskCompletedSubscription: Subscription;
+
   private syncScrollCleanups: (() => void)[] = [];
 
   private baseExtensions: Extension[] = [
@@ -67,7 +95,9 @@ export class FileDiffsDialogComponent
 
   constructor(
     public ref: DialogRef<FileDiffsDialogData>,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private highLightService: HighLightService,
+    private uiQuery: UiQuery
   ) {}
 
   ngOnInit(): void {
@@ -75,22 +105,66 @@ export class FileDiffsDialogComponent
       (document.activeElement as HTMLElement).blur();
     }, 0);
 
-    this.initDiffState();
-  }
+    this.workerTaskCompletedSubscription = new Subscription();
 
-  ngAfterViewInit(): void {
-    this.setupDiffEditorSyncScroll();
+    this.workerTaskCompletedSubscription.add(
+      this.highLightService.workerTaskCompleted.subscribe(eventData => {
+        if (eventData.placeName === PlaceNameEnum.DiffDialogOriginal) {
+          this.forceReRender({ side: 'original' });
+        } else if (eventData.placeName === PlaceNameEnum.DiffDialogModified) {
+          this.forceReRender({ side: 'modified' });
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
     this.cleanupSyncScroll();
+    this.workerTaskCompletedSubscription?.unsubscribe();
   }
 
-  private initDiffState() {
+  private initEditorOptions() {
+    let originalLanguagesResult = this.highLightService.getLanguages({
+      placeName: PlaceNameEnum.DiffDialogOriginal
+    });
+
+    let modifiedLanguagesResult = this.highLightService.getLanguages({
+      placeName: PlaceNameEnum.DiffDialogModified
+    });
+
+    this.originalLanguages = originalLanguagesResult.languages;
+    this.modifiedLanguages = modifiedLanguagesResult.languages;
+
+    this.isEditorOptionsInitComplete = true;
+
+    this.initDiffState();
+  }
+
+  private async initDiffState() {
     let diff = this.dataItem.diff;
 
     let readOnlyExt = EditorState.readOnly.of(true);
-    let themeExt = VS_LIGHT_THEME_EXTRA_DIFF_READ;
+
+    let ext = this.getFileExtension(diff.file);
+
+    let originalLangDesc = this.originalLanguages.find(
+      (l: LanguageDescription) =>
+        l.extensions.indexOf(ext) > -1 ||
+        l.filename?.test(diff.file.split('/').pop() || '')
+    );
+    let modifiedLangDesc = this.modifiedLanguages.find(
+      (l: LanguageDescription) =>
+        l.extensions.indexOf(ext) > -1 ||
+        l.filename?.test(diff.file.split('/').pop() || '')
+    );
+    this.lang = originalLangDesc?.name;
+
+    let isMalloyLang =
+      LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1;
+    let themeExt =
+      isMalloyLang === true
+        ? LIGHT_PLUS_THEME_EXTRA_DIFF_READ
+        : VS_LIGHT_THEME_EXTRA_DIFF_READ;
 
     let originalExtensions: Extension[] = [
       ...this.baseExtensions,
@@ -103,27 +177,71 @@ export class FileDiffsDialogComponent
       themeExt
     ];
 
-    let ext = this.getFileExtension(diff.file);
-    let langDesc = languageData.languages.find(
-      (l: LanguageDescription) =>
-        l.extensions.indexOf(ext) > -1 ||
-        l.filename?.test(diff.file.split('/').pop() || '')
-    );
-
-    if (langDesc) {
-      langDesc.load().then(langSupport => {
-        this.originalExtensions = [...originalExtensions, langSupport];
-        this.modifiedExtensions = [...modifiedExtensions, langSupport];
-        this.cd.detectChanges();
-      });
+    if (originalLangDesc && modifiedLangDesc) {
+      let originalLangSupport = await originalLangDesc.load();
+      let modifiedLangSupport = await modifiedLangDesc.load();
+      originalExtensions.push(originalLangSupport);
+      modifiedExtensions.push(modifiedLangSupport);
     }
+
+    this.originalExtensions = originalExtensions;
+    this.modifiedExtensions = modifiedExtensions;
 
     this.diffContent = {
       original: diff.before ?? '',
       modified: diff.after ?? ''
     };
-    this.originalExtensions = originalExtensions;
-    this.modifiedExtensions = modifiedExtensions;
+
+    this.cd.detectChanges();
+
+    this.setupDiffEditorSyncScroll();
+
+    if (isMalloyLang === true) {
+      this.highLightService.updateDocText({
+        placeName: PlaceNameEnum.DiffDialogOriginal,
+        docText: diff.before ?? '',
+        shikiLanguage: this.lang.toLowerCase(),
+        shikiTheme: 'light-plus-extended',
+        isThrottle: false
+      });
+
+      this.highLightService.updateDocText({
+        placeName: PlaceNameEnum.DiffDialogModified,
+        docText: diff.after ?? '',
+        shikiLanguage: this.lang.toLowerCase(),
+        shikiTheme: 'light-plus-extended',
+        isThrottle: false
+      });
+    }
+  }
+
+  private forceReRender(item: { side: 'original' | 'modified' }) {
+    let { side } = item;
+
+    if (!this.diffEditorRef?.mergeView) {
+      return;
+    }
+
+    let editorV =
+      side === 'original'
+        ? this.diffEditorRef.mergeView.a
+        : this.diffEditorRef.mergeView.b;
+
+    if (!editorV) {
+      return;
+    }
+
+    let transaction = editorV.state.update({
+      changes: {
+        from: 0,
+        to: editorV.state.doc.length,
+        insert: editorV.state.doc.toString()
+      },
+      selection: editorV.state.selection,
+      scrollIntoView: false
+    });
+
+    editorV.dispatch(transaction);
   }
 
   private setupDiffEditorSyncScroll() {

@@ -47,7 +47,9 @@ export enum PlaceNameEnum {
   Main = 'Main',
   Original = 'Original',
   Right = 'Right',
-  QueryInfo = 'QueryInfo'
+  QueryInfo = 'QueryInfo',
+  DiffDialogOriginal = 'DiffDialogOriginal',
+  DiffDialogModified = 'DiffDialogModified'
 }
 
 @Injectable({ providedIn: 'root' })
@@ -60,6 +62,8 @@ export class HighLightService {
   originalEditorPlace: Place = {};
   rightEditorPlace: Place = {};
   queryInfoPlace: Place = {};
+  diffDialogOriginalPlace: Place = {};
+  diffDialogModifiedPlace: Place = {};
 
   throttleWorkerPostMessage = throttle(
     300,
@@ -155,7 +159,11 @@ export class HighLightService {
             ? this.rightEditorPlace
             : placeName === PlaceNameEnum.QueryInfo
               ? this.queryInfoPlace
-              : undefined;
+              : placeName === PlaceNameEnum.DiffDialogOriginal
+                ? this.diffDialogOriginalPlace
+                : placeName === PlaceNameEnum.DiffDialogModified
+                  ? this.diffDialogModifiedPlace
+                  : undefined;
     return place;
   }
 
