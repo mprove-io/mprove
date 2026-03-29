@@ -5,6 +5,7 @@ import {
   FieldDef,
   MySQLDialect,
   mkArrayDef,
+  mkFieldDef,
   PostgresDialect,
   SnowflakeDialect,
   StandardSQLDialect,
@@ -16,6 +17,9 @@ import { isDefined } from '#common/functions/is-defined';
 import { RawSchemaColumn } from '#common/interfaces/backend/connection-schemas/raw-schema';
 import { ProjectConnection } from '#common/interfaces/backend/project-connection';
 import { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import { BigQueryTypeParser } from '#node-common/functions/schema-parse/parse-bigquery-type';
+import { DatabricksTypeParser } from '#node-common/functions/schema-parse/parse-databricks-type';
+import { TrinoPrestoSchemaParser } from '#node-common/functions/schema-parse/parse-trino-type';
 
 function getDialect(item: {
   connectionType: ConnectionTypeEnum;
@@ -97,32 +101,6 @@ export function prePopulateMalloySchemaCache(item: {
   });
 }
 
-function extractAngleBracketArrayElement(item: {
-  dataType: string;
-}): string | undefined {
-  let { dataType } = item;
-  let lower = dataType.toLowerCase();
-
-  if (lower.startsWith('array<') && lower.endsWith('>')) {
-    return dataType.slice(6, -1).trim();
-  }
-
-  return undefined;
-}
-
-function extractParenArrayElement(item: {
-  dataType: string;
-}): string | undefined {
-  let { dataType } = item;
-  let lower = dataType.toLowerCase();
-
-  if (lower.startsWith('array(') && lower.endsWith(')')) {
-    return dataType.slice(6, -1).trim();
-  }
-
-  return undefined;
-}
-
 function columnToFieldDef(item: {
   connectionType: ConnectionTypeEnum;
   dialect: Dialect;
@@ -144,41 +122,43 @@ function columnToFieldDef(item: {
   if (connectionType === ConnectionTypeEnum.MotherDuck) {
     let duckdbDialect = dialect as DuckDBDialect;
     let typeDef = duckdbDialect.parseDuckDBType(col.dataType);
-    return { ...typeDef, name: col.columnName } as FieldDef;
+    return mkFieldDef(typeDef, col.columnName);
   }
 
-  // BigQuery (ARRAY<INT64>) / Databricks (array<int>): angle bracket syntax
+  // BigQuery: STRUCT<name TYPE>, ARRAY<TYPE>, nested combinations
   // ref: malloy/packages/malloy-db-bigquery/src/bigquery_connection.ts
-  //   addFieldsToStructDef (line 529) — handles REPEATED mode for arrays
-  // ref: malloy/packages/malloy-db-databricks/src/databricks_connection.ts
-  //   fetchTableSchema (line 280) — uses DatabricksTypeParser for array<type>
-  if (
-    connectionType === ConnectionTypeEnum.BigQuery ||
-    connectionType === ConnectionTypeEnum.Databricks
-  ) {
-    let elementTypeStr = extractAngleBracketArrayElement({
-      dataType: col.dataType
-    });
-    if (isDefined(elementTypeStr)) {
-      let elementType = dialect.sqlTypeToMalloyType(elementTypeStr);
-      return mkArrayDef(elementType, col.columnName);
-    }
+  //   addFieldsToStructDef (line 529) — handles REPEATED mode and STRUCT recursion
+  if (connectionType === ConnectionTypeEnum.BigQuery) {
+    let parser = new BigQueryTypeParser(
+      col.dataType,
+      dialect as StandardSQLDialect
+    );
+    let typeDef = parser.typeDef();
+    return mkFieldDef(typeDef, col.columnName);
   }
 
-  // Trino / Presto: parenthesis syntax — array(integer)
+  // Databricks: struct<name:type>, array<type>, map<k,v>, decimal(p,s)
+  // ref: malloy/packages/malloy-db-databricks/src/databricks_connection.ts
+  //   DatabricksTypeParser (line 35) — recursive descent parser
+  if (connectionType === ConnectionTypeEnum.Databricks) {
+    let parser = new DatabricksTypeParser(
+      col.dataType,
+      dialect as DatabricksDialect
+    );
+    let typeDef = parser.typeDef();
+    return mkFieldDef(typeDef, col.columnName);
+  }
+
+  // Trino / Presto: row(name type, ...), array(type), map(k,v)
   // ref: malloy/packages/malloy-db-trino/src/trino_connection.ts
-  //   malloyTypeFromTrinoType (line 379) — uses TrinoPrestoSchemaParser for array(type)
+  //   malloyTypeFromTrinoType (line 379) — uses TrinoPrestoSchemaParser
   if (
     connectionType === ConnectionTypeEnum.Trino ||
     connectionType === ConnectionTypeEnum.Presto
   ) {
-    let elementTypeStr = extractParenArrayElement({
-      dataType: col.dataType
-    });
-    if (isDefined(elementTypeStr)) {
-      let elementType = dialect.sqlTypeToMalloyType(elementTypeStr);
-      return mkArrayDef(elementType, col.columnName);
-    }
+    let parser = new TrinoPrestoSchemaParser(col.dataType, dialect);
+    let typeDef = parser.typeDef();
+    return mkFieldDef(typeDef, col.columnName);
   }
 
   // Default: simple type mapping (MySQL, Snowflake, and scalar types for all DWHs)

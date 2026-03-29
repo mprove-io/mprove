@@ -87,7 +87,7 @@ import {
   MalloyConnection,
   makeMalloyConnections
 } from '#node-common/functions/make-malloy-connections';
-import { prePopulateMalloySchemaCache } from '#node-common/functions/pre-populate-malloy-schema-cache';
+import { prePopulateMalloySchemaCache } from '#node-common/functions/schema-parse/pre-populate-malloy-schema-cache';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 
 interface RebuildStructPrep {
