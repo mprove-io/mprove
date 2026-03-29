@@ -58,24 +58,24 @@ body {
 }
 
 // codemirror scroll for WebKit browsers (Chrome, Safari)
+// reserve space to prevent layout shift, show thumb on hover
 .cm-scroller::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+  width: 15px;
+  height: 15px;
   background: transparent;
 }
 
-.cm-editor:hover .cm-scroller::-webkit-scrollbar {
-  width: 15px;
-  height: 15px;
+.cm-scroller::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.cm-scroller::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .cm-editor:hover .cm-scroller::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.15);
   border-radius: 0px;
-}
-
-.cm-editor:hover .cm-scroller::-webkit-scrollbar-track {
-  background: transparent;
 }
 
 // codemirror focus border
