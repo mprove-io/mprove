@@ -103,6 +103,7 @@ export class EditConnectionDialogComponent implements OnInit {
   typeApi = ConnectionTypeEnum.Api;
 
   testConnectionResult: TestConnectionResult;
+  testInternalHostResult: TestConnectionResult;
 
   constructor(
     public ref: DialogRef<EditConnectionDialogData>,
@@ -176,9 +177,17 @@ export class EditConnectionDialogComponent implements OnInit {
         this.dataItem.connection.options.postgres?.host,
         [Validators.required]
       ],
+      internalHost: [
+        this.dataItem.connection.options.postgres?.internalHost,
+        []
+      ],
       port: [
         this.dataItem.connection.options.postgres?.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
+      ],
+      internalPort: [
+        this.dataItem.connection.options.postgres?.internalPort,
+        [ValidationService.integerOrEmptyValidator]
       ],
       database: [
         this.dataItem.connection.options.postgres?.database,
@@ -199,9 +208,14 @@ export class EditConnectionDialogComponent implements OnInit {
         this.dataItem.connection.options.mysql?.host,
         [Validators.required]
       ],
+      internalHost: [this.dataItem.connection.options.mysql?.internalHost, []],
       port: [
         this.dataItem.connection.options.mysql?.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
+      ],
+      internalPort: [
+        this.dataItem.connection.options.mysql?.internalPort,
+        [ValidationService.integerOrEmptyValidator]
       ],
       database: [
         this.dataItem.connection.options.mysql?.database,
@@ -222,6 +236,10 @@ export class EditConnectionDialogComponent implements OnInit {
         this.dataItem.connection.options.trino?.server,
         [Validators.required]
       ],
+      internalServer: [
+        this.dataItem.connection.options.trino?.internalServer,
+        []
+      ],
       catalog: [this.dataItem.connection.options.trino?.catalog, []],
       schema: [this.dataItem.connection.options.trino?.schema, []],
       user: [
@@ -236,9 +254,17 @@ export class EditConnectionDialogComponent implements OnInit {
         this.dataItem.connection.options.presto?.server,
         [Validators.required]
       ],
+      internalServer: [
+        this.dataItem.connection.options.presto?.internalServer,
+        []
+      ],
       port: [
         this.dataItem.connection.options.presto?.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
+      ],
+      internalPort: [
+        this.dataItem.connection.options.presto?.internalPort,
+        [ValidationService.integerOrEmptyValidator]
       ],
       catalog: [this.dataItem.connection.options.presto?.catalog, []],
       schema: [this.dataItem.connection.options.presto?.schema, []],
@@ -280,6 +306,10 @@ export class EditConnectionDialogComponent implements OnInit {
       host: [
         this.dataItem.connection.options.databricks?.host,
         [Validators.required]
+      ],
+      internalHost: [
+        this.dataItem.connection.options.databricks?.internalHost,
+        []
       ],
       path: [
         this.dataItem.connection.options.databricks?.path,
@@ -555,8 +585,12 @@ export class EditConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.PostgreSQL
           ? {
               host: this.editPostgresForm.value.host,
+              internalHost: this.editPostgresForm.value.internalHost,
               port: isDefined(this.editPostgresForm.value.port)
                 ? Number(this.editPostgresForm.value.port)
+                : undefined,
+              internalPort: isDefined(this.editPostgresForm.value.internalPort)
+                ? Number(this.editPostgresForm.value.internalPort)
                 : undefined,
               database: this.editPostgresForm.value.database,
               username: this.editPostgresForm.value.username,
@@ -568,8 +602,12 @@ export class EditConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.MySQL
           ? {
               host: this.editMysqlForm.value.host,
+              internalHost: this.editMysqlForm.value.internalHost,
               port: isDefined(this.editMysqlForm.value.port)
                 ? Number(this.editMysqlForm.value.port)
+                : undefined,
+              internalPort: isDefined(this.editMysqlForm.value.internalPort)
+                ? Number(this.editMysqlForm.value.internalPort)
                 : undefined,
               database: this.editMysqlForm.value.database,
               user: this.editMysqlForm.value.user,
@@ -580,6 +618,7 @@ export class EditConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.Trino
           ? {
               server: this.editTrinoForm.value.server,
+              internalServer: this.editTrinoForm.value.internalServer,
               catalog: this.editTrinoForm.value.catalog,
               schema: this.editTrinoForm.value.schema,
               user: this.editTrinoForm.value.user,
@@ -590,8 +629,12 @@ export class EditConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.Presto
           ? {
               server: this.editPrestoForm.value.server,
+              internalServer: this.editPrestoForm.value.internalServer,
               port: isDefined(this.editPrestoForm.value.port)
                 ? Number(this.editPrestoForm.value.port)
+                : undefined,
+              internalPort: isDefined(this.editPrestoForm.value.internalPort)
+                ? Number(this.editPrestoForm.value.internalPort)
                 : undefined,
               catalog: this.editPrestoForm.value.catalog,
               schema: this.editPrestoForm.value.schema,
@@ -614,6 +657,7 @@ export class EditConnectionDialogComponent implements OnInit {
           ? {
               authType: this.editDatabricksForm.value.authType,
               host: this.editDatabricksForm.value.host,
+              internalHost: this.editDatabricksForm.value.internalHost,
               path: this.editDatabricksForm.value.path,
               token: this.editDatabricksForm.value.token,
               oauthClientId: this.editDatabricksForm.value.oauthClientId,
@@ -659,6 +703,25 @@ export class EditConnectionDialogComponent implements OnInit {
       return;
     }
 
+    if (isDefined(options.postgres)) {
+      options.postgres.internalHost = undefined;
+      options.postgres.internalPort = undefined;
+    }
+    if (isDefined(options.mysql)) {
+      options.mysql.internalHost = undefined;
+      options.mysql.internalPort = undefined;
+    }
+    if (isDefined(options.databricks)) {
+      options.databricks.internalHost = undefined;
+    }
+    if (isDefined(options.trino)) {
+      options.trino.internalServer = undefined;
+    }
+    if (isDefined(options.presto)) {
+      options.presto.internalServer = undefined;
+      options.presto.internalPort = undefined;
+    }
+
     let payload: ToBackendTestConnectionRequestPayload = {
       projectId: this.dataItem.connection.projectId,
       envId: this.dataItem.connection.envId,
@@ -666,10 +729,6 @@ export class EditConnectionDialogComponent implements OnInit {
       type: this.dataItem.connection.type,
       options: options,
       storeMethod: undefined
-      // this.dataItem.connection.type === ConnectionTypeEnum.Api ||
-      // this.dataItem.connection.type === ConnectionTypeEnum.GoogleApi
-      //   ? StoreMethodEnum.Get
-      //   : undefined
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -684,6 +743,44 @@ export class EditConnectionDialogComponent implements OnInit {
         tap((resp: ToBackendTestConnectionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.testConnectionResult = resp.payload.testConnectionResult;
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  testInternalHost() {
+    this.testInternalHostResult = undefined;
+
+    let options = this.prepareOptions();
+
+    if (isUndefined(options)) {
+      return;
+    }
+
+    let payload: ToBackendTestConnectionRequestPayload = {
+      projectId: this.dataItem.connection.projectId,
+      envId: this.dataItem.connection.envId,
+      connectionId: this.dataItem.connection.connectionId,
+      type: this.dataItem.connection.type,
+      options: options,
+      storeMethod: undefined
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendTestConnection,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: ToBackendTestConnectionResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.testInternalHostResult = resp.payload.testConnectionResult;
             this.cd.detectChanges();
           }
         }),

@@ -12,6 +12,10 @@ export class OptionsDatabricks {
 
   @IsOptional()
   @IsString()
+  internalHost?: string;
+
+  @IsOptional()
+  @IsString()
   path: string;
 
   @IsOptional()

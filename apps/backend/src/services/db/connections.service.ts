@@ -119,6 +119,7 @@ export class ConnectionsService {
           ? {
               authType: options.databricks.authType,
               host: options.databricks.host,
+              internalHost: options.databricks.internalHost,
               path: options.databricks.path,
               token:
                 isIncludePasswords === true
@@ -147,7 +148,9 @@ export class ConnectionsService {
         postgres: isDefined(options.postgres)
           ? {
               host: options.postgres.host,
+              internalHost: options.postgres.internalHost,
               port: options.postgres.port,
+              internalPort: options.postgres.internalPort,
               database: options.postgres.database,
               username: options.postgres.username,
               password:
@@ -160,7 +163,9 @@ export class ConnectionsService {
         mysql: isDefined(options.mysql)
           ? {
               host: options.mysql.host,
+              internalHost: options.mysql.internalHost,
               port: options.mysql.port,
+              internalPort: options.mysql.internalPort,
               database: options.mysql.database,
               user: options.mysql.user,
               password:
@@ -170,6 +175,7 @@ export class ConnectionsService {
         trino: isDefined(options.trino)
           ? {
               server: options.trino.server,
+              internalServer: options.trino.internalServer,
               catalog: options.trino.catalog,
               schema: options.trino.schema,
               user: options.trino.user,
@@ -180,7 +186,9 @@ export class ConnectionsService {
         presto: isDefined(options.presto)
           ? {
               server: options.presto.server,
+              internalServer: options.presto.internalServer,
               port: options.presto.port,
+              internalPort: options.presto.internalPort,
               catalog: options.presto.catalog,
               schema: options.presto.schema,
               user: options.presto.user,

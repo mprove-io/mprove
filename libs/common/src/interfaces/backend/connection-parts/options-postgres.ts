@@ -6,8 +6,16 @@ export class OptionsPostgres {
   host: string;
 
   @IsOptional()
+  @IsString()
+  internalHost?: string;
+
+  @IsOptional()
   @IsInt()
   port: number;
+
+  @IsOptional()
+  @IsInt()
+  internalPort?: number;
 
   @IsOptional()
   @IsString()

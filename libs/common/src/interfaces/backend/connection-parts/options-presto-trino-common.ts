@@ -8,6 +8,10 @@ export class OptionsPrestoTrinoCommon {
 
   @IsOptional()
   @IsString()
+  internalServer?: string;
+
+  @IsOptional()
+  @IsString()
   catalog?: string;
 
   @IsOptional()

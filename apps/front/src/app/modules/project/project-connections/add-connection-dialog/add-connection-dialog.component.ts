@@ -134,6 +134,7 @@ export class AddConnectionDialogComponent implements OnInit {
   typeGoogleApi = ConnectionTypeEnum.GoogleApi;
 
   testConnectionResult: TestConnectionResult;
+  testInternalHostResult: TestConnectionResult;
 
   constructor(
     public ref: DialogRef<AddConnectionDialogData>,
@@ -181,10 +182,12 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.addPostgresForm = this.fb.group({
       host: [undefined, [Validators.required]],
+      internalHost: [undefined, []],
       port: [
         undefined,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
+      internalPort: [undefined, [ValidationService.integerOrEmptyValidator]],
       database: [undefined, [Validators.required]],
       username: [undefined, [Validators.required]],
       password: [undefined, [Validators.required]]
@@ -192,10 +195,12 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.addMysqlForm = this.fb.group({
       host: [undefined, [Validators.required]],
+      internalHost: [undefined, []],
       port: [
         undefined,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
+      internalPort: [undefined, [ValidationService.integerOrEmptyValidator]],
       database: [undefined, [Validators.required]],
       user: [undefined, [Validators.required]],
       password: [undefined, [Validators.required]]
@@ -203,6 +208,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.addTrinoForm = this.fb.group({
       server: [undefined, [Validators.required]],
+      internalServer: [undefined, []],
       catalog: [undefined, []],
       schema: [undefined, []],
       user: [undefined, [Validators.required]],
@@ -211,10 +217,12 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.addPrestoForm = this.fb.group({
       server: [undefined, [Validators.required]],
+      internalServer: [undefined, []],
       port: [
         undefined,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
+      internalPort: [undefined, [ValidationService.integerOrEmptyValidator]],
       catalog: [undefined, []],
       schema: [undefined, []],
       user: [undefined, [Validators.required]],
@@ -232,6 +240,7 @@ export class AddConnectionDialogComponent implements OnInit {
     this.addDatabricksForm = this.fb.group({
       authType: [DatabricksAuthTypeEnum.OAuthM2M, [Validators.required]],
       host: [undefined, [Validators.required]],
+      internalHost: [undefined, []],
       path: [undefined, [Validators.required]],
       token: [undefined, []],
       oauthClientId: [undefined, [Validators.required]],
@@ -455,6 +464,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
   changeType(type: ConnectionTypeEnum) {
     this.testConnectionResult = undefined;
+    this.testInternalHostResult = undefined;
 
     if (type !== ConnectionTypeEnum.BigQuery) {
       this.addBigqueryForm.controls['serviceAccountCredentials'].reset();
@@ -475,7 +485,9 @@ export class AddConnectionDialogComponent implements OnInit {
 
     if (type !== ConnectionTypeEnum.PostgreSQL) {
       this.addPostgresForm.controls['host'].reset();
+      this.addPostgresForm.controls['internalHost'].reset();
       this.addPostgresForm.controls['port'].reset();
+      this.addPostgresForm.controls['internalPort'].reset();
       this.addPostgresForm.controls['database'].reset();
       this.addPostgresForm.controls['username'].reset();
       this.addPostgresForm.controls['password'].reset();
@@ -483,7 +495,9 @@ export class AddConnectionDialogComponent implements OnInit {
 
     if (type !== ConnectionTypeEnum.MySQL) {
       this.addMysqlForm.controls['host'].reset();
+      this.addMysqlForm.controls['internalHost'].reset();
       this.addMysqlForm.controls['port'].reset();
+      this.addMysqlForm.controls['internalPort'].reset();
       this.addMysqlForm.controls['database'].reset();
       this.addMysqlForm.controls['user'].reset();
       this.addMysqlForm.controls['password'].reset();
@@ -491,6 +505,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
     if (type !== ConnectionTypeEnum.Trino) {
       this.addTrinoForm.controls['server'].reset();
+      this.addTrinoForm.controls['internalServer'].reset();
       this.addTrinoForm.controls['catalog'].reset();
       this.addTrinoForm.controls['schema'].reset();
       this.addTrinoForm.controls['user'].reset();
@@ -499,7 +514,9 @@ export class AddConnectionDialogComponent implements OnInit {
 
     if (type !== ConnectionTypeEnum.Presto) {
       this.addPrestoForm.controls['server'].reset();
+      this.addPrestoForm.controls['internalServer'].reset();
       this.addPrestoForm.controls['port'].reset();
+      this.addPrestoForm.controls['internalPort'].reset();
       this.addPrestoForm.controls['catalog'].reset();
       this.addPrestoForm.controls['schema'].reset();
       this.addPrestoForm.controls['user'].reset();
@@ -519,6 +536,7 @@ export class AddConnectionDialogComponent implements OnInit {
         DatabricksAuthTypeEnum.OAuthM2M
       );
       this.addDatabricksForm.controls['host'].reset();
+      this.addDatabricksForm.controls['internalHost'].reset();
       this.addDatabricksForm.controls['path'].reset();
       this.addDatabricksForm.controls['token'].reset();
       this.addDatabricksForm.controls['oauthClientId'].reset();
@@ -648,8 +666,12 @@ export class AddConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.PostgreSQL
           ? {
               host: this.addPostgresForm.value.host,
+              internalHost: this.addPostgresForm.value.internalHost,
               port: isDefined(this.addPostgresForm.value.port)
                 ? Number(this.addPostgresForm.value.port)
+                : undefined,
+              internalPort: isDefined(this.addPostgresForm.value.internalPort)
+                ? Number(this.addPostgresForm.value.internalPort)
                 : undefined,
               database: this.addPostgresForm.value.database,
               username: this.addPostgresForm.value.username,
@@ -661,8 +683,12 @@ export class AddConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.MySQL
           ? {
               host: this.addMysqlForm.value.host,
+              internalHost: this.addMysqlForm.value.internalHost,
               port: isDefined(this.addMysqlForm.value.port)
                 ? Number(this.addMysqlForm.value.port)
+                : undefined,
+              internalPort: isDefined(this.addMysqlForm.value.internalPort)
+                ? Number(this.addMysqlForm.value.internalPort)
                 : undefined,
               database: this.addMysqlForm.value.database,
               user: this.addMysqlForm.value.user,
@@ -673,6 +699,7 @@ export class AddConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.Trino
           ? {
               server: this.addTrinoForm.value.server,
+              internalServer: this.addTrinoForm.value.internalServer,
               catalog: this.addTrinoForm.value.catalog,
               schema: this.addTrinoForm.value.schema,
               user: this.addTrinoForm.value.user,
@@ -683,8 +710,12 @@ export class AddConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.Presto
           ? {
               server: this.addPrestoForm.value.server,
+              internalServer: this.addPrestoForm.value.internalServer,
               port: isDefined(this.addPrestoForm.value.port)
                 ? Number(this.addPrestoForm.value.port)
+                : undefined,
+              internalPort: isDefined(this.addPrestoForm.value.internalPort)
+                ? Number(this.addPrestoForm.value.internalPort)
                 : undefined,
               catalog: this.addPrestoForm.value.catalog,
               schema: this.addPrestoForm.value.schema,
@@ -707,6 +738,7 @@ export class AddConnectionDialogComponent implements OnInit {
           ? {
               authType: this.addDatabricksForm.value.authType,
               host: this.addDatabricksForm.value.host,
+              internalHost: this.addDatabricksForm.value.internalHost,
               path: this.addDatabricksForm.value.path,
               token: this.addDatabricksForm.value.token,
               oauthClientId: this.addDatabricksForm.value.oauthClientId,
@@ -754,6 +786,25 @@ export class AddConnectionDialogComponent implements OnInit {
       return;
     }
 
+    if (isDefined(options.postgres)) {
+      options.postgres.internalHost = undefined;
+      options.postgres.internalPort = undefined;
+    }
+    if (isDefined(options.mysql)) {
+      options.mysql.internalHost = undefined;
+      options.mysql.internalPort = undefined;
+    }
+    if (isDefined(options.databricks)) {
+      options.databricks.internalHost = undefined;
+    }
+    if (isDefined(options.trino)) {
+      options.trino.internalServer = undefined;
+    }
+    if (isDefined(options.presto)) {
+      options.presto.internalServer = undefined;
+      options.presto.internalPort = undefined;
+    }
+
     let payload: ToBackendTestConnectionRequestPayload = {
       projectId: this.ref.data.projectId,
       connectionId: this.addForm.value.connectionId,
@@ -761,10 +812,6 @@ export class AddConnectionDialogComponent implements OnInit {
       type: this.addForm.value.type,
       options: options,
       storeMethod: undefined
-      // this.addForm.value.type === ConnectionTypeEnum.Api ||
-      // this.addForm.value.type === ConnectionTypeEnum.GoogleApi
-      //   ? StoreMethodEnum.Get
-      //   : undefined
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -779,6 +826,44 @@ export class AddConnectionDialogComponent implements OnInit {
         tap((resp: ToBackendTestConnectionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.testConnectionResult = resp.payload.testConnectionResult;
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  testInternalHost() {
+    this.testInternalHostResult = undefined;
+
+    let options = this.prepareOptions();
+
+    if (isUndefined(options)) {
+      return;
+    }
+
+    let payload: ToBackendTestConnectionRequestPayload = {
+      projectId: this.ref.data.projectId,
+      connectionId: this.addForm.value.connectionId,
+      envId: this.addForm.value.envId,
+      type: this.addForm.value.type,
+      options: options,
+      storeMethod: undefined
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendTestConnection,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: ToBackendTestConnectionResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.testInternalHostResult = resp.payload.testConnectionResult;
             this.cd.detectChanges();
           }
         }),

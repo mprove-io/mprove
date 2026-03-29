@@ -425,6 +425,21 @@
           </div>
         </div>
 
+        <div class="mb-6 flex flex-row items-center">
+          <div class="w-[200px] flex-shrink-0 font-semibold">Internal Host</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogPostgresInternalHostInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              formControlName="internalHost"
+              placeholder="Optional"
+            />
+          </div>
+        </div>
+
         <div class="flex flex-row items-center">
           <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Port</div>
 
@@ -443,6 +458,26 @@
             />
             <m-validation
               [control]="addPostgresForm.controls['port']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
+            >Internal Port</div
+          >
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogPostgresInternalPortInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              formControlName="internalPort"
+              placeholder="Optional"
+            />
+            <m-validation
+              [control]="addPostgresForm.controls['internalPort']"
             ></m-validation>
           </div>
         </div>
@@ -544,6 +579,21 @@
           </div>
         </div>
 
+        <div class="mb-6 flex flex-row items-center">
+          <div class="w-[200px] flex-shrink-0 font-semibold">Internal Host</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogMysqlInternalHostInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              formControlName="internalHost"
+              placeholder="Optional"
+            />
+          </div>
+        </div>
+
         <div class="flex flex-row items-center">
           <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Port</div>
 
@@ -562,6 +612,26 @@
             />
             <m-validation
               [control]="addMysqlForm.controls['port']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
+            >Internal Port</div
+          >
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogMysqlInternalPortInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              formControlName="internalPort"
+              placeholder="Optional"
+            />
+            <m-validation
+              [control]="addMysqlForm.controls['internalPort']"
             ></m-validation>
           </div>
         </div>
@@ -661,6 +731,23 @@
             <m-validation
               [control]="addTrinoForm.controls['server']"
             ></m-validation>
+          </div>
+        </div>
+
+        <div class="mb-6 flex flex-row items-center">
+          <div class="w-[200px] flex-shrink-0 font-semibold"
+            >Internal Server</div
+          >
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogTrinoInternalServerInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              formControlName="internalServer"
+              placeholder="Optional"
+            />
           </div>
         </div>
       </div>
@@ -784,6 +871,23 @@
           </div>
         </div>
 
+        <div class="mb-6 flex flex-row items-center">
+          <div class="w-[200px] flex-shrink-0 font-semibold"
+            >Internal Server</div
+          >
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogPrestoInternalServerInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              formControlName="internalServer"
+              placeholder="Optional"
+            />
+          </div>
+        </div>
+
         <div class="flex flex-row items-center">
           <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Port</div>
 
@@ -802,6 +906,26 @@
             />
             <m-validation
               [control]="addPrestoForm.controls['port']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
+            >Internal Port</div
+          >
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogPrestoInternalPortInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              formControlName="internalPort"
+              placeholder="Optional"
+            />
+            <m-validation
+              [control]="addPrestoForm.controls['internalPort']"
             ></m-validation>
           </div>
         </div>
@@ -1039,6 +1163,21 @@
           <m-validation
             [control]="addDatabricksForm.controls['host']"
           ></m-validation>
+        </div>
+      </div>
+
+      <div class="mb-6 flex flex-row items-center">
+        <div class="w-[200px] flex-shrink-0 font-semibold">Internal Host</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogDatabricksInternalHostInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            formControlName="internalHost"
+            placeholder="Optional"
+          />
         </div>
       </div>
 
@@ -1462,7 +1601,7 @@
       </div>
     </form>
 
-    <div class="mt-9 flex flex-row">
+    <div class="mt-9 flex flex-row items-start">
       <button
         data-cy="addConnectionDialogAddButton"
         class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
@@ -1486,43 +1625,74 @@
           addForm.controls['type'].value !== typeGoogleApi &&
           addForm.controls['type'].value !== typeApi
         "
-        class="ml-5 flex h-[50px] flex-shrink-0 flex-row items-center justify-end"
+        class="ml-5 flex flex-shrink-0 flex-col items-end gap-2"
       >
-        <div
-          *ngIf="testConnectionResult?.isSuccess === true"
-          class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-green-600"
-        >
-          Connection is valid
+        <div class="flex flex-row items-center">
+          <div
+            *ngIf="testConnectionResult?.isSuccess === true"
+            class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-green-600"
+          >
+            Connection is valid
+          </div>
+
+          <div
+            *ngIf="testConnectionResult?.isSuccess === false"
+            class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-red-500"
+            [tp]="errorMessageTemplate"
+          >
+            Connection failed
+          </div>
+
+          <ng-template #errorMessageTemplate>
+            <div class="break-words">{{
+              !!testConnectionResult?.errorMessage
+                ? testConnectionResult?.errorMessage
+                : 'Error message is empty'
+            }}</div>
+          </ng-template>
+
+          <button
+            data-cy="addConnectionDialogTestConnectionButton"
+            class="bg-m600 text-m0 ml-3 w-60 rounded py-3 text-base font-medium focus:outline-none"
+            type="button"
+            (click)="testConnection()"
+            >Test Connection</button
+          >
         </div>
 
-        <div
-          *ngIf="testConnectionResult?.isSuccess === false"
-          class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-red-500"
-          [tp]="errorMessageTemplate"
-        >
-          Connection failed
-        </div>
+        <div class="flex flex-row items-center">
+          <div
+            *ngIf="testInternalHostResult?.isSuccess === true"
+            class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-green-600"
+          >
+            Internal is valid
+          </div>
 
-        <ng-template #errorMessageTemplate>
-          <div class="break-words">{{
-            !!testConnectionResult?.errorMessage
-              ? testConnectionResult?.errorMessage
-              : 'Error message is empty'
-          }}</div>
-        </ng-template>
+          <div
+            *ngIf="testInternalHostResult?.isSuccess === false"
+            class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-red-500"
+            [tp]="internalErrorMessageTemplate"
+          >
+            Internal failed
+          </div>
+
+          <ng-template #internalErrorMessageTemplate>
+            <div class="break-words">{{
+              !!testInternalHostResult?.errorMessage
+                ? testInternalHostResult?.errorMessage
+                : 'Error message is empty'
+            }}</div>
+          </ng-template>
+
+          <button
+            data-cy="addConnectionDialogTestInternalHostButton"
+            class="bg-m600 text-m0 ml-3 w-60 rounded py-3 text-base font-medium focus:outline-none"
+            type="button"
+            (click)="testInternalHost()"
+            >Test Internal Connection</button
+          >
+        </div>
       </div>
-
-      <button
-        *ngIf="
-          addForm.controls['type'].value !== typeGoogleApi &&
-          addForm.controls['type'].value !== typeApi
-        "
-        data-cy="addConnectionDialogTestConnectionButton"
-        class="bg-m600 text-m0 ml-3 w-60 rounded py-3 text-base font-medium focus:outline-none"
-        type="button"
-        (click)="testConnection()"
-        >Test Connection</button
-      >
     </div>
   </div>
 </div>

@@ -77,8 +77,12 @@ export class PgService {
     let { connection } = item;
 
     let connectionOptions: pg.IConnectionParameters<pg.IClient> = {
-      host: connection.options.postgres.host,
-      port: connection.options.postgres.port,
+      host:
+        connection.options.postgres.internalHost ??
+        connection.options.postgres.host,
+      port:
+        connection.options.postgres.internalPort ??
+        connection.options.postgres.port,
       database: connection.options.postgres.database,
       user: connection.options.postgres.username,
       password: connection.options.postgres.password,

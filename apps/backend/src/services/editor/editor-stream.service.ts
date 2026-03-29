@@ -139,7 +139,8 @@ export class EditorStreamService implements OnModuleDestroy {
             questionId: payload.questionId,
             answers: payload.answers,
             messageId: payload.messageId,
-            partId: payload.partId
+            partId: payload.partId,
+            system: payload.system
           })
             .then(result => {
               this.redisClient
@@ -762,6 +763,7 @@ export class EditorStreamService implements OnModuleDestroy {
     answers?: string[][];
     messageId?: string;
     partId?: string;
+    system?: string;
   }): Promise<{ success: boolean }> {
     let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
@@ -794,6 +796,10 @@ export class EditorStreamService implements OnModuleDestroy {
 
       if (item.messageId) {
         promptBody.messageID = item.messageId;
+      }
+
+      if (item.system) {
+        promptBody.system = item.system;
       }
 
       await opencodeClient.session.promptAsync(
@@ -903,6 +909,7 @@ export class EditorStreamService implements OnModuleDestroy {
     answers?: string[][];
     messageId?: string;
     partId?: string;
+    system?: string;
   }): Promise<{ success: boolean }> {
     let correlationId = crypto.randomUUID();
     let replyTo = `${CHANNEL_OPENCODE_INTERACT_REPLY}:${correlationId}`;
@@ -929,7 +936,8 @@ export class EditorStreamService implements OnModuleDestroy {
           questionId: item.questionId,
           answers: item.answers,
           messageId: item.messageId,
-          partId: item.partId
+          partId: item.partId,
+          system: item.system
         }
       })
     );

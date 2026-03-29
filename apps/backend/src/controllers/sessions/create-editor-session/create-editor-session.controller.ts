@@ -234,6 +234,8 @@ export class CreateEditorSessionController {
 
     this.activateSessionAsync({
       sessionId: session.sessionId,
+      projectId: projectId,
+      envId: envId,
       model: session.model,
       agent: session.agent,
       sandboxType: sandboxType,
@@ -279,6 +281,8 @@ export class CreateEditorSessionController {
 
   private async activateSessionAsync(item: {
     sessionId: string;
+    projectId: string;
+    envId: string;
     model?: string;
     agent?: string;
     sandboxType: SandboxTypeEnum;
@@ -292,6 +296,8 @@ export class CreateEditorSessionController {
   }) {
     let {
       sessionId,
+      projectId,
+      envId,
       model,
       agent,
       sandboxType,
@@ -414,6 +420,15 @@ export class CreateEditorSessionController {
         });
 
       if (firstMessage) {
+        let system = [
+          `Mprove context parameters for MCP tool calls and cli:`,
+          `- projectId: ${projectId}`,
+          `- repoId: ${sessionId}`,
+          `- branchId: ${sessionId}`,
+          `- envId: ${envId}`,
+          ``
+        ].join('\n');
+
         try {
           await this.editorStreamService.executeInteraction({
             sessionId: sessionId,
@@ -424,7 +439,8 @@ export class CreateEditorSessionController {
             model: model,
             variant: variant,
             messageId: messageId,
-            partId: partId
+            partId: partId,
+            system: system
           });
         } catch (e) {
           if (isStreamStartedFresh) {

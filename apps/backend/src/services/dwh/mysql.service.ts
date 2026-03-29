@@ -83,8 +83,10 @@ export class MysqlService {
     let { connection } = item;
 
     let connectionOptions: MYSQL.ConnectionOptions = {
-      host: connection.options.mysql.host,
-      port: connection.options.mysql.port,
+      host:
+        connection.options.mysql.internalHost ?? connection.options.mysql.host,
+      port:
+        connection.options.mysql.internalPort ?? connection.options.mysql.port,
       database: connection.options.mysql.database,
       user: connection.options.mysql.user,
       password: connection.options.mysql.password,

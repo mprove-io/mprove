@@ -5,4 +5,8 @@ export class OptionsPresto extends OptionsPrestoTrinoCommon {
   @IsOptional()
   @IsInt()
   port?: number;
+
+  @IsOptional()
+  @IsInt()
+  internalPort?: number;
 }

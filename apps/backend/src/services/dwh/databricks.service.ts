@@ -98,7 +98,9 @@ export class DatabricksService {
 
     let config = {
       authType: connection.options.databricks.authType,
-      host: connection.options.databricks.host,
+      host:
+        connection.options.databricks.internalHost ??
+        connection.options.databricks.host,
       path: connection.options.databricks.path,
       token: connection.options.databricks.token,
       oauthClientId: connection.options.databricks.oauthClientId,
