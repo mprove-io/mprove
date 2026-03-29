@@ -69,6 +69,21 @@ export function prePopulateMalloySchemaCache(item: {
     > = (connection as any).schemaCache ?? {};
 
     pc.rawSchema.tables.forEach(table => {
+      // Snowflake VARIANT/ARRAY/OBJECT columns require live DB sampling
+      // to discover their nested schema. Skip tables that contain these
+      // columns so Malloy falls back to its own fetching + sampling.
+      // ref: malloy/packages/malloy-db-snowflake/src/snowflake_connection.ts
+      //   schemaFromTablePath (line 348) — samples 100 rows for VARIANT columns
+      if (pc.type === ConnectionTypeEnum.SnowFlake) {
+        let snowflakeVariantTypes = ['variant', 'array', 'object'];
+        let hasVariant = table.columns.some(col =>
+          snowflakeVariantTypes.includes(col.dataType.toLowerCase())
+        );
+        if (hasVariant) {
+          return;
+        }
+      }
+
       let tablePath = `${table.schemaName}.${table.tableName}`;
 
       let fields: FieldDef[] = [];
