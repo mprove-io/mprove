@@ -6,7 +6,10 @@ import {
 import {
   ChangeDetectorRef,
   Component,
+  EventEmitter,
+  Input,
   OnDestroy,
+  Output,
   ViewChild
 } from '@angular/core';
 import { Subscription } from 'rxjs';
@@ -49,6 +52,12 @@ export class BmlErrorsNode {
   styleUrls: ['blockml-errors.component.scss']
 })
 export class BlockmlErrorsComponent implements OnDestroy {
+  @Input() isEditor: boolean;
+  @Input() needSave: boolean;
+  @Input() isProduction: boolean;
+
+  @Output() validateClick = new EventEmitter<void>();
+
   errors: BmlErrorExtra[];
 
   nodes: BmlErrorsNode[];

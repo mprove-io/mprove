@@ -25,14 +25,22 @@ export function makeMalloyConnections(item: {
   let malloyConnections: MalloyConnection[] = [];
 
   item.connections.forEach(x => {
+    let pgOpts = x.options.postgres;
+    let pgUsername = encodeURIComponent(pgOpts?.username ?? '');
+    let pgPassword = encodeURIComponent(pgOpts?.password ?? '');
+    let pgHost = pgOpts?.host ?? '';
+    let pgPort = pgOpts?.port ?? 5432;
+    let pgDatabase = encodeURIComponent(pgOpts?.database ?? '');
+    let pgConnectionString = `postgresql://${pgUsername}:${pgPassword}@${pgHost}:${pgPort}/${pgDatabase}`;
+
+    if (pgOpts?.isSSL === true) {
+      pgConnectionString += '?sslmode=no-verify';
+    }
+
     let mConnection =
       x.type === ConnectionTypeEnum.PostgreSQL
         ? new PostgresConnection(x.connectionId, () => ({}), {
-            host: x.options.postgres?.host,
-            port: x.options.postgres?.port,
-            username: x.options.postgres?.username,
-            password: x.options.postgres?.password,
-            databaseName: x.options.postgres?.database
+            connectionString: pgConnectionString
           })
         : x.type === ConnectionTypeEnum.MySQL
           ? new MySQLConnection(

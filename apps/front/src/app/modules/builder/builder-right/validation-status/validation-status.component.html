@@ -78,6 +78,10 @@
 
 <m-repo-conflicts
   *ngIf="nav?.needValidate === false && repo && repo.conflicts.length > 0"
+  [isEditor]="isEditor"
+  [needSave]="needSave"
+  [isProduction]="nav?.repoType === repoTypeEnum.Production"
+  (validateClick)="validate()"
   class="flex w-full"
 ></m-repo-conflicts>
 
@@ -89,6 +93,10 @@
     struct &&
     struct.errors.length > 0
   "
+  [isEditor]="isEditor"
+  [needSave]="needSave"
+  [isProduction]="nav?.repoType === repoTypeEnum.Production"
+  (validateClick)="validate()"
   class="flex w-full"
 ></m-blockml-errors>
 

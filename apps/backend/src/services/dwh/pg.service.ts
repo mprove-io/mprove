@@ -48,32 +48,22 @@ export class PgService {
     let envs: Record<string, string> = {};
     let files: { path: string; data: string }[] = [];
 
-    if (isDefined(opts.host)) {
-      envs[`${envPrefix}_HOST`] = String(opts.host);
+    let username = encodeURIComponent(opts.username ?? '');
+    let password = encodeURIComponent(opts.password ?? '');
+    let host = opts.host ?? '';
+    let port = opts.port ?? 5432;
+    let database = encodeURIComponent(opts.database ?? '');
+    let connectionString = `postgresql://${username}:${password}@${host}:${port}/${database}`;
+
+    if (opts.isSSL === true) {
+      connectionString += '?sslmode=no-verify';
     }
-    if (isDefined(opts.port)) {
-      envs[`${envPrefix}_PORT`] = String(opts.port);
-    }
-    if (isDefined(opts.database)) {
-      envs[`${envPrefix}_DATABASE`] = String(opts.database);
-    }
-    if (isDefined(opts.username)) {
-      envs[`${envPrefix}_USERNAME`] = String(opts.username);
-    }
-    if (isDefined(opts.password)) {
-      envs[`${envPrefix}_PASSWORD`] = String(opts.password);
-    }
-    if (isDefined(opts.isSSL)) {
-      envs[`${envPrefix}_IS_SSL`] = String(opts.isSSL);
-    }
+
+    envs[`${envPrefix}_CONNECTION_STRING`] = connectionString;
 
     let malloyConnectionConfigEntry: ConnectionConfigEntry = {
       is: 'postgres',
-      host: { env: `${envPrefix}_HOST` },
-      port: { env: `${envPrefix}_PORT` },
-      databaseName: { env: `${envPrefix}_DATABASE` },
-      username: { env: `${envPrefix}_USERNAME` },
-      password: { env: `${envPrefix}_PASSWORD` }
+      connectionString: { env: `${envPrefix}_CONNECTION_STRING` }
     };
 
     return {

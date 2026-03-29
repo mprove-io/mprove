@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  Output
+} from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { DiskFileLine } from '#common/interfaces/disk/disk-file-line';
@@ -11,6 +17,12 @@ import { NavigateService } from '#front/app/services/navigate.service';
   templateUrl: './repo-conflicts.component.html'
 })
 export class RepoConflictsComponent {
+  @Input() isEditor: boolean;
+  @Input() needSave: boolean;
+  @Input() isProduction: boolean;
+
+  @Output() validateClick = new EventEmitter<void>();
+
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {

@@ -6,6 +6,27 @@
   >
     <m-exclamation-icon></m-exclamation-icon>
     <div>Merge Conflicts</div>
+    <div class="flex flex-1"></div>
+    <div
+      *ngIf="isProduction === false"
+      tp="FileEditor role is required to validate files"
+      [tpIsEnabled]="isEditor === false"
+    >
+      <button
+        type="button"
+        data-cy="conflictsValidateButton"
+        class="h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-base font-medium focus:outline-none"
+        [ngClass]="{
+          'border-s400 text-s500 hover:bg-gray-50':
+            isEditor === true && needSave === false,
+          'border-s300 text-s400 cursor-default':
+            isEditor === false || needSave === true
+        }"
+        (click)="validateClick.emit()"
+        [disabled]="isEditor === false || needSave === true"
+        >Validate Files</button
+      >
+    </div>
   </div>
 
   <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">

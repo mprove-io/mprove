@@ -6,6 +6,27 @@
   >
     <m-exclamation-icon></m-exclamation-icon>
     <div>Errors</div>
+    <div class="flex flex-1"></div>
+    <div
+      *ngIf="isProduction === false"
+      tp="FileEditor role is required to validate files"
+      [tpIsEnabled]="isEditor === false"
+    >
+      <button
+        type="button"
+        data-cy="errorsValidateButton"
+        class="h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-base font-medium focus:outline-none"
+        [ngClass]="{
+          'border-s400 text-s500 hover:bg-gray-50':
+            isEditor === true && needSave === false,
+          'border-s300 text-s400 cursor-default':
+            isEditor === false || needSave === true
+        }"
+        (click)="validateClick.emit()"
+        [disabled]="isEditor === false || needSave === true"
+        >Validate Files</button
+      >
+    </div>
   </div>
 
   <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
@@ -71,13 +92,14 @@
                     *ngIf="node.data.isError === true"
                     class="mb-3 mt-3 flex min-w-[2px] flex-1 flex-col"
                   >
-                    <div class="text-r1 flex w-full text-base">{{
+                    <div class="text-r1 flex w-full select-text text-base">{{
                       node.data.title
                     }}</div>
 
-                    <div class="text-s500 mb-1 mt-2 break-words text-base">{{
-                      node.data.message | capitalize
-                    }}</div>
+                    <div
+                      class="text-s500 mb-1 mt-2 select-text break-words text-base"
+                      >{{ node.data.message | capitalize }}</div
+                    >
 
                     <div
                       *ngFor="let line of node.data.lines"
