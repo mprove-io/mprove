@@ -27,6 +27,10 @@ var s500 = '#6a7282'; // gray-500
 
 var a500 = '#fe9a00'; // amber-500
 
+var g50 = '#f0fdf4'; // green-50
+var g75 = '#e6fbed'; // green-75
+var g100 = '#dcfce7'; // green-100
+var g500 = '#22c55e'; // green-500
 var g1 = '#64BD63'; // the same as ui-switch
 var g2 = '#B6E1BC'; // table measures and calculations
 var g700 = '#008236'; // green-700
@@ -90,6 +94,10 @@ module.exports = {
       s400,
       s500,
       a500,
+      g50,
+      g75,
+      g100,
+      g500,
       g1,
       g2,
       g700,
@@ -122,6 +130,10 @@ module.exports = {
       s400,
       s500,
       a500,
+      g50,
+      g75,
+      g100,
+      g500,
       g1,
       g2,
       g700,
@@ -154,6 +166,10 @@ module.exports = {
       s400,
       s500,
       a500,
+      g50,
+      g75,
+      g100,
+      g500,
       g1,
       g2,
       g700,

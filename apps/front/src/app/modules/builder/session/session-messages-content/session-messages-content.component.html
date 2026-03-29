@@ -1,6 +1,6 @@
 <!-- First message from session (before events arrive) -->
 <ng-container *ngIf="turns.length === 0 && session?.firstMessage">
-  <div class="user-message mb-8 ml-4">
+  <div class="user-message mb-8 ml-4 mr-8">
     <div class="flex justify-start">
       <div class="border-s200 bg-s100 max-w-[90%] rounded-2xl border px-5 py-3">
         <div class="text-s1 whitespace-pre-wrap break-words text-[17px]">{{
@@ -30,7 +30,7 @@
   "
 >
   <!-- User message -->
-  <div *ngIf="turn.userMessage" class="user-message mb-8 ml-4">
+  <div *ngIf="turn.userMessage" class="user-message mb-8 ml-4 mr-8">
     <div class="flex justify-start">
       <div class="border-s200 bg-s100 max-w-[90%] rounded-2xl border px-5 py-3">
         <div class="text-s1 whitespace-pre-wrap break-words text-[17px]">{{
@@ -50,11 +50,11 @@
   </div>
 
   <!-- Response div wrapping all non-user content for this turn -->
-  <div class="response-div mb-8">
+  <div class="response-div mb-8 mr-8">
     <div *ngFor="let msg of turn.responses" class="mb-4">
       <!-- Agent message -->
-      <div *ngIf="msg.role === 'agent'" class="ml-10 flex justify-start">
-        <div class="max-w-[90%] rounded-2xl px-4 py-3">
+      <div *ngIf="msg.role === 'agent'" class="ml-10">
+        <div class="rounded-2xl px-4 py-3">
           <div
             class="whitespace-pre-wrap break-words text-[17px] text-gray-800"
             >{{ msg.text }}</div
@@ -77,7 +77,7 @@
             'bg-amber-400':
               msg.toolPart.state?.status === 'pending' ||
               msg.toolPart.state?.status === 'running',
-            'bg-green-500': msg.toolPart.state?.status === 'completed',
+            'bg-g500': msg.toolPart.state?.status === 'completed',
             'bg-red-500': msg.toolPart.state?.status === 'error'
           }"
         ></span>
@@ -111,15 +111,11 @@
             'bg-amber-400':
               msg.toolPart.state?.status === 'pending' ||
               msg.toolPart.state?.status === 'running',
-            'bg-green-500': msg.toolPart.state?.status === 'completed',
+            'bg-g500': msg.toolPart.state?.status === 'completed',
             'bg-red-500': msg.toolPart.state?.status === 'error'
           }"
         ></span>
-        <button
-          class="border-s200 hover:bg-m50 max-w-[90%] overflow-hidden rounded-lg border bg-gray-50 text-left focus:outline-none disabled:bg-transparent disabled:hover:bg-transparent"
-          [disabled]="!hasToolContent(msg.toolPart)"
-          (click)="openToolOutput(msg.toolPart)"
-        >
+        <div class="border-s200 min-w-0 flex-1 rounded-lg border">
           <!-- Header -->
           <div class="flex w-full items-center gap-2 px-3 py-2">
             <span class="text-s1 text-base font-medium">{{
@@ -135,14 +131,15 @@
           <!-- Inline output preview -->
           <div
             *ngIf="getToolOutput(msg.toolPart)"
-            class="border-s200 max-h-[3.3lh] overflow-hidden border-t px-3 py-2"
+            class="border-s300 bg-m50 hover:bg-m75 min-h-[40px] cursor-pointer overflow-hidden rounded-b-lg border-t px-3 pt-2"
+            (click)="openToolOutput(msg.toolPart)"
           >
             <pre
-              class="text-s500 whitespace-pre-wrap break-words font-mono text-sm"
+              class="text-s1 whitespace-pre-wrap break-words font-mono text-sm"
               >{{ getBashOutputPreview(msg.toolPart) }}</pre
             >
           </div>
-        </button>
+        </div>
       </div>
 
       <!-- Tool call: NON-BASH (existing behavior) -->
@@ -161,13 +158,15 @@
             'bg-amber-400':
               msg.toolPart.state?.status === 'pending' ||
               msg.toolPart.state?.status === 'running',
-            'bg-green-500': msg.toolPart.state?.status === 'completed',
+            'bg-g500': msg.toolPart.state?.status === 'completed',
             'bg-red-500': msg.toolPart.state?.status === 'error'
           }"
         ></span>
-        <div class="border-s200 max-w-[90%] overflow-hidden rounded-lg border">
+        <div
+          class="border-s200 min-w-0 flex-1 overflow-hidden rounded-lg border"
+        >
           <button
-            class="hover:bg-m50 flex w-full items-center gap-2 bg-gray-50 px-3 py-2 text-left focus:outline-none disabled:bg-transparent disabled:hover:bg-transparent"
+            class="hover:bg-m75 bg-m50 flex w-full items-center gap-2 px-3 py-2 text-left focus:outline-none disabled:bg-transparent disabled:hover:bg-transparent"
             [disabled]="!hasToolContent(msg.toolPart)"
             (click)="openToolOutput(msg.toolPart)"
           >
@@ -245,10 +244,8 @@
       *ngIf="turn.fileDiffs?.length > 0 && (!isLast || !isSessionBusy)"
       class="mb-4 ml-[34px] flex items-start gap-3"
     >
-      <span
-        class="mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-green-500"
-      ></span>
-      <div class="border-s200 max-w-[90%] overflow-hidden rounded-lg border">
+      <span class="bg-g500 mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full"></span>
+      <div class="border-s200 min-w-0 flex-1 overflow-hidden rounded-lg border">
         <div class="flex items-center gap-2 px-3 py-2">
           <span class="text-s1 text-base font-medium">Modified</span>
           <span class="text-s500 text-base"
@@ -266,10 +263,10 @@
         </div>
         <div
           *ngFor="let diff of turn.fileDiffs"
-          class="border-s200 flex cursor-pointer items-center justify-between border-t px-3 py-2 hover:bg-gray-50"
+          class="border-s300 bg-m50 hover:bg-m75 flex cursor-pointer items-center justify-between border-t px-3 py-2"
           (click)="openFileDiff(diff)"
         >
-          <span class="text-s1 min-w-0 truncate text-base">{{
+          <span class="text-s2 min-w-0 truncate text-base">{{
             diff.file
           }}</span>
           <span class="ml-3 flex flex-shrink-0 items-center gap-2 text-sm">
@@ -281,11 +278,11 @@
             >
             <span
               *ngIf="diff.status"
-              class="rounded px-1.5 py-0.5 text-sm"
+              class="rounded px-1.5 py-0.5 text-base font-medium"
               [ngClass]="{
-                'bg-green-50 text-green-700': diff.status === 'added',
-                'bg-red-50 text-red-700': diff.status === 'deleted',
-                'bg-blue-50 text-blue-700': diff.status === 'modified'
+                'text-green-700': diff.status === 'added',
+                'text-m600': diff.status === 'modified',
+                'text-red-700': diff.status === 'deleted'
               }"
               >{{ diff.status }}</span
             >
