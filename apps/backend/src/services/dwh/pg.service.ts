@@ -125,11 +125,16 @@ export class PgService {
         column_name: string;
         data_type: string;
         is_nullable: string;
+        element_type: string | null;
       }>(`
-        SELECT table_schema, table_name, column_name, data_type, is_nullable
-        FROM information_schema.columns
-        WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
-        ORDER BY table_schema, table_name, ordinal_position
+        SELECT c.table_schema, c.table_name, c.column_name, c.data_type, c.is_nullable,
+               e.data_type as element_type
+        FROM information_schema.columns c
+        LEFT JOIN information_schema.element_types e
+          ON ((c.table_catalog, c.table_schema, c.table_name, 'TABLE', c.dtd_identifier)
+            = (e.object_catalog, e.object_schema, e.object_name, e.object_type, e.collection_type_identifier))
+        WHERE c.table_schema NOT IN ('pg_catalog', 'information_schema')
+        ORDER BY c.table_schema, c.table_name, c.ordinal_position
       `);
 
       let indexesRows = await pgDb.any<{
@@ -271,6 +276,7 @@ export class PgService {
             return {
               columnName: c.column_name,
               dataType: c.data_type,
+              elementType: c.element_type ?? undefined,
               isNullable: c.is_nullable === 'YES',
               isPrimaryKey: isPrimaryKey,
               isUnique: isUnique,

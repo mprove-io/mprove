@@ -276,7 +276,8 @@ export class SnowFlakeService {
         snowflakeConnection,
         {
           sqlText: `
-            SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, DATA_TYPE, IS_NULLABLE
+            SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, DATA_TYPE, IS_NULLABLE,
+                   NUMERIC_PRECISION, NUMERIC_SCALE
             FROM INFORMATION_SCHEMA.COLUMNS
             WHERE TABLE_SCHEMA != 'INFORMATION_SCHEMA'
             ORDER BY TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION
@@ -289,6 +290,8 @@ export class SnowFlakeService {
         COLUMN_NAME: string;
         DATA_TYPE: string;
         IS_NULLABLE: string;
+        NUMERIC_PRECISION: number | null;
+        NUMERIC_SCALE: number | null;
       }[];
 
       let fkRows: {
@@ -445,9 +448,17 @@ export class SnowFlakeService {
                 idx.indexColumns.includes(c.COLUMN_NAME)
             );
 
+            let dataType = c.DATA_TYPE;
+            let isNumericType = ['NUMBER', 'NUMERIC', 'DECIMAL'].includes(
+              dataType
+            );
+            if (isNumericType && c.NUMERIC_PRECISION !== null) {
+              dataType = `${dataType}(${c.NUMERIC_PRECISION},${c.NUMERIC_SCALE ?? 0})`;
+            }
+
             return {
               columnName: c.COLUMN_NAME,
-              dataType: c.DATA_TYPE,
+              dataType: dataType,
               isNullable: c.IS_NULLABLE === 'YES',
               isPrimaryKey: isPrimaryKey,
               isUnique: isUnique,

@@ -83,6 +83,8 @@ export class ConnectionsService {
 
     let options = connection.options;
 
+    // rawSchema is intentionally not included here — it is only needed
+    // by blockml for pre-populating Malloy's schema cache.
     let apiProjectConnection: ProjectConnection = {
       projectId: connection.projectId,
       connectionId: connection.connectionId,

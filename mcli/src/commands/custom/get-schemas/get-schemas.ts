@@ -56,7 +56,7 @@ export class GetSchemasCommand extends CustomCommand {
     description: '(required) Environment'
   });
 
-  isRefresh = Option.Boolean('--refresh', false, {
+  isRefreshExistingCache = Option.Boolean('--refresh', false, {
     description: '(default false) Refresh schemas from database'
   });
 
@@ -97,7 +97,7 @@ export class GetSchemasCommand extends CustomCommand {
       envId: this.env,
       repoId: repoId,
       branchId: this.branch,
-      isRefresh: this.isRefresh
+      isRefreshExistingCache: this.isRefreshExistingCache
     };
 
     let getSchemasResp = await mreq<ToBackendGetConnectionSchemasResponse>({

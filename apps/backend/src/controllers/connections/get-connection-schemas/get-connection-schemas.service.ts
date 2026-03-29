@@ -68,12 +68,13 @@ export class GetConnectionSchemasService {
     envId: string;
     repoId: string;
     branchId: string;
-    isRefresh: boolean;
+    isRefreshExistingCache: boolean;
   }): Promise<{
     userMember: Member;
     combinedSchemaItems: CombinedSchemaItem[];
   }> {
-    let { userId, projectId, envId, repoId, branchId, isRefresh } = item;
+    let { userId, projectId, envId, repoId, branchId, isRefreshExistingCache } =
+      item;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -142,87 +143,39 @@ export class GetConnectionSchemasService {
       schema: ConnectionRawSchema;
     }[] = [];
 
-    if (isRefresh === true) {
-      await Promise.all(
-        eligibleConnections.map(async connection => {
-          let schema: ConnectionRawSchema;
+    if (isRefreshExistingCache === true) {
+      let fetched = await this.fetchAndSaveSchemas({
+        connections: eligibleConnections
+      });
 
-          if (connection.type === ConnectionTypeEnum.PostgreSQL) {
-            schema = await this.pgService.fetchSchema({
-              connection: connection
-            });
-          } else if (connection.type === ConnectionTypeEnum.MySQL) {
-            schema = await this.mysqlService.fetchSchema({
-              connection: connection
-            });
-          } else if (connection.type === ConnectionTypeEnum.SnowFlake) {
-            schema = await this.snowFlakeService.fetchSchema({
-              connection: connection
-            });
-          } else if (connection.type === ConnectionTypeEnum.Databricks) {
-            schema = await this.databricksService.fetchSchema({
-              connection: connection
-            });
-          } else if (connection.type === ConnectionTypeEnum.BigQuery) {
-            schema = await this.bigQueryService.fetchSchema({
-              connection: connection
-            });
-          } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
-            schema = await this.duckDbService.fetchSchema({
-              connection: connection
-            });
-          } else if (connection.type === ConnectionTypeEnum.Presto) {
-            schema = await this.prestoService.fetchSchema({
-              connection: connection
-            });
-          } else if (connection.type === ConnectionTypeEnum.Trino) {
-            schema = await this.trinoService.fetchSchema({
-              connection: connection
-            });
-          }
-
-          if (isDefined(schema)) {
-            connection.rawSchema = schema;
-          }
-
-          rawSchemasByConnection.push({
-            connectionId: connection.connectionId,
-            schema: schema
-          });
-        })
+      fetched.forEach(x => {
+        rawSchemasByConnection.push(x);
+      });
+    } else {
+      let connectionsWithCache = eligibleConnections.filter(x =>
+        isDefined(x.rawSchema)
       );
 
-      let connectionsToUpdate = eligibleConnections.filter(c =>
-        isDefined(c.rawSchema)
+      connectionsWithCache.forEach(x => {
+        rawSchemasByConnection.push({
+          connectionId: x.connectionId,
+          schema: x.rawSchema
+        });
+      });
+
+      let connectionsWithoutCache = eligibleConnections.filter(
+        x => !isDefined(x.rawSchema)
       );
 
-      if (connectionsToUpdate.length > 0) {
-        let serverTs = makeTsNumber();
+      if (connectionsWithoutCache.length > 0) {
+        let fetched = await this.fetchAndSaveSchemas({
+          connections: connectionsWithoutCache
+        });
 
-        await forEachSeries(connectionsToUpdate, async c => {
-          let connectionSt: ConnectionSt = { options: c.options };
-          let connectionLt: ConnectionLt = { rawSchema: c.rawSchema };
-
-          let entProps = this.tabToEntService.getEntProps({
-            dataSt: connectionSt,
-            dataLt: connectionLt,
-            isMetadata: false
-          });
-
-          await this.db.drizzle.execute(
-            sql`UPDATE connections SET lt = ${JSON.stringify(entProps.lt)}::json, server_ts = ${serverTs} WHERE connection_full_id = ${c.connectionFullId}`
-          );
+        fetched.forEach(x => {
+          rawSchemasByConnection.push(x);
         });
       }
-    } else {
-      eligibleConnections
-        .filter(x => isDefined(x.rawSchema))
-        .forEach(x => {
-          rawSchemasByConnection.push({
-            connectionId: x.connectionId,
-            schema: x.rawSchema
-          });
-        });
     }
 
     let combinedSchemaItems = this.buildCombinedSchema({
@@ -236,6 +189,86 @@ export class GetConnectionSchemasService {
       userMember: apiUserMember,
       combinedSchemaItems: combinedSchemaItems
     };
+  }
+
+  private async fetchAndSaveSchemas(item: {
+    connections: ConnectionTab[];
+  }): Promise<{ connectionId: string; schema: ConnectionRawSchema }[]> {
+    let { connections } = item;
+
+    let results: { connectionId: string; schema: ConnectionRawSchema }[] = [];
+
+    await Promise.all(
+      connections.map(async connection => {
+        let schema: ConnectionRawSchema;
+
+        if (connection.type === ConnectionTypeEnum.PostgreSQL) {
+          schema = await this.pgService.fetchSchema({
+            connection: connection
+          });
+        } else if (connection.type === ConnectionTypeEnum.MySQL) {
+          schema = await this.mysqlService.fetchSchema({
+            connection: connection
+          });
+        } else if (connection.type === ConnectionTypeEnum.SnowFlake) {
+          schema = await this.snowFlakeService.fetchSchema({
+            connection: connection
+          });
+        } else if (connection.type === ConnectionTypeEnum.Databricks) {
+          schema = await this.databricksService.fetchSchema({
+            connection: connection
+          });
+        } else if (connection.type === ConnectionTypeEnum.BigQuery) {
+          schema = await this.bigQueryService.fetchSchema({
+            connection: connection
+          });
+        } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
+          schema = await this.duckDbService.fetchSchema({
+            connection: connection
+          });
+        } else if (connection.type === ConnectionTypeEnum.Presto) {
+          schema = await this.prestoService.fetchSchema({
+            connection: connection
+          });
+        } else if (connection.type === ConnectionTypeEnum.Trino) {
+          schema = await this.trinoService.fetchSchema({
+            connection: connection
+          });
+        }
+
+        if (isDefined(schema)) {
+          connection.rawSchema = schema;
+        }
+
+        results.push({
+          connectionId: connection.connectionId,
+          schema: schema
+        });
+      })
+    );
+
+    let connectionsToUpdate = connections.filter(c => isDefined(c.rawSchema));
+
+    if (connectionsToUpdate.length > 0) {
+      let serverTs = makeTsNumber();
+
+      await forEachSeries(connectionsToUpdate, async c => {
+        let connectionSt: ConnectionSt = { options: c.options };
+        let connectionLt: ConnectionLt = { rawSchema: c.rawSchema };
+
+        let entProps = this.tabToEntService.getEntProps({
+          dataSt: connectionSt,
+          dataLt: connectionLt,
+          isMetadata: false
+        });
+
+        await this.db.drizzle.execute(
+          sql`UPDATE connections SET lt = ${JSON.stringify(entProps.lt)}::json, server_ts = ${serverTs} WHERE connection_full_id = ${c.connectionFullId}`
+        );
+      });
+    }
+
+    return results;
   }
 
   buildCombinedSchema(item: {

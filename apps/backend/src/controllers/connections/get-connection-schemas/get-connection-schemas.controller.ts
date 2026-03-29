@@ -24,7 +24,8 @@ export class GetConnectionSchemasController {
   async getConnectionSchemas(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetConnectionSchemasRequest = request.body;
 
-    let { projectId, envId, repoId, branchId, isRefresh } = reqValid.payload;
+    let { projectId, envId, repoId, branchId, isRefreshExistingCache } =
+      reqValid.payload;
 
     let payload: ToBackendGetConnectionSchemasResponsePayload =
       await this.getConnectionSchemasService.getConnectionSchemas({
@@ -33,7 +34,7 @@ export class GetConnectionSchemasController {
         envId: envId,
         repoId: repoId,
         branchId: branchId,
-        isRefresh: isRefresh
+        isRefreshExistingCache: isRefreshExistingCache
       });
 
     return payload;

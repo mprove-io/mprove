@@ -8,6 +8,7 @@ export class RawSchemaForeignKey {
 export class RawSchemaColumn {
   columnName: string;
   dataType: string;
+  elementType?: string;
   isNullable: boolean;
   isPrimaryKey?: boolean;
   isUnique?: boolean;

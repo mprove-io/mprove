@@ -19,7 +19,7 @@ export class ToBackendGetConnectionSchemasRequestPayload {
   branchId: string;
 
   @IsBoolean()
-  isRefresh: boolean;
+  isRefreshExistingCache: boolean;
 }
 
 export class ToBackendGetConnectionSchemasRequest extends ToBackendRequest {

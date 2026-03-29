@@ -142,7 +142,7 @@ test('1', async t => {
           envId: PROJECT_ENV_PROD,
           repoId: userId,
           branchId: BRANCH_MAIN,
-          isRefresh: false
+          isRefreshExistingCache: false
         }
       },
       apiKey: generateResp.payload.apiKey

@@ -91,7 +91,7 @@ export class SchemasComponent implements OnInit {
       this.cd.detectChanges();
 
       if (navChanged) {
-        this.loadSchemas();
+        this.loadSchemas({ isRefreshExistingCache: false });
       }
     })
   );
@@ -116,10 +116,12 @@ export class SchemasComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadSchemas();
+    this.loadSchemas({ isRefreshExistingCache: false });
   }
 
-  loadSchemas() {
+  loadSchemas(item: { isRefreshExistingCache: boolean }) {
+    let { isRefreshExistingCache } = item;
+
     let nav = this.navQuery.getValue();
 
     let payload: ToBackendGetConnectionSchemasRequestPayload = {
@@ -127,7 +129,7 @@ export class SchemasComponent implements OnInit {
       envId: nav.envId,
       repoId: nav.repoId,
       branchId: nav.branchId,
-      isRefresh: true
+      isRefreshExistingCache: isRefreshExistingCache
     };
 
     this.isRefreshing = true;

@@ -139,7 +139,7 @@ test('1', async () => {
           envId: PROJECT_ENV_PROD,
           repoId: repoId,
           branchId: defaultBranch,
-          isRefresh: true
+          isRefreshExistingCache: true
         } as ToBackendGetConnectionSchemasRequestPayload,
         host: config.mproveCliHost
       });

@@ -75,7 +75,7 @@ import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { Model } from '#common/interfaces/blockml/model';
 import { ModelMetric } from '#common/interfaces/blockml/model-metric';
 import { Preset } from '#common/interfaces/blockml/preset';
-import { ConnectionSt } from '#common/interfaces/st-lt';
+import { ConnectionLt, ConnectionSt } from '#common/interfaces/st-lt';
 import {
   ToBlockmlRebuildStructRequest,
   ToBlockmlRebuildStructResponsePayload
@@ -87,6 +87,7 @@ import {
   MalloyConnection,
   makeMalloyConnections
 } from '#node-common/functions/make-malloy-connections';
+import { prePopulateMalloySchemaCache } from '#node-common/functions/pre-populate-malloy-schema-cache';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 
 interface RebuildStructPrep {
@@ -146,23 +147,28 @@ export class RebuildStructService {
       cachedMetrics
     } = reqValid.payload;
 
-    let projectConnections: ProjectConnection[] = baseConnections.map(
-      baseConnection => {
-        let connectionSt = this.blockmlTabService.decrypt<ConnectionSt>({
-          encryptedString: baseConnection.st
-        });
+    let projectConnections: ProjectConnection[] = [];
 
-        let projectConnection: ProjectConnection = {
-          projectId: baseConnection.projectId,
-          connectionId: baseConnection.connectionId,
-          envId: baseConnection.envId,
-          type: baseConnection.type,
-          options: connectionSt.options
-        };
+    baseConnections.forEach(baseConnection => {
+      let connectionSt = this.blockmlTabService.decrypt<ConnectionSt>({
+        encryptedString: baseConnection.st
+      });
 
-        return projectConnection;
-      }
-    );
+      let connectionLt = this.blockmlTabService.decrypt<ConnectionLt>({
+        encryptedString: baseConnection.lt
+      });
+
+      let projectConnection: ProjectConnection = {
+        projectId: baseConnection.projectId,
+        connectionId: baseConnection.connectionId,
+        envId: baseConnection.envId,
+        type: baseConnection.type,
+        options: connectionSt.options,
+        rawSchema: connectionLt.rawSchema
+      };
+
+      projectConnections.push(projectConnection);
+    });
 
     let prep: RebuildStructPrep = await this.rebuildStructStateless({
       traceId: reqValid.info.traceId,
@@ -468,6 +474,11 @@ export class RebuildStructService {
 
     let malloyConnections: MalloyConnection[] = makeMalloyConnections({
       connections: item.projectConnections
+    });
+
+    prePopulateMalloySchemaCache({
+      malloyConnections: malloyConnections,
+      projectConnections: item.projectConnections
     });
 
     mods =

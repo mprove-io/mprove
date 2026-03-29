@@ -29,7 +29,7 @@ export class GetConnectionSchemasTool {
       envId: z.string(),
       repoId: z.string(),
       branchId: z.string(),
-      isRefresh: z.boolean()
+      isRefreshExistingCache: z.boolean()
     }),
     outputSchema: z.object({
       combinedSchemaItems: z.array(zCombinedSchemaItem)
@@ -41,7 +41,7 @@ export class GetConnectionSchemasTool {
       envId: string;
       repoId: string;
       branchId: string;
-      isRefresh: boolean;
+      isRefreshExistingCache: boolean;
     },
     context: Context,
     request: Request
@@ -76,7 +76,7 @@ export class GetConnectionSchemasTool {
       envId: item.envId,
       repoId: item.repoId,
       branchId: item.branchId,
-      isRefresh: item.isRefresh !== false
+      isRefreshExistingCache: item.isRefreshExistingCache
     });
 
     return processGetConnectionSchemasPayload({
