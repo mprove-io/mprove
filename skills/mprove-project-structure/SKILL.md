@@ -1,11 +1,14 @@
-# Mprove Project Structure
+---
+name: mprove-project-structure
+description: Files and folders structure patterns for a new mprove project
+---
 
-How to structure files and folders for a new Mprove project.
+# Mprove Project Structure
 
 ## Connections
 
 Connections are created by user on mprove server.
-If connection name follows recommended <prefix>\_<db-type> pattern - then reuse prefix in malloy file names.
+If connection name follows recommended <prefix>\_<db-type> pattern - then reuse this prefix in malloy file names.
 If connection name does not follow this pattern - ask user before continue - maybe he will fix it.
 
 ## Project Structure
@@ -30,6 +33,11 @@ my-project/
         TDEXWBE5PI2X17CJCFKC.dashboard              # <ID>.dashboard
       reports/
         IEWZFR718VMKXXIHDV5J.report                 # <ID>.report
+    mprove-users/                                   # objects "saved" by users through server UI
+      <user-id>/
+        AFASVXV135J7MF4Y387D.chart
+        FJS29ASDFJLPA7KJ8SDF.report
+        JF9L7AK7J9SDF7KL8SJD.dashboard
 ```
 
 Connection folder names must match the connection name configured in Mprove server.
