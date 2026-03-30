@@ -1,5 +1,9 @@
 import { Component, Input } from '@angular/core';
+import { LanguageDescription } from '@codemirror/language';
+import { languages as cmLanguages } from '@codemirror/language-data';
+import { Extension } from '@codemirror/state';
 import type { ToolPart } from '@opencode-ai/sdk/v2';
+import { VS_LIGHT_THEME_EXTRA_SINGLE_SESSION_READ } from '#common/constants/code-themes/themes';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import { MyDialogService } from '../../../../services/my-dialog.service';
 import {
@@ -98,6 +102,9 @@ export class SessionMessagesContentComponent {
   @Input() isSessionError = false;
   @Input() lastSessionError: Record<string, unknown> | undefined;
   @Input() isLastErrorRecovered: boolean | undefined;
+
+  codeLanguages: LanguageDescription[] = cmLanguages;
+  codeTheme: Extension = VS_LIGHT_THEME_EXTRA_SINGLE_SESSION_READ;
 
   activatingChars = 'Activating Session...'.split('').map((char, i) => ({
     char: char === ' ' ? '\u00A0' : char,

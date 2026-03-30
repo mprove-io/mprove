@@ -3,7 +3,7 @@
   <div class="user-message mb-8 ml-4 mr-8">
     <div class="flex justify-start">
       <div class="border-s200 bg-s100 max-w-[90%] rounded-2xl border px-5 py-3">
-        <div class="text-s1 whitespace-pre-wrap break-words text-[17px]">{{
+        <div class="text-s1 whitespace-pre-wrap break-words text-lg">{{
           session.firstMessage
         }}</div>
       </div>
@@ -12,7 +12,7 @@
   <div class="response-div">
     <div *ngIf="isSessionError" class="mb-4 ml-10 flex justify-start">
       <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
-        <div class="break-words text-[17px] text-red-700">
+        <div class="break-words text-lg text-red-700">
           Session activation failed. Please try again.
         </div>
       </div>
@@ -33,7 +33,7 @@
   <div *ngIf="turn.userMessage" class="user-message mb-8 ml-4 mr-8">
     <div class="flex justify-start">
       <div class="border-s200 bg-s100 max-w-[90%] rounded-2xl border px-5 py-3">
-        <div class="text-s1 whitespace-pre-wrap break-words text-[17px]">{{
+        <div class="text-s1 whitespace-pre-wrap break-words text-lg">{{
           turn.userMessage.text
         }}</div>
       </div>
@@ -43,7 +43,7 @@
       *ngIf="turn.userMessage.agentName || turn.userMessage.modelId"
       class="ml-4 mt-1 flex justify-start"
     >
-      <span class="text-s500 text-[15px] font-medium">{{
+      <span class="text-s500 text-base font-medium">{{
         getMetaText(turn.userMessage)
       }}</span>
     </div>
@@ -56,9 +56,40 @@
       <div *ngIf="msg.role === 'agent'" class="ml-10">
         <div class="rounded-2xl px-4 py-3">
           <div
-            class="whitespace-pre-wrap break-words text-[17px] text-gray-800"
-            >{{ msg.text }}</div
+            class="prose prose-gray max-w-none break-words text-lg text-gray-800"
           >
+            <remark [markdown]="msg.text">
+              <ng-template [remarkTemplate]="'link'" let-node>
+                <a
+                  [href]="node.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [title]="node.title ?? ''"
+                  [remarkNode]="node"
+                ></a>
+              </ng-template>
+              <ng-template [remarkTemplate]="'code'" let-node>
+                <code-editor
+                  class="border-s200 block max-h-96 overflow-auto rounded-lg border"
+                  [ngModel]="node.value"
+                  [readonly]="true"
+                  [languages]="codeLanguages"
+                  [language]="node.lang"
+                  [theme]="codeTheme"
+                  [setup]="null"
+                ></code-editor>
+              </ng-template>
+              <ng-template [remarkTemplate]="'image'" let-node>
+                <a
+                  class="block"
+                  [href]="node.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >[image: {{ node.alt || 'link' }}]</a
+                >
+              </ng-template>
+            </remark>
+          </div>
         </div>
       </div>
 
@@ -83,7 +114,7 @@
         ></span>
         <div class="border-s200 max-w-[90%] overflow-hidden rounded-lg border">
           <div class="flex items-center gap-2 px-3 py-2">
-            <span class="text-s1 text-base font-medium">{{
+            <span class="text-s1 text-lg font-medium">{{
               getQuestionStatus(msg.toolPart)
             }}</span>
           </div>
@@ -91,7 +122,7 @@
             *ngIf="getToolOutput(msg.toolPart)"
             class="border-s200 border-t px-3 py-2"
           >
-            <div class="text-s1 whitespace-pre-wrap break-words text-base">{{
+            <div class="text-s1 whitespace-pre-wrap break-words text-lg">{{
               getToolOutput(msg.toolPart)
             }}</div>
           </div>
@@ -118,12 +149,12 @@
         <div class="border-s200 min-w-0 flex-1 rounded-lg border">
           <!-- Header -->
           <div class="flex w-full items-center gap-2 px-3 py-2">
-            <span class="text-s1 text-base font-medium">{{
+            <span class="text-s1 text-lg font-medium">{{
               getToolTitle(msg.toolPart.tool)
             }}</span>
             <span
               *ngIf="getToolSubtitle(msg.toolPart)"
-              class="text-s500 min-w-0 flex-1 truncate text-base"
+              class="text-s500 min-w-0 flex-1 truncate text-lg"
               >{{ getToolSubtitle(msg.toolPart) }}</span
             >
           </div>
@@ -131,7 +162,7 @@
           <!-- Inline output preview -->
           <div
             *ngIf="getToolOutput(msg.toolPart)"
-            class="border-s300 bg-s150 min-h-[40px] cursor-pointer overflow-hidden rounded-b-lg border-t px-3 pt-2 hover:bg-gray-200"
+            class="border-s200 min-h-[40px] cursor-pointer overflow-hidden rounded-b-lg border-t px-3 pt-2 hover:bg-gray-50"
             (click)="openToolOutput(msg.toolPart)"
           >
             <pre
@@ -166,16 +197,16 @@
           class="border-s200 min-w-0 flex-1 overflow-hidden rounded-lg border"
         >
           <button
-            class="bg-s150 flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-200 focus:outline-none disabled:bg-transparent disabled:hover:bg-transparent"
+            class="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 focus:outline-none disabled:hover:bg-transparent"
             [disabled]="!hasToolContent(msg.toolPart)"
             (click)="openToolOutput(msg.toolPart)"
           >
-            <span class="text-s1 text-base font-medium">{{
+            <span class="text-s1 text-lg font-medium">{{
               getToolTitle(msg.toolPart.tool)
             }}</span>
             <span
               *ngIf="getToolSubtitle(msg.toolPart)"
-              class="text-s500 min-w-0 flex-1 truncate text-base"
+              class="text-s500 min-w-0 flex-1 truncate text-lg"
               >{{ getToolSubtitle(msg.toolPart) }}</span
             >
           </button>
@@ -188,14 +219,14 @@
         class="ml-10 flex justify-start"
       >
         <div class="border-s200 max-w-[90%] rounded-lg border px-3 py-2">
-          <div class="text-s600 break-words text-[17px]">{{ msg.text }}</div>
+          <div class="text-s600 break-words text-lg">{{ msg.text }}</div>
         </div>
       </div>
 
       <!-- Thought -->
       <div *ngIf="msg.role === 'thought'" class="ml-10 flex justify-start">
         <div class="max-w-[90%] rounded-2xl px-4 py-2">
-          <div class="text-s500 whitespace-pre-wrap break-words text-[17px]">{{
+          <div class="text-s500 whitespace-pre-wrap break-words text-lg">{{
             msg.text
           }}</div>
         </div>
@@ -211,7 +242,7 @@
         ></span>
         <div class="border-s200 max-w-[90%] overflow-hidden rounded-lg border">
           <div class="flex items-center gap-2 px-3 py-2">
-            <span class="text-s1 text-base font-medium">{{ msg.text }}</span>
+            <span class="text-s1 text-lg font-medium">{{ msg.text }}</span>
           </div>
         </div>
       </div>
@@ -226,7 +257,7 @@
         ></span>
         <div class="border-s200 max-w-[90%] overflow-hidden rounded-lg border">
           <div class="flex items-center gap-2 px-3 py-2">
-            <span class="text-s500 text-base font-medium">{{ msg.text }}</span>
+            <span class="text-s500 text-lg font-medium">{{ msg.text }}</span>
           </div>
         </div>
       </div>
@@ -234,7 +265,7 @@
       <!-- Error -->
       <div *ngIf="msg.role === 'error'" class="ml-10 flex justify-start">
         <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
-          <div class="break-words text-[17px] text-red-700">{{ msg.text }}</div>
+          <div class="break-words text-lg text-red-700">{{ msg.text }}</div>
         </div>
       </div>
     </div>
@@ -247,8 +278,8 @@
       <span class="bg-g500 mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full"></span>
       <div class="border-s200 min-w-0 flex-1 overflow-hidden rounded-lg border">
         <div class="flex items-center gap-2 px-3 py-2">
-          <span class="text-s1 text-base font-medium">Modified</span>
-          <span class="text-s500 text-base"
+          <span class="text-s1 text-lg font-medium">Modified</span>
+          <span class="text-s500 text-lg"
             >{{ turn.fileDiffs.length }}
             {{ turn.fileDiffs.length === 1 ? 'file' : 'files' }}</span
           >
@@ -266,9 +297,7 @@
           class="border-s300 bg-s150 flex cursor-pointer items-center justify-between border-t px-3 py-2 hover:bg-gray-200"
           (click)="openFileDiff(diff)"
         >
-          <span class="text-s2 min-w-0 truncate text-base">{{
-            diff.file
-          }}</span>
+          <span class="text-s2 min-w-0 truncate text-lg">{{ diff.file }}</span>
           <span class="ml-3 flex flex-shrink-0 items-center gap-2 text-sm">
             <span *ngIf="diff.additions > 0" class="text-green-600"
               >+{{ diff.additions }}</span
@@ -278,7 +307,7 @@
             >
             <span
               *ngIf="diff.status"
-              class="rounded px-1.5 py-0.5 text-base font-medium"
+              class="rounded px-1.5 py-0.5 text-lg font-medium"
               [ngClass]="{
                 'text-green-700': diff.status === 'added',
                 'text-m600': diff.status === 'modified',
@@ -298,7 +327,7 @@
         class="mb-4 ml-8 flex justify-start"
       >
         <div class="max-w-[90%] py-3">
-          <span class="text-shimmer text-base font-semibold leading-[1.5]"
+          <span class="text-shimmer text-lg font-semibold leading-[1.5]"
             ><span
               *ngFor="let ch of activatingChars; trackBy: trackByIndex"
               class="text-shimmer-char"
@@ -310,7 +339,7 @@
       </div>
       <div *ngIf="isSessionError" class="mb-4 ml-10 flex justify-start">
         <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
-          <div class="break-words text-[17px] text-red-700">
+          <div class="break-words text-lg text-red-700">
             Session activation failed. Please try again.
           </div>
         </div>
@@ -333,8 +362,8 @@
           (click)="openSessionErrorDialog()"
         >
           <div class="flex items-center gap-2 px-3 py-2">
-            <span class="text-s1 text-base font-medium">Error</span>
-            <span class="text-s500 min-w-0 flex-1 truncate text-base">{{
+            <span class="text-s1 text-lg font-medium">Error</span>
+            <span class="text-s500 min-w-0 flex-1 truncate text-lg">{{
               getSessionErrorName()
             }}</span>
           </div>

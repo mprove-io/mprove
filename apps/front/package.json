@@ -60,6 +60,8 @@
     "@tweenjs/tween.js": "catalog:",
     "@vaadin/date-picker": "catalog:",
     "@vaadin/time-picker": "catalog:",
+    "ngx-remark": "catalog:",
+    "remark": "catalog:",
     "ag-grid-angular": "catalog:",
     "ag-grid-community": "catalog:",
     "class-transformer": "catalog:",

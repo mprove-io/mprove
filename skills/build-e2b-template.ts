@@ -1,34 +1,15 @@
-import { parseArgs } from 'node:util';
+import { createRequire } from 'node:module';
 import { defaultBuildLogger, Template } from 'e2b';
 
-let { values } = parseArgs({
-  options: {
-    opencode: { type: 'string' },
-    mprove: { type: 'string' },
-    'malloy-cli': { type: 'string' },
-    template: { type: 'string' }
-  },
-  strict: true
-});
+let require = createRequire(import.meta.url);
+let config = require('./e2b-template-config.json');
 
-let opencodeVersion = values.opencode;
-let mproveCliVersion = values.mprove;
-let malloyCliVersion = values['malloy-cli'];
-let templateVersion = values.template;
-
-if (
-  !opencodeVersion ||
-  !mproveCliVersion ||
-  !malloyCliVersion ||
-  !templateVersion
-) {
-  console.error(
-    `Usage: pnpm e2b:build --opencode <version> --mprove <version> --malloy-cli <version> --template <version>
-Example: pnpm e2b:build --opencode 1.2.27 --mprove 11.0.102-dev --malloy-cli 0.0.52 --template v9`
-  );
-
-  process.exit(1);
-}
+let opencodeVersion = config.opencode;
+let mproveCliVersion = config.mprove;
+let malloyCliVersion = config.malloyCli;
+let templateVersion = config.template;
+let mproveDocsFm = config.repos.mproveDocsFm;
+let malloyDocs = config.repos.malloyDocs;
 
 let templateName = `opencode_${opencodeVersion.split('.').join('-')}_mprove_${mproveCliVersion.split('.').join('-')}_malloy-cli_${malloyCliVersion.split('.').join('-')}_${templateVersion}`;
 
@@ -59,6 +40,12 @@ let template = Template()
     'sudo tar -xzf /tmp/mprove-cli.tar.gz -C /usr/local/bin && rm /tmp/mprove-cli.tar.gz'
   )
   .runCmd(`sudo npm install -g @malloydata/cli@${malloyCliVersion}`)
+  .runCmd(
+    `git clone ${mproveDocsFm.url} ${mproveDocsFm.path} && cd ${mproveDocsFm.path} && git checkout ${mproveDocsFm.commit}`
+  )
+  .runCmd(
+    `git clone ${malloyDocs.url} ${malloyDocs.path} && cd ${malloyDocs.path} && git checkout ${malloyDocs.commit}`
+  )
   .makeDir('/home/user/.config/opencode')
   .copy(
     'opencode-global-config.json',

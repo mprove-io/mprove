@@ -1,0 +1,18 @@
+{
+  "template": "v23",
+  "opencode": "1.3.3",
+  "mprove": "11.0.104-dev",
+  "malloyCli": "0.0.52-next.2026.3.25.b8fdc90",
+  "repos": {
+    "mproveDocsFm": {
+      "url": "https://github.com/mprove-io/mprove-docs-fm.git",
+      "commit": "1efd1908f3562d7f21df10631ce78a6d03cf0ed2",
+      "path": "/home/user/mprove-docs-fm"
+    },
+    "malloyDocs": {
+      "url": "https://github.com/malloydata/malloydata.github.io.git",
+      "commit": "77609405d003d04b3d884f1903dba489fbad66de",
+      "path": "/home/user/malloydata.github.io"
+    }
+  }
+}

@@ -4,6 +4,7 @@ import { EditorView } from '@codemirror/view';
 import { LIGHT_PLUS_STYLES } from './light-plus-tags';
 import { createThemeExtra } from './theme-creators/create-theme-extra';
 import { createThemeExtraDiff } from './theme-creators/create-theme-extra-diff';
+import { createThemeExtraSession } from './theme-creators/create-theme-extra-session';
 import { createThemeExtraSingle } from './theme-creators/create-theme-extra-single';
 import { VS_LIGHT_STYLES } from './vs-light-tags';
 
@@ -63,6 +64,30 @@ const LIGHT_START_THEME_READ = EditorView.theme(
   Object.assign({}, lightSpec, {
     '.cm-content': {
       caretColor: 'transparent'
+    }
+  }),
+  { dark: false }
+);
+
+const LIGHT_START_THEME_SESSION_READ = EditorView.theme(
+  Object.assign({}, lightSpec, {
+    '&': {
+      backgroundColor: '#f9fafb',
+      color: '#383a42'
+    },
+    '.cm-gutters': {
+      backgroundColor: '#f9fafb',
+      color: '#237893'
+    },
+    '.cm-content': {
+      caretColor: 'transparent'
+    },
+    '.cm-activeLine': {
+      backgroundColor: 'transparent'
+    },
+    '.cm-activeLineGutter': {
+      color: '#237893',
+      backgroundColor: 'transparent'
     }
   }),
   { dark: false }
@@ -131,6 +156,17 @@ export const VS_LIGHT_THEME_EXTRA_READ: Extension =
 
 export const VS_LIGHT_THEME_EXTRA_SINGLE_READ: Extension =
   createThemeExtraSingle(VS_LIGHT_THEME_EXTRA_READ);
+
+export const VS_LIGHT_THEME_SESSION_READ = [
+  LIGHT_START_THEME_SESSION_READ,
+  syntaxHighlighting(HighlightStyle.define([...VS_LIGHT_STYLES]))
+];
+
+export const VS_LIGHT_THEME_EXTRA_SESSION_READ: Extension =
+  createThemeExtraSession(VS_LIGHT_THEME_SESSION_READ);
+
+export const VS_LIGHT_THEME_EXTRA_SINGLE_SESSION_READ: Extension =
+  createThemeExtraSingle(VS_LIGHT_THEME_EXTRA_SESSION_READ);
 
 export const VS_LIGHT_THEME_EXTRA_DIFF_READ: Extension = createThemeExtraDiff(
   VS_LIGHT_THEME_EXTRA_READ

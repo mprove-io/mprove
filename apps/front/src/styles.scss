@@ -215,6 +215,13 @@ scrollbar-thumb-y {
     url(./assets/fonts/Montserrat/Montserrat-Black.ttf) format('truetype');
 }
 
+@font-face {
+  font-family: 'Nunito Sans';
+  font-style: normal;
+  font-weight: 300 700;
+  src: url(./assets/fonts/NunitoSans/NunitoSans-Variable.ttf) format('truetype');
+}
+
 // @import '~@ali-hm/angular-tree-component/css/angular-tree-component.css';
 @import './tree.css';
 
@@ -545,5 +552,77 @@ ng-select .ng-select-container .ng-value-container .ng-placeholder {
   }
   75% {
     color: #9a9a9a;
+  }
+}
+
+// Session messages font (system UI, similar to Claude Code extension)
+m-session-messages-content,
+m-session-input {
+  font-family:
+    'Nunito Sans',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+
+  .ng-select,
+  .ng-dropdown-panel {
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+// Markdown rendering in agent messages
+.prose {
+  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+
+  pre {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+  }
+
+  code:not(pre code) {
+    background-color: #eff6ff;
+    color: #1e40af;
+    font-weight: 400;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+  }
+
+  strong code:not(pre code),
+  a code:not(pre code) {
+    background-color: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    padding: 0;
+  }
+
+  code::before,
+  code::after {
+    content: none;
+  }
+
+  table {
+    font-size: 0.9em;
+  }
+
+  a {
+    color: #0084d1;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }

@@ -127,9 +127,9 @@
   </div>
 
   <!-- Archived session message -->
-  <div *ngIf="isArchived" class="flex-shrink-0 px-6 pb-8 pt-[6px]">
+  <div *ngIf="isArchived" class="flex-shrink-0 px-6 pb-4 pt-[6px]">
     <div class="mx-auto flex max-w-[860px] items-center justify-center">
-      <div class="text-s400 py-4 text-lg">{{
+      <div class="text-s400 py-1 text-lg">{{
         archiveReason === archiveReasonEnum.Expire
           ? 'Session is archived (sandbox expired)'
           : 'Session is archived by User'
@@ -140,10 +140,10 @@
   <!-- Paused session message -->
   <div
     *ngIf="session?.status === sessionStatusEnum.Paused && !isOptimisticLoading"
-    class="flex-shrink-0 px-6 pb-8 pt-[6px]"
+    class="flex-shrink-0 px-6 pb-4 pt-[6px]"
   >
     <div class="mx-auto flex max-w-[860px] items-center justify-center">
-      <div class="text-s400 py-4 text-lg">{{
+      <div class="text-s400 py-1 text-lg">{{
         pauseReason === pauseReasonEnum.User
           ? 'Session is paused by User'
           : pauseReason === pauseReasonEnum.Idle

@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
+import { RemarkModule } from 'ngx-remark';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { SharedModule } from '../shared/shared.module';
@@ -81,7 +82,8 @@ import { SessionWrapperComponent } from './session/session-wrapper/session-wrapp
     DiffEditor,
     NgSelectModule,
     NgxSpinnerModule,
-    NgScrollbarModule
+    NgScrollbarModule,
+    ...RemarkModule
   ]
 })
 export class BuilderModule {}

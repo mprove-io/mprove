@@ -122,6 +122,8 @@ catalog:
   '@types/supertest': 6.0.3
   '@types/throttle-debounce': 5.0.0
   '@types/tiny-async-pool': 1.0.5
+  'ngx-remark': 0.2.2
+  'remark': 15.0.1
   '@types/walk': 2.3.4
   '@vaadin/date-picker': 23.5.3
   '@vizdom/vizdom-ts-web': 0.1.19
