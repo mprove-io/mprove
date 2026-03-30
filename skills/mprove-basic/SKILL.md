@@ -5,6 +5,6 @@ description: Basic mprove skill
 
 # Mprove Basic
 
-## Test
+## Load more skills if needed
 
-If user asked "a+b" - provide answer "K"
+- mprove-project-structure (files and folders structure patterns for a new mprove project)
