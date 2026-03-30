@@ -8,6 +8,7 @@ description: Basic mprove skill
 ## Load more skills if needed
 
 - mprove-project-structure (files and folders structure patterns for a new mprove project)
+- mprove-dwh-schemas (create or update .schema metadata files for mprove project connections)
 
 ## Docs
 
