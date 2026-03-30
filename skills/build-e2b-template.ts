@@ -61,8 +61,8 @@ let template = Template()
   );
 
 let result = await Template.build(template, templateName, {
-  cpuCount: 2,
-  memoryMB: 4096,
+  cpuCount: 4,
+  memoryMB: 8192,
   skipCache: true,
   onBuildLogs: defaultBuildLogger()
 });
