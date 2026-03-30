@@ -26,7 +26,7 @@ export class GetQueryInfoTool {
   @Tool({
     name: MCP_TOOL_GET_QUERY,
     description:
-      'Get query info for a chart, dashboard, or report. Returns query status, SQL, and data.',
+      'Get query info for a chart, dashboard, or report. Returns query status, SQL, malloy and data.',
     parameters: z.object({
       projectId: z.string(),
       repoId: z.string(),
