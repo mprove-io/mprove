@@ -1,0 +1,16 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": "allow",
+  "instructions": ["/home/user/.config/opencode/mprove-instructions.md"],
+  "mcp": {
+    "mprove-mcp": {
+      "type": "remote",
+      "url": "{env:MPROVE_CLI_HOST}/mcp",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer {env:MPROVE_CLI_API_KEY}"
+      },
+      "oauth": false
+    }
+  }
+}

@@ -13,6 +13,7 @@ export interface ToolOutputDialogData {
   title: string;
   subtitle: string;
   output: string;
+  rawOutput?: string;
   isError: boolean;
 }
 
@@ -30,8 +31,13 @@ export class ToolOutputDialogComponent implements OnInit {
   }
 
   dataItem = this.ref.data;
+  showXml = false;
 
   constructor(public ref: DialogRef<ToolOutputDialogData>) {}
+
+  toggleXml() {
+    this.showXml = !this.showXml;
+  }
 
   ngOnInit(): void {
     setTimeout(() => {

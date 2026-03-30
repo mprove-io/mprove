@@ -232,6 +232,23 @@ export class CreateEditorSessionController {
 
     Object.assign(sandboxEnvs, malloyConnectionEnvs);
 
+    let sessionDataFile = {
+      path: '/home/user/.config/opencode/mprove-session.json',
+      data: JSON.stringify(
+        {
+          projectId: projectId,
+          repoId: session.sessionId,
+          branchId: session.sessionId,
+          envId: envId,
+          note: 'For mprove cli - no need to specify projectId, because it is already set in MPROVE_CLI_PROJECT_ID env var'
+        },
+        null,
+        2
+      )
+    };
+
+    let sandboxFiles = [...malloySandboxFiles, sessionDataFile];
+
     this.activateSessionAsync({
       sessionId: session.sessionId,
       projectId: projectId,
@@ -240,7 +257,7 @@ export class CreateEditorSessionController {
       agent: session.agent,
       sandboxType: sandboxType,
       sandboxEnvs: sandboxEnvs,
-      sandboxFiles: malloySandboxFiles,
+      sandboxFiles: sandboxFiles,
       project: project,
       variant: variant,
       firstMessage: firstMessage,
@@ -420,14 +437,8 @@ export class CreateEditorSessionController {
         });
 
       if (firstMessage) {
-        let system = [
-          `Mprove context parameters for MCP tool calls and cli:`,
-          `- projectId: ${projectId}`,
-          `- repoId: ${sessionId}`,
-          `- branchId: ${sessionId}`,
-          `- envId: ${envId}`,
-          ``
-        ].join('\n');
+        // system prompt now handled via opencode instructions mechanism
+        // (see mprove-instructions.md and mprove-session.json)
 
         try {
           await this.editorStreamService.executeInteraction({
@@ -439,8 +450,7 @@ export class CreateEditorSessionController {
             model: model,
             variant: variant,
             messageId: messageId,
-            partId: partId,
-            system: system
+            partId: partId
           });
         } catch (e) {
           if (isStreamStartedFresh) {

@@ -58,7 +58,20 @@ let template = Template()
   .runCmd(
     'sudo tar -xzf /tmp/mprove-cli.tar.gz -C /usr/local/bin && rm /tmp/mprove-cli.tar.gz'
   )
-  .runCmd(`sudo npm install -g @malloydata/cli@${malloyCliVersion}`);
+  .runCmd(`sudo npm install -g @malloydata/cli@${malloyCliVersion}`)
+  .makeDir('/home/user/.config/opencode')
+  .copy(
+    'opencode-global-config.json',
+    '/home/user/.config/opencode/opencode.json'
+  )
+  .copy(
+    'mprove-instructions.md',
+    '/home/user/.config/opencode/mprove-instructions.md'
+  )
+  .copy(
+    'mprove-basic/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-basic/SKILL.md'
+  );
 
 let result = await Template.build(template, templateName, {
   cpuCount: 2,

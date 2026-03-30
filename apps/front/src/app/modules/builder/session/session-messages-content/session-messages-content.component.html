@@ -131,7 +131,7 @@
           <!-- Inline output preview -->
           <div
             *ngIf="getToolOutput(msg.toolPart)"
-            class="border-s300 bg-m50 hover:bg-m75 min-h-[40px] cursor-pointer overflow-hidden rounded-b-lg border-t px-3 pt-2"
+            class="border-s300 bg-s150 min-h-[40px] cursor-pointer overflow-hidden rounded-b-lg border-t px-3 pt-2 hover:bg-gray-200"
             (click)="openToolOutput(msg.toolPart)"
           >
             <pre
@@ -166,7 +166,7 @@
           class="border-s200 min-w-0 flex-1 overflow-hidden rounded-lg border"
         >
           <button
-            class="hover:bg-m75 bg-m50 flex w-full items-center gap-2 px-3 py-2 text-left focus:outline-none disabled:bg-transparent disabled:hover:bg-transparent"
+            class="bg-s150 flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-200 focus:outline-none disabled:bg-transparent disabled:hover:bg-transparent"
             [disabled]="!hasToolContent(msg.toolPart)"
             (click)="openToolOutput(msg.toolPart)"
           >
@@ -263,7 +263,7 @@
         </div>
         <div
           *ngFor="let diff of turn.fileDiffs"
-          class="border-s300 bg-m50 hover:bg-m75 flex cursor-pointer items-center justify-between border-t px-3 py-2"
+          class="border-s300 bg-s150 flex cursor-pointer items-center justify-between border-t px-3 py-2 hover:bg-gray-200"
           (click)="openFileDiff(diff)"
         >
           <span class="text-s2 min-w-0 truncate text-base">{{

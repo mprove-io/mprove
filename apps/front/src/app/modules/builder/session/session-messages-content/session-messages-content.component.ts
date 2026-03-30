@@ -16,6 +16,58 @@ function stripAnsi(item: { text: string }): string {
   return text.replace(ANSI_REGEX, '');
 }
 
+function tryFormatJson(item: { text: string }): string {
+  let { text } = item;
+  let trimmed = text.trim();
+  if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+    try {
+      let parsed = JSON.parse(trimmed);
+      return JSON.stringify(parsed, undefined, 2);
+    } catch {
+      return text;
+    }
+  }
+  return text;
+}
+
+function extractReadContent(item: { text: string }): string {
+  let { text } = item;
+  let contentMatch = text.match(/<content>([\s\S]*)<\/content>/);
+  if (contentMatch) {
+    return contentMatch[1].trim();
+  }
+  return text;
+}
+
+function extractTaskResult(item: { text: string }): string {
+  let { text } = item;
+  let match = text.match(/<task_result>([\s\S]*)<\/task_result>/);
+  if (match) {
+    return match[1].trim();
+  }
+  return text;
+}
+
+function extractSkillContent(item: { text: string }): string {
+  let { text } = item;
+  let match = text.trimEnd().match(/^<(\w[\w-]*)[^>]*>([\s\S]*)<\/\1>\s*$/);
+  if (match) {
+    let inner = match[2].trim();
+    // Remove empty XML tags (e.g., <skill_files></skill_files>)
+    return inner.replace(/<(\w[\w-]*)[^>]*>\s*<\/\1>/g, '').trim();
+  }
+  return text;
+}
+
+function stripTrailingXmlTags(item: { text: string }): string {
+  let { text } = item;
+  let result = text.replace(/<(\w[\w-]*)[^>]*>[\s\S]*<\/\1>\s*$/g, '');
+  if (result !== text) {
+    return result.trim();
+  }
+  return text;
+}
+
 const TOOL_TITLE_MAP: Record<string, string> = {
   bash: 'Shell',
   read: 'Read',
@@ -80,7 +132,9 @@ export class SessionMessagesContentComponent {
   getToolOutput(toolPart: ToolPart): string {
     if (!toolPart.state) return '';
     if (toolPart.state.status === 'completed')
-      return stripAnsi({ text: toolPart.state.output });
+      return tryFormatJson({
+        text: stripAnsi({ text: toolPart.state.output })
+      });
     if (toolPart.state.status === 'error')
       return stripAnsi({ text: toolPart.state.error });
     return '';
@@ -114,10 +168,29 @@ export class SessionMessagesContentComponent {
       output = this.getToolOutput(toolPart);
     }
     if (!output) return;
+    let displayOutput: string;
+    if (toolPart.tool === 'read') {
+      displayOutput = extractReadContent({ text: output });
+    } else if (toolPart.tool === 'task') {
+      displayOutput = extractTaskResult({ text: output });
+    } else if (toolPart.tool === 'skill') {
+      displayOutput = extractSkillContent({ text: output });
+    } else if (
+      toolPart.tool === 'write' ||
+      toolPart.tool === 'edit' ||
+      toolPart.tool === 'bash' ||
+      toolPart.tool === 'apply_patch'
+    ) {
+      displayOutput = stripTrailingXmlTags({ text: output });
+    } else {
+      displayOutput = output;
+    }
+    let rawOutput = displayOutput !== output ? output : undefined;
     this.myDialogService.showToolOutput({
       title: this.getToolTitle(toolPart.tool),
       subtitle: this.getToolSubtitle(toolPart),
-      output,
+      output: displayOutput,
+      rawOutput: rawOutput,
       isError: toolPart.state?.status === 'error'
     });
   }
