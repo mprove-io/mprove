@@ -14,7 +14,7 @@ let templateVersion = config.template;
 let mproveDocsFm = config.repos.mproveDocsFm;
 let malloyDocs = config.repos.malloyDocs;
 
-let templateName = `opencode_${opencodeVersion.split('.').join('-')}_mprove_${mproveCliVersion.split('.').join('-')}_malloy-cli_${malloyCliVersion.split('.').join('-')}_${templateVersion}`;
+let templateName = `${templateVersion}_opencode_${opencodeVersion.split('.').join('-')}_mprove_${mproveCliVersion.split('.').join('-')}_malloy-cli_${malloyCliVersion.split('.').join('-')}`;
 
 console.log(`Building e2b template: ${templateName}`);
 
