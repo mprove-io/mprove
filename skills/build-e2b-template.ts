@@ -64,15 +64,15 @@ let template = Template()
     '/home/user/.config/opencode/skills/mprove-basic/SKILL.md'
   )
   .copy(
-    'mprove-basic/SKILL.md',
+    'mprove-dwh-schemas/SKILL.md',
     '/home/user/.config/opencode/skills/mprove-dwh-schemas/SKILL.md'
   )
   .copy(
-    'mprove-basic/SKILL.md',
+    'mprove-project-structure/SKILL.md',
     '/home/user/.config/opencode/skills/mprove-project-structure/SKILL.md'
   )
   .copy(
-    'mprove-basic/SKILL.md',
+    'mprove-editor-query/SKILL.md',
     '/home/user/.config/opencode/skills/mprove-editor-query/SKILL.md'
   );
 
