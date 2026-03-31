@@ -10,22 +10,22 @@ catalog:
   '@ai-sdk/anthropic': 2.0.65
   '@acrodata/code-editor': 0.5.1
   '@ali-hm/angular-tree-component': 21.0.3
-  '@angular-devkit/build-angular': 21.1.0
-  '@angular-devkit/core': 21.1.0
-  '@angular-devkit/schematics': 21.1.0
-  '@angular/animations': 21.1.0
-  '@angular/build': 21.1.0
-  '@angular/cdk': 21.1.0
-  '@angular/cli': 21.1.0
-  '@angular/common': 21.1.0
-  '@angular/compiler': 21.1.0
-  '@angular/compiler-cli': 21.1.0
-  '@angular/core': 21.1.0
-  '@angular/forms': 21.1.0
-  '@angular/language-service': 21.1.0
-  '@angular/platform-browser': 21.1.0
-  '@angular/platform-browser-dynamic': 21.1.0
-  '@angular/router': 21.1.0
+  '@angular-devkit/build-angular': 21.2.5
+  '@angular-devkit/core': 21.2.5
+  '@angular-devkit/schematics': 21.2.5
+  '@angular/animations': 21.2.6
+  '@angular/build': 21.2.5
+  '@angular/cdk': 21.2.4
+  '@angular/cli': 21.2.5
+  '@angular/common': 21.2.6
+  '@angular/compiler': 21.2.6
+  '@angular/compiler-cli': 21.2.6
+  '@angular/core': 21.2.6
+  '@angular/forms': 21.2.6
+  '@angular/language-service': 21.2.6
+  '@angular/platform-browser': 21.2.6
+  '@angular/platform-browser-dynamic': 21.2.6
+  '@angular/router': 21.2.6
   '@auth0/angular-jwt': 5.2.0
   '@biomejs/biome': 2.3.12
   '@codemirror/commands': 6.10.0
@@ -134,7 +134,7 @@ catalog:
   async-retry: 1.3.3
   autoprefixer: 10.4.20
   ava: 6.4.1
-  axios: 1.13.1
+  axios: 1.14.0
   bcrypt: 5.1.1
   body-parser: 2.2.1
   class-transformer: 0.3.1

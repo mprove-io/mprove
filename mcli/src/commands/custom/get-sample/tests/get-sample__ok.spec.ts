@@ -37,8 +37,8 @@ test('1', async () => {
 --project-id ${projectId} \
 --env prod \
 --connection-id c1_postgres \
---schema-name ecommerce \
---table-name order_items \
+--schema ecommerce \
+--table order_items \
 --json`;
 
     let userId = makeId();
