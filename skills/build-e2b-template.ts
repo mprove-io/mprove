@@ -9,12 +9,13 @@ let memoryMB = config.memoryMB;
 let skipCache = config.skipCache;
 let opencodeVersion = config.opencode;
 let mproveCliVersion = config.mprove;
-let malloyCliVersion = config.malloyCli;
+// let malloyCliVersion = config.malloyCli;
 let templateVersion = config.template;
 let mproveDocsFm = config.repos.mproveDocsFm;
 let malloyDocs = config.repos.malloyDocs;
 
-let templateName = `${templateVersion}_opencode_${opencodeVersion.split('.').join('-')}_mprove_${mproveCliVersion.split('.').join('-')}_malloy-cli_${malloyCliVersion.split('.').join('-')}`;
+// let templateName = `${templateVersion}_opencode_${opencodeVersion.split('.').join('-')}_mprove_${mproveCliVersion.split('.').join('-')}_malloy-cli_${malloyCliVersion.split('.').join('-')}`;
+let templateName = `${templateVersion}_opencode_${opencodeVersion.split('.').join('-')}_mprove_${mproveCliVersion.split('.').join('-')}`;
 
 console.log(`Building e2b template: ${templateName}`);
 
@@ -42,7 +43,7 @@ let template = Template()
   .runCmd(
     'sudo tar -xzf /tmp/mprove-cli.tar.gz -C /usr/local/bin && rm /tmp/mprove-cli.tar.gz'
   )
-  .runCmd(`sudo npm install -g @malloydata/cli@${malloyCliVersion}`)
+  // .runCmd(`sudo npm install -g @malloydata/cli@${malloyCliVersion}`)
   .runCmd(
     `git clone ${mproveDocsFm.url} ${mproveDocsFm.path} && cd ${mproveDocsFm.path} && git checkout ${mproveDocsFm.commit}`
   )

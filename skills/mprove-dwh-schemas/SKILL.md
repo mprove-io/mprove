@@ -127,29 +127,19 @@ Use sample data to write meaningful descriptions and realistic examples.
 
 ### Step 5: Determine Relationship Types
 
-If `foreignKeys`, `references`, and sample data from previous steps are not enough to determine cardinality, use `malloy-cli` to run analytical queries.
-
-Create a temporary `.malloy` file:
+If `foreignKeys`, `references`, and sample data from previous steps are not enough to determine cardinality,
+you can create a custom malloy source with mprove model tag:
 
 ```malloy
+#(mprove) model
 source: check is c1_postgres.table('fleet.trips') extend {
   measure:
     total_rows is count()
     distinct_vehicle_ids is count(distinct vehicle_id)
 }
-
-run: check -> {
-  select:
-    total_rows
-    distinct_vehicle_ids
-}
 ```
 
-Run it:
-
-```bash
-malloy-cli run path/to/temp_query.malloy --config /home/user/.config/malloy/malloy-config.json
-```
+Then create an mprove chart file and run it using mcp tool to get data (total_rows and distinct_vehicle_ids)
 
 If `total_rows` equals `distinct_vehicle_ids`, the relationship is `one_to_one`.
 If `total_rows` is greater, it is `many_to_one` from `trips` to `vehicles`.

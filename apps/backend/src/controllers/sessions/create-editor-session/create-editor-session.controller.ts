@@ -230,7 +230,8 @@ export class CreateEditorSessionController {
         envId: envId
       });
 
-    Object.assign(sandboxEnvs, malloyConnectionEnvs);
+    // disabled malloy-cli in sandbox
+    // Object.assign(sandboxEnvs, malloyConnectionEnvs);
 
     let sessionDataFile = {
       path: '/home/user/.config/opencode/mprove-session.json',
@@ -247,7 +248,11 @@ export class CreateEditorSessionController {
       )
     };
 
-    let sandboxFiles = [...malloySandboxFiles, sessionDataFile];
+    // disabled malloy-cli in sandbox
+    let sandboxFiles = [
+      // ...malloySandboxFiles,
+      sessionDataFile
+    ];
 
     this.activateSessionAsync({
       sessionId: session.sessionId,
