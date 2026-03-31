@@ -98,11 +98,11 @@ export class PrestoService {
     let prestoClientConfig: PrestoClientConfig = {
       catalog: connection.options.presto.catalog,
       host:
-        connection.options.presto.internalServer ??
+        connection.options.presto.internalServer ||
         connection.options.presto.server,
-      port:
-        connection.options.presto.internalPort ??
-        connection.options.presto.port,
+      port: connection.options.presto.internalServer
+        ? connection.options.presto.internalPort
+        : connection.options.presto.port,
       schema: connection.options.presto.schema,
       user: connection.options.presto.user,
       basicAuthentication:

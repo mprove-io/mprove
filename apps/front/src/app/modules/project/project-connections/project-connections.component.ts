@@ -25,6 +25,7 @@ export class ProjectConnectionsComponent implements OnInit {
   typeMySQL = ConnectionTypeEnum.MySQL;
   typeTrino = ConnectionTypeEnum.Trino;
   typePresto = ConnectionTypeEnum.Presto;
+  typeDatabricks = ConnectionTypeEnum.Databricks;
   typeGoogleApi = ConnectionTypeEnum.GoogleApi;
   typeApi = ConnectionTypeEnum.Api;
 

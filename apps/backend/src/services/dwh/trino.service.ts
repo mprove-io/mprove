@@ -87,7 +87,7 @@ export class TrinoService {
 
     let prepConnectionOptions: TrinoConnectionConfiguration = {
       server:
-        connection.options.trino.internalServer ??
+        connection.options.trino.internalServer ||
         connection.options.trino.server,
       catalog: connection.options.trino.catalog,
       schema: connection.options.trino.schema,

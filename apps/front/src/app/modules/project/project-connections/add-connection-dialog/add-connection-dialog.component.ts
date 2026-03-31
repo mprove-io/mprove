@@ -574,6 +574,85 @@ export class AddConnectionDialogComponent implements OnInit {
     }
   }
 
+  isPostgresInternalPairInvalid() {
+    let host = this.addPostgresForm?.value?.internalHost;
+    let port = this.addPostgresForm?.value?.internalPort;
+    let hostSet = isDefined(host) && host !== '';
+    let portSet = isDefined(port) && port !== '';
+    return (hostSet && !portSet) || (!hostSet && portSet);
+  }
+
+  isMysqlInternalPairInvalid() {
+    let host = this.addMysqlForm?.value?.internalHost;
+    let port = this.addMysqlForm?.value?.internalPort;
+    let hostSet = isDefined(host) && host !== '';
+    let portSet = isDefined(port) && port !== '';
+    return (hostSet && !portSet) || (!hostSet && portSet);
+  }
+
+  isPrestoInternalPairInvalid() {
+    let server = this.addPrestoForm?.value?.internalServer;
+    let port = this.addPrestoForm?.value?.internalPort;
+    let serverSet = isDefined(server) && server !== '';
+    let portSet = isDefined(port) && port !== '';
+    return (serverSet && !portSet) || (!serverSet && portSet);
+  }
+
+  isCurrentInternalPairInvalid() {
+    let cType = this.addForm?.value?.type;
+
+    if (cType === ConnectionTypeEnum.PostgreSQL) {
+      return this.isPostgresInternalPairInvalid();
+    }
+    if (cType === ConnectionTypeEnum.MySQL) {
+      return this.isMysqlInternalPairInvalid();
+    }
+    if (cType === ConnectionTypeEnum.Presto) {
+      return this.isPrestoInternalPairInvalid();
+    }
+    return false;
+  }
+
+  getInternalPairErrorMessage() {
+    let cType = this.addForm?.value?.type;
+
+    if (cType === ConnectionTypeEnum.Presto) {
+      return 'Set both Internal Server and Internal Port, or neither';
+    }
+    return 'Set both Internal Host and Internal Port, or neither';
+  }
+
+  isInternalFieldsComplete() {
+    let cType = this.addForm?.value?.type;
+
+    if (cType === ConnectionTypeEnum.PostgreSQL) {
+      let host = this.addPostgresForm?.value?.internalHost;
+      let port = this.addPostgresForm?.value?.internalPort;
+      return isDefined(host) && host !== '' && isDefined(port) && port !== '';
+    }
+    if (cType === ConnectionTypeEnum.MySQL) {
+      let host = this.addMysqlForm?.value?.internalHost;
+      let port = this.addMysqlForm?.value?.internalPort;
+      return isDefined(host) && host !== '' && isDefined(port) && port !== '';
+    }
+    if (cType === ConnectionTypeEnum.Presto) {
+      let server = this.addPrestoForm?.value?.internalServer;
+      let port = this.addPrestoForm?.value?.internalPort;
+      return (
+        isDefined(server) && server !== '' && isDefined(port) && port !== ''
+      );
+    }
+    if (cType === ConnectionTypeEnum.Trino) {
+      let server = this.addTrinoForm?.value?.internalServer;
+      return isDefined(server) && server !== '';
+    }
+    if (cType === ConnectionTypeEnum.Databricks) {
+      let host = this.addDatabricksForm?.value?.internalHost;
+      return isDefined(host) && host !== '';
+    }
+    return false;
+  }
+
   prepareOptions() {
     this.addForm.markAllAsTouched();
 
@@ -609,6 +688,19 @@ export class AddConnectionDialogComponent implements OnInit {
         !this.addDatabricksForm.valid) ||
       (cType === ConnectionTypeEnum.Api && !this.addApiForm.valid) ||
       (cType === ConnectionTypeEnum.GoogleApi && !this.addGoogleApiForm.valid)
+    ) {
+      return;
+    }
+
+    let postgresInternalPairInvalid = this.isPostgresInternalPairInvalid();
+    let mysqlInternalPairInvalid = this.isMysqlInternalPairInvalid();
+    let prestoInternalPairInvalid = this.isPrestoInternalPairInvalid();
+
+    if (
+      (cType === ConnectionTypeEnum.PostgreSQL &&
+        postgresInternalPairInvalid) ||
+      (cType === ConnectionTypeEnum.MySQL && mysqlInternalPairInvalid) ||
+      (cType === ConnectionTypeEnum.Presto && prestoInternalPairInvalid)
     ) {
       return;
     }
@@ -666,13 +758,16 @@ export class AddConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.PostgreSQL
           ? {
               host: this.addPostgresForm.value.host,
-              internalHost: this.addPostgresForm.value.internalHost,
+              internalHost:
+                this.addPostgresForm.value.internalHost || undefined,
               port: isDefined(this.addPostgresForm.value.port)
                 ? Number(this.addPostgresForm.value.port)
                 : undefined,
-              internalPort: isDefined(this.addPostgresForm.value.internalPort)
-                ? Number(this.addPostgresForm.value.internalPort)
-                : undefined,
+              internalPort:
+                isDefined(this.addPostgresForm.value.internalPort) &&
+                this.addPostgresForm.value.internalPort !== ''
+                  ? Number(this.addPostgresForm.value.internalPort)
+                  : undefined,
               database: this.addPostgresForm.value.database,
               username: this.addPostgresForm.value.username,
               password: this.addPostgresForm.value.password,
@@ -683,13 +778,15 @@ export class AddConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.MySQL
           ? {
               host: this.addMysqlForm.value.host,
-              internalHost: this.addMysqlForm.value.internalHost,
+              internalHost: this.addMysqlForm.value.internalHost || undefined,
               port: isDefined(this.addMysqlForm.value.port)
                 ? Number(this.addMysqlForm.value.port)
                 : undefined,
-              internalPort: isDefined(this.addMysqlForm.value.internalPort)
-                ? Number(this.addMysqlForm.value.internalPort)
-                : undefined,
+              internalPort:
+                isDefined(this.addMysqlForm.value.internalPort) &&
+                this.addMysqlForm.value.internalPort !== ''
+                  ? Number(this.addMysqlForm.value.internalPort)
+                  : undefined,
               database: this.addMysqlForm.value.database,
               user: this.addMysqlForm.value.user,
               password: this.addMysqlForm.value.password
@@ -699,7 +796,8 @@ export class AddConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.Trino
           ? {
               server: this.addTrinoForm.value.server,
-              internalServer: this.addTrinoForm.value.internalServer,
+              internalServer:
+                this.addTrinoForm.value.internalServer || undefined,
               catalog: this.addTrinoForm.value.catalog,
               schema: this.addTrinoForm.value.schema,
               user: this.addTrinoForm.value.user,
@@ -710,13 +808,16 @@ export class AddConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.Presto
           ? {
               server: this.addPrestoForm.value.server,
-              internalServer: this.addPrestoForm.value.internalServer,
+              internalServer:
+                this.addPrestoForm.value.internalServer || undefined,
               port: isDefined(this.addPrestoForm.value.port)
                 ? Number(this.addPrestoForm.value.port)
                 : undefined,
-              internalPort: isDefined(this.addPrestoForm.value.internalPort)
-                ? Number(this.addPrestoForm.value.internalPort)
-                : undefined,
+              internalPort:
+                isDefined(this.addPrestoForm.value.internalPort) &&
+                this.addPrestoForm.value.internalPort !== ''
+                  ? Number(this.addPrestoForm.value.internalPort)
+                  : undefined,
               catalog: this.addPrestoForm.value.catalog,
               schema: this.addPrestoForm.value.schema,
               user: this.addPrestoForm.value.user,
@@ -738,7 +839,8 @@ export class AddConnectionDialogComponent implements OnInit {
           ? {
               authType: this.addDatabricksForm.value.authType,
               host: this.addDatabricksForm.value.host,
-              internalHost: this.addDatabricksForm.value.internalHost,
+              internalHost:
+                this.addDatabricksForm.value.internalHost || undefined,
               path: this.addDatabricksForm.value.path,
               token: this.addDatabricksForm.value.token,
               oauthClientId: this.addDatabricksForm.value.oauthClientId,

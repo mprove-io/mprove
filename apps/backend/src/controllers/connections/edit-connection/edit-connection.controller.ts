@@ -122,6 +122,8 @@ export class EditConnectionController {
       }
     }
 
+    this.connectionsService.cleanInternalFields({ options: options });
+
     connection.options = options;
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({

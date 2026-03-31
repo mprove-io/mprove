@@ -1627,17 +1627,17 @@
         "
         class="ml-5 flex flex-shrink-0 flex-col items-end gap-2"
       >
-        <div class="flex flex-row items-center">
+        <div class="flex h-[50px] flex-row items-center">
           <div
             *ngIf="testConnectionResult?.isSuccess === true"
-            class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-green-600"
+            class="flex flex-shrink-0 items-center px-3 font-semibold text-green-600"
           >
             Connection is valid
           </div>
 
           <div
             *ngIf="testConnectionResult?.isSuccess === false"
-            class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-red-500"
+            class="flex flex-shrink-0 items-center px-3 font-semibold text-red-500"
             [tp]="errorMessageTemplate"
           >
             Connection failed
@@ -1660,17 +1660,17 @@
           >
         </div>
 
-        <div class="flex flex-row items-center">
+        <div class="flex h-[50px] flex-row items-center">
           <div
             *ngIf="testInternalHostResult?.isSuccess === true"
-            class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-green-600"
+            class="flex flex-shrink-0 items-center px-3 font-semibold text-green-600"
           >
             Internal is valid
           </div>
 
           <div
             *ngIf="testInternalHostResult?.isSuccess === false"
-            class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-red-500"
+            class="flex flex-shrink-0 items-center px-3 font-semibold text-red-500"
             [tp]="internalErrorMessageTemplate"
           >
             Internal failed
@@ -1686,12 +1686,25 @@
 
           <button
             data-cy="addConnectionDialogTestInternalHostButton"
-            class="bg-m600 text-m0 ml-3 w-60 rounded py-3 text-base font-medium focus:outline-none"
+            class="text-m0 ml-3 w-60 rounded py-3 text-base font-medium focus:outline-none"
+            [ngClass]="
+              isInternalFieldsComplete() ? 'bg-m600' : 'bg-s400 cursor-default'
+            "
             type="button"
+            [disabled]="!isInternalFieldsComplete()"
             (click)="testInternalHost()"
             >Test Internal Connection</button
           >
         </div>
+      </div>
+    </div>
+
+    <div class="mt-2 flex h-6 flex-row items-center justify-end">
+      <div
+        *ngIf="isCurrentInternalPairInvalid()"
+        class="text-sm font-semibold text-red-500"
+      >
+        {{ getInternalPairErrorMessage() }}
       </div>
     </div>
   </div>

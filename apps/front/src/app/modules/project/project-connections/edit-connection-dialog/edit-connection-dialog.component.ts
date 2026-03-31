@@ -496,6 +496,85 @@ export class EditConnectionDialogComponent implements OnInit {
     this.isMotherduckAccessModeReadOnly = !this.isMotherduckAccessModeReadOnly;
   }
 
+  isPostgresInternalPairInvalid() {
+    let host = this.editPostgresForm?.value?.internalHost;
+    let port = this.editPostgresForm?.value?.internalPort;
+    let hostSet = isDefined(host) && host !== '';
+    let portSet = isDefined(port) && port !== '';
+    return (hostSet && !portSet) || (!hostSet && portSet);
+  }
+
+  isMysqlInternalPairInvalid() {
+    let host = this.editMysqlForm?.value?.internalHost;
+    let port = this.editMysqlForm?.value?.internalPort;
+    let hostSet = isDefined(host) && host !== '';
+    let portSet = isDefined(port) && port !== '';
+    return (hostSet && !portSet) || (!hostSet && portSet);
+  }
+
+  isPrestoInternalPairInvalid() {
+    let server = this.editPrestoForm?.value?.internalServer;
+    let port = this.editPrestoForm?.value?.internalPort;
+    let serverSet = isDefined(server) && server !== '';
+    let portSet = isDefined(port) && port !== '';
+    return (serverSet && !portSet) || (!serverSet && portSet);
+  }
+
+  isCurrentInternalPairInvalid() {
+    let cType = this.dataItem.connection.type;
+
+    if (cType === ConnectionTypeEnum.PostgreSQL) {
+      return this.isPostgresInternalPairInvalid();
+    }
+    if (cType === ConnectionTypeEnum.MySQL) {
+      return this.isMysqlInternalPairInvalid();
+    }
+    if (cType === ConnectionTypeEnum.Presto) {
+      return this.isPrestoInternalPairInvalid();
+    }
+    return false;
+  }
+
+  isInternalFieldsComplete() {
+    let cType = this.dataItem.connection.type;
+
+    if (cType === ConnectionTypeEnum.PostgreSQL) {
+      let host = this.editPostgresForm?.value?.internalHost;
+      let port = this.editPostgresForm?.value?.internalPort;
+      return isDefined(host) && host !== '' && isDefined(port) && port !== '';
+    }
+    if (cType === ConnectionTypeEnum.MySQL) {
+      let host = this.editMysqlForm?.value?.internalHost;
+      let port = this.editMysqlForm?.value?.internalPort;
+      return isDefined(host) && host !== '' && isDefined(port) && port !== '';
+    }
+    if (cType === ConnectionTypeEnum.Presto) {
+      let server = this.editPrestoForm?.value?.internalServer;
+      let port = this.editPrestoForm?.value?.internalPort;
+      return (
+        isDefined(server) && server !== '' && isDefined(port) && port !== ''
+      );
+    }
+    if (cType === ConnectionTypeEnum.Trino) {
+      let server = this.editTrinoForm?.value?.internalServer;
+      return isDefined(server) && server !== '';
+    }
+    if (cType === ConnectionTypeEnum.Databricks) {
+      let host = this.editDatabricksForm?.value?.internalHost;
+      return isDefined(host) && host !== '';
+    }
+    return false;
+  }
+
+  getInternalPairErrorMessage() {
+    let cType = this.dataItem.connection.type;
+
+    if (cType === ConnectionTypeEnum.Presto) {
+      return 'Set both Internal Server and Internal Port, or neither';
+    }
+    return 'Set both Internal Host and Internal Port, or neither';
+  }
+
   prepareOptions() {
     this.editBigqueryForm.markAllAsTouched();
     // this.editClickhouseForm.markAllAsTouched();
@@ -528,6 +607,19 @@ export class EditConnectionDialogComponent implements OnInit {
         !this.editDatabricksForm.valid) ||
       (cType === ConnectionTypeEnum.Api && !this.editApiForm.valid) ||
       (cType === ConnectionTypeEnum.GoogleApi && !this.editGoogleApiForm.valid)
+    ) {
+      return;
+    }
+
+    let postgresInternalPairInvalid = this.isPostgresInternalPairInvalid();
+    let mysqlInternalPairInvalid = this.isMysqlInternalPairInvalid();
+    let prestoInternalPairInvalid = this.isPrestoInternalPairInvalid();
+
+    if (
+      (cType === ConnectionTypeEnum.PostgreSQL &&
+        postgresInternalPairInvalid) ||
+      (cType === ConnectionTypeEnum.MySQL && mysqlInternalPairInvalid) ||
+      (cType === ConnectionTypeEnum.Presto && prestoInternalPairInvalid)
     ) {
       return;
     }
@@ -585,13 +677,16 @@ export class EditConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.PostgreSQL
           ? {
               host: this.editPostgresForm.value.host,
-              internalHost: this.editPostgresForm.value.internalHost,
+              internalHost:
+                this.editPostgresForm.value.internalHost || undefined,
               port: isDefined(this.editPostgresForm.value.port)
                 ? Number(this.editPostgresForm.value.port)
                 : undefined,
-              internalPort: isDefined(this.editPostgresForm.value.internalPort)
-                ? Number(this.editPostgresForm.value.internalPort)
-                : undefined,
+              internalPort:
+                isDefined(this.editPostgresForm.value.internalPort) &&
+                this.editPostgresForm.value.internalPort !== ''
+                  ? Number(this.editPostgresForm.value.internalPort)
+                  : undefined,
               database: this.editPostgresForm.value.database,
               username: this.editPostgresForm.value.username,
               password: this.editPostgresForm.value.password,
@@ -602,13 +697,15 @@ export class EditConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.MySQL
           ? {
               host: this.editMysqlForm.value.host,
-              internalHost: this.editMysqlForm.value.internalHost,
+              internalHost: this.editMysqlForm.value.internalHost || undefined,
               port: isDefined(this.editMysqlForm.value.port)
                 ? Number(this.editMysqlForm.value.port)
                 : undefined,
-              internalPort: isDefined(this.editMysqlForm.value.internalPort)
-                ? Number(this.editMysqlForm.value.internalPort)
-                : undefined,
+              internalPort:
+                isDefined(this.editMysqlForm.value.internalPort) &&
+                this.editMysqlForm.value.internalPort !== ''
+                  ? Number(this.editMysqlForm.value.internalPort)
+                  : undefined,
               database: this.editMysqlForm.value.database,
               user: this.editMysqlForm.value.user,
               password: this.editMysqlForm.value.password
@@ -618,7 +715,8 @@ export class EditConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.Trino
           ? {
               server: this.editTrinoForm.value.server,
-              internalServer: this.editTrinoForm.value.internalServer,
+              internalServer:
+                this.editTrinoForm.value.internalServer || undefined,
               catalog: this.editTrinoForm.value.catalog,
               schema: this.editTrinoForm.value.schema,
               user: this.editTrinoForm.value.user,
@@ -629,13 +727,16 @@ export class EditConnectionDialogComponent implements OnInit {
         cType === ConnectionTypeEnum.Presto
           ? {
               server: this.editPrestoForm.value.server,
-              internalServer: this.editPrestoForm.value.internalServer,
+              internalServer:
+                this.editPrestoForm.value.internalServer || undefined,
               port: isDefined(this.editPrestoForm.value.port)
                 ? Number(this.editPrestoForm.value.port)
                 : undefined,
-              internalPort: isDefined(this.editPrestoForm.value.internalPort)
-                ? Number(this.editPrestoForm.value.internalPort)
-                : undefined,
+              internalPort:
+                isDefined(this.editPrestoForm.value.internalPort) &&
+                this.editPrestoForm.value.internalPort !== ''
+                  ? Number(this.editPrestoForm.value.internalPort)
+                  : undefined,
               catalog: this.editPrestoForm.value.catalog,
               schema: this.editPrestoForm.value.schema,
               user: this.editPrestoForm.value.user,
@@ -657,7 +758,8 @@ export class EditConnectionDialogComponent implements OnInit {
           ? {
               authType: this.editDatabricksForm.value.authType,
               host: this.editDatabricksForm.value.host,
-              internalHost: this.editDatabricksForm.value.internalHost,
+              internalHost:
+                this.editDatabricksForm.value.internalHost || undefined,
               path: this.editDatabricksForm.value.path,
               token: this.editDatabricksForm.value.token,
               oauthClientId: this.editDatabricksForm.value.oauthClientId,

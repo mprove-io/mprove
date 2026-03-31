@@ -28,8 +28,10 @@ export function makeMalloyConnections(item: {
     let pgOpts = x.options.postgres;
     let pgUsername = encodeURIComponent(pgOpts?.username ?? '');
     let pgPassword = encodeURIComponent(pgOpts?.password ?? '');
-    let pgHost = pgOpts?.internalHost ?? pgOpts?.host ?? '';
-    let pgPort = pgOpts?.internalPort ?? pgOpts?.port ?? 5432;
+    let pgHost = pgOpts?.internalHost || pgOpts?.host || '';
+    let pgPort = pgOpts?.internalHost
+      ? pgOpts?.internalPort
+      : pgOpts?.port || 5432;
     let pgDatabase = encodeURIComponent(pgOpts?.database ?? '');
     let pgConnectionString = `postgresql://${pgUsername}:${pgPassword}@${pgHost}:${pgPort}/${pgDatabase}`;
 
@@ -46,8 +48,10 @@ export function makeMalloyConnections(item: {
           ? new MySQLConnection(
               x.connectionId,
               {
-                host: x.options.mysql?.internalHost ?? x.options.mysql?.host,
-                port: x.options.mysql?.internalPort ?? x.options.mysql?.port,
+                host: x.options.mysql?.internalHost || x.options.mysql?.host,
+                port: x.options.mysql?.internalHost
+                  ? x.options.mysql?.internalPort
+                  : x.options.mysql?.port,
                 database: x.options.mysql?.database,
                 user: x.options.mysql?.user,
                 password: x.options.mysql?.password
@@ -65,7 +69,7 @@ export function makeMalloyConnections(item: {
                   {},
                   {
                     server:
-                      x.options.trino?.internalServer ??
+                      x.options.trino?.internalServer ||
                       x.options.trino?.server,
                     port: undefined,
                     catalog: x.options.trino?.catalog,
@@ -81,11 +85,11 @@ export function makeMalloyConnections(item: {
                     {},
                     {
                       server:
-                        x.options.presto?.internalServer ??
+                        x.options.presto?.internalServer ||
                         x.options.presto?.server,
-                      port:
-                        x.options.presto?.internalPort ??
-                        x.options.presto?.port,
+                      port: x.options.presto?.internalServer
+                        ? x.options.presto?.internalPort
+                        : x.options.presto?.port,
                       catalog: x.options.presto?.catalog,
                       schema: x.options.presto?.schema,
                       user: x.options.presto?.user,
@@ -115,7 +119,7 @@ export function makeMalloyConnections(item: {
                     : x.type === ConnectionTypeEnum.Databricks
                       ? new DatabricksConnection(x.connectionId, {
                           host:
-                            x.options.databricks?.internalHost ??
+                            x.options.databricks?.internalHost ||
                             x.options.databricks?.host,
                           path: x.options.databricks?.path,
                           token: x.options.databricks?.token,

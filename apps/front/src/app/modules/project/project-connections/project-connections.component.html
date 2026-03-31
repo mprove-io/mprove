@@ -130,8 +130,8 @@
                   }}
                 </td>
 
-                <td data-cy="projectConnectionsHost" class="w-96"
-                  >{{
+                <td data-cy="projectConnectionsHost" class="w-96">
+                  {{
                     (connection.type === typePostgreSQL
                       ? connection.options.postgres?.host
                       : connection.type === typeMySQL
@@ -140,17 +140,47 @@
                           ? connection.options.trino?.server
                           : connection.type === typePresto
                             ? connection.options.presto?.server
-                            : undefined) ||
+                            : connection.type === typeDatabricks
+                              ? connection.options.databricks?.host
+                              : undefined) ||
                       (connection.type === typeApi
                         ? connection.options.storeApi?.baseUrl
                         : connection.type === typeGoogleApi
                           ? connection.options.storeGoogleApi?.baseUrl
                           : undefined)
                   }}
+                  <span
+                    *ngIf="
+                      (connection.type === typePostgreSQL &&
+                        connection.options.postgres?.internalHost) ||
+                      (connection.type === typeMySQL &&
+                        connection.options.mysql?.internalHost) ||
+                      (connection.type === typeTrino &&
+                        connection.options.trino?.internalServer) ||
+                      (connection.type === typePresto &&
+                        connection.options.presto?.internalServer) ||
+                      (connection.type === typeDatabricks &&
+                        connection.options.databricks?.internalHost)
+                    "
+                    class="text-s400 ml-2"
+                    >{{
+                      connection.type === typePostgreSQL
+                        ? connection.options.postgres?.internalHost
+                        : connection.type === typeMySQL
+                          ? connection.options.mysql?.internalHost
+                          : connection.type === typeTrino
+                            ? connection.options.trino?.internalServer
+                            : connection.type === typePresto
+                              ? connection.options.presto?.internalServer
+                              : connection.type === typeDatabricks
+                                ? connection.options.databricks?.internalHost
+                                : undefined
+                    }}</span
+                  >
                 </td>
 
-                <td class="w-48"
-                  >{{
+                <td class="w-48">
+                  {{
                     connection.type === typePostgreSQL
                       ? connection.options.postgres?.port
                       : connection.type === typeMySQL
@@ -159,6 +189,26 @@
                           ? connection.options.presto?.port
                           : undefined
                   }}
+                  <span
+                    *ngIf="
+                      (connection.type === typePostgreSQL &&
+                        connection.options.postgres?.internalPort) ||
+                      (connection.type === typeMySQL &&
+                        connection.options.mysql?.internalPort) ||
+                      (connection.type === typePresto &&
+                        connection.options.presto?.internalPort)
+                    "
+                    class="text-s400 ml-2"
+                    >{{
+                      connection.type === typePostgreSQL
+                        ? connection.options.postgres?.internalPort
+                        : connection.type === typeMySQL
+                          ? connection.options.mysql?.internalPort
+                          : connection.type === typePresto
+                            ? connection.options.presto?.internalPort
+                            : undefined
+                    }}</span
+                  >
                 </td>
 
                 <td class="w-48"
@@ -175,7 +225,10 @@
                               ? connection.options.snowflake?.database
                               : connection.type === typeMotherDuck
                                 ? connection.options.motherduck?.database
-                                : undefined
+                                : connection.type === typeDatabricks
+                                  ? connection.options.databricks
+                                      ?.defaultCatalog
+                                  : undefined
                   }}
                 </td>
 
@@ -286,6 +339,36 @@
                       <span class="font-medium">Schema: </span>
                       <span class="text-g700">
                         {{ connection.options.presto?.schema }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex-col"
+                    *ngIf="connection.type === typeDatabricks"
+                  >
+                    <div *ngIf="connection.options.databricks?.authType">
+                      <span class="font-medium">Auth Type: </span>
+                      <span class="text-g700">
+                        {{ connection.options.databricks?.authType }}
+                      </span>
+                    </div>
+                    <div *ngIf="connection.options.databricks?.path">
+                      <span class="font-medium">Path: </span>
+                      <span class="text-g700">
+                        {{ connection.options.databricks?.path }}
+                      </span>
+                    </div>
+                    <div *ngIf="connection.options.databricks?.defaultSchema">
+                      <span class="font-medium">Schema: </span>
+                      <span class="text-g700">
+                        {{ connection.options.databricks?.defaultSchema }}
+                      </span>
+                    </div>
+                    <div *ngIf="connection.options.databricks?.oauthClientId">
+                      <span class="font-medium">OAuth Client ID: </span>
+                      <span class="text-g700">
+                        {{ connection.options.databricks?.oauthClientId }}
                       </span>
                     </div>
                   </div>
