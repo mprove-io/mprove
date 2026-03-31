@@ -1,5 +1,5 @@
 {
-  "template": "v30",
+  "template": "v32",
   "cpuCount": 4,
   "memoryMB": 8192,
   "skipCache": true,
