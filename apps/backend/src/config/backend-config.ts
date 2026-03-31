@@ -17,6 +17,9 @@ export class BackendConfig {
   @IsBoolean()
   isTelemetryEnabled?: boolean;
 
+  @IsBoolean()
+  isTraceDrizzleEnabled?: boolean;
+
   @IsOptional()
   @IsString()
   telemetryEndpoint?: string;

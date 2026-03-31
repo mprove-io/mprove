@@ -14,6 +14,11 @@ export function getDevConfig() {
       name: 'IS_TELEMETRY_ENABLED'
     }),
 
+    isTraceDrizzleEnabled: enumToBoolean({
+      value: process.env.BACKEND_IS_TRACE_DRIZZLE_ENABLED,
+      name: 'BACKEND_IS_TRACE_DRIZZLE_ENABLED'
+    }),
+
     telemetryEndpoint: process.env.TELEMETRY_ENDPOINT,
 
     telemetryHyperdxIngestApiKey: process.env.TELEMETRY_HYPERDX_INGEST_API_KEY,

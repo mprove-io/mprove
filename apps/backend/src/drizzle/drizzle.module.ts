@@ -85,9 +85,15 @@ export interface Db {
         let postgresPoolDrizzle: NodePgDatabase<typeof schemaPostgres> =
           drizzlePg(postgresPool, pgDrizzleConfig);
 
-        instrumentDrizzleClient(postgresPoolDrizzle, {
-          dbSystem: 'postgresql'
-        });
+        if (
+          cs.get<BackendConfig['isTraceDrizzleEnabled']>(
+            'isTraceDrizzleEnabled'
+          ) === true
+        ) {
+          instrumentDrizzleClient(postgresPoolDrizzle, {
+            dbSystem: 'postgresql'
+          });
+        }
 
         let postgresPacker = new DrizzlePacker(tabService, tabToEntService);
 
