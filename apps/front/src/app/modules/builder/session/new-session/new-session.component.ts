@@ -47,7 +47,7 @@ import { UiService } from '#front/app/services/ui.service';
 })
 export class NewSessionComponent implements OnInit {
   sessionTypeEnum = SessionTypeEnum;
-  sessionType: SessionTypeEnum = SessionTypeEnum.Explorer;
+  sessionType: SessionTypeEnum = SessionTypeEnum.Editor;
   sessionTypes = [SessionTypeEnum.Explorer, SessionTypeEnum.Editor];
 
   agent = 'plan';
@@ -115,7 +115,7 @@ export class NewSessionComponent implements OnInit {
 
   ngOnInit() {
     let uiState = this.uiQuery.getValue();
-    this.model = uiState.newSessionExplorerProviderModel;
+    this.model = uiState.newSessionEditorProviderModel;
     this.variant = uiState.newSessionEditorVariant || 'default';
 
     let project = this.projectQuery.getValue();

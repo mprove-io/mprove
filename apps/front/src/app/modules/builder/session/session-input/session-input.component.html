@@ -1,11 +1,24 @@
 <div
-  *ngIf="!projectHasAnyApiKey"
+  *ngIf="!projectHasE2bApiKey && sessionType !== sessionTypeEnum.Explorer"
+  class="mb-2 text-center text-[17px] text-red-500"
+  >Editor session requires E2B API Key (see Project Settings)</div
+>
+
+<div
+  *ngIf="
+    (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
+    !projectHasAnyApiKey
+  "
   class="mb-2 text-center text-[17px] text-red-500"
   >Session requires provider API Key (see Project Settings)</div
 >
 
 <div
-  *ngIf="projectHasAnyApiKey && !providerHasApiKey"
+  *ngIf="
+    (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
+    projectHasAnyApiKey &&
+    !providerHasApiKey
+  "
   class="mb-2 text-center text-[17px] text-red-500"
   >This provider requires an API key (see Project Settings)</div
 >
@@ -63,7 +76,11 @@
 </div>
 
 <div
-  *ngIf="showSelects && projectHasAnyApiKey"
+  *ngIf="
+    showSelects &&
+    projectHasAnyApiKey &&
+    (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer)
+  "
   class="mt-4 flex h-10 flex-row items-center justify-center space-x-3"
 >
   <div

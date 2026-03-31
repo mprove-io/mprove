@@ -67,6 +67,7 @@ export class SessionInputComponent implements OnChanges {
   modelVariantsMap = new Map<string, string[]>();
   providerHasApiKey = true;
   projectHasAnyApiKey = true;
+  projectHasE2bApiKey = true;
   effectiveDisabled = false;
 
   constructor(
@@ -98,15 +99,16 @@ export class SessionInputComponent implements OnChanges {
           : state.modelsOpencode;
 
       this.applyModels(models);
+      this.updateProjectHasE2bApiKey();
     }
     if (changes['model']) {
       this.updateVariants();
       this.updateProjectHasAnyApiKey();
+      this.updateProjectHasE2bApiKey();
       this.updateProviderHasApiKey();
     }
     if (changes['disabled']) {
-      this.effectiveDisabled =
-        this.disabled || !this.projectHasAnyApiKey || !this.providerHasApiKey;
+      this.updateEffectiveDisabled();
     }
   }
 
@@ -178,6 +180,18 @@ export class SessionInputComponent implements OnChanges {
     }
   }
 
+  updateEffectiveDisabled() {
+    let isEditorWithoutE2b =
+      this.sessionType !== SessionTypeEnum.Explorer &&
+      !this.projectHasE2bApiKey;
+
+    this.effectiveDisabled =
+      this.disabled ||
+      !this.projectHasAnyApiKey ||
+      !this.providerHasApiKey ||
+      isEditorWithoutE2b;
+  }
+
   updateProjectHasAnyApiKey() {
     let project = this.projectQuery.getValue();
 
@@ -186,15 +200,22 @@ export class SessionInputComponent implements OnChanges {
       !!project.isOpenaiApiKeySet ||
       !!project.isAnthropicApiKeySet;
 
-    this.effectiveDisabled =
-      this.disabled || !this.projectHasAnyApiKey || !this.providerHasApiKey;
+    this.updateEffectiveDisabled();
+  }
+
+  updateProjectHasE2bApiKey() {
+    let project = this.projectQuery.getValue();
+
+    this.projectHasE2bApiKey = !!project.isE2bApiKeySet;
+
+    this.updateEffectiveDisabled();
   }
 
   updateProviderHasApiKey() {
     if (!this.model) {
       this.providerHasApiKey = true;
-      this.effectiveDisabled = this.disabled || !this.projectHasAnyApiKey;
       this.providerHasApiKeyChange.emit(this.providerHasApiKey);
+      this.updateEffectiveDisabled();
       return;
     }
 
@@ -211,9 +232,8 @@ export class SessionInputComponent implements OnChanges {
     } else {
       this.providerHasApiKey = false;
     }
-    this.effectiveDisabled =
-      this.disabled || !this.projectHasAnyApiKey || !this.providerHasApiKey;
     this.providerHasApiKeyChange.emit(this.providerHasApiKey);
+    this.updateEffectiveDisabled();
   }
 
   updateVariants() {
