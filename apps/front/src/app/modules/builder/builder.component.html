@@ -3,7 +3,7 @@
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex h-11 w-1/4 flex-row items-center justify-start">
-          <div class="ml-5 flex select-none flex-row items-center">
+          <div class="flex select-none flex-row items-center">
             <div
               data-cy="builderTitle"
               class="text-s1 flex select-none items-center self-center text-2xl font-semibold"
@@ -348,6 +348,7 @@
         >
           <div class="flex flex-row items-center">
             <button
+              *ngIf="showEventsButton"
               tp="Toggle events"
               type="button"
               class="mr-7 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"

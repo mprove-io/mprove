@@ -31,6 +31,7 @@ import {
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { NavQuery } from '#front/app/queries/nav.query';
+import { ProjectQuery } from '#front/app/queries/project.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
@@ -71,11 +72,13 @@ export class NewSessionComponent implements OnInit {
   envsLoading = false;
 
   isSubmitting = false;
+  projectHasAnyApiKey = true;
 
   constructor(
     private cd: ChangeDetectorRef,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
+    private projectQuery: ProjectQuery,
     private apiService: ApiService,
     private sessionsQuery: SessionsQuery,
     private uiQuery: UiQuery,
@@ -114,6 +117,12 @@ export class NewSessionComponent implements OnInit {
     let uiState = this.uiQuery.getValue();
     this.model = uiState.newSessionExplorerProviderModel;
     this.variant = uiState.newSessionEditorVariant || 'default';
+
+    let project = this.projectQuery.getValue();
+    this.projectHasAnyApiKey =
+      !!project.isZenApiKeySet ||
+      !!project.isOpenaiApiKeySet ||
+      !!project.isAnthropicApiKeySet;
   }
 
   openBranchSelect() {

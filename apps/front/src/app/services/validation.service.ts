@@ -44,7 +44,8 @@ export class ValidationService {
         'labelIsNotUnique',
         'Filter label must be unique for filter labels and Ids'
       ],
-      ['motherduckDatabaseWrongChars', 'Use only "a-zA-Z0-9_-" chars']
+      ['motherduckDatabaseWrongChars', 'Use only "a-zA-Z0-9_-" chars'],
+      ['gitUrlNotStartWithGitAt', 'Must start with "git@"']
     ]);
 
     return config.get(validatorName);
@@ -275,6 +276,18 @@ export class ValidationService {
     return control.value.length > 0 && control.value.length <= 1048576
       ? null
       : { moreThenOneMB: true };
+  }
+
+  static gitUrlNotStartWithGitAt(control: FormControl) {
+    if (isUndefined(control.value) || control.value === '') {
+      return null;
+    }
+
+    if (control.value.startsWith('git@')) {
+      return null;
+    } else {
+      return { gitUrlNotStartWithGitAt: true };
+    }
   }
 
   static motherduckDatabaseWrongChars(control: FormControl) {

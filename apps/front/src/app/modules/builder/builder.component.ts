@@ -163,6 +163,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
     })
   );
 
+  showEventsButton = false;
   showEvents = false;
   showEvents$ = this.uiQuery.sessionShowEvents$.pipe(
     tap(x => {

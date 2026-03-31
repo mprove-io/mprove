@@ -40,6 +40,7 @@ import {
 } from '#common/interfaces/to-backend/projects/to-backend-generate-project-remote-key';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ApiService } from '#front/app/services/api.service';
+import { ValidationService } from '#front/app/services/validation.service';
 
 export interface CreateProjectDialogData {
   apiService: ApiService;
@@ -93,7 +94,11 @@ export class CreateProjectDialogComponent implements OnInit {
       ],
       projectGitUrl: [
         projectGitUrl,
-        [Validators.required, Validators.maxLength(255)]
+        [
+          Validators.required,
+          Validators.maxLength(255),
+          ValidationService.gitUrlNotStartWithGitAt
+        ]
       ]
     });
 
