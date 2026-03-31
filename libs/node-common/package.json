@@ -1,6 +1,6 @@
 {
   "name": "@mprove/node-common",
-  "version": "11.0.105",
+  "version": "11.0.106",
   "private": true,
   "type": "module",
   "exports": {
