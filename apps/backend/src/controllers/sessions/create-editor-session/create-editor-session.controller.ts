@@ -282,9 +282,9 @@ export class CreateEditorSessionController {
       initialBranch: initialBranch,
       traceId: reqValid.info.traceId
     });
-    console.log(
-      `createSessionRepoAsync took ${(Date.now() - createSessionRepoStart) / 1000}s`
-    );
+    // console.log(
+    //   `createSessionRepoAsync took ${(Date.now() - createSessionRepoStart) / 1000}s`
+    // );
 
     let payload: ToBackendCreateEditorSessionResponsePayload = {
       sessionId: session.sessionId,
@@ -543,7 +543,7 @@ export class CreateEditorSessionController {
         message: toDiskCreateDevRepoRequest,
         checkIsOk: true
       });
-    console.log(`sendToDisk took ${(Date.now() - sendToDiskStart) / 1000}s`);
+    // console.log(`sendToDisk took ${(Date.now() - sendToDiskStart) / 1000}s`);
 
     let repoId = sessionId;
     let branchId = sessionId;
@@ -602,9 +602,9 @@ export class CreateEditorSessionController {
           envId: x.envId,
           overrideTimezone: undefined
         });
-        console.log(
-          `rebuildStruct took ${(Date.now() - rebuildStructStart) / 1000}s`
-        );
+        // console.log(
+        //   `rebuildStruct took ${(Date.now() - rebuildStructStart) / 1000}s`
+        // );
 
         x.structId = structId;
         x.needValidate = false;

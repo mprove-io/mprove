@@ -100,14 +100,14 @@ export class ExplorerStreamService implements OnModuleDestroy {
         }
 
         if (command === AiStreamCommandEnum.Stop) {
-          console.log(`[ai-stream] received stop for sessionId=${sessionId}`);
+          // console.log(`[ai-stream] received stop for sessionId=${sessionId}`);
 
           let ac = this.abortControllers.get(sessionId);
           ac.abort();
         } else if (command === AiStreamCommandEnum.SetTitle) {
-          console.log(
-            `[ai-stream] received set-title for sessionId=${sessionId}`
-          );
+          // console.log(
+          //   `[ai-stream] received set-title for sessionId=${sessionId}`
+          // );
 
           let titleEvent = this.explorerEventsMakerService.makeTitleEvent({
             title: parsed.title
@@ -119,9 +119,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
         } else if (command === AiStreamCommandEnum.Interact) {
           let { replyTo, payload } = parsed;
 
-          console.log(
-            `[ai-stream] received interact for sessionId=${sessionId}`
-          );
+          // console.log(
+          //   `[ai-stream] received interact for sessionId=${sessionId}`
+          // );
 
           let queue = this.pendingInteracts.get(sessionId);
 
@@ -354,9 +354,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
       let isTimedOut = elapsed >= this.STREAM_LOCK_WAIT_TIMEOUT_MS;
 
       if (isTimedOut) {
-        console.log(
-          `[ai-stream] timed out after ${elapsed}ms for sessionId=${item.sessionId}`
-        );
+        // console.log(
+        //   `[ai-stream] timed out after ${elapsed}ms for sessionId=${item.sessionId}`
+        // );
         return;
       }
 

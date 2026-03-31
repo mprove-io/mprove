@@ -106,7 +106,7 @@ export class EditorStreamService implements OnModuleDestroy {
         }
 
         if (command === OpencodeStreamCommandEnum.Stop) {
-          console.log(`[oc-stream] received stop for sessionId=${sessionId}`);
+          // console.log(`[oc-stream] received stop for sessionId=${sessionId}`);
 
           this.stopEventStream({ sessionId: sessionId }).catch(e => {
             logToConsoleBackend({
@@ -122,9 +122,9 @@ export class EditorStreamService implements OnModuleDestroy {
         } else if (command === OpencodeStreamCommandEnum.Interact) {
           let { replyTo, payload } = parsed;
 
-          console.log(
-            `[oc-stream] received interact for sessionId=${sessionId}`
-          );
+          // console.log(
+          //   `[oc-stream] received interact for sessionId=${sessionId}`
+          // );
 
           this.executeInteraction({
             sessionId: sessionId,
@@ -161,9 +161,9 @@ export class EditorStreamService implements OnModuleDestroy {
         } else if (command === OpencodeStreamCommandEnum.Fetch) {
           let { replyTo, payload } = parsed;
 
-          console.log(
-            `[oc-stream] command - fetchSessionStateFromOpencode for sessionId=${sessionId}`
-          );
+          // console.log(
+          //   `[oc-stream] command - fetchSessionStateFromOpencode for sessionId=${sessionId}`
+          // );
 
           this.fetchSessionStateFromOpencode({
             sessionId: sessionId,
@@ -226,9 +226,9 @@ export class EditorStreamService implements OnModuleDestroy {
     sessionId: string;
   }): Promise<void> {
     try {
-      console.log(
-        `[oc-stream] setSessionRequestedReloadTs for sessionId=${item.sessionId}`
-      );
+      // console.log(
+      //   `[oc-stream] setSessionRequestedReloadTs for sessionId=${item.sessionId}`
+      // );
 
       await this.db.drizzle.execute(
         sql`UPDATE sessions SET reload_requested_ts = ${Date.now()} WHERE session_id = ${item.sessionId}`
@@ -303,9 +303,9 @@ export class EditorStreamService implements OnModuleDestroy {
       );
 
       if (result === 0) {
-        console.log(
-          `[oc-stream] lock lost, cleaning up sessionId=${sessionId}`
-        );
+        // console.log(
+        //   `[oc-stream] lock lost, cleaning up sessionId=${sessionId}`
+        // );
 
         let stopFn = this.activeStreams.get(sessionId);
 
@@ -341,9 +341,9 @@ export class EditorStreamService implements OnModuleDestroy {
     let { isSetReload } = item;
 
     if (this.activeStreams.has(item.sessionId)) {
-      console.log(
-        `[oc-stream] skip startEventStream - already in activeStreams sessionId=${item.sessionId}`
-      );
+      // console.log(
+      //   `[oc-stream] skip startEventStream - already in activeStreams sessionId=${item.sessionId}`
+      // );
       return false;
     }
 
@@ -352,15 +352,15 @@ export class EditorStreamService implements OnModuleDestroy {
     });
 
     if (!acquired) {
-      console.log(
-        `[oc-stream] skip startEventStream - lock not acquired sessionId=${item.sessionId}`
-      );
+      // console.log(
+      //   `[oc-stream] skip startEventStream - lock not acquired sessionId=${item.sessionId}`
+      // );
       return false;
     }
 
-    console.log(
-      `[oc-stream] startEventStream - lock acquired, subscribing sessionId=${item.sessionId}`
-    );
+    // console.log(
+    //   `[oc-stream] startEventStream - lock acquired, subscribing sessionId=${item.sessionId}`
+    // );
 
     let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
@@ -377,9 +377,9 @@ export class EditorStreamService implements OnModuleDestroy {
       { signal: abortController.signal }
     );
 
-    console.log(
-      `[oc-stream] startEventStream - subscribed sessionId=${item.sessionId}`
-    );
+    // console.log(
+    //   `[oc-stream] startEventStream - subscribed sessionId=${item.sessionId}`
+    // );
 
     this.activeStreams.set(item.sessionId, () => abortController.abort());
     this.lastEventTsMap.set(item.sessionId, Date.now());
@@ -387,9 +387,9 @@ export class EditorStreamService implements OnModuleDestroy {
       response: response
     });
 
-    console.log(
-      `[oc-stream] startEventStream - fetchSessionStateFromOpencode for sessionId=${item.sessionId}`
-    );
+    // console.log(
+    //   `[oc-stream] startEventStream - fetchSessionStateFromOpencode for sessionId=${item.sessionId}`
+    // );
 
     await this.fetchSessionStateFromOpencode({
       sessionId: item.sessionId,
@@ -421,9 +421,9 @@ export class EditorStreamService implements OnModuleDestroy {
           });
         }
 
-        console.log(
-          `[oc-stream] stream ended naturally sessionId=${item.sessionId}`
-        );
+        // console.log(
+        //   `[oc-stream] stream ended naturally sessionId=${item.sessionId}`
+        // );
       } catch (e: any) {
         if (e.name !== 'AbortError') {
           logToConsoleBackend({
@@ -436,11 +436,11 @@ export class EditorStreamService implements OnModuleDestroy {
             cs: this.cs
           });
 
-          console.log(
-            `[oc-stream] stream failed sessionId=${item.sessionId} error=${e.message}`
-          );
+          // console.log(
+          //   `[oc-stream] stream failed sessionId=${item.sessionId} error=${e.message}`
+          // );
         } else {
-          console.log(`[oc-stream] stream aborted sessionId=${item.sessionId}`);
+          // console.log(`[oc-stream] stream aborted sessionId=${item.sessionId}`);
         }
       }
 
@@ -451,9 +451,9 @@ export class EditorStreamService implements OnModuleDestroy {
       });
     };
 
-    console.log(
-      `[oc-stream] processEventStream started sessionId=${item.sessionId}`
-    );
+    // console.log(
+    //   `[oc-stream] processEventStream started sessionId=${item.sessionId}`
+    // );
 
     processStream();
   }
@@ -461,7 +461,7 @@ export class EditorStreamService implements OnModuleDestroy {
   async stopEventStream(item: { sessionId: string }): Promise<void> {
     let { sessionId } = item;
 
-    console.log('[oc-stream] stopEventStream started');
+    // console.log('[oc-stream] stopEventStream started');
 
     let stopFn = this.activeStreams.get(sessionId);
 
@@ -474,7 +474,7 @@ export class EditorStreamService implements OnModuleDestroy {
     this.sessionDrainService.cleanup({ sessionId: sessionId });
     await this.releaseStreamLock({ sessionId: sessionId });
 
-    console.log('[oc-stream] stopEventStream completed');
+    // console.log('[oc-stream] stopEventStream completed');
   }
 
   async respondToPermission(item: {
@@ -541,9 +541,9 @@ export class EditorStreamService implements OnModuleDestroy {
       let isStalled = elapsed > this.STREAM_STALL_THRESHOLD_MS;
 
       if (isStalled) {
-        console.log(
-          `[oc-stream] stream stalled for sessionId=${sessionId} elapsed=${elapsed}ms`
-        );
+        // console.log(
+        //   `[oc-stream] stream stalled for sessionId=${sessionId} elapsed=${elapsed}ms`
+        // );
 
         await this.stopEventStream({ sessionId: sessionId });
 
@@ -569,9 +569,9 @@ export class EditorStreamService implements OnModuleDestroy {
       let isTimedOut = elapsed >= this.STREAM_LOCK_WAIT_TIMEOUT_MS;
 
       if (isTimedOut) {
-        console.log(
-          `[oc-stream] timed out after ${elapsed}ms for sessionId=${item.sessionId}`
-        );
+        // console.log(
+        //   `[oc-stream] timed out after ${elapsed}ms for sessionId=${item.sessionId}`
+        // );
         return;
       }
 
@@ -856,9 +856,9 @@ export class EditorStreamService implements OnModuleDestroy {
             });
           });
         } catch (e: any) {
-          console.log(
-            `[oc-exec] failed to persist user message part sessionId=${item.sessionId} messageId=${item.messageId}: ${e?.message}`
-          );
+          // console.log(
+          //   `[oc-exec] failed to persist user message part sessionId=${item.sessionId} messageId=${item.messageId}: ${e?.message}`
+          // );
         }
       }
     } else if (item.interactionType === InteractionTypeEnum.Permission) {
