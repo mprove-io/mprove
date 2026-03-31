@@ -79,12 +79,14 @@ const TOOL_TITLE_MAP: Record<string, string> = {
   edit: 'Edit',
   glob: 'Glob',
   grep: 'Grep',
-  web_search: 'Web Search',
-  web_fetch: 'Web Fetch',
+  websearch: 'Web Search',
+  webfetch: 'Web Fetch',
   task: 'Task',
-  todo_write: 'Todo',
-  notebook_edit: 'Notebook Edit',
-  question: 'Question'
+  todowrite: 'Todo',
+  question: 'Question',
+  skill: 'Skill',
+  codesearch: 'Code Search',
+  apply_patch: 'Apply Patch'
 };
 
 @Component({
@@ -124,6 +126,9 @@ export class SessionMessagesContentComponent {
   getToolSubtitle(toolPart: ToolPart): string {
     let input = toolPart.state?.input;
     if (!input) return '';
+    if (toolPart.tool === 'skill') {
+      return (input['name'] as string) || '';
+    }
     return (
       (input['file_path'] as string) ||
       (input['filePath'] as string) ||
