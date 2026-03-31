@@ -26,15 +26,15 @@ export class GetQueryCommand extends CustomCommand {
     examples: [
       [
         'Get Query for Chart',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --chart-id v1 --get-malloy --get-sql --get-data'
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --chart-id v1 --get-malloy --get-sql --get-data'
       ],
       [
         'Get Query for Dashboard',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --dashboard-id d1 --get-malloy --get-sql --get-data'
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --dashboard-id d1 --get-malloy --get-sql --get-data'
       ],
       [
         'Get Query for Report',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --report-id r1 --get-malloy --get-sql --get-data'
+        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --report-id r1 --get-malloy --get-sql --get-data'
       ]
     ]
   });
@@ -43,7 +43,7 @@ export class GetQueryCommand extends CustomCommand {
     description: '(required) Project Id'
   });
 
-  repo = Option.String('--repo', {
+  repoType = Option.String('--repo-type', {
     required: true,
     validator: t.isEnum(RepoTypeEnum),
     description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
@@ -134,7 +134,7 @@ export class GetQueryCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
-      this.repo === RepoTypeEnum.Production
+      this.repoType === RepoTypeEnum.Production
         ? PROD_REPO_ID
         : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
           ? apiKey.split('-')[2].toLowerCase()

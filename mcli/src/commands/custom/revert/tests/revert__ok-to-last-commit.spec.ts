@@ -29,7 +29,7 @@ test('1', async () => {
     let commandLine = `revert \
 --to last-commit \
 --project-id ${projectId} \
---repo production \
+--repo-type production \
 --branch ${defaultBranch} \
 --env prod \
 --get-errors \

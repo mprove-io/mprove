@@ -25,11 +25,11 @@ export class GetBranchesCommand extends CustomCommand {
     examples: [
       [
         'Get Dev repo branches',
-        'mprove get-branches --project-id DXYE72ODCP5LWPWH2EXQ --repo dev'
+        'mprove get-branches --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev'
       ],
       [
         'Get Production repo branches',
-        'mprove get-branches --project-id DXYE72ODCP5LWPWH2EXQ --repo production'
+        'mprove get-branches --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production'
       ]
     ]
   });
@@ -38,7 +38,7 @@ export class GetBranchesCommand extends CustomCommand {
     description: '(required) Project Id'
   });
 
-  repo = Option.String('--repo', {
+  repoType = Option.String('--repo-type', {
     required: true,
     validator: t.isEnum(RepoTypeEnum),
     description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
@@ -70,7 +70,7 @@ export class GetBranchesCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
-      this.repo === RepoTypeEnum.Production
+      this.repoType === RepoTypeEnum.Production
         ? PROD_REPO_ID
         : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
           ? apiKey.split('-')[2].toLowerCase()

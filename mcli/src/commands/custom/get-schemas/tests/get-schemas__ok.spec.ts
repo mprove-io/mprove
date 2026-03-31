@@ -29,7 +29,7 @@ test('1', async () => {
     let projectId = makeId();
     let commandLine = `get-schemas \
 --project-id ${projectId} \
---repo dev \
+--repo-type dev \
 --branch ${defaultBranch} \
 --env prod \
 --json`;

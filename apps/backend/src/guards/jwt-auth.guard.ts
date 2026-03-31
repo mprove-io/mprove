@@ -119,7 +119,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       let path = request.url?.substring(1);
 
-      let isMcpRequest = path === 'mcp' || path.startsWith('mcp/');
+      let isMcpRequest = path === 'api/mcp' || path.startsWith('api/mcp/');
 
       if (isMcpRequest === true) {
         return true;
@@ -190,7 +190,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
       let url = request.url?.substring(1);
 
-      let isMcpRequest = url === 'mcp' || url.startsWith('mcp/');
+      let isMcpRequest = url === 'api/mcp' || url.startsWith('api/mcp/');
 
       if (isMcpRequest === true) {
         request.apiKeyToValidateSessionId = parsed.entityId;

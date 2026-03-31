@@ -28,7 +28,7 @@ test('1', async () => {
     let projectId = makeId();
     let commandLine = `get-branches \
 --project-id ${projectId} \
---repo dev \
+--repo-type dev \
 --json`;
 
     let userId = makeId();

@@ -157,6 +157,7 @@ export let mcpModuleOptions: McpOptions = {
   name: 'mprove',
   version: backendPackageJson.version,
   transport: McpTransportType.STREAMABLE_HTTP,
+  mcpEndpoint: 'api/mcp',
   streamableHttp: {
     enableJsonResponse: true,
     statelessMode: true

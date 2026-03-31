@@ -27,7 +27,7 @@ test('1', async () => {
     let projectId = makeId();
     let commandLine = `create-branch \
 --project-id ${projectId} \
---repo dev \
+--repo-type dev \
 --new-branch b1 \
 --from-branch ${defaultBranch} \
 --json`;

@@ -29,7 +29,7 @@ test('1', async () => {
     let projectId = makeId();
     let commandLine = `get-model \
 --project-id ${projectId} \
---repo dev \
+--repo-type dev \
 --branch ${defaultBranch} \
 --env prod \
 --model-id c1_order_items \

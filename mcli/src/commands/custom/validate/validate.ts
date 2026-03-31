@@ -26,11 +26,11 @@ export class ValidateCommand extends CustomCommand {
     examples: [
       [
         'Validate Mprove Files for Dev repo, env prod',
-        'mprove validate --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove validate --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod'
       ],
       [
         'Validate Mprove Files for Production repo, env prod',
-        'mprove validate --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove validate --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch main --env prod'
       ]
     ]
   });
@@ -39,7 +39,7 @@ export class ValidateCommand extends CustomCommand {
     description: '(required) Project Id'
   });
 
-  repo = Option.String('--repo', {
+  repoType = Option.String('--repo-type', {
     required: true,
     validator: t.isEnum(RepoTypeEnum),
     description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
@@ -81,7 +81,7 @@ export class ValidateCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
-      this.repo === RepoTypeEnum.Production
+      this.repoType === RepoTypeEnum.Production
         ? PROD_REPO_ID
         : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
           ? apiKey.split('-')[2].toLowerCase()

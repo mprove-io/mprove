@@ -29,7 +29,7 @@ test('1', async () => {
 
     let commandLine = `validate \
 --project-id ${projectId} \
---repo dev \
+--repo-type dev \
 --branch ${defaultBranch} \
 --env prod \
 --json`;

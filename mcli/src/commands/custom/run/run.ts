@@ -25,15 +25,15 @@ export class RunCommand extends CustomCommand {
     examples: [
       [
         'Run for Dev repo and wait for completion',
-        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --wait --get-dashboards --get-charts'
+        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --wait --get-dashboards --get-charts'
       ],
       [
         'Run dashboards d1 and d2 for Dev repo',
-        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --no-charts --dashboard-ids d1,d2'
+        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --no-charts --dashboard-ids d1,d2'
       ],
       [
         'Run for Production repo',
-        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove run --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch main --env prod'
       ]
     ]
   });
@@ -42,7 +42,7 @@ export class RunCommand extends CustomCommand {
     description: '(required) Project Id'
   });
 
-  repo = Option.String('--repo', {
+  repoType = Option.String('--repo-type', {
     required: true,
     validator: t.isEnum(RepoTypeEnum),
     description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
@@ -137,7 +137,7 @@ export class RunCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
-      this.repo === RepoTypeEnum.Production
+      this.repoType === RepoTypeEnum.Production
         ? PROD_REPO_ID
         : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
           ? apiKey.split('-')[2].toLowerCase()

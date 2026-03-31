@@ -37,11 +37,11 @@ export class RevertCommand extends CustomCommand {
     examples: [
       [
         'Revert Dev repo to the state of a last commit, validate Mprove Files for env prod',
-        'mprove revert --to last-commit --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod'
+        'mprove revert --to last-commit --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod'
       ],
       [
         'Revert Production repo to the state of Remote repo, validate Mprove Files for env prod',
-        'mprove revert --to remote --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod'
+        'mprove revert --to remote --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch main --env prod'
       ]
     ]
   });
@@ -56,7 +56,7 @@ export class RevertCommand extends CustomCommand {
     description: '(required) Project Id'
   });
 
-  repo = Option.String('--repo', {
+  repoType = Option.String('--repo-type', {
     required: true,
     validator: t.isEnum(RepoTypeEnum),
     description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
@@ -106,7 +106,7 @@ export class RevertCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
-      this.repo === RepoTypeEnum.Production
+      this.repoType === RepoTypeEnum.Production
         ? PROD_REPO_ID
         : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
           ? apiKey.split('-')[2].toLowerCase()

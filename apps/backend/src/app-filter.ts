@@ -44,7 +44,7 @@ export class AppFilter implements ExceptionFilter {
             })
           : exception;
 
-      if (request?.url?.startsWith('/mcp')) {
+      if (request?.url?.startsWith('/api/mcp')) {
         let errorMessage =
           e instanceof ServerError ? String(e.message) : 'INTERNAL_ERROR';
 

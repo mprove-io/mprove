@@ -38,7 +38,7 @@ test('1', async () => {
 
     let commandLine = `delete-branch \
 --project-id ${projectId} \
---repo ${repo} \
+--repo-type ${repo} \
 --branch ${branch} \
 --json`;
 

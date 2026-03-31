@@ -41,7 +41,7 @@ test('1', async () => {
     let projectId = makeId();
     let commandLine = `push \
 --project-id ${projectId} \
---repo ${repo} \
+--repo-type ${repo} \
 --branch ${branch} \
 --env prod \
 --get-errors \

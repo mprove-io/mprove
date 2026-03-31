@@ -26,11 +26,11 @@ export class GetStateCommand extends CustomCommand {
     examples: [
       [
         'Get Dev repo state',
-        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch main --env prod --get-repo --get-repo-nodes'
+        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --get-repo --get-repo-nodes'
       ],
       [
         'Get Production repo state',
-        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch main --env prod --get-models --get-dashboards --get-charts --get-metrics --get-reports'
+        'mprove get-state --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch main --env prod --get-models --get-dashboards --get-charts --get-metrics --get-reports'
       ]
     ]
   });
@@ -39,7 +39,7 @@ export class GetStateCommand extends CustomCommand {
     description: '(required) Project Id'
   });
 
-  repo = Option.String('--repo', {
+  repoType = Option.String('--repo-type', {
     required: true,
     validator: t.isEnum(RepoTypeEnum),
     description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
@@ -113,7 +113,7 @@ export class GetStateCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
-      this.repo === RepoTypeEnum.Production
+      this.repoType === RepoTypeEnum.Production
         ? PROD_REPO_ID
         : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
           ? apiKey.split('-')[2].toLowerCase()

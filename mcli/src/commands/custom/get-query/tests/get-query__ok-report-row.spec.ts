@@ -32,7 +32,7 @@ test('1', async () => {
 
     // pnpm mcli get-query \
     // --project-id DXYE72ODCP5LWPWH2EXQ \
-    // --repo dev \
+    // --repo-type dev \
     // --branch main \
     // --env prod \
     // --report-id 0ZN4W4XE9LQ7TSF5DQYC \
@@ -45,7 +45,7 @@ test('1', async () => {
 
     let commandLine = `get-query \
 --project-id ${projectId} \
---repo dev \
+--repo-type dev \
 --branch ${defaultBranch} \
 --env prod \
 --report-id ${reportId} \

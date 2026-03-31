@@ -35,7 +35,7 @@ test('1', async () => {
     let projectId = makeId();
     let commandLine = `commit \
 --project-id ${projectId} \
---repo dev \
+--repo-type dev \
 --branch ${branch} \
 --commit-message m1 \
 --get-repo \

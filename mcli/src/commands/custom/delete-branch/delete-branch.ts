@@ -25,11 +25,11 @@ export class DeleteBranchCommand extends CustomCommand {
     examples: [
       [
         'Delete branch for Dev repo',
-        'mprove delete-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo dev --branch b1'
+        'mprove delete-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch b1'
       ],
       [
         'Delete branch for Production repo',
-        'mprove delete-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo production --branch b1'
+        'mprove delete-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch b1'
       ]
     ]
   });
@@ -38,7 +38,7 @@ export class DeleteBranchCommand extends CustomCommand {
     description: '(required) Project Id'
   });
 
-  repo = Option.String('--repo', {
+  repoType = Option.String('--repo-type', {
     required: true,
     validator: t.isEnum(RepoTypeEnum),
     description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
@@ -75,7 +75,7 @@ export class DeleteBranchCommand extends CustomCommand {
     let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
-      this.repo === RepoTypeEnum.Production
+      this.repoType === RepoTypeEnum.Production
         ? PROD_REPO_ID
         : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
           ? apiKey.split('-')[2].toLowerCase()

@@ -35,7 +35,7 @@ test('1', async () => {
 
     let commandLine = `run \
 --project-id ${projectId} \
---repo production \
+--repo-type production \
 --branch ${defaultBranch} \
 --env prod \
 --wait \

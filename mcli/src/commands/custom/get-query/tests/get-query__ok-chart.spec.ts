@@ -31,7 +31,7 @@ test('1', async () => {
 
     let commandLine = `get-query \
 --project-id ${projectId} \
---repo dev \
+--repo-type dev \
 --branch ${defaultBranch} \
 --env prod \
 --chart-id ${chartId} \

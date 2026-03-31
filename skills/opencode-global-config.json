@@ -5,7 +5,7 @@
   "mcp": {
     "mprove-mcp": {
       "type": "remote",
-      "url": "{env:MPROVE_CLI_HOST}/mcp",
+      "url": "{env:MPROVE_CLI_HOST}/api/mcp",
       "enabled": true,
       "headers": {
         "Authorization": "Bearer {env:MPROVE_CLI_API_KEY}"

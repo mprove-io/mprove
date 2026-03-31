@@ -12,7 +12,7 @@ export async function sendToMcp(item: {
 }) {
   let { httpServer, method, params, apiKey } = item;
 
-  let rq = request(httpServer).post('/mcp');
+  let rq = request(httpServer).post('/api/mcp');
 
   if (isDefined(apiKey)) {
     rq = rq.auth(apiKey, { type: 'bearer' });
