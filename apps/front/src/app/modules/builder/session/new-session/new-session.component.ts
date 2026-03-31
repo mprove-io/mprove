@@ -49,7 +49,7 @@ export class NewSessionComponent implements OnInit {
   sessionType: SessionTypeEnum = SessionTypeEnum.Editor;
   sessionTypes = [SessionTypeEnum.Explorer, SessionTypeEnum.Editor];
 
-  agent = 'plan';
+  agent = 'build';
 
   model: string;
   variant = 'default';

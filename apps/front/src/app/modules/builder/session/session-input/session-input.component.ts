@@ -32,7 +32,7 @@ export class SessionInputComponent implements OnChanges {
   @Input() model: string;
   @Output() modelChange = new EventEmitter<string>();
 
-  @Input() agent = 'plan';
+  @Input() agent = 'build';
   @Output() agentChange = new EventEmitter<string>();
 
   @Input() variant = 'default';

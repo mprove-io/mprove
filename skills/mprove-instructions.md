@@ -38,8 +38,10 @@ For mprove sync to work, the current git branch in the Session repository and th
 Format your responses in markdown. Use headings, bold, italic, code blocks, inline code,
 lists, links, and tables where appropriate to make your responses clear and well-structured.
 
-If user asks for model/chart/dashboard/report - provide name as a markdown link to the page URL (from get-state).
-Format: `[<name>](<url>)`
+When referencing any entity (model, chart, dashboard, report) that has URL from get-state,
+always format it as a clickable markdown link. Never put URLs inside code blocks or inline code.
+Use the entity type and name as the link text.
+Format: `[<type>/<name>](<url>)` — e.g., `[dashboard/TDEXWBE5PI2X17CJCFKC](<url>)`
 
 # Docs
 
