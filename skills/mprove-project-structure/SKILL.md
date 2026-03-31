@@ -1,6 +1,6 @@
 ---
 name: mprove-project-structure
-description: Files and folders structure patterns for a new mprove project
+description: Files and folders structure patterns
 ---
 
 # Mprove Project Structure

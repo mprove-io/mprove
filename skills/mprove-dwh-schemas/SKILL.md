@@ -1,6 +1,6 @@
 ---
 name: mprove-dwh-schemas
-description: Create or update .schema metadata files for mprove project connections
+description: Get create or update .schema metadata files for mprove project connections
 ---
 
 # Mprove Schema Files

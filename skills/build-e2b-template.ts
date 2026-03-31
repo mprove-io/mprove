@@ -4,6 +4,9 @@ import { defaultBuildLogger, Template } from 'e2b';
 let require = createRequire(import.meta.url);
 let config = require('./e2b-template-config.json');
 
+let cpuCount = config.cpuCount;
+let memoryMB = config.memoryMB;
+let skipCache = config.skipCache;
 let opencodeVersion = config.opencode;
 let mproveCliVersion = config.mprove;
 let malloyCliVersion = config.malloyCli;
@@ -58,12 +61,24 @@ let template = Template()
   .copy(
     'mprove-basic/SKILL.md',
     '/home/user/.config/opencode/skills/mprove-basic/SKILL.md'
+  )
+  .copy(
+    'mprove-basic/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-dwh-schemas/SKILL.md'
+  )
+  .copy(
+    'mprove-basic/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-project-structure/SKILL.md'
+  )
+  .copy(
+    'mprove-basic/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-editor-query/SKILL.md'
   );
 
 let result = await Template.build(template, templateName, {
-  cpuCount: 4,
-  memoryMB: 8192,
-  skipCache: true,
+  cpuCount: cpuCount,
+  memoryMB: memoryMB,
+  skipCache: skipCache,
   onBuildLogs: defaultBuildLogger()
 });
 

@@ -1,5 +1,8 @@
 {
   "template": "v24",
+  "cpuCount": 4,
+  "memoryMB": 8192,
+  "skipCache": true,
   "opencode": "1.3.3",
   "mprove": "11.0.104-dev",
   "malloyCli": "0.0.52-next.2026.3.25.b8fdc90",

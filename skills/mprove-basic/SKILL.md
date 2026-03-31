@@ -7,8 +7,9 @@ description: Basic mprove skill
 
 ## Load more skills if needed
 
-- mprove-project-structure (files and folders structure patterns for a new mprove project)
-- mprove-dwh-schemas (create or update .schema metadata files for mprove project connections)
+- mprove-project-structure (Files and folders structure patterns)
+- mprove-dwh-schemas (Get, create or update .schema metadata files for mprove project connections)
+- mprove-editor-query (Query chart, dashboard, report or build a new one. Answer question using data.)
 
 ## Docs
 
