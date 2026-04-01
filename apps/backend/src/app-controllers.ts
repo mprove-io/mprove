@@ -58,6 +58,7 @@ import { GetMembersController } from './controllers/members/get-members/get-memb
 import { GetMembersListController } from './controllers/members/get-members-list/get-members-list.controller';
 import { GetModelController } from './controllers/models/get-model/get-model.controller';
 import { GetModelsController } from './controllers/models/get-models/get-models.controller';
+import { CheckLastNavController } from './controllers/nav/check-last-nav/check-last-nav.controller';
 import { GetNavController } from './controllers/nav/get-nav/get-nav.controller';
 import { GetOrgUsersController } from './controllers/org-users/get-org-users/get-org-users.controller';
 import { CreateOrgController } from './controllers/orgs/create-org/create-org.controller';
@@ -194,6 +195,7 @@ export const appControllers = [
   GetModelController,
   GetModelsController,
 
+  CheckLastNavController,
   GetNavController,
 
   GetOrgUsersController,

@@ -258,10 +258,6 @@ export class StructLt {
   presets: Preset[];
   extraSchemas: ExtraSchema[];
   mproveConfig: MproveConfig;
-  modelIds: string[];
-  dashboardIds: string[];
-  chartIds: string[];
-  reportIds: string[];
 }
 
 //

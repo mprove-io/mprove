@@ -57,6 +57,7 @@ import { ToBackendGetMembersRequest } from '#common/interfaces/to-backend/member
 import { ToBackendGetMembersListRequest } from '#common/interfaces/to-backend/members/to-backend-get-members-list';
 import { ToBackendGetModelRequest } from '#common/interfaces/to-backend/models/to-backend-get-model';
 import { ToBackendGetModelsRequest } from '#common/interfaces/to-backend/models/to-backend-get-models';
+import { ToBackendCheckLastNavRequest } from '#common/interfaces/to-backend/nav/to-backend-check-last-nav';
 import { ToBackendGetNavRequest } from '#common/interfaces/to-backend/nav/to-backend-get-nav';
 import { ToBackendGetOrgUsersRequest } from '#common/interfaces/to-backend/org-users/to-backend-get-org-users';
 import { ToBackendCreateOrgRequest } from '#common/interfaces/to-backend/orgs/to-backend-create-org';
@@ -386,6 +387,8 @@ export const nameToClass = {
   [ToBackendRequestInfoNameEnum.ToBackendCancelQueries]:
     ToBackendCancelQueriesRequest,
   //
+  [ToBackendRequestInfoNameEnum.ToBackendCheckLastNav]:
+    ToBackendCheckLastNavRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetNav]: ToBackendGetNavRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig]:

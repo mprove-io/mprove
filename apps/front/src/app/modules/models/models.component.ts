@@ -461,7 +461,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
       this.cd.detectChanges();
 
-      if (x.draft === false && this.chart.chartId !== EMPTY_CHART_ID) {
+      if (this.chart.chartId !== EMPTY_CHART_ID) {
         this.uiService.setProjectChartLink({ chartId: this.chart.chartId });
       }
     })

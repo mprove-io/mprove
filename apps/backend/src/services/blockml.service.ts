@@ -164,10 +164,6 @@ export class BlockmlService {
       errors: rs.errors,
       metrics: rs.metrics,
       presets: rs.presets,
-      modelIds: rs.models.map(x => x.modelId),
-      dashboardIds: rs.dashboards.map(x => x.dashboardId),
-      chartIds: rs.charts.map(x => x.chartId),
-      reportIds: rs.reports.map(x => x.reportId),
       mproveVersion:
         this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
       keyTag: undefined,

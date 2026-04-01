@@ -199,11 +199,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
       this.cd.detectChanges();
 
-      if (x.draft === false) {
-        this.uiService.setProjectDashboardLink({
-          dashboardId: this.dashboard.dashboardId
-        });
-      }
+      this.uiService.setProjectDashboardLink({
+        dashboardId: this.dashboard.dashboardId
+      });
     })
   );
 

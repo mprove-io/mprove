@@ -151,6 +151,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendRunQueriesDry = 'api/ToBackendRunQueriesDry',
   ToBackendCancelQueries = 'api/ToBackendCancelQueries',
   //
+  ToBackendCheckLastNav = 'api/ToBackendCheckLastNav',
   ToBackendGetNav = 'api/ToBackendGetNav',
   //
   ToBackendGetAvatarBig = 'api/ToBackendGetAvatarBig',

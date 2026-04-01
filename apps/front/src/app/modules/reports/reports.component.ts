@@ -187,7 +187,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       this.cd.detectChanges();
 
-      if (x.draft === false && this.report.reportId !== EMPTY_REPORT_ID) {
+      if (this.report.reportId !== EMPTY_REPORT_ID) {
         this.uiService.setProjectReportLink({ reportId: this.report.reportId });
       }
     })

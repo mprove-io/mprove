@@ -23,11 +23,7 @@ let structState: StructState = {
   metrics: [],
   presets: [],
   mproveVersion: undefined,
-  serverTs: undefined,
-  modelIds: [],
-  dashboardIds: [],
-  chartIds: [],
-  reportIds: []
+  serverTs: undefined
 };
 
 @Injectable({ providedIn: 'root' })
