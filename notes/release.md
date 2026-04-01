@@ -26,6 +26,9 @@ git push origin --tags
 
 # update e2b template
 
+update e2b config
+build e2b template
+set template public in e2b ui
 add templateId to create-env and .env
 
 # update pods
