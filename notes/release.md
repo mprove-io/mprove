@@ -19,6 +19,17 @@ git push origin --tags
 (wait for app action to finish in mprove)
 (wait for cli action to finish in mprove)
 
+# cli - pre-release (optional)
+
+(manually publish mprove-cli pre-release - from draft. download cli to check - if needed)
+devcontainer:
+scripts/dev/install-mprove-cli.sh 11.0.104-dev
+
+mac:
+tar -xzf <mprove-cli-downloaded-path>
+xattr -d com.apple.quarantine mprove
+./mprove version
+
 # cli - release
 
 (manually publish mprove-cli release - from draft)
@@ -45,14 +56,3 @@ update templateId
 (helm-docs -s file -c mproves)
 (scripts/helm-package-mprove.sh)
 (scripts/helm-push-mprove.sh)
-
-# cli - pre-release
-
-(manually publish mprove-cli pre-release - from draft. download cli to check - if needed)
-devcontainer:
-scripts/dev/install-mprove-cli.sh 11.0.104-dev
-
-mac:
-tar -xzf <mprove-cli-downloaded-path>
-xattr -d com.apple.quarantine mprove
-./mprove version
