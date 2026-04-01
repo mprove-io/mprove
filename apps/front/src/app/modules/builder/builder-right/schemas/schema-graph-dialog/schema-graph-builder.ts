@@ -43,6 +43,10 @@ export interface MapGraphResult {
   nodeDataSignals: Map<string, WritableSignal<MapNodeData>>;
   edgeDataSignals: Map<string, WritableSignal<MapEdgeData>>;
   edgesByTable: Map<string, Set<string>>;
+  boundsMinX: number;
+  boundsMinY: number;
+  boundsMaxX: number;
+  boundsMaxY: number;
 }
 
 export interface GraphTable extends CombinedSchemaTable {
@@ -163,7 +167,11 @@ export async function buildAllTablesGraph(item: {
       edges: [],
       nodeDataSignals: new Map(),
       edgeDataSignals: new Map(),
-      edgesByTable: new Map()
+      edgesByTable: new Map(),
+      boundsMinX: 0,
+      boundsMinY: 0,
+      boundsMaxX: 0,
+      boundsMaxY: 0
     };
   }
 
@@ -424,11 +432,37 @@ export async function buildAllTablesGraph(item: {
     });
   });
 
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  allTables.forEach(table => {
+    let pos = positionMap.get(table.tableFullId) || { x: 0, y: 0 };
+    let height = nodeHeights.get(table.tableFullId) || 0;
+    if (pos.x < minX) {
+      minX = pos.x;
+    }
+    if (pos.y < minY) {
+      minY = pos.y;
+    }
+    if (pos.x + NODE_WIDTH > maxX) {
+      maxX = pos.x + NODE_WIDTH;
+    }
+    if (pos.y + height > maxY) {
+      maxY = pos.y + height;
+    }
+  });
+
   return {
     nodes: nodes,
     edges: edges,
     nodeDataSignals: nodeDataSignals,
     edgeDataSignals: edgeDataSignals,
-    edgesByTable: edgesByTable
+    edgesByTable: edgesByTable,
+    boundsMinX: minX,
+    boundsMinY: minY,
+    boundsMaxX: maxX,
+    boundsMaxY: maxY
   };
 }

@@ -186,6 +186,7 @@
         <vflow
           *ngIf="!graphLoading"
           view="auto"
+          [minZoom]="minZoom"
           [nodes]="nodes"
           [edges]="edges"
           [entitiesSelectable]="false"

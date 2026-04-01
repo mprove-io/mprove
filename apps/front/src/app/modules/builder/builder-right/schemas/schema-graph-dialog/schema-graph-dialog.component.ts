@@ -89,6 +89,8 @@ export class SchemaGraphDialogComponent implements OnInit {
   edgeDataSignals: Map<string, WritableSignal<MapEdgeData>> = new Map();
   edgesByTable: Map<string, Set<string>> = new Map();
 
+  minZoom = 0;
+  translateExtent: [[number, number], [number, number]] | undefined = undefined;
   graphLoading = true;
   graphOverlay = true;
   showNodeSubtitle = false;
@@ -328,12 +330,19 @@ export class SchemaGraphDialogComponent implements OnInit {
       }
     }
 
+    this.calculateMinZoom({
+      boundsMinX: result.boundsMinX,
+      boundsMinY: result.boundsMinY,
+      boundsMaxX: result.boundsMaxX,
+      boundsMaxY: result.boundsMaxY
+    });
     this.graphLoading = false;
     this.cd.detectChanges();
 
     setTimeout(() => {
       if (this.vflowRef) {
         this.vflowRef.fitView();
+        this.applyTranslateExtent();
       }
       setTimeout(() => {
         this.graphOverlay = false;
@@ -381,18 +390,60 @@ export class SchemaGraphDialogComponent implements OnInit {
       this.updateSelection({ tableKey: fullId });
     }
 
+    this.calculateMinZoom({
+      boundsMinX: result.boundsMinX,
+      boundsMinY: result.boundsMinY,
+      boundsMaxX: result.boundsMaxX,
+      boundsMaxY: result.boundsMaxY
+    });
     this.graphLoading = false;
     this.cd.detectChanges();
 
     setTimeout(() => {
       if (this.vflowRef) {
         this.vflowRef.fitView();
+        this.applyTranslateExtent();
       }
       setTimeout(() => {
         this.graphOverlay = false;
         this.cd.detectChanges();
       }, 100);
     }, 200);
+  }
+
+  applyTranslateExtent() {
+    if (!this.translateExtent || !this.vflowRef) {
+      return;
+    }
+    let mapContext = (this.vflowRef as any).mapContext?.();
+    if (mapContext?.zoomBehavior) {
+      mapContext.zoomBehavior.translateExtent(this.translateExtent);
+    }
+  }
+
+  calculateMinZoom(item: {
+    boundsMinX: number;
+    boundsMinY: number;
+    boundsMaxX: number;
+    boundsMaxY: number;
+  }) {
+    let { boundsMinX, boundsMinY, boundsMaxX, boundsMaxY } = item;
+    let boundsWidth = boundsMaxX - boundsMinX;
+    let boundsHeight = boundsMaxY - boundsMinY;
+    let containerWidth = window.innerWidth * 0.9 - 420;
+    let containerHeight = window.innerHeight * 0.85;
+    let paddingX = containerWidth * 0.75;
+    let paddingY = containerHeight * 0.75;
+    this.translateExtent = [
+      [boundsMinX - paddingX, boundsMinY - paddingY],
+      [boundsMaxX + paddingX, boundsMaxY + paddingY]
+    ];
+
+    let totalWidth = boundsWidth + paddingX * 2;
+    let totalHeight = boundsHeight + paddingY * 2;
+    let xMinZoom = containerWidth / totalWidth;
+    let yMinZoom = containerHeight / totalHeight;
+    this.minZoom = Math.min(xMinZoom, yMinZoom);
   }
 
   updateSelection(item: { tableKey: string }) {
