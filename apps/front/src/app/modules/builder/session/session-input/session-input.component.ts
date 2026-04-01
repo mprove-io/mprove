@@ -16,6 +16,7 @@ import {
   ToBackendGetSessionProviderModelsRequestPayload,
   ToBackendGetSessionProviderModelsResponse
 } from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
+import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { SessionModelsQuery } from '#front/app/queries/session-models.query';
@@ -69,9 +70,11 @@ export class SessionInputComponent implements OnChanges {
   projectHasAnyApiKey = true;
   projectHasE2bApiKey = true;
   effectiveDisabled = false;
+  isEditor = true;
 
   constructor(
     private cd: ChangeDetectorRef,
+    private memberQuery: MemberQuery,
     private projectQuery: ProjectQuery,
     private navQuery: NavQuery,
     private apiService: ApiService,
@@ -79,6 +82,8 @@ export class SessionInputComponent implements OnChanges {
     private uiService: UiService,
     private sessionModelsQuery: SessionModelsQuery
   ) {
+    this.isEditor = this.memberQuery.getValue().isEditor;
+
     let state = this.sessionModelsQuery.getValue();
 
     let models =
@@ -181,12 +186,16 @@ export class SessionInputComponent implements OnChanges {
   }
 
   updateEffectiveDisabled() {
+    let isEditorSessionWithoutEditorRole =
+      this.sessionType === SessionTypeEnum.Editor && !this.isEditor;
+
     let isEditorWithoutE2b =
       this.sessionType !== SessionTypeEnum.Explorer &&
       !this.projectHasE2bApiKey;
 
     this.effectiveDisabled =
       this.disabled ||
+      isEditorSessionWithoutEditorRole ||
       !this.projectHasAnyApiKey ||
       !this.providerHasApiKey ||
       isEditorWithoutE2b;

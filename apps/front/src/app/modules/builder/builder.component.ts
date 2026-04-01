@@ -155,6 +155,14 @@ export class BuilderComponent implements OnInit, OnDestroy {
     })
   );
 
+  isAdmin: boolean;
+  isAdmin$ = this.memberQuery.isAdmin$.pipe(
+    tap(x => {
+      this.isAdmin = x;
+      this.cd.detectChanges();
+    })
+  );
+
   user: UserState;
   user$ = this.userQuery.select().pipe(
     tap(x => {

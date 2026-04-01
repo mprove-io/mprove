@@ -1,11 +1,20 @@
 <div
-  *ngIf="!projectHasE2bApiKey && sessionType !== sessionTypeEnum.Explorer"
+  *ngIf="!isEditor && sessionType === sessionTypeEnum.Editor"
+  class="mb-2 text-center text-[17px] text-red-500"
+  >Editor session requires Files Editor role</div
+>
+
+<div
+  *ngIf="
+    isEditor && !projectHasE2bApiKey && sessionType !== sessionTypeEnum.Explorer
+  "
   class="mb-2 text-center text-[17px] text-red-500"
   >Editor session requires E2B API Key (see Project Settings)</div
 >
 
 <div
   *ngIf="
+    isEditor &&
     (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
     !projectHasAnyApiKey
   "
@@ -15,6 +24,7 @@
 
 <div
   *ngIf="
+    isEditor &&
     (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
     projectHasAnyApiKey &&
     !providerHasApiKey
