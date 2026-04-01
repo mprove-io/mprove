@@ -16,9 +16,22 @@ scripts/tag/tag-app.sh
 scripts/tag/tag-cli.sh
 git push origin --tags
 
-(wait for action finish in mprove)
+(wait for app action to finish in mprove)
+(wait for cli action to finish in mprove)
 
-(update pods)
+# cli - release
+
+(manually publish mprove-cli release - from draft)
+(wait for action to finish in mprove-cli for brew)
+
+# update e2b template
+
+add templateId to create-env and .env
+
+# update pods
+
+update app version
+update templateId
 
 # app - release
 
@@ -26,12 +39,9 @@ git push origin --tags
 
 # helm - release
 
-(publish helm release)
-
-# cli - release
-
-(manually publish mprove-cli release - from draft)
-(wait for action finish in mprove-cli for brew)
+(helm-docs -s file -c mproves)
+(scripts/helm-package-mprove.sh)
+(scripts/helm-push-mprove.sh)
 
 # cli - pre-release
 
