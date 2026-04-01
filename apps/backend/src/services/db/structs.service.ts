@@ -57,7 +57,11 @@ export class StructsService {
       presets: struct.presets,
       mproveConfig: struct.mproveConfig,
       mproveVersion: struct.mproveVersion,
-      serverTs: Number(struct.serverTs)
+      serverTs: Number(struct.serverTs),
+      modelIds: struct.modelIds ?? [],
+      dashboardIds: struct.dashboardIds ?? [],
+      chartIds: struct.chartIds ?? [],
+      reportIds: struct.reportIds ?? []
     };
 
     return apiStruct;
@@ -77,6 +81,10 @@ export class StructsService {
       metrics: [],
       presets: [],
       extraSchemas: [],
+      modelIds: [],
+      dashboardIds: [],
+      chartIds: [],
+      reportIds: [],
       mproveConfig: {
         mproveDirValue: './data',
         weekStart: ProjectWeekStartEnum.Sunday,

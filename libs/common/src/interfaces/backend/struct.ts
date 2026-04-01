@@ -33,4 +33,16 @@ export class Struct {
 
   @IsInt()
   serverTs: number;
+
+  @IsString({ each: true })
+  modelIds: string[];
+
+  @IsString({ each: true })
+  dashboardIds: string[];
+
+  @IsString({ each: true })
+  chartIds: string[];
+
+  @IsString({ each: true })
+  reportIds: string[];
 }

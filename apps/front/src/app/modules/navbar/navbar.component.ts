@@ -123,10 +123,10 @@ export class NavbarComponent implements OnInit {
 
     if (this.nav.repoType === RepoTypeEnum.Session) {
       this.navigateService.navigateToSession({
-        sessionId: this.session.sessionId,
-        repoId: this.session.repoId,
-        branchId: this.session.branchId,
-        envId: this.session.envId,
+        sessionId: this.nav.repoId,
+        repoId: this.nav.repoId,
+        branchId: this.nav.repoId,
+        envId: this.nav.envId,
         left: BuilderLeftEnum.Info,
         right: BuilderRightEnum.Sessions
       });
@@ -143,6 +143,11 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
+    if (this.nav.needValidate === true) {
+      this.navigateService.navigateToModels();
+      return;
+    }
+
     let projectModelLinks = this.uiQuery.getValue().projectModelLinks;
     let projectChartLinks = this.uiQuery.getValue().projectChartLinks;
 
@@ -154,7 +159,15 @@ export class NavbarComponent implements OnInit {
       link => link.projectId === this.nav.projectId
     );
 
-    if (isDefined(pModelLink) && isDefined(pChartLink)) {
+    let modelExists =
+      isDefined(pModelLink) &&
+      this.struct?.modelIds?.indexOf(pModelLink.modelId) > -1;
+
+    let chartExists =
+      isDefined(pChartLink) &&
+      this.struct?.chartIds?.indexOf(pChartLink.chartId) > -1;
+
+    if (modelExists && chartExists) {
       this.navigateService.navigateToChart({
         modelId: pModelLink.modelId,
         chartId: pChartLink.chartId
@@ -169,12 +182,21 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
+    if (this.nav.needValidate === true) {
+      this.navigateService.navigateToDashboardsList();
+      return;
+    }
+
     let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
     let pLink = projectDashboardLinks.find(
       link => link.projectId === this.nav.projectId
     );
 
-    if (isDefined(pLink?.dashboardId)) {
+    let dashboardExists =
+      isDefined(pLink?.dashboardId) &&
+      this.struct?.dashboardIds?.indexOf(pLink.dashboardId) > -1;
+
+    if (dashboardExists) {
       this.navigateService.navigateToDashboard({
         dashboardId: pLink.dashboardId
       });
@@ -188,15 +210,25 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
+    if (this.nav.needValidate === true) {
+      this.navigateService.navigateToReportsList();
+      return;
+    }
+
     let projectReportLinks = this.uiQuery.getValue().projectReportLinks;
 
     let pLink = projectReportLinks.find(
       link => link.projectId === this.nav.projectId
     );
 
-    if (isDefined(pLink) && pLink.reportId === EMPTY_REPORT_ID) {
+    let reportExists =
+      isDefined(pLink) &&
+      (pLink.reportId === EMPTY_REPORT_ID ||
+        this.struct?.reportIds?.indexOf(pLink.reportId) > -1);
+
+    if (reportExists && pLink.reportId === EMPTY_REPORT_ID) {
       this.navigateService.navigateToReport({ reportId: EMPTY_REPORT_ID });
-    } else if (isDefined(pLink)) {
+    } else if (reportExists) {
       this.navigateService.navigateToReport({ reportId: pLink.reportId });
     } else {
       this.navigateService.navigateToReportsList();

@@ -908,7 +908,11 @@ export class TabToEntService {
       metrics: tab.metrics,
       presets: tab.presets,
       extraSchemas: tab.extraSchemas,
-      mproveConfig: tab.mproveConfig
+      mproveConfig: tab.mproveConfig,
+      modelIds: tab.modelIds,
+      dashboardIds: tab.dashboardIds,
+      chartIds: tab.chartIds,
+      reportIds: tab.reportIds
     };
 
     let structEnt: StructEnt = {
