@@ -10,9 +10,10 @@ git commit -m <commit-message>
 
 (push button)
 
-# app - tag
+# app and cli - tags
 
 scripts/tag/tag-app.sh
+scripts/tag/tag-cli.sh
 git push origin --tags
 
 (wait for action finish in mprove)
@@ -27,10 +28,10 @@ git push origin --tags
 
 (publish helm release)
 
-# cli - tag
+# cli - release
 
-scripts/tag/tag-cli.sh
-git push origin --tags
+(manually publish mprove-cli release - from draft)
+(wait for action finish in mprove-cli for brew)
 
 # cli - pre-release
 
@@ -42,8 +43,3 @@ mac:
 tar -xzf <mprove-cli-downloaded-path>
 xattr -d com.apple.quarantine mprove
 ./mprove version
-
-# cli - release
-
-(manually publish mprove-cli release - from draft)
-(wait for action finish in mprove-cli for brew)
