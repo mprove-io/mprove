@@ -72,12 +72,12 @@ let template = Template()
     '/home/user/.config/opencode/skills/mprove-build-store-model/SKILL.md'
   )
   .copy(
-    'mprove-dwh-schemas/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-dwh-schemas/SKILL.md'
+    'mprove-connection-schemas/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-connection-schemas/SKILL.md'
   )
   .copy(
-    'mprove-editor-query/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-editor-query/SKILL.md'
+    'mprove-query-data/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-query-data/SKILL.md'
   )
   .copy(
     'mprove-project-structure/SKILL.md',

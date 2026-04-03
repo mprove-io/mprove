@@ -114,6 +114,7 @@ import { ToBackendPauseEditorSessionRequest } from '#common/interfaces/to-backen
 import { ToBackendSendMessageToEditorSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-editor-session';
 import { ToBackendSendMessageToExplorerSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-explorer-session';
 import { ToBackendSetSessionTitleRequest } from '#common/interfaces/to-backend/sessions/to-backend-set-session-title';
+import { ToBackendDownloadSkillsRequest } from '#common/interfaces/to-backend/skills/to-backend-download-skills';
 import { ToBackendSpecialRebuildStructsRequest } from '#common/interfaces/to-backend/special/to-backend-special-rebuild-structs';
 import { ToBackendGetStateRequest } from '#common/interfaces/to-backend/state/to-backend-get-state';
 import { ToBackendGetStructRequest } from '#common/interfaces/to-backend/structs/to-backend-get-struct';
@@ -427,5 +428,8 @@ export const nameToClass = {
   [ToBackendRequestInfoNameEnum.ToBackendSendMessageToExplorerSession]:
     ToBackendSendMessageToExplorerSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSetSessionTitle]:
-    ToBackendSetSessionTitleRequest
+    ToBackendSetSessionTitleRequest,
+  //
+  [ToBackendRequestInfoNameEnum.ToBackendDownloadSkills]:
+    ToBackendDownloadSkillsRequest
 };

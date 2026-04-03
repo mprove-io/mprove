@@ -10,6 +10,7 @@ import { VersionCommand } from './commands/base/version/version';
 import { CommitCommand } from './commands/custom/commit/commit';
 import { CreateBranchCommand } from './commands/custom/create-branch/create-branch';
 import { DeleteBranchCommand } from './commands/custom/delete-branch/delete-branch';
+import { DownloadSkillsCommand } from './commands/custom/download-skills/download-skills';
 import { GetBranchesCommand } from './commands/custom/get-branches/get-branches';
 import { GetConnectionsListCommand } from './commands/custom/get-connections-list/get-connections-list';
 import { GetModelCommand } from './commands/custom/get-model/get-model';
@@ -43,6 +44,7 @@ let appCommands = [
   VersionCommand,
   // custom
   CommitCommand,
+  DownloadSkillsCommand,
   CreateBranchCommand,
   DeleteBranchCommand,
   GetBranchesCommand,

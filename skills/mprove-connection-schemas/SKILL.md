@@ -1,5 +1,5 @@
 ---
-name: mprove-dwh-schemas
+name: mprove-connection-schemas
 description: Get, create or update schema metadata for mprove project connections
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: mprove-editor-query
+name: mprove-query-data
 description: Query chart, dashboard, report or build a new one. Answer question using data.
 ---
 

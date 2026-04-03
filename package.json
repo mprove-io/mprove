@@ -14,7 +14,8 @@
   },
   "scripts": {
     "prepare": "husky",
-    "version-write": "bash scripts/dev/version-write.sh",
+    "version-write": "bash scripts/dev/version-write.sh && pnpm skills-write",
+    "skills-write": "node --import @swc-node/register/esm-register scripts/dev/skills-write.ts",
     "catalog-write": "bash scripts/dev/catalog-write.sh",
     "deps-write": "bash scripts/dev/deps-write.sh",
     "deps-check": "bash scripts/dev/deps-check.sh",
@@ -33,7 +34,7 @@
     "debug": "turbo run debug",
     "test": "turbo run test",
     "e2e": "pnpm e2e:turbo && pnpm e2e:mcli",
-    "inst": "pnpm catalog-write && pnpm install && pnpm install:mcli",
+    "inst": "pnpm catalog-write && pnpm skills-write && pnpm install && pnpm install:mcli",
     "install:mcli": "cd mcli && bun install",
     "audit:nofail": "pnpm audit:apps || true && pnpm audit:mcli || true",
     "audit:apps": "pnpm audit",

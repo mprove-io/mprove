@@ -32,8 +32,8 @@ The flow for setup a new Mprove project:
 ## Load more skills if needed
 
 - mprove-project-structure (Files and folders structure patterns)
-- mprove-dwh-schemas (Get, create or update .schema metadata files for mprove project connections)
-- mprove-editor-query (Query chart, dashboard, report or build a new one. Answer question using data.)
+- mprove-connection-schemas (Get, create or update .schema metadata files for mprove project connections)
+- mprove-query-data (Query chart, dashboard, report or build a new one. Answer question using data.)
 
 ## Docs
 
