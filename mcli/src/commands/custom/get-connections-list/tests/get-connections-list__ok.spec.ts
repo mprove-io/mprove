@@ -13,9 +13,9 @@ import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
 import { prepareTest } from '#mcli/functions/prepare-test';
 import { CustomContext } from '#mcli/models/custom-command';
-import { GetStoresCommand } from '../get-stores';
+import { GetConnectionsListCommand } from '../get-connections-list';
 
-let testId = 'mcli__get-stores__ok';
+let testId = 'mcli__get-connections-list__ok';
 
 test('1', async () => {
   let code: number;
@@ -25,7 +25,7 @@ test('1', async () => {
 
   await retry(async (bail: any) => {
     let projectId = makeId();
-    let commandLine = `get-stores \
+    let commandLine = `get-connections-list \
 --project-id ${projectId} \
 --env prod \
 --json`;
@@ -44,7 +44,7 @@ test('1', async () => {
 
     try {
       let { cli, mockContext } = await prepareTest({
-        command: GetStoresCommand,
+        command: GetConnectionsListCommand,
         config: config,
         deletePack: {
           emails: [email],
@@ -140,14 +140,14 @@ test('1', async () => {
 
     assert.equal(code === 0, true, `code === 0`);
     assert.equal(
-      isDefined(parsedOutput?.storeItems),
+      isDefined(parsedOutput?.connectionItems),
       true,
-      `isDefined(parsedOutput?.storeItems)`
+      `isDefined(parsedOutput?.connectionItems)`
     );
     assert.equal(
-      parsedOutput?.storeItems?.length === 1,
+      parsedOutput?.connectionItems?.length === 1,
       true,
-      `storeItems.length === 1`
+      `connectionItems.length === 1`
     );
 
     isPass = true;

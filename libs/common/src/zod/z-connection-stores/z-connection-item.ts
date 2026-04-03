@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 
-export let zStoreItem = z.object({
+export let zConnectionItem = z.object({
   connectionId: z.string().nullish(),
   type: z.enum(ConnectionTypeEnum).nullish(),
   baseUrl: z.string().nullish(),

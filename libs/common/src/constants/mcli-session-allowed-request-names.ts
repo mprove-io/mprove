@@ -2,9 +2,9 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 
 export const MCLI_SESSION_ALLOWED_REQUEST_NAMES: ToBackendRequestInfoNameEnum[] =
   [
+    ToBackendRequestInfoNameEnum.ToBackendGetConnectionsList, // get-connections-list
     ToBackendRequestInfoNameEnum.ToBackendGetConnectionSample, // get-sample
     ToBackendRequestInfoNameEnum.ToBackendGetConnectionSchemas, // get-schemas
-    ToBackendRequestInfoNameEnum.ToBackendGetConnectionStores, // get-stores
     ToBackendRequestInfoNameEnum.ToBackendSyncRepo, // sync
     ToBackendRequestInfoNameEnum.ToBackendValidateFiles, // validate
     ToBackendRequestInfoNameEnum.ToBackendGetState, // get-state

@@ -81,7 +81,7 @@ export const MCP_TOOL_GET_QUERY = 'get-query';
 export const MCP_TOOL_VALIDATE = 'validate';
 export const MCP_TOOL_GET_SAMPLE = 'get-sample';
 export const MCP_TOOL_GET_SCHEMAS = 'get-schemas';
-export const MCP_TOOL_GET_STORES = 'get-stores';
+export const MCP_TOOL_GET_CONNECTIONS_LIST = 'get-connections-list';
 
 export const DEFAULT_QUERY_SIZE_LIMIT = 1;
 

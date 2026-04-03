@@ -1,6 +1,6 @@
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 
-export class StoreItem {
+export class ConnectionItem {
   connectionId: string;
 
   type: ConnectionTypeEnum;

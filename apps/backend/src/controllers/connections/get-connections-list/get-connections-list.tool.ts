@@ -3,36 +3,36 @@ import type { Context } from '@rekog/mcp-nest';
 import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { z } from 'zod';
-import { GetConnectionStoresService } from '#backend/controllers/connections/get-connection-stores/get-connection-stores.service';
+import { GetConnectionsListService } from '#backend/controllers/connections/get-connections-list/get-connections-list.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
-import { MCP_TOOL_GET_STORES } from '#common/constants/top-backend';
+import { MCP_TOOL_GET_CONNECTIONS_LIST } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ToBackendGetConnectionStoresResponsePayload } from '#common/interfaces/to-backend/connections/to-backend-get-connection-stores';
-import { zStoreItem } from '#common/zod/z-connection-stores/z-store-item';
+import { ToBackendGetConnectionsListResponsePayload } from '#common/interfaces/to-backend/connections/to-backend-get-connections-list';
+import { zConnectionItem } from '#common/zod/z-connection-stores/z-connection-item';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
-export class GetConnectionStoresTool {
+export class GetConnectionsListTool {
   constructor(
-    private getConnectionStoresService: GetConnectionStoresService,
+    private getConnectionsListService: GetConnectionsListService,
     private toolService: ToolService
   ) {}
 
   @Tool({
-    name: MCP_TOOL_GET_STORES,
+    name: MCP_TOOL_GET_CONNECTIONS_LIST,
     description:
-      'Get store configuration (API endpoints, header keys, OAuth scopes) for project HTTP API connections',
+      'Get connection info (type, API endpoints, header keys, OAuth scopes) for project connections',
     parameters: z.object({
       projectId: z.string(),
       envId: z.string()
     }),
     outputSchema: z.object({
-      storeItems: z.array(zStoreItem)
+      connectionItems: z.array(zConnectionItem)
     })
   })
-  async getConnectionStores(
+  async getConnectionsList(
     item: {
       projectId: string;
       envId: string;
@@ -51,8 +51,8 @@ export class GetConnectionStoresTool {
       });
     }
 
-    let payload: ToBackendGetConnectionStoresResponsePayload =
-      await this.getConnectionStoresService.getConnectionStores({
+    let payload: ToBackendGetConnectionsListResponsePayload =
+      await this.getConnectionsListService.getConnectionsList({
         userId: user.userId,
         projectId: item.projectId,
         envId: item.envId

@@ -4,29 +4,28 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import {
-  ToBackendGetConnectionStoresRequestPayload,
-  ToBackendGetConnectionStoresResponse
-} from '#common/interfaces/to-backend/connections/to-backend-get-connection-stores';
+  ToBackendGetConnectionsListRequestPayload,
+  ToBackendGetConnectionsListResponse
+} from '#common/interfaces/to-backend/connections/to-backend-get-connections-list';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
 
-export class GetStoresCommand extends CustomCommand {
-  static paths = [['get-stores']];
+export class GetConnectionsListCommand extends CustomCommand {
+  static paths = [['get-connections-list']];
 
   static usage = Command.Usage({
-    description:
-      'Get store configuration (API endpoints, header keys, OAuth scopes) for project connections',
+    description: 'Get project connections',
     examples: [
       [
-        'Get stores for prod environment',
-        'mprove get-stores --project-id DXYE72ODCP5LWPWH2EXQ --env prod'
+        'Get connections for prod environment',
+        'mprove get-connections-list --project-id DXYE72ODCP5LWPWH2EXQ --env prod'
       ],
       [
-        'Get stores as JSON',
-        'mprove get-stores --project-id DXYE72ODCP5LWPWH2EXQ --env prod --json'
+        'Get connections as JSON',
+        'mprove get-connections-list --project-id DXYE72ODCP5LWPWH2EXQ --env prod --json'
       ]
     ]
   });
@@ -65,20 +64,22 @@ export class GetStoresCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let getStoresReqPayload: ToBackendGetConnectionStoresRequestPayload = {
-      projectId: this.projectId,
-      envId: this.env
-    };
+    let getConnectionsListReqPayload: ToBackendGetConnectionsListRequestPayload =
+      {
+        projectId: this.projectId,
+        envId: this.env
+      };
 
-    let getStoresResp = await mreq<ToBackendGetConnectionStoresResponse>({
-      apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionStores,
-      payload: getStoresReqPayload,
-      host: this.context.config.mproveCliHost
-    });
+    let getConnectionsListResp =
+      await mreq<ToBackendGetConnectionsListResponse>({
+        apiKey: apiKey,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionsList,
+        payload: getConnectionsListReqPayload,
+        host: this.context.config.mproveCliHost
+      });
 
     logToConsoleMcli({
-      log: getStoresResp.payload,
+      log: getConnectionsListResp.payload,
       logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json

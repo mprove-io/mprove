@@ -11,10 +11,10 @@ import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import type { StoreItem } from '#common/interfaces/to-backend/connections/store-item';
+import type { ConnectionItem } from '#common/interfaces/to-backend/connections/connection-item';
 
 @Injectable()
-export class GetConnectionStoresService {
+export class GetConnectionsListService {
   constructor(
     private tabService: TabService,
     private projectsService: ProjectsService,
@@ -23,12 +23,12 @@ export class GetConnectionStoresService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getConnectionStores(item: {
+  async getConnectionsList(item: {
     userId: string;
     projectId: string;
     envId: string;
   }): Promise<{
-    storeItems: StoreItem[];
+    connectionItems: ConnectionItem[];
   }> {
     let { userId, projectId, envId } = item;
 
@@ -66,7 +66,7 @@ export class GetConnectionStoresService {
         })
         .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
 
-    let storeItems: StoreItem[] = [];
+    let connectionItems: ConnectionItem[] = [];
 
     connections.forEach(connection => {
       if (connection.type === ConnectionTypeEnum.Api) {
@@ -77,7 +77,7 @@ export class GetConnectionStoresService {
             ? storeApi.headers.map(h => h.key)
             : [];
 
-          storeItems.push({
+          connectionItems.push({
             connectionId: connection.connectionId,
             type: connection.type,
             baseUrl: storeApi.baseUrl,
@@ -92,7 +92,7 @@ export class GetConnectionStoresService {
             ? storeGoogleApi.headers.map(h => h.key)
             : [];
 
-          storeItems.push({
+          connectionItems.push({
             connectionId: connection.connectionId,
             type: connection.type,
             baseUrl: storeGoogleApi.baseUrl,
@@ -100,11 +100,16 @@ export class GetConnectionStoresService {
             googleAuthScopes: storeGoogleApi.googleAuthScopes
           });
         }
+      } else {
+        connectionItems.push({
+          connectionId: connection.connectionId,
+          type: connection.type
+        });
       }
     });
 
     return {
-      storeItems: storeItems
+      connectionItems: connectionItems
     };
   }
 }
