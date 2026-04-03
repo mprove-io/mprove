@@ -19,7 +19,7 @@ angular.json
 CONTEXT.md
 package.json
 tailwind.config.js
-tsconfig.json
+tsconfig.app.json
 ```
 
 ## Scripts
@@ -46,8 +46,8 @@ src/app/
 ├── guards/         # Route guards
 ├── modules/        # Feature modules
 │   ├── auth/       # Login, signup, password reset
+│   ├── builder/    # Builder workspace (file editor, sessions, repo options)
 │   ├── dashboards/ # Dashboard views
-│   ├── files/      # File editor
 │   ├── models/     # Model explorer
 │   ├── nav/        # Navigation
 │   ├── navbar/     # Top navbar

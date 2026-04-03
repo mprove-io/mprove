@@ -13,10 +13,11 @@ node_modules/
 src/
 .swcrc
 ava.config.js
+ava.e2x.config.js
 build.mjs
 CONTEXT.md
 package.json
-tsconfig.json
+tsconfig.app.json
 ```
 
 ## Scripts
@@ -55,17 +56,21 @@ src/
 ├── controllers/        # REST API endpoints (grouped by domain)
 ├── decorators/         # Custom NestJS decorators
 ├── drizzle/            # Database schema, migrations, utilities
+├── filters/            # Exception filters
 ├── functions/          # Standalone helper functions
 ├── guards/             # Route guards (auth, roles)
 ├── interfaces/         # TypeScript interfaces
 └── services/           # Business logic services
     ├── db/             # Database CRUD services (per entity)
-    └── dwh/            # Data warehouse connector services
+    ├── dwh/            # Data warehouse connector services
+    ├── editor/         # Editor services (codex, connections, models, sandbox, stream)
+    ├── explorer/       # Explorer services (events, models, prompts, stream, tools)
+    └── session/        # Session services (archive, drain, SSE)
 ```
 
 ## Controllers (by domain)
 
-avatars, branches, catalogs, charts, check, connections, dashboards, envs, files, folders, mconfigs, members, models, nav, orgs, org-users, projects, queries, reports, repos, sessions, special, structs, suggest-fields, telemetry, test-routes, users
+avatars, branches, catalogs, charts, check, connections, dashboards, envs, files, folders, mconfigs, mcp, mcp-error-tests, members, models, nav, orgs, org-users, projects, queries, query-info, reports, repos, run, sessions, skills, special, state, structs, suggest-fields, telemetry, test-routes, users
 
 ## Database
 

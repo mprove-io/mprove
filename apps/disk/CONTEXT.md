@@ -17,7 +17,7 @@ ava.config.js
 build.mjs
 CONTEXT.md
 package.json
-tsconfig.json
+tsconfig.app.json
 ```
 
 ## Scripts

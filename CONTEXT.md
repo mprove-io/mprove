@@ -231,6 +231,7 @@ plans/
 scripts/
 secrets/
 setup-docker/
+skills/
 tmp/
 .dockerignore
 .DS_Store
@@ -250,6 +251,7 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 README.md
 tsconfig.base.json
+tsconfig.check.json
 tsconfig.json
 turbo.json
 ```

@@ -12,8 +12,8 @@ dist/
 node_modules/
 src/
 ava.config.js
-bun.lock
 bunfig.toml
+bun.lock
 CONTEXT.md
 package.json
 tsconfig.json
@@ -53,14 +53,20 @@ src/
 │       ├── commit/       # Commit changes
 │       ├── create-branch/
 │       ├── delete-branch/
+│       ├── download-skills/
 │       ├── get-branches/
-│       ├── get-query-info/ # Get query info
-│       ├── get-state/    # Get project state
+│       ├── get-connections-list/
+│       ├── get-model/
+│       ├── get-query-info/
+│       ├── get-sample/
+│       ├── get-schemas/
+│       ├── get-state/
 │       ├── merge/        # Merge branches
 │       ├── pull/         # Pull from remote
 │       ├── push/         # Push to remote
 │       ├── revert/       # Revert changes
 │       ├── run/          # Run queries
+│       ├── set-codex-auth/
 │       ├── sync/         # Sync project
 │       └── validate/     # Validate models
 ├── functions/          # Helper functions
