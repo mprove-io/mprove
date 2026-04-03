@@ -6,7 +6,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { sendToMcp } from '#backend/functions/send-to-mcp';
 import { PrepTest } from '#backend/interfaces/prep-test';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
-import { MCP_TOOL_GET_QUERY } from '#common/constants/top-backend';
+import { MCP_TOOL_GET_QUERY_INFO } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -18,7 +18,7 @@ import {
   ToBackendGenerateUserApiKeyResponse
 } from '#common/interfaces/to-backend/users/to-backend-generate-user-api-key';
 
-let testId = 'backend-mcp-get-query__ok';
+let testId = 'backend-mcp-get-query-info__ok';
 
 let traceId = testId;
 
@@ -136,7 +136,7 @@ test('1', async t => {
       httpServer: prepTest.httpServer,
       method: 'tools/call',
       params: {
-        name: MCP_TOOL_GET_QUERY,
+        name: MCP_TOOL_GET_QUERY_INFO,
         arguments: {
           projectId: projectId,
           repoId: userId,

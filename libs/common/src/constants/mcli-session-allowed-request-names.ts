@@ -9,6 +9,6 @@ export const MCLI_SESSION_ALLOWED_REQUEST_NAMES: ToBackendRequestInfoNameEnum[] 
     ToBackendRequestInfoNameEnum.ToBackendValidateFiles, // validate
     ToBackendRequestInfoNameEnum.ToBackendGetState, // get-state
     ToBackendRequestInfoNameEnum.ToBackendGetModel, // get-model
-    ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo, // get-query
+    ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo, // get-query-info
     ToBackendRequestInfoNameEnum.ToBackendRun // run
   ];

@@ -13,9 +13,9 @@ import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
 import { prepareTest } from '#mcli/functions/prepare-test';
 import { CustomContext } from '#mcli/models/custom-command';
-import { GetQueryCommand } from '../get-query';
+import { GetQueryInfoCommand } from '../get-query-info';
 
-let testId = 'mcli__get-query__ok-chart';
+let testId = 'mcli__get-query-info__ok-report-row';
 
 test('1', async () => {
   let code: number;
@@ -27,14 +27,31 @@ test('1', async () => {
     let defaultBranch = BRANCH_MAIN;
 
     let projectId = makeId();
-    let chartId = 'C3ENGIP2LC00GUFMP333';
+    let reportId = '0ZN4W4XE9LQ7TSF5DQYC';
+    let rowId = 'B';
 
-    let commandLine = `get-query \
+    // pnpm mcli get-query-info \
+    // --project-id DXYE72ODCP5LWPWH2EXQ \
+    // --repo-type dev \
+    // --branch main \
+    // --env prod \
+    // --report-id 0ZN4W4XE9LQ7TSF5DQYC \
+    // --row-id B \
+    // --detail days \
+    // --range "f\`last 3 days\`" \
+    // --timezone Asia/Yekaterinburg \
+    // --get-sql \
+    // --get-data
+
+    let commandLine = `get-query-info \
 --project-id ${projectId} \
 --repo-type dev \
 --branch ${defaultBranch} \
 --env prod \
---chart-id ${chartId} \
+--report-id ${reportId} \
+--row-id ${rowId} \
+--detail days \
+--timezone Asia/Yekaterinburg \
 --get-sql \
 --get-data \
 --json`;
@@ -53,7 +70,7 @@ test('1', async () => {
 
     try {
       let { cli, mockContext } = await prepareTest({
-        command: GetQueryCommand,
+        command: GetQueryInfoCommand,
         config: config,
         deletePack: {
           emails: [email],
@@ -150,9 +167,9 @@ test('1', async () => {
 
     assert.equal(code === 0, true, `code === 0`);
     assert.equal(
-      isDefined(parsedOutput?.chart),
+      isDefined(parsedOutput?.report),
       true,
-      `isDefined(parsedOutput?.chart)`
+      `isDefined(parsedOutput?.report)`
     );
 
     isPass = true;

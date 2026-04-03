@@ -8,7 +8,7 @@ export const MCLI_USER_ALLOWED_REQUEST_NAMES: ToBackendRequestInfoNameEnum[] = [
   ToBackendRequestInfoNameEnum.ToBackendValidateFiles, // validate
   ToBackendRequestInfoNameEnum.ToBackendGetState, // get-state
   ToBackendRequestInfoNameEnum.ToBackendGetModel, // get-model
-  ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo, // get-query
+  ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo, // get-query-info
   ToBackendRequestInfoNameEnum.ToBackendRun, // run
   // git
   ToBackendRequestInfoNameEnum.ToBackendGetBranchesList, // get-branches

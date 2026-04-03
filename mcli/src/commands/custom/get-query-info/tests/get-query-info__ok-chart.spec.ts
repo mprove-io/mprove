@@ -13,9 +13,9 @@ import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
 import { prepareTest } from '#mcli/functions/prepare-test';
 import { CustomContext } from '#mcli/models/custom-command';
-import { GetQueryCommand } from '../get-query';
+import { GetQueryInfoCommand } from '../get-query-info';
 
-let testId = 'mcli__get-query__ok-dashboard-tile';
+let testId = 'mcli__get-query-info__ok-chart';
 
 test('1', async () => {
   let code: number;
@@ -27,15 +27,14 @@ test('1', async () => {
     let defaultBranch = BRANCH_MAIN;
 
     let projectId = makeId();
-    let dashboardId = 'c1_d1';
+    let chartId = 'C3ENGIP2LC00GUFMP333';
 
-    let commandLine = `get-query \
+    let commandLine = `get-query-info \
 --project-id ${projectId} \
 --repo-type dev \
 --branch ${defaultBranch} \
 --env prod \
---dashboard-id ${dashboardId} \
---tile-index 0 \
+--chart-id ${chartId} \
 --get-sql \
 --get-data \
 --json`;
@@ -54,7 +53,7 @@ test('1', async () => {
 
     try {
       let { cli, mockContext } = await prepareTest({
-        command: GetQueryCommand,
+        command: GetQueryInfoCommand,
         config: config,
         deletePack: {
           emails: [email],
@@ -151,9 +150,9 @@ test('1', async () => {
 
     assert.equal(code === 0, true, `code === 0`);
     assert.equal(
-      isDefined(parsedOutput?.dashboard),
+      isDefined(parsedOutput?.chart),
       true,
-      `isDefined(parsedOutput?.dashboard)`
+      `isDefined(parsedOutput?.chart)`
     );
 
     isPass = true;

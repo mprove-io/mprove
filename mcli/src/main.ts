@@ -13,7 +13,7 @@ import { DeleteBranchCommand } from './commands/custom/delete-branch/delete-bran
 import { GetBranchesCommand } from './commands/custom/get-branches/get-branches';
 import { GetConnectionsListCommand } from './commands/custom/get-connections-list/get-connections-list';
 import { GetModelCommand } from './commands/custom/get-model/get-model';
-import { GetQueryCommand } from './commands/custom/get-query/get-query';
+import { GetQueryInfoCommand } from './commands/custom/get-query-info/get-query-info';
 import { GetSampleCommand } from './commands/custom/get-sample/get-sample';
 import { GetSchemasCommand } from './commands/custom/get-schemas/get-schemas';
 import { GetStateCommand } from './commands/custom/get-state/get-state';
@@ -47,7 +47,7 @@ let appCommands = [
   DeleteBranchCommand,
   GetBranchesCommand,
   GetModelCommand,
-  GetQueryCommand,
+  GetQueryInfoCommand,
   GetSampleCommand,
   GetSchemasCommand,
   GetConnectionsListCommand,

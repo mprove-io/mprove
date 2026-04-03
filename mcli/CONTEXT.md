@@ -54,7 +54,7 @@ src/
 │       ├── create-branch/
 │       ├── delete-branch/
 │       ├── get-branches/
-│       ├── get-query/    # Get query results
+│       ├── get-query-info/ # Get query info
 │       ├── get-state/    # Get project state
 │       ├── merge/        # Merge branches
 │       ├── pull/         # Pull from remote

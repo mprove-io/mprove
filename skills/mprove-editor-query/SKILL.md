@@ -29,5 +29,5 @@ If you create or modify files - run "mprove sync --env <envId>" to validate and 
 Then:
 
 - get-state (optional)
-- get-query (optional)
+- get-query-info (optional)
 - run

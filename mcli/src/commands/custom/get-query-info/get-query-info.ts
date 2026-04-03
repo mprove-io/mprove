@@ -18,23 +18,23 @@ import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
 
-export class GetQueryCommand extends CustomCommand {
-  static paths = [['get-query']];
+export class GetQueryInfoCommand extends CustomCommand {
+  static paths = [['get-query-info']];
 
   static usage = Command.Usage({
-    description: 'Get query',
+    description: 'Get query info',
     examples: [
       [
-        'Get Query for Chart',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --chart-id v1 --get-malloy --get-sql --get-data'
+        'Get Query Info for Chart',
+        'mprove get-query-info --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --chart-id v1 --get-malloy --get-sql --get-data'
       ],
       [
-        'Get Query for Dashboard',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --dashboard-id d1 --get-malloy --get-sql --get-data'
+        'Get Query Info for Dashboard',
+        'mprove get-query-info --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --dashboard-id d1 --get-malloy --get-sql --get-data'
       ],
       [
-        'Get Query for Report',
-        'mprove get-query --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --report-id r1 --get-malloy --get-sql --get-data'
+        'Get Query Info for Report',
+        'mprove get-query-info --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --report-id r1 --get-malloy --get-sql --get-data'
       ]
     ]
   });
