@@ -28,7 +28,12 @@ export const MODEL_PROVIDERS: { provider_id: string; label: string }[] = [
   { provider_id: 'opencode', label: 'Zen' }
 ];
 
-export const ALLOWED_MODEL_KEYWORDS: string[] = ['opus', 'sonnet', 'codex'];
+export const ALLOWED_MODEL_KEYWORDS: string[] = [
+  'opus',
+  'sonnet',
+  'codex',
+  'gpt-5.4'
+];
 
 export const PASSWORD_EXPIRES_OFFSET = 86400000;
 
@@ -76,6 +81,7 @@ export const MCP_TOOL_GET_QUERY = 'get-query';
 export const MCP_TOOL_VALIDATE = 'validate';
 export const MCP_TOOL_GET_SAMPLE = 'get-sample';
 export const MCP_TOOL_GET_SCHEMAS = 'get-schemas';
+export const MCP_TOOL_GET_STORES = 'get-stores';
 
 export const DEFAULT_QUERY_SIZE_LIMIT = 1;
 

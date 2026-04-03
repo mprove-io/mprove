@@ -3,7 +3,7 @@ name: mprove-editor-query
 description: Query chart, dashboard, report or build a new one. Answer question using data.
 ---
 
-# Mprove Editor Query
+# Query chart, dashboard, report or build a new one. Answer question using data.
 
 Use get-state tool to see if project has valid mprove models.
 You can use get-model to see available fields.

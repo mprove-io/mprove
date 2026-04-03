@@ -7,6 +7,8 @@ import { GetConnectionSampleService } from './controllers/connections/get-connec
 import { GetConnectionSampleTool } from './controllers/connections/get-connection-sample/get-connection-sample.tool';
 import { GetConnectionSchemasService } from './controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import { GetConnectionSchemasTool } from './controllers/connections/get-connection-schemas/get-connection-schemas.tool';
+import { GetConnectionStoresService } from './controllers/connections/get-connection-stores/get-connection-stores.service';
+import { GetConnectionStoresTool } from './controllers/connections/get-connection-stores/get-connection-stores.tool';
 import { ValidateFilesService } from './controllers/files/validate-files/validate-files.service';
 import { ValidateFilesTool } from './controllers/files/validate-files/validate-files.tool';
 import { GetModelService } from './controllers/models/get-model/get-model.service';
@@ -164,6 +166,7 @@ export const appProviders = [
   //
   ToolService,
   GetConnectionSampleService,
+  GetConnectionStoresService,
   GetConnectionSchemasService,
   ValidateFilesService,
   QueryInfoChartService,
@@ -179,6 +182,7 @@ export const appProviders = [
   GetStateService,
   //
   GetConnectionSampleTool,
+  GetConnectionStoresTool,
   GetConnectionSchemasTool,
   ValidateFilesTool,
   GetQueryInfoTool,

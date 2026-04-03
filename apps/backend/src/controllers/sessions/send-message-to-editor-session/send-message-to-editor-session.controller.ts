@@ -119,8 +119,13 @@ export class SendMessageToEditorSessionController {
       e2bApiKey: project.e2bApiKey
     });
 
+    let wasSessionPaused = false;
+    let isUserUpdated = false;
+
     if (isDefined(sandboxInfo) === true) {
       if (sandboxInfo.state === 'paused') {
+        wasSessionPaused = true;
+
         let isLockExist =
           await this.editorStreamService.publishStopSessionStream({
             sessionId: session.sessionId
@@ -159,20 +164,50 @@ export class SendMessageToEditorSessionController {
           sandboxBaseUrl: session.sandboxBaseUrl
         });
 
-        if (
-          session.useCodex === true &&
-          isDefinedAndNotEmpty(user.codexAuthJson) &&
-          isDefined(user.codexAuthUpdateTs) &&
-          (!isDefined(session.codexAuthUpdateTs) ||
-            user.codexAuthUpdateTs > session.codexAuthUpdateTs)
-        ) {
-          await this.editorCodexService.writeAuthJsonToSandbox({
-            sandboxId: session.sandboxId,
-            e2bApiKey: project.e2bApiKey,
-            authJsonContent: user.codexAuthJson
-          });
+        if (session.useCodex === true) {
+          let sandboxAuthContent =
+            await this.editorCodexService.readAuthJsonFromSandbox({
+              sandboxId: session.sandboxId,
+              e2bApiKey: project.e2bApiKey
+            });
 
-          session.codexAuthUpdateTs = user.codexAuthUpdateTs;
+          let sandboxAuth = isDefined(sandboxAuthContent)
+            ? this.editorCodexService.parseCodexAuthJson({
+                authJsonContent: sandboxAuthContent
+              })
+            : undefined;
+
+          let userAuth = isDefinedAndNotEmpty(user.codexAuthJson)
+            ? this.editorCodexService.parseCodexAuthJson({
+                authJsonContent: user.codexAuthJson
+              })
+            : undefined;
+
+          let accountIdsMatch =
+            isDefined(sandboxAuth) &&
+            isDefined(userAuth) &&
+            sandboxAuth.accountId === userAuth.accountId;
+
+          if (accountIdsMatch && sandboxAuth.refreshTs > userAuth.refreshTs) {
+            user.codexAuthJson = sandboxAuthContent;
+            user.codexAuthUpdateTs = Date.now();
+            user.codexAuthExpiresTs = sandboxAuth.expires;
+            user.codexAuthRefreshTs = sandboxAuth.refreshTs;
+            session.codexAuthUpdateTs = user.codexAuthUpdateTs;
+
+            isUserUpdated = true;
+          } else if (
+            wasSessionPaused &&
+            accountIdsMatch &&
+            userAuth.refreshTs > sandboxAuth.refreshTs
+          ) {
+            await this.editorCodexService.writeAuthJsonToSandbox({
+              sandboxId: session.sandboxId,
+              e2bApiKey: project.e2bApiKey,
+              authJsonContent: user.codexAuthJson
+            });
+            session.codexAuthUpdateTs = user.codexAuthUpdateTs;
+          }
         }
 
         session.status = SessionStatusEnum.Active;
@@ -289,7 +324,8 @@ export class SendMessageToEditorSessionController {
             await this.db.packer.write({
               tx: tx,
               insertOrUpdate: {
-                sessions: [session]
+                sessions: [session],
+                users: isUserUpdated ? [user] : []
               }
             })
         ),

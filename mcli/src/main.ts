@@ -16,6 +16,7 @@ import { GetQueryCommand } from './commands/custom/get-query/get-query';
 import { GetSampleCommand } from './commands/custom/get-sample/get-sample';
 import { GetSchemasCommand } from './commands/custom/get-schemas/get-schemas';
 import { GetStateCommand } from './commands/custom/get-state/get-state';
+import { GetStoresCommand } from './commands/custom/get-stores/get-stores';
 import { MergeCommand } from './commands/custom/merge/merge';
 import { PullCommand } from './commands/custom/pull/pull';
 import { PushCommand } from './commands/custom/push/push';
@@ -49,6 +50,7 @@ let appCommands = [
   GetQueryCommand,
   GetSampleCommand,
   GetSchemasCommand,
+  GetStoresCommand,
   GetStateCommand,
   MergeCommand,
   PullCommand,

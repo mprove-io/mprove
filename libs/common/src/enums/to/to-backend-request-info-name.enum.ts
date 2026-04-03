@@ -76,6 +76,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendTestConnection = 'api/ToBackendTestConnection',
   ToBackendGetConnectionSchemas = 'api/ToBackendGetConnectionSchemas',
   ToBackendGetConnectionSample = 'api/ToBackendGetConnectionSample',
+  ToBackendGetConnectionStores = 'api/ToBackendGetConnectionStores',
   //
   ToBackendGetBranchesList = 'api/ToBackendGetBranchesList',
   ToBackendIsBranchExist = 'api/ToBackendIsBranchExist',

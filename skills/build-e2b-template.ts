@@ -64,16 +64,24 @@ let template = Template()
     '/home/user/.config/opencode/skills/mprove-basic/SKILL.md'
   )
   .copy(
+    'mprove-build-malloy-model/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-build-malloy-model/SKILL.md'
+  )
+  .copy(
+    'mprove-build-store-model/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-build-store-model/SKILL.md'
+  )
+  .copy(
     'mprove-dwh-schemas/SKILL.md',
     '/home/user/.config/opencode/skills/mprove-dwh-schemas/SKILL.md'
   )
   .copy(
-    'mprove-project-structure/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-project-structure/SKILL.md'
-  )
-  .copy(
     'mprove-editor-query/SKILL.md',
     '/home/user/.config/opencode/skills/mprove-editor-query/SKILL.md'
+  )
+  .copy(
+    'mprove-project-structure/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-project-structure/SKILL.md'
   );
 
 let result = await Template.build(template, templateName, {

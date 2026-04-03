@@ -1,9 +1,9 @@
 ---
 name: mprove-project-structure
-description: Files and folders structure patterns
+description: Mprove project files and folders structure patterns
 ---
 
-# Mprove Project Structure
+# Mprove project files and folders structure patterns
 
 ## Connections
 

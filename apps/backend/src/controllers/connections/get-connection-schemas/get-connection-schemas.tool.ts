@@ -23,7 +23,7 @@ export class GetConnectionSchemasTool {
   @Tool({
     name: MCP_TOOL_GET_SCHEMAS,
     description:
-      'Fetch database schemas (tables, columns, relationships, indexes) for project connections',
+      'Fetch database schemas (tables, columns, relationships, indexes) for project SQL connections',
     parameters: z.object({
       projectId: z.string(),
       envId: z.string(),

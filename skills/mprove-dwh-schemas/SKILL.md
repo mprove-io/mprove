@@ -1,9 +1,11 @@
 ---
 name: mprove-dwh-schemas
-description: Get create or update .schema metadata files for mprove project connections
+description: Get, create or update schema metadata for mprove project connections
 ---
 
-# Mprove Schema Files
+# Get, create or update schema metadata for mprove project connections
+
+## Mprove Schema Files
 
 Schema files provide metadata (descriptions, examples, relationships) for database tables and columns.
 They are combined with raw database schemas to build "combined schemas" that are useful for creating Malloy semantic models.

@@ -24,7 +24,7 @@ The flow for setup a new Mprove project:
 - create mprove.yml (if no existing mprove config)
 - get-state
 - create .schema for metadata and relationships (use get-schemas and get-sample to understand relationships)
-- create malloy model(s)
+- create mprove model(s) based on malloy sources
 - create mprove report, dashboard, chart
 - run report, dashboard, chart
 - provide report, dashboard, chart links to user
@@ -43,10 +43,12 @@ When you need to look up Malloy documentation, check `https://docs.malloydata.de
 
 ## .gitignore Example
 
-\*.env
+```
+*.env
 .envrc
 
 .DS_Store
 Thumbs.db
 
 .mprove/
+```
