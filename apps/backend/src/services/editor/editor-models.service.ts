@@ -35,6 +35,7 @@ export class EditorModelsService {
     openaiApiKey?: string;
     anthropicApiKey?: string;
     zenApiKey?: string;
+    isUserCodexAuthSet: boolean;
     enableLoadFromCache: boolean;
     forceLoadFromCache: boolean;
   }): Promise<SessionModelApi[]> {
@@ -43,6 +44,7 @@ export class EditorModelsService {
       openaiApiKey,
       anthropicApiKey,
       zenApiKey,
+      isUserCodexAuthSet,
       enableLoadFromCache,
       forceLoadFromCache
     } = item;
@@ -72,7 +74,8 @@ export class EditorModelsService {
     let models = await this.fetchAndTransform({
       openaiApiKey: openaiApiKey,
       anthropicApiKey: anthropicApiKey,
-      zenApiKey: zenApiKey
+      zenApiKey: zenApiKey,
+      isUserCodexAuthSet: isUserCodexAuthSet
     });
 
     models = models.filter(m => {
@@ -161,8 +164,9 @@ export class EditorModelsService {
     openaiApiKey?: string;
     anthropicApiKey?: string;
     zenApiKey?: string;
+    isUserCodexAuthSet: boolean;
   }): Promise<SessionModelApi[]> {
-    let { openaiApiKey, anthropicApiKey, zenApiKey } = item;
+    let { openaiApiKey, anthropicApiKey, zenApiKey, isUserCodexAuthSet } = item;
 
     let response = await fetch('https://models.dev/api.json', {
       signal: AbortSignal.timeout(10_000)
@@ -172,7 +176,7 @@ export class EditorModelsService {
 
     let includeProviders = new Set<string>();
 
-    if (openaiApiKey) {
+    if (openaiApiKey || isUserCodexAuthSet) {
       includeProviders.add('openai');
     }
     if (anthropicApiKey) {

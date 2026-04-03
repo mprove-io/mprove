@@ -126,6 +126,7 @@ import { CompleteUserRegistrationController } from './controllers/users/complete
 import { ConfirmUserEmailController } from './controllers/users/confirm-user-email/confirm-user-email.controller';
 import { DeleteUserController } from './controllers/users/delete-user/delete-user.controller';
 import { DeleteUserApiKeyController } from './controllers/users/delete-user-api-key/delete-user-api-key.controller';
+import { DeleteUserCodexAuthController } from './controllers/users/delete-user-codex-auth/delete-user-codex-auth.controller';
 import { GenerateUserApiKeyController } from './controllers/users/generate-user-api-key/generate-user-api-key.controller';
 import { GetUserProfileController } from './controllers/users/get-user-profile/get-user-profile.controller';
 import { LoginUserController } from './controllers/users/login-user/login-user.controller';
@@ -133,6 +134,7 @@ import { LogoutUserController } from './controllers/users/logout-user/logout-use
 import { RegisterUserController } from './controllers/users/register-user/register-user.controller';
 import { ResendUserEmailController } from './controllers/users/resend-user-email/resend-user-email.controller';
 import { ResetUserPasswordController } from './controllers/users/reset-user-password/reset-user-password.controller';
+import { SetUserCodexAuthController } from './controllers/users/set-user-codex-auth/set-user-codex-auth.controller';
 import { SetUserNameController } from './controllers/users/set-user-name/set-user-name.controller';
 import { SetUserUiController } from './controllers/users/set-user-ui/set-user-ui.controller';
 import { UpdateUserPasswordController } from './controllers/users/update-user-password/update-user-password.controller';
@@ -271,6 +273,8 @@ export const appControllers = [
   UpdateUserPasswordController,
   GenerateUserApiKeyController,
   DeleteUserApiKeyController,
+  SetUserCodexAuthController,
+  DeleteUserCodexAuthController,
 
   CreateDraftChartController,
   DeleteChartController,

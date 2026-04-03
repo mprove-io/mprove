@@ -13,6 +13,7 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendDeleteUserApiKeyResponse } from '#common/interfaces/to-backend/users/to-backend-delete-user-api-key';
+import { ToBackendDeleteUserCodexAuthResponse } from '#common/interfaces/to-backend/users/to-backend-delete-user-codex-auth';
 import { ToBackendGenerateUserApiKeyResponse } from '#common/interfaces/to-backend/users/to-backend-generate-user-api-key';
 import {
   ToBackendResetUserPasswordRequestPayload,
@@ -78,6 +79,14 @@ export class ProfileComponent implements OnInit {
   apiKeyPrefix$ = this.userQuery.apiKeyPrefix$.pipe(
     tap(x => {
       this.apiKeyPrefix = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  isCodexAuthSet: boolean;
+  isCodexAuthSet$ = this.userQuery.isCodexAuthSet$.pipe(
+    tap(x => {
+      this.isCodexAuthSet = x;
       this.cd.detectChanges();
     })
   );
@@ -194,5 +203,31 @@ export class ProfileComponent implements OnInit {
     this.myDialogService.showDeleteUser({
       apiService: this.apiService
     });
+  }
+
+  setCodexAuth() {
+    this.myDialogService.showSetCodexAuth({
+      apiService: this.apiService
+    });
+  }
+
+  deleteCodexAuth() {
+    let payload = {};
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteUserCodexAuth,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: ToBackendDeleteUserCodexAuthResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.userQuery.update(resp.payload.user);
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 }

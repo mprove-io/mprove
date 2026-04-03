@@ -3,7 +3,7 @@
   <div class="user-message mb-8 ml-4 mr-8">
     <div class="flex justify-start">
       <div class="border-s200 bg-s100 max-w-[90%] rounded-2xl border px-5 py-3">
-        <div class="text-s1 whitespace-pre-wrap break-words text-lg">{{
+        <div class="text-s1 whitespace-pre-wrap break-words text-xl">{{
           session.firstMessage
         }}</div>
       </div>
@@ -12,7 +12,7 @@
   <div class="response-div">
     <div *ngIf="isSessionError" class="mb-4 ml-10 flex justify-start">
       <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
-        <div class="break-words text-lg text-red-700">
+        <div class="break-words text-xl text-red-700">
           Session activation failed. Please try again.
         </div>
       </div>
@@ -33,7 +33,7 @@
   <div *ngIf="turn.userMessage" class="user-message mb-8 ml-4 mr-8">
     <div class="flex justify-start">
       <div class="border-s200 bg-s100 max-w-[90%] rounded-2xl border px-5 py-3">
-        <div class="text-s1 whitespace-pre-wrap break-words text-lg">{{
+        <div class="text-s1 whitespace-pre-wrap break-words text-xl">{{
           turn.userMessage.text
         }}</div>
       </div>
@@ -56,7 +56,7 @@
       <div *ngIf="msg.role === 'agent'" class="ml-10">
         <div class="rounded-2xl px-4 py-3">
           <div
-            class="prose prose-gray max-w-none break-words text-lg text-gray-800"
+            class="prose prose-gray max-w-none break-words text-xl text-gray-800"
           >
             <remark [markdown]="msg.text">
               <ng-template [remarkTemplate]="'link'" let-node>
@@ -122,7 +122,7 @@
             *ngIf="getToolOutput(msg.toolPart)"
             class="border-s200 border-t px-3 py-2"
           >
-            <div class="text-s1 whitespace-pre-wrap break-words text-lg">{{
+            <div class="text-s1 whitespace-pre-wrap break-words text-xl">{{
               getToolOutput(msg.toolPart)
             }}</div>
           </div>
@@ -166,7 +166,7 @@
             (click)="openToolOutput(msg.toolPart)"
           >
             <pre
-              class="text-s1 whitespace-pre-wrap break-words font-mono text-sm"
+              class="text-s1 whitespace-pre-wrap break-words font-mono text-base"
               >{{ getBashOutputPreview(msg.toolPart) }}</pre
             >
           </div>
@@ -226,7 +226,7 @@
       <!-- Thought -->
       <div *ngIf="msg.role === 'thought'" class="ml-10 flex justify-start">
         <div class="max-w-[90%] rounded-2xl px-4 py-2">
-          <div class="text-s500 whitespace-pre-wrap break-words text-lg">{{
+          <div class="text-s500 whitespace-pre-wrap break-words text-xl">{{
             msg.text
           }}</div>
         </div>
@@ -265,7 +265,7 @@
       <!-- Error -->
       <div *ngIf="msg.role === 'error'" class="ml-10 flex justify-start">
         <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
-          <div class="break-words text-lg text-red-700">{{ msg.text }}</div>
+          <div class="break-words text-xl text-red-700">{{ msg.text }}</div>
         </div>
       </div>
     </div>
@@ -294,10 +294,12 @@
         </div>
         <div
           *ngFor="let diff of turn.fileDiffs"
-          class="border-s300 bg-s150 flex cursor-pointer items-center justify-between border-t px-3 py-2 hover:bg-gray-200"
+          class="border-s300 flex cursor-pointer items-center justify-between border-t px-3 py-2 hover:bg-gray-50"
           (click)="openFileDiff(diff)"
         >
-          <span class="text-s2 min-w-0 truncate text-lg">{{ diff.file }}</span>
+          <span class="text-s500 min-w-0 truncate text-lg">{{
+            diff.file
+          }}</span>
           <span class="ml-3 flex flex-shrink-0 items-center gap-2 text-sm">
             <span *ngIf="diff.additions > 0" class="text-green-600"
               >+{{ diff.additions }}</span
@@ -327,7 +329,7 @@
         class="mb-4 ml-8 flex justify-start"
       >
         <div class="max-w-[90%] py-3">
-          <span class="text-shimmer text-lg font-semibold leading-[1.5]"
+          <span class="text-shimmer text-xl font-semibold leading-[1.5]"
             ><span
               *ngFor="let ch of activatingChars; trackBy: trackByIndex"
               class="text-shimmer-char"
@@ -339,7 +341,7 @@
       </div>
       <div *ngIf="isSessionError" class="mb-4 ml-10 flex justify-start">
         <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
-          <div class="break-words text-lg text-red-700">
+          <div class="break-words text-xl text-red-700">
             Session activation failed. Please try again.
           </div>
         </div>

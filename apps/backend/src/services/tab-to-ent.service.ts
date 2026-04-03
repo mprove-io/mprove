@@ -943,7 +943,8 @@ export class TabToEntService {
       passwordResetExpiresTs: tab.passwordResetExpiresTs,
       ui: tab.ui,
       apiKeySecretHash: tab.apiKeySecretHash,
-      apiKeySalt: tab.apiKeySalt
+      apiKeySalt: tab.apiKeySalt,
+      codexAuthJson: tab.codexAuthJson
     };
 
     let userEnt: UserEnt = {
@@ -951,6 +952,9 @@ export class TabToEntService {
       isEmailVerified: tab.isEmailVerified,
       jwtMinIat: tab.jwtMinIat,
       apiKeyPrefix: tab.apiKeyPrefix,
+      codexAuthUpdateTs: tab.codexAuthUpdateTs,
+      codexAuthExpiresTs: tab.codexAuthExpiresTs,
+      codexAuthRefreshTs: tab.codexAuthRefreshTs,
       ...this.getEntProps({
         dataSt: userSt,
         dataLt: userLt,
@@ -1051,6 +1055,8 @@ export class TabToEntService {
       sandboxInfo: tab.sandboxInfo,
       lastFetchEventIndex: tab.lastFetchEventIndex,
       reloadRequestedTs: tab.reloadRequestedTs,
+      useCodex: tab.useCodex,
+      codexAuthUpdateTs: tab.codexAuthUpdateTs,
       createdTs: tab.createdTs,
       serverTs: tab.serverTs
     };
@@ -1068,7 +1074,10 @@ export class TabToEntService {
       openSession: tab.openSession,
       todos: tab.todos,
       questions: tab.questions,
-      permissions: tab.permissions
+      permissions: tab.permissions,
+      ocSessionStatus: tab.ocSessionStatus,
+      lastSessionError: tab.lastSessionError,
+      isLastErrorRecovered: tab.isLastErrorRecovered
     };
 
     let ocSessionLt: OcSessionLt = {};

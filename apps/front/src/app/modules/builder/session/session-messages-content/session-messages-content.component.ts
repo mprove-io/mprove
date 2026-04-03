@@ -129,6 +129,14 @@ export class SessionMessagesContentComponent {
     if (toolPart.tool === 'skill') {
       return (input['name'] as string) || '';
     }
+    if (toolPart.tool === 'apply_patch') {
+      let patchText = (input['patchText'] as string) || '';
+      let matches = patchText.match(/\*\*\* (Update|Add|Delete) File: (.+)/);
+      if (matches) {
+        return matches[1] + ' ' + matches[2];
+      }
+      return '';
+    }
     return (
       (input['file_path'] as string) ||
       (input['filePath'] as string) ||

@@ -19,6 +19,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorCodexService } from '#backend/services/editor/editor-codex.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
@@ -31,6 +32,7 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import {
   ToBackendSendMessageToEditorSessionRequest,
   ToBackendSendMessageToEditorSessionResponsePayload
@@ -46,6 +48,7 @@ export class SendMessageToEditorSessionController {
     private projectsService: ProjectsService,
     private editorStreamService: EditorStreamService,
     private editorOpencodeService: EditorOpencodeService,
+    private editorCodexService: EditorCodexService,
     private editorSandboxService: EditorSandboxService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -155,6 +158,22 @@ export class SendMessageToEditorSessionController {
         await this.editorOpencodeService.healthCheckOpenCode({
           sandboxBaseUrl: session.sandboxBaseUrl
         });
+
+        if (
+          session.useCodex === true &&
+          isDefinedAndNotEmpty(user.codexAuthJson) &&
+          isDefined(user.codexAuthUpdateTs) &&
+          (!isDefined(session.codexAuthUpdateTs) ||
+            user.codexAuthUpdateTs > session.codexAuthUpdateTs)
+        ) {
+          await this.editorCodexService.writeAuthJsonToSandbox({
+            sandboxId: session.sandboxId,
+            e2bApiKey: project.e2bApiKey,
+            authJsonContent: user.codexAuthJson
+          });
+
+          session.codexAuthUpdateTs = user.codexAuthUpdateTs;
+        }
 
         session.status = SessionStatusEnum.Active;
         session.sandboxStartTs = sandboxInfo.startedAt.getTime();

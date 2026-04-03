@@ -114,8 +114,10 @@ export class CreateExplorerSessionController {
           initialBranch: initialBranch,
           envId: envId,
           initialCommit: undefined,
+          useCodex: false,
           status: SessionStatusEnum.Active,
           lastActivityTs: now,
+          codexAuthUpdateTs: undefined,
           createdTs: now
         });
 

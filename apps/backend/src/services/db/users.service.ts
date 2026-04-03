@@ -98,8 +98,17 @@ export class UsersService {
         //
         newSessionEditorVariant: isDefined(user.ui?.newSessionEditorVariant)
           ? user.ui?.newSessionEditorVariant
-          : defaultSrvUi.newSessionEditorVariant
+          : defaultSrvUi.newSessionEditorVariant,
+        //
+        newSessionUseCodex: isDefined(user.ui?.newSessionUseCodex)
+          ? user.ui?.newSessionUseCodex
+          : defaultSrvUi.newSessionUseCodex
       },
+      isCodexAuthSet:
+        isDefined(user.codexAuthJson) && user.codexAuthJson !== '',
+      codexAuthUpdateTs: user.codexAuthUpdateTs,
+      codexAuthExpiresTs: user.codexAuthExpiresTs,
+      codexAuthRefreshTs: user.codexAuthRefreshTs,
       serverTs: Number(user.serverTs)
     };
 
@@ -199,6 +208,9 @@ export class UsersService {
       emailVerificationTokenHash: undefined, // tab-to-ent
       passwordResetTokenHash: undefined, // tab-to-ent
       apiKeyPrefix: undefined,
+      codexAuthUpdateTs: undefined,
+      codexAuthExpiresTs: undefined,
+      codexAuthRefreshTs: undefined,
       keyTag: undefined,
       serverTs: undefined
     };
@@ -250,6 +262,9 @@ export class UsersService {
       emailVerificationTokenHash: undefined, // tab-to-ent
       passwordResetTokenHash: undefined, // tab-to-ent
       apiKeyPrefix: undefined,
+      codexAuthUpdateTs: undefined,
+      codexAuthExpiresTs: undefined,
+      codexAuthRefreshTs: undefined,
       keyTag: undefined,
       serverTs: undefined
     };

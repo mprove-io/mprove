@@ -28,6 +28,10 @@
                 class="flex h-16 select-none items-center justify-end font-semibold"
                 >MPROVE_CLI_API_KEY</div
               >
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
+                >OpenAI Codex Subscription</div
+              >
               <!-- <div class="flex h-16 items-center justify-end font-semibold"
               >Default Time Zone</div
             > -->
@@ -64,6 +68,7 @@
               </svg> -->
               </div>
               <div class="flex h-16 items-center"></div>
+              <div class="flex h-16 items-center"></div>
               <div class="flex items-center"></div>
               <div class="flex items-center"></div>
               <div class="flex items-center"></div>
@@ -98,11 +103,21 @@
                 >{{ userFullName }}</div
               >
 
-              <div class="flex h-16 items-center text-base">{{
-                apiKeyPrefix
-                  ? apiKeyTypeEnum.PK + '-' + apiKeyPrefix + '-..........'
-                  : 'No API key'
-              }}</div>
+              <div
+                class="flex h-16 items-center text-base"
+                [ngClass]="{ 'text-green-600': apiKeyPrefix }"
+                >{{
+                  apiKeyPrefix
+                    ? apiKeyTypeEnum.PK + '-' + apiKeyPrefix + '-..........'
+                    : 'No API key'
+                }}</div
+              >
+
+              <div
+                class="flex h-16 items-center text-base"
+                [ngClass]="{ 'text-green-600': isCodexAuthSet }"
+                >{{ isCodexAuthSet ? 'Auth Set' : 'Auth Not Set' }}</div
+              >
 
               <div
                 data-cy="profileEmail"
@@ -231,6 +246,44 @@
                     </div> </button
                 ></div>
               </div>
+
+              <div class="flex h-16 items-center gap-2">
+                <div
+                  tp="Demo user is restricted. Sign Up at https://mprove.io to get full access."
+                  [tpIsEnabled]="alias === restrictedUserAlias"
+                >
+                  <button
+                    class="select-none rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'text-s400 cursor-default': alias === restrictedUserAlias,
+                      'border-s3 text-s1': alias !== restrictedUserAlias
+                    }"
+                    (click)="setCodexAuth()"
+                    [disabled]="alias === restrictedUserAlias"
+                    >{{ isCodexAuthSet ? 'Edit' : 'Set' }}</button
+                  ></div
+                >
+                <div
+                  class="ml-3 flex items-center"
+                  *ngIf="isCodexAuthSet"
+                  tp="Demo user is restricted. Sign Up at https://mprove.io to get full access."
+                  [tpIsEnabled]="alias === restrictedUserAlias"
+                >
+                  <button
+                    class="select-none focus:outline-none"
+                    [ngClass]="{
+                      'text-s400 cursor-default': alias === restrictedUserAlias,
+                      'text-s500 hover:text-r1': alias !== restrictedUserAlias
+                    }"
+                    (click)="deleteCodexAuth()"
+                    [disabled]="alias === restrictedUserAlias"
+                  >
+                    <div class="ml-3 flex justify-center">
+                      <m-trash-icon></m-trash-icon>
+                    </div> </button
+                ></div>
+              </div>
+
               <div class="flex h-16 items-center"></div>
               <div class="flex h-16 items-center"></div>
               <div class="flex items-center"></div>
@@ -249,3 +302,4 @@
 <div *ngIf="userFullName$ | async"></div>
 <div *ngIf="userInitials$ | async"></div>
 <div *ngIf="apiKeyPrefix$ | async"></div>
+<div *ngIf="isCodexAuthSet$ | async"></div>

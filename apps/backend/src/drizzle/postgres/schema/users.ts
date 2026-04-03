@@ -27,6 +27,9 @@ export const usersTable = pgTable(
     ).notNull(),
     passwordResetTokenHash: varchar('password_reset_token_hash'),
     apiKeyPrefix: varchar('api_key_prefix', { length: 32 }),
+    codexAuthUpdateTs: bigint('codex_auth_update_ts', { mode: 'number' }),
+    codexAuthExpiresTs: bigint('codex_auth_expires_ts', { mode: 'number' }),
+    codexAuthRefreshTs: bigint('codex_auth_refresh_ts', { mode: 'number' }),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

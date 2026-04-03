@@ -124,7 +124,8 @@ test('1', async t => {
         envId: PROJECT_ENV_PROD,
         initialBranch: BRANCH_MAIN,
         messageId: makeAscendingId({ prefix: 'msg' }),
-        partId: makeAscendingId({ prefix: 'prt' })
+        partId: makeAscendingId({ prefix: 'prt' }),
+        useCodex: false
       }
     };
 

@@ -64,4 +64,8 @@ export class Ui {
   @IsOptional()
   @IsString()
   newSessionEditorVariant?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  newSessionUseCodex?: boolean;
 }

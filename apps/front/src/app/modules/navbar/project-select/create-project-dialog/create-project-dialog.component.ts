@@ -67,6 +67,8 @@ export class CreateProjectDialogComponent implements OnInit {
 
   noteId: string;
   publicKey: string;
+  maskedPublicKey: string;
+  showPublicKey = false;
 
   isDeployKeyAdded = false;
   copied = false;
@@ -119,6 +121,9 @@ export class CreateProjectDialogComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.noteId = resp.payload.noteId;
             this.publicKey = resp.payload.publicKey;
+            this.maskedPublicKey =
+              this.publicKey.substring(0, 40) +
+              '•'.repeat(this.publicKey.length - 40);
 
             this.spinner.hide(this.spinnerName);
 
@@ -201,6 +206,10 @@ export class CreateProjectDialogComponent implements OnInit {
     event.stopPropagation();
     this.isDeployKeyAdded = !this.isDeployKeyAdded;
     this.cd.detectChanges();
+  }
+
+  togglePublicKey() {
+    this.showPublicKey = !this.showPublicKey;
   }
 
   copyToClipboard() {

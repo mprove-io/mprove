@@ -124,6 +124,7 @@ import { ToBackendCompleteUserRegistrationRequest } from '#common/interfaces/to-
 import { ToBackendConfirmUserEmailRequest } from '#common/interfaces/to-backend/users/to-backend-confirm-user-email';
 import { ToBackendDeleteUserRequest } from '#common/interfaces/to-backend/users/to-backend-delete-user';
 import { ToBackendDeleteUserApiKeyRequest } from '#common/interfaces/to-backend/users/to-backend-delete-user-api-key';
+import { ToBackendDeleteUserCodexAuthRequest } from '#common/interfaces/to-backend/users/to-backend-delete-user-codex-auth';
 import { ToBackendGenerateUserApiKeyRequest } from '#common/interfaces/to-backend/users/to-backend-generate-user-api-key';
 import { ToBackendGetUserProfileRequest } from '#common/interfaces/to-backend/users/to-backend-get-user-profile';
 import { ToBackendLoginUserRequest } from '#common/interfaces/to-backend/users/to-backend-login-user';
@@ -131,6 +132,7 @@ import { ToBackendLogoutUserRequest } from '#common/interfaces/to-backend/users/
 import { ToBackendRegisterUserRequest } from '#common/interfaces/to-backend/users/to-backend-register-user';
 import { ToBackendResendUserEmailRequest } from '#common/interfaces/to-backend/users/to-backend-resend-user-email';
 import { ToBackendResetUserPasswordRequest } from '#common/interfaces/to-backend/users/to-backend-reset-user-password';
+import { ToBackendSetUserCodexAuthRequest } from '#common/interfaces/to-backend/users/to-backend-set-user-codex-auth';
 import { ToBackendSetUserNameRequest } from '#common/interfaces/to-backend/users/to-backend-set-user-name';
 import { ToBackendSetUserUiRequest } from '#common/interfaces/to-backend/users/to-backend-set-user-ui';
 import { ToBackendUpdateUserPasswordRequest } from '#common/interfaces/to-backend/users/to-backend-update-user-password';
@@ -182,6 +184,10 @@ export const nameToClass = {
     ToBackendDeleteUserApiKeyRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey]:
     ToBackendGenerateUserApiKeyRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSetUserCodexAuth]:
+    ToBackendSetUserCodexAuthRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendDeleteUserCodexAuth]:
+    ToBackendDeleteUserCodexAuthRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendCreateOrg]: ToBackendCreateOrgRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetOrgsList]:

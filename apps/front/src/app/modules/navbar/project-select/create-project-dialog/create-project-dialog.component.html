@@ -111,7 +111,7 @@
           *ngIf="publicKey"
           class="text-g700 text-base"
           style="word-break: break-all"
-          >{{ publicKey }}</div
+          >{{ showPublicKey ? publicKey : maskedPublicKey }}</div
         >
         <ngx-spinner
           [ngClass]="{
@@ -189,6 +189,15 @@
         (click)="copyToClipboard()"
       >
         Copy to Clipboard
+      </button>
+
+      <button
+        *ngIf="publicKey"
+        class="border-s400 text-s500 ml-3 w-[140px] select-none rounded border py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="togglePublicKey()"
+      >
+        {{ showPublicKey ? 'Hide Value' : 'Show Value' }}
       </button>
     </div>
   </form>

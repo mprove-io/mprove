@@ -54,6 +54,7 @@ import { PgService } from './services/dwh/pg.service';
 import { PrestoService } from './services/dwh/presto.service';
 import { SnowFlakeService } from './services/dwh/snowflake.service';
 import { TrinoService } from './services/dwh/trino.service';
+import { EditorCodexService } from './services/editor/editor-codex.service';
 import { EditorConnectionsService } from './services/editor/editor-connections.service';
 import { EditorModelsService } from './services/editor/editor-models.service';
 import { EditorOpencodeService } from './services/editor/editor-opencode.service';
@@ -145,6 +146,7 @@ export const appProviders = [
   //
   SessionsService,
   EditorOpencodeService,
+  EditorCodexService,
   SessionArchiveService,
   SessionDrainService,
   SessionDrainTimerService,

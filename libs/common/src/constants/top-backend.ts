@@ -102,5 +102,6 @@ export const DEFAULT_SRV_UI: Ui = {
   newSessionPermissionsAutoAccept: false,
   newSessionExplorerProviderModel: undefined,
   newSessionEditorProviderModel: undefined,
-  newSessionEditorVariant: 'default'
+  newSessionEditorVariant: 'default',
+  newSessionUseCodex: true
 };

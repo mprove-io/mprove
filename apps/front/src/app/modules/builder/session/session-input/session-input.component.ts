@@ -21,6 +21,7 @@ import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { SessionModelsQuery } from '#front/app/queries/session-models.query';
 import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { UiService } from '#front/app/services/ui.service';
 
@@ -39,19 +40,22 @@ export class SessionInputComponent implements OnChanges {
   @Input() variant = 'default';
   @Output() variantChange = new EventEmitter<string>();
 
+  @Input() useCodex = false;
+  @Output() useCodexChange = new EventEmitter<boolean>();
+
   sessionTypeEnum = SessionTypeEnum;
 
   @Input() sessionType: SessionTypeEnum = SessionTypeEnum.Explorer;
-
   @Input() disabled = false;
   @Input() showSelects = true;
   @Input() scrollableInput = false;
   @Input() sessionId: string;
   @Input() isWorking = false;
 
+  isCodexAuthSet = false;
+
   @Output() send = new EventEmitter<string>();
   @Output() stop = new EventEmitter<void>();
-  @Output() providerHasApiKeyChange = new EventEmitter<boolean>();
 
   messageText = '';
 
@@ -66,11 +70,13 @@ export class SessionInputComponent implements OnChanges {
   agents = ['build', 'plan'];
   variants: string[] = ['default'];
   modelVariantsMap = new Map<string, string[]>();
-  providerHasApiKey = true;
-  projectHasAnyApiKey = true;
   projectHasE2bApiKey = true;
   effectiveDisabled = false;
   isEditor = true;
+
+  projectHasAnyApiKeyOrSubscription = true;
+
+  providerHasApiKeyOrSubscription = true;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -79,10 +85,14 @@ export class SessionInputComponent implements OnChanges {
     private navQuery: NavQuery,
     private apiService: ApiService,
     private uiQuery: UiQuery,
+    private userQuery: UserQuery,
     private uiService: UiService,
     private sessionModelsQuery: SessionModelsQuery
   ) {
     this.isEditor = this.memberQuery.getValue().isEditor;
+
+    let user = this.userQuery.getValue();
+    this.isCodexAuthSet = user.isCodexAuthSet === true;
 
     let state = this.sessionModelsQuery.getValue();
 
@@ -108,12 +118,13 @@ export class SessionInputComponent implements OnChanges {
     }
     if (changes['model']) {
       this.updateVariants();
-      this.updateProjectHasAnyApiKey();
       this.updateProjectHasE2bApiKey();
-      this.updateProviderHasApiKey();
+      this.updateProjectHasAnyApiKeyOrSubscription();
+      this.updateProviderHasApiKeyOrSubscription();
     }
-    if (changes['disabled']) {
-      this.updateEffectiveDisabled();
+    if (changes['disabled'] || changes['useCodex']) {
+      this.updateProjectHasAnyApiKeyOrSubscription();
+      this.updateProviderHasApiKeyOrSubscription();
     }
   }
 
@@ -126,6 +137,15 @@ export class SessionInputComponent implements OnChanges {
 
   onStop() {
     this.stop.emit();
+  }
+
+  toggleUseCodex() {
+    this.useCodex = !this.useCodex;
+    this.useCodexChange.emit(this.useCodex);
+    this.uiQuery.updatePart({ newSessionUseCodex: this.useCodex });
+    this.uiService.setUserUi({ newSessionUseCodex: this.useCodex });
+    this.updateProjectHasAnyApiKeyOrSubscription();
+    this.updateProviderHasApiKeyOrSubscription();
   }
 
   onSend() {
@@ -143,7 +163,9 @@ export class SessionInputComponent implements OnChanges {
 
   onModelSelect() {
     this.updateVariants();
-    this.updateProviderHasApiKey();
+
+    this.updateProviderHasApiKeyOrSubscription();
+
     this.modelChange.emit(this.model);
     this.variantChange.emit(this.variant);
 
@@ -196,20 +218,9 @@ export class SessionInputComponent implements OnChanges {
     this.effectiveDisabled =
       this.disabled ||
       isEditorSessionWithoutEditorRole ||
-      !this.projectHasAnyApiKey ||
-      !this.providerHasApiKey ||
+      !this.projectHasAnyApiKeyOrSubscription ||
+      !this.providerHasApiKeyOrSubscription ||
       isEditorWithoutE2b;
-  }
-
-  updateProjectHasAnyApiKey() {
-    let project = this.projectQuery.getValue();
-
-    this.projectHasAnyApiKey =
-      !!project.isZenApiKeySet ||
-      !!project.isOpenaiApiKeySet ||
-      !!project.isAnthropicApiKeySet;
-
-    this.updateEffectiveDisabled();
   }
 
   updateProjectHasE2bApiKey() {
@@ -220,10 +231,26 @@ export class SessionInputComponent implements OnChanges {
     this.updateEffectiveDisabled();
   }
 
-  updateProviderHasApiKey() {
+  updateProjectHasAnyApiKeyOrSubscription() {
+    let project = this.projectQuery.getValue();
+
+    let hasCodexSubscriptionAndEnabled =
+      this.sessionType === SessionTypeEnum.Editor &&
+      this.useCodex &&
+      this.isCodexAuthSet;
+
+    this.projectHasAnyApiKeyOrSubscription =
+      !!project.isZenApiKeySet ||
+      !!project.isOpenaiApiKeySet ||
+      !!project.isAnthropicApiKeySet ||
+      hasCodexSubscriptionAndEnabled;
+
+    this.updateEffectiveDisabled();
+  }
+
+  updateProviderHasApiKeyOrSubscription() {
     if (!this.model) {
-      this.providerHasApiKey = true;
-      this.providerHasApiKeyChange.emit(this.providerHasApiKey);
+      this.providerHasApiKeyOrSubscription = true;
       this.updateEffectiveDisabled();
       return;
     }
@@ -232,16 +259,21 @@ export class SessionInputComponent implements OnChanges {
 
     let provider = this.model.split('/')[0];
 
+    let hasCodexSubscriptionAndEnabled =
+      this.sessionType === SessionTypeEnum.Editor &&
+      this.useCodex &&
+      this.isCodexAuthSet;
+
     if (provider === 'opencode') {
-      this.providerHasApiKey = !!project.isZenApiKeySet;
+      this.providerHasApiKeyOrSubscription = !!project.isZenApiKeySet;
     } else if (provider === 'openai') {
-      this.providerHasApiKey = !!project.isOpenaiApiKeySet;
+      this.providerHasApiKeyOrSubscription =
+        !!project.isOpenaiApiKeySet || hasCodexSubscriptionAndEnabled;
     } else if (provider === 'anthropic') {
-      this.providerHasApiKey = !!project.isAnthropicApiKeySet;
+      this.providerHasApiKeyOrSubscription = !!project.isAnthropicApiKeySet;
     } else {
-      this.providerHasApiKey = false;
+      this.providerHasApiKeyOrSubscription = false;
     }
-    this.providerHasApiKeyChange.emit(this.providerHasApiKey);
     this.updateEffectiveDisabled();
   }
 

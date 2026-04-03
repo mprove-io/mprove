@@ -35,6 +35,22 @@ export class User {
   @IsString()
   apiKeyPrefix?: string;
 
+  @IsOptional()
+  @IsBoolean()
+  isCodexAuthSet?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  codexAuthUpdateTs?: number;
+
+  @IsOptional()
+  @IsInt()
+  codexAuthExpiresTs?: number;
+
+  @IsOptional()
+  @IsInt()
+  codexAuthRefreshTs?: number;
+
   @IsInt()
   serverTs: number;
 }

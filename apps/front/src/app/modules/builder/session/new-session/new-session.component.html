@@ -46,6 +46,8 @@
     <div class="grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-3">
       <div class="text-s400 text-right text-base">Base Branch</div>
       <ng-select
+        #newSessionBranchSelect
+        [fixNgSelectBottom]="newSessionBranchSelect"
         class="w-[240px] select-none text-base"
         [items]="branches"
         [clearable]="false"
@@ -60,6 +62,8 @@
       ></ng-select>
       <div class="text-s400 text-right text-base">Env</div>
       <ng-select
+        #newSessionEnvSelect
+        [fixNgSelectBottom]="newSessionEnvSelect"
         class="w-[240px] select-none text-base"
         [items]="envs"
         [clearable]="false"
@@ -87,6 +91,7 @@
       [sessionType]="sessionType"
       [disabled]="isSubmitting"
       [scrollableInput]="true"
+      [(useCodex)]="useCodex"
       (send)="sendMessage($event)"
     ></m-session-input>
   </div>

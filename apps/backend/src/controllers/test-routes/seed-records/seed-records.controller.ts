@@ -200,6 +200,9 @@ export class SeedRecordsController {
             apiKeyPrefix: apiKeyPrefix,
             apiKeySecretHash: apiKeySecretHash,
             apiKeySalt: apiKeySalt,
+            codexAuthUpdateTs: undefined,
+            codexAuthExpiresTs: undefined,
+            codexAuthRefreshTs: undefined,
             keyTag: undefined,
             serverTs: undefined
           };
@@ -248,6 +251,8 @@ export class SeedRecordsController {
             sandboxInfo: undefined,
             lastFetchEventIndex: undefined,
             reloadRequestedTs: undefined,
+            codexAuthUpdateTs: undefined,
+            useCodex: false,
             keyTag: undefined,
             serverTs: undefined
           };

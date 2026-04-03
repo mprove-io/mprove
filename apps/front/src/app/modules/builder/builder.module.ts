@@ -9,6 +9,7 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { RemarkModule } from 'ngx-remark';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
 import { BuilderComponent } from './builder.component';
 import { BuilderLeftComponent } from './builder-left/builder-left.component';
@@ -83,6 +84,7 @@ import { SessionWrapperComponent } from './session/session-wrapper/session-wrapp
     NgSelectModule,
     NgxSpinnerModule,
     NgScrollbarModule,
+    UiSwitchModule,
     ...RemarkModule
   ]
 })

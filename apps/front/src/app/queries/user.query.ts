@@ -38,6 +38,7 @@ export class UserQuery extends BaseQuery<UserState> {
   alias$ = this.store.pipe(select(state => state.alias));
   userId$ = this.store.pipe(select(state => state.userId));
   apiKeyPrefix$ = this.store.pipe(select(state => state.apiKeyPrefix));
+  isCodexAuthSet$ = this.store.pipe(select(state => state.isCodexAuthSet));
 
   constructor() {
     super(createStore({ name: 'user' }, withProps<UserState>(userState)));

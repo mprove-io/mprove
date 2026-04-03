@@ -180,6 +180,9 @@ export class CreateMemberController {
         passwordResetTokenHash: undefined, // tab-to-ent
         emailVerificationTokenHash: undefined, // tab-to-ent
         apiKeyPrefix: undefined,
+        codexAuthUpdateTs: undefined,
+        codexAuthExpiresTs: undefined,
+        codexAuthRefreshTs: undefined,
         keyTag: undefined,
         serverTs: undefined
       };

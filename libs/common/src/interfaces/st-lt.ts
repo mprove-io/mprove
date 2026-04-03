@@ -278,6 +278,7 @@ export class UserLt {
   ui: Ui;
   apiKeySecretHash?: string;
   apiKeySalt?: string;
+  codexAuthJson?: string;
 }
 
 //

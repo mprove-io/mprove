@@ -1208,6 +1208,8 @@
 
         <div class="flex flex-col">
           <ng-select
+            #addConnectionDialogDatabricksAuthTypeSelect
+            [fixNgSelectBottom]="addConnectionDialogDatabricksAuthTypeSelect"
             data-cy="addConnectionDialogDatabricksAuthTypeSelect"
             class="w-[400px] text-base"
             [items]="databricksAuthTypes"

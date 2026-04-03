@@ -18,6 +18,7 @@ If user asks data question, and there is no mprove.yml - you should setup mprove
 
 The flow for setup a new Mprove project:
 
+- create .gitignore if not exist (or add missing parts from .gitignore example)
 - load more skills
 - get-schemas (if there are no connections - ask user to create a db connection before continue to next step)
 - create mprove.yml (if no existing mprove config)
@@ -39,3 +40,13 @@ The flow for setup a new Mprove project:
 When you need to look up Mprove documentation, check `https://docs.mprove.io/docs/ref-model-malloy` and/or other pages based on task.
 
 When you need to look up Malloy documentation, check `https://docs.malloydata.dev/documentation/user_guides/quickstart_modeling` and/or other pages based on task.
+
+## .gitignore Example
+
+\*.env
+.envrc
+
+.DS_Store
+Thumbs.db
+
+.mprove/

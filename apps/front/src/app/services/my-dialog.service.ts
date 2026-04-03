@@ -136,6 +136,10 @@ import {
   EditPhotoDialogData
 } from '../modules/profile/edit-photo-dialog/edit-photo-dialog.component';
 import {
+  SetCodexAuthDialogComponent,
+  SetCodexAuthDialogData
+} from '../modules/profile/set-codex-auth-dialog/set-codex-auth-dialog.component';
+import {
   ShowKeyDialogComponent,
   ShowKeyDialogData
 } from '../modules/profile/show-key-dialog/show-key-dialog.component';
@@ -334,6 +338,15 @@ export class MyDialogService {
       closeButton: true,
       data: item,
       width: 1064
+    });
+  }
+
+  showSetCodexAuth(item: SetCodexAuthDialogData): void {
+    this.dialogService.open(SetCodexAuthDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 600
     });
   }
 

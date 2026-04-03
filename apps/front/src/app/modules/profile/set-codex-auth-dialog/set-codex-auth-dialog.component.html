@@ -1,0 +1,50 @@
+<div class="bg-m0 flex select-none flex-col p-9">
+  <div class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
+    >Set Codex Auth</div
+  >
+
+  <p class="text-s500 mt-4 text-sm">
+    Paste the contents of your
+    <span class="font-mono">~/.local/share/opencode/auth.json</span> file below.
+    Run <span class="font-mono">opencode auth</span> locally to generate it.
+  </p>
+
+  <form
+    class="mt-4 flex w-[500px] flex-col"
+    [formGroup]="codexAuthForm"
+    (ngSubmit)="save()"
+  >
+    <textarea
+      autocomplete="off"
+      spellcheck="false"
+      class="form-input border-s3 focus:border-m600 rounded font-mono text-sm"
+      [ngClass]="{
+        'border-r600':
+          (codexAuthForm.controls['authJson'].invalid &&
+            codexAuthForm.controls['authJson'].touched) ||
+          parseError
+      }"
+      formControlName="authJson"
+      placeholder='{ "openai": { "type": "oauth", ... } }'
+      rows="8"
+    ></textarea>
+    <m-validation [control]="codexAuthForm.controls['authJson']"></m-validation>
+
+    <div *ngIf="parseError" class="text-r1 mt-1 text-sm">{{ parseError }}</div>
+
+    <div class="mt-6">
+      <button
+        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+
+      <button
+        class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

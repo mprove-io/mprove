@@ -1131,6 +1131,8 @@
 
         <div class="flex flex-col">
           <ng-select
+            #editConnectionDialogDatabricksAuthTypeSelect
+            [fixNgSelectBottom]="editConnectionDialogDatabricksAuthTypeSelect"
             data-cy="editConnectionDialogDatabricksAuthTypeSelect"
             class="w-[400px] text-base"
             [items]="databricksAuthTypes"

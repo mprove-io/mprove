@@ -53,6 +53,11 @@ export class NewSessionComponent implements OnInit {
 
   model: string;
   variant = 'default';
+  useCodex = true;
+
+  toggleUseCodex() {
+    this.useCodex = !this.useCodex;
+  }
 
   onSessionTypeChange() {
     let uiState = this.uiQuery.getValue();
@@ -114,6 +119,7 @@ export class NewSessionComponent implements OnInit {
     let uiState = this.uiQuery.getValue();
     this.model = uiState.newSessionEditorProviderModel;
     this.variant = uiState.newSessionEditorVariant || 'default';
+    this.useCodex = uiState.newSessionUseCodex !== false; // "undefined" -> true
   }
 
   openBranchSelect() {
@@ -275,7 +281,8 @@ export class NewSessionComponent implements OnInit {
         initialBranch: this.initialBranch,
         firstMessage: text,
         messageId: messageId,
-        partId: partId
+        partId: partId,
+        useCodex: this.useCodex
       };
 
       this.apiService
@@ -335,7 +342,8 @@ export class NewSessionComponent implements OnInit {
           status: SessionStatusEnum.New,
           createdTs: Date.now(),
           lastActivityTs: Date.now(),
-          firstMessage: text
+          firstMessage: text,
+          useCodex: this.useCodex
         };
         this.sessionsQuery.updatePart({
           sessions: [newSession, ...currentSessions]

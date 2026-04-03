@@ -18,5 +18,7 @@ export const MCLI_USER_ALLOWED_REQUEST_NAMES: ToBackendRequestInfoNameEnum[] = [
   ToBackendRequestInfoNameEnum.ToBackendPullRepo, // pull
   ToBackendRequestInfoNameEnum.ToBackendPushRepo, // push
   ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit, // revert
-  ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote // revert
+  ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote, // revert
+  // other
+  ToBackendRequestInfoNameEnum.ToBackendSetUserCodexAuth // set-codex-auth
 ];

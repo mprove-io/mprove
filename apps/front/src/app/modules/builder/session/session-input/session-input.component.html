@@ -1,37 +1,6 @@
-<div
-  *ngIf="!isEditor && sessionType === sessionTypeEnum.Editor"
-  class="mb-2 text-center text-[17px] text-red-500"
-  >Editor session requires Files Editor role</div
->
-
-<div
-  *ngIf="
-    isEditor && !projectHasE2bApiKey && sessionType !== sessionTypeEnum.Explorer
-  "
-  class="mb-2 text-center text-[17px] text-red-500"
-  >Editor session requires E2B API Key (see Project Settings)</div
->
-
-<div
-  *ngIf="
-    isEditor &&
-    (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
-    !projectHasAnyApiKey
-  "
-  class="mb-2 text-center text-[17px] text-red-500"
-  >Session requires provider API Key (see Project Settings)</div
->
-
-<div
-  *ngIf="
-    isEditor &&
-    (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
-    projectHasAnyApiKey &&
-    !providerHasApiKey
-  "
-  class="mb-2 text-center text-[17px] text-red-500"
-  >This provider requires an API key (see Project Settings)</div
->
+<div *ngIf="!scrollableInput">
+  <ng-container [ngTemplateOutlet]="errorMessages"></ng-container>
+</div>
 
 <div
   class="overflow-hidden rounded-3xl border-[1.5px]"
@@ -88,7 +57,7 @@
 <div
   *ngIf="
     showSelects &&
-    projectHasAnyApiKey &&
+    projectHasAnyApiKeyOrSubscription &&
     (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer)
   "
   class="mt-4 flex h-10 flex-row items-center justify-center space-x-3"
@@ -101,6 +70,8 @@
   </div>
 
   <ng-select
+    #sessionAgentSelect
+    [fixNgSelectBottom]="sessionAgentSelect"
     *ngIf="sessionType !== sessionTypeEnum.Explorer"
     class="session-agents-select w-[140px] select-none text-base"
     [items]="agents"
@@ -115,6 +86,8 @@
   ></ng-select>
 
   <ng-select
+    #sessionModelSelect
+    [fixNgSelectBottom]="sessionModelSelect"
     class="session-models-select w-[340px] select-none text-base"
     [class.session-models-select-error]="!model && messageText.trim()"
     [items]="models"
@@ -136,7 +109,11 @@
         <m-provider-icon
           *ngIf="item.providerId"
           [providerId]="item.providerId"
-          class="text-s500 mr-2 flex-shrink-0"
+          class="mr-2 flex-shrink-0"
+          [ngClass]="{
+            'text-green-600': useCodex && item.providerId === 'openai',
+            'text-s500': !(useCodex && item.providerId === 'openai')
+          }"
         ></m-provider-icon>
         <span>{{ item.modelId }}</span>
       </div>
@@ -147,7 +124,11 @@
         <m-provider-icon
           *ngIf="item.providerId"
           [providerId]="item.providerId"
-          class="text-s500 mr-2 flex-shrink-0"
+          class="mr-2 flex-shrink-0"
+          [ngClass]="{
+            'text-green-600': useCodex && item.providerId === 'openai',
+            'text-s500': !(useCodex && item.providerId === 'openai')
+          }"
         ></m-provider-icon>
         <span>{{ item.modelId }}</span>
       </div>
@@ -155,6 +136,8 @@
   </ng-select>
 
   <ng-select
+    #sessionVariantSelect
+    [fixNgSelectBottom]="sessionVariantSelect"
     *ngIf="sessionType !== sessionTypeEnum.Explorer"
     class="session-variants-select w-[140px] select-none text-base"
     [items]="variants"
@@ -175,3 +158,80 @@
     <m-context-usage-circle></m-context-usage-circle>
   </div>
 </div>
+
+<div
+  *ngIf="
+    scrollableInput &&
+    showSelects &&
+    isCodexAuthSet &&
+    sessionType === sessionTypeEnum.Editor &&
+    projectHasE2bApiKey &&
+    model?.startsWith('openai/')
+  "
+  class="mt-3 flex cursor-pointer select-none flex-row items-center justify-center"
+  (click)="toggleUseCodex()"
+>
+  <span
+    class="ml-[64px] inline-block w-[340px] text-left text-base"
+    [ngClass]="{ 'text-green-600': useCodex, 'text-s400': !useCodex }"
+    >OpenAI Codex Subscription is {{ useCodex ? 'Enabled' : 'Disabled' }}</span
+  >
+</div>
+
+<div *ngIf="scrollableInput" class="mt-5">
+  <ng-container [ngTemplateOutlet]="errorMessages"></ng-container>
+</div>
+
+<ng-template #errorMessages>
+  <div
+    *ngIf="!isEditor && sessionType === sessionTypeEnum.Editor"
+    class="mb-2 text-center text-[17px] text-red-500"
+    >Editor session requires Files Editor role</div
+  >
+
+  <div
+    *ngIf="
+      isEditor && !projectHasE2bApiKey && sessionType == sessionTypeEnum.Editor
+    "
+    class="mb-2 text-center text-[17px] text-red-500"
+    >Editor session requires E2B API Key (see Project Settings)</div
+  >
+
+  <div
+    *ngIf="
+      isEditor &&
+      (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
+      !projectHasAnyApiKeyOrSubscription
+    "
+    class="mb-2 text-center text-[17px] text-red-500"
+    >{{
+      sessionType === sessionTypeEnum.Editor && isCodexAuthSet && !useCodex
+        ? 'Enable Codex Subscription or set provider API Key (see Project Settings)'
+        : sessionType === sessionTypeEnum.Editor
+          ? 'Session requires Codex Subscription (see Profile) or provider API Key (see Project Settings)'
+          : 'Session requires provider API Key (see Project Settings)'
+    }}</div
+  >
+
+  <div
+    *ngIf="
+      isEditor &&
+      (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
+      projectHasAnyApiKeyOrSubscription &&
+      !providerHasApiKeyOrSubscription
+    "
+    class="mb-2 text-center text-[17px] text-red-500"
+    >{{
+      sessionType === sessionTypeEnum.Editor &&
+      model?.startsWith('openai/') &&
+      isCodexAuthSet &&
+      !useCodex
+        ? 'Enable Codex Subscription or set OpenAI API Key (see Project Settings)'
+        : sessionType === sessionTypeEnum.Editor &&
+            model?.startsWith('openai/') &&
+            !isCodexAuthSet
+          ? 'This provider requires Codex Subscription (see Profile) or API key (see Project Settings)'
+          : 'This provider requires an API key (see Project Settings)'
+    }}</div
+  >
+</ng-template>

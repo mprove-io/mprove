@@ -1,6 +1,7 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
+  boolean,
   index,
   json,
   pgTable,
@@ -59,6 +60,8 @@ export const sessionsTable = pgTable(
     sandboxInfo: json('sandbox_info'),
     lastFetchEventIndex: bigint('last_fetch_event_index', { mode: 'number' }),
     reloadRequestedTs: bigint('reload_requested_ts', { mode: 'number' }),
+    useCodex: boolean('use_codex'),
+    codexAuthUpdateTs: bigint('codex_auth_update_ts', { mode: 'number' }),
     createdTs: bigint('created_ts', { mode: 'number' }).notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

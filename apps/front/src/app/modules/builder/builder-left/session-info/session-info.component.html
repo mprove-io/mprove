@@ -52,6 +52,15 @@
             </div>
 
             <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium"
+                >Codex Subscription</div
+              >
+              <div class="text-s400 text-base">{{
+                session?.useCodex ? 'Enabled' : 'Disabled'
+              }}</div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
               <div class="text-s400 text-base font-medium">Last Activity</div>
               <div class="text-s400 text-base">{{ lastActivityAgo }}</div>
             </div>

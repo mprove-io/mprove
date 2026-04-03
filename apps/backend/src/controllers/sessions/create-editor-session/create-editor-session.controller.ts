@@ -34,6 +34,7 @@ import { BridgesService } from '#backend/services/db/bridges.service';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { EditorCodexService } from '#backend/services/editor/editor-codex.service';
 import { EditorConnectionsService } from '#backend/services/editor/editor-connections.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
@@ -49,6 +50,7 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { makeId } from '#common/functions/make-id';
 import { makeSessionId } from '#common/functions/make-session-id';
 import {
@@ -75,6 +77,7 @@ export class CreateEditorSessionController {
     private sessionsService: SessionsService,
     private editorStreamService: EditorStreamService,
     private editorOpencodeService: EditorOpencodeService,
+    private editorCodexService: EditorCodexService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
@@ -100,7 +103,8 @@ export class CreateEditorSessionController {
       initialBranch,
       firstMessage,
       messageId,
-      partId
+      partId,
+      useCodex
     } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -135,6 +139,15 @@ export class CreateEditorSessionController {
       });
     }
 
+    if (
+      useCodex === true &&
+      isDefinedAndNotEmpty(user.codexAuthJson) === false
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET
+      });
+    }
+
     // Type Editor: existing sandboxed opencode flow
 
     let sandboxEnvs: Record<string, string> = {};
@@ -145,7 +158,7 @@ export class CreateEditorSessionController {
     if (project.anthropicApiKey) {
       sandboxEnvs.ANTHROPIC_API_KEY = project.anthropicApiKey;
     }
-    if (project.openaiApiKey) {
+    if (project.openaiApiKey && useCodex === false) {
       sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
     }
 
@@ -187,6 +200,9 @@ export class CreateEditorSessionController {
           initialBranch: initialBranch,
           envId: envId,
           initialCommit: undefined,
+          useCodex: useCodex,
+          codexAuthUpdateTs:
+            useCodex === true ? user.codexAuthUpdateTs : undefined,
           status: SessionStatusEnum.New,
           lastActivityTs: now,
           createdTs: now
@@ -248,11 +264,24 @@ export class CreateEditorSessionController {
       )
     };
 
-    // disabled malloy-cli in sandbox
-    let sandboxFiles = [
-      // ...malloySandboxFiles,
-      sessionDataFile
-    ];
+    let codexAuthFile: { path: string; data: string };
+
+    if (useCodex === true) {
+      codexAuthFile = this.editorCodexService.buildCodexAuthFile({
+        codexAuthJson: user.codexAuthJson
+      });
+    }
+
+    let sandboxFiles = codexAuthFile
+      ? [
+          // ...malloySandboxFiles,  // disabled malloy-cli in sandbox
+          sessionDataFile,
+          codexAuthFile
+        ]
+      : [
+          // ...malloySandboxFiles, // disabled malloy-cli in sandbox
+          sessionDataFile
+        ];
 
     this.activateSessionAsync({
       sessionId: session.sessionId,

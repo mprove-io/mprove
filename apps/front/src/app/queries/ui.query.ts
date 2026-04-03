@@ -74,6 +74,7 @@ export class UiState {
   newSessionExplorerProviderModel: string;
   newSessionEditorProviderModel: string;
   newSessionEditorVariant: string;
+  newSessionUseCodex: boolean;
 }
 
 let uiState: UiState = {
@@ -131,7 +132,8 @@ let uiState: UiState = {
   newSessionPermissionsAutoAccept: false,
   newSessionExplorerProviderModel: undefined,
   newSessionEditorProviderModel: undefined,
-  newSessionEditorVariant: undefined
+  newSessionEditorVariant: undefined,
+  newSessionUseCodex: true
 };
 
 @Injectable({ providedIn: 'root' })
@@ -251,6 +253,10 @@ export class UiQuery extends BaseQuery<UiState> {
 
   newSessionEditorVariant$ = this.store.pipe(
     select(state => state.newSessionEditorVariant)
+  );
+
+  newSessionUseCodex$ = this.store.pipe(
+    select(state => state.newSessionUseCodex)
   );
 
   constructor() {

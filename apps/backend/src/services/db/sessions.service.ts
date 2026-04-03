@@ -52,6 +52,8 @@ export class SessionsService {
     initialBranch: string;
     envId?: string;
     initialCommit?: string;
+    useCodex: boolean;
+    codexAuthUpdateTs: number;
     status: SessionStatusEnum;
     lastActivityTs: number;
     sandboxStartTs?: number;
@@ -83,6 +85,8 @@ export class SessionsService {
       initialBranch: item.initialBranch,
       envId: item.envId,
       initialCommit: item.initialCommit,
+      useCodex: item.useCodex,
+      codexAuthUpdateTs: item.codexAuthUpdateTs,
       status: item.status,
       archiveReason: undefined,
       pauseReason: undefined,
@@ -162,7 +166,8 @@ export class SessionsService {
       lastActivityTs: session.lastActivityTs,
       firstMessage: session.firstMessage,
       title: ocSession?.openSession?.title,
-      opencodeSessionId: session.opencodeSessionId
+      opencodeSessionId: session.opencodeSessionId,
+      useCodex: session.useCodex
     };
   }
 

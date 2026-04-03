@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -38,6 +44,9 @@ export class ToBackendCreateEditorSessionRequestPayload {
 
   @IsString()
   partId: string;
+
+  @IsBoolean()
+  useCodex: boolean;
 }
 
 export class ToBackendCreateEditorSessionRequest extends ToBackendRequest {

@@ -18,7 +18,8 @@ let sessionState: SessionState = {
   initialCommit: undefined,
   createdTs: undefined,
   lastActivityTs: undefined,
-  firstMessage: undefined
+  firstMessage: undefined,
+  useCodex: false
 };
 
 @Injectable({ providedIn: 'root' })

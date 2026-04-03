@@ -38,6 +38,7 @@ export class UiService {
     newSessionExplorerProviderModel?: string;
     newSessionEditorProviderModel?: string;
     newSessionEditorVariant?: string;
+    newSessionUseCodex?: boolean;
   }) {
     let {
       timezone,
@@ -50,7 +51,8 @@ export class UiService {
       newSessionPermissionsAutoAccept,
       newSessionExplorerProviderModel,
       newSessionEditorProviderModel,
-      newSessionEditorVariant
+      newSessionEditorVariant,
+      newSessionUseCodex
     } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -94,7 +96,10 @@ export class UiService {
         : uiState.newSessionEditorProviderModel,
       newSessionEditorVariant: isDefined(newSessionEditorVariant)
         ? newSessionEditorVariant
-        : uiState.newSessionEditorVariant
+        : uiState.newSessionEditorVariant,
+      newSessionUseCodex: isDefined(newSessionUseCodex)
+        ? newSessionUseCodex
+        : uiState.newSessionUseCodex
     };
 
     let payload: ToBackendSetUserUiRequestPayload = {
