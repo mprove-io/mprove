@@ -1,6 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { DownloadSkillsService } from '#backend/controllers/skills/download-skills/download-skills.service';
+import { SkillsService } from '#backend/controllers/skills/download-skills/download-skills.service';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -16,14 +16,14 @@ import type {
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DownloadSkillsController {
-  constructor(private downloadSkillsService: DownloadSkillsService) {}
+  constructor(private skillsService: SkillsService) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDownloadSkills)
   async downloadSkills(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDownloadSkillsRequest = request.body;
 
     let payload: ToBackendDownloadSkillsResponsePayload =
-      await this.downloadSkillsService.downloadSkills();
+      await this.skillsService.downloadSkills();
 
     return payload;
   }

@@ -226,11 +226,13 @@ DISK_VALKEY_PASSWORD=${VALKEY_PASS}
 DISK_LOG_IS_JSON=FALSE
 DISK_LOG_RESPONSE_ERROR=FALSE
 DISK_LOG_RESPONSE_OK=FALSE
+DISK_TEST_REPOS_PATH=/mprove/mprove_data/mcli-repos
+DISK_TEST_LOCAL_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp6
 
 MPROVE_CLI_TEST_REPOS_PATH=/mprove/mprove_data/mcli-repos
+MPROVE_CLI_TEST_LOCAL_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp6
 MPROVE_CLI_TEST_REMOTE_GIT_URL=https://github.com/mprove-io/mp6.git
 MPROVE_CLI_TEST_DESTINATION_URL=/mprove/mprove_data/mcli-repos/mp6
-MPROVE_CLI_TEST_LOCAL_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp6
 MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp6
 MPROVE_CLI_TEST_PUBLIC_KEY_PATH=/mprove/secrets/demo-project-remote-public-key.pem
 MPROVE_CLI_TEST_PRIVATE_KEY_ENCRYPTED_PATH=/mprove/secrets/demo-project-remote-private-key-encrypted.pem

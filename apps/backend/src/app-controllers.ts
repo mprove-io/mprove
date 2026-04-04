@@ -121,6 +121,7 @@ import { GetSuggestFieldsController } from './controllers/suggest-fields/get-sug
 import { TelemetryLogsController } from './controllers/telemetry/telemetry-logs/telemetry-logs.controller';
 import { TelemetryMetricsController } from './controllers/telemetry/telemetry-metrics/telemetry-metrics.controller';
 import { TelemetryTracesController } from './controllers/telemetry/telemetry-traces/telemetry-traces.controller';
+import { CloneTestRepoController } from './controllers/test-routes/clone-test-repo/clone-test-repo.controller';
 import { DeleteRecordsController } from './controllers/test-routes/delete-records/delete-records.controller';
 import { GetRebuildStructController } from './controllers/test-routes/get-rebuild-struct/get-rebuild-struct.controller';
 import { SeedRecordsController } from './controllers/test-routes/seed-records/seed-records.controller';
@@ -239,6 +240,7 @@ export const appControllers = [
   RunQueriesController,
   RunQueriesDryController,
 
+  CloneTestRepoController,
   DeleteRecordsController,
   GetRebuildStructController,
   SeedRecordsController,

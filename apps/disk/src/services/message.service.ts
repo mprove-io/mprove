@@ -34,6 +34,7 @@ import { DeleteFileService } from '#disk/controllers/07-files/delete-file/delete
 import { GetFileService } from '#disk/controllers/07-files/get-file/get-file.service';
 import { SaveFileService } from '#disk/controllers/07-files/save-file/save-file.service';
 import { SeedProjectService } from '#disk/controllers/08-seed/seed-project/seed-project.service';
+import { CloneTestRepoService } from '#disk/controllers/09-test/clone-test-repo/clone-test-repo.service';
 import { makeErrorResponseDisk } from '#disk/functions/make-error-response-disk';
 import { makeOkResponseDisk } from '#disk/functions/make-ok-response-disk';
 
@@ -78,6 +79,7 @@ export class MessageService {
     private saveFileService: SaveFileService,
 
     private seedProjectService: SeedProjectService,
+    private cloneTestRepoService: CloneTestRepoService,
     private logger: Logger
   ) {}
 
@@ -177,6 +179,9 @@ export class MessageService {
 
       case ToDiskRequestInfoNameEnum.ToDiskSeedProject:
         return await this.seedProjectService.process(request);
+
+      case ToDiskRequestInfoNameEnum.ToDiskCloneTestRepo:
+        return await this.cloneTestRepoService.process(request);
 
       default:
         throw new ServerError({

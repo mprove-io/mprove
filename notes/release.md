@@ -1,5 +1,17 @@
 # release
 
+cloudflared
+pnpm start
+check mcli works
+
+pnpm version-write
+
+(update template and mprove versions in skills/e2b-template-config.json)
+
+pnpm e2b-build
+
+# release
+
 (manual) edit MPROVE_RELEASE_TAG in .env
 
 // write version to multiple package.json

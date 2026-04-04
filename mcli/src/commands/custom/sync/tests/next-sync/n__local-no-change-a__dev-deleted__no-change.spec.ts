@@ -13,8 +13,8 @@ import {
   ToBackendDeleteFileRequestPayload,
   ToBackendDeleteFileResponse
 } from '#common/interfaces/to-backend/files/to-backend-delete-file';
+import { ToBackendCloneTestRepoResponse } from '#common/interfaces/to-backend/test-routes/to-backend-clone-test-repo';
 import { getConfig } from '#mcli/config/get.config';
-import { cloneRepo } from '#mcli/functions/clone-repo';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeSyncTime } from '#mcli/functions/make-sync-time';
@@ -42,9 +42,15 @@ test('1', async () => {
 
     let syncTime = await makeSyncTime();
 
-    await cloneRepo({
-      repoPath: repoPath,
-      gitUrl: config.mproveCliTestLocalSourceGitUrl
+    let orgId = 't' + testId;
+
+    await mreq<ToBackendCloneTestRepoResponse>({
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCloneTestRepo,
+      payload: {
+        orgId: orgId,
+        testId: testId
+      },
+      host: config.mproveCliHost
     });
 
     let projectId = makeId();
@@ -61,7 +67,6 @@ test('1', async () => {
     let password = '123123';
     let apiKey = makeTestApiKey({ testId, userId });
 
-    let orgId = 't' + testId;
     let orgName = testId;
 
     let projectName = testId;

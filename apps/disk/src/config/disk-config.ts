@@ -44,6 +44,14 @@ export class DiskConfig {
   @IsString()
   diskOrganizationsPath?: string;
 
+  @IsOptional()
+  @IsString()
+  diskTestReposPath?: string;
+
+  @IsOptional()
+  @IsString()
+  diskTestLocalSourceGitUrl?: string;
+
   @IsBoolean()
   diskLogIsJson?: boolean;
 

@@ -27,6 +27,7 @@ import { DeleteFileService } from './controllers/07-files/delete-file/delete-fil
 import { GetFileService } from './controllers/07-files/get-file/get-file.service';
 import { SaveFileService } from './controllers/07-files/save-file/save-file.service';
 import { SeedProjectService } from './controllers/08-seed/seed-project/seed-project.service';
+import { CloneTestRepoService } from './controllers/09-test/clone-test-repo/clone-test-repo.service';
 import { ConsumerService } from './services/consumer.service';
 import { DiskTabService } from './services/disk-tab.service';
 import { MessageService } from './services/message.service';
@@ -73,5 +74,7 @@ export const appServices = [
   GetFileService,
   SaveFileService,
 
-  SeedProjectService
+  SeedProjectService,
+
+  CloneTestRepoService
 ];

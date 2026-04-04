@@ -17,8 +17,8 @@ import {
   ToBackendSaveFileRequestPayload,
   ToBackendSaveFileResponse
 } from '#common/interfaces/to-backend/files/to-backend-save-file';
+import { ToBackendCloneTestRepoResponse } from '#common/interfaces/to-backend/test-routes/to-backend-clone-test-repo';
 import { getConfig } from '#mcli/config/get.config';
-import { cloneRepo } from '#mcli/functions/clone-repo';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeSyncTime } from '#mcli/functions/make-sync-time';
@@ -172,11 +172,13 @@ test('1', async () => {
 
       await sleep(POSSIBLE_TIME_DIFF_MS);
 
-      await cloneRepo({
-        repoPath: repoPath,
-        gitUrl: config.mproveCliTestLocalSourceGitUrl,
-        publicKeyPath: config.mproveCliTestPublicKeyPath,
-        privateKeyPath: config.mproveCliTestPrivateKeyEncryptedPath
+      await mreq<ToBackendCloneTestRepoResponse>({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCloneTestRepo,
+        payload: {
+          orgId: orgId,
+          testId: testId
+        },
+        host: config.mproveCliHost
       });
 
       let syncConfig = await writeSyncConfig({

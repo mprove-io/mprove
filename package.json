@@ -1,6 +1,6 @@
 {
   "name": "mprove",
-  "version": "11.0.108",
+  "version": "11.0.109-dev",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
   "packageManager": "pnpm@10.32.1",
@@ -117,7 +117,6 @@
     "e2x:backend": "turbo run e2x --filter=@mprove/backend --log-prefix=none",
     "custom:backend": "turbo run custom --filter=@mprove/backend --log-prefix=none",
     "e2b:build": "node --import @swc-node/register/esm-register skills/build-e2b-template.ts",
-    "e2b:templates": "node --import @swc-node/register/esm-register skills/list-e2b-templates.ts",
     "clean:app": "pnpm clean:blockml-data && pnpm clean:blockml-logs && pnpm clean:clickstack-ch-data && pnpm clean:clickstack-ch-logs && pnpm clean:db-main && pnpm clean:dwh-mysql && pnpm clean:dwh-postgres && pnpm clean:mcli-repos && pnpm clean:organizations",
     "clean:mprove_data": "pnpm clean:blockml-data && pnpm clean:blockml-logs && pnpm clean:clickstack-ch-data && pnpm clean:clickstack-ch-logs && pnpm clean:clickstack-db && pnpm clean:db-main && pnpm clean:dwh-mysql && pnpm clean:dwh-postgres && pnpm clean:mcli-repos && pnpm clean:organizations",
     "clean:blockml-data": "rimraf --glob \"mprove_data/blockml-data/*\" \"mprove_data/blockml-data/.[!.]*\"",

@@ -119,6 +119,7 @@ import { ToBackendSpecialRebuildStructsRequest } from '#common/interfaces/to-bac
 import { ToBackendGetStateRequest } from '#common/interfaces/to-backend/state/to-backend-get-state';
 import { ToBackendGetStructRequest } from '#common/interfaces/to-backend/structs/to-backend-get-struct';
 import { ToBackendGetSuggestFieldsRequest } from '#common/interfaces/to-backend/suggest-fields/to-backend-get-suggest-fields';
+import { ToBackendCloneTestRepoRequest } from '#common/interfaces/to-backend/test-routes/to-backend-clone-test-repo';
 import { ToBackendDeleteRecordsRequest } from '#common/interfaces/to-backend/test-routes/to-backend-delete-records';
 import { ToBackendGetRebuildStructRequest } from '#common/interfaces/to-backend/test-routes/to-backend-get-rebuild-struct';
 import { ToBackendSeedRecordsRequest } from '#common/interfaces/to-backend/test-routes/to-backend-seed-records';
@@ -159,6 +160,8 @@ export const nameToClass = {
     ToBackendSeedRecordsRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDeleteRecords]:
     ToBackendDeleteRecordsRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendCloneTestRepo]:
+    ToBackendCloneTestRepoRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration]:
     ToBackendCompleteUserRegistrationRequest,

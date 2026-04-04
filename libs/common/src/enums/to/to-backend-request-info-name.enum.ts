@@ -12,6 +12,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetRebuildStruct = 'api/ToBackendGetRebuildStruct',
   ToBackendSeedRecords = 'api/ToBackendSeedRecords',
   ToBackendDeleteRecords = 'api/ToBackendDeleteRecords',
+  ToBackendCloneTestRepo = 'api/ToBackendCloneTestRepo',
   //
   ToBackendCompleteUserRegistration = 'api/ToBackendCompleteUserRegistration',
   ToBackendConfirmUserEmail = 'api/ToBackendConfirmUserEmail',

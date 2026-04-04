@@ -3,10 +3,8 @@ import { Command, Option } from 'clipanion';
 import fse from 'fs-extra';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import type {
-  SkillItem,
-  ToBackendDownloadSkillsResponse
-} from '#common/interfaces/to-backend/skills/to-backend-download-skills';
+import type { SkillItem } from '#common/interfaces/backend/skill-item';
+import type { ToBackendDownloadSkillsResponse } from '#common/interfaces/to-backend/skills/to-backend-download-skills';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';

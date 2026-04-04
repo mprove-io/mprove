@@ -3,14 +3,14 @@ import type { Context } from '@rekog/mcp-nest';
 import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { z } from 'zod';
-import { DownloadSkillsService } from '#backend/controllers/skills/download-skills/download-skills.service';
+import { SkillsService } from '#backend/controllers/skills/download-skills/download-skills.service';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { MCP_TOOL_DOWNLOAD_SKILLS } from '#common/constants/top-backend';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
 export class DownloadSkillsTool {
-  constructor(private downloadSkillsService: DownloadSkillsService) {}
+  constructor(private skillsService: SkillsService) {}
 
   @Tool({
     name: MCP_TOOL_DOWNLOAD_SKILLS,
@@ -30,6 +30,6 @@ export class DownloadSkillsTool {
     context: Context,
     request: Request
   ) {
-    return await this.downloadSkillsService.downloadSkills();
+    return await this.skillsService.downloadSkills();
   }
 }

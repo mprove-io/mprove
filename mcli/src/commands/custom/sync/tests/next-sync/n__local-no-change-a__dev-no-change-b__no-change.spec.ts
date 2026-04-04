@@ -7,12 +7,14 @@ import { RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import { ToBackendCloneTestRepoResponse } from '#common/interfaces/to-backend/test-routes/to-backend-clone-test-repo';
 import { getConfig } from '#mcli/config/get.config';
-import { cloneRepo } from '#mcli/functions/clone-repo';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeSyncTime } from '#mcli/functions/make-sync-time';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
+import { mreq } from '#mcli/functions/mreq';
 import { prepareTest } from '#mcli/functions/prepare-test';
 import { writeSyncConfig } from '#mcli/functions/write-sync-config';
 import { CustomContext } from '#mcli/models/custom-command';
@@ -129,11 +131,13 @@ test('1', async () => {
 
       let syncTime = await makeSyncTime();
 
-      await cloneRepo({
-        repoPath: repoPath,
-        gitUrl: config.mproveCliTestLocalSourceGitUrl,
-        publicKeyPath: config.mproveCliTestPublicKeyPath,
-        privateKeyPath: config.mproveCliTestPrivateKeyEncryptedPath
+      await mreq<ToBackendCloneTestRepoResponse>({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCloneTestRepo,
+        payload: {
+          orgId: orgId,
+          testId: testId
+        },
+        host: config.mproveCliHost
       });
 
       let syncConfig = await writeSyncConfig({

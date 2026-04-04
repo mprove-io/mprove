@@ -34,5 +34,7 @@ export enum ToDiskRequestInfoNameEnum {
   ToDiskGetFile = 'ToDiskGetFile',
   ToDiskSaveFile = 'ToDiskSaveFile',
 
-  ToDiskSeedProject = 'ToDiskSeedProject'
+  ToDiskSeedProject = 'ToDiskSeedProject',
+
+  ToDiskCloneTestRepo = 'ToDiskCloneTestRepo'
 }

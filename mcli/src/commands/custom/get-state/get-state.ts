@@ -36,7 +36,7 @@ export class GetStateCommand extends CustomCommand {
   });
 
   projectId = Option.String('--project-id', {
-    description: '(required) Project Id'
+    description: '(optional if set through env var) Project Id'
   });
 
   repoType = Option.String('--repo-type', {

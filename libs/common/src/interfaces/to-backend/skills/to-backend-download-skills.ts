@@ -1,22 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { ValidateNested } from 'class-validator';
+import { SkillItem } from '#common/interfaces/backend/skill-item';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
-export class ToBackendDownloadSkillsRequestPayload {}
-
 export class ToBackendDownloadSkillsRequest extends ToBackendRequest {
-  @ValidateNested()
-  @Type(() => ToBackendDownloadSkillsRequestPayload)
-  payload: ToBackendDownloadSkillsRequestPayload;
-}
-
-export class SkillItem {
-  @IsString()
-  name: string;
-
-  @IsString()
-  content: string;
+  payload: { [k in any]: never };
 }
 
 export class ToBackendDownloadSkillsResponsePayload {

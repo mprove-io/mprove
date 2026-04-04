@@ -32,6 +32,10 @@ export function getDevConfig() {
 
     diskOrganizationsPath: process.env.DISK_ORGANIZATIONS_PATH,
 
+    diskTestReposPath: process.env.DISK_TEST_REPOS_PATH,
+
+    diskTestLocalSourceGitUrl: process.env.DISK_TEST_LOCAL_SOURCE_GIT_URL,
+
     diskLogIsJson: enumToBoolean({
       value: process.env.DISK_LOG_IS_JSON,
       name: 'DISK_LOG_IS_JSON'
