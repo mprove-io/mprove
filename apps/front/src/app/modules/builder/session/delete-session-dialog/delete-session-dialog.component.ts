@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { PROD_REPO_ID } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendDeleteSessionRequestPayload } from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -88,7 +89,10 @@ export class DeleteSessionDialogComponent implements OnInit {
 
           let currentSession = this.sessionQuery.getValue();
           if (currentSession?.sessionId === sessionId) {
-            this.navigateService.navigateToBuilder();
+            this.navigateService.navigateToBuilder({
+              repoId: PROD_REPO_ID,
+              branchId: this.navigateService.nav.projectDefaultBranch
+            });
           }
         }),
         take(1)

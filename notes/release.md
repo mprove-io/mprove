@@ -35,7 +35,7 @@ xattr -d com.apple.quarantine mprove
 
 (update template and mprove versions in skills/e2b-template-config.json)
 
-pnpm e2b-build
+pnpm e2b:build
 
 update template in env
 
