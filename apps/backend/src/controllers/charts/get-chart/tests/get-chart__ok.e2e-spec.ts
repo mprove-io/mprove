@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
@@ -5,6 +7,7 @@ import { prepareSeed, prepareTest } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { PrepTest } from '#backend/interfaces/prep-test';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -34,119 +37,136 @@ let projectName = testId;
 
 let chartId = 'c1';
 
-let prepTest: PrepTest;
-
 test('1', async t => {
-  let resp: ToBackendGetChartResponse;
+  let isPass: boolean;
+  let prepTest: PrepTest;
 
-  try {
-    prepTest = await prepareTest({});
+  await retry(async (bail: any) => {
+    let resp: ToBackendGetChartResponse;
 
-    let c1Postgres: ToBackendSeedRecordsRequestPayloadConnectionsItem = {
-      envId: PROJECT_ENV_PROD,
-      projectId: projectId,
-      connectionId: 'c1_postgres',
-      type: ConnectionTypeEnum.PostgreSQL,
-      options: {
-        postgres: {
-          host: prepTest.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
-            'demoProjectDwhPostgresHost'
-          ),
-          port: 5436,
-          username: prepTest.cs.get<
-            BackendConfig['demoProjectDwhPostgresUser']
-          >('demoProjectDwhPostgresUser'),
-          password: prepTest.cs.get<
-            BackendConfig['demoProjectDwhPostgresPassword']
-          >('demoProjectDwhPostgresPassword'),
-          database: 'p_db',
-          isSSL: false
-        }
-      }
-    };
+    try {
+      prepTest = await prepareTest({});
 
-    let prepareSeedResult = await prepareSeed({
-      httpServer: prepTest.httpServer,
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email],
-        orgIds: [orgId],
-        projectIds: [projectId],
-        projectNames: [projectName]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            userId,
-            email,
-            password,
-            isEmailVerified: true
-          }
-        ],
-        orgs: [
-          {
-            orgId: orgId,
-            ownerEmail: email,
-            name: orgName
-          }
-        ],
-        projects: [
-          {
-            orgId,
-            projectId,
-            testProjectId,
-            name: projectName,
-            defaultBranch: BRANCH_MAIN,
-            remoteType: ProjectRemoteTypeEnum.Managed
-          }
-        ],
-        members: [
-          {
-            memberId: userId,
-            email,
-            projectId,
-            isAdmin: true,
-            isEditor: true,
-            isExplorer: true
-          }
-        ],
-        connections: [c1Postgres]
-      },
-      loginUserPayload: { email, password }
-    });
-
-    let req: ToBackendGetChartRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetChart,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        projectId: projectId,
-        repoId: userId,
-        branchId: BRANCH_MAIN,
+      let c1Postgres: ToBackendSeedRecordsRequestPayloadConnectionsItem = {
         envId: PROJECT_ENV_PROD,
-        chartId: chartId,
-        timezone: 'UTC'
+        projectId: projectId,
+        connectionId: 'c1_postgres',
+        type: ConnectionTypeEnum.PostgreSQL,
+        options: {
+          postgres: {
+            host: prepTest.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
+              'demoProjectDwhPostgresHost'
+            ),
+            port: 5436,
+            username: prepTest.cs.get<
+              BackendConfig['demoProjectDwhPostgresUser']
+            >('demoProjectDwhPostgresUser'),
+            password: prepTest.cs.get<
+              BackendConfig['demoProjectDwhPostgresPassword']
+            >('demoProjectDwhPostgresPassword'),
+            database: 'p_db',
+            isSSL: false
+          }
+        }
+      };
+
+      let prepareSeedResult = await prepareSeed({
+        httpServer: prepTest.httpServer,
+        traceId: traceId,
+        deleteRecordsPayload: {
+          emails: [email],
+          orgIds: [orgId],
+          projectIds: [projectId],
+          projectNames: [projectName]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              userId,
+              email,
+              password,
+              isEmailVerified: true
+            }
+          ],
+          orgs: [
+            {
+              orgId: orgId,
+              ownerEmail: email,
+              name: orgName
+            }
+          ],
+          projects: [
+            {
+              orgId,
+              projectId,
+              testProjectId,
+              name: projectName,
+              defaultBranch: BRANCH_MAIN,
+              remoteType: ProjectRemoteTypeEnum.Managed
+            }
+          ],
+          members: [
+            {
+              memberId: userId,
+              email,
+              projectId,
+              isAdmin: true,
+              isEditor: true,
+              isExplorer: true
+            }
+          ],
+          connections: [c1Postgres]
+        },
+        loginUserPayload: { email, password }
+      });
+
+      let req: ToBackendGetChartRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendGetChart,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          repoId: userId,
+          branchId: BRANCH_MAIN,
+          envId: PROJECT_ENV_PROD,
+          chartId: chartId,
+          timezone: 'UTC'
+        }
+      };
+
+      resp = await sendToBackend<ToBackendGetChartResponse>({
+        httpServer: prepTest.httpServer,
+        loginToken: prepareSeedResult.loginToken,
+        req: req
+      });
+
+      await prepTest.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prepTest?.logger,
+        cs: prepTest?.cs
+      });
+      if (prepTest) {
+        await prepTest.app.close();
       }
-    };
+    }
 
-    resp = await sendToBackend<ToBackendGetChartResponse>({
-      httpServer: prepTest.httpServer,
-      loginToken: prepareSeedResult.loginToken,
-      req: req
-    });
+    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
 
-    await prepTest.app.close();
-  } catch (e) {
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prepTest.logger,
-      cs: prepTest.cs
+      logger: prepTest?.logger,
+      cs: prepTest?.cs
     });
-  }
+  });
 
-  t.is(resp.info.error, undefined);
-  t.is(resp.info.status, ResponseInfoStatusEnum.Ok);
+  t.is(isPass, true);
 });

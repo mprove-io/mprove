@@ -2,7 +2,7 @@ import { expect, test } from 'bun:test';
 import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import { BRANCH_MAIN } from '#common/constants/top';
-import { RETRY_OPTIONS } from '#common/constants/top-mcli';
+import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -132,7 +132,7 @@ test('1', async () => {
     );
 
     isPass = true;
-  }, RETRY_OPTIONS).catch((er: any) => {
+  }, MCLI_E2E_RETRY_OPTIONS).catch((er: any) => {
     if (context) {
       console.log(context.stdout.toString());
       console.log(context.stderr.toString());

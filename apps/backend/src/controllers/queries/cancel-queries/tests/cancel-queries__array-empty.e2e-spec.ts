@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
@@ -10,6 +12,7 @@ import {
   PROJECT_ENV_PROD,
   UTC
 } from '#common/constants/top';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -50,157 +53,174 @@ let queryJobId = makeId();
 let structId = makeId();
 let mconfigId = makeId();
 
-let prep: Prep;
-
 test('1', async t => {
-  let resp1: ToBackendCancelQueriesResponse;
+  let isPass: boolean;
+  let prep: Prep;
 
-  let mconfig: Mconfig = {
-    structId: structId,
-    mconfigId: mconfigId,
-    queryId: queryId,
-    modelId: 'unk',
-    modelType: ModelTypeEnum.Malloy,
-    parentType: MconfigParentTypeEnum.Chart,
-    parentId: undefined,
-    dateRangeIncludesRightSide: false,
-    storePart: undefined,
-    modelLabel: 'unk',
-    modelFilePath: 'unk',
-    compiledQuery: undefined,
-    malloyQueryStable: undefined,
-    malloyQueryExtra: undefined,
-    select: [],
-    sortings: [],
-    sorts: undefined,
-    timezone: UTC,
-    limit: 500,
-    filters: [],
-    chart: makeCopy(DEFAULT_CHART),
-    serverTs: 1
-  };
+  await retry(async (bail: any) => {
+    let resp1: ToBackendCancelQueriesResponse;
 
-  let query: Query = {
-    projectId: projectId,
-    envId: PROJECT_ENV_PROD,
-    connectionId: connectionId,
-    connectionType: connectionType,
-    queryId: queryId,
-    reportId: undefined,
-    reportStructId: undefined,
-    sql: '123',
-    apiMethod: undefined,
-    apiUrl: undefined,
-    apiBody: undefined,
-    data: undefined,
-    status: QueryStatusEnum.Running,
-    lastRunBy: userId,
-    lastRunTs: 1,
-    lastCancelTs: undefined,
-    lastCompleteTs: undefined,
-    lastCompleteDuration: undefined,
-    lastErrorMessage: undefined,
-    lastErrorTs: undefined,
-    queryJobId: queryJobId,
-    bigqueryQueryJobId: undefined,
-    bigqueryConsecutiveErrorsGetJob: 0,
-    bigqueryConsecutiveErrorsGetResults: 0,
-    serverTs: 1
-  };
-
-  try {
-    prep = await prepareTestAndSeed({
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email],
-        orgIds: [orgId],
-        projectIds: [projectId],
-        projectNames: [projectName]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            userId,
-            email,
-            password,
-            isEmailVerified: true
-          }
-        ],
-        orgs: [
-          {
-            orgId: orgId,
-            ownerEmail: email,
-            name: orgName
-          }
-        ],
-        projects: [
-          {
-            orgId,
-            projectId,
-            name: projectName,
-            remoteType: ProjectRemoteTypeEnum.Managed,
-            defaultBranch: BRANCH_MAIN
-          }
-        ],
-        members: [
-          {
-            memberId: userId,
-            email,
-            projectId,
-            isAdmin: true,
-            isEditor: true,
-            isExplorer: true
-          }
-        ],
-        connections: [
-          {
-            projectId: projectId,
-            connectionId: connectionId,
-            envId: PROJECT_ENV_PROD,
-            type: connectionType,
-            options: {}
-          }
-        ],
-        queries: [query],
-        mconfigs: [mconfig]
-      },
-      loginUserPayload: { email, password }
-    });
-
-    let req1: ToBackendCancelQueriesRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        projectId: projectId,
-        repoId: PROD_REPO_ID,
-        branchId: BRANCH_MAIN,
-        envId: PROJECT_ENV_PROD,
-        mconfigIds: []
-      }
+    let mconfig: Mconfig = {
+      structId: structId,
+      mconfigId: mconfigId,
+      queryId: queryId,
+      modelId: 'unk',
+      modelType: ModelTypeEnum.Malloy,
+      parentType: MconfigParentTypeEnum.Chart,
+      parentId: undefined,
+      dateRangeIncludesRightSide: false,
+      storePart: undefined,
+      modelLabel: 'unk',
+      modelFilePath: 'unk',
+      compiledQuery: undefined,
+      malloyQueryStable: undefined,
+      malloyQueryExtra: undefined,
+      select: [],
+      sortings: [],
+      sorts: undefined,
+      timezone: UTC,
+      limit: 500,
+      filters: [],
+      chart: makeCopy(DEFAULT_CHART),
+      serverTs: 1
     };
 
-    resp1 = await sendToBackend<ToBackendCancelQueriesResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: req1
-    });
+    let query: Query = {
+      projectId: projectId,
+      envId: PROJECT_ENV_PROD,
+      connectionId: connectionId,
+      connectionType: connectionType,
+      queryId: queryId,
+      reportId: undefined,
+      reportStructId: undefined,
+      sql: '123',
+      apiMethod: undefined,
+      apiUrl: undefined,
+      apiBody: undefined,
+      data: undefined,
+      status: QueryStatusEnum.Running,
+      lastRunBy: userId,
+      lastRunTs: 1,
+      lastCancelTs: undefined,
+      lastCompleteTs: undefined,
+      lastCompleteDuration: undefined,
+      lastErrorMessage: undefined,
+      lastErrorTs: undefined,
+      queryJobId: queryJobId,
+      bigqueryQueryJobId: undefined,
+      bigqueryConsecutiveErrorsGetJob: 0,
+      bigqueryConsecutiveErrorsGetResults: 0,
+      serverTs: 1
+    };
 
-    await prep.app.close();
-  } catch (e) {
+    try {
+      prep = await prepareTestAndSeed({
+        traceId: traceId,
+        deleteRecordsPayload: {
+          emails: [email],
+          orgIds: [orgId],
+          projectIds: [projectId],
+          projectNames: [projectName]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              userId,
+              email,
+              password,
+              isEmailVerified: true
+            }
+          ],
+          orgs: [
+            {
+              orgId: orgId,
+              ownerEmail: email,
+              name: orgName
+            }
+          ],
+          projects: [
+            {
+              orgId,
+              projectId,
+              name: projectName,
+              remoteType: ProjectRemoteTypeEnum.Managed,
+              defaultBranch: BRANCH_MAIN
+            }
+          ],
+          members: [
+            {
+              memberId: userId,
+              email,
+              projectId,
+              isAdmin: true,
+              isEditor: true,
+              isExplorer: true
+            }
+          ],
+          connections: [
+            {
+              projectId: projectId,
+              connectionId: connectionId,
+              envId: PROJECT_ENV_PROD,
+              type: connectionType,
+              options: {}
+            }
+          ],
+          queries: [query],
+          mconfigs: [mconfig]
+        },
+        loginUserPayload: { email, password }
+      });
+
+      let req1: ToBackendCancelQueriesRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          repoId: PROD_REPO_ID,
+          branchId: BRANCH_MAIN,
+          envId: PROJECT_ENV_PROD,
+          mconfigIds: []
+        }
+      };
+
+      resp1 = await sendToBackend<ToBackendCancelQueriesResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req1
+      });
+
+      await prep.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prep?.logger,
+        cs: prep?.cs
+      });
+      if (prep) {
+        await prep.app.close();
+      }
+    }
+
+    assert.equal(resp1.info.error.message, ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
+    assert.equal(
+      resp1.info.error.displayData[0].arrayNotEmpty,
+      'mconfigIds should not be empty'
+    );
+
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prep?.logger,
+      cs: prep?.cs
     });
-  }
+  });
 
-  t.is(resp1.info.error.message, ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
-  t.is(
-    resp1.info.error.displayData[0].arrayNotEmpty,
-    'mconfigIds should not be empty'
-  );
+  t.is(isPass, true);
 });

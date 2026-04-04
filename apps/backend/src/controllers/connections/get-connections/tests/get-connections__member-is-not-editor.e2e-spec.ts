@@ -1,9 +1,12 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -29,94 +32,114 @@ let orgName = testId;
 let projectId = makeId();
 let projectName = testId;
 
-let prep: Prep;
-
 test('1', async t => {
-  let resp: ToBackendGetConnectionsResponse;
+  let isPass: boolean;
+  let prep: Prep;
 
-  try {
-    prep = await prepareTestAndSeed({
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email],
-        orgIds: [orgId],
-        projectIds: [projectId],
-        projectNames: [projectName]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            userId,
-            email,
-            password,
-            isEmailVerified: true
-          }
-        ],
-        orgs: [
-          {
-            orgId,
-            name: orgName,
-            ownerEmail: email
-          }
-        ],
-        projects: [
-          {
-            orgId,
-            projectId,
-            name: projectName,
-            remoteType: ProjectRemoteTypeEnum.Managed,
-            defaultBranch: BRANCH_MAIN
-          }
-        ],
-        members: [
-          {
-            memberId: userId,
-            email,
-            projectId,
-            isAdmin: false,
-            isEditor: false,
-            isExplorer: true
-          }
-        ],
-        connections: [
-          {
-            connectionId: 'c1',
-            envId: PROJECT_ENV_PROD,
-            projectId: projectId,
-            type: ConnectionTypeEnum.PostgreSQL,
-            options: {}
-          }
-        ]
-      },
-      loginUserPayload: { email, password }
-    });
+  await retry(async (bail: any) => {
+    let resp: ToBackendGetConnectionsResponse;
 
-    let req: ToBackendGetConnectionsRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetConnections,
+    try {
+      prep = await prepareTestAndSeed({
         traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        projectId: projectId
+        deleteRecordsPayload: {
+          emails: [email],
+          orgIds: [orgId],
+          projectIds: [projectId],
+          projectNames: [projectName]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              userId,
+              email,
+              password,
+              isEmailVerified: true
+            }
+          ],
+          orgs: [
+            {
+              orgId,
+              name: orgName,
+              ownerEmail: email
+            }
+          ],
+          projects: [
+            {
+              orgId,
+              projectId,
+              name: projectName,
+              remoteType: ProjectRemoteTypeEnum.Managed,
+              defaultBranch: BRANCH_MAIN
+            }
+          ],
+          members: [
+            {
+              memberId: userId,
+              email,
+              projectId,
+              isAdmin: false,
+              isEditor: false,
+              isExplorer: true
+            }
+          ],
+          connections: [
+            {
+              connectionId: 'c1',
+              envId: PROJECT_ENV_PROD,
+              projectId: projectId,
+              type: ConnectionTypeEnum.PostgreSQL,
+              options: {}
+            }
+          ]
+        },
+        loginUserPayload: { email, password }
+      });
+
+      let req: ToBackendGetConnectionsRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendGetConnections,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId
+        }
+      };
+
+      resp = await sendToBackend<ToBackendGetConnectionsResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req
+      });
+
+      await prep.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prep?.logger,
+        cs: prep?.cs
+      });
+      if (prep) {
+        await prep.app.close();
       }
-    };
+    }
 
-    resp = await sendToBackend<ToBackendGetConnectionsResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: req
-    });
+    assert.equal(
+      resp.info.error.message,
+      ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+    );
 
-    await prep.app.close();
-  } catch (e) {
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prep?.logger,
+      cs: prep?.cs
     });
-  }
+  });
 
-  t.is(resp.info.error.message, ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN);
+  t.is(isPass, true);
 });

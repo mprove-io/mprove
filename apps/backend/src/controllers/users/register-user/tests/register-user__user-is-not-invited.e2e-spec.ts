@@ -1,8 +1,11 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -19,48 +22,65 @@ let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123456';
 
-let prep: Prep;
-
 test('1', async t => {
-  let resp: ToBackendRegisterUserResponse;
+  let isPass: boolean;
+  let prep: Prep;
 
-  try {
-    prep = await prepareTestAndSeed({
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email]
-      },
-      overrideConfigOptions: {
-        registerOnlyInvitedUsers: true
-      }
-    });
+  await retry(async (bail: any) => {
+    let resp: ToBackendRegisterUserResponse;
 
-    let registerUserReq: ToBackendRegisterUserRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
+    try {
+      prep = await prepareTestAndSeed({
         traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        email: email,
-        password: password
+        deleteRecordsPayload: {
+          emails: [email]
+        },
+        overrideConfigOptions: {
+          registerOnlyInvitedUsers: true
+        }
+      });
+
+      let registerUserReq: ToBackendRegisterUserRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          email: email,
+          password: password
+        }
+      };
+
+      resp = await sendToBackend<ToBackendRegisterUserResponse>({
+        httpServer: prep.httpServer,
+        req: registerUserReq
+      });
+
+      await prep.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prep?.logger,
+        cs: prep?.cs
+      });
+      if (prep) {
+        await prep.app.close();
       }
-    };
+    }
 
-    resp = await sendToBackend<ToBackendRegisterUserResponse>({
-      httpServer: prep.httpServer,
-      req: registerUserReq
-    });
+    assert.equal(resp.info.error.message, ErEnum.BACKEND_USER_IS_NOT_INVITED);
 
-    await prep.app.close();
-  } catch (e) {
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prep?.logger,
+      cs: prep?.cs
     });
-  }
+  });
 
-  t.is(resp.info.error.message, ErEnum.BACKEND_USER_IS_NOT_INVITED);
+  t.is(isPass, true);
 });

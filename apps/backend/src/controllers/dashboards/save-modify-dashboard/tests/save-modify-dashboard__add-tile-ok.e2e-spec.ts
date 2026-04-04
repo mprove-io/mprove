@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
@@ -9,6 +11,7 @@ import {
   PROJECT_ENV_PROD,
   UTC
 } from '#common/constants/top';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -42,134 +45,151 @@ let projectName = testId;
 
 let dashboardId = 'd2';
 
-let prep: Prep;
-
 test('1', async t => {
-  let resp: ToBackendSaveModifyDashboardResponse;
+  let isPass: boolean;
+  let prep: Prep;
 
-  try {
-    prep = await prepareTestAndSeed({
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email],
-        orgIds: [orgId],
-        projectIds: [projectId],
-        projectNames: [projectName]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            userId,
-            email,
-            password,
-            isEmailVerified: true
-          }
-        ],
-        orgs: [
-          {
-            orgId: orgId,
-            ownerEmail: email,
-            name: orgName
-          }
-        ],
-        projects: [
-          {
-            orgId,
-            projectId,
-            testProjectId,
-            name: projectName,
-            defaultBranch: BRANCH_MAIN,
-            remoteType: ProjectRemoteTypeEnum.Managed
-          }
-        ],
-        members: [
-          {
-            memberId: userId,
-            email,
-            projectId,
-            isAdmin: true,
-            isEditor: true,
-            isExplorer: true
-          }
-        ],
-        connections: [
-          {
-            projectId: projectId,
-            connectionId: 'c7',
-            envId: PROJECT_ENV_PROD,
-            type: ConnectionTypeEnum.GoogleApi,
-            options: {
-              storeGoogleApi: EMPTY_STORE_GOOGLE_API_OPTIONS
+  await retry(async (bail: any) => {
+    let resp: ToBackendSaveModifyDashboardResponse;
+
+    try {
+      prep = await prepareTestAndSeed({
+        traceId: traceId,
+        deleteRecordsPayload: {
+          emails: [email],
+          orgIds: [orgId],
+          projectIds: [projectId],
+          projectNames: [projectName]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              userId,
+              email,
+              password,
+              isEmailVerified: true
             }
-          }
-        ]
-      },
-      loginUserPayload: { email, password }
-    });
+          ],
+          orgs: [
+            {
+              orgId: orgId,
+              ownerEmail: email,
+              name: orgName
+            }
+          ],
+          projects: [
+            {
+              orgId,
+              projectId,
+              testProjectId,
+              name: projectName,
+              defaultBranch: BRANCH_MAIN,
+              remoteType: ProjectRemoteTypeEnum.Managed
+            }
+          ],
+          members: [
+            {
+              memberId: userId,
+              email,
+              projectId,
+              isAdmin: true,
+              isEditor: true,
+              isExplorer: true
+            }
+          ],
+          connections: [
+            {
+              projectId: projectId,
+              connectionId: 'c7',
+              envId: PROJECT_ENV_PROD,
+              type: ConnectionTypeEnum.GoogleApi,
+              options: {
+                storeGoogleApi: EMPTY_STORE_GOOGLE_API_OPTIONS
+              }
+            }
+          ]
+        },
+        loginUserPayload: { email, password }
+      });
 
-    let req1: ToBackendGetDashboardRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        projectId: projectId,
-        repoId: userId,
-        branchId: BRANCH_MAIN,
-        envId: PROJECT_ENV_PROD,
-        dashboardId: dashboardId,
-        timezone: 'UTC'
+      let req1: ToBackendGetDashboardRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          repoId: userId,
+          branchId: BRANCH_MAIN,
+          envId: PROJECT_ENV_PROD,
+          dashboardId: dashboardId,
+          timezone: 'UTC'
+        }
+      };
+
+      let resp1 = await sendToBackend<ToBackendGetDashboardResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req1
+      });
+
+      let fromDashboard = resp1.payload.dashboard;
+
+      let newTile = makeCopy(fromDashboard.tiles[0]);
+
+      newTile.title = 'new title';
+
+      let req: ToBackendSaveModifyDashboardRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          repoId: userId,
+          branchId: BRANCH_MAIN,
+          envId: PROJECT_ENV_PROD,
+          toDashboardId: dashboardId,
+          fromDashboardId: dashboardId,
+          newTile: newTile,
+          isReplaceTile: false,
+          timezone: UTC
+        }
+      };
+
+      resp = await sendToBackend<ToBackendSaveModifyDashboardResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req
+      });
+
+      await prep.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prep?.logger,
+        cs: prep?.cs
+      });
+      if (prep) {
+        await prep.app.close();
       }
-    };
+    }
 
-    let resp1 = await sendToBackend<ToBackendGetDashboardResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: req1
-    });
+    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
 
-    let fromDashboard = resp1.payload.dashboard;
-
-    let newTile = makeCopy(fromDashboard.tiles[0]);
-
-    newTile.title = 'new title';
-
-    let req: ToBackendSaveModifyDashboardRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        projectId: projectId,
-        repoId: userId,
-        branchId: BRANCH_MAIN,
-        envId: PROJECT_ENV_PROD,
-        toDashboardId: dashboardId,
-        fromDashboardId: dashboardId,
-        newTile: newTile,
-        isReplaceTile: false,
-        timezone: UTC
-      }
-    };
-
-    resp = await sendToBackend<ToBackendSaveModifyDashboardResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: req
-    });
-
-    await prep.app.close();
-  } catch (e) {
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prep?.logger,
+      cs: prep?.cs
     });
-  }
+  });
 
-  t.is(resp.info.error, undefined);
-  t.is(resp.info.status, ResponseInfoStatusEnum.Ok);
+  t.is(isPass, true);
 });

@@ -66,30 +66,35 @@ export async function prepareTest(item: {
 
   let app: INestApplication = moduleRef.createNestApplication();
 
-  app.use(json({ limit: '50mb' }));
-  app.use(urlencoded({ limit: '50mb', extended: true }));
+  try {
+    app.use(json({ limit: '50mb' }));
+    app.use(urlencoded({ limit: '50mb', extended: true }));
 
-  await app.init();
+    await app.init();
 
-  let httpServer = app.getHttpServer();
+    let httpServer = app.getHttpServer();
 
-  let rpcService = moduleRef.get<RpcService>(RpcService);
-  let tabToEntService = moduleRef.get<TabToEntService>(TabToEntService);
-  let logger = await moduleRef.resolve<Logger>(Logger);
-  let cs = await moduleRef.resolve<ConfigService>(ConfigService);
+    let rpcService = moduleRef.get<RpcService>(RpcService);
+    let tabToEntService = moduleRef.get<TabToEntService>(TabToEntService);
+    let logger = await moduleRef.resolve<Logger>(Logger);
+    let cs = await moduleRef.resolve<ConfigService>(ConfigService);
 
-  let prep: Prep = {
-    loginToken: undefined,
-    app,
-    httpServer,
-    moduleRef,
-    rpcService,
-    tabToEntService,
-    logger,
-    cs
-  };
+    let prep: Prep = {
+      loginToken: undefined,
+      app,
+      httpServer,
+      moduleRef,
+      rpcService,
+      tabToEntService,
+      logger,
+      cs
+    };
 
-  return prep;
+    return prep;
+  } catch (e) {
+    await app.close();
+    throw e;
+  }
 }
 
 export async function prepareSeed(item: {
@@ -121,7 +126,6 @@ export async function prepareSeed(item: {
       httpServer: httpServer,
       req: deleteRecordsRequest
     }).catch(e => {
-      console.log(e);
       throw e;
     });
   }
@@ -141,7 +145,6 @@ export async function prepareSeed(item: {
       httpServer: httpServer,
       req: seedRecordsRequest
     }).catch(e => {
-      console.log(e);
       throw e;
     });
   }
@@ -192,13 +195,19 @@ export async function prepareTestAndSeed(item: {
     overrideConfigOptions: overrideConfigOptions
   });
 
-  let prepareSeedResult = await prepareSeed({
-    httpServer: prep1.httpServer,
-    traceId,
-    seedRecordsPayload,
-    deleteRecordsPayload,
-    loginUserPayload
-  });
+  let prepareSeedResult;
+  try {
+    prepareSeedResult = await prepareSeed({
+      httpServer: prep1.httpServer,
+      traceId,
+      seedRecordsPayload,
+      deleteRecordsPayload,
+      loginUserPayload
+    });
+  } catch (e) {
+    await prep1.app.close();
+    throw e;
+  }
 
   let prep2: Prep = {
     loginToken: prepareSeedResult.loginToken,

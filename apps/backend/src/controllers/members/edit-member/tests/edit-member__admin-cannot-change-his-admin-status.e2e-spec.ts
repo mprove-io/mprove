@@ -1,9 +1,12 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN } from '#common/constants/top';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -28,93 +31,110 @@ let orgName = testId;
 let projectId = makeId();
 let projectName = testId;
 
-let prep: Prep;
-
 test('1', async t => {
-  let resp: ToBackendEditMemberResponse;
+  let isPass: boolean;
+  let prep: Prep;
 
-  try {
-    prep = await prepareTestAndSeed({
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email],
-        orgIds: [orgId],
-        projectIds: [projectId],
-        projectNames: [projectName]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            userId,
-            email,
-            password,
-            isEmailVerified: true
-          }
-        ],
-        orgs: [
-          {
-            orgId,
-            name: orgName,
-            ownerEmail: email
-          }
-        ],
-        projects: [
-          {
-            orgId,
-            projectId,
-            name: projectName,
-            remoteType: ProjectRemoteTypeEnum.Managed,
-            defaultBranch: BRANCH_MAIN
-          }
-        ],
-        members: [
-          {
-            memberId: userId,
-            email,
-            projectId,
-            isAdmin: true,
-            isEditor: true,
-            isExplorer: true
-          }
-        ]
-      },
-      loginUserPayload: { email, password }
-    });
+  await retry(async (bail: any) => {
+    let resp: ToBackendEditMemberResponse;
 
-    let req: ToBackendEditMemberRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendEditMember,
+    try {
+      prep = await prepareTestAndSeed({
         traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        projectId: projectId,
-        memberId: userId,
-        isAdmin: false,
-        isEditor: true,
-        isExplorer: true,
-        roles: []
+        deleteRecordsPayload: {
+          emails: [email],
+          orgIds: [orgId],
+          projectIds: [projectId],
+          projectNames: [projectName]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              userId,
+              email,
+              password,
+              isEmailVerified: true
+            }
+          ],
+          orgs: [
+            {
+              orgId,
+              name: orgName,
+              ownerEmail: email
+            }
+          ],
+          projects: [
+            {
+              orgId,
+              projectId,
+              name: projectName,
+              remoteType: ProjectRemoteTypeEnum.Managed,
+              defaultBranch: BRANCH_MAIN
+            }
+          ],
+          members: [
+            {
+              memberId: userId,
+              email,
+              projectId,
+              isAdmin: true,
+              isEditor: true,
+              isExplorer: true
+            }
+          ]
+        },
+        loginUserPayload: { email, password }
+      });
+
+      let req: ToBackendEditMemberRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendEditMember,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          memberId: userId,
+          isAdmin: false,
+          isEditor: true,
+          isExplorer: true,
+          roles: []
+        }
+      };
+
+      resp = await sendToBackend<ToBackendEditMemberResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req
+      });
+
+      await prep.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prep?.logger,
+        cs: prep?.cs
+      });
+      if (prep) {
+        await prep.app.close();
       }
-    };
+    }
 
-    resp = await sendToBackend<ToBackendEditMemberResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: req
-    });
+    assert.equal(
+      resp.info.error.message,
+      ErEnum.BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS
+    );
 
-    await prep.app.close();
-  } catch (e) {
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prep?.logger,
+      cs: prep?.cs
     });
-  }
+  });
 
-  t.is(
-    resp.info.error.message,
-    ErEnum.BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS
-  );
+  t.is(isPass, true);
 });

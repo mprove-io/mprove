@@ -20,7 +20,7 @@ let templateName = `${templateVersion}_opencode_${opencodeVersion.split('.').joi
 console.log(`Building e2b template: ${templateName}`);
 
 let template = Template()
-  .fromImage('node:24.10.0-bookworm')
+  .fromImage('node:24.14.0-bookworm')
   .aptInstall(['curl', 'git', 'ripgrep', 'openssh-client', 'ca-certificates'])
   .runCmd(
     `curl -fsSL https://opencode.ai/install | bash -s -- --version ${opencodeVersion}`

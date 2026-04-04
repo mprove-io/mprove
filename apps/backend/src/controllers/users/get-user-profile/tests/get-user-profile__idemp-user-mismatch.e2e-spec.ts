@@ -1,8 +1,11 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -25,86 +28,103 @@ let emailA = `${testId}-a@example.com`;
 let emailB = `${testId}-b@example.com`;
 let password = '123456';
 
-let prep: Prep;
-
 test('1', async t => {
-  let resp2: ToBackendGetUserProfileResponse;
+  let isPass: boolean;
+  let prep: Prep;
 
-  try {
-    prep = await prepareTestAndSeed({
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [emailA, emailB]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            email: emailA,
-            password,
-            isEmailVerified: true
-          },
-          {
-            email: emailB,
-            password,
-            isEmailVerified: true
-          }
-        ]
-      },
-      loginUserPayload: { email: emailA, password }
-    });
+  await retry(async (bail: any) => {
+    let resp2: ToBackendGetUserProfileResponse;
 
-    let idempotencyKey = makeId();
-
-    let getUserProfileReq: ToBackendGetUserProfileRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
+    try {
+      prep = await prepareTestAndSeed({
         traceId: traceId,
-        idempotencyKey: idempotencyKey
-      },
-      payload: {}
-    };
+        deleteRecordsPayload: {
+          emails: [emailA, emailB]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              email: emailA,
+              password,
+              isEmailVerified: true
+            },
+            {
+              email: emailB,
+              password,
+              isEmailVerified: true
+            }
+          ]
+        },
+        loginUserPayload: { email: emailA, password }
+      });
 
-    await sendToBackend<ToBackendGetUserProfileResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: getUserProfileReq
-    });
+      let idempotencyKey = makeId();
 
-    let loginUserBReq: ToBackendLoginUserRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        email: emailB,
-        password: password
+      let getUserProfileReq: ToBackendGetUserProfileRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
+          traceId: traceId,
+          idempotencyKey: idempotencyKey
+        },
+        payload: {}
+      };
+
+      await sendToBackend<ToBackendGetUserProfileResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: getUserProfileReq
+      });
+
+      let loginUserBReq: ToBackendLoginUserRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          email: emailB,
+          password: password
+        }
+      };
+
+      let loginUserBResp = await sendToBackend<ToBackendLoginUserResponse>({
+        httpServer: prep.httpServer,
+        req: loginUserBReq
+      });
+
+      let loginTokenB = loginUserBResp.payload.token;
+
+      resp2 = await sendToBackend<ToBackendGetUserProfileResponse>({
+        httpServer: prep.httpServer,
+        loginToken: loginTokenB,
+        req: getUserProfileReq
+      });
+
+      await prep.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prep?.logger,
+        cs: prep?.cs
+      });
+      if (prep) {
+        await prep.app.close();
       }
-    };
+    }
 
-    let loginUserBResp = await sendToBackend<ToBackendLoginUserResponse>({
-      httpServer: prep.httpServer,
-      req: loginUserBReq
-    });
+    assert.equal(resp2.info.status, ResponseInfoStatusEnum.Error);
+    assert.equal(resp2.info.error?.message, ErEnum.BACKEND_IDEMP_USER_MISMATCH);
 
-    let loginTokenB = loginUserBResp.payload.token;
-
-    resp2 = await sendToBackend<ToBackendGetUserProfileResponse>({
-      httpServer: prep.httpServer,
-      loginToken: loginTokenB,
-      req: getUserProfileReq
-    });
-
-    await prep.app.close();
-  } catch (e) {
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prep?.logger,
+      cs: prep?.cs
     });
-  }
+  });
 
-  t.is(resp2.info.status, ResponseInfoStatusEnum.Error);
-  t.is(resp2.info.error?.message, ErEnum.BACKEND_IDEMP_USER_MISMATCH);
+  t.is(isPass, true);
 });

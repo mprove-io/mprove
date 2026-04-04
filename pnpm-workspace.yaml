@@ -3,11 +3,11 @@ packages:
   - libs/*
 
 catalog:
-  '@opencode-ai/sdk': 1.3.3
-  'opencode-ai': 1.3.3
-  'ai': 5.0.124
-  '@ai-sdk/openai': 2.0.89
-  '@ai-sdk/anthropic': 2.0.65
+  '@opencode-ai/sdk': 1.3.13
+  'opencode-ai': 1.3.13
+  'ai': 6.0.138
+  '@ai-sdk/openai': 3.0.48
+  '@ai-sdk/anthropic': 3.0.64
   '@acrodata/code-editor': 0.5.1
   '@ali-hm/angular-tree-component': 21.0.3
   '@angular-devkit/build-angular': 21.2.5
@@ -42,19 +42,19 @@ catalog:
   '@kubiks/otel-drizzle': 2.1.0
   '@leeoniya/ufuzzy': 1.0.18
   '@lezer/highlight': 1.2.3
-  '@malloydata/db-bigquery': 0.0.367
-  '@malloydata/db-databricks': 0.0.367
-  '@malloydata/db-duckdb': 0.0.367
-  '@malloydata/db-mysql': 0.0.367
-  '@malloydata/db-postgres': 0.0.367
-  '@malloydata/db-snowflake': 0.0.367
-  '@malloydata/db-trino': 0.0.367
-  '@malloydata/malloy': 0.0.367
-  '@malloydata/malloy-filter': 0.0.367
-  '@malloydata/malloy-interfaces': 0.0.367
-  '@malloydata/malloy-query-builder': 0.0.367
-  '@malloydata/malloy-tag': 0.0.367
-  '@malloydata/render': 0.0.367
+  '@malloydata/db-bigquery': 0.0.369
+  '@malloydata/db-databricks': 0.0.369
+  '@malloydata/db-duckdb': 0.0.369
+  '@malloydata/db-mysql': 0.0.369
+  '@malloydata/db-postgres': 0.0.369
+  '@malloydata/db-snowflake': 0.0.369
+  '@malloydata/db-trino': 0.0.369
+  '@malloydata/malloy': 0.0.369
+  '@malloydata/malloy-filter': 0.0.369
+  '@malloydata/malloy-interfaces': 0.0.369
+  '@malloydata/malloy-query-builder': 0.0.369
+  '@malloydata/malloy-tag': 0.0.369
+  '@malloydata/render': 0.0.369
   '@modelcontextprotocol/sdk': 1.27.1
   '@nest-lab/throttler-storage-redis': 1.1.0
   '@nestjs/common': 11.1.0
@@ -133,7 +133,7 @@ catalog:
   ag-grid-community: 33.3.0
   async-retry: 1.3.3
   autoprefixer: 10.4.20
-  ava: 6.4.1
+  ava: 7.0.0
   axios: 1.14.0
   bcrypt: 5.1.1
   body-parser: 2.2.1
@@ -214,7 +214,7 @@ catalog:
   ts-node: 10.9.2
   tsconfig-paths: 3.14.2
   tslib: 2.7.0
-  turbo: 2.8.7
+  turbo: 2.9.3
   typanion: 3.14.0
   typescript: 5.9.2
   uuid: 11.1.0

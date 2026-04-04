@@ -4,8 +4,8 @@ import retry from 'async-retry';
 import fse from 'fs-extra';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import {
-  POSSIBLE_TIME_DIFF_MS,
-  RETRY_OPTIONS
+  MCLI_E2E_RETRY_OPTIONS,
+  POSSIBLE_TIME_DIFF_MS
 } from '#common/constants/top-mcli';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { FileStatusEnum } from '#common/enums/file-status.enum';
@@ -237,7 +237,7 @@ test('1', async () => {
     );
 
     isPass = true;
-  }, RETRY_OPTIONS).catch((er: any) => {
+  }, MCLI_E2E_RETRY_OPTIONS).catch((er: any) => {
     if (context) {
       console.log(context.stdout.toString());
       console.log(context.stderr.toString());

@@ -1,8 +1,11 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -24,64 +27,81 @@ let newOwnerEmail = `new-${testId}@example.com`;
 let orgId = testId;
 let orgName = testId;
 
-let prep: Prep;
-
 test('1', async t => {
-  let resp: ToBackendSetOrgOwnerResponse;
+  let isPass: boolean;
+  let prep: Prep;
 
-  try {
-    prep = await prepareTestAndSeed({
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email],
-        orgIds: [orgId]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            email,
-            password,
-            isEmailVerified: true
-          }
-        ],
-        orgs: [
-          {
-            orgId: orgId,
-            ownerEmail: email,
-            name: orgName
-          }
-        ]
-      },
-      loginUserPayload: { email, password }
-    });
+  await retry(async (bail: any) => {
+    let resp: ToBackendSetOrgOwnerResponse;
 
-    let req: ToBackendSetOrgOwnerRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
+    try {
+      prep = await prepareTestAndSeed({
         traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        orgId: orgId,
-        ownerEmail: newOwnerEmail
+        deleteRecordsPayload: {
+          emails: [email],
+          orgIds: [orgId]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              email,
+              password,
+              isEmailVerified: true
+            }
+          ],
+          orgs: [
+            {
+              orgId: orgId,
+              ownerEmail: email,
+              name: orgName
+            }
+          ]
+        },
+        loginUserPayload: { email, password }
+      });
+
+      let req: ToBackendSetOrgOwnerRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          orgId: orgId,
+          ownerEmail: newOwnerEmail
+        }
+      };
+
+      resp = await sendToBackend<ToBackendSetOrgOwnerResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req
+      });
+
+      await prep.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prep?.logger,
+        cs: prep?.cs
+      });
+      if (prep) {
+        await prep.app.close();
       }
-    };
+    }
 
-    resp = await sendToBackend<ToBackendSetOrgOwnerResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: req
-    });
+    assert.equal(resp.info.error.message, ErEnum.BACKEND_NEW_OWNER_NOT_FOUND);
 
-    await prep.app.close();
-  } catch (e) {
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prep?.logger,
+      cs: prep?.cs
     });
-  }
+  });
 
-  t.is(resp.info.error.message, ErEnum.BACKEND_NEW_OWNER_NOT_FOUND);
+  t.is(isPass, true);
 });

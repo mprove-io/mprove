@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { CoreMessage } from 'ai';
+import type { ModelMessage } from 'ai';
 import { streamText } from 'ai';
 import { asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
@@ -733,7 +733,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
   async loadMessageHistory(item: {
     sessionId: string;
-  }): Promise<CoreMessage[]> {
+  }): Promise<ModelMessage[]> {
     let { sessionId } = item;
 
     let messageEnts = await this.db.drizzle.query.ocMessagesTable.findMany({
@@ -763,7 +763,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       }
     });
 
-    let coreMessages: CoreMessage[] = [];
+    let coreMessages: ModelMessage[] = [];
 
     messageTabs.forEach(msg => {
       let msgParts = partsByMessageId.get(msg.messageId) || [];

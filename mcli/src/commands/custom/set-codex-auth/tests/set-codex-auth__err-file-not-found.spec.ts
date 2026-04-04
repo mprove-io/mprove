@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test';
 import assert from 'node:assert/strict';
 import retry from 'async-retry';
-import { RETRY_OPTIONS } from '#common/constants/top-mcli';
+import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id';
@@ -86,7 +86,7 @@ test('1', async () => {
     );
 
     isPass = true;
-  }, RETRY_OPTIONS).catch((er: any) => {
+  }, MCLI_E2E_RETRY_OPTIONS).catch((er: any) => {
     if (context) {
       console.log(context.stdout.toString());
       console.log(context.stderr.toString());

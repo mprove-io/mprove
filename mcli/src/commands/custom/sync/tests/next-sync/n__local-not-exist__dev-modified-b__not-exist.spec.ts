@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import fse from 'fs-extra';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
-import { RETRY_OPTIONS } from '#common/constants/top-mcli';
+import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -229,7 +229,7 @@ test('1', async () => {
     );
 
     isPass = true;
-  }, RETRY_OPTIONS).catch((er: any) => {
+  }, MCLI_E2E_RETRY_OPTIONS).catch((er: any) => {
     if (context) {
       console.log(context.stdout.toString());
       console.log(context.stderr.toString());

@@ -1,9 +1,9 @@
 {
-  "template": "v35",
+  "template": "v36",
   "cpuCount": 4,
   "memoryMB": 8192,
   "skipCache": true,
-  "opencode": "1.3.3",
+  "opencode": "1.3.13",
   "mprove": "11.0.109-dev",
   "repos": {
     "mproveDocsFm": {

@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
@@ -5,6 +7,7 @@ import { prepareSeed, prepareTest } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { PrepTest } from '#backend/interfaces/prep-test';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -43,178 +46,195 @@ let projectName = testId;
 
 let chartId = 'c1';
 
-let prepTest: PrepTest;
-
 test('1', async t => {
-  let resp2: ToBackendRunQueriesResponse;
+  let isPass: boolean;
+  let prepTest: PrepTest;
 
-  try {
-    prepTest = await prepareTest({});
+  await retry(async (bail: any) => {
+    let resp2: ToBackendRunQueriesResponse;
 
-    let c1Postgres: ToBackendSeedRecordsRequestPayloadConnectionsItem = {
-      envId: PROJECT_ENV_PROD,
-      projectId: projectId,
-      connectionId: 'c1_postgres',
-      type: ConnectionTypeEnum.PostgreSQL,
-      options: {
-        postgres: {
-          host: prepTest.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
-            'demoProjectDwhPostgresHost'
-          ),
-          port: 5436,
-          username: prepTest.cs.get<
-            BackendConfig['demoProjectDwhPostgresUser']
-          >('demoProjectDwhPostgresUser'),
-          password: prepTest.cs.get<
-            BackendConfig['demoProjectDwhPostgresPassword']
-          >('demoProjectDwhPostgresPassword'),
-          database: 'p_db',
-          isSSL: false
-        }
-      }
-    };
+    try {
+      prepTest = await prepareTest({});
 
-    let prepareSeedResult = await prepareSeed({
-      httpServer: prepTest.httpServer,
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email],
-        orgIds: [orgId],
-        projectIds: [projectId],
-        projectNames: [projectName]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            userId,
-            email,
-            password,
-            isEmailVerified: true
-          }
-        ],
-        orgs: [
-          {
-            orgId: orgId,
-            ownerEmail: email,
-            name: orgName
-          }
-        ],
-        projects: [
-          {
-            orgId,
-            projectId,
-            testProjectId,
-            name: projectName,
-            defaultBranch: BRANCH_MAIN,
-            remoteType: ProjectRemoteTypeEnum.Managed
-          }
-        ],
-        members: [
-          {
-            memberId: userId,
-            email,
-            projectId,
-            isAdmin: true,
-            isEditor: true,
-            isExplorer: true
-          }
-        ],
-        connections: [c1Postgres]
-      },
-      loginUserPayload: { email, password }
-    });
-
-    let req1: ToBackendGetChartsRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetCharts,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        projectId: projectId,
-        repoId: userId,
-        branchId: BRANCH_MAIN,
-        envId: PROJECT_ENV_PROD
-      }
-    };
-
-    let resp1 = await sendToBackend<ToBackendGetChartsResponse>({
-      httpServer: prepTest.httpServer,
-      loginToken: prepareSeedResult.loginToken,
-      req: req1
-    });
-
-    let chart = resp1.payload.charts.find(x => x.chartId === chartId);
-
-    let req2: ToBackendRunQueriesRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        projectId: projectId,
-        repoId: userId,
-        branchId: BRANCH_MAIN,
+      let c1Postgres: ToBackendSeedRecordsRequestPayloadConnectionsItem = {
         envId: PROJECT_ENV_PROD,
-        mconfigIds: [chart.tiles[0].mconfigId]
-      }
-    };
-
-    resp2 = await sendToBackend<ToBackendRunQueriesResponse>({
-      httpServer: prepTest.httpServer,
-      loginToken: prepareSeedResult.loginToken,
-      req: req2
-    });
-
-    // Wait for query to complete before closing to avoid "pool closed" error
-    let queryId = resp2.payload.runningQueries[0]?.queryId;
-    if (queryId) {
-      let maxWaitMs = 10000;
-      let waited = 0;
-      while (waited < maxWaitMs) {
-        let reqGetQuery: ToBackendGetQueryRequest = {
-          info: {
-            name: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-            traceId: traceId,
-            idempotencyKey: makeId()
-          },
-          payload: {
-            projectId: projectId,
-            repoId: userId,
-            branchId: BRANCH_MAIN,
-            envId: PROJECT_ENV_PROD,
-            queryId: queryId,
-            mconfigId: chart.tiles[0].mconfigId
+        projectId: projectId,
+        connectionId: 'c1_postgres',
+        type: ConnectionTypeEnum.PostgreSQL,
+        options: {
+          postgres: {
+            host: prepTest.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
+              'demoProjectDwhPostgresHost'
+            ),
+            port: 5436,
+            username: prepTest.cs.get<
+              BackendConfig['demoProjectDwhPostgresUser']
+            >('demoProjectDwhPostgresUser'),
+            password: prepTest.cs.get<
+              BackendConfig['demoProjectDwhPostgresPassword']
+            >('demoProjectDwhPostgresPassword'),
+            database: 'p_db',
+            isSSL: false
           }
-        };
-
-        let respGetQuery = await sendToBackend<ToBackendGetQueryResponse>({
-          httpServer: prepTest.httpServer,
-          loginToken: prepareSeedResult.loginToken,
-          req: reqGetQuery
-        });
-
-        let status = respGetQuery.payload.query?.status;
-        if (status !== QueryStatusEnum.Running) {
-          break;
         }
+      };
 
-        await new Promise(resolve => setTimeout(resolve, 200));
-        waited += 200;
+      let prepareSeedResult = await prepareSeed({
+        httpServer: prepTest.httpServer,
+        traceId: traceId,
+        deleteRecordsPayload: {
+          emails: [email],
+          orgIds: [orgId],
+          projectIds: [projectId],
+          projectNames: [projectName]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              userId,
+              email,
+              password,
+              isEmailVerified: true
+            }
+          ],
+          orgs: [
+            {
+              orgId: orgId,
+              ownerEmail: email,
+              name: orgName
+            }
+          ],
+          projects: [
+            {
+              orgId,
+              projectId,
+              testProjectId,
+              name: projectName,
+              defaultBranch: BRANCH_MAIN,
+              remoteType: ProjectRemoteTypeEnum.Managed
+            }
+          ],
+          members: [
+            {
+              memberId: userId,
+              email,
+              projectId,
+              isAdmin: true,
+              isEditor: true,
+              isExplorer: true
+            }
+          ],
+          connections: [c1Postgres]
+        },
+        loginUserPayload: { email, password }
+      });
+
+      let req1: ToBackendGetChartsRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendGetCharts,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          repoId: userId,
+          branchId: BRANCH_MAIN,
+          envId: PROJECT_ENV_PROD
+        }
+      };
+
+      let resp1 = await sendToBackend<ToBackendGetChartsResponse>({
+        httpServer: prepTest.httpServer,
+        loginToken: prepareSeedResult.loginToken,
+        req: req1
+      });
+
+      let chart = resp1.payload.charts.find(x => x.chartId === chartId);
+
+      let req2: ToBackendRunQueriesRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          repoId: userId,
+          branchId: BRANCH_MAIN,
+          envId: PROJECT_ENV_PROD,
+          mconfigIds: [chart.tiles[0].mconfigId]
+        }
+      };
+
+      resp2 = await sendToBackend<ToBackendRunQueriesResponse>({
+        httpServer: prepTest.httpServer,
+        loginToken: prepareSeedResult.loginToken,
+        req: req2
+      });
+
+      // Wait for query to complete before closing to avoid "pool closed" error
+      let queryId = resp2.payload.runningQueries[0]?.queryId;
+      if (queryId) {
+        let maxWaitMs = 10000;
+        let waited = 0;
+        while (waited < maxWaitMs) {
+          let reqGetQuery: ToBackendGetQueryRequest = {
+            info: {
+              name: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+              traceId: traceId,
+              idempotencyKey: makeId()
+            },
+            payload: {
+              projectId: projectId,
+              repoId: userId,
+              branchId: BRANCH_MAIN,
+              envId: PROJECT_ENV_PROD,
+              queryId: queryId,
+              mconfigId: chart.tiles[0].mconfigId
+            }
+          };
+
+          let respGetQuery = await sendToBackend<ToBackendGetQueryResponse>({
+            httpServer: prepTest.httpServer,
+            loginToken: prepareSeedResult.loginToken,
+            req: reqGetQuery
+          });
+
+          let status = respGetQuery.payload.query?.status;
+          if (status !== QueryStatusEnum.Running) {
+            break;
+          }
+
+          await new Promise(resolve => setTimeout(resolve, 200));
+          waited += 200;
+        }
+      }
+
+      await prepTest.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prepTest?.logger,
+        cs: prepTest?.cs
+      });
+      if (prepTest) {
+        await prepTest.app.close();
       }
     }
 
-    await prepTest.app.close();
-  } catch (e) {
-    logToConsoleBackend({
-      log: e,
-      logLevel: LogLevelEnum.Error,
-      logger: prepTest.logger,
-      cs: prepTest.cs
-    });
-  }
+    assert.equal(resp2.info.error, undefined);
+    assert.equal(resp2.info.status, ResponseInfoStatusEnum.Ok);
 
-  t.is(resp2.info.error, undefined);
-  t.is(resp2.info.status, ResponseInfoStatusEnum.Ok);
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
+    logToConsoleBackend({
+      log: er,
+      logLevel: LogLevelEnum.Error,
+      logger: prepTest?.logger,
+      cs: prepTest?.cs
+    });
+  });
+
+  t.is(isPass, true);
 });

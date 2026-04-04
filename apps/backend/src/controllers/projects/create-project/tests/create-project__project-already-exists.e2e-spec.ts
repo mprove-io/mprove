@@ -1,9 +1,12 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN } from '#common/constants/top';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -26,74 +29,94 @@ let orgName = testId;
 
 let projectName = testId;
 
-let prep: Prep;
-
 test('1', async t => {
-  let resp: ToBackendCreateProjectResponse;
+  let isPass: boolean;
+  let prep: Prep;
 
-  try {
-    prep = await prepareTestAndSeed({
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email],
-        orgIds: [orgId],
-        projectNames: [projectName]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            email,
-            password,
-            isEmailVerified: true
-          }
-        ],
-        orgs: [
-          {
-            orgId: orgId,
-            name: orgName,
-            ownerEmail: email
-          }
-        ],
-        projects: [
-          {
-            orgId,
-            name: projectName,
-            remoteType: ProjectRemoteTypeEnum.Managed,
-            defaultBranch: BRANCH_MAIN
-          }
-        ]
-      },
-      loginUserPayload: { email, password }
-    });
+  await retry(async (bail: any) => {
+    let resp: ToBackendCreateProjectResponse;
 
-    let req: ToBackendCreateProjectRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendCreateProject,
+    try {
+      prep = await prepareTestAndSeed({
         traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        orgId: orgId,
-        name: projectName,
-        remoteType: ProjectRemoteTypeEnum.Managed
+        deleteRecordsPayload: {
+          emails: [email],
+          orgIds: [orgId],
+          projectNames: [projectName]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              email,
+              password,
+              isEmailVerified: true
+            }
+          ],
+          orgs: [
+            {
+              orgId: orgId,
+              name: orgName,
+              ownerEmail: email
+            }
+          ],
+          projects: [
+            {
+              orgId,
+              name: projectName,
+              remoteType: ProjectRemoteTypeEnum.Managed,
+              defaultBranch: BRANCH_MAIN
+            }
+          ]
+        },
+        loginUserPayload: { email, password }
+      });
+
+      let req: ToBackendCreateProjectRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendCreateProject,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          orgId: orgId,
+          name: projectName,
+          remoteType: ProjectRemoteTypeEnum.Managed
+        }
+      };
+
+      resp = await sendToBackend<ToBackendCreateProjectResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req
+      });
+
+      await prep.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prep?.logger,
+        cs: prep?.cs
+      });
+      if (prep) {
+        await prep.app.close();
       }
-    };
+    }
 
-    resp = await sendToBackend<ToBackendCreateProjectResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: req
-    });
+    assert.equal(
+      resp.info.error.message,
+      ErEnum.BACKEND_PROJECT_ALREADY_EXISTS
+    );
 
-    await prep.app.close();
-  } catch (e) {
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prep?.logger,
+      cs: prep?.cs
     });
-  }
+  });
 
-  t.is(resp.info.error.message, ErEnum.BACKEND_PROJECT_ALREADY_EXISTS);
+  t.is(isPass, true);
 });

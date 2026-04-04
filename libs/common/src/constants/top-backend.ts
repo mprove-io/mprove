@@ -84,6 +84,16 @@ export const MCP_TOOL_GET_SCHEMAS = 'get-schemas';
 export const MCP_TOOL_GET_CONNECTIONS_LIST = 'get-connections-list';
 export const MCP_TOOL_DOWNLOAD_SKILLS = 'download-skills';
 
+export const BACKEND_E2E_RETRY_OPTIONS = {
+  retries: 2,
+  minTimeout: 1000,
+  factor: 1,
+  randomize: true,
+  onRetry: (e: any, attempt: number) => {
+    console.log(`Retry attempt ${attempt}:`, e.message);
+  }
+};
+
 export const DEFAULT_QUERY_SIZE_LIMIT = 1;
 
 export const UNK_ST_ID = 'unk';

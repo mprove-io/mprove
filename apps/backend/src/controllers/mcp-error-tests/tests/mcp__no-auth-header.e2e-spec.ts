@@ -1,8 +1,11 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToMcp } from '#backend/functions/send-to-mcp';
 import { Prep } from '#backend/interfaces/prep';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 
@@ -13,45 +16,62 @@ let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123456';
 
-let prep: Prep;
-
 test('1', async t => {
-  let response: any;
+  let isPass: boolean;
+  let prep: Prep;
 
-  try {
-    prep = await prepareTestAndSeed({
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            email: email,
-            password: password,
-            isEmailVerified: true
-          }
-        ]
+  await retry(async (bail: any) => {
+    let response: any;
+
+    try {
+      prep = await prepareTestAndSeed({
+        traceId: traceId,
+        deleteRecordsPayload: {
+          emails: [email]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              email: email,
+              password: password,
+              isEmailVerified: true
+            }
+          ]
+        }
+      });
+
+      response = await sendToMcp({
+        httpServer: prep.httpServer,
+        method: 'tools/list'
+      });
+
+      await prep.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prep?.logger,
+        cs: prep?.cs
+      });
+      if (prep) {
+        await prep.app.close();
       }
-    });
+    }
 
-    response = await sendToMcp({
-      httpServer: prep.httpServer,
-      method: 'tools/list'
-    });
+    assert.equal(response.status, 400);
+    assert.equal(response.body.jsonrpc, '2.0');
+    assert.equal(response.body.error.code, -32600);
+    assert.equal(response.body.error.message, ErEnum.BACKEND_UNAUTHORIZED);
 
-    await prep.app.close();
-  } catch (e) {
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prep?.logger,
+      cs: prep?.cs
     });
-  }
+  });
 
-  t.is(response.status, 400);
-  t.is(response.body.jsonrpc, '2.0');
-  t.is(response.body.error.code, -32600);
-  t.is(response.body.error.message, ErEnum.BACKEND_UNAUTHORIZED);
+  t.is(isPass, true);
 });

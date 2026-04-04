@@ -10,11 +10,11 @@ catalogs:
       specifier: 0.5.1
       version: 0.5.1
     '@ai-sdk/anthropic':
-      specifier: 2.0.65
-      version: 2.0.65
+      specifier: 3.0.64
+      version: 3.0.64
     '@ai-sdk/openai':
-      specifier: 2.0.89
-      version: 2.0.89
+      specifier: 3.0.48
+      version: 3.0.48
     '@ali-hm/angular-tree-component':
       specifier: 21.0.3
       version: 21.0.3
@@ -115,41 +115,41 @@ catalogs:
       specifier: 1.2.3
       version: 1.2.3
     '@malloydata/db-bigquery':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/db-databricks':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/db-duckdb':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/db-mysql':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/db-postgres':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/db-snowflake':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/db-trino':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/malloy':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/malloy-filter':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/malloy-interfaces':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/malloy-query-builder':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@malloydata/malloy-tag':
-      specifier: 0.0.367
-      version: 0.0.367
+      specifier: 0.0.369
+      version: 0.0.369
     '@modelcontextprotocol/sdk':
       specifier: 1.27.1
       version: 1.27.1
@@ -199,8 +199,8 @@ catalogs:
       specifier: 7.0.0
       version: 7.0.0
     '@opencode-ai/sdk':
-      specifier: 1.3.3
-      version: 1.3.3
+      specifier: 1.3.13
+      version: 1.3.13
     '@opentelemetry/api':
       specifier: 1.9.0
       version: 1.9.0
@@ -352,8 +352,8 @@ catalogs:
       specifier: 33.3.0
       version: 33.3.0
     ai:
-      specifier: 5.0.124
-      version: 5.0.124
+      specifier: 6.0.138
+      version: 6.0.138
     async-retry:
       specifier: 1.3.3
       version: 1.3.3
@@ -361,8 +361,8 @@ catalogs:
       specifier: 10.4.20
       version: 10.4.20
     ava:
-      specifier: 6.4.1
-      version: 6.4.1
+      specifier: 7.0.0
+      version: 7.0.0
     axios:
       specifier: 1.14.0
       version: 1.14.0
@@ -508,8 +508,8 @@ catalogs:
       specifier: 7.0.11
       version: 7.0.11
     opencode-ai:
-      specifier: 1.3.3
-      version: 1.3.3
+      specifier: 1.3.13
+      version: 1.3.13
     p-iteration:
       specifier: 1.1.8
       version: 1.1.8
@@ -595,8 +595,8 @@ catalogs:
       specifier: 2.7.0
       version: 2.7.0
     turbo:
-      specifier: 2.8.7
-      version: 2.8.7
+      specifier: 2.9.3
+      version: 2.9.3
     typescript:
       specifier: 5.9.2
       version: 5.9.2
@@ -643,7 +643,7 @@ importers:
         version: 22.7.5
       ava:
         specifier: 'catalog:'
-        version: 6.4.1(encoding@0.1.13)(rollup@4.54.0)
+        version: 7.0.0(encoding@0.1.13)(rollup@4.54.0)
       cross-env:
         specifier: 'catalog:'
         version: 7.0.3
@@ -691,7 +691,7 @@ importers:
         version: 4.21.0
       turbo:
         specifier: 'catalog:'
-        version: 2.8.7
+        version: 2.9.3
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -700,10 +700,10 @@ importers:
     dependencies:
       '@ai-sdk/anthropic':
         specifier: 'catalog:'
-        version: 2.0.65(zod@4.3.6)
+        version: 3.0.64(zod@4.3.6)
       '@ai-sdk/openai':
         specifier: 'catalog:'
-        version: 2.0.89(zod@4.3.6)
+        version: 3.0.48(zod@4.3.6)
       '@databricks/sql':
         specifier: 'catalog:'
         version: 1.13.0(encoding@0.1.13)
@@ -718,40 +718,40 @@ importers:
         version: 2.1.0(@opentelemetry/api@1.9.0)(drizzle-orm@0.36.0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(mysql2@3.11.3)(pg@8.13.0)(react@19.2.4))
       '@malloydata/db-bigquery':
         specifier: 'catalog:'
-        version: 0.0.367(encoding@0.1.13)
+        version: 0.0.369(encoding@0.1.13)
       '@malloydata/db-databricks':
         specifier: 'catalog:'
-        version: 0.0.367(encoding@0.1.13)
+        version: 0.0.369(encoding@0.1.13)
       '@malloydata/db-duckdb':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/db-mysql':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/db-postgres':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/db-snowflake':
         specifier: 'catalog:'
-        version: 0.0.367(asn1.js@5.4.1)(encoding@0.1.13)
+        version: 0.0.369(asn1.js@5.4.1)(encoding@0.1.13)
       '@malloydata/db-trino':
         specifier: 'catalog:'
-        version: 0.0.367(encoding@0.1.13)
+        version: 0.0.369(encoding@0.1.13)
       '@malloydata/malloy':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/malloy-filter':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/malloy-interfaces':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/malloy-query-builder':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/malloy-tag':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@modelcontextprotocol/sdk':
         specifier: 'catalog:'
         version: 1.27.1(zod@4.3.6)
@@ -790,7 +790,7 @@ importers:
         version: 6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2)
       '@opencode-ai/sdk':
         specifier: 'catalog:'
-        version: 1.3.3
+        version: 1.3.13
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.9.0
@@ -817,7 +817,7 @@ importers:
         version: 1.9.8(@modelcontextprotocol/sdk@1.27.1(zod@4.3.6))(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(@nestjs/jwt@11.0.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1)))(@nestjs/passport@11.0.5(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(passport@0.7.0))(express@5.1.0)(reflect-metadata@0.2.2)(zod@4.3.6)
       ai:
         specifier: 'catalog:'
-        version: 5.0.124(zod@4.3.6)
+        version: 6.0.138(zod@4.3.6)
       async-retry:
         specifier: 'catalog:'
         version: 1.3.3
@@ -901,7 +901,7 @@ importers:
         version: 7.0.11
       opencode-ai:
         specifier: 'catalog:'
-        version: 1.3.3
+        version: 1.3.13
       p-iteration:
         specifier: 'catalog:'
         version: 1.1.8
@@ -1022,7 +1022,7 @@ importers:
         version: 1.0.5
       ava:
         specifier: 'catalog:'
-        version: 6.4.1(encoding@0.1.13)(rollup@4.54.0)
+        version: 7.0.0(encoding@0.1.13)(rollup@4.54.0)
       dotenv-cli:
         specifier: 'catalog:'
         version: 11.0.0
@@ -1037,40 +1037,40 @@ importers:
     dependencies:
       '@malloydata/db-bigquery':
         specifier: 'catalog:'
-        version: 0.0.367(encoding@0.1.13)
+        version: 0.0.369(encoding@0.1.13)
       '@malloydata/db-databricks':
         specifier: 'catalog:'
-        version: 0.0.367(encoding@0.1.13)
+        version: 0.0.369(encoding@0.1.13)
       '@malloydata/db-duckdb':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/db-mysql':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/db-postgres':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/db-snowflake':
         specifier: 'catalog:'
-        version: 0.0.367(asn1.js@5.4.1)(encoding@0.1.13)
+        version: 0.0.369(asn1.js@5.4.1)(encoding@0.1.13)
       '@malloydata/db-trino':
         specifier: 'catalog:'
-        version: 0.0.367(encoding@0.1.13)
+        version: 0.0.369(encoding@0.1.13)
       '@malloydata/malloy':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/malloy-filter':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/malloy-interfaces':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/malloy-query-builder':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@malloydata/malloy-tag':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@mprove/common':
         specifier: workspace:*
         version: link:../../libs/common
@@ -1197,7 +1197,7 @@ importers:
         version: 2.3.4
       ava:
         specifier: 'catalog:'
-        version: 6.4.1(encoding@0.1.13)(rollup@4.54.0)
+        version: 7.0.0(encoding@0.1.13)(rollup@4.54.0)
       dotenv-cli:
         specifier: 'catalog:'
         version: 11.0.0
@@ -1309,7 +1309,7 @@ importers:
         version: 4.0.9
       ava:
         specifier: 'catalog:'
-        version: 6.4.1(encoding@0.1.13)(rollup@4.54.0)
+        version: 7.0.0(encoding@0.1.13)(rollup@4.54.0)
       dotenv-cli:
         specifier: 'catalog:'
         version: 11.0.0
@@ -1387,7 +1387,7 @@ importers:
         version: 1.2.3
       '@malloydata/malloy-filter':
         specifier: 'catalog:'
-        version: 0.0.367
+        version: 0.0.369
       '@mprove/common':
         specifier: workspace:*
         version: link:../../libs/common
@@ -1408,7 +1408,7 @@ importers:
         version: 7.0.0(@angular/core@21.2.6(@angular/compiler@21.2.6)(rxjs@7.8.1)(zone.js@0.16.0))
       '@opencode-ai/sdk':
         specifier: 'catalog:'
-        version: 1.3.3
+        version: 1.3.13
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.9.0
@@ -1630,23 +1630,23 @@ importers:
         specifier: 1.2.3
         version: 1.2.3
       '@malloydata/malloy':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@malloydata/malloy-filter':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@malloydata/malloy-interfaces':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@malloydata/malloy-tag':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@nestjs/throttler':
         specifier: 6.4.0
         version: 6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2)
       '@opencode-ai/sdk':
-        specifier: 1.3.3
-        version: 1.3.3
+        specifier: 1.3.13
+        version: 1.3.13
       '@replit/codemirror-indentation-markers':
         specifier: 6.5.3
         version: 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.5.2)(@codemirror/view@6.36.7)
@@ -1688,38 +1688,38 @@ importers:
   libs/node-common:
     dependencies:
       '@malloydata/db-bigquery':
-        specifier: 0.0.367
-        version: 0.0.367(encoding@0.1.13)
+        specifier: 0.0.369
+        version: 0.0.369(encoding@0.1.13)
       '@malloydata/db-databricks':
-        specifier: 0.0.367
-        version: 0.0.367(encoding@0.1.13)
+        specifier: 0.0.369
+        version: 0.0.369(encoding@0.1.13)
       '@malloydata/db-duckdb':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@malloydata/db-mysql':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@malloydata/db-postgres':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@malloydata/db-snowflake':
-        specifier: 0.0.367
-        version: 0.0.367(asn1.js@5.4.1)(encoding@0.1.13)
+        specifier: 0.0.369
+        version: 0.0.369(asn1.js@5.4.1)(encoding@0.1.13)
       '@malloydata/db-trino':
-        specifier: 0.0.367
-        version: 0.0.367(encoding@0.1.13)
+        specifier: 0.0.369
+        version: 0.0.369(encoding@0.1.13)
       '@malloydata/malloy':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@malloydata/malloy-filter':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@malloydata/malloy-interfaces':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@malloydata/malloy-query-builder':
-        specifier: 0.0.367
-        version: 0.0.367
+        specifier: 0.0.369
+        version: 0.0.369
       '@mprove/common':
         specifier: file:../common
         version: file:libs/common(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)
@@ -1826,38 +1826,32 @@ packages:
   '@adobe/css-tools@4.3.3':
     resolution: {integrity: sha512-rE0Pygv0sEZ4vBWHlAgJLGDU7Pm8xoO6p3wsEceb7GYAjScrOHpEo8KK/eVkAcnSM+slAEtXjA2JpdjLp4fJQQ==}
 
-  '@ai-sdk/anthropic@2.0.65':
-    resolution: {integrity: sha512-HqTPP59mLQ9U6jXQcx6EORkdc5FyZu34Sitkg6jNpyMYcRjStvfx4+NWq/qaR+OTwBFcccv8hvVii0CYkH2Lag==}
+  '@ai-sdk/anthropic@3.0.64':
+    resolution: {integrity: sha512-rwLi/Rsuj2pYniQXIrvClHvXDzgM4UQHHnvHTWEF14efnlKclG/1ghpNC+adsRujAbCTr6gRsSbDE2vEqriV7g==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/gateway@2.0.30':
-    resolution: {integrity: sha512-5Nrkj8B4MzkkOfjjA+Cs5pamkbkK4lI11bx80QV7TFcen/hWA8wEC+UVzwuM5H2zpekoNMjvl6GonHnR62XIZw==}
+  '@ai-sdk/gateway@3.0.80':
+    resolution: {integrity: sha512-uM7kpZB5l977lW7+2X1+klBUxIZQ78+1a9jHlaHFEzcOcmmslTl3sdP0QqfuuBcO0YBM2gwOiqVdp8i4TRQYcw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/openai@2.0.89':
-    resolution: {integrity: sha512-4+qWkBCbL9HPKbgrUO/F2uXZ8GqrYxHa8SWEYIzxEJ9zvWw3ISr3t1/27O1i8MGSym+PzEyHBT48EV4LAwWaEw==}
+  '@ai-sdk/openai@3.0.48':
+    resolution: {integrity: sha512-ALmj/53EXpcRqMbGpPJPP4UOSWw0q4VGpnDo7YctvsynjkrKDmoneDG/1a7VQnSPYHnJp6tTRMf5ZdxZ5whulg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/provider-utils@3.0.20':
-    resolution: {integrity: sha512-iXHVe0apM2zUEzauqJwqmpC37A5rihrStAih5Ks+JE32iTe4LZ58y17UGBjpQQTCRw9YxMeo2UFLxLpBluyvLQ==}
+  '@ai-sdk/provider-utils@4.0.21':
+    resolution: {integrity: sha512-MtFUYI1/8mgDvRmaBDjbLJPFFrMG777AvSgyIFQtZHIMzm88R/12vYBBpnk7pfiWLFE1DSZzY4WDYzGbKAcmiw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/provider-utils@3.0.21':
-    resolution: {integrity: sha512-veuMwTLxsgh31Jjn0SnBABnM1f7ebHhRWcV2ZuY3hP3iJDCZ8VXBaYqcHXoOQDqUXTCas08sKQcHyWK+zl882Q==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
-
-  '@ai-sdk/provider@2.0.1':
-    resolution: {integrity: sha512-KCUwswvsC5VsW2PWFqF8eJgSCu5Ysj7m1TxiHTVA6g7k360bk0RNQENT8KTMAYEs+8fWPD3Uu4dEmzGHc+jGng==}
+  '@ai-sdk/provider@3.0.8':
+    resolution: {integrity: sha512-oGMAgGoQdBXbZqNG0Ze56CHjDZ1IDYOwGYxYjO5KLSlz5HiNQ9udIXsPZ61VWaHGZ5XW/jyjmr6t2xz2jGVwbQ==}
     engines: {node: '>=18'}
 
   '@algolia/abtesting@1.14.1':
@@ -4503,56 +4497,56 @@ packages:
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
 
-  '@malloydata/db-bigquery@0.0.367':
-    resolution: {integrity: sha512-nOofGTfIZrKI3AfivYsDtaaySwEFqGBMn7kUCIPzTZO2aAO2qX7buJ1U1s+TfSpH05459nEhgMTE9d2AERk6Xg==}
+  '@malloydata/db-bigquery@0.0.369':
+    resolution: {integrity: sha512-tUFuojYHgzlfRSg7hFAeuXTTUsPU/01kt2viUML0595EKgoZ55Xf1mB38rKFEgFujwLB21SiADJcKIpS6ohzaw==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-databricks@0.0.367':
-    resolution: {integrity: sha512-+tvIzBU2HBF79P5/boIq0tdTorlGxLc/ULhsJnyNp9V+Tb2nPbpcTJwdKGMyJ9NiTUKeMqhUj4PPQ89N6asnLw==}
+  '@malloydata/db-databricks@0.0.369':
+    resolution: {integrity: sha512-M2DQI3T97cksjfzlqNSP1igge6s0mF8KpDB6lbd5TuJeHuDO2qhcF/LunB9OqoXIEvcMINbPsduivg8OB9XoxA==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-duckdb@0.0.367':
-    resolution: {integrity: sha512-KKA3nlg1QTQWAAsV+QbmY52AoAurE7277uHwiZSVzdKGixUmyv+T0zW1snuEP6IOM6YTFlRFUldMkF7KiT3abQ==}
+  '@malloydata/db-duckdb@0.0.369':
+    resolution: {integrity: sha512-sM81Ptr+7s2Ewmv/54KPWAaGmoBOzjcyT3mzfdGdzsV6iIS8SDNcErAFYiN98UL+CRN3QSBVAR/JZCI8Gr2GrA==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-mysql@0.0.367':
-    resolution: {integrity: sha512-UHbGuhClpCq4I7A1H2V76Ponbyz/0wjfdiA4onm4GbvJMJf3YIOc13pA3KKTdjL1yvHzDtKFmUYqIiSwOnyEZA==}
+  '@malloydata/db-mysql@0.0.369':
+    resolution: {integrity: sha512-+t02kmdeqqmCC4//Bv+ApySwJhPz3hUhh/ilzW1Lgng9ei15xXIX5kM+kUbMmwA+C8Gl7cb3+zrTe/V4W37gdg==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-postgres@0.0.367':
-    resolution: {integrity: sha512-9TayUJYyRWTqohNBN2aQ1XKizh3hFnMffeGCauID/O0p2UIe2nngjoYXUZuvWOcX6v9AjsoE/0d5rNlZNCO1Xg==}
+  '@malloydata/db-postgres@0.0.369':
+    resolution: {integrity: sha512-Ebqmbh7VatUMeK/rNW4CxuqLeneEKusXT1kzCR1CGNFpmk5BmLyeN6k7cKM9QlO/xYE0vGe3p2IoVlk9OXQmpg==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-snowflake@0.0.367':
-    resolution: {integrity: sha512-LgIIHOVQsgIGGvKHxR+LlKTK3FGUsx/JetX7Zgqh4FNit+CIUrVtimYF71BXZmxVru+tsH8cs+JNWWPWmE2XAA==}
+  '@malloydata/db-snowflake@0.0.369':
+    resolution: {integrity: sha512-bllvLi/15U4UGy42oo08+t5d1FNG5PByzrX2FsLgEIiXeRJ+yaNSkTD519ajzGpch4Bjnd4kjm4PNlAUnaA8Yw==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-trino@0.0.367':
-    resolution: {integrity: sha512-399QYw6RcFFZt9MEDzUSXwD4V2iqV6izFDJqT9lMZ5G/HD7raS6q9qgLw1/Al2j3M0S+LxFX/yZ9omR0TgOPyg==}
+  '@malloydata/db-trino@0.0.369':
+    resolution: {integrity: sha512-wk0grAiQJsvVWrhUZZFAK7HnBwrSHnpZakd1+4qlQ9anpL34qqf1fk0wCYXOOGcXTw/kX+i1OW1nIVTuZPKVwA==}
     engines: {node: '>=20'}
 
-  '@malloydata/malloy-filter@0.0.367':
-    resolution: {integrity: sha512-MXgBHNr3N9sTZj2z1yfj7AKfpqMxVeqhKgyqX134rfijT8SKiv1tfBdRoXTpnFvFEq1iDQBbQeSW18nt+cxMnw==}
+  '@malloydata/malloy-filter@0.0.369':
+    resolution: {integrity: sha512-9XWkbM25L+JuTl7LYuLqE3x+t5WUFvJdz7jB6O2AKhpN18NWD1BqPtB8eOYdnEFtbKDnG9D341kNabEk5HFWjw==}
     engines: {node: '>=20'}
 
-  '@malloydata/malloy-interfaces@0.0.367':
-    resolution: {integrity: sha512-tF6rHtPzQFp7WIEZBYjCsS4Y9AjPUAiFRdnx9m4IuVm3hKtI+oiTmt6gcbVbxrseIz8aFd8Bjw3yiUk0PtI/OA==}
+  '@malloydata/malloy-interfaces@0.0.369':
+    resolution: {integrity: sha512-TV3CPczN+3CMbzMSSZPLkGP2ROWsu5Co6aQEhz9JkK4BRpfJ+AB0I0Qq1zuaFWzwgy3+lnU18xbccnRDltVJVg==}
     engines: {node: '>=20'}
 
-  '@malloydata/malloy-query-builder@0.0.367':
-    resolution: {integrity: sha512-ixOZpWnysAHcG05zq6wJasAn7exn2C538MdvYBVp07qKtPTwN857yTDBvZjdZ09AICW5iHfFi8c3dJnPr710dA==}
+  '@malloydata/malloy-query-builder@0.0.369':
+    resolution: {integrity: sha512-b+cNaqnZ+50qBvxIemaMXbUUVm69Cqy4TPB2A8gwwYh80552Aw3KljaqUgafkaGW5Kz7RPqeiK5+l92JWDAE2A==}
     engines: {node: '>=20'}
 
-  '@malloydata/malloy-tag@0.0.367':
-    resolution: {integrity: sha512-1whKhMK8kXl9eL3CZnq64KY43V55BqZs1Xm8QBE8pDVzxa9xC0Mw8yb+oA7C1dh+Mnf0s1onqSelibVyx/c2QQ==}
+  '@malloydata/malloy-tag@0.0.369':
+    resolution: {integrity: sha512-7uXmnvQ+dBfh96dl1Dw05G8x4+kzS9se5vi3MfbrnhqgJdBTSaDnn4eGbpvRbAXmcpFIqRmNxqsB4TsQA+Mjtw==}
     engines: {node: '>=20'}
 
-  '@malloydata/malloy@0.0.367':
-    resolution: {integrity: sha512-OoShzWQcoELbq6rbQ/C45EwdDM/B1e/BJV7V3ivUqlzfU4nZ2l/TfsCgIdB6ioks/7m7fvFAfgD57wZCzhKnLg==}
+  '@malloydata/malloy@0.0.369':
+    resolution: {integrity: sha512-zgESsBU6ye6ctyfJZBE3aYDHzb1+t7UCdyPpSaEkcVJ4ss0UimX0WP7Js8X26z02NJWlCMshU/Dvzl54sqUMPg==}
     engines: {node: '>=20'}
 
-  '@malloydata/motly-ts-parser@0.7.1':
-    resolution: {integrity: sha512-zL08Dkbzlx+m2Br4lAlcaV/xHlxnLRsJWcAfTNpjuI5Amy5cYBJwPEvkEAUaXCU8JVT5XuR2MtEyJufYaw5pjw==}
+  '@malloydata/motly-ts-parser@0.8.1':
+    resolution: {integrity: sha512-aNo6Yr8Z1T3fHwNta7mCUKEeQksYuft9/dxyzt4KWL40u9VwQzOjsnrbHPO7czfZNdq5/IKTccqnDIyAV0eiqw==}
 
   '@mapbox/node-pre-gyp@1.0.11':
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
@@ -4957,8 +4951,8 @@ packages:
   '@open-wc/dedupe-mixin@1.4.0':
     resolution: {integrity: sha512-Sj7gKl1TLcDbF7B6KUhtvr+1UCxdhMbNY5KxdU5IfMFWqL8oy1ZeAcCANjoB1TL0AJTcPmcCFsCbHf8X2jGDUA==}
 
-  '@opencode-ai/sdk@1.3.3':
-    resolution: {integrity: sha512-qg7DwEVUpZArsYajs0DcaHqmIYB3EfHCuuTdMJir7Yc976DUWDfLR/5y9h8fKb9HAMJXe4TZkAIEr0/3OmK67g==}
+  '@opencode-ai/sdk@1.3.13':
+    resolution: {integrity: sha512-/M6HlNnba+xf1EId6qFb2tG0cvq0db3PCQDug1glrf8wYOU57LYNF8WvHX9zoDKPTMv0F+O4pcP/8J+WvDaxHA==}
 
   '@opentelemetry/api-logs@0.208.0':
     resolution: {integrity: sha512-CjruKY9V6NMssL/T1kAFgzosF1v9o6oeN+aX5JB/C/xPNtmgIJqcXHG7fA82Ou1zCpWGl4lROQUKwUNE1pMCyg==}
@@ -6105,8 +6099,8 @@ packages:
     resolution: {integrity: sha512-TV7t8GKYaJWsn00tFDqBw8+Uqmr8A0fRU1tvTQhyZzGv0sJCGRQL3JGMI3ucuKo3XIZdUP+Lx7/gh2t3lewy7g==}
     engines: {node: '>=14.16'}
 
-  '@sindresorhus/merge-streams@2.3.0':
-    resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
+  '@sindresorhus/merge-streams@4.0.0':
+    resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
   '@smithy/abort-controller@4.2.7':
@@ -6632,6 +6626,36 @@ packages:
     resolution: {integrity: sha512-Y8cK9aggNRsqJVaKUlEYs4s7CvQ1b1ta2DVPyAimb0I2qhzjNk+A+mxvll/klL0RlfuIUei8BF7YWiua4kQqww==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
+  '@turbo/darwin-64@2.9.3':
+    resolution: {integrity: sha512-P8foouaP+y/p+hhEGBoZpzMbpVvUMwPjDpcy6wN7EYfvvyISD1USuV27qWkczecihwuPJzQ1lDBuL8ERcavTyg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@turbo/darwin-arm64@2.9.3':
+    resolution: {integrity: sha512-SIzEkvtNdzdI50FJDaIQ6kQGqgSSdFPcdn0wqmmONN6iGKjy6hsT+EH99GP65FsfV7DLZTh2NmtTIRl2kdoz5Q==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@turbo/linux-64@2.9.3':
+    resolution: {integrity: sha512-pLRwFmcHHNBvsCySLS6OFabr/07kDT2pxEt/k6eBf/3asiVQZKJ7Rk88AafQx2aYA641qek4RsXvYO3JYpiBug==}
+    cpu: [x64]
+    os: [linux]
+
+  '@turbo/linux-arm64@2.9.3':
+    resolution: {integrity: sha512-gy6ApUroC2Nzv+qjGtE/uPNkhHAFU4c8God+zd5Aiv9L9uBgHlxVJpHT3XWl5xwlJZ2KWuMrlHTaS5kmNB+q1Q==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@turbo/windows-64@2.9.3':
+    resolution: {integrity: sha512-d0YelTX6hAsB7kIEtGB3PzIzSfAg3yDoUlHwuwJc3adBXUsyUIs0YLG+1NNtuhcDOUGnWQeKUoJ2pGWvbpRj7w==}
+    cpu: [x64]
+    os: [win32]
+
+  '@turbo/windows-arm64@2.9.3':
+    resolution: {integrity: sha512-/08CwpKJl3oRY8nOlh2YgilZVJDHsr60XTNxRhuDeuFXONpUZ5X+Nv65izbG/xBew9qxcJFbDX9/sAmAX+ITcQ==}
+    cpu: [arm64]
+    os: [win32]
+
   '@tweenjs/tween.js@18.6.4':
     resolution: {integrity: sha512-lB9lMjuqjtuJrx7/kOkqQBtllspPIN+96OvTCeJ2j5FEzinoAXTdAMFnDAQT1KVPRlnYfBrqxtqP66vDM40xxQ==}
 
@@ -6975,9 +6999,9 @@ packages:
     resolution: {integrity: sha512-8r4TNknD7OJQADe3VygeofFR7UNAXZ2/jjBFP5dgI8+2uMfnuGYgbuHivasKr9WSQ64sPej6m8rDoM1uSllXjQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  '@vercel/nft@0.29.4':
-    resolution: {integrity: sha512-6lLqMNX3TuycBPABycx7A9F1bHQR7kiQln6abjFbPrf5C/05qHM9M5E4PeTE59c7z8g6vHnx1Ioihb2AQl7BTA==}
-    engines: {node: '>=18'}
+  '@vercel/nft@1.5.0':
+    resolution: {integrity: sha512-IWTDeIoWhQ7ZtRO/JRKH+jhmeQvZYhtGPmzw/QGDY+wDCQqfm25P9yIdoAFagu4fWsK4IwZXDFIjrmp5rRm/sA==}
+    engines: {node: '>=20'}
     hasBin: true
 
   '@vercel/oidc@3.1.0':
@@ -7142,12 +7166,17 @@ packages:
     peerDependencies:
       acorn: ^8.14.0
 
-  acorn-walk@8.3.4:
-    resolution: {integrity: sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==}
+  acorn-walk@8.3.5:
+    resolution: {integrity: sha512-HEHNfbars9v4pgpW6SO1KSPkfoS0xVOM/9UzkJltjlsHZmJasxg8aXkuZa7SMf8vKGIBhpUsPluQSqhJFCqebw==}
     engines: {node: '>=0.4.0'}
 
   acorn@8.15.0:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+
+  acorn@8.16.0:
+    resolution: {integrity: sha512-UVJyE9MttOsBQIDKw1skb9nAwQuR5wuGD3+82K6JgJlm/Y+KI92oNsMNGZCYdDsVtRHSak0pcV5Dno5+4jh9sw==}
     engines: {node: '>=0.4.0'}
     hasBin: true
 
@@ -7175,8 +7204,8 @@ packages:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
 
-  ai@5.0.124:
-    resolution: {integrity: sha512-Li6Jw9F9qsvFJXZPBfxj38ddP2iURCnMs96f9Q3OeQzrDVcl1hvtwSEAuxA/qmfh6SDV2ERqFUOFzigvr0697g==}
+  ai@6.0.138:
+    resolution: {integrity: sha512-49OfPe0f5uxJ6jUdA5BBXjIinP6+ZdYfAtpF2aEH64GA5wPcxH2rf/TBUQQ0bbamBz/D+TLMV18xilZqOC+zaA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -7401,9 +7430,9 @@ packages:
     peerDependencies:
       postcss: ^8.1.0
 
-  ava@6.4.1:
-    resolution: {integrity: sha512-vxmPbi1gZx9zhAjHBgw81w/iEDKcrokeRk/fqDTyA2DQygZ0o+dUGRHFOtX8RA5N0heGJTTsIk7+xYxitDb61Q==}
-    engines: {node: ^18.18 || ^20.8 || ^22 || ^23 || >=24}
+  ava@7.0.0:
+    resolution: {integrity: sha512-4sRJO/gehlfAgSbuH02mClDDiyymnuFmirE3KqPXl2pic1FaFTZaAACKqr85WT4o08iLjViMR9gmMkxzbZ3AgA==}
+    engines: {node: ^20.19 || ^22.20 || ^24.12 || >=25}
     hasBin: true
     peerDependencies:
       '@ava/typescript': '*'
@@ -7737,8 +7766,8 @@ packages:
   chunkd@2.0.1:
     resolution: {integrity: sha512-7d58XsFmOq0j6el67Ug9mHf9ELUXsQXYJBkyxhH/k+6Ke0qXRnv0kbemx+Twc6fRJ07C49lcbdgm9FL1Ei/6SQ==}
 
-  ci-info@4.3.1:
-    resolution: {integrity: sha512-Wdy2Igu8OcBpI2pZePZ5oWjPC38tmDVx5WKUXKwlLYkA0ozo85sLsLvkBbBn/sZaSCMFOGZJ14fvW9t5/d7kdA==}
+  ci-info@4.4.0:
+    resolution: {integrity: sha512-77PSwercCZU2Fc4sX94eF8k8Pxte6JAwL4/ICZLFjJLqegs7kCuAsqqj/70NQF6TvDpgFjkubQB2FW2ZZddvQg==}
     engines: {node: '>=8'}
 
   ci-parallel-vars@1.0.1:
@@ -7778,10 +7807,6 @@ packages:
   cli-spinners@3.3.0:
     resolution: {integrity: sha512-/+40ljC3ONVnYIttjMWrlL51nItDAbBrq2upN8BPyvGU/2n5Oxw3tbNwORCaNuNqLJnxGqOfjUuhsv7l5Q4IsQ==}
     engines: {node: '>=18.20'}
-
-  cli-truncate@4.0.0:
-    resolution: {integrity: sha512-nPdaFdQ0h/GEigbPClz11D0v/ZJEwxmeVZGeMo3Z5StPtUTkA9o1lD6QwoirYiSDzbcwn2XcjwmCp68W1IS4TA==}
-    engines: {node: '>=18'}
 
   cli-truncate@5.1.1:
     resolution: {integrity: sha512-SroPvNHxUnk+vIW/dOSfNqdy1sPEFkrTk6TUtqLCnBlo3N7TNYYkzzN7uSD6+jVjrdO4+p8nH7JzH6cIvUem6A==}
@@ -9128,9 +9153,9 @@ packages:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
     deprecated: Glob versions prior to v9 are no longer supported
 
-  globby@14.1.0:
-    resolution: {integrity: sha512-0Ia46fDOaT7k4og1PDW4YbodWWr3scS2vAr2lTbsplOt2WkKp0vQbkI9wKis/T5LV/dqPjO3bpS/z6GTJB82LA==}
-    engines: {node: '>=18'}
+  globby@16.2.0:
+    resolution: {integrity: sha512-QrJia2qDf5BB/V6HYlDTs0I0lBahyjLzpGQg3KT7FnCdTonAyPy2RtY802m2k4ALx6Dp752f82WsOczEVr3l6Q==}
+    engines: {node: '>=20'}
 
   gonzales-pe@4.3.0:
     resolution: {integrity: sha512-otgSPpUmdWJ43VXyiNgEYE4luzHCL2pz4wQ0OnDluC6Eg4Ko3Vexy/SrSynglw/eR+OhkzmqFCZa/OFa/RgAOQ==}
@@ -9412,9 +9437,9 @@ packages:
     resolution: {integrity: sha512-Zv/pA+ciVFbCSBBjGfaKUya/CcGmUHzTydLMaTwrUUEM2DIEO3iZvueGxmacvmN50fGpGVKeTXpb2LcYQxeVdg==}
     engines: {node: '>= 10'}
 
-  irregular-plurals@3.5.0:
-    resolution: {integrity: sha512-1ANGLZ+Nkv1ptFb2pa8oG8Lem4krflKuX/gINiHJHjJUKaJHk/SXk5x6K3J+39/p0h1RQ2saROclJJ+QLvETCQ==}
-    engines: {node: '>=8'}
+  irregular-plurals@4.2.0:
+    resolution: {integrity: sha512-bW9UXHL7bnUcNtTo+9ccSngbxc+V40H32IgvdVin0Xs8gbo+AVYD5g/72ce/54Kjfhq66vcZr8H8TKEvsifeOw==}
+    engines: {node: '>=18.20'}
 
   is-arguments@1.2.0:
     resolution: {integrity: sha512-7bVbi0huj/wrIAOzb8U1aszg9kdi3KN/CyU19CTI7tAoZYEZoL9yCDXpbXN+uPsuWnP02cyug1gleqq+TU+YCA==}
@@ -9452,10 +9477,6 @@ packages:
   is-fullwidth-code-point@3.0.0:
     resolution: {integrity: sha512-zymm5+u+sCsSWyD9qNaejV3DFvhCKclKdizYaJUuHA83RLjb7nSuGnddCHGv0hk+KY7BMAlsWeK4Ueg6EV6XQg==}
     engines: {node: '>=8'}
-
-  is-fullwidth-code-point@4.0.0:
-    resolution: {integrity: sha512-O4L094N2/dZ7xqVdrXhh9r1KODPJpFms8B5sGdJLPy664AgvXsreZUyCQQNItZRDlYug4xStLjNp/sz3HvBowQ==}
-    engines: {node: '>=12'}
 
   is-fullwidth-code-point@5.1.0:
     resolution: {integrity: sha512-5XHYaSyiqADb4RnZ1Bdad6cPp8Toise4TzEjcOYDHZkTCbKgiUl7WTUCpNWHuxmDt91wnsZBc9xinNzopv3JMQ==}
@@ -9501,6 +9522,10 @@ packages:
   is-obj@1.0.1:
     resolution: {integrity: sha512-l4RyHgRqGN4Y3+9JHVrNqO+tN0rV5My76uW5/nuO4K1b6vw5G8d/cmFjP9tRfEsdhZNt0IFdZuK/c2Vr4Nb+Qg==}
     engines: {node: '>=0.10.0'}
+
+  is-path-inside@4.0.0:
+    resolution: {integrity: sha512-lJJV/5dYS+RcL8uQdBDW9c9uWFLLBNRyFhnAKXw5tVqLlKZ4RMGZKv+YQ/IA3OhD+RpbJa1LLFM1FQPGyIXvOA==}
+    engines: {node: '>=12'}
 
   is-plain-obj@1.1.0:
     resolution: {integrity: sha512-yvkRyxmFKEOQ4pNXCmJG5AEQNlXJS5LaONXo5/cLdTZdWvsZ1ioJEonLGAosKlMWE8lwUy/bJzMjcw8az73+Fg==}
@@ -9980,9 +10005,9 @@ packages:
     resolution: {integrity: sha512-iyyEpDty1mwW3dGlYXAJqC/azFn5PPvgKVwXayOGBSmKLxhKZ9fg4qIan2ePpp1vJIwfFiO34LAPZgq9SZW9Aw==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  matcher@5.0.0:
-    resolution: {integrity: sha512-s2EMBOWtXFc8dgqvoAzKJXxNHibcdJMV0gwqKUaw9E2JBJuGUK7DrNKrA6g/i+v72TT16+6sVm5mS3thaMLQUw==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+  matcher@6.0.0:
+    resolution: {integrity: sha512-TzDerdcNtI79w7Av4GT57bLdElPA/VAkjqdMZv8yhuc8geU2z0ljW9anXbX/55aHEMTpYypZb1lxsA/46r9oOQ==}
+    engines: {node: '>=20'}
 
   material-colors@1.2.6:
     resolution: {integrity: sha512-6qE4B9deFBIa9YSpOc9O0Sgc43zTeVYbgDT5veRKSlB2+ZuHNoVVxA1L/ckMUayV9Ay9y7Z/SZCLcGteW9i7bg==}
@@ -10669,67 +10694,67 @@ packages:
   openapi-typescript-helpers@0.0.15:
     resolution: {integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==}
 
-  opencode-ai@1.3.3:
-    resolution: {integrity: sha512-jepqVEwUFsSwuREGdeAVyVXyQlrDiIbIM2Jw3VRKck3U/n0PDM1DEH4aX2Ox4IJQKyWJIzX3W5X6gs3+pMXyOA==}
+  opencode-ai@1.3.13:
+    resolution: {integrity: sha512-+FmXiAwCiSNYFkWEBsRWKMpDAGR2KuViVelIH9i3w5s2lltjw84Q4IQybDqzOzwTN/H4g9UgQuf5QzDqsZ1xNw==}
     hasBin: true
 
-  opencode-darwin-arm64@1.3.3:
-    resolution: {integrity: sha512-q3BjhpR8ow8RSK6KuwcDXCEI80sCwb4RFNYET8n4fiWk2QQLhXRLjYWSNrtbQE0D7qvFvEoGFxf7kDf9iLQNdA==}
+  opencode-darwin-arm64@1.3.13:
+    resolution: {integrity: sha512-pZv7qhuMFhtv+pksKXmX2IhlK2QHOQkoJQHByzCEhvDq9JVxIduwB9ADepNJDfcY7tXePrSJCLxIYKFzVjVOzA==}
     cpu: [arm64]
     os: [darwin]
 
-  opencode-darwin-x64-baseline@1.3.3:
-    resolution: {integrity: sha512-4Hp1Sr99BL3Poa+kz9ZNp0Lt9uwIoT8OYF/f10jNdMUZLBNSijVIiSH0zH3KyBKMRvNl0ZcWbOvKGTaRh9X0Kg==}
+  opencode-darwin-x64-baseline@1.3.13:
+    resolution: {integrity: sha512-KYAAodKxVoE+MQvl1de8WXfmy0gQtsDLS1XGmro608nlQOheVMOBZfWJbRi51rcjL4cDoF0/k4CQ35uluxsciw==}
     cpu: [x64]
     os: [darwin]
 
-  opencode-darwin-x64@1.3.3:
-    resolution: {integrity: sha512-/AmjZ2hu7pVRKpj7t6siiiW3xo68enjRUmfAOI+grIAdX64oh+95xf/l7hsf2TLIWjRev+9kOBjUVMQTQNu2VA==}
+  opencode-darwin-x64@1.3.13:
+    resolution: {integrity: sha512-BSBSaHwLY8REwW4hVOm9hsihJBJMN559FE0+01I1nwrAg5OM7bPCoDL/PK+xnGkWe6wpbjL7x1hju3BPx3Dk+g==}
     cpu: [x64]
     os: [darwin]
 
-  opencode-linux-arm64-musl@1.3.3:
-    resolution: {integrity: sha512-N4pBzZDeTq4noc4/SwIm4roGb6OtDt9XOOE9p6OsB+4JhCuBIUcyMW71EQCIFlH197vmcJfWCo/AdCa3OS6uHA==}
+  opencode-linux-arm64-musl@1.3.13:
+    resolution: {integrity: sha512-prJuZc93GcYxeWs/uz1BuoYGZSQEswJmKoh9nWh55QmCXf+Lb/x1vp2CdtiGzxpb7mj+NJ4QfVOa9Fc0UZMj0Q==}
     cpu: [arm64]
     os: [linux]
 
-  opencode-linux-arm64@1.3.3:
-    resolution: {integrity: sha512-i2/PR9lMPpn0RjELiAKcdLkDjtBHP+l/HVxNFB7l3E9jXT2V/WohOZOGlegIsYmm6bB10/qU0UrzPlRLLJY1kg==}
+  opencode-linux-arm64@1.3.13:
+    resolution: {integrity: sha512-FalygguOjawwNkZOyyERKsZHC9kU5O05Nf0X9iNCNdeNIYD8oktqB1GfDymedKVLSM3s1wLiY2K2AadwnivRGQ==}
     cpu: [arm64]
     os: [linux]
 
-  opencode-linux-x64-baseline-musl@1.3.3:
-    resolution: {integrity: sha512-QXiIDscOCDN0z80SrO/L4Oi/f8fxs0c4zV12eUA13zw8MITLjOzdRoBIIv8jwwgjLC7rJd/PE8CIkiB5xMjuXQ==}
+  opencode-linux-x64-baseline-musl@1.3.13:
+    resolution: {integrity: sha512-vxKW4tPQH3WKf4eoyNw4bzf503IvfxZ+94PXbvD0TK49Qhkab/W7ibigtTJ/WyC1JllBz7W3RQS6odstgXqUVA==}
     cpu: [x64]
     os: [linux]
 
-  opencode-linux-x64-baseline@1.3.3:
-    resolution: {integrity: sha512-9dY89V7tKNzyOsbH9pIQORCxPGImwnDvoyMZ1s1NtXDCXz/ZJWfzYOcVWBZZA7frRcwnwIueZjrz0aARDAtLdg==}
+  opencode-linux-x64-baseline@1.3.13:
+    resolution: {integrity: sha512-0F6biOgk9u889ZvckOnrHpSz9b29vqR/kcL1LxQ1t41Erq89uYcNh/RbNJcTJkYPsG30+yu8hHg+eQWvFjxvyw==}
     cpu: [x64]
     os: [linux]
 
-  opencode-linux-x64-musl@1.3.3:
-    resolution: {integrity: sha512-mJlzR+VOv+zqxLbpd4JhUF9ElbN/9ebQ395onTUDZU3vGtTvqz5Z3cZm8R7Xd+GNs5f/AkPUNyYqlHrmT85RKw==}
+  opencode-linux-x64-musl@1.3.13:
+    resolution: {integrity: sha512-jk+YSEYje0JfV7xapUX02zkF1N8fHfuH0O9di5S/VP4L4zLHO8uWrEj/4LxiwPWwdUgSATP9pf8WMx/Shn5dZQ==}
     cpu: [x64]
     os: [linux]
 
-  opencode-linux-x64@1.3.3:
-    resolution: {integrity: sha512-BpqYkbk8adAvnXTNFOjs5gxOsbqA/+l7J0PRIQtvslwRgVnrPMQoCXeD9okSXaVxMvyil4mWdodalY3wkY5LWg==}
+  opencode-linux-x64@1.3.13:
+    resolution: {integrity: sha512-zL+gG/TnevdTgbc6z3RwYXIpaodmdt2IqHF+CAQuf8Ayzx1LF0SvkkiclIEz12kdjlfttjNOxuRFWCJLzQIJIw==}
     cpu: [x64]
     os: [linux]
 
-  opencode-windows-arm64@1.3.3:
-    resolution: {integrity: sha512-1GeiiZocPzE0mBp6cgON/180DN1v+jT0YH4mKEY1nof5V0CWS5WazvciPdGDTf0mfnvz+FfrDpxFxpA8HVU+SA==}
+  opencode-windows-arm64@1.3.13:
+    resolution: {integrity: sha512-FMDHGS0PQ/rFFEpJccn5jxxk+xwB8uU4iWHNaVCDnw7HtB9qxE2wq7cIkMnrBr3NzeCV4P9O4edbhiSwt7cZsQ==}
     cpu: [arm64]
     os: [win32]
 
-  opencode-windows-x64-baseline@1.3.3:
-    resolution: {integrity: sha512-+S6ADlSdB3Cf+JfkVeJ1087lM6BeCslROfNUt3I2Y6hktqwOKRnlhI/dz/SySaGeQD0gysgYcQ7PzZPQpPNa/w==}
+  opencode-windows-x64-baseline@1.3.13:
+    resolution: {integrity: sha512-6bUttlnruIcTE+iU2MWR5kNtMOa6PIgXx5cyPNCvbbNUzdgo8AB2BWubB7IFn4DG2hy8UxFCW0ICjRv8ic5Tbw==}
     cpu: [x64]
     os: [win32]
 
-  opencode-windows-x64@1.3.3:
-    resolution: {integrity: sha512-pE7VJNy3s3nMgdhbbZIGW9f/kHxgdV3sqAxM5kJd8WVOetQQ7DxUH52+rwYs0DqyoX9lZqIY2SnWCRFxio5Qtw==}
+  opencode-windows-x64@1.3.13:
+    resolution: {integrity: sha512-URW1iowKefYTzxKEyD3Kq03HjqVRlwPHAAFiB7qzA17AcWCZFppp+rhOlKz25oxXjugJj53YGd63Shlrjc/oUg==}
     cpu: [x64]
     os: [win32]
 
@@ -10944,10 +10969,6 @@ packages:
   path-to-regexp@8.3.0:
     resolution: {integrity: sha512-7jdwVIRtsP8MYpdXSwOS0YdD0Du+qOoF/AEPIt88PcCFrZCzx41oxku1jD88hZBwbNUIEfpqvuhjFaMAqMTWnA==}
 
-  path-type@6.0.0:
-    resolution: {integrity: sha512-Vj7sf++t5pBD637NSfkxpHSMfWaeig5+DKWLhcqIYx6mWQz5hdJTGDVMQiJcw1ZYkhs7AazKDGpRVji1LJCZUQ==}
-    engines: {node: '>=18'}
-
   pause@0.0.1:
     resolution: {integrity: sha512-KG8UEiEVkR3wGEb4m5yZkVCzigAD+cVEJck2CzYZO37ZGJfctvVptVO192MwrtPhzONn6go8ylnOdMhKqi4nfg==}
 
@@ -11069,9 +11090,9 @@ packages:
   platform@1.3.6:
     resolution: {integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==}
 
-  plur@5.1.0:
-    resolution: {integrity: sha512-VP/72JeXqak2KiOzjgKtQen5y3IZHn+9GOuLDafPv0eXa47xq0At93XahYBs26MsifCQ4enGKwbjBTKgb9QJXg==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+  plur@6.0.0:
+    resolution: {integrity: sha512-Y9wXQivjRX0REtwpA9+n0bYYypWESn3cWtW2vazymw711qn+AQXxzZjRqhANYGBLIMC1UzVdpwe/1hHQwHfwng==}
+    engines: {node: '>=20'}
 
   pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
@@ -11983,10 +12004,6 @@ packages:
     resolution: {integrity: sha512-ZA6oR3T/pEyuqwMgAKT0/hAv8oAXckzbkmR0UkUosQ+Mc4RxGoJkRmwHgHufaenlyAgE1Mxgpdcrf75y6XcnDg==}
     engines: {node: '>=14.16'}
 
-  slice-ansi@5.0.0:
-    resolution: {integrity: sha512-FC+lgizVPfie0kkhqUScwRu1O/lF6NOgJmlCgK+/LYxDCTk8sGelYaHDhFcDN+Sn3Cv+3VSa4Byeo+IMCzpMgQ==}
-    engines: {node: '>=12'}
-
   slice-ansi@7.1.2:
     resolution: {integrity: sha512-iOBWFgUX7caIZiuutICxVgX1SdxwAVFFKwt1EvMYYec/NWO5meOJ6K5uQxhrYBdQJne4KxiqZc+KptFOWFSI9w==}
     engines: {node: '>=18'}
@@ -12302,11 +12319,6 @@ packages:
     engines: {node: '>=10'}
     deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exhorbitant rates) by contacting i@izs.me
 
-  tar@7.5.2:
-    resolution: {integrity: sha512-7NyxrTE4Anh8km8iEy7o0QYPs+0JKBTj5ZaqHg6B39erLg0qYXN3BijtShwbsNSvQ+LN75+KV+C4QR/f6Gwnpg==}
-    engines: {node: '>=18'}
-    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exhorbitant rates) by contacting i@izs.me
-
   tar@7.5.7:
     resolution: {integrity: sha512-fov56fJiRuThVFXD6o6/Q354S7pnWMJIVlDBYijsTNx6jKSE4pvrDTs6lUnmGvNyfJwFQQwWy3owKz1ucIhveQ==}
     engines: {node: '>=18'}
@@ -12498,38 +12510,8 @@ packages:
   tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
 
-  turbo-darwin-64@2.8.7:
-    resolution: {integrity: sha512-Xr4TO/oDDwoozbDtBvunb66g//WK8uHRygl72vUthuwzmiw48pil4IuoG/QbMHd9RE8aBnVmzC0WZEWk/WWt3A==}
-    cpu: [x64]
-    os: [darwin]
-
-  turbo-darwin-arm64@2.8.7:
-    resolution: {integrity: sha512-p8Xbmb9kZEY/NoshQUcFmQdO80s2PCGoLYj5DbpxjZr3diknipXxzOK7pcmT7l2gNHaMCpFVWLkiFY9nO3EU5w==}
-    cpu: [arm64]
-    os: [darwin]
-
-  turbo-linux-64@2.8.7:
-    resolution: {integrity: sha512-nwfEPAH3m5y/nJeYly3j1YJNYU2EG5+2ysZUxvBNM+VBV2LjQaLxB9CsEIpIOKuWKCjnFHKIADTSDPZ3D12J5Q==}
-    cpu: [x64]
-    os: [linux]
-
-  turbo-linux-arm64@2.8.7:
-    resolution: {integrity: sha512-mgA/M6xiJzyxtXV70TtWGDPh+I6acOKmeQGtOzbFQZYEf794pu5jax26bCk5skAp1gqZu3vacPr6jhYHoHU9IQ==}
-    cpu: [arm64]
-    os: [linux]
-
-  turbo-windows-64@2.8.7:
-    resolution: {integrity: sha512-sHTYMaXuCcyHnGUQgfUUt7S8407TWoP14zc/4N2tsM0wZNK6V9h4H2t5jQPtqKEb6Fg8313kygdDgEwuM4vsHg==}
-    cpu: [x64]
-    os: [win32]
-
-  turbo-windows-arm64@2.8.7:
-    resolution: {integrity: sha512-WyGiOI2Zp3AhuzVagzQN+T+iq0fWx0oGxDfAWT3ZiLEd4U0cDUkwUZDKVGb3rKqPjDL6lWnuxKKu73ge5xtovQ==}
-    cpu: [arm64]
-    os: [win32]
-
-  turbo@2.8.7:
-    resolution: {integrity: sha512-RBLh5caMAu1kFdTK1jgH2gH/z+jFsvX5rGbhgJ9nlIAWXSvxlzwId05uDlBA1+pBd3wO/UaKYzaQZQBXDd7kcA==}
+  turbo@2.9.3:
+    resolution: {integrity: sha512-J/VUvsGRykPb9R8Kh8dHVBOqioDexLk9BhLCU/ZybRR+HN9UR3cURdazFvNgMDt9zPP8TF6K73Z+tplfmi0PqQ==}
     hasBin: true
 
   tweetnacl@0.14.5:
@@ -12610,9 +12592,9 @@ packages:
     resolution: {integrity: sha512-hpbDzxUY9BFwX+UeBnxv3Sh1q7HFxj48DTmXchNgRa46lO8uj3/1iEn3MiNUYTg1g9ctIqXCCERn8gYZhHC5lQ==}
     engines: {node: '>=4'}
 
-  unicorn-magic@0.3.0:
-    resolution: {integrity: sha512-+QBBXBCvifc56fsbuxZQ6Sic3wqqc3WWaqxs58gvJrcOuN83HGTCwz3oS5phzU9LthRNE9VrJCFCLUgHeeFnfA==}
-    engines: {node: '>=18'}
+  unicorn-magic@0.4.0:
+    resolution: {integrity: sha512-wH590V9VNgYH9g3lH9wWjTrUoKsjLF6sGLjhR4sH1LWpLmCOH0Zf7PukhDA8BiS7KHe4oPNkcTHqYkj7SOGUOw==}
+    engines: {node: '>=20'}
 
   unified@11.0.5:
     resolution: {integrity: sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==}
@@ -12929,9 +12911,9 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  write-file-atomic@6.0.0:
-    resolution: {integrity: sha512-GmqrO8WJ1NuzJ2DrziEI2o57jKAVIQNf8a18W3nCYU3H7PNWqCCVTeH6/NQE93CIllIgQS98rrmVkYgTX9fFJQ==}
-    engines: {node: ^18.17.0 || >=20.5.0}
+  write-file-atomic@7.0.1:
+    resolution: {integrity: sha512-OTIk8iR8/aCRWBqvxrzxR0hgxWpnYBblY1S5hDWBQfk/VFmJwzmJgQFN3WsoUKHISv2eAwe+PpbUzyL1CKTLXg==}
+    engines: {node: ^20.17.0 || >=22.9.0}
 
   ws@5.2.4:
     resolution: {integrity: sha512-fFCejsuC8f9kOSu9FYaOw8CdO68O3h5v0lg4p74o8JqWpwTf9tniOD+nOB78aWoVSS6WptVUmDrp/KPsMVBWFQ==}
@@ -13065,40 +13047,33 @@ snapshots:
   '@adobe/css-tools@4.3.3':
     optional: true
 
-  '@ai-sdk/anthropic@2.0.65(zod@4.3.6)':
+  '@ai-sdk/anthropic@3.0.64(zod@4.3.6)':
     dependencies:
-      '@ai-sdk/provider': 2.0.1
-      '@ai-sdk/provider-utils': 3.0.21(zod@4.3.6)
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.21(zod@4.3.6)
       zod: 4.3.6
 
-  '@ai-sdk/gateway@2.0.30(zod@4.3.6)':
+  '@ai-sdk/gateway@3.0.80(zod@4.3.6)':
     dependencies:
-      '@ai-sdk/provider': 2.0.1
-      '@ai-sdk/provider-utils': 3.0.20(zod@4.3.6)
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.21(zod@4.3.6)
       '@vercel/oidc': 3.1.0
       zod: 4.3.6
 
-  '@ai-sdk/openai@2.0.89(zod@4.3.6)':
+  '@ai-sdk/openai@3.0.48(zod@4.3.6)':
     dependencies:
-      '@ai-sdk/provider': 2.0.1
-      '@ai-sdk/provider-utils': 3.0.20(zod@4.3.6)
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.21(zod@4.3.6)
       zod: 4.3.6
 
-  '@ai-sdk/provider-utils@3.0.20(zod@4.3.6)':
+  '@ai-sdk/provider-utils@4.0.21(zod@4.3.6)':
     dependencies:
-      '@ai-sdk/provider': 2.0.1
+      '@ai-sdk/provider': 3.0.8
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.0.6
       zod: 4.3.6
 
-  '@ai-sdk/provider-utils@3.0.21(zod@4.3.6)':
-    dependencies:
-      '@ai-sdk/provider': 2.0.1
-      '@standard-schema/spec': 1.1.0
-      eventsource-parser: 3.0.6
-      zod: 4.3.6
-
-  '@ai-sdk/provider@2.0.1':
+  '@ai-sdk/provider@3.0.8':
     dependencies:
       json-schema: 0.4.0
 
@@ -16669,21 +16644,21 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
-  '@malloydata/db-bigquery@0.0.367(encoding@0.1.13)':
+  '@malloydata/db-bigquery@0.0.369(encoding@0.1.13)':
     dependencies:
       '@google-cloud/bigquery': 7.9.4(encoding@0.1.13)
       '@google-cloud/common': 5.0.2(encoding@0.1.13)
       '@google-cloud/paginator': 5.0.2
-      '@malloydata/malloy': 0.0.367
+      '@malloydata/malloy': 0.0.369
       gaxios: 4.3.3(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
       - supports-color
 
-  '@malloydata/db-databricks@0.0.367(encoding@0.1.13)':
+  '@malloydata/db-databricks@0.0.369(encoding@0.1.13)':
     dependencies:
       '@databricks/sql': 1.13.0(encoding@0.1.13)
-      '@malloydata/malloy': 0.0.367
+      '@malloydata/malloy': 0.0.369
       '@types/node': 22.7.5
     transitivePeerDependencies:
       - '@75lb/nature'
@@ -16692,35 +16667,35 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@malloydata/db-duckdb@0.0.367':
+  '@malloydata/db-duckdb@0.0.369':
     dependencies:
       '@duckdb/duckdb-wasm': 1.33.1-dev13.0
       '@duckdb/node-api': 1.4.4-r.1
-      '@malloydata/malloy': 0.0.367
+      '@malloydata/malloy': 0.0.369
       '@motherduck/wasm-client': 0.6.6(apache-arrow@17.0.0)
       apache-arrow: 17.0.0
       web-worker: 1.5.0
 
-  '@malloydata/db-mysql@0.0.367':
+  '@malloydata/db-mysql@0.0.369':
     dependencies:
-      '@malloydata/malloy': 0.0.367
+      '@malloydata/malloy': 0.0.369
       '@types/node': 22.7.5
       fastestsmallesttextencoderdecoder: 1.0.22
       luxon: 3.7.2
       mysql2: 3.11.3
 
-  '@malloydata/db-postgres@0.0.367':
+  '@malloydata/db-postgres@0.0.369':
     dependencies:
-      '@malloydata/malloy': 0.0.367
+      '@malloydata/malloy': 0.0.369
       '@types/pg': 8.15.6
       pg: 8.13.0
       pg-query-stream: 4.2.3(pg@8.13.0)
     transitivePeerDependencies:
       - pg-native
 
-  '@malloydata/db-snowflake@0.0.367(asn1.js@5.4.1)(encoding@0.1.13)':
+  '@malloydata/db-snowflake@0.0.369(asn1.js@5.4.1)(encoding@0.1.13)':
     dependencies:
-      '@malloydata/malloy': 0.0.367
+      '@malloydata/malloy': 0.0.369
       generic-pool: 3.9.0
       snowflake-sdk: 2.3.1(asn1.js@5.4.1)(encoding@0.1.13)
       toml: 3.0.0
@@ -16731,9 +16706,9 @@ snapshots:
       - encoding
       - supports-color
 
-  '@malloydata/db-trino@0.0.367(encoding@0.1.13)':
+  '@malloydata/db-trino@0.0.369(encoding@0.1.13)':
     dependencies:
-      '@malloydata/malloy': 0.0.367
+      '@malloydata/malloy': 0.0.369
       '@prestodb/presto-js-client': 1.1.0
       gaxios: 4.3.3(encoding@0.1.13)
       luxon: 3.7.2
@@ -16743,31 +16718,31 @@ snapshots:
       - encoding
       - supports-color
 
-  '@malloydata/malloy-filter@0.0.367':
+  '@malloydata/malloy-filter@0.0.369':
     dependencies:
       jest-diff: 29.7.0
       luxon: 3.7.2
 
-  '@malloydata/malloy-interfaces@0.0.367':
+  '@malloydata/malloy-interfaces@0.0.369':
     dependencies:
       '@creditkarma/thrift-server-core': 1.0.4
 
-  '@malloydata/malloy-query-builder@0.0.367':
+  '@malloydata/malloy-query-builder@0.0.369':
     dependencies:
-      '@malloydata/malloy-filter': 0.0.367
-      '@malloydata/malloy-interfaces': 0.0.367
-      '@malloydata/malloy-tag': 0.0.367
+      '@malloydata/malloy-filter': 0.0.369
+      '@malloydata/malloy-interfaces': 0.0.369
+      '@malloydata/malloy-tag': 0.0.369
 
-  '@malloydata/malloy-tag@0.0.367':
+  '@malloydata/malloy-tag@0.0.369':
     dependencies:
-      '@malloydata/motly-ts-parser': 0.7.1
+      '@malloydata/motly-ts-parser': 0.8.1
       assert: 2.1.0
 
-  '@malloydata/malloy@0.0.367':
+  '@malloydata/malloy@0.0.369':
     dependencies:
-      '@malloydata/malloy-filter': 0.0.367
-      '@malloydata/malloy-interfaces': 0.0.367
-      '@malloydata/malloy-tag': 0.0.367
+      '@malloydata/malloy-filter': 0.0.369
+      '@malloydata/malloy-interfaces': 0.0.369
+      '@malloydata/malloy-tag': 0.0.369
       '@noble/hashes': 1.8.0
       antlr4ts: 0.5.0-alpha.4
       assert: 2.1.0
@@ -16777,7 +16752,7 @@ snapshots:
       luxon: 3.7.2
       uuid: 8.3.2
 
-  '@malloydata/motly-ts-parser@0.7.1': {}
+  '@malloydata/motly-ts-parser@0.8.1': {}
 
   '@mapbox/node-pre-gyp@1.0.11(encoding@0.1.13)':
     dependencies:
@@ -16801,8 +16776,8 @@ snapshots:
       https-proxy-agent: 7.0.6
       node-fetch: 2.7.0(encoding@0.1.13)
       nopt: 8.1.0
-      semver: 7.7.3
-      tar: 7.5.2
+      semver: 7.7.4
+      tar: 7.5.7
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -16894,12 +16869,12 @@ snapshots:
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.36.7
       '@lezer/highlight': 1.2.3
-      '@malloydata/malloy': 0.0.367
-      '@malloydata/malloy-filter': 0.0.367
-      '@malloydata/malloy-interfaces': 0.0.367
-      '@malloydata/malloy-tag': 0.0.367
+      '@malloydata/malloy': 0.0.369
+      '@malloydata/malloy-filter': 0.0.369
+      '@malloydata/malloy-interfaces': 0.0.369
+      '@malloydata/malloy-tag': 0.0.369
       '@nestjs/throttler': 6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2)
-      '@opencode-ai/sdk': 1.3.3
+      '@opencode-ai/sdk': 1.3.13
       '@replit/codemirror-indentation-markers': 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.5.2)(@codemirror/view@6.36.7)
       '@vaadin/date-picker': 23.5.3
       class-transformer: 0.3.1
@@ -17281,7 +17256,7 @@ snapshots:
 
   '@open-wc/dedupe-mixin@1.4.0': {}
 
-  '@opencode-ai/sdk@1.3.3': {}
+  '@opencode-ai/sdk@1.3.13': {}
 
   '@opentelemetry/api-logs@0.208.0':
     dependencies:
@@ -18366,7 +18341,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.8
       estree-walker: 2.0.2
-      picomatch: 4.0.3
+      picomatch: 4.0.4
     optionalDependencies:
       rollup: 4.54.0
 
@@ -18546,7 +18521,7 @@ snapshots:
 
   '@sindresorhus/is@5.6.0': {}
 
-  '@sindresorhus/merge-streams@2.3.0': {}
+  '@sindresorhus/merge-streams@4.0.0': {}
 
   '@smithy/abort-controller@4.2.7':
     dependencies:
@@ -19287,6 +19262,24 @@ snapshots:
       '@tufjs/canonical-json': 2.0.0
       minimatch: 10.1.1
 
+  '@turbo/darwin-64@2.9.3':
+    optional: true
+
+  '@turbo/darwin-arm64@2.9.3':
+    optional: true
+
+  '@turbo/linux-64@2.9.3':
+    optional: true
+
+  '@turbo/linux-arm64@2.9.3':
+    optional: true
+
+  '@turbo/windows-64@2.9.3':
+    optional: true
+
+  '@turbo/windows-arm64@2.9.3':
+    optional: true
+
   '@tweenjs/tween.js@18.6.4': {}
 
   '@tybys/wasm-util@0.10.1':
@@ -19776,19 +19769,19 @@ snapshots:
     dependencies:
       '@vaadin/vaadin-development-mode-detector': 2.0.7
 
-  '@vercel/nft@0.29.4(encoding@0.1.13)(rollup@4.54.0)':
+  '@vercel/nft@1.5.0(encoding@0.1.13)(rollup@4.54.0)':
     dependencies:
       '@mapbox/node-pre-gyp': 2.0.3(encoding@0.1.13)
       '@rollup/pluginutils': 5.3.0(rollup@4.54.0)
-      acorn: 8.15.0
-      acorn-import-attributes: 1.9.5(acorn@8.15.0)
+      acorn: 8.16.0
+      acorn-import-attributes: 1.9.5(acorn@8.16.0)
       async-sema: 3.1.1
       bindings: 1.5.0
       estree-walker: 2.0.2
-      glob: 10.5.0
+      glob: 13.0.0
       graceful-fs: 4.2.11
       node-gyp-build: 4.8.4
-      picomatch: 4.0.3
+      picomatch: 4.0.4
       resolve-from: 5.0.0
     transitivePeerDependencies:
       - encoding
@@ -20040,15 +20033,21 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
+  acorn-import-attributes@1.9.5(acorn@8.16.0):
+    dependencies:
+      acorn: 8.16.0
+
   acorn-import-phases@1.0.4(acorn@8.15.0):
     dependencies:
       acorn: 8.15.0
 
-  acorn-walk@8.3.4:
+  acorn-walk@8.3.5:
     dependencies:
-      acorn: 8.15.0
+      acorn: 8.16.0
 
   acorn@8.15.0: {}
+
+  acorn@8.16.0: {}
 
   adjust-sourcemap-loader@4.0.0:
     dependencies:
@@ -20076,11 +20075,11 @@ snapshots:
 
   agent-base@7.1.4: {}
 
-  ai@5.0.124(zod@4.3.6):
+  ai@6.0.138(zod@4.3.6):
     dependencies:
-      '@ai-sdk/gateway': 2.0.30(zod@4.3.6)
-      '@ai-sdk/provider': 2.0.1
-      '@ai-sdk/provider-utils': 3.0.20(zod@4.3.6)
+      '@ai-sdk/gateway': 3.0.80(zod@4.3.6)
+      '@ai-sdk/provider': 3.0.8
+      '@ai-sdk/provider-utils': 4.0.21(zod@4.3.6)
       '@opentelemetry/api': 1.9.0
       zod: 4.3.6
 
@@ -20320,11 +20319,11 @@ snapshots:
       postcss: 8.5.6
       postcss-value-parser: 4.2.0
 
-  ava@6.4.1(encoding@0.1.13)(rollup@4.54.0):
+  ava@7.0.0(encoding@0.1.13)(rollup@4.54.0):
     dependencies:
-      '@vercel/nft': 0.29.4(encoding@0.1.13)(rollup@4.54.0)
-      acorn: 8.15.0
-      acorn-walk: 8.3.4
+      '@vercel/nft': 1.5.0(encoding@0.1.13)(rollup@4.54.0)
+      acorn: 8.16.0
+      acorn-walk: 8.3.5
       ansi-styles: 6.2.3
       arrgv: 1.0.2
       arrify: 3.0.0
@@ -20332,9 +20331,9 @@ snapshots:
       cbor: 10.0.11
       chalk: 5.6.2
       chunkd: 2.0.1
-      ci-info: 4.3.1
+      ci-info: 4.4.0
       ci-parallel-vars: 1.0.1
-      cli-truncate: 4.0.0
+      cli-truncate: 5.1.1
       code-excerpt: 4.0.0
       common-path-prefix: 3.0.0
       concordance: 5.0.4
@@ -20342,26 +20341,25 @@ snapshots:
       debug: 4.4.3
       emittery: 1.2.0
       figures: 6.1.0
-      globby: 14.1.0
+      globby: 16.2.0
       ignore-by-default: 2.1.0
       indent-string: 5.0.0
       is-plain-object: 5.0.0
       is-promise: 4.0.0
-      matcher: 5.0.0
+      matcher: 6.0.0
       memoize: 10.2.0
       ms: 2.1.3
       p-map: 7.0.4
       package-config: 5.0.0
-      picomatch: 4.0.3
-      plur: 5.1.0
+      picomatch: 4.0.4
+      plur: 6.0.0
       pretty-ms: 9.3.0
       resolve-cwd: 3.0.0
       stack-utils: 2.0.6
-      strip-ansi: 7.1.2
       supertap: 3.0.1
       temp-dir: 3.0.0
-      write-file-atomic: 6.0.0
-      yargs: 17.7.2
+      write-file-atomic: 7.0.1
+      yargs: 18.0.0
     transitivePeerDependencies:
       - encoding
       - rollup
@@ -20738,7 +20736,7 @@ snapshots:
 
   chunkd@2.0.1: {}
 
-  ci-info@4.3.1: {}
+  ci-info@4.4.0: {}
 
   ci-parallel-vars@1.0.1: {}
 
@@ -20770,11 +20768,6 @@ snapshots:
   cli-spinners@2.9.2: {}
 
   cli-spinners@3.3.0: {}
-
-  cli-truncate@4.0.0:
-    dependencies:
-      slice-ansi: 5.0.0
-      string-width: 7.2.0
 
   cli-truncate@5.1.1:
     dependencies:
@@ -20948,9 +20941,9 @@ snapshots:
       esutils: 2.0.3
       fast-diff: 1.3.0
       js-string-escape: 1.0.1
-      lodash: 4.17.21
+      lodash: 4.17.23
       md5-hex: 3.0.1
-      semver: 7.7.3
+      semver: 7.7.4
       well-known-symbols: 2.0.0
 
   connect-history-api-fallback@2.0.0: {}
@@ -22275,14 +22268,14 @@ snapshots:
       once: 1.4.0
       path-is-absolute: 1.0.1
 
-  globby@14.1.0:
+  globby@16.2.0:
     dependencies:
-      '@sindresorhus/merge-streams': 2.3.0
+      '@sindresorhus/merge-streams': 4.0.0
       fast-glob: 3.3.3
       ignore: 7.0.5
-      path-type: 6.0.0
+      is-path-inside: 4.0.0
       slash: 5.1.0
-      unicorn-magic: 0.3.0
+      unicorn-magic: 0.4.0
 
   gonzales-pe@4.3.0:
     dependencies:
@@ -22612,7 +22605,7 @@ snapshots:
 
   ipaddr.js@2.3.0: {}
 
-  irregular-plurals@3.5.0: {}
+  irregular-plurals@4.2.0: {}
 
   is-arguments@1.2.0:
     dependencies:
@@ -22638,8 +22631,6 @@ snapshots:
   is-extglob@2.1.1: {}
 
   is-fullwidth-code-point@3.0.0: {}
-
-  is-fullwidth-code-point@4.0.0: {}
 
   is-fullwidth-code-point@5.1.0:
     dependencies:
@@ -22677,6 +22668,8 @@ snapshots:
   is-number@7.0.0: {}
 
   is-obj@1.0.1: {}
+
+  is-path-inside@4.0.0: {}
 
   is-plain-obj@1.1.0: {}
 
@@ -23176,7 +23169,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  matcher@5.0.0:
+  matcher@6.0.0:
     dependencies:
       escape-string-regexp: 5.0.0
 
@@ -23942,55 +23935,55 @@ snapshots:
 
   openapi-typescript-helpers@0.0.15: {}
 
-  opencode-ai@1.3.3:
+  opencode-ai@1.3.13:
     optionalDependencies:
-      opencode-darwin-arm64: 1.3.3
-      opencode-darwin-x64: 1.3.3
-      opencode-darwin-x64-baseline: 1.3.3
-      opencode-linux-arm64: 1.3.3
-      opencode-linux-arm64-musl: 1.3.3
-      opencode-linux-x64: 1.3.3
-      opencode-linux-x64-baseline: 1.3.3
-      opencode-linux-x64-baseline-musl: 1.3.3
-      opencode-linux-x64-musl: 1.3.3
-      opencode-windows-arm64: 1.3.3
-      opencode-windows-x64: 1.3.3
-      opencode-windows-x64-baseline: 1.3.3
+      opencode-darwin-arm64: 1.3.13
+      opencode-darwin-x64: 1.3.13
+      opencode-darwin-x64-baseline: 1.3.13
+      opencode-linux-arm64: 1.3.13
+      opencode-linux-arm64-musl: 1.3.13
+      opencode-linux-x64: 1.3.13
+      opencode-linux-x64-baseline: 1.3.13
+      opencode-linux-x64-baseline-musl: 1.3.13
+      opencode-linux-x64-musl: 1.3.13
+      opencode-windows-arm64: 1.3.13
+      opencode-windows-x64: 1.3.13
+      opencode-windows-x64-baseline: 1.3.13
 
-  opencode-darwin-arm64@1.3.3:
+  opencode-darwin-arm64@1.3.13:
     optional: true
 
-  opencode-darwin-x64-baseline@1.3.3:
+  opencode-darwin-x64-baseline@1.3.13:
     optional: true
 
-  opencode-darwin-x64@1.3.3:
+  opencode-darwin-x64@1.3.13:
     optional: true
 
-  opencode-linux-arm64-musl@1.3.3:
+  opencode-linux-arm64-musl@1.3.13:
     optional: true
 
-  opencode-linux-arm64@1.3.3:
+  opencode-linux-arm64@1.3.13:
     optional: true
 
-  opencode-linux-x64-baseline-musl@1.3.3:
+  opencode-linux-x64-baseline-musl@1.3.13:
     optional: true
 
-  opencode-linux-x64-baseline@1.3.3:
+  opencode-linux-x64-baseline@1.3.13:
     optional: true
 
-  opencode-linux-x64-musl@1.3.3:
+  opencode-linux-x64-musl@1.3.13:
     optional: true
 
-  opencode-linux-x64@1.3.3:
+  opencode-linux-x64@1.3.13:
     optional: true
 
-  opencode-windows-arm64@1.3.3:
+  opencode-windows-arm64@1.3.13:
     optional: true
 
-  opencode-windows-x64-baseline@1.3.3:
+  opencode-windows-x64-baseline@1.3.13:
     optional: true
 
-  opencode-windows-x64@1.3.3:
+  opencode-windows-x64@1.3.13:
     optional: true
 
   openid-client@5.7.1:
@@ -24264,8 +24257,6 @@ snapshots:
 
   path-to-regexp@8.3.0: {}
 
-  path-type@6.0.0: {}
-
   pause@0.0.1: {}
 
   pend@1.2.0: {}
@@ -24382,9 +24373,9 @@ snapshots:
 
   platform@1.3.6: {}
 
-  plur@5.1.0:
+  plur@6.0.0:
     dependencies:
-      irregular-plurals: 3.5.0
+      irregular-plurals: 4.2.0
 
   pluralize@8.0.0: {}
 
@@ -25357,11 +25348,6 @@ snapshots:
 
   slash@5.1.0: {}
 
-  slice-ansi@5.0.0:
-    dependencies:
-      ansi-styles: 6.2.3
-      is-fullwidth-code-point: 4.0.0
-
   slice-ansi@7.1.2:
     dependencies:
       ansi-styles: 6.2.3
@@ -25802,14 +25788,6 @@ snapshots:
       mkdirp: 1.0.4
       yallist: 4.0.0
 
-  tar@7.5.2:
-    dependencies:
-      '@isaacs/fs-minipass': 4.0.1
-      chownr: 3.0.0
-      minipass: 7.1.2
-      minizlib: 3.1.0
-      yallist: 5.0.0
-
   tar@7.5.7:
     dependencies:
       '@isaacs/fs-minipass': 4.0.1
@@ -25970,8 +25948,8 @@ snapshots:
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
       '@types/node': 20.19.27
-      acorn: 8.15.0
-      acorn-walk: 8.3.4
+      acorn: 8.16.0
+      acorn-walk: 8.3.5
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2
@@ -26022,32 +26000,14 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  turbo-darwin-64@2.8.7:
-    optional: true
-
-  turbo-darwin-arm64@2.8.7:
-    optional: true
-
-  turbo-linux-64@2.8.7:
-    optional: true
-
-  turbo-linux-arm64@2.8.7:
-    optional: true
-
-  turbo-windows-64@2.8.7:
-    optional: true
-
-  turbo-windows-arm64@2.8.7:
-    optional: true
-
-  turbo@2.8.7:
+  turbo@2.9.3:
     optionalDependencies:
-      turbo-darwin-64: 2.8.7
-      turbo-darwin-arm64: 2.8.7
-      turbo-linux-64: 2.8.7
-      turbo-linux-arm64: 2.8.7
-      turbo-windows-64: 2.8.7
-      turbo-windows-arm64: 2.8.7
+      '@turbo/darwin-64': 2.9.3
+      '@turbo/darwin-arm64': 2.9.3
+      '@turbo/linux-64': 2.9.3
+      '@turbo/linux-arm64': 2.9.3
+      '@turbo/windows-64': 2.9.3
+      '@turbo/windows-arm64': 2.9.3
 
   tweetnacl@0.14.5: {}
 
@@ -26106,7 +26066,7 @@ snapshots:
 
   unicode-property-aliases-ecmascript@2.2.0: {}
 
-  unicorn-magic@0.3.0: {}
+  unicorn-magic@0.4.0: {}
 
   unified@11.0.5:
     dependencies:
@@ -26464,9 +26424,8 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  write-file-atomic@6.0.0:
+  write-file-atomic@7.0.1:
     dependencies:
-      imurmurhash: 0.1.4
       signal-exit: 4.1.0
 
   ws@5.2.4:

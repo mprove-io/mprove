@@ -1,4 +1,4 @@
-FROM node:24.10.0-bookworm
+FROM node:24.14.0-bookworm
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"

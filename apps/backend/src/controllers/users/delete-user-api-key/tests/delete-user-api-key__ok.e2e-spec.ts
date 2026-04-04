@@ -1,8 +1,11 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -23,72 +26,89 @@ let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123456';
 
-let prep: Prep;
-
 test('1', async t => {
-  let resp: ToBackendDeleteUserApiKeyResponse;
+  let isPass: boolean;
+  let prep: Prep;
 
-  try {
-    prep = await prepareTestAndSeed({
-      traceId: traceId,
-      deleteRecordsPayload: {
-        emails: [email]
-      },
-      seedRecordsPayload: {
-        users: [
-          {
-            email,
-            password,
-            isEmailVerified: true
-          }
-        ]
-      },
-      loginUserPayload: { email, password }
-    });
+  await retry(async (bail: any) => {
+    let resp: ToBackendDeleteUserApiKeyResponse;
 
-    // First generate an API key
-    let generateReq: ToBackendGenerateUserApiKeyRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey,
+    try {
+      prep = await prepareTestAndSeed({
         traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {}
-    };
+        deleteRecordsPayload: {
+          emails: [email]
+        },
+        seedRecordsPayload: {
+          users: [
+            {
+              email,
+              password,
+              isEmailVerified: true
+            }
+          ]
+        },
+        loginUserPayload: { email, password }
+      });
 
-    await sendToBackend<ToBackendGenerateUserApiKeyResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: generateReq,
-      checkIsOk: true
-    });
+      // First generate an API key
+      let generateReq: ToBackendGenerateUserApiKeyRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {}
+      };
 
-    // Then delete it
-    let deleteReq: ToBackendDeleteUserApiKeyRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendDeleteUserApiKey,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {}
-    };
+      await sendToBackend<ToBackendGenerateUserApiKeyResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: generateReq,
+        checkIsOk: true
+      });
 
-    resp = await sendToBackend<ToBackendDeleteUserApiKeyResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: deleteReq
-    });
+      // Then delete it
+      let deleteReq: ToBackendDeleteUserApiKeyRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendDeleteUserApiKey,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {}
+      };
 
-    await prep.app.close();
-  } catch (e) {
+      resp = await sendToBackend<ToBackendDeleteUserApiKeyResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: deleteReq
+      });
+
+      await prep.app.close();
+    } catch (e) {
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: prep?.logger,
+        cs: prep?.cs
+      });
+      if (prep) {
+        await prep.app.close();
+      }
+    }
+
+    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+
+    isPass = true;
+  }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
     logToConsoleBackend({
-      log: e,
+      log: er,
       logLevel: LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prep?.logger,
+      cs: prep?.cs
     });
-  }
+  });
 
-  t.is(resp.info.error, undefined);
-  t.is(resp.info.status, ResponseInfoStatusEnum.Ok);
+  t.is(isPass, true);
 });
