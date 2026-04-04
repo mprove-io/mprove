@@ -704,6 +704,15 @@ importers:
       '@ai-sdk/openai':
         specifier: 'catalog:'
         version: 3.0.48(zod@4.3.6)
+      '@codemirror/language':
+        specifier: 'catalog:'
+        version: 6.11.3
+      '@codemirror/state':
+        specifier: 'catalog:'
+        version: 6.5.2
+      '@codemirror/view':
+        specifier: 'catalog:'
+        version: 6.36.7
       '@databricks/sql':
         specifier: 'catalog:'
         version: 1.13.0(encoding@0.1.13)
@@ -716,6 +725,9 @@ importers:
       '@kubiks/otel-drizzle':
         specifier: 'catalog:'
         version: 2.1.0(@opentelemetry/api@1.9.0)(drizzle-orm@0.36.0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(mysql2@3.11.3)(pg@8.13.0)(react@19.2.4))
+      '@lezer/highlight':
+        specifier: 'catalog:'
+        version: 1.2.3
       '@malloydata/db-bigquery':
         specifier: 'catalog:'
         version: 0.0.369(encoding@0.1.13)
@@ -815,6 +827,12 @@ importers:
       '@rekog/mcp-nest':
         specifier: 'catalog:'
         version: 1.9.8(@modelcontextprotocol/sdk@1.27.1(zod@4.3.6))(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(@nestjs/jwt@11.0.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1)))(@nestjs/passport@11.0.5(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(passport@0.7.0))(express@5.1.0)(reflect-metadata@0.2.2)(zod@4.3.6)
+      '@replit/codemirror-indentation-markers':
+        specifier: 'catalog:'
+        version: 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.5.2)(@codemirror/view@6.36.7)
+      '@vaadin/date-picker':
+        specifier: 'catalog:'
+        version: 23.5.3
       ai:
         specifier: 'catalog:'
         version: 6.0.138(zod@4.3.6)
@@ -929,6 +947,9 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.1
+      simple-git:
+        specifier: 'catalog:'
+        version: 3.33.0
       snowflake-sdk:
         specifier: 'catalog:'
         version: 2.3.1(asn1.js@5.4.1)(encoding@0.1.13)
@@ -1035,6 +1056,18 @@ importers:
 
   apps/blockml:
     dependencies:
+      '@codemirror/language':
+        specifier: 'catalog:'
+        version: 6.11.3
+      '@codemirror/state':
+        specifier: 'catalog:'
+        version: 6.5.2
+      '@codemirror/view':
+        specifier: 'catalog:'
+        version: 6.36.7
+      '@lezer/highlight':
+        specifier: 'catalog:'
+        version: 1.2.3
       '@malloydata/db-bigquery':
         specifier: 'catalog:'
         version: 0.0.369(encoding@0.1.13)
@@ -1089,6 +1122,12 @@ importers:
       '@nestjs/platform-express':
         specifier: 'catalog:'
         version: 11.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)
+      '@nestjs/throttler':
+        specifier: 'catalog:'
+        version: 6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2)
+      '@opencode-ai/sdk':
+        specifier: 'catalog:'
+        version: 1.3.13
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.9.0
@@ -1107,6 +1146,15 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: 'catalog:'
         version: 1.38.0
+      '@replit/codemirror-indentation-markers':
+        specifier: 'catalog:'
+        version: 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.5.2)(@codemirror/view@6.36.7)
+      '@vaadin/date-picker':
+        specifier: 'catalog:'
+        version: 23.5.3
+      bcrypt:
+        specifier: 'catalog:'
+        version: 5.1.1(encoding@0.1.13)
       class-transformer:
         specifier: 'catalog:'
         version: 0.3.1
@@ -1125,6 +1173,9 @@ importers:
       date-fns-tz:
         specifier: 'catalog:'
         version: 3.2.0(date-fns@4.1.0)
+      dayjs:
+        specifier: 'catalog:'
+        version: 1.11.19
       fs-extra:
         specifier: 'catalog:'
         version: 11.2.0
@@ -1134,12 +1185,18 @@ importers:
       ioredis:
         specifier: 'catalog:'
         version: 5.8.2
+      ipaddr.js:
+        specifier: 'catalog:'
+        version: 2.3.0
       js-yaml:
         specifier: 'catalog:'
         version: 4.1.1
       nanoid:
         specifier: 'catalog:'
         version: 3.3.10
+      neoip:
+        specifier: 'catalog:'
+        version: 3.0.1
       nest-winston:
         specifier: 'catalog:'
         version: 1.9.4(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
@@ -1152,9 +1209,15 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.1
+      simple-git:
+        specifier: 'catalog:'
+        version: 3.33.0
       tiny-async-pool:
         specifier: 'catalog:'
         version: 1.3.0
+      trino-client:
+        specifier: 'catalog:'
+        version: 0.2.9
       tslib:
         specifier: 'catalog:'
         version: 2.7.0
@@ -1164,6 +1227,9 @@ importers:
       winston:
         specifier: 'catalog:'
         version: 3.14.2
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@nestjs/testing':
         specifier: 'catalog:'
@@ -1207,6 +1273,54 @@ importers:
 
   apps/disk:
     dependencies:
+      '@codemirror/language':
+        specifier: 'catalog:'
+        version: 6.11.3
+      '@codemirror/state':
+        specifier: 'catalog:'
+        version: 6.5.2
+      '@codemirror/view':
+        specifier: 'catalog:'
+        version: 6.36.7
+      '@lezer/highlight':
+        specifier: 'catalog:'
+        version: 1.2.3
+      '@malloydata/db-bigquery':
+        specifier: 'catalog:'
+        version: 0.0.369(encoding@0.1.13)
+      '@malloydata/db-databricks':
+        specifier: 'catalog:'
+        version: 0.0.369(encoding@0.1.13)
+      '@malloydata/db-duckdb':
+        specifier: 'catalog:'
+        version: 0.0.369
+      '@malloydata/db-mysql':
+        specifier: 'catalog:'
+        version: 0.0.369
+      '@malloydata/db-postgres':
+        specifier: 'catalog:'
+        version: 0.0.369
+      '@malloydata/db-snowflake':
+        specifier: 'catalog:'
+        version: 0.0.369(asn1.js@5.4.1)(encoding@0.1.13)
+      '@malloydata/db-trino':
+        specifier: 'catalog:'
+        version: 0.0.369(encoding@0.1.13)
+      '@malloydata/malloy':
+        specifier: 'catalog:'
+        version: 0.0.369
+      '@malloydata/malloy-filter':
+        specifier: 'catalog:'
+        version: 0.0.369
+      '@malloydata/malloy-interfaces':
+        specifier: 'catalog:'
+        version: 0.0.369
+      '@malloydata/malloy-query-builder':
+        specifier: 'catalog:'
+        version: 0.0.369
+      '@malloydata/malloy-tag':
+        specifier: 'catalog:'
+        version: 0.0.369
       '@mprove/common':
         specifier: workspace:*
         version: link:../../libs/common
@@ -1225,6 +1339,12 @@ importers:
       '@nestjs/platform-express':
         specifier: 'catalog:'
         version: 11.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)
+      '@nestjs/throttler':
+        specifier: 'catalog:'
+        version: 6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2)
+      '@opencode-ai/sdk':
+        specifier: 'catalog:'
+        version: 1.3.13
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.9.0
@@ -1243,6 +1363,15 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: 'catalog:'
         version: 1.38.0
+      '@replit/codemirror-indentation-markers':
+        specifier: 'catalog:'
+        version: 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.5.2)(@codemirror/view@6.36.7)
+      '@vaadin/date-picker':
+        specifier: 'catalog:'
+        version: 23.5.3
+      bcrypt:
+        specifier: 'catalog:'
+        version: 5.1.1(encoding@0.1.13)
       class-transformer:
         specifier: 'catalog:'
         version: 0.3.1
@@ -1252,6 +1381,15 @@ importers:
       class-validator:
         specifier: 'catalog:'
         version: 0.14.2
+      date-fns:
+        specifier: 'catalog:'
+        version: 4.1.0
+      date-fns-tz:
+        specifier: 'catalog:'
+        version: 3.2.0(date-fns@4.1.0)
+      dayjs:
+        specifier: 'catalog:'
+        version: 1.11.19
       fs-extra:
         specifier: 'catalog:'
         version: 11.2.0
@@ -1261,9 +1399,18 @@ importers:
       ioredis:
         specifier: 'catalog:'
         version: 5.8.2
+      ipaddr.js:
+        specifier: 'catalog:'
+        version: 2.3.0
       js-yaml:
         specifier: 'catalog:'
         version: 4.1.1
+      nanoid:
+        specifier: 'catalog:'
+        version: 3.3.10
+      neoip:
+        specifier: 'catalog:'
+        version: 3.0.1
       nest-winston:
         specifier: 'catalog:'
         version: 1.9.4(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
@@ -1279,12 +1426,18 @@ importers:
       simple-git:
         specifier: 'catalog:'
         version: 3.33.0
+      trino-client:
+        specifier: 'catalog:'
+        version: 0.2.9
       tslib:
         specifier: 'catalog:'
         version: 2.7.0
       winston:
         specifier: 'catalog:'
         version: 3.14.2
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
     devDependencies:
       '@nestjs/testing':
         specifier: 'catalog:'

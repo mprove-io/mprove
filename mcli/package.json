@@ -22,7 +22,7 @@
     "circular": "madge --circular .",
     "build": "bun build src/main.ts --compile --outfile dist/bin/mprove",
     "build:linux": "bun build src/main.ts --compile --target=bun-linux-x64 --outfile dist/bin/mprove-linux-x64",
-    "e2e": "dotenv -e ../.env -- bun test --concurrent 3 --timeout 60000 src",
+    "e2e": "dotenv -e ../.env -- bun test --concurrent --max-concurrency 4 --timeout 150000 src",
     "clean-node": "rimraf --glob \"node_modules/*\" \"node_modules/.[!.]*\"",
     "clean-dist": "rimraf --glob \"dist/*\" \"dist/.[!.]*\"",
     "clean-bun": "rimraf --glob  \".bun/*\" \".bun/.[!.]*\""
@@ -51,11 +51,11 @@
     "js-yaml": "4.1.1",
     "nanoid": "3.3.10",
     "nest-winston": "1.9.4",
-    "simple-git": "3.33.0",
     "p-iteration": "1.1.8",
     "prettyjson": "1.2.5",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.1",
+    "simple-git": "3.33.0",
     "tslib": "2.7.0",
     "typanion": "3.14.0",
     "winston": "3.14.2"

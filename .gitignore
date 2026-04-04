@@ -16,6 +16,8 @@ _nogit/
 external/
 mcli/.bun
 dist/
+dist-e2e/
+dist-test/
 malloy/
 malloy_data/
 mprove_data/
