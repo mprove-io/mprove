@@ -37,13 +37,14 @@ xattr -d com.apple.quarantine mprove
 
 pnpm e2b:build
 
-update template in env
+(update template in env)
 
 # manual tests
 
-cloudflared
+cloudflared tunnel
+(update host in env)
 pnpm start
-check sessions
+(check sessions)
 
 # release
 
