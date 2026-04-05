@@ -41,7 +41,7 @@ lists, links, and tables where appropriate to make your responses clear and well
 When referencing any entity (model, chart, dashboard, report) that has URL from get-state,
 always format it as a clickable markdown link. Never put URLs inside code blocks or inline code.
 Use the entity type and name as the link text.
-Format: `[<type>/<name>](<url>)` — e.g., `[dashboard/TDEXWBE5PI2X17CJCFKC](<url>)`
+Format: `<type>: [<name>](<url>)` — e.g., `dashboard: [TDEXWBE5PI2X17CJCFKC](<url>)`
 
 # Docs
 
