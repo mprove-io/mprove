@@ -31,6 +31,7 @@ import { ValidationService } from '#front/app/services/validation.service';
 export interface CreateFolderDialogData {
   apiService: ApiService;
   projectId: string;
+  repoId: string;
   branchId: string;
   envId: string;
   parentNodeId: string;
@@ -93,6 +94,7 @@ export class CreateFolderDialogComponent implements OnInit {
 
     let payload: ToBackendCreateFolderRequestPayload = {
       projectId: this.ref.data.projectId,
+      repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
       envId: this.ref.data.envId,
       parentNodeId: this.ref.data.parentNodeId,

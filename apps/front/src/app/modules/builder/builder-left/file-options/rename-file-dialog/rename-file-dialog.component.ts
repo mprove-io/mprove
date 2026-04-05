@@ -41,6 +41,7 @@ import { ValidationService } from '#front/app/services/validation.service';
 export interface RenameFileDialogData {
   apiService: ApiService;
   projectId: string;
+  repoId: string;
   branchId: string;
   envId: string;
   nodeId: string;
@@ -136,6 +137,7 @@ export class RenameFileDialogComponent implements OnInit {
 
     let payload: ToBackendRenameCatalogNodeRequestPayload = {
       projectId: this.ref.data.projectId,
+      repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
       envId: this.ref.data.envId,
       nodeId: this.ref.data.nodeId,

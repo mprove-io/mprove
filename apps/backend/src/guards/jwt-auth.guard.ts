@@ -13,7 +13,6 @@ import { PROD_REPO_ID } from '#common/constants/top';
 import { SKIP_JWT } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
 import { parseApiKey } from '#node-common/functions/api-key/parse-api-key';
@@ -139,9 +138,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         });
       }
 
-      request.apiKeyRepoType =
-        repoId === PROD_REPO_ID ? RepoTypeEnum.Production : RepoTypeEnum.Dev;
-
       return true;
     } else if (parsed.type === ApiKeyTypeEnum.SK) {
       let session = await this.db.drizzle.query.sessionsTable
@@ -229,13 +225,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
           message: ErEnum.BACKEND_BRANCH_ID_DOES_NOT_MATCH_SESSION
         });
       }
-
-      request.apiKeyRepoType =
-        repoId === PROD_REPO_ID
-          ? RepoTypeEnum.Production
-          : RepoTypeEnum.Session;
-
-      request.apiKeySessionId = session.sessionId;
 
       return true;
     }

@@ -175,10 +175,16 @@ export class SessionsService {
     repoId: string;
     userId: string;
     projectId: string;
+    allowProdRepo: boolean;
   }): Promise<RepoTypeEnum> {
-    let { repoId, userId, projectId } = item;
+    let { repoId, userId, projectId, allowProdRepo } = item;
 
     if (repoId === PROD_REPO_ID) {
+      if (allowProdRepo === false) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_PRODUCTION_REPO_NOT_ALLOWED
+        });
+      }
       return RepoTypeEnum.Production;
     }
 

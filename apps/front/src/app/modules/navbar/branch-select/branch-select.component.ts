@@ -270,6 +270,7 @@ export class BranchSelectComponent {
       apiService: this.apiService,
       fileService: this.fileService,
       projectId: this.selectedProjectId,
+      repoId: this.nav.repoId,
       fileId: this.file.fileId,
       envId: this.nav.envId,
       currentBranchId: this.selectedBranchItem.branchId,

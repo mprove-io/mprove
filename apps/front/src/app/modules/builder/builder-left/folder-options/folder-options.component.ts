@@ -44,6 +44,7 @@ export class FolderOptionsComponent {
     this.myDialogService.showCreateFolder({
       apiService: this.apiService,
       projectId: this.nav.projectId,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       parentNodeId: node.data.id
@@ -56,6 +57,7 @@ export class FolderOptionsComponent {
     this.myDialogService.showCreateFile({
       apiService: this.apiService,
       projectId: this.nav.projectId,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       parentNodeId: node.data.id
@@ -68,6 +70,7 @@ export class FolderOptionsComponent {
     this.myDialogService.showDeleteFolder({
       apiService: this.apiService,
       projectId: this.nav.projectId,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       folderNodeId: node.data.id,
@@ -81,6 +84,7 @@ export class FolderOptionsComponent {
     this.myDialogService.showRenameFolder({
       apiService: this.apiService,
       projectId: this.nav.projectId,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       nodeId: node.data.id,

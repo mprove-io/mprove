@@ -10,6 +10,9 @@ export class ToBackendDeleteFileRequestPayload {
   projectId: string;
 
   @IsString()
+  repoId: string;
+
+  @IsString()
   branchId: string;
 
   @IsString()

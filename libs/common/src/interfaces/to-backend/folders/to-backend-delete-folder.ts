@@ -10,6 +10,9 @@ export class ToBackendDeleteFolderRequestPayload {
   projectId: string;
 
   @IsString()
+  repoId: string;
+
+  @IsString()
   branchId: string;
 
   @IsString()

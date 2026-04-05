@@ -122,6 +122,7 @@ test('1', async t => {
         },
         payload: {
           projectId: projectId,
+          repoId: userId,
           branchId: branchId,
           envId: PROJECT_ENV_PROD,
           theirBranchId: theirBranchId

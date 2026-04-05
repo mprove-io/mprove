@@ -35,6 +35,8 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
@@ -46,6 +48,7 @@ import {
   ToDiskRevertRepoToRemoteRequest,
   ToDiskRevertRepoToRemoteResponse
 } from '#common/interfaces/to-disk/03-repos/to-disk-revert-repo-to-remote';
+import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -77,8 +80,15 @@ export class RevertRepoToRemoteController {
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
       userId: user.userId,
-      projectId: projectId
+      projectId: projectId,
+      allowProdRepo: true
     });
+
+    if (repoType === RepoTypeEnum.Session) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_SESSION_REPO_CANNOT_BE_REVERTED_TO_REMOTE
+      });
+    }
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

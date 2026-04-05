@@ -281,6 +281,7 @@ export class CreateModelDialogComponent implements OnInit {
 
     let payload: ToBackendCreateFileRequestPayload = {
       projectId: nav.projectId,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       parentNodeId: parentNodeId,

@@ -50,7 +50,8 @@ export class CommitRepoController {
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
       userId: user.userId,
-      projectId: projectId
+      projectId: projectId,
+      allowProdRepo: true
     });
 
     if (repoType === RepoTypeEnum.Production) {

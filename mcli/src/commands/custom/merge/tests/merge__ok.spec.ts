@@ -143,6 +143,7 @@ test('1', async () => {
 
       let saveFileReqPayload: ToBackendSaveFileRequestPayload = {
         projectId: projectId,
+        repoId: userId,
         branchId: theirBranch,
         envId: PROJECT_ENV_PROD,
         fileNodeId: `${projectId}/readme.md`,

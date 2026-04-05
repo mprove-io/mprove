@@ -37,6 +37,7 @@ export interface MergeBranchDialogData {
   apiService: ApiService;
   fileService: FileService;
   projectId: string;
+  repoId: string;
   fileId: string;
   currentBranchId: string;
   currentBranchExtraName: string;
@@ -108,6 +109,7 @@ export class MergeBranchDialogComponent implements OnInit {
 
     let payload: ToBackendMergeRepoRequestPayload = {
       projectId: this.ref.data.projectId,
+      repoId: this.ref.data.repoId,
       branchId: this.ref.data.currentBranchId,
       envId: this.ref.data.envId,
       theirBranchId: this.selectedBranchItem.branchId

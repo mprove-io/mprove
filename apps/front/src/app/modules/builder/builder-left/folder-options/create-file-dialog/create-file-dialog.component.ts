@@ -35,6 +35,7 @@ import { ValidationService } from '#front/app/services/validation.service';
 export interface CreateFileDialogData {
   apiService: ApiService;
   projectId: string;
+  repoId: string;
   branchId: string;
   envId: string;
   parentNodeId: string;
@@ -101,6 +102,7 @@ export class CreateFileDialogComponent implements OnInit {
 
     let payload: ToBackendCreateFileRequestPayload = {
       projectId: this.ref.data.projectId,
+      repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
       envId: this.ref.data.envId,
       parentNodeId: this.ref.data.parentNodeId,

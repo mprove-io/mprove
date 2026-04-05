@@ -60,7 +60,8 @@ export class ValidateFilesService {
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
       userId: userId,
-      projectId: projectId
+      projectId: projectId,
+      allowProdRepo: true
     });
 
     let project = await this.projectsService.getProjectCheckExists({

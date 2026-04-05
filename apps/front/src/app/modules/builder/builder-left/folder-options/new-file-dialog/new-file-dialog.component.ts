@@ -39,6 +39,7 @@ import { ValidationService } from '#front/app/services/validation.service';
 export interface NewFileDialogData {
   apiService: ApiService;
   projectId: string;
+  repoId: string;
   branchId: string;
   envId: string;
 }
@@ -119,6 +120,7 @@ export class NewFileDialogComponent implements OnInit {
     if (this.isFolder === true) {
       let payload: ToBackendCreateFolderRequestPayload = {
         projectId: this.ref.data.projectId,
+        repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
         envId: this.ref.data.envId,
         parentNodeId: parentNodeId,
@@ -147,6 +149,7 @@ export class NewFileDialogComponent implements OnInit {
     } else {
       let payload: ToBackendCreateFileRequestPayload = {
         projectId: this.ref.data.projectId,
+        repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
         envId: this.ref.data.envId,
         parentNodeId: parentNodeId,

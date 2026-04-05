@@ -75,17 +75,14 @@ export class MergeRepoController {
     let reqValid: ToBackendMergeRepoRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, branchId, envId, theirBranchId } = reqValid.payload;
-
-    let repoId =
-      request.apiKeyRepoType === RepoTypeEnum.Session
-        ? request.apiKeySessionId
-        : user.userId;
+    let { projectId, repoId, branchId, envId, theirBranchId } =
+      reqValid.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
       userId: user.userId,
-      projectId: projectId
+      projectId: projectId,
+      allowProdRepo: false
     });
 
     if (repoType === RepoTypeEnum.Session) {
@@ -105,7 +102,7 @@ export class MergeRepoController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: user.userId,
+      repoId: repoId,
       branchId: branchId
     });
 

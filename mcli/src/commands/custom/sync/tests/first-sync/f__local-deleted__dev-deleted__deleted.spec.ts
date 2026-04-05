@@ -161,6 +161,7 @@ test('1', async () => {
 
       let deleteFileReqPayload: ToBackendDeleteFileRequestPayload = {
         projectId: projectId,
+        repoId: userId,
         branchId: defaultBranch,
         envId: env,
         fileNodeId: `${projectId}/${fileName}`

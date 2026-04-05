@@ -26,6 +26,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 export interface DeleteFileDialogData {
   apiService: ApiService;
   projectId: string;
+  repoId: string;
   branchId: string;
   envId: string;
   fileNodeId: string;
@@ -88,6 +89,7 @@ export class DeleteFileDialogComponent implements OnInit {
 
     let payload: ToBackendDeleteFileRequestPayload = {
       projectId: this.ref.data.projectId,
+      repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
       envId: this.ref.data.envId,
       fileNodeId: this.ref.data.fileNodeId

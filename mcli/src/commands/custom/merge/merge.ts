@@ -1,4 +1,5 @@
 import { Command, Option } from 'clipanion';
+import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -79,8 +80,15 @@ export class MergeCommand extends CustomCommand {
       throw serverError;
     }
 
+    let apiKey = this.context.config.mproveCliApiKey;
+
+    let repoId = apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
+      ? apiKey.split('-')[2].toLowerCase()
+      : apiKey.split('-')[2];
+
     let mergeRepoReqPayload: ToBackendMergeRepoRequestPayload = {
       projectId: this.projectId,
+      repoId: repoId,
       branchId: this.branch,
       theirBranchId: this.theirBranch,
       envId: this.env

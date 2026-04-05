@@ -31,12 +31,12 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -65,6 +65,7 @@ export class CreateFileController {
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
+    private sessionsService: SessionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -75,13 +76,22 @@ export class CreateFileController {
     let reqValid: ToBackendCreateFileRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, branchId, parentNodeId, fileName, envId, modelInfo } =
-      reqValid.payload;
+    let {
+      projectId,
+      repoId,
+      branchId,
+      parentNodeId,
+      fileName,
+      envId,
+      modelInfo
+    } = reqValid.payload;
 
-    let repoId =
-      request.apiKeyRepoType === RepoTypeEnum.Session
-        ? request.apiKeySessionId
-        : user.userId;
+    await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId,
+      allowProdRepo: false
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

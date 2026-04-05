@@ -27,6 +27,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 export interface DeleteFolderDialogData {
   apiService: ApiService;
   projectId: string;
+  repoId: string;
   branchId: string;
   envId: string;
   folderNodeId: string;
@@ -90,6 +91,7 @@ export class DeleteFolderDialogComponent implements OnInit {
 
     let payload: ToBackendDeleteFolderRequestPayload = {
       projectId: this.ref.data.projectId,
+      repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
       envId: this.ref.data.envId,
       folderNodeId: this.ref.data.folderNodeId

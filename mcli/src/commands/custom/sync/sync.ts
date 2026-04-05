@@ -8,6 +8,7 @@ const { forEachSeries } = pIteration;
 import deepEqual from 'fast-deep-equal';
 import { MPROVE_CACHE_DIR, MPROVE_SYNC_FILENAME } from '#common/constants/top';
 import { POSSIBLE_TIME_DIFF_MS } from '#common/constants/top-mcli';
+import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -154,8 +155,15 @@ export class SyncCommand extends CustomCommand {
 
     let localReqSentTime = Date.now();
 
+    let apiKey = this.context.config.mproveCliApiKey;
+
+    let repoId = apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
+      ? apiKey.split('-')[2].toLowerCase()
+      : apiKey.split('-')[2];
+
     let syncRepoReqPayload: ToBackendSyncRepoRequestPayload = {
       projectId: this.projectId,
+      repoId: repoId,
       branchId: currentBranchName,
       envId: this.env,
       lastCommit: lastCommit,

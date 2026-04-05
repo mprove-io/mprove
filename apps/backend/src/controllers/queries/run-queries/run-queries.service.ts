@@ -95,7 +95,8 @@ export class RunQueriesService {
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
       userId: user.userId,
-      projectId: projectId
+      projectId: projectId,
+      allowProdRepo: true
     });
 
     let userMember = await this.membersService.getMemberCheckExists({

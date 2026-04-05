@@ -72,7 +72,8 @@ export class DeleteReportController {
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
       userId: user.userId,
-      projectId: projectId
+      projectId: projectId,
+      allowProdRepo: true
     });
 
     let project = await this.projectsService.getProjectCheckExists({

@@ -337,6 +337,7 @@ export class BuilderLeftComponent implements OnDestroy {
 
     let payload: ToBackendMoveCatalogNodeRequestPayload = {
       projectId: this.nav.projectId,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       fromNodeId: fromNodeId,

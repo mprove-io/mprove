@@ -163,6 +163,7 @@ test('1', async () => {
 
       let saveFileReqPayload: ToBackendSaveFileRequestPayload = {
         projectId: projectId,
+        repoId: userId,
         branchId: defaultBranch,
         envId: env,
         fileNodeId: `${projectId}/${fileName}`,

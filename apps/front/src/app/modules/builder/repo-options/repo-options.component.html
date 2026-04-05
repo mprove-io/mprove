@@ -30,16 +30,22 @@
       >Revert to Last Commit</button
     >
 
-    <button
-      data-cy="repoOptionsRevertRepoToRemoteButton"
-      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
-      [ngClass]="{
-        'text-s400 cursor-default': needSave === true
-      }"
-      [disabled]="needSave === true"
-      (click)="t1.hide(); revertToRemote($event)"
-      >Revert to Remote</button
+    <div
+      tp="Not available for Session repos"
+      [tpIsEnabled]="nav?.repoType === repoTypeSession"
     >
+      <button
+        data-cy="repoOptionsRevertRepoToRemoteButton"
+        class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+        [ngClass]="{
+          'text-s400 cursor-default':
+            needSave === true || nav?.repoType === repoTypeSession
+        }"
+        [disabled]="needSave === true || nav?.repoType === repoTypeSession"
+        (click)="t1.hide(); revertToRemote($event)"
+        >Revert to Remote</button
+      >
+    </div>
 
     <button
       data-cy="repoOptionsPullFromRemoteButton"

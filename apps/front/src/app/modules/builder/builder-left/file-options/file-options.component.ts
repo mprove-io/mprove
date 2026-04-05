@@ -43,6 +43,7 @@ export class FileOptionsComponent {
     this.myDialogService.showDeleteFile({
       apiService: this.apiService,
       projectId: this.nav.projectId,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       fileNodeId: node.data.id,
@@ -55,6 +56,7 @@ export class FileOptionsComponent {
     this.myDialogService.showRenameFile({
       apiService: this.apiService,
       projectId: this.nav.projectId,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       nodeId: node.data.id,
