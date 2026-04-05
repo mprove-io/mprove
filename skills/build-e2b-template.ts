@@ -64,9 +64,22 @@ let template = Template()
     '/home/user/.config/opencode/skills/mprove-basic/SKILL.md'
   )
   .copy(
+    'mprove-build-chart/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-build-chart/SKILL.md'
+  )
+  .copy(
+    'mprove-build-dashboard/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-build-dashboard/SKILL.md'
+  )
+  .copy(
     'mprove-build-malloy-model/SKILL.md',
     '/home/user/.config/opencode/skills/mprove-build-malloy-model/SKILL.md'
   )
+  .copy(
+    'mprove-build-report/SKILL.md',
+    '/home/user/.config/opencode/skills/mprove-build-report/SKILL.md'
+  )
+
   .copy(
     'mprove-build-store-model/SKILL.md',
     '/home/user/.config/opencode/skills/mprove-build-store-model/SKILL.md'

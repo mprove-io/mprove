@@ -33,7 +33,18 @@ The flow for setup a new Mprove project:
 
 - mprove-project-structure (Files and folders structure patterns)
 - mprove-connection-schemas (Get, create or update .schema metadata files for mprove project connections)
+- mprove-build-malloy-model (Build Mprove Model based on Malloy sources)
+- mprove-build-store-model (Build Mprove Model based on HTTP API (Store) sources)
+- mprove-build-chart (Build Mprove Chart)
+- mprove-build-report (Build Mprove Report)
+- mprove-build-dashboard (Build Mprove Dashboard)
 - mprove-query-data (Query chart, dashboard, report or build a new one. Answer question using data.)
+
+## Rules
+
+If yaml property has an array type - use an empty array [] instead of undefined or null value.
+
+Mprove Reports are much more useful for Metrics (measures + time based dimension) than Mprove Charts or Dashboards.
 
 ## Docs
 
