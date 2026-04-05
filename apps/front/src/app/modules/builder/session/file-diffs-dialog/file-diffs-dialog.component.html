@@ -16,9 +16,10 @@
         *ngIf="dataItem.diff.status"
         class="rounded px-1.5 py-0.5 text-xs"
         [ngClass]="{
-          'bg-green-50 text-green-700': dataItem.diff.status === 'added',
-          'bg-red-50 text-red-700': dataItem.diff.status === 'deleted',
-          'bg-blue-50 text-blue-700': dataItem.diff.status === 'modified'
+          'bg-green-50 text-green-700':
+            dataItem.diff.status === 'added' ||
+            dataItem.diff.status === 'modified',
+          'bg-red-50 text-red-700': dataItem.diff.status === 'deleted'
         }"
         >{{ dataItem.diff.status }}</span
       >

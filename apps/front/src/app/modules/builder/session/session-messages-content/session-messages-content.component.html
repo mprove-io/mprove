@@ -311,8 +311,8 @@
               *ngIf="diff.status"
               class="rounded px-1.5 py-0.5 text-lg font-medium"
               [ngClass]="{
-                'text-green-700': diff.status === 'added',
-                'text-m600': diff.status === 'modified',
+                'text-green-700':
+                  diff.status === 'added' || diff.status === 'modified',
                 'text-red-700': diff.status === 'deleted'
               }"
               >{{ diff.status }}</span
