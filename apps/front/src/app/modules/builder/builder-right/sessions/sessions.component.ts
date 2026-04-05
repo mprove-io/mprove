@@ -192,12 +192,6 @@ export class SessionsComponent implements OnInit {
 
     let session = this.sessionQuery.getValue();
     this.sessionQuery.update({ ...session, firstMessage: undefined });
-    this.repoQuery.updatePart({
-      repoStatus: RepoStatusEnum.Ok, // for "Push to Remote" not flash during navigation
-      changesToCommit: [],
-      changesToPush: []
-    });
-
     this.navigateService.navigateToBuilder({
       // repoId: PROD_REPO_ID,
       // branchId: this.navQuery.getValue().projectDefaultBranch,
@@ -436,11 +430,17 @@ export class SessionsComponent implements OnInit {
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();
     this.sessionQuery.update({ ...session, firstMessage: undefined });
-    this.repoQuery.updatePart({
-      repoStatus: RepoStatusEnum.Ok, // for "Push to Remote" not flash during navigation
-      changesToCommit: [],
-      changesToPush: []
-    });
+
+    let currentRepoId = this.navQuery.getValue().repoId;
+
+    if (session.repoId !== currentRepoId) {
+      this.repoQuery.updatePart({
+        repoStatus: RepoStatusEnum.Ok,
+        changesToCommit: [],
+        changesToPush: []
+      });
+    }
+
     this.navigateService.navigateToSession({
       sessionId: session.sessionId,
       repoId: session.repoId,
