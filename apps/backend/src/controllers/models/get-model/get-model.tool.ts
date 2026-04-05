@@ -25,12 +25,15 @@ export class GetModelTool {
     description:
       'Get a model definition including its fields, dimensions, measures, and access info',
     parameters: z.object({
-      projectId: z.string(),
-      repoId: z.string(),
-      branchId: z.string(),
-      envId: z.string(),
-      modelId: z.string(),
-      getMalloy: z.boolean().default(false)
+      projectId: z.string().describe('Project ID'),
+      repoId: z.string().describe('Repository ID'),
+      branchId: z.string().describe('Git branch name'),
+      envId: z.string().describe('Environment ID'),
+      modelId: z.string().describe('Model ID'),
+      getMalloy: z
+        .boolean()
+        .default(false)
+        .describe('Include Malloy source in output')
     }),
     outputSchema: z.object({
       needValidate: z.boolean(),

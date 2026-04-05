@@ -25,11 +25,13 @@ export class GetConnectionSchemasTool {
     description:
       'Fetch database schemas (tables, columns, relationships, indexes) for project SQL connections',
     parameters: z.object({
-      projectId: z.string(),
-      envId: z.string(),
-      repoId: z.string(),
-      branchId: z.string(),
-      isRefreshExistingCache: z.boolean()
+      projectId: z.string().describe('Project ID'),
+      envId: z.string().describe('Environment ID'),
+      repoId: z.string().describe('Repository ID'),
+      branchId: z.string().describe('Git branch name'),
+      isRefreshExistingCache: z
+        .boolean()
+        .describe('Refresh cached schemas from the database')
     }),
     outputSchema: z.object({
       combinedSchemaItems: z.array(zCombinedSchemaItem)

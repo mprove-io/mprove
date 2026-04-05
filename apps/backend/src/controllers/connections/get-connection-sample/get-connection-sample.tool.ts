@@ -24,13 +24,25 @@ export class GetConnectionSampleTool {
     description:
       'Fetch sample data rows from a database table or column for a project connection',
     parameters: z.object({
-      projectId: z.string(),
-      envId: z.string(),
-      connectionId: z.string(),
-      schemaName: z.string(),
-      tableName: z.string(),
-      columnName: z.string().optional(),
-      offset: z.number().int().min(0).optional()
+      projectId: z.string().describe('Project ID'),
+      envId: z.string().describe('Environment ID'),
+      connectionId: z.string().describe('Connection ID'),
+      schemaName: z.string().describe('Database schema name'),
+      tableName: z.string().describe('Database table name'),
+      columnName: z
+        .string()
+        .nullish()
+        .describe(
+          'Column name to sample. Omit to get all columns from the table.'
+        ),
+      offset: z
+        .number()
+        .int()
+        .min(0)
+        .nullish()
+        .describe(
+          'Row offset for pagination. Omit to start from the first row.'
+        )
     }),
     outputSchema: z.object({
       columnNames: z.array(z.string()),

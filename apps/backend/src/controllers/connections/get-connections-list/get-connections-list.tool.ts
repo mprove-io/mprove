@@ -25,8 +25,8 @@ export class GetConnectionsListTool {
     description:
       'Get connection info (type, API endpoints, header keys, OAuth scopes) for project connections',
     parameters: z.object({
-      projectId: z.string(),
-      envId: z.string()
+      projectId: z.string().describe('Project ID'),
+      envId: z.string().describe('Environment ID')
     }),
     outputSchema: z.object({
       connectionItems: z.array(zConnectionItem)

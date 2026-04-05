@@ -30,10 +30,10 @@ export class ValidateFilesTool {
     description:
       'Validate (rebuild) Mprove files for a project branch and environment',
     parameters: z.object({
-      projectId: z.string(),
-      repoId: z.string(),
-      branchId: z.string(),
-      envId: z.string()
+      projectId: z.string().describe('Project ID'),
+      repoId: z.string().describe('Repository ID'),
+      branchId: z.string().describe('Git branch name'),
+      envId: z.string().describe('Environment ID')
     }),
     outputSchema: z.object({
       needValidate: z.boolean(),

@@ -29,22 +29,43 @@ export class RunTool {
     description:
       'Run dashboards, charts, and reports queries. Returns query statuses and statistics.',
     parameters: z.object({
-      projectId: z.string(),
-      repoId: z.string(),
-      branchId: z.string(),
-      envId: z.string(),
-      concurrency: z.number().optional(),
-      wait: z.boolean(),
-      sleep: z.number().optional(),
-      dashboardIds: z.string().optional(),
-      chartIds: z.string().optional(),
-      noDashboards: z.boolean(),
-      noCharts: z.boolean(),
-      getDashboards: z.boolean(),
-      getCharts: z.boolean(),
-      reportIds: z.string().optional(),
-      noReports: z.boolean(),
-      getReports: z.boolean()
+      projectId: z.string().describe('Project ID'),
+      repoId: z.string().describe('Repository ID'),
+      branchId: z.string().describe('Git branch name'),
+      envId: z.string().describe('Environment ID'),
+      concurrency: z
+        .number()
+        .nullish()
+        .describe('Max concurrent queries. Omit to use server default.'),
+      wait: z.boolean().describe('Wait for queries completion'),
+      sleep: z
+        .number()
+        .nullish()
+        .describe(
+          'Seconds to sleep between query status checks. Omit to use default of 3 seconds.'
+        ),
+      dashboardIds: z
+        .string()
+        .nullish()
+        .describe(
+          'Comma-separated dashboard IDs to run. Omit to run all dashboards.'
+        ),
+      chartIds: z
+        .string()
+        .nullish()
+        .describe('Comma-separated chart IDs to run. Omit to run all charts.'),
+      noDashboards: z.boolean().describe('Do not run dashboards'),
+      noCharts: z.boolean().describe('Do not run charts'),
+      getDashboards: z.boolean().describe('Include dashboards in output'),
+      getCharts: z.boolean().describe('Include charts in output'),
+      reportIds: z
+        .string()
+        .nullish()
+        .describe(
+          'Comma-separated report IDs to run. Omit to run all reports.'
+        ),
+      noReports: z.boolean().describe('Do not run reports'),
+      getReports: z.boolean().describe('Include reports in output')
     }),
     outputSchema: z.object({
       charts: z.array(zRunChart),

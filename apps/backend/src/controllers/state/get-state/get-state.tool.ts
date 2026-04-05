@@ -31,19 +31,19 @@ export class GetStateTool {
     description:
       'Get project state: models, dashboards, charts, reports, metrics, validation errors, and repo info',
     parameters: z.object({
-      projectId: z.string(),
-      repoId: z.string(),
-      branchId: z.string(),
-      envId: z.string(),
-      isFetch: z.boolean(),
-      getErrors: z.boolean(),
-      getRepo: z.boolean(),
-      getRepoNodes: z.boolean(),
-      getModels: z.boolean(),
-      getDashboards: z.boolean(),
-      getCharts: z.boolean(),
-      getMetrics: z.boolean(),
-      getReports: z.boolean()
+      projectId: z.string().describe('Project ID'),
+      repoId: z.string().describe('Repository ID'),
+      branchId: z.string().describe('Git branch name'),
+      envId: z.string().describe('Environment ID'),
+      isFetch: z.boolean().describe('Fetch latest data from the database'),
+      getErrors: z.boolean().describe('Include validation errors in output'),
+      getRepo: z.boolean().describe('Include repo info in output'),
+      getRepoNodes: z.boolean().describe('Include repo file nodes in output'),
+      getModels: z.boolean().describe('Include models in output'),
+      getDashboards: z.boolean().describe('Include dashboards in output'),
+      getCharts: z.boolean().describe('Include charts in output'),
+      getMetrics: z.boolean().describe('Include metrics in output'),
+      getReports: z.boolean().describe('Include reports in output')
     }),
     outputSchema: z.object({
       needValidate: z.boolean(),
