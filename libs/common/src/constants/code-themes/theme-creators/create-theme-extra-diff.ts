@@ -10,15 +10,15 @@ export function createThemeExtraDiff(themeExtension: Extension) {
       //   overflowY: 'visible !important'
       // },
       '&.cm-merge-a .cm-changedLine, .cm-deletedChunk': {
-        backgroundColor: '#ffecec' // 'rgba(160, 128, 100, .08)'
+        backgroundColor: '#fff4f4' // 'rgba(160, 128, 100, .08)'
       },
       '&.cm-merge-b .cm-changedLine, .cm-inlineChangedLine': {
-        backgroundColor: '#ecfcca' // 'rgba(100, 160, 128, .08)'
+        backgroundColor: '#f7feef' // 'rgba(100, 160, 128, .08)'
       },
       '&light.cm-merge-a .cm-changedText, &light .cm-deletedChunk .cm-deletedText':
         {
-          backgroundColor: '#ffa2a2',
-          background: '#ffa2a2'
+          backgroundColor: '#ffbdbd',
+          background: '#ffbdbd'
           // background:
           //   'linear-gradient(#ee443366, #ee443366) bottom/100% 2px no-repeat'
         },
@@ -30,8 +30,8 @@ export function createThemeExtraDiff(themeExtension: Extension) {
       '&light.cm-merge-b .cm-changedText': {
         // background:
         //   'linear-gradient(#22bb22aa, #22bb22aa) bottom/100% 2px no-repeat'
-        backgroundColor: '#bbf451',
-        background: '#bbf451'
+        backgroundColor: '#d7f89a',
+        background: '#d7f89a'
         // backgroundColor: '#7bf1a8',
         // background: '#7bf1a8'
       }
