@@ -22,6 +22,7 @@ import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 export interface DeleteDashboardDialogData {
   apiService: ApiService;
@@ -53,7 +54,8 @@ export class DeleteDashboardDialogComponent implements OnInit {
     private router: Router,
     private dashboardPartsQuery: DashboardPartsQuery,
     private dashboardQuery: DashboardQuery,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private uiService: UiService
   ) {}
 
   ngOnInit(): void {
@@ -103,6 +105,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
             let currentDashboard = this.dashboardQuery.getValue();
 
             if (currentDashboard.dashboardId === dashboardPart.dashboardId) {
+              this.uiService.clearProjectDashboardLink();
               this.navigateService.navigateToDashboards();
             }
           }

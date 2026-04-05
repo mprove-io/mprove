@@ -328,4 +328,68 @@ export class UiService {
     this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });
     this.setUserUi({ projectReportLinks: newProjectReportLinks });
   }
+
+  clearProjectChartLink() {
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(nav.projectId)) {
+      return;
+    }
+
+    let links = this.uiQuery.getValue().projectChartLinks;
+    let newProjectChartLinks = links.filter(l => l.projectId !== nav.projectId);
+
+    this.uiQuery.updatePart({ projectChartLinks: newProjectChartLinks });
+    this.setUserUi({ projectChartLinks: newProjectChartLinks });
+  }
+
+  clearProjectModelLink() {
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(nav.projectId)) {
+      return;
+    }
+
+    let links = this.uiQuery.getValue().projectModelLinks;
+    let newProjectModelLinks = links.filter(l => l.projectId !== nav.projectId);
+
+    this.uiQuery.updatePart({ projectModelLinks: newProjectModelLinks });
+    this.setUserUi({ projectModelLinks: newProjectModelLinks });
+  }
+
+  clearProjectDashboardLink() {
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(nav.projectId)) {
+      return;
+    }
+
+    let links = this.uiQuery.getValue().projectDashboardLinks;
+    let newProjectDashboardLinks = links.filter(
+      l => l.projectId !== nav.projectId
+    );
+
+    this.uiQuery.updatePart({
+      projectDashboardLinks: newProjectDashboardLinks
+    });
+    this.setUserUi({
+      projectDashboardLinks: newProjectDashboardLinks
+    });
+  }
+
+  clearProjectReportLink() {
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(nav.projectId)) {
+      return;
+    }
+
+    let links = this.uiQuery.getValue().projectReportLinks;
+    let newProjectReportLinks = links.filter(
+      l => l.projectId !== nav.projectId
+    );
+
+    this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });
+    this.setUserUi({ projectReportLinks: newProjectReportLinks });
+  }
 }

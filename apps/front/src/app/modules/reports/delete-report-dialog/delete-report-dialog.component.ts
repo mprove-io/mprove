@@ -22,6 +22,7 @@ import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 export interface DeleteReportDialogData {
   apiService: ApiService;
@@ -53,7 +54,8 @@ export class DeleteReportDialogComponent implements OnInit {
     private reportsQuery: ReportsQuery,
     private reportQuery: ReportQuery,
     private navigateService: NavigateService,
-    private router: Router
+    private router: Router,
+    private uiService: UiService
   ) {}
 
   ngOnInit(): void {
@@ -100,6 +102,7 @@ export class DeleteReportDialogComponent implements OnInit {
             let currentReport = this.reportQuery.getValue();
 
             if (currentReport.reportId === report.reportId) {
+              this.uiService.clearProjectReportLink();
               this.navigateService.navigateToReports();
             }
           }

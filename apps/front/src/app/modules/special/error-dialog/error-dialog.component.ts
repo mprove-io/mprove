@@ -8,9 +8,11 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
 
 import { ErrorData } from '#common/interfaces/front/error-data';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   selector: 'm-error-dialog',
@@ -35,7 +37,8 @@ export class ErrorDialogComponent implements OnInit {
 
   constructor(
     public ref: DialogRef<ErrorData>,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private uiService: UiService
   ) {}
 
   ngOnInit() {
@@ -64,6 +67,21 @@ export class ErrorDialogComponent implements OnInit {
 
     this.path = this.ref.data?.reqBody?.info?.name;
     this.traceId = this.ref.data?.reqBody?.info?.traceId;
+
+    if (
+      [
+        ErEnum.BACKEND_REPORT_DOES_NOT_EXIST as string,
+        ErEnum.BACKEND_REPORT_NOT_FOUND as string
+      ].indexOf(this.message) > -1
+    ) {
+      this.uiService.clearProjectReportLink();
+    } else if (this.message === ErEnum.BACKEND_MODEL_DOES_NOT_EXIST) {
+      this.uiService.clearProjectModelLink();
+    } else if (this.message === ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST) {
+      this.uiService.clearProjectDashboardLink();
+    } else if (this.message === ErEnum.BACKEND_CHART_DOES_NOT_EXIST) {
+      this.uiService.clearProjectChartLink();
+    }
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
