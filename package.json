@@ -114,6 +114,7 @@
     "e2e:turbo": "turbo run e2e",
     "e2e:backend": "turbo run e2e --filter=@mprove/backend --log-prefix=none",
     "compile-e2e:backend": "node apps/backend/compile-e2e.mjs",
+    "compile-e2x:backend": "node apps/backend/compile-e2x.mjs",
     "e2e:mcli": "pnpm prep:mcli && cd mcli && bun run e2e",
     "e2x": "pnpm e2x:turbo",
     "e2x:turbo": "turbo run e2x",

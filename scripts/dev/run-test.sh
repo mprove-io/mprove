@@ -29,6 +29,14 @@ elif [[ "$REL" == apps/blockml/* ]]; then
   exec dotenv -e ../../.env -v BLOCKML_LOG_IO=TRUE -v IS_TELEMETRY_ENABLED=FALSE -- \
     npx ava --config ava.compiled.config.js "$COMPILED"
 
+elif [[ "$REL" == apps/backend/*.e2x-spec.ts ]]; then
+  SRC_REL="${REL#apps/backend/}"
+  COMPILED="dist-e2x/${SRC_REL%.ts}.js"
+  cd "$ROOT/apps/backend"
+  node compile-e2x.mjs
+  exec dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- \
+    npx ava --config ava.e2x.compiled.config.js "$COMPILED"
+
 elif [[ "$REL" == apps/backend/* ]]; then
   SRC_REL="${REL#apps/backend/}"
   COMPILED="dist-e2e/${SRC_REL%.ts}.js"

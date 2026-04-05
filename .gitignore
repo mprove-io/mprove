@@ -17,6 +17,7 @@ external/
 mcli/.bun
 dist/
 dist-e2e/
+dist-e2x/
 dist-test/
 malloy/
 malloy_data/
