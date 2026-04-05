@@ -590,12 +590,13 @@ m-session-input {
   }
 
   code:not(pre code) {
-    background-color: #eff6ff;
-    color: #1e40af;
+    background-color: #fffbeb;
+    color: #92400e;
     font-weight: 400;
     padding: 0.125rem 0.25rem;
     border-radius: 0.25rem;
     font-size: 0.8em;
+    border: 1px solid #fde68a;
   }
 
   strong code:not(pre code),
