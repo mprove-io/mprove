@@ -131,9 +131,14 @@ export class SessionMessagesContentComponent {
     }
     if (toolPart.tool === 'apply_patch') {
       let patchText = (input['patchText'] as string) || '';
-      let matches = patchText.match(/\*\*\* (Update|Add|Delete) File: (.+)/);
-      if (matches) {
-        return matches[1] + ' ' + matches[2];
+      let allMatches = [
+        ...patchText.matchAll(/\*\*\* (Update|Add|Delete) File: (.+)/g)
+      ];
+      if (allMatches.length > 1) {
+        return 'multiple files';
+      }
+      if (allMatches.length === 1) {
+        return allMatches[0][1] + ' ' + allMatches[0][2];
       }
       return '';
     }
