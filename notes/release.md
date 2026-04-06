@@ -90,6 +90,6 @@ update templateId
 
 # helm - release
 
-(helm-docs -s file -c mproves)
+(helm-docs -s file -c mprove)
 (scripts/helm-package-mprove.sh)
 (scripts/helm-push-mprove.sh)
