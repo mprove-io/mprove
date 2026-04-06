@@ -113,7 +113,8 @@ src/
 │   ├── to-blockml/ # Backend→BlockML DTOs
 │   └── to-disk/    # Backend→Disk DTOs
 ├── models/         # Shared models (ServerError, MyRegex)
-└── types/          # TypeScript types
+├── types/          # TypeScript types
+└── zod/            # Zod validation schemas
 ```
 
 **Key Enums:**
@@ -140,6 +141,7 @@ NodeJS-specific utilities shared across services (backend, blockml, disk) and mc
 
 ```
 src/
+├── classes/        # Utility classes (e.g., CycleGraph)
 ├── decorators/     # NestJS method decorators
 └── functions/      # Node.js utility functions
 ```

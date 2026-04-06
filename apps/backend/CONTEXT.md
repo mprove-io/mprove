@@ -9,13 +9,19 @@ Generated with `./scripts/dev/list-context-files-tree.sh apps/backend`
 ```
 .turbo/
 dist/
+dist-e2e/
+dist-e2x/
 node_modules/
 src/
 .swcrc
-ava.config.js
-ava.e2x.config.js
+ava.e2e.compiled.config.js
+ava.e2x.compiled.config.js
 build.mjs
+compile-e2e.mjs
+compile-e2x.mjs
 CONTEXT.md
+loader-compiled.mjs
+loader-register.mjs
 package.json
 tsconfig.app.json
 ```
@@ -63,9 +69,9 @@ src/
 └── services/           # Business logic services
     ├── db/             # Database CRUD services (per entity)
     ├── dwh/            # Data warehouse connector services
-    ├── editor/         # Editor services (codex, connections, models, sandbox, stream)
-    ├── explorer/       # Explorer services (events, models, prompts, stream, tools)
-    └── session/        # Session services (archive, drain, SSE)
+    ├── editor/         # Editor services (codex, connections, models, opencode, sandbox, stream)
+    ├── explorer/       # Explorer services (events-maker, models, prompts, stream, title, tools)
+    └── session/        # Session services (archive, drain, drain-timer, SSE)
 ```
 
 ## Controllers (by domain)

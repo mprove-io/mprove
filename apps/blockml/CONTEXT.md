@@ -9,12 +9,16 @@ Generated with `./scripts/dev/list-context-files-tree.sh apps/blockml`
 ```
 .turbo/
 dist/
+dist-test/
 node_modules/
 src/
 .swcrc
-ava.config.js
+ava.compiled.config.js
 build.mjs
+compile-test.mjs
 CONTEXT.md
+loader-compiled.mjs
+loader-register.mjs
 package.json
 tsconfig.app.json
 ```

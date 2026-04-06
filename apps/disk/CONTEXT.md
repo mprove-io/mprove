@@ -9,13 +9,17 @@ Generated with `./scripts/dev/list-context-files-tree.sh apps/disk`
 ```
 .turbo/
 dist/
+dist-test/
 node_modules/
 src/
 .DS_Store
 .swcrc
-ava.config.js
+ava.compiled.config.js
 build.mjs
+compile-test.mjs
 CONTEXT.md
+loader-compiled.mjs
+loader-register.mjs
 package.json
 tsconfig.app.json
 ```
@@ -50,7 +54,8 @@ src/
 │   ├── 05-branches/
 │   ├── 06-folders/
 │   ├── 07-files/
-│   └── 08-seed/
+│   ├── 08-seed/
+│   └── 09-test/
 ├── functions/      # File system & git helper functions
 ├── services/       # Business logic services
 └── assets/         # Static files for tests
