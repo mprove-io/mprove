@@ -33,7 +33,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { EMPTY_STRUCT_ID } from '#common/constants/top';
+import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
@@ -75,8 +75,14 @@ export class MergeRepoController {
     let reqValid: ToBackendMergeRepoRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, envId, theirBranchId } =
-      reqValid.payload;
+    let {
+      projectId,
+      repoId,
+      branchId,
+      envId,
+      theirBranchId,
+      isTheirBranchRemote
+    } = reqValid.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -106,9 +112,12 @@ export class MergeRepoController {
       branchId: branchId
     });
 
+    let theirBranchRepoId =
+      isTheirBranchRemote === true ? PROD_REPO_ID : repoId;
+
     let theirBranch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: repoId,
+      repoId: theirBranchRepoId,
       branchId: theirBranchId
     });
 
@@ -133,7 +142,7 @@ export class MergeRepoController {
         repoId: repoId,
         branch: branchId,
         theirBranch: theirBranchId,
-        isTheirBranchRemote: false,
+        isTheirBranchRemote: isTheirBranchRemote,
         userAlias: user.alias
       }
     };

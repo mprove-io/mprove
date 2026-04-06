@@ -137,6 +137,7 @@ export class MergeRepoService {
             repoDir: repoDir,
             localBranch: theirBranch
           });
+
     if (isTheirBranchExist === false) {
       throw new ServerError({
         message: ErEnum.DISK_THEIR_BRANCH_IS_NOT_EXIST
@@ -150,7 +151,7 @@ export class MergeRepoService {
       repoDir: repoDir,
       branchName: branch,
       git: git,
-      isFetch: true
+      isFetch: false
     });
 
     //
@@ -180,7 +181,7 @@ export class MergeRepoService {
       repoId: repoId,
       repoDir: repoDir,
       git: git,
-      isFetch: true,
+      isFetch: isTheirBranchRemote === true ? false : true,
       isCheckConflicts: true
     });
 

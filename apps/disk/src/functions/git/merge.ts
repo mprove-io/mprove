@@ -17,11 +17,6 @@ export async function merge(item: {
     fn: async () => {
       let git = item.git;
 
-      await addTraceSpan({
-        spanName: 'disk.git.merge.git.fetch',
-        fn: () => git.fetch('origin', ['--prune'])
-      });
-
       let ourCommitId = await git.revparse([`refs/heads/${item.branch}`]);
       ourCommitId = ourCommitId.trim();
 

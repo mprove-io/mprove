@@ -76,7 +76,8 @@ export async function prepareRemoteAndProd(item: {
           repoId: PROD_REPO_ID,
           repoDir: prodDir,
           branch: BRANCH_MAIN,
-          git: prodGit
+          git: prodGit,
+          isFetch: true
         });
       }
     }

@@ -139,7 +139,8 @@ export class PushRepoService {
       repoId: repoId,
       repoDir: repoDir,
       branch: branch,
-      git: git
+      git: git,
+      isFetch: false
     });
 
     let prodGit = await createGit({
@@ -151,6 +152,8 @@ export class PushRepoService {
       publicKey: publicKey,
       passPhrase: passPhrase
     });
+
+    await prodGit.fetch('origin', ['--prune']);
 
     let isProdBranchExist = await isLocalBranchExist({
       repoDir: prodRepoDir,
@@ -208,7 +211,7 @@ export class PushRepoService {
       repoDir: prodRepoDir,
       branchName: branch,
       git: prodGit,
-      isFetch: true
+      isFetch: false
     });
 
     let productionItemCatalog = <DiskItemCatalog>await getNodesAndFiles({

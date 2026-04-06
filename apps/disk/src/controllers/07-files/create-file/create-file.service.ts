@@ -186,7 +186,8 @@ export class CreateFileService {
         repoId: repoId,
         repoDir: repoDir,
         branch: branch,
-        git: git
+        git: git,
+        isFetch: true
       });
     }
 

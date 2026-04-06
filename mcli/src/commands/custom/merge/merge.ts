@@ -49,6 +49,10 @@ export class MergeCommand extends CustomCommand {
     description: '(required) Environment'
   });
 
+  theirBranchRemote = Option.Boolean('--their-branch-remote', false, {
+    description: '(default false), merge from production (remote) repo branch'
+  });
+
   getErrors = Option.Boolean('--get-errors', false, {
     description: '(default false), show validation errors in output'
   });
@@ -91,7 +95,8 @@ export class MergeCommand extends CustomCommand {
       repoId: repoId,
       branchId: this.branch,
       theirBranchId: this.theirBranch,
-      envId: this.env
+      envId: this.env,
+      isTheirBranchRemote: this.theirBranchRemote
     };
 
     let mergeRepoResp = await mreq<ToBackendMergeRepoResponse>({

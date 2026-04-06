@@ -14,6 +14,7 @@ export async function pushToRemote(item: {
   repoDir: string;
   branch: string;
   git: SimpleGit;
+  isFetch: boolean;
 }) {
   return await addTraceSpan({
     spanName: 'disk.git.pushToRemote',
@@ -25,7 +26,7 @@ export async function pushToRemote(item: {
           repoId: item.repoId,
           repoDir: item.repoDir,
           git: item.git,
-          isFetch: true,
+          isFetch: item.isFetch,
           isCheckConflicts: false
         })
       );

@@ -153,7 +153,7 @@ export class CreateBranchService {
       repoDir: repoDir,
       branchName: fromBranch,
       git: git,
-      isFetch: true
+      isFetch: false
     });
 
     //
@@ -177,7 +177,7 @@ export class CreateBranchService {
       repoId: repoId,
       repoDir: repoDir,
       git: git,
-      isFetch: true,
+      isFetch: isFromRemote === true ? false : true,
       isCheckConflicts: true
     });
 

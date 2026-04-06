@@ -20,6 +20,9 @@ export class ToBackendMergeRepoRequestPayload {
 
   @IsString()
   theirBranchId: string;
+
+  @IsBoolean()
+  isTheirBranchRemote: boolean;
 }
 
 export class ToBackendMergeRepoRequest extends ToBackendRequest {

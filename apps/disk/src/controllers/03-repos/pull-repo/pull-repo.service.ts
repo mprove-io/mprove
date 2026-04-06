@@ -151,7 +151,7 @@ export class PullRepoService {
       repoId: repoId,
       repoDir: repoDir,
       git: git,
-      isFetch: true,
+      isFetch: false,
       isCheckConflicts: true
     });
 

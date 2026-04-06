@@ -64,9 +64,7 @@ export class MergeBranchDialogComponent implements OnInit {
   mergeForm: FormGroup;
 
   branchesList: BranchItem[] = this.ref.data.branchesList.filter(
-    (x: BranchItem) =>
-      x.repoType !== RepoTypeEnum.Production &&
-      x.repoType !== RepoTypeEnum.Session
+    (x: BranchItem) => x.repoType !== RepoTypeEnum.Session
   );
 
   selectedBranchItem: BranchItem = undefined;
@@ -107,12 +105,16 @@ export class MergeBranchDialogComponent implements OnInit {
 
     this.ref.close();
 
+    let isTheirBranchRemote =
+      this.selectedBranchItem.repoType === RepoTypeEnum.Production;
+
     let payload: ToBackendMergeRepoRequestPayload = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.currentBranchId,
       envId: this.ref.data.envId,
-      theirBranchId: this.selectedBranchItem.branchId
+      theirBranchId: this.selectedBranchItem.branchId,
+      isTheirBranchRemote: isTheirBranchRemote
     };
 
     let apiService: ApiService = this.ref.data.apiService;

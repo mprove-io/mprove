@@ -12,11 +12,6 @@ export async function createBranch(item: {
     fn: async () => {
       let git = item.git;
 
-      await addTraceSpan({
-        spanName: 'disk.git.createBranch.git.fetch',
-        fn: () => git.fetch('origin', ['--prune'])
-      });
-
       await git.branch([item.newBranch, item.fromBranch]);
     }
   });

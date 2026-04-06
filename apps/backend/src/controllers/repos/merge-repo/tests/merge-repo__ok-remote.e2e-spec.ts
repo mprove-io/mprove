@@ -17,11 +17,23 @@ import {
   ToBackendCreateBranchResponse
 } from '#common/interfaces/to-backend/branches/to-backend-create-branch';
 import {
+  ToBackendSaveFileRequest,
+  ToBackendSaveFileResponse
+} from '#common/interfaces/to-backend/files/to-backend-save-file';
+import {
+  ToBackendCommitRepoRequest,
+  ToBackendCommitRepoResponse
+} from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
+import {
   ToBackendMergeRepoRequest,
   ToBackendMergeRepoResponse
 } from '#common/interfaces/to-backend/repos/to-backend-merge-repo';
+import {
+  ToBackendPushRepoRequest,
+  ToBackendPushRepoResponse
+} from '#common/interfaces/to-backend/repos/to-backend-push-repo';
 
-let testId = 'backend-merge-repo__ok';
+let testId = 'backend-merge-repo__ok-remote';
 
 let traceId = testId;
 
@@ -35,9 +47,7 @@ let orgName = testId;
 let projectId = makeId();
 let projectName = testId;
 
-let branchId = BRANCH_MAIN;
-
-let theirBranchId = 'b2';
+let branchId = 'b2';
 
 test('1', async t => {
   let isPass: boolean;
@@ -102,8 +112,8 @@ test('1', async t => {
         },
         payload: {
           projectId: projectId,
-          fromBranchId: branchId,
-          newBranchId: theirBranchId,
+          fromBranchId: BRANCH_MAIN,
+          newBranchId: branchId,
           repoId: userId
         }
       };
@@ -112,6 +122,68 @@ test('1', async t => {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
+      });
+
+      let saveFileReq: ToBackendSaveFileRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          repoId: userId,
+          branchId: BRANCH_MAIN,
+          envId: PROJECT_ENV_PROD,
+          fileNodeId: `${projectId}/readme.md`,
+          content: 'remote change'
+        }
+      };
+
+      let saveFileResp = await sendToBackend<ToBackendSaveFileResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: saveFileReq
+      });
+
+      let commitReq: ToBackendCommitRepoRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          branchId: BRANCH_MAIN,
+          repoId: userId,
+          commitMessage: 'commit on main'
+        }
+      };
+
+      let commitResp = await sendToBackend<ToBackendCommitRepoResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: commitReq
+      });
+
+      let pushReq: ToBackendPushRepoRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendPushRepo,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          repoId: userId,
+          branchId: BRANCH_MAIN,
+          envId: PROJECT_ENV_PROD
+        }
+      };
+
+      let pushResp = await sendToBackend<ToBackendPushRepoResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: pushReq
       });
 
       let req: ToBackendMergeRepoRequest = {
@@ -125,8 +197,8 @@ test('1', async t => {
           repoId: userId,
           branchId: branchId,
           envId: PROJECT_ENV_PROD,
-          theirBranchId: theirBranchId,
-          isTheirBranchRemote: false
+          theirBranchId: BRANCH_MAIN,
+          isTheirBranchRemote: true
         }
       };
 
