@@ -82,7 +82,7 @@ add templateId to create-env and .env
 # update pods
 
 update app version
-update templateId
+update templateId (5 places)
 
 # app - release
 
