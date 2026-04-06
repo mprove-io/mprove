@@ -1,6 +1,6 @@
 {
   "name": "@mprove/common",
-  "version": "11.0.110-dev",
+  "version": "11.0.112-dev",
   "private": true,
   "type": "module",
   "exports": {
