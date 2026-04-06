@@ -26,7 +26,7 @@ git push origin --tags
 (wait for action to finish in mprove-cli for brew)
 
 devcontainer:
-scripts/dev/install-mprove-cli.sh 11.0.109-dev
+scripts/dev/install-mprove-cli.sh 12.0.1
 
 mac:
 tar -xzf <mprove-cli-downloaded-path>
