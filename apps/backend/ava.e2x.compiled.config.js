@@ -4,6 +4,7 @@ export default {
   timeout: '5m',
   nodeArguments: [
     '--import=./loader-register.mjs',
+    '--disable-warning=DEP0169',
     '--experimental-eventsource'
   ]
 };

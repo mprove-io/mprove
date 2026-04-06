@@ -28,4 +28,4 @@ COPY turbo.json tsconfig.base.json tsconfig.json ./
 RUN chmod +x scripts/wait-for-it.sh
 RUN pnpm build:disk
 
-CMD [ "node", "--enable-source-maps", "apps/disk/dist/main.js" ]
+CMD [ "node", "--enable-source-maps", "--disable-warning=DEP0169", "apps/disk/dist/main.js" ]
