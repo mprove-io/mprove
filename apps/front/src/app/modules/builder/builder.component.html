@@ -244,7 +244,8 @@
                 nav?.repoType === repoTypeEnum.Session &&
                 repo?.changesToCommit?.length === 0 &&
                 repo?.changesToPush?.length === 0 &&
-                repo.repoStatus === repoStatusNeedPush
+                repo.repoStatus === repoStatusNeedPush &&
+                session?.archiveReason !== archiveReasonCommit
               "
               >No committed changes to Push</div
             >
@@ -259,7 +260,8 @@
               needSave === true ||
               (nav?.repoType === repoTypeEnum.Session &&
                 repo?.changesToCommit?.length === 0 &&
-                repo?.changesToPush?.length === 0)
+                repo?.changesToPush?.length === 0 &&
+                session?.archiveReason !== archiveReasonCommit)
             "
           >
             <button
@@ -272,7 +274,8 @@
                   !(
                     nav?.repoType === repoTypeEnum.Session &&
                     repo?.changesToCommit?.length === 0 &&
-                    repo?.changesToPush?.length === 0
+                    repo?.changesToPush?.length === 0 &&
+                    session?.archiveReason !== archiveReasonCommit
                   ) &&
                   (repo.repoStatus === repoStatusNeedPush ||
                     (repo.repoStatus === repoStatusOk &&
@@ -282,7 +285,8 @@
                   needSave === true ||
                   (nav?.repoType === repoTypeEnum.Session &&
                     repo?.changesToCommit?.length === 0 &&
-                    repo?.changesToPush?.length === 0) ||
+                    repo?.changesToPush?.length === 0 &&
+                    session?.archiveReason !== archiveReasonCommit) ||
                   (repo.repoStatus !== repoStatusNeedPush &&
                     !(
                       repo.repoStatus === repoStatusOk &&
@@ -295,7 +299,8 @@
                 needSave === true ||
                 (nav?.repoType === repoTypeEnum.Session &&
                   repo?.changesToCommit?.length === 0 &&
-                  repo?.changesToPush?.length === 0) ||
+                  repo?.changesToPush?.length === 0 &&
+                  session?.archiveReason !== archiveReasonCommit) ||
                 (repo.repoStatus !== repoStatusNeedPush &&
                   !(
                     repo.repoStatus === repoStatusOk &&

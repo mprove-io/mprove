@@ -132,7 +132,9 @@
       <div class="text-s400 py-1 text-lg">{{
         archiveReason === archiveReasonEnum.Expire
           ? 'Session is archived (sandbox expired)'
-          : 'Session is archived by User'
+          : archiveReason === archiveReasonEnum.Commit
+            ? 'Session is archived (commit by User)'
+            : 'Session is archived by User'
       }}</div>
     </div>
   </div>

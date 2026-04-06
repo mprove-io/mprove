@@ -12,6 +12,7 @@ import {
   PATH_SESSION
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
@@ -61,6 +62,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
   builderLeftInfo = BuilderLeftEnum.Info;
 
   repoTypeEnum = RepoTypeEnum;
+
+  archiveReasonCommit = ArchiveReasonEnum.Commit;
 
   repoStatusNeedCommit = RepoStatusEnum.NeedCommit;
   repoStatusNeedPull = RepoStatusEnum.NeedPull;
