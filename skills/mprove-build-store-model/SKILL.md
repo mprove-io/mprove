@@ -7,7 +7,7 @@ description: Build Mprove Model based on HTTP API (Store) sources
 
 ## Docs
 
-https://docs.mprove.io/docs/ref-model-store
+https://docs.mprove.io/docs/reference/model-store
 
 ## If user asked to create mprove model (Store) for HTTP API data source
 

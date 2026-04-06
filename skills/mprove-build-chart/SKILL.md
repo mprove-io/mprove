@@ -5,7 +5,7 @@ description: Build Mprove Chart
 
 # Build Mprove Chart
 
-https://docs.mprove.io/docs/ref-chart
+https://docs.mprove.io/docs/reference/chart
 
 ## Chart Link URL Structure
 

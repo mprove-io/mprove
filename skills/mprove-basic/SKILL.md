@@ -48,7 +48,7 @@ Mprove Reports are much more useful for Metrics (measures + time based dimension
 
 ## Docs
 
-When you need to look up Mprove documentation, check `https://docs.mprove.io/docs/ref-model-malloy` and/or other pages based on task.
+When you need to look up Mprove documentation, check `https://docs.mprove.io/docs/reference/model-malloy` and/or other pages based on task.
 
 When you need to look up Malloy documentation, check `https://docs.malloydata.dev/documentation/user_guides/quickstart_modeling` and/or other pages based on task.
 

@@ -5,7 +5,7 @@ description: Build Mprove Dashboard
 
 # Build Mprove Dashboard
 
-https://docs.mprove.io/docs/ref-dashboard
+https://docs.mprove.io/docs/reference/dashboard
 
 ## Dashboard Link URL Structure
 

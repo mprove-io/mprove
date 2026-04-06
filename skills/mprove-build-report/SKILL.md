@@ -5,7 +5,7 @@ description: Build Mprove Report
 
 # Build Mprove Report
 
-https://docs.mprove.io/docs/ref-report
+https://docs.mprove.io/docs/reference/report
 
 ## Report Link URL Structure
 
@@ -62,7 +62,7 @@ Relative:
 - `` f`last 3 months` ``
 - `` f`last 4 quarters` ``
 
-https://docs.mprove.io/docs/ref-filter-conditions#timestamp
+https://docs.mprove.io/docs/reference/filter-conditions#timestamp
 
 ## Example
 

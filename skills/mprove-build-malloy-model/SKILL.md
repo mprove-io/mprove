@@ -7,7 +7,7 @@ description: Build Mprove Model based on Malloy sources
 
 ## Docs
 
-https://docs.mprove.io/docs/ref-model-malloy
+https://docs.mprove.io/docs/reference/model-malloy
 https://docs.malloydata.dev/documentation
 
 ## Some parts of Malloy language are not supported in Mprove Models yet
