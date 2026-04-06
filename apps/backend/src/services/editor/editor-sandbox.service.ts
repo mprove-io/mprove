@@ -260,20 +260,27 @@ export class EditorSandboxService {
 
         if (!sandboxInfo) {
           // Sandbox no longer exists
-          let updatedSession: SessionTab = {
-            ...session,
-            status: SessionStatusEnum.Archived,
-            archiveReason: ArchiveReasonEnum.Expire
-          };
-
-          await this.db.drizzle.transaction(async tx => {
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                sessions: [updatedSession]
-              }
+          let freshSession =
+            await this.sessionsService.getSessionByIdCheckExists({
+              sessionId: session.sessionId
             });
-          });
+
+          if (freshSession.status !== SessionStatusEnum.Archived) {
+            let updatedSession: SessionTab = {
+              ...freshSession,
+              status: SessionStatusEnum.Archived,
+              archiveReason: ArchiveReasonEnum.Expire
+            };
+
+            await this.db.drizzle.transaction(async tx => {
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  sessions: [updatedSession]
+                }
+              });
+            });
+          }
         } else if (
           session.status === SessionStatusEnum.Active &&
           sandboxInfo.state === 'paused'

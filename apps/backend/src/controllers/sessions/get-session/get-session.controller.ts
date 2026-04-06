@@ -68,7 +68,7 @@ export class GetSessionController {
       });
     }
 
-    if (session.sandboxId) {
+    if (session.sandboxId && session.status !== SessionStatusEnum.Archived) {
       let sandboxInfo = await this.editorSandboxService.getSandboxInfo({
         sandboxId: session.sandboxId,
         e2bApiKey: project.e2bApiKey
