@@ -51,7 +51,7 @@
 
   <!-- Response div wrapping all non-user content for this turn -->
   <div class="response-div mb-8 mr-8">
-    <div *ngFor="let msg of turn.responses" class="mb-4">
+    <div *ngFor="let msg of turn.responses; trackBy: trackByIndex" class="mb-4">
       <!-- Agent message -->
       <div *ngIf="msg.role === 'agent'" class="ml-10">
         <div class="rounded-2xl px-4 py-3">
@@ -74,7 +74,7 @@
                   [ngModel]="node.value"
                   [readonly]="true"
                   [languages]="codeLanguages"
-                  [language]="node.lang"
+                  [language]="getCodeLanguage({ lang: node.lang })"
                   [theme]="codeTheme"
                   [setup]="null"
                 ></code-editor>

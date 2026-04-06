@@ -43,6 +43,14 @@ always format it as a clickable markdown link. Never put URLs inside code blocks
 Use the entity type and name as the link text.
 Format: `<type>: [<name>](<url>)` — e.g., `dashboard: [TDEXWBE5PI2X17CJCFKC](<url>)`
 
+No need to provide Builder link (user is already on Builder Session page).
+
+Do not do git operations that will change current branch or commit ("mprove sync" works only when the server and local commits match).
+
+Use python3 instead of python if needed.
+
+Jq is not installed.
+
 # Docs
 
 When you need to look up Mprove documentation, check `/home/user/mprove-docs-fm/content/docs` instead of web.

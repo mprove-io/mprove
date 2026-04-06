@@ -106,12 +106,24 @@ export class SessionMessagesContentComponent {
   @Input() isLastErrorRecovered: boolean | undefined;
 
   codeLanguages: LanguageDescription[] = cmLanguages;
+  codeLanguageNames: Set<string> = new Set(
+    cmLanguages.flatMap(ld => [ld.name, ...ld.alias].map(n => n.toLowerCase()))
+  );
   codeTheme: Extension = VS_LIGHT_THEME_EXTRA_SINGLE_SESSION_READ;
 
   activatingChars = 'Activating Session...'.split('').map((char, i) => ({
     char: char === ' ' ? '\u00A0' : char,
     index: i
   }));
+
+  getCodeLanguage(item: { lang: string }): string {
+    let { lang } = item;
+    if (!lang) {
+      return '';
+    }
+    let isKnown = this.codeLanguageNames.has(lang.toLowerCase());
+    return isKnown ? lang : '';
+  }
 
   trackByIndex(index: number): number {
     return index;
