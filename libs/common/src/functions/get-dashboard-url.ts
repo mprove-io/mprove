@@ -11,7 +11,7 @@ export function getDashboardUrl(item: {
   let { host, orgId, projectId, repoId, branch, env, dashboardId, timezone } =
     item;
 
-  let tz = timezone.split('/').join('-');
+  let tzEncoded = encodeURIComponent(timezone);
 
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/dashboards/dashboard/${dashboardId}?timezone=${tz}`;
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/dashboards/dashboard/${dashboardId}?timezone=${tzEncoded}`;
 }

@@ -19,14 +19,16 @@ The `run` MCP tool returns `RunReport` objects with a `url` property containing 
 
 If you build report with top parameters (filters). Rows should listen to them.
 
+Use single letters as row_id (A, B, C, D, etc...) and "options: {}" as a default.
+
 ## Query Parameters
 
 ### timezone
 
-IANA timezone identifier with `/` replaced by `-` in the URL.
+IANA timezone identifier, URL-encoded.
 
-- `America/New_York` → `America-New_York`
-- `Europe/London` → `Europe-London`
+- `America/New_York` → `America%2FNew_York`
+- `America/Port-au-Prince` → `America%2FPort-au-Prince`
 - `UTC` → `UTC`
 
 Default: project's `default_timezone` from mprove config.
@@ -69,7 +71,7 @@ https://docs.mprove.io/docs/reference/filter-conditions#timestamp
 Report showing last 3 months by month in US Eastern time:
 
 ```
-{host}/org/{orgId}/project/{projectId}/repo/{repoId}/branch/main/env/prod/reports/report/{reportId}?timezone=America-New_York&timeSpec=months&timeRange=f%60last%203%20months%60
+{host}/org/{orgId}/project/{projectId}/repo/{repoId}/branch/main/env/prod/reports/report/{reportId}?timezone=America%2FNew_York&timeSpec=months&timeRange=f%60last%203%20months%60
 ```
 
 ## Notes

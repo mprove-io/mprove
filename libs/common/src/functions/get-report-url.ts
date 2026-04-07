@@ -23,8 +23,8 @@ export function getReportUrl(item: {
     timeRange
   } = item;
 
-  let tz = timezone.split('/').join('-');
-  let timeRangeUnderscore = timeRange.split(' ').join('_');
+  let tzEncoded = encodeURIComponent(timezone);
+  let timeRangeEncoded = encodeURIComponent(timeRange);
 
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/reports/report/${reportId}?timezone=${tz}&timeSpec=${timeSpec}&timeRange=${timeRangeUnderscore}`;
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/reports/report/${reportId}?timezone=${tzEncoded}&timeSpec=${timeSpec}&timeRange=${timeRangeEncoded}`;
 }

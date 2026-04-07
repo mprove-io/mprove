@@ -10,7 +10,7 @@ export function getModelUrl(item: {
 }) {
   let { host, orgId, projectId, repoId, branch, env, modelId, timezone } = item;
 
-  let tz = timezone.split('/').join('-');
+  let tzEncoded = encodeURIComponent(timezone);
 
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/models/model/${modelId}/chart/new?timezone=${tz}`;
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/models/model/${modelId}/chart/new?timezone=${tzEncoded}`;
 }

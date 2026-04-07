@@ -9,7 +9,7 @@ export function makeQueryParams(item: {
   let { timezone, timeSpec, timeRangeFraction } = item;
 
   let queryParams = {
-    timezone: timezone.split('/').join('-'),
+    timezone: timezone,
     timeSpec: timeSpec,
     timeRange: timeRangeFraction?.brick
   };

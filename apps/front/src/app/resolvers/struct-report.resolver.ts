@@ -52,7 +52,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
       structState.mproveConfig.allowTimezones === false
         ? structState.mproveConfig.defaultTimezone
         : isDefined(timezoneParam)
-          ? timezoneParam.split('-').join('/')
+          ? timezoneParam
           : uiState.timezone;
 
     return this.resolveRoute({

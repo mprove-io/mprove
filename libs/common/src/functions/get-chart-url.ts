@@ -21,7 +21,7 @@ export function getChartUrl(item: {
     timezone
   } = item;
 
-  let tz = timezone.split('/').join('-');
+  let tzEncoded = encodeURIComponent(timezone);
 
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/models/model/${modelId}/chart/${chartId}?timezone=${tz}`;
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/models/model/${modelId}/chart/${chartId}?timezone=${tzEncoded}`;
 }

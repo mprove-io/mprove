@@ -1054,7 +1054,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
               .createUrlTree([], {
                 relativeTo: this.route,
                 queryParams: {
-                  timezone: uiStateB.timezone.split('/').join('-')
+                  timezone: uiStateB.timezone
                 }
               })
               .toString();

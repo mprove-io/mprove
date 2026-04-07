@@ -60,7 +60,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
       structState.mproveConfig.allowTimezones === false
         ? structState.mproveConfig.defaultTimezone
         : isDefined(timezoneParam)
-          ? timezoneParam.split('-').join('/')
+          ? timezoneParam
           : uiState.timezone;
 
     if (uiState.timezone !== timezone) {

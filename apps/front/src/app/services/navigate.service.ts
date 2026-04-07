@@ -272,7 +272,7 @@ export class NavigateService {
         PATH_CHART,
         chartId
       ],
-      { queryParams: { timezone: uiState.timezone.split('/').join('-') } }
+      { queryParams: { timezone: uiState.timezone } }
     );
   }
 
@@ -334,7 +334,7 @@ export class NavigateService {
         PATH_DASHBOARD,
         dashboardId
       ],
-      { queryParams: { timezone: uiState.timezone.split('/').join('-') } }
+      { queryParams: { timezone: uiState.timezone } }
     );
   }
 

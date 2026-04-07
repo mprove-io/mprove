@@ -19,10 +19,10 @@ The `run` MCP tool returns `RunChart` objects with a `url` property containing t
 
 ### timezone
 
-IANA timezone identifier with `/` replaced by `-` in the URL.
+IANA timezone identifier, URL-encoded.
 
-- `America/New_York` → `America-New_York`
-- `Europe/London` → `Europe-London`
+- `America/New_York` → `America%2FNew_York`
+- `America/Port-au-Prince` → `America%2FPort-au-Prince`
 - `UTC` → `UTC`
 
 Provided timezone is project's `default_timezone` from mprove config.
