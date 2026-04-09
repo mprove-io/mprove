@@ -149,7 +149,6 @@ export class RegisterUserController {
           apiKeyPrefix: undefined,
           codexAuthUpdateTs: undefined,
           codexAuthExpiresTs: undefined,
-          codexAuthRefreshTs: undefined,
           keyTag: undefined,
           serverTs: undefined
         };

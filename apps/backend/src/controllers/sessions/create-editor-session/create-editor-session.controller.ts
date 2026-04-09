@@ -50,7 +50,7 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { makeSessionId } from '#common/functions/make-session-id';
 import {
@@ -139,10 +139,7 @@ export class CreateEditorSessionController {
       });
     }
 
-    if (
-      useCodex === true &&
-      isDefinedAndNotEmpty(user.codexAuthJson) === false
-    ) {
+    if (useCodex === true && isUndefined(user.codexAuth)) {
       throw new ServerError({
         message: ErEnum.BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET
       });
@@ -268,7 +265,7 @@ export class CreateEditorSessionController {
 
     if (useCodex === true) {
       codexAuthFile = this.editorCodexService.buildCodexAuthFile({
-        codexAuthJson: user.codexAuthJson
+        codexAuth: user.codexAuth
       });
     }
 

@@ -1,0 +1,1 @@
+ALTER TABLE "users" DROP COLUMN IF EXISTS "codex_auth_refresh_ts";

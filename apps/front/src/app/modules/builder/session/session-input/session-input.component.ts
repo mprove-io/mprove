@@ -234,10 +234,7 @@ export class SessionInputComponent implements OnChanges {
   updateProjectHasAnyApiKeyOrSubscription() {
     let project = this.projectQuery.getValue();
 
-    let hasCodexSubscriptionAndEnabled =
-      this.sessionType === SessionTypeEnum.Editor &&
-      this.useCodex &&
-      this.isCodexAuthSet;
+    let hasCodexSubscriptionAndEnabled = this.useCodex && this.isCodexAuthSet;
 
     this.projectHasAnyApiKeyOrSubscription =
       !!project.isZenApiKeySet ||
@@ -259,10 +256,7 @@ export class SessionInputComponent implements OnChanges {
 
     let provider = this.model.split('/')[0];
 
-    let hasCodexSubscriptionAndEnabled =
-      this.sessionType === SessionTypeEnum.Editor &&
-      this.useCodex &&
-      this.isCodexAuthSet;
+    let hasCodexSubscriptionAndEnabled = this.useCodex && this.isCodexAuthSet;
 
     if (provider === 'opencode') {
       this.providerHasApiKeyOrSubscription = !!project.isZenApiKeySet;

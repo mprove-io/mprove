@@ -182,7 +182,6 @@ export class CreateMemberController {
         apiKeyPrefix: undefined,
         codexAuthUpdateTs: undefined,
         codexAuthExpiresTs: undefined,
-        codexAuthRefreshTs: undefined,
         keyTag: undefined,
         serverTs: undefined
       };

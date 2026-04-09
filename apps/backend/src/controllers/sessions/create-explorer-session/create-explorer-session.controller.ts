@@ -26,6 +26,7 @@ import { MembersService } from '#backend/services/db/members.service.js';
 import { OcEventsService } from '#backend/services/db/oc-events.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { ExplorerCodexService } from '#backend/services/explorer/explorer-codex.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -34,6 +35,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isUndefined } from '#common/functions/is-undefined';
 import { makeSessionId } from '#common/functions/make-session-id';
 import { splitModel } from '#common/functions/split-model';
 import {
@@ -51,6 +53,7 @@ export class CreateExplorerSessionController {
     private sessionsService: SessionsService,
     private membersService: MembersService,
     private ocEventsService: OcEventsService,
+    private explorerCodexService: ExplorerCodexService,
     private explorerStreamService: ExplorerStreamService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -72,7 +75,8 @@ export class CreateExplorerSessionController {
       envId,
       firstMessage,
       messageId,
-      partId
+      partId,
+      useCodex
     } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -87,6 +91,19 @@ export class CreateExplorerSessionController {
     if (userMember.isExplorer === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      });
+    }
+
+    if (useCodex && isUndefined(user.codexAuth)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET
+      });
+    }
+
+    // Prewarm codex auth so first message (title + stream parallel) starts with fresh token
+    if (useCodex) {
+      await this.explorerCodexService.prewarmCodexAuth({
+        userId: user.userId
       });
     }
 
@@ -114,10 +131,10 @@ export class CreateExplorerSessionController {
           initialBranch: initialBranch,
           envId: envId,
           initialCommit: undefined,
-          useCodex: false,
+          useCodex: useCodex,
           status: SessionStatusEnum.Active,
           lastActivityTs: now,
-          codexAuthUpdateTs: undefined,
+          codexAuthUpdateTs: useCodex ? user.codexAuthUpdateTs : undefined,
           createdTs: now
         });
 
@@ -191,7 +208,9 @@ export class CreateExplorerSessionController {
           userMessage: firstMessage,
           messageId: messageId,
           partId: partId,
-          isLockAcquired: false
+          isLockAcquired: false,
+          useCodex: useCodex,
+          userId: useCodex ? user.userId : undefined
         })
         .catch(e => {
           logToConsoleBackend({

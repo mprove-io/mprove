@@ -42,10 +42,9 @@ export class DeleteUserCodexAuthController {
 
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    user.codexAuthJson = undefined;
+    user.codexAuth = undefined;
     user.codexAuthUpdateTs = undefined;
     user.codexAuthExpiresTs = undefined;
-    user.codexAuthRefreshTs = undefined;
 
     await retry(
       async () =>

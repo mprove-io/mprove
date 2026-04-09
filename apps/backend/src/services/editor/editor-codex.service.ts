@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Sandbox } from 'e2b';
+import { CodexAuth } from '#common/interfaces/backend/codex-auth';
 
 const CODEX_AUTH_JSON_PATH = '/home/user/.local/share/opencode/auth.json';
 
@@ -9,15 +10,15 @@ export class EditorCodexService {
     return CODEX_AUTH_JSON_PATH;
   }
 
-  buildCodexAuthFile(item: { codexAuthJson: string }): {
+  buildCodexAuthFile(item: { codexAuth: CodexAuth }): {
     path: string;
     data: string;
   } {
-    let { codexAuthJson } = item;
+    let { codexAuth } = item;
 
     return {
       path: CODEX_AUTH_JSON_PATH,
-      data: codexAuthJson
+      data: JSON.stringify(codexAuth)
     };
   }
 
@@ -36,14 +37,7 @@ export class EditorCodexService {
     }
   }
 
-  parseCodexAuthJson(item: { authJsonContent: string }):
-    | {
-        accountId: string;
-        expires: number;
-        refresh: string;
-        refreshTs: number;
-      }
-    | undefined {
+  parseCodexAuthJson(item: { authJsonContent: string }): CodexAuth | undefined {
     let { authJsonContent } = item;
 
     try {
@@ -64,21 +58,22 @@ export class EditorCodexService {
         return undefined;
       }
 
-      let refreshTs = this.parseJwtExp({ token: refresh });
-      if (refreshTs === undefined) {
-        return undefined;
-      }
-
       let accountId: string =
         typeof openaiAuth.accountId === 'string'
           ? openaiAuth.accountId
           : undefined;
 
+      let access: string =
+        typeof openaiAuth.access === 'string' ? openaiAuth.access : '';
+
       return {
-        accountId: accountId,
-        expires: expires,
-        refresh: refresh,
-        refreshTs: refreshTs
+        openai: {
+          type: 'oauth',
+          refresh: refresh,
+          expires: expires,
+          access: access,
+          accountId: accountId
+        }
       };
     } catch {
       return undefined;
@@ -88,9 +83,9 @@ export class EditorCodexService {
   async writeAuthJsonToSandbox(item: {
     sandboxId: string;
     e2bApiKey: string;
-    authJsonContent: string;
+    codexAuth: CodexAuth;
   }): Promise<void> {
-    let { sandboxId, e2bApiKey, authJsonContent } = item;
+    let { sandboxId, e2bApiKey, codexAuth } = item;
 
     let dirPath = CODEX_AUTH_JSON_PATH.substring(
       0,
@@ -100,30 +95,7 @@ export class EditorCodexService {
     let sandbox = await Sandbox.connect(sandboxId, { apiKey: e2bApiKey });
 
     await sandbox.commands.run(`mkdir -p ${dirPath}`);
-    await sandbox.files.write(CODEX_AUTH_JSON_PATH, authJsonContent);
+    await sandbox.files.write(CODEX_AUTH_JSON_PATH, JSON.stringify(codexAuth));
     await sandbox.commands.run(`chmod 600 ${CODEX_AUTH_JSON_PATH}`);
-  }
-
-  parseJwtExp(item: { token: string }): number | undefined {
-    let { token } = item;
-
-    let parts = token.split('.');
-
-    if (parts.length !== 3) {
-      return undefined;
-    }
-
-    try {
-      let payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
-
-      let exp = payload?.exp;
-
-      if (typeof exp === 'number') {
-        return exp * 1000;
-      }
-      return undefined;
-    } catch {
-      return undefined;
-    }
   }
 }

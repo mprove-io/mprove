@@ -9,7 +9,9 @@
         *ngFor="let st of sessionTypes"
         class="flex-1"
         tp="Explorer Session type is under development"
-        [tpIsEnabled]="st === sessionTypeEnum.Explorer"
+        [tpIsEnabled]="
+          st === sessionTypeEnum.Explorer && !explorerSessionEnabled
+        "
       >
         <button
           class="w-full appearance-none rounded-md border-none px-4 py-1.5 text-lg outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0 [&]:[-webkit-tap-highlight-color:transparent]"
@@ -17,9 +19,12 @@
             'text-m800 border-s200 border bg-white font-medium shadow-sm':
               sessionType === st,
             'text-s500': sessionType !== st,
-            'cursor-default opacity-50': st === sessionTypeEnum.Explorer
+            'cursor-default opacity-50':
+              st === sessionTypeEnum.Explorer && !explorerSessionEnabled
           }"
-          [disabled]="st === sessionTypeEnum.Explorer"
+          [disabled]="
+            st === sessionTypeEnum.Explorer && !explorerSessionEnabled
+          "
           (click)="sessionType = st; onSessionTypeChange()"
         >
           <span class="flex flex-col items-center">

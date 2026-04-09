@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -31,6 +36,9 @@ export class ToBackendCreateExplorerSessionRequestPayload {
 
   @IsString()
   partId: string;
+
+  @IsBoolean()
+  useCodex: boolean;
 }
 
 export class ToBackendCreateExplorerSessionRequest extends ToBackendRequest {

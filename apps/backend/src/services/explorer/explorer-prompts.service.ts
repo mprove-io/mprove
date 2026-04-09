@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ExplorerPromptsService {
+  getExplorerSessionSystemPrompt(): string {
+    return `You are a helpful AI assistant. Answer the user's questions clearly and concisely.`;
+  }
+
   getTitleSystemPrompt(): string {
     return `You are a title generator. You output ONLY a thread title. Nothing else.
 

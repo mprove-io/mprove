@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { generateText } from 'ai';
+import { streamText } from 'ai';
 import { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -19,31 +19,64 @@ export class ExplorerTitleService {
   ) {}
 
   async generateTitleText(item: {
+    sessionId: string;
     provider: string;
     modelId: string;
     apiKey: string;
     userMessage: string;
+    useCodex: boolean;
+    codexFetch?: typeof fetch;
   }): Promise<string | undefined> {
-    let { provider, modelId, apiKey, userMessage } = item;
+    let {
+      sessionId,
+      provider,
+      modelId,
+      apiKey,
+      userMessage,
+      useCodex,
+      codexFetch
+    } = item;
 
     let model = this.explorerModelsService.getModel({
       provider: provider,
       modelId: modelId,
-      apiKey: apiKey
+      apiKey: apiKey,
+      useCodex: useCodex,
+      codexFetch: codexFetch
     });
 
     let systemPrompt = this.explorerPromptsService.getTitleSystemPrompt();
 
     try {
-      let result = await generateText({
+      let result = streamText({
         model: model,
-        system: systemPrompt,
-        prompt: `Generate a title for this conversation:\n${userMessage}`
+        ...(useCodex
+          ? {
+              prompt: `Generate a title for this conversation:\n${userMessage}`,
+              providerOptions:
+                this.explorerModelsService.buildCodexProviderOptions({
+                  modelId: modelId,
+                  sessionId: sessionId,
+                  instructions: systemPrompt,
+                  isSmall: true
+                })
+            }
+          : {
+              system: systemPrompt,
+              prompt: `Generate a title for this conversation:\n${userMessage}`
+            })
       });
 
-      let text = result.text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+      let fullText = '';
+      for await (let chunk of result.textStream) {
+        fullText += chunk;
+      }
 
-      let firstLine = text.split('\n').find(line => line.trim().length > 0);
+      let text = fullText.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+
+      let firstLine = text
+        .split('\n')
+        .find((line: string) => line.trim().length > 0);
 
       if (!firstLine) {
         return undefined;

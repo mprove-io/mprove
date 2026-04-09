@@ -11,7 +11,7 @@ import { ExplorerModelsService } from '#backend/services/explorer/explorer-model
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendGetSessionProviderModelsRequest,
   ToBackendGetSessionProviderModelsResponsePayload
@@ -51,6 +51,7 @@ export class GetSessionProviderModelsController {
             projectId: projectId,
             openaiApiKey: project.openaiApiKey,
             anthropicApiKey: project.anthropicApiKey,
+            isUserCodexAuthSet: isDefined(user.codexAuth),
             enableLoadFromCache: false,
             forceLoadFromCache: forceLoadFromCache
           })
@@ -61,7 +62,7 @@ export class GetSessionProviderModelsController {
             openaiApiKey: project.openaiApiKey,
             anthropicApiKey: project.anthropicApiKey,
             zenApiKey: project.zenApiKey,
-            isUserCodexAuthSet: isDefinedAndNotEmpty(user.codexAuthJson),
+            isUserCodexAuthSet: isDefined(user.codexAuth),
             enableLoadFromCache: false,
             forceLoadFromCache: forceLoadFromCache
           })

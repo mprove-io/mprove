@@ -202,7 +202,6 @@ export class SeedRecordsController {
             apiKeySalt: apiKeySalt,
             codexAuthUpdateTs: undefined,
             codexAuthExpiresTs: undefined,
-            codexAuthRefreshTs: undefined,
             keyTag: undefined,
             serverTs: undefined
           };

@@ -17,6 +17,18 @@ import { isDefined } from '#common/functions/is-defined';
 import { SessionModelApi } from '#common/interfaces/backend/session-model-api';
 import { ServerError } from '#common/models/server-error';
 
+// Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 362-371
+const CODEX_ALLOWED_MODELS: string[] = [
+  'gpt-5.1-codex',
+  'gpt-5.1-codex-max',
+  'gpt-5.1-codex-mini',
+  'gpt-5.2',
+  'gpt-5.2-codex',
+  'gpt-5.3-codex',
+  'gpt-5.4',
+  'gpt-5.4-mini'
+];
+
 @Injectable()
 export class ExplorerModelsService {
   private MODELS_AI_TTL_MS = 60 * 60 * 1000; // 1 hour
@@ -31,6 +43,7 @@ export class ExplorerModelsService {
     projectId: string;
     openaiApiKey?: string;
     anthropicApiKey?: string;
+    isUserCodexAuthSet?: boolean;
     enableLoadFromCache: boolean;
     forceLoadFromCache: boolean;
   }): Promise<SessionModelApi[]> {
@@ -38,6 +51,7 @@ export class ExplorerModelsService {
       projectId,
       openaiApiKey,
       anthropicApiKey,
+      isUserCodexAuthSet,
       enableLoadFromCache,
       forceLoadFromCache
     } = item;
@@ -65,7 +79,7 @@ export class ExplorerModelsService {
     }
 
     let models = await this.fetchModels({
-      openaiApiKey: openaiApiKey,
+      openaiApiKey: isUserCodexAuthSet === true ? undefined : openaiApiKey,
       anthropicApiKey: anthropicApiKey
     });
 
@@ -73,6 +87,18 @@ export class ExplorerModelsService {
       let idLower = m.id.toLowerCase();
       return ALLOWED_MODEL_KEYWORDS.some(kw => idLower.includes(kw));
     });
+
+    // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 362-371
+    if (isUserCodexAuthSet === true) {
+      CODEX_ALLOWED_MODELS.forEach(modelId => {
+        models.push({
+          id: modelId,
+          name: modelId,
+          providerId: 'openai',
+          providerName: 'OpenAI'
+        });
+      });
+    }
 
     await this.writeCache({
       projectId: projectId,
@@ -279,11 +305,18 @@ export class ExplorerModelsService {
     provider: string;
     modelId: string;
     apiKey: string;
+    useCodex: boolean;
+    codexFetch: typeof fetch;
   }): LanguageModel {
-    let { provider, modelId, apiKey } = item;
+    let { provider, modelId, apiKey, useCodex, codexFetch } = item;
 
     if (provider === 'openai') {
-      let openai = createOpenAI({ apiKey: apiKey });
+      let isCodex = useCodex === true && isDefined(codexFetch);
+
+      let openai = isCodex
+        ? createOpenAI({ apiKey: 'oauth-dummy-key', fetch: codexFetch })
+        : createOpenAI({ apiKey: apiKey });
+
       return openai(modelId);
     } else if (provider === 'anthropic') {
       let anthropic = createAnthropic({ apiKey: apiKey });
@@ -293,6 +326,50 @@ export class ExplorerModelsService {
     throw new ServerError({
       message: ErEnum.BACKEND_PROMPT_FAILED
     });
+  }
+
+  // Reference: external/opencode/packages/opencode/src/provider/transform.ts
+  // - options() lines 746-864 (chat/non-small)
+  // - smallOptions() lines 866-879 (title/small)
+  buildCodexProviderOptions(item: {
+    modelId: string;
+    sessionId: string;
+    instructions: string;
+    isSmall: boolean;
+  }): { openai: Record<string, any> } {
+    let { modelId, sessionId, instructions, isSmall } = item;
+
+    let openai: Record<string, any> = {
+      instructions: instructions,
+      store: false,
+      promptCacheKey: sessionId
+    };
+
+    let isGpt5 = modelId.includes('gpt-5');
+
+    if (isSmall) {
+      if (isGpt5) {
+        openai.reasoningEffort = modelId.includes('5.') ? 'low' : 'minimal';
+      }
+    } else {
+      let isGpt5Chat = modelId.includes('gpt-5-chat');
+      let isGpt5Pro = modelId.includes('gpt-5-pro');
+
+      if (isGpt5 && !isGpt5Chat && !isGpt5Pro) {
+        openai.reasoningEffort = 'medium';
+        openai.reasoningSummary = 'auto';
+      }
+
+      let isGpt5Dotted = modelId.includes('gpt-5.');
+      let isCodexVariant = modelId.includes('codex');
+      let isChatVariant = modelId.includes('-chat');
+
+      if (isGpt5Dotted && !isCodexVariant && !isChatVariant) {
+        openai.textVerbosity = 'low';
+      }
+    }
+
+    return { openai: openai };
   }
 
   private async fetchModelsDevCapabilities(item: {

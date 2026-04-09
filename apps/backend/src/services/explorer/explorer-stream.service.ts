@@ -20,12 +20,14 @@ import {
 import { AiStreamCommandEnum } from '#common/enums/ai-stream-command.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { makeAscendingId } from '#common/functions/make-ascending-id';
+import { makeAscendingIdAfter } from '#common/functions/make-ascending-id';
 import { ServerError } from '#common/models/server-error';
 import { SessionDrainService } from '../session/session-drain.service';
 import { TabService } from '../tab.service';
+import { ExplorerCodexService } from './explorer-codex.service';
 import { ExplorerEventsMakerService } from './explorer-events-maker.service';
 import { ExplorerModelsService } from './explorer-models.service';
+import { ExplorerPromptsService } from './explorer-prompts.service';
 import { ExplorerTitleService } from './explorer-title.service';
 
 const { forEachSeries } = pIteration;
@@ -56,13 +58,17 @@ export class ExplorerStreamService implements OnModuleDestroy {
       userMessage: string;
       messageId: string;
       partId: string;
+      useCodex: boolean;
+      userId?: string;
     }>
   >();
 
   constructor(
     private cs: ConfigService<BackendConfig>,
     private sessionDrainService: SessionDrainService,
+    private explorerCodexService: ExplorerCodexService,
     private explorerModelsService: ExplorerModelsService,
+    private explorerPromptsService: ExplorerPromptsService,
     private explorerTitleService: ExplorerTitleService,
     private explorerEventsMakerService: ExplorerEventsMakerService,
     private tabService: TabService,
@@ -136,7 +142,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
             apiKey: payload.apiKey,
             userMessage: payload.userMessage,
             messageId: payload.messageId,
-            partId: payload.partId
+            partId: payload.partId,
+            useCodex: payload.useCodex,
+            userId: payload.userId
           });
 
           this.redisClient
@@ -188,6 +196,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
     userMessage: string;
     messageId: string;
     partId: string;
+    useCodex: boolean;
+    userId?: string;
   }): Promise<{ success: boolean }> {
     let correlationId = crypto.randomUUID();
 
@@ -209,7 +219,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
           apiKey: item.apiKey,
           userMessage: item.userMessage,
           messageId: item.messageId,
-          partId: item.partId
+          partId: item.partId,
+          useCodex: item.useCodex,
+          userId: item.userId
         }
       })
     );
@@ -396,6 +408,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
     messageId: string;
     partId: string;
     isLockAcquired: boolean;
+    useCodex: boolean;
+    userId?: string;
   }): Promise<void> {
     let { sessionId, isLockAcquired } = item;
 
@@ -428,7 +442,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
       apiKey: item.apiKey,
       userMessage: item.userMessage,
       messageId: item.messageId,
-      partId: item.partId
+      partId: item.partId,
+      useCodex: item.useCodex,
+      userId: item.userId
     };
 
     while (true) {
@@ -449,7 +465,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
           userMessage: currentParams.userMessage,
           abortController: abortController,
           messageId: currentParams.messageId,
-          partId: currentParams.partId
+          partId: currentParams.partId,
+          useCodex: currentParams.useCodex,
+          userId: currentParams.userId
         });
       } catch (e: any) {
         logToConsoleBackend({
@@ -501,7 +519,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
         apiKey: nextInteract.apiKey,
         userMessage: nextInteract.userMessage,
         messageId: nextInteract.messageId,
-        partId: nextInteract.partId
+        partId: nextInteract.partId,
+        useCodex: nextInteract.useCodex,
+        userId: nextInteract.userId
       };
     }
 
@@ -536,6 +556,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
     abortController: AbortController;
     messageId: string;
     partId: string;
+    useCodex: boolean;
+    userId?: string;
   }): Promise<void> {
     let {
       sessionId,
@@ -545,7 +567,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
       userMessage,
       abortController,
       messageId,
-      partId
+      partId,
+      useCodex,
+      userId
     } = item;
 
     let history = await this.loadMessageHistory({
@@ -586,7 +610,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
       event: userPartEvent
     });
 
-    let assistantMessageId = makeAscendingId({ prefix: 'msg' });
+    let assistantMessageId = makeAscendingIdAfter({
+      prefix: 'msg',
+      afterId: userMessageId
+    });
 
     let assistantMsgEvent =
       this.explorerEventsMakerService.makeAssistantMessageEvent({
@@ -598,7 +625,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
       event: assistantMsgEvent
     });
 
-    let assistantPartId = makeAscendingId({ prefix: 'prt' });
+    let assistantPartId = makeAscendingIdAfter({
+      prefix: 'prt',
+      afterId: userPartId
+    });
 
     let assistantPartEvent =
       this.explorerEventsMakerService.makeAssistantPartEvent({
@@ -611,15 +641,27 @@ export class ExplorerStreamService implements OnModuleDestroy {
       event: assistantPartEvent
     });
 
+    // Build codex fetch if needed (reads fresh auth from DB)
+    let codexFetch =
+      useCodex === true && userId
+        ? await this.explorerCodexService.buildCodexFetch({
+            userId: userId,
+            sessionId: sessionId
+          })
+        : undefined;
+
     // Start title generation in parallel
     let isFirstMessage = history.length === 0;
 
     let titlePromise = isFirstMessage
       ? this.explorerTitleService.generateTitleText({
+          sessionId: sessionId,
           provider: provider,
           modelId: modelId,
           apiKey: apiKey,
-          userMessage: userMessage
+          userMessage: userMessage,
+          useCodex: useCodex,
+          codexFetch: codexFetch
         })
       : undefined;
 
@@ -627,7 +669,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let model = this.explorerModelsService.getModel({
       provider: provider,
       modelId: modelId,
-      apiKey: apiKey
+      apiKey: apiKey,
+      useCodex: useCodex,
+      codexFetch: codexFetch
     });
 
     let messages = [
@@ -635,10 +679,22 @@ export class ExplorerStreamService implements OnModuleDestroy {
       { role: 'user' as const, content: userMessage }
     ];
 
+    let providerOptions =
+      useCodex === true
+        ? this.explorerModelsService.buildCodexProviderOptions({
+            modelId: modelId,
+            sessionId: sessionId,
+            instructions:
+              this.explorerPromptsService.getExplorerSessionSystemPrompt(),
+            isSmall: false
+          })
+        : undefined;
+
     let result = streamText({
       model: model,
       messages: messages,
-      abortSignal: abortController.signal
+      abortSignal: abortController.signal,
+      providerOptions: providerOptions
     });
 
     let fullContent = '';

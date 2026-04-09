@@ -164,8 +164,7 @@
     scrollableInput &&
     showSelects &&
     isCodexAuthSet &&
-    sessionType === sessionTypeEnum.Editor &&
-    projectHasE2bApiKey &&
+    (sessionType === sessionTypeEnum.Explorer || projectHasE2bApiKey) &&
     model?.startsWith('openai/')
   "
   class="mt-3 flex cursor-pointer select-none flex-row items-center justify-center"
@@ -205,11 +204,9 @@
     "
     class="mb-2 text-center text-[17px] text-red-500"
     >{{
-      sessionType === sessionTypeEnum.Editor && isCodexAuthSet && !useCodex
+      isCodexAuthSet && !useCodex
         ? 'Enable Codex Subscription or set provider API Key (see Project Settings)'
-        : sessionType === sessionTypeEnum.Editor
-          ? 'Session requires Codex Subscription (see Profile) or provider API Key (see Project Settings)'
-          : 'Session requires provider API Key (see Project Settings)'
+        : 'Session requires Codex Subscription (see Profile) or provider API Key (see Project Settings)'
     }}</div
   >
 
@@ -222,14 +219,9 @@
     "
     class="mb-2 text-center text-[17px] text-red-500"
     >{{
-      sessionType === sessionTypeEnum.Editor &&
-      model?.startsWith('openai/') &&
-      isCodexAuthSet &&
-      !useCodex
+      model?.startsWith('openai/') && isCodexAuthSet && !useCodex
         ? 'Enable Codex Subscription or set OpenAI API Key (see Project Settings)'
-        : sessionType === sessionTypeEnum.Editor &&
-            model?.startsWith('openai/') &&
-            !isCodexAuthSet
+        : model?.startsWith('openai/') && !isCodexAuthSet
           ? 'This provider requires Codex Subscription (see Profile) or API key (see Project Settings)'
           : 'This provider requires an API key (see Project Settings)'
     }}</div

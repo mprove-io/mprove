@@ -9,6 +9,7 @@ import type {
   SessionStatus,
   Todo
 } from '@opencode-ai/sdk/v2';
+import { CodexAuth } from './backend/codex-auth';
 import { ConnectionOptions } from './backend/connection-parts/connection-options';
 import { ExtraSchema } from './backend/connection-schemas/extra-schema';
 import { ConnectionRawSchema } from './backend/connection-schemas/raw-schema';
@@ -278,7 +279,7 @@ export class UserLt {
   ui: Ui;
   apiKeySecretHash?: string;
   apiKeySalt?: string;
-  codexAuthJson?: string;
+  codexAuth?: CodexAuth;
 }
 
 //

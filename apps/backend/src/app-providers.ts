@@ -65,6 +65,7 @@ import { EditorOpencodeService } from './services/editor/editor-opencode.service
 import { EditorSandboxService } from './services/editor/editor-sandbox.service';
 import { EditorStreamService } from './services/editor/editor-stream.service';
 import { EmailService } from './services/email.service';
+import { ExplorerCodexService } from './services/explorer/explorer-codex.service';
 import { ExplorerEventsMakerService } from './services/explorer/explorer-events-maker.service';
 import { ExplorerModelsService } from './services/explorer/explorer-models.service';
 import { ExplorerPromptsService } from './services/explorer/explorer-prompts.service';
@@ -157,6 +158,7 @@ export const appProviders = [
   SessionSseService,
   EditorStreamService,
   EditorSandboxService,
+  ExplorerCodexService,
   ExplorerEventsMakerService,
   ExplorerPromptsService,
   ExplorerTitleService,

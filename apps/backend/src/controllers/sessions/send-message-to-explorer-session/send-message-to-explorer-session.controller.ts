@@ -20,6 +20,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { ExplorerCodexService } from '#backend/services/explorer/explorer-codex.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -42,6 +43,7 @@ export class SendMessageToExplorerSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
+    private explorerCodexService: ExplorerCodexService,
     private explorerStreamService: ExplorerStreamService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -107,11 +109,22 @@ export class SendMessageToExplorerSessionController {
       let modelProvider = split ? split.providerID : session.provider;
       let modelId = split ? split.modelID : model;
 
+      let isCodex = session.useCodex === true;
+
       let apiKey = '';
-      if (modelProvider === 'openai') {
-        apiKey = project.openaiApiKey || '';
-      } else if (modelProvider === 'anthropic') {
-        apiKey = project.anthropicApiKey || '';
+      if (!isCodex) {
+        if (modelProvider === 'openai') {
+          apiKey = project.openaiApiKey || '';
+        } else if (modelProvider === 'anthropic') {
+          apiKey = project.anthropicApiKey || '';
+        }
+      }
+
+      // Ensure codex auth is fresh in DB before stream / interact dispatch
+      if (isCodex) {
+        await this.explorerCodexService.prewarmCodexAuth({
+          userId: user.userId
+        });
       }
 
       session = {
@@ -151,7 +164,9 @@ export class SendMessageToExplorerSessionController {
             userMessage: message,
             messageId: messageId,
             partId: partId,
-            isLockAcquired: true
+            isLockAcquired: true,
+            useCodex: isCodex,
+            userId: user.userId
           })
           .catch(e => {
             logToConsoleBackend({
@@ -170,7 +185,9 @@ export class SendMessageToExplorerSessionController {
           apiKey: apiKey,
           userMessage: message,
           messageId: messageId,
-          partId: partId
+          partId: partId,
+          useCodex: isCodex,
+          userId: user.userId
         });
       }
     } else if (interactionType === InteractionTypeEnum.Stop) {

@@ -104,11 +104,9 @@ export class UsersService {
           ? user.ui?.newSessionUseCodex
           : defaultSrvUi.newSessionUseCodex
       },
-      isCodexAuthSet:
-        isDefined(user.codexAuthJson) && user.codexAuthJson !== '',
+      isCodexAuthSet: isDefined(user.codexAuth),
       codexAuthUpdateTs: user.codexAuthUpdateTs,
       codexAuthExpiresTs: user.codexAuthExpiresTs,
-      codexAuthRefreshTs: user.codexAuthRefreshTs,
       serverTs: Number(user.serverTs)
     };
 
@@ -210,7 +208,6 @@ export class UsersService {
       apiKeyPrefix: undefined,
       codexAuthUpdateTs: undefined,
       codexAuthExpiresTs: undefined,
-      codexAuthRefreshTs: undefined,
       keyTag: undefined,
       serverTs: undefined
     };
@@ -264,7 +261,6 @@ export class UsersService {
       apiKeyPrefix: undefined,
       codexAuthUpdateTs: undefined,
       codexAuthExpiresTs: undefined,
-      codexAuthRefreshTs: undefined,
       keyTag: undefined,
       serverTs: undefined
     };

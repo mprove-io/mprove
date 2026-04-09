@@ -944,7 +944,7 @@ export class TabToEntService {
       ui: tab.ui,
       apiKeySecretHash: tab.apiKeySecretHash,
       apiKeySalt: tab.apiKeySalt,
-      codexAuthJson: tab.codexAuthJson
+      codexAuth: tab.codexAuth
     };
 
     let userEnt: UserEnt = {
@@ -954,7 +954,6 @@ export class TabToEntService {
       apiKeyPrefix: tab.apiKeyPrefix,
       codexAuthUpdateTs: tab.codexAuthUpdateTs,
       codexAuthExpiresTs: tab.codexAuthExpiresTs,
-      codexAuthRefreshTs: tab.codexAuthRefreshTs,
       ...this.getEntProps({
         dataSt: userSt,
         dataLt: userLt,

@@ -32,7 +32,6 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import {
   ToBackendSendMessageToEditorSessionRequest,
   ToBackendSendMessageToEditorSessionResponsePayload
@@ -177,34 +176,32 @@ export class SendMessageToEditorSessionController {
               })
             : undefined;
 
-          let userAuth = isDefinedAndNotEmpty(user.codexAuthJson)
-            ? this.editorCodexService.parseCodexAuthJson({
-                authJsonContent: user.codexAuthJson
-              })
-            : undefined;
+          let userAuth = user.codexAuth;
 
           let accountIdsMatch =
             isDefined(sandboxAuth) &&
             isDefined(userAuth) &&
-            sandboxAuth.accountId === userAuth.accountId;
+            sandboxAuth.openai.accountId === userAuth.openai.accountId;
 
-          if (accountIdsMatch && sandboxAuth.refreshTs > userAuth.refreshTs) {
-            user.codexAuthJson = sandboxAuthContent;
+          if (
+            accountIdsMatch &&
+            sandboxAuth.openai.expires > userAuth.openai.expires
+          ) {
+            user.codexAuth = sandboxAuth;
             user.codexAuthUpdateTs = Date.now();
-            user.codexAuthExpiresTs = sandboxAuth.expires;
-            user.codexAuthRefreshTs = sandboxAuth.refreshTs;
+            user.codexAuthExpiresTs = sandboxAuth.openai.expires;
             session.codexAuthUpdateTs = user.codexAuthUpdateTs;
 
             isUserUpdated = true;
           } else if (
             wasSessionPaused &&
             accountIdsMatch &&
-            userAuth.refreshTs > sandboxAuth.refreshTs
+            userAuth.openai.expires > sandboxAuth.openai.expires
           ) {
             await this.editorCodexService.writeAuthJsonToSandbox({
               sandboxId: session.sandboxId,
               e2bApiKey: project.e2bApiKey,
-              authJsonContent: user.codexAuthJson
+              codexAuth: user.codexAuth
             });
             session.codexAuthUpdateTs = user.codexAuthUpdateTs;
           }

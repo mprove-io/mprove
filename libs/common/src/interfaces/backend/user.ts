@@ -47,10 +47,6 @@ export class User {
   @IsInt()
   codexAuthExpiresTs?: number;
 
-  @IsOptional()
-  @IsInt()
-  codexAuthRefreshTs?: number;
-
   @IsInt()
   serverTs: number;
 }

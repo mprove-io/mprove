@@ -97,8 +97,7 @@ export class SetCodexAuthCommand extends CustomCommand {
     let log = {
       isCodexAuthSet: user.isCodexAuthSet,
       codexAuthUpdateTs: user.codexAuthUpdateTs,
-      codexAuthExpiresTs: user.codexAuthExpiresTs,
-      codexAuthRefreshTs: user.codexAuthRefreshTs
+      codexAuthExpiresTs: user.codexAuthExpiresTs
     };
 
     logToConsoleMcli({

@@ -48,42 +48,19 @@ export class SetUserCodexAuthController {
 
     let { authJson } = reqValid.payload;
 
-    let parsed: any;
-    try {
-      parsed = JSON.parse(authJson);
-    } catch {
-      throw new ServerError({
-        message: ErEnum.BACKEND_INVALID_CODEX_AUTH_JSON
-      });
-    }
-
-    let openaiAuth = parsed?.openai;
-
-    if (!openaiAuth || openaiAuth.type !== 'oauth') {
-      throw new ServerError({
-        message: ErEnum.BACKEND_INVALID_CODEX_AUTH_JSON
-      });
-    }
-
-    let refreshToken = openaiAuth.refresh;
-
-    if (!refreshToken || typeof refreshToken !== 'string') {
-      throw new ServerError({
-        message: ErEnum.BACKEND_INVALID_CODEX_AUTH_JSON
-      });
-    }
-
-    let expiresTs =
-      typeof openaiAuth.expires === 'number' ? openaiAuth.expires : undefined;
-
-    let refreshTs = this.editorCodexService.parseJwtExp({
-      token: refreshToken
+    let parsed = this.editorCodexService.parseCodexAuthJson({
+      authJsonContent: authJson
     });
 
-    user.codexAuthJson = authJson;
+    if (!parsed) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_INVALID_CODEX_AUTH_JSON
+      });
+    }
+
+    user.codexAuth = parsed;
     user.codexAuthUpdateTs = Date.now();
-    user.codexAuthExpiresTs = expiresTs;
-    user.codexAuthRefreshTs = refreshTs;
+    user.codexAuthExpiresTs = parsed.openai.expires;
 
     await retry(
       async () =>

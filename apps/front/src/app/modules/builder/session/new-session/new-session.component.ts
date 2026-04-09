@@ -47,6 +47,7 @@ import { UiService } from '#front/app/services/ui.service';
 export class NewSessionComponent implements OnInit {
   sessionTypeEnum = SessionTypeEnum;
   sessionType: SessionTypeEnum = SessionTypeEnum.Editor;
+  explorerSessionEnabled = false;
   sessionTypes = [SessionTypeEnum.Explorer, SessionTypeEnum.Editor];
 
   agent = 'build';
@@ -246,7 +247,8 @@ export class NewSessionComponent implements OnInit {
         envId: this.baseEnvId,
         firstMessage: text,
         messageId: messageId,
-        partId: partId
+        partId: partId,
+        useCodex: this.useCodex
       };
 
       this.apiService
