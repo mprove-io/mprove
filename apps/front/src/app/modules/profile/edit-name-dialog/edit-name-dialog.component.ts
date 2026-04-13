@@ -15,10 +15,11 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type { User } from '#common/interfaces/backend/user';
+import type {
   ToBackendSetUserNameRequestPayload,
   ToBackendSetUserNameResponse
-} from '#common/interfaces/to-backend/users/to-backend-set-user-name';
+} from '#common/zod/to-backend/users/to-backend-set-user-name';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../shared/shared.module';
@@ -98,7 +99,7 @@ export class EditNameDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendSetUserNameResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let user = resp.payload.user;
+            let user = resp.payload.user as User;
             this.userQuery.update(user);
           }
         }),

@@ -9,7 +9,7 @@ import {
   OnModuleInit
 } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -72,6 +72,7 @@ import { usersTable } from './drizzle/postgres/schema/users';
 import { getRetryOption } from './functions/get-retry-option';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { ZodValidationPipe } from './pipes/zod-validation.pipe';
 import { ConnectionsService } from './services/db/connections.service';
 import { DconfigsService } from './services/db/dconfigs.service';
 import { MembersService } from './services/db/members.service';
@@ -191,6 +192,10 @@ let mcpModule = McpModule.forRoot(mcpModuleOptions);
     {
       provide: APP_INTERCEPTOR,
       useClass: AppInterceptor
+    },
+    {
+      provide: APP_PIPE,
+      useClass: ZodValidationPipe
     }
   ]
 })

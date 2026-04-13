@@ -136,7 +136,6 @@ import { ToBackendRegisterUserRequest } from '#common/interfaces/to-backend/user
 import { ToBackendResendUserEmailRequest } from '#common/interfaces/to-backend/users/to-backend-resend-user-email';
 import { ToBackendResetUserPasswordRequest } from '#common/interfaces/to-backend/users/to-backend-reset-user-password';
 import { ToBackendSetUserCodexAuthRequest } from '#common/interfaces/to-backend/users/to-backend-set-user-codex-auth';
-import { ToBackendSetUserNameRequest } from '#common/interfaces/to-backend/users/to-backend-set-user-name';
 import { ToBackendSetUserUiRequest } from '#common/interfaces/to-backend/users/to-backend-set-user-ui';
 import { ToBackendUpdateUserPasswordRequest } from '#common/interfaces/to-backend/users/to-backend-update-user-password';
 
@@ -176,8 +175,7 @@ export const nameToClass = {
     ToBackendRegisterUserRequest,
   [ToBackendRequestInfoNameEnum.ToBackendResendUserEmail]:
     ToBackendResendUserEmailRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSetUserName]:
-    ToBackendSetUserNameRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSetUserName]: NoCheckParamsSchema,
   [ToBackendRequestInfoNameEnum.ToBackendSetUserUi]: ToBackendSetUserUiRequest,
   [ToBackendRequestInfoNameEnum.ToBackendResetUserPassword]:
     ToBackendResetUserPasswordRequest,

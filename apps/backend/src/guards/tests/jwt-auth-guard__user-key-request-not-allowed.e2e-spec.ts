@@ -15,10 +15,10 @@ import {
   ToBackendGenerateUserApiKeyRequest,
   ToBackendGenerateUserApiKeyResponse
 } from '#common/interfaces/to-backend/users/to-backend-generate-user-api-key';
-import {
+import type {
   ToBackendSetUserNameRequest,
   ToBackendSetUserNameResponse
-} from '#common/interfaces/to-backend/users/to-backend-set-user-name';
+} from '#common/zod/to-backend/users/to-backend-set-user-name';
 
 let testId = 'backend-jwt-auth-guard__user-key-request-not-allowed';
 

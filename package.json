@@ -198,6 +198,7 @@
       "@biomejs/biome",
       "@nestjs/core",
       "@parcel/watcher",
+      "@scarf/scarf",
       "@swc/core",
       "bcrypt",
       "duckdb",
@@ -206,7 +207,6 @@
       "isolated-vm",
       "lmdb",
       "msgpackr-extract",
-      "opencode-ai",
       "protobufjs"
     ]
   },

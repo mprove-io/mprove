@@ -10,7 +10,9 @@ let tracerNodeSdk = startTelemetry({
 
 //
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import bodyParser from 'body-parser';
+import { cleanupOpenApiDoc } from 'nestjs-zod';
 
 const { json, urlencoded } = bodyParser;
 
@@ -20,6 +22,7 @@ import {
   APP_NAME_SCHEDULER
 } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getLoggerOptions } from '#node-common/functions/get-logger-options';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events';
 import { AppModule } from './app.module';
@@ -50,6 +53,30 @@ async function bootstrap() {
 
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ limit: '50mb', extended: true }));
+
+  let openApiDoc = SwaggerModule.createDocument(
+    app,
+    new DocumentBuilder()
+      .setTitle('mprove backend')
+      .setVersion(config.mproveReleaseTag ?? 'dev')
+      .addTag('Users')
+      .build()
+  );
+
+  let openApiAllowedPaths = new Set<string>([
+    '/' + ToBackendRequestInfoNameEnum.ToBackendSetUserName
+  ]);
+
+  openApiDoc.paths = Object.fromEntries(
+    Object.entries(openApiDoc.paths).filter(([path]) =>
+      openApiAllowedPaths.has(path)
+    )
+  );
+
+  SwaggerModule.setup('api/docs', app, cleanupOpenApiDoc(openApiDoc), {
+    ui: false,
+    jsonDocumentUrl: 'api/openapi.json'
+  });
 
   app.enableCors({
     origin: [...config.hostUrl.split(',')],

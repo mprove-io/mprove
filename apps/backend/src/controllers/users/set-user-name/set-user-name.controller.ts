@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSetUserNameRequestDto,
+  ToBackendSetUserNameResponseDto
+} from '#backend/controllers/users/set-user-name/set-user-name.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -23,11 +28,9 @@ import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendSetUserNameRequest,
-  ToBackendSetUserNameResponsePayload
-} from '#common/interfaces/to-backend/users/to-backend-set-user-name';
+import type { ToBackendSetUserNameResponsePayload } from '#common/zod/to-backend/users/to-backend-set-user-name';
 
+@ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
@@ -41,12 +44,21 @@ export class SetUserNameController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetUserName)
-  async setUserName(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSetUserNameRequest = request.body;
-
+  @ApiOperation({
+    summary: 'SetUserName',
+    description: "Update the user's first and last name."
+  })
+  @ApiOkResponse({
+    type: ToBackendSetUserNameResponseDto.Output,
+    description: 'Updated user'
+  })
+  async setUserName(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendSetUserNameRequestDto
+  ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { firstName, lastName } = reqValid.payload;
+    let { firstName, lastName } = body.payload;
 
     user.firstName = firstName;
     user.lastName = lastName;

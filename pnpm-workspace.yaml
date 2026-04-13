@@ -64,6 +64,7 @@ catalog:
   '@nestjs/passport': 11.0.5
   '@nestjs/platform-express': 11.1.0
   '@nestjs/schedule': 4.1.1
+  '@nestjs/swagger': 11.2.7
   '@nestjs/testing': 11.1.0
   '@nestjs/throttler': 6.4.0
   '@rekog/mcp-nest': 1.9.8
@@ -173,6 +174,7 @@ catalog:
   nanoid: 3.3.10
   neoip: 3.0.1
   nest-winston: 1.9.4
+  nestjs-zod: 5.3.0
   ngx-vflow: 2.5.0
   ngx-color: 10.1.0
   ngx-echarts: 21.0.0
