@@ -2,14 +2,18 @@ import { Injectable, UseFilters } from '@nestjs/common';
 import type { Context } from '@rekog/mcp-nest';
 import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
-import { z } from 'zod';
 import { GetModelService } from '#backend/controllers/models/get-model/get-model.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_MODEL } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { zModel } from '#common/zod/z-model/z-model';
+import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import {
+  type McpToolGetModelInput,
+  zMcpToolGetModelInput,
+  zMcpToolGetModelOutput
+} from '#common/interfaces/to-backend/models/mcp-tool-get-model';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload';
 
 @Injectable()
@@ -24,31 +28,11 @@ export class GetModelTool {
     name: MCP_TOOL_GET_MODEL,
     description:
       'Get a model definition including its fields, dimensions, measures, and access info',
-    parameters: z.object({
-      projectId: z.string().describe('Project ID'),
-      repoId: z.string().describe('Repository ID'),
-      branchId: z.string().describe('Git branch name'),
-      envId: z.string().describe('Environment ID'),
-      modelId: z.string().describe('Model ID'),
-      getMalloy: z
-        .boolean()
-        .default(false)
-        .describe('Include Malloy source in output')
-    }),
-    outputSchema: z.object({
-      needValidate: z.boolean(),
-      model: zModel
-    })
+    parameters: zMcpToolGetModelInput,
+    outputSchema: zodDeepNullish({ schema: zMcpToolGetModelOutput })
   })
   async getModel(
-    item: {
-      projectId: string;
-      repoId: string;
-      branchId: string;
-      envId: string;
-      modelId: string;
-      getMalloy: boolean;
-    },
+    item: McpToolGetModelInput,
     context: Context,
     request: Request
   ) {

@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import type { Context } from '@rekog/mcp-nest';
 import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
-import { z } from 'zod';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { ValidateFilesService } from '#backend/controllers/files/validate-files/validate-files.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -12,8 +11,12 @@ import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_VALIDATE } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
-import { zMproveValidationError } from '#common/zod/z-state/z-mprove-validation-error';
-import { zValidateFilesRepo } from '#common/zod/z-validate-files/z-validate-files-repo';
+import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import {
+  type McpToolValidateFilesInput,
+  zMcpToolValidateFilesInput,
+  zMcpToolValidateFilesOutput
+} from '#common/interfaces/to-backend/files/mcp-tool-validate-files';
 import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload';
 
 @Injectable()
@@ -29,27 +32,11 @@ export class ValidateFilesTool {
     name: MCP_TOOL_VALIDATE,
     description:
       'Validate (rebuild) Mprove files for a project branch and environment',
-    parameters: z.object({
-      projectId: z.string().describe('Project ID'),
-      repoId: z.string().describe('Repository ID'),
-      branchId: z.string().describe('Git branch name'),
-      envId: z.string().describe('Environment ID')
-    }),
-    outputSchema: z.object({
-      needValidate: z.boolean(),
-      validationErrorsTotal: z.number(),
-      validationErrors: z.array(zMproveValidationError),
-      repo: zValidateFilesRepo,
-      url: z.string()
-    })
+    parameters: zMcpToolValidateFilesInput,
+    outputSchema: zodDeepNullish({ schema: zMcpToolValidateFilesOutput })
   })
   async validateFiles(
-    item: {
-      projectId: string;
-      repoId: string;
-      branchId: string;
-      envId: string;
-    },
+    item: McpToolValidateFilesInput,
     context: Context,
     request: Request
   ) {

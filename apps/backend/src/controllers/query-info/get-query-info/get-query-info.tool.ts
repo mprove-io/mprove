@@ -2,7 +2,6 @@ import { Injectable, UseFilters } from '@nestjs/common';
 import type { Context } from '@rekog/mcp-nest';
 import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
-import { z } from 'zod';
 import { GetQueryInfoService } from '#backend/controllers/query-info/get-query-info/get-query-info.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
@@ -10,10 +9,13 @@ import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_QUERY_INFO } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
+import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import {
+  type McpToolGetQueryInfoInput,
+  zMcpToolGetQueryInfoInput,
+  zMcpToolGetQueryInfoOutput
+} from '#common/interfaces/to-backend/query-info/mcp-tool-get-query-info';
 import { ToBackendGetQueryInfoResponsePayload } from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
-import { zQueryInfoChart } from '#common/zod/z-query-info/z-query-info-chart';
-import { zQueryInfoDashboard } from '#common/zod/z-query-info/z-query-info-dashboard';
-import { zQueryInfoReport } from '#common/zod/z-query-info/z-query-info-report';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
@@ -27,78 +29,11 @@ export class GetQueryInfoTool {
     name: MCP_TOOL_GET_QUERY_INFO,
     description:
       'Get query info for a chart, dashboard, or report. Returns query status, SQL, malloy and data.',
-    parameters: z.object({
-      projectId: z.string().describe('Project ID'),
-      repoId: z.string().describe('Repository ID'),
-      branchId: z.string().describe('Git branch name'),
-      envId: z.string().describe('Environment ID'),
-      chartId: z
-        .string()
-        .nullish()
-        .describe(
-          'Chart ID to get query info for. Omit if querying a dashboard or report.'
-        ),
-      dashboardId: z
-        .string()
-        .nullish()
-        .describe(
-          'Dashboard ID to get query info for. Omit if querying a chart or report.'
-        ),
-      tileIndex: z
-        .number()
-        .nullish()
-        .describe('Dashboard tile index. Omit to get all tiles.'),
-      reportId: z
-        .string()
-        .nullish()
-        .describe(
-          'Report ID to get query info for. Omit if querying a chart or dashboard.'
-        ),
-      rowId: z
-        .string()
-        .nullish()
-        .describe('Report row ID. Omit to get all rows.'),
-      timezone: z.string().describe('Timezone, e.g. "UTC"'),
-      timeSpec: z
-        .string()
-        .nullish()
-        .describe(
-          'Time specification for the query. Omit to use default time range.'
-        ),
-      timeRangeFractionBrick: z
-        .string()
-        .nullish()
-        .describe('Time range fraction brick. Omit to use default.'),
-      getMalloy: z.boolean().describe('Include Malloy query in output'),
-      getSql: z.boolean().describe('Include SQL query in output'),
-      getData: z.boolean().describe('Include query data in output'),
-      isFetch: z.boolean().describe('Fetch latest data from the database')
-    }),
-    outputSchema: z.object({
-      chart: zQueryInfoChart.optional(),
-      dashboard: zQueryInfoDashboard.optional(),
-      report: zQueryInfoReport.optional()
-    })
+    parameters: zMcpToolGetQueryInfoInput,
+    outputSchema: zodDeepNullish({ schema: zMcpToolGetQueryInfoOutput })
   })
   async getQueryInfo(
-    item: {
-      projectId: string;
-      repoId: string;
-      branchId: string;
-      envId: string;
-      chartId?: string;
-      dashboardId?: string;
-      tileIndex?: number;
-      reportId?: string;
-      rowId?: string;
-      timezone: string;
-      timeSpec?: string;
-      timeRangeFractionBrick?: string;
-      getMalloy: boolean;
-      getSql: boolean;
-      getData: boolean;
-      isFetch: boolean;
-    },
+    item: McpToolGetQueryInfoInput,
     context: Context,
     request: Request
   ) {

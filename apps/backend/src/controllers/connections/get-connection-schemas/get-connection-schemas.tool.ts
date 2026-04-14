@@ -2,14 +2,18 @@ import { Injectable, UseFilters } from '@nestjs/common';
 import type { Context } from '@rekog/mcp-nest';
 import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
-import { z } from 'zod';
 import { GetConnectionSchemasService } from '#backend/controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_SCHEMAS } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { zCombinedSchemaItem } from '#common/zod/z-connection-schemas/z-combined-schema';
+import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import {
+  type McpToolGetSchemasInput,
+  zMcpToolGetSchemasInput,
+  zMcpToolGetSchemasOutput
+} from '#common/interfaces/to-backend/connections/mcp-tool-get-schemas';
 import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload';
 
 @Injectable()
@@ -24,27 +28,11 @@ export class GetConnectionSchemasTool {
     name: MCP_TOOL_GET_SCHEMAS,
     description:
       'Fetch database schemas (tables, columns, relationships, indexes) for project SQL connections',
-    parameters: z.object({
-      projectId: z.string().describe('Project ID'),
-      envId: z.string().describe('Environment ID'),
-      repoId: z.string().describe('Repository ID'),
-      branchId: z.string().describe('Git branch name'),
-      isRefreshExistingCache: z
-        .boolean()
-        .describe('Refresh cached schemas from the database')
-    }),
-    outputSchema: z.object({
-      combinedSchemaItems: z.array(zCombinedSchemaItem)
-    })
+    parameters: zMcpToolGetSchemasInput,
+    outputSchema: zodDeepNullish({ schema: zMcpToolGetSchemasOutput })
   })
   async getConnectionSchemas(
-    item: {
-      projectId: string;
-      envId: string;
-      repoId: string;
-      branchId: string;
-      isRefreshExistingCache: boolean;
-    },
+    item: McpToolGetSchemasInput,
     context: Context,
     request: Request
   ) {
