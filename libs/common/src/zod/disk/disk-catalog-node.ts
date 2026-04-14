@@ -1,12 +1,14 @@
 import { z } from 'zod';
 
-export let zDiskCatalogNode: z.ZodType<{
+export type ZDiskCatalogNode = {
   id: string;
   isFolder: boolean;
   name: string;
   fileId: string;
-  children: unknown[];
-}> = z.lazy(() =>
+  children: ZDiskCatalogNode[];
+};
+
+export let zDiskCatalogNode: z.ZodType<ZDiskCatalogNode> = z.lazy(() =>
   z
     .object({
       id: z.string(),
@@ -17,5 +19,3 @@ export let zDiskCatalogNode: z.ZodType<{
     })
     .meta({ id: 'DiskCatalogNode' })
 );
-
-export type ZDiskCatalogNode = z.infer<typeof zDiskCatalogNode>;

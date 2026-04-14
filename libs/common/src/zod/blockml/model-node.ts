@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 
-export let zModelNode: z.ZodType<{
+export type ZModelNode = {
   id: string;
   label: string;
   description?: string;
@@ -16,8 +16,10 @@ export let zModelNode: z.ZodType<{
   fieldLineNum?: number;
   hidden: boolean;
   required: boolean;
-  children?: unknown[];
-}> = z.lazy(() =>
+  children?: ZModelNode[];
+};
+
+export let zModelNode: z.ZodType<ZModelNode> = z.lazy(() =>
   z
     .object({
       id: z.string(),
@@ -37,5 +39,3 @@ export let zModelNode: z.ZodType<{
     })
     .meta({ id: 'ModelNode' })
 );
-
-export type ZModelNode = z.infer<typeof zModelNode>;
