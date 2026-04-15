@@ -15,9 +15,9 @@ import { getLoggerOptions } from '#node-common/functions/get-logger-options';
 
 export async function prepareTest(
   orgId: string,
-  overrideConfigOptions?: DiskConfig
+  overrideConfigOptions?: Partial<DiskConfig>
 ) {
-  let extraOverride: DiskConfig = {
+  let extraOverride: Partial<DiskConfig> = {
     diskEnv: DiskEnvEnum.TEST,
     diskLogResponseError: true,
     ...overrideConfigOptions

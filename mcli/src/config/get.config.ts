@@ -2,8 +2,8 @@ import { parse } from 'dotenv';
 import fse from 'fs-extra';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { transformValidSyncMcli } from '#mcli/functions/transform-valid-sync-mcli';
-import { McliConfig } from './mcli-config';
+import { zodParseOrThrowMcli } from '#mcli/functions/zod-parse-or-throw-mcli';
+import { McliConfig, zMcliConfig } from './mcli-config';
 
 export function getConfig(envPath?: string) {
   let envFilePath = isDefined(envPath) ? envPath : '.env';
@@ -62,8 +62,8 @@ export function getConfig(envPath?: string) {
       envFile.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD
   };
 
-  let validatedConfig = transformValidSyncMcli({
-    classType: McliConfig,
+  let validatedConfig = zodParseOrThrowMcli({
+    schema: zMcliConfig,
     object: config,
     errorMessage: ErEnum.MCLI_WRONG_ENV_VALUES
   });

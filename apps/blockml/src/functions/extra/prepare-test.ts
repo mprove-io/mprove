@@ -21,9 +21,9 @@ export async function prepareTest(
   func: FuncEnum,
   testId: string,
   connection?: ProjectConnection,
-  overrideConfigOptions?: BlockmlConfig
+  overrideConfigOptions?: Partial<BlockmlConfig>
 ) {
-  let extraOverride: BlockmlConfig = {
+  let extraOverride: Partial<BlockmlConfig> = {
     blockmlEnv: BlockmlEnvEnum.TEST,
     // blockmlLogResponseOk: true,
     blockmlLogResponseError: true
@@ -33,7 +33,7 @@ export async function prepareTest(
 
   let mockConfig: BlockmlConfig = Object.assign(
     config,
-    <BlockmlConfig>{ logFunc: func },
+    <Partial<BlockmlConfig>>{ logFunc: func },
     overrideConfigOptions,
     extraOverride
   );

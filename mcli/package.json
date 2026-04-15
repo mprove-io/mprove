@@ -58,7 +58,8 @@
     "simple-git": "3.33.0",
     "tslib": "2.7.0",
     "typanion": "3.14.0",
-    "winston": "3.14.2"
+    "winston": "3.14.2",
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@types/async-retry": "1.4.9",

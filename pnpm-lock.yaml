@@ -1957,6 +1957,9 @@ importers:
       winston:
         specifier: 3.14.2
         version: 3.14.2
+      zod:
+        specifier: 4.3.6
+        version: 4.3.6
     devDependencies:
       '@swc/helpers':
         specifier: 0.5.18

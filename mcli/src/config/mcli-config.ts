@@ -1,46 +1,17 @@
-import { IsOptional, IsString } from 'class-validator';
+import { z } from 'zod';
 
-export class McliConfig {
-  @IsString()
-  mproveCliHost?: string;
+export let zMcliConfig = z.object({
+  mproveCliHost: z.string(),
+  mproveCliApiKey: z.string().optional(),
+  mproveCliProjectId: z.string().optional(),
+  mproveCliTestReposPath: z.string().optional(),
+  mproveCliTestLocalSourceGitUrl: z.string().optional(),
+  mproveCliTestDevSourceGitUrl: z.string().optional(),
+  mproveCliTestPublicKeyPath: z.string().optional(),
+  mproveCliTestPrivateKeyEncryptedPath: z.string().optional(),
+  mproveCliTestPassPhrase: z.string().optional(),
+  mproveCliTestDwhPostgresUser: z.string().optional(),
+  mproveCliTestDwhPostgresPassword: z.string().optional()
+});
 
-  @IsString()
-  @IsOptional()
-  mproveCliApiKey?: string;
-
-  @IsString()
-  @IsOptional()
-  mproveCliProjectId?: string;
-
-  @IsString()
-  @IsOptional()
-  mproveCliTestReposPath?: string;
-
-  @IsString()
-  @IsOptional()
-  mproveCliTestLocalSourceGitUrl?: string;
-
-  @IsString()
-  @IsOptional()
-  mproveCliTestDevSourceGitUrl?: string;
-
-  @IsString()
-  @IsOptional()
-  mproveCliTestPublicKeyPath?: string;
-
-  @IsString()
-  @IsOptional()
-  mproveCliTestPrivateKeyEncryptedPath?: string;
-
-  @IsString()
-  @IsOptional()
-  mproveCliTestPassPhrase?: string;
-
-  @IsString()
-  @IsOptional()
-  mproveCliTestDwhPostgresUser?: string;
-
-  @IsString()
-  @IsOptional()
-  mproveCliTestDwhPostgresPassword?: string;
-}
+export type McliConfig = z.infer<typeof zMcliConfig>;

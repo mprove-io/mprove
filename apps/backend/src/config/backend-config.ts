@@ -1,335 +1,100 @@
-import {
-  IsBoolean,
-  IsEnum,
-  IsInt,
-  IsNumber,
-  IsOptional,
-  IsString
-} from 'class-validator';
+import { z } from 'zod';
 import { EmailTransportEnum } from '#common/enums/email-transport.enum';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 
-export class BackendConfig {
-  @IsString()
-  mproveReleaseTag?: string;
-
-  @IsBoolean()
-  isTelemetryEnabled?: boolean;
-
-  @IsBoolean()
-  isTraceDrizzleEnabled?: boolean;
-
-  @IsOptional()
-  @IsString()
-  telemetryEndpoint?: string;
-
-  @IsOptional()
-  @IsString()
-  telemetryHyperdxIngestApiKey?: string;
-
-  @IsOptional()
-  @IsString()
-  otelLogLevel?: string;
-
-  @IsEnum(BackendEnvEnum)
-  backendEnv?: BackendEnvEnum;
-
-  @IsBoolean()
-  isEncryptDb?: boolean;
-
-  @IsBoolean()
-  isEncryptMetadata?: boolean;
-
-  @IsString()
-  aesKey?: string;
-
-  @IsString()
-  aesKeyTag?: string;
-
-  @IsOptional()
-  @IsString()
-  prevAesKey?: string;
-
-  @IsOptional()
-  @IsString()
-  prevAesKeyTag?: string;
-
-  @IsNumber()
-  totalDiskShards?: number;
-
-  @IsNumber()
-  rpcDiskTimeoutMs?: number;
-
-  @IsNumber()
-  rpcBlockmlTimeoutMs?: number;
-
-  @IsBoolean()
-  isScheduler?: boolean;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhBigqueryCredentialsPath?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhGoogleApiCredentialsPath?: string;
-
-  @IsString()
-  jwtSecret?: string;
-
-  @IsString()
-  specialKey?: string;
-
-  @IsBoolean()
-  allowTestRoutes?: boolean;
-
-  @IsString()
-  mproveAdminEmail?: string;
-
-  @IsString()
-  mproveAdminInitialPassword?: string;
-
-  @IsOptional()
-  @IsString()
-  storeApiBlockHosts?: string;
-
-  @IsOptional()
-  @IsString()
-  storeApiAllowHosts?: string;
-
-  @IsBoolean()
-  seedDemoOrgAndProject?: boolean;
-
-  @IsOptional()
-  @IsString()
-  demoOrgId?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectId?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectName?: string;
-
-  @IsOptional()
-  @IsEnum(ProjectRemoteTypeEnum)
-  demoProjectRemoteType?: ProjectRemoteTypeEnum;
-
-  @IsOptional()
-  @IsString()
-  demoProjectRemoteGitUrl?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectRemotePrivateKeyEncryptedPath?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectRemotePublicKeyPath?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectRemotePassPhrase?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhPostgresHost?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhPostgresUser?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhPostgresPassword?: string;
-
-  // @IsOptional()
-  // @IsString()
-  // demoProjectDwhClickhousePassword?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhMysqlHost?: string;
-
-  @IsOptional()
-  @IsNumber()
-  demoProjectDwhMysqlPort?: number;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhMysqlDatabase?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhMysqlUser?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhMysqlPassword?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhTrinoUser?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhTrinoPassword?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhPrestoUser?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhPrestoPassword?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhSnowflakeAccount?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhSnowflakeWarehouse?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhSnowflakeUsername?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhSnowflakePassword?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectDwhMotherDuckToken?: string;
-
-  @IsString()
-  calcPostgresHost?: string;
-
-  @IsNumber()
-  calcPostgresPort?: number;
-
-  @IsString()
-  calcPostgresUsername?: string;
-
-  @IsString()
-  calcPostgresPassword?: string;
-
-  @IsBoolean()
-  allowUsersToCreateOrganizations?: boolean;
-
-  @IsBoolean()
-  registerOnlyInvitedUsers?: boolean;
-
-  @IsString()
-  hostUrl?: string;
-
-  @IsString()
-  sendEmailFromName?: string;
-
-  @IsString()
-  sendEmailFromAddress?: string;
-
-  @IsEnum(EmailTransportEnum)
-  emailTransport?: EmailTransportEnum;
-
-  @IsString()
-  smtpHost?: string;
-
-  @IsInt()
-  smtpPort?: number;
-
-  @IsBoolean()
-  smtpSecure?: boolean;
-
-  @IsString()
-  smtpAuthUser?: string;
-
-  @IsString()
-  smtpAuthPassword?: string;
-
-  @IsBoolean()
-  backendIsForwardTelemetryEnabled?: boolean;
-
-  @IsString()
-  backendValkeyHost?: string;
-
-  @IsString()
-  backendValkeyPassword?: string;
-
-  @IsString()
-  backendPostgresDatabaseUrl?: string;
-
-  @IsBoolean()
-  backendIsPostgresTls?: boolean;
-
-  @IsOptional()
-  @IsString()
-  backendRequestIpHeaderA?: string;
-
-  @IsOptional()
-  @IsString()
-  backendRequestIpHeaderB?: string;
-
-  @IsBoolean()
-  backendThrottlePublicRoutesByIp?: boolean;
-
-  @IsBoolean()
-  backendThrottlePrivateRoutesByUserId?: boolean;
-
-  @IsBoolean()
-  backendLogThrottleTracker?: boolean;
-
-  @IsBoolean()
-  backendLogDrizzlePostgres?: boolean;
-
-  @IsBoolean()
-  backendLogIsJson?: boolean;
-
-  @IsBoolean()
-  backendLogResponseError?: boolean;
-
-  @IsBoolean()
-  backendLogResponseOk?: boolean;
-
-  @IsOptional()
-  @IsString()
-  demoProjectZenApiKey?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectAnthropicApiKey?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectOpenaiApiKey?: string;
-
-  @IsOptional()
-  @IsString()
-  demoProjectE2bApiKey?: string;
-
-  @IsOptional()
-  @IsString()
-  e2bPublicTemplate?: string;
-
-  @IsOptional()
-  @IsNumber()
-  sandboxTimeoutMinutes?: number;
-
-  @IsOptional()
-  @IsNumber()
-  sessionLastActivityToPauseMinutes?: number;
-
-  @IsOptional()
-  @IsNumber()
-  sessionPauseOnUserTurnMinutes?: number;
-
-  @IsOptional()
-  @IsNumber()
-  maxActiveEditorSessionsPerProjectUser?: number;
-
-  @IsString()
-  sandboxMproveCliHost?: string;
-}
+export let zBackendConfig = z.object({
+  mproveReleaseTag: z.string(),
+  isTelemetryEnabled: z.boolean(),
+  isTraceDrizzleEnabled: z.boolean(),
+  telemetryEndpoint: z.string().optional(),
+  telemetryHyperdxIngestApiKey: z.string().optional(),
+  otelLogLevel: z.string().optional(),
+  backendEnv: z.enum(BackendEnvEnum),
+  isEncryptDb: z.boolean(),
+  isEncryptMetadata: z.boolean(),
+  aesKey: z.string(),
+  aesKeyTag: z.string(),
+  prevAesKey: z.string().optional(),
+  prevAesKeyTag: z.string().optional(),
+  totalDiskShards: z.number(),
+  rpcDiskTimeoutMs: z.number(),
+  rpcBlockmlTimeoutMs: z.number(),
+  isScheduler: z.boolean(),
+  demoProjectDwhBigqueryCredentialsPath: z.string().optional(),
+  demoProjectDwhGoogleApiCredentialsPath: z.string().optional(),
+  jwtSecret: z.string(),
+  specialKey: z.string(),
+  allowTestRoutes: z.boolean(),
+  mproveAdminEmail: z.string(),
+  mproveAdminInitialPassword: z.string(),
+  storeApiBlockHosts: z.string().optional(),
+  storeApiAllowHosts: z.string().optional(),
+  seedDemoOrgAndProject: z.boolean(),
+  demoOrgId: z.string().optional(),
+  demoProjectId: z.string().optional(),
+  demoProjectName: z.string().optional(),
+  demoProjectRemoteType: z.enum(ProjectRemoteTypeEnum).optional(),
+  demoProjectRemoteGitUrl: z.string().optional(),
+  demoProjectRemotePrivateKeyEncryptedPath: z.string().optional(),
+  demoProjectRemotePublicKeyPath: z.string().optional(),
+  demoProjectRemotePassPhrase: z.string().optional(),
+  demoProjectDwhPostgresHost: z.string().optional(),
+  demoProjectDwhPostgresUser: z.string().optional(),
+  demoProjectDwhPostgresPassword: z.string().optional(),
+  demoProjectDwhMysqlHost: z.string().optional(),
+  demoProjectDwhMysqlPort: z.number().optional(),
+  demoProjectDwhMysqlDatabase: z.string().optional(),
+  demoProjectDwhMysqlUser: z.string().optional(),
+  demoProjectDwhMysqlPassword: z.string().optional(),
+  demoProjectDwhTrinoUser: z.string().optional(),
+  demoProjectDwhTrinoPassword: z.string().optional(),
+  demoProjectDwhPrestoUser: z.string().optional(),
+  demoProjectDwhPrestoPassword: z.string().optional(),
+  demoProjectDwhSnowflakeAccount: z.string().optional(),
+  demoProjectDwhSnowflakeWarehouse: z.string().optional(),
+  demoProjectDwhSnowflakeUsername: z.string().optional(),
+  demoProjectDwhSnowflakePassword: z.string().optional(),
+  demoProjectDwhMotherDuckToken: z.string().optional(),
+  calcPostgresHost: z.string(),
+  calcPostgresPort: z.number(),
+  calcPostgresUsername: z.string(),
+  calcPostgresPassword: z.string(),
+  allowUsersToCreateOrganizations: z.boolean(),
+  registerOnlyInvitedUsers: z.boolean(),
+  hostUrl: z.string(),
+  sendEmailFromName: z.string(),
+  sendEmailFromAddress: z.string(),
+  emailTransport: z.enum(EmailTransportEnum),
+  smtpHost: z.string(),
+  smtpPort: z.number().int(),
+  smtpSecure: z.boolean(),
+  smtpAuthUser: z.string(),
+  smtpAuthPassword: z.string(),
+  backendIsForwardTelemetryEnabled: z.boolean(),
+  backendValkeyHost: z.string(),
+  backendValkeyPassword: z.string(),
+  backendPostgresDatabaseUrl: z.string(),
+  backendIsPostgresTls: z.boolean(),
+  backendRequestIpHeaderA: z.string().optional(),
+  backendRequestIpHeaderB: z.string().optional(),
+  backendThrottlePublicRoutesByIp: z.boolean(),
+  backendThrottlePrivateRoutesByUserId: z.boolean(),
+  backendLogThrottleTracker: z.boolean(),
+  backendLogDrizzlePostgres: z.boolean(),
+  backendLogIsJson: z.boolean(),
+  backendLogResponseError: z.boolean(),
+  backendLogResponseOk: z.boolean(),
+  demoProjectZenApiKey: z.string().optional(),
+  demoProjectAnthropicApiKey: z.string().optional(),
+  demoProjectOpenaiApiKey: z.string().optional(),
+  demoProjectE2bApiKey: z.string().optional(),
+  e2bPublicTemplate: z.string().optional(),
+  sandboxTimeoutMinutes: z.number().optional(),
+  sessionLastActivityToPauseMinutes: z.number().optional(),
+  sessionPauseOnUserTurnMinutes: z.number().optional(),
+  maxActiveEditorSessionsPerProjectUser: z.number().optional(),
+  sandboxMproveCliHost: z.string()
+});
+
+export type BackendConfig = z.infer<typeof zBackendConfig>;

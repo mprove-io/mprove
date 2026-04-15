@@ -34,11 +34,11 @@ import {
 import { sendToBackend } from './send-to-backend';
 
 export async function prepareTest(item: {
-  overrideConfigOptions?: BackendConfig;
+  overrideConfigOptions?: Partial<BackendConfig>;
 }) {
   let { overrideConfigOptions } = item;
 
-  let extraOverride: BackendConfig = {
+  let extraOverride: Partial<BackendConfig> = {
     backendEnv: BackendEnvEnum.TEST,
     backendLogResponseOk: false,
     backendLogResponseError: false
@@ -180,7 +180,7 @@ export async function prepareTestAndSeed(item: {
   traceId: string;
   seedRecordsPayload?: ToBackendSeedRecordsRequestPayload;
   deleteRecordsPayload?: ToBackendDeleteRecordsRequestPayload;
-  overrideConfigOptions?: BackendConfig;
+  overrideConfigOptions?: Partial<BackendConfig>;
   loginUserPayload?: ToBackendLoginUserRequestPayload;
 }) {
   let {
