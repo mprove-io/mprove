@@ -9,4 +9,4 @@ export let zMproveValidationError = z
   })
   .meta({ id: 'MproveValidationError' });
 
-export type ZMproveValidationError = z.infer<typeof zMproveValidationError>;
+export type MproveValidationError = z.infer<typeof zMproveValidationError>;

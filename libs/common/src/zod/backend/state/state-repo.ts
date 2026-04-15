@@ -15,4 +15,4 @@ export let zStateRepo = z
   })
   .meta({ id: 'StateRepo' });
 
-export type ZStateRepo = z.infer<typeof zStateRepo>;
+export type StateRepo = z.infer<typeof zStateRepo>;

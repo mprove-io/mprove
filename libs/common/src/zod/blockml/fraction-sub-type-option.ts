@@ -10,4 +10,4 @@ export let zFractionSubTypeOption = z
   })
   .meta({ id: 'FractionSubTypeOption' });
 
-export type ZFractionSubTypeOption = z.infer<typeof zFractionSubTypeOption>;
+export type FractionSubTypeOption = z.infer<typeof zFractionSubTypeOption>;

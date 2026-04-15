@@ -10,4 +10,4 @@ export let zQueryInfoReport = z
   })
   .meta({ id: 'QueryInfoReport' });
 
-export type ZQueryInfoReport = z.infer<typeof zQueryInfoReport>;
+export type QueryInfoReport = z.infer<typeof zQueryInfoReport>;

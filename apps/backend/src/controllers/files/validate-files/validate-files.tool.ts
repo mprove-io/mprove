@@ -16,7 +16,7 @@ import {
   type McpToolValidateFilesInput,
   zMcpToolValidateFilesInput,
   zMcpToolValidateFilesOutput
-} from '#common/interfaces/to-backend/files/mcp-tool-validate-files';
+} from '#common/zod/to-backend/files/mcp-tool-validate-files';
 import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload';
 
 @Injectable()

@@ -13,7 +13,7 @@ import {
   type McpToolGetSchemasInput,
   zMcpToolGetSchemasInput,
   zMcpToolGetSchemasOutput
-} from '#common/interfaces/to-backend/connections/mcp-tool-get-schemas';
+} from '#common/zod/to-backend/connections/mcp-tool-get-schemas';
 import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload';
 
 @Injectable()

@@ -8,4 +8,4 @@ export let zProjectDashboardLink = z
   })
   .meta({ id: 'ProjectDashboardLink' });
 
-export type ZProjectDashboardLink = z.infer<typeof zProjectDashboardLink>;
+export type ProjectDashboardLink = z.infer<typeof zProjectDashboardLink>;

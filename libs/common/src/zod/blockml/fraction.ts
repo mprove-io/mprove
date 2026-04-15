@@ -1,3 +1,4 @@
+import type { Moment } from '@malloydata/malloy-filter';
 import { z } from 'zod';
 import { FractionDayOfWeekValueEnum } from '#common/enums/fraction/fraction-day-of-week-value.enum';
 import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
@@ -67,19 +68,19 @@ export let zFraction = z
     tsNextValue: z.number().nullish(),
     tsNextUnit: z.enum(FractionTsUnitEnum).nullish(),
 
-    tsMoment: z.any().nullish(),
+    tsMoment: z.custom<Moment>().nullish(),
     tsMomentType: z.enum(FractionTsMomentTypeEnum).nullish(),
     tsMomentUnit: z.enum(FractionTsMixUnitEnum).nullish(),
     tsTimestampValue: z.string().nullish(),
     tsMomentAgoFromNowQuantity: z.number().nullish(),
 
-    tsFromMoment: z.any().nullish(),
+    tsFromMoment: z.custom<Moment>().nullish(),
     tsFromMomentType: z.enum(FractionTsMomentTypeEnum).nullish(),
     tsFromMomentUnit: z.enum(FractionTsMixUnitEnum).nullish(),
     tsFromTimestampValue: z.string().nullish(),
     tsFromMomentAgoFromNowQuantity: z.number().nullish(),
 
-    tsToMoment: z.any().nullish(),
+    tsToMoment: z.custom<Moment>().nullish(),
     tsToMomentType: z.enum(FractionTsMomentTypeEnum).nullish(),
     tsToMomentUnit: z.enum(FractionTsMixUnitEnum).nullish(),
     tsToTimestampValue: z.string().nullish(),
@@ -87,4 +88,4 @@ export let zFraction = z
   })
   .meta({ id: 'Fraction' });
 
-export type ZFraction = z.infer<typeof zFraction>;
+export type Fraction = z.infer<typeof zFraction>;

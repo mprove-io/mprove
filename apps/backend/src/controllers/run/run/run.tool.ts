@@ -10,12 +10,12 @@ import { MCP_TOOL_RUN } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import type { ToBackendRunResponsePayload } from '#common/interfaces/to-backend/run/to-backend-run';
 import {
   type McpToolRunInput,
   zMcpToolRunInput,
   zMcpToolRunOutput
-} from '#common/interfaces/to-backend/run/mcp-tool-run';
-import type { ToBackendRunResponsePayload } from '#common/interfaces/to-backend/run/to-backend-run';
+} from '#common/zod/to-backend/run/mcp-tool-run';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

@@ -7,4 +7,4 @@ export let zStateDashboardItem = z
   })
   .meta({ id: 'StateDashboardItem' });
 
-export type ZStateDashboardItem = z.infer<typeof zStateDashboardItem>;
+export type StateDashboardItem = z.infer<typeof zStateDashboardItem>;

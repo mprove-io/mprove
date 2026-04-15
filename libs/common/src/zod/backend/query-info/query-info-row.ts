@@ -11,9 +11,9 @@ export let zQueryInfoRow = z
     metricId: z.string(),
     formula: z.string(),
     parameters: z.array(zParameter),
-    query: zQueryInfoQuery.optional(),
-    records: z.array(z.any()).optional()
+    query: zQueryInfoQuery.nullish(),
+    records: z.array(z.any()).nullish()
   })
   .meta({ id: 'QueryInfoRow' });
 
-export type ZQueryInfoRow = z.infer<typeof zQueryInfoRow>;
+export type QueryInfoRow = z.infer<typeof zQueryInfoRow>;

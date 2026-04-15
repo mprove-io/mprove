@@ -10,4 +10,4 @@ export let zRunReport = z
   })
   .meta({ id: 'RunReport' });
 
-export type ZRunReport = z.infer<typeof zRunReport>;
+export type RunReport = z.infer<typeof zRunReport>;

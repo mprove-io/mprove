@@ -10,4 +10,4 @@ export let zQueryInfoChart = z
   })
   .meta({ id: 'QueryInfoChart' });
 
-export type ZQueryInfoChart = z.infer<typeof zQueryInfoChart>;
+export type QueryInfoChart = z.infer<typeof zQueryInfoChart>;

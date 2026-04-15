@@ -7,31 +7,31 @@ import {
 
 export let zColumnCombinedReference = z
   .object({
-    relationshipType: z.enum(RelationshipTypeEnum).optional(),
+    relationshipType: z.enum(RelationshipTypeEnum).nullish(),
     isForeignKey: z.boolean(),
-    referencedSchemaName: z.string().optional(),
+    referencedSchemaName: z.string().nullish(),
     referencedTableName: z.string(),
     referencedColumnName: z.string()
   })
   .meta({ id: 'ColumnCombinedReference' });
 
-export type ZColumnCombinedReference = z.infer<typeof zColumnCombinedReference>;
+export type ColumnCombinedReference = z.infer<typeof zColumnCombinedReference>;
 
 export let zCombinedSchemaColumn = z
   .object({
     columnName: z.string(),
     dataType: z.string(),
     isNullable: z.boolean(),
-    isPrimaryKey: z.boolean().optional(),
-    isUnique: z.boolean().optional(),
+    isPrimaryKey: z.boolean().nullish(),
+    isUnique: z.boolean().nullish(),
     foreignKeys: z.array(zRawSchemaForeignKey),
-    description: z.string().optional(),
-    example: z.string().optional(),
-    references: z.array(zColumnCombinedReference).optional()
+    description: z.string().nullish(),
+    example: z.string().nullish(),
+    references: z.array(zColumnCombinedReference).nullish()
   })
   .meta({ id: 'CombinedSchemaColumn' });
 
-export type ZCombinedSchemaColumn = z.infer<typeof zCombinedSchemaColumn>;
+export type CombinedSchemaColumn = z.infer<typeof zCombinedSchemaColumn>;
 
 export let zCombinedSchemaTable = z
   .object({
@@ -39,29 +39,29 @@ export let zCombinedSchemaTable = z
     tableType: z.string(),
     columns: z.array(zCombinedSchemaColumn),
     indexes: z.array(zRawSchemaIndex),
-    description: z.string().optional()
+    description: z.string().nullish()
   })
   .meta({ id: 'CombinedSchemaTable' });
 
-export type ZCombinedSchemaTable = z.infer<typeof zCombinedSchemaTable>;
+export type CombinedSchemaTable = z.infer<typeof zCombinedSchemaTable>;
 
 export let zCombinedSchema = z
   .object({
     schemaName: z.string(),
-    description: z.string().optional(),
+    description: z.string().nullish(),
     tables: z.array(zCombinedSchemaTable)
   })
   .meta({ id: 'CombinedSchema' });
 
-export type ZCombinedSchema = z.infer<typeof zCombinedSchema>;
+export type CombinedSchema = z.infer<typeof zCombinedSchema>;
 
 export let zCombinedSchemaItem = z
   .object({
     connectionId: z.string(),
     schemas: z.array(zCombinedSchema),
     lastRefreshedTs: z.number().int(),
-    errorMessage: z.string().optional()
+    errorMessage: z.string().nullish()
   })
   .meta({ id: 'CombinedSchemaItem' });
 
-export type ZCombinedSchemaItem = z.infer<typeof zCombinedSchemaItem>;
+export type CombinedSchemaItem = z.infer<typeof zCombinedSchemaItem>;

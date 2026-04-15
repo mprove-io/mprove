@@ -8,6 +8,6 @@ export let zMproveValidationErrorLine = z
   })
   .meta({ id: 'MproveValidationErrorLine' });
 
-export type ZMproveValidationErrorLine = z.infer<
+export type MproveValidationErrorLine = z.infer<
   typeof zMproveValidationErrorLine
 >;

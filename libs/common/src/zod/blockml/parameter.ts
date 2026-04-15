@@ -9,4 +9,4 @@ export let zParameter = z
   })
   .meta({ id: 'Parameter' });
 
-export type ZParameter = z.infer<typeof zParameter>;
+export type Parameter = z.infer<typeof zParameter>;

@@ -41,7 +41,7 @@ export let zMcpToolGetStateOutput = z
     dashboardItems: z.array(zStateDashboardItem),
     reportItems: z.array(zStateReportItem),
     metricItems: z.array(zStateMetricItem),
-    repo: zStateRepo.optional()
+    repo: zStateRepo.nullish()
   })
   .meta({ id: 'McpToolGetStateOutput' });
 

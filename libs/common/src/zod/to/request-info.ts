@@ -7,4 +7,4 @@ export let zRequestInfo = z
   })
   .meta({ id: 'RequestInfo' });
 
-export type ZRequestInfo = z.infer<typeof zRequestInfo>;
+export type RequestInfo = z.infer<typeof zRequestInfo>;

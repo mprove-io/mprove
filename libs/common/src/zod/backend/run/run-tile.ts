@@ -8,4 +8,4 @@ export let zRunTile = z
   })
   .meta({ id: 'RunTile' });
 
-export type ZRunTile = z.infer<typeof zRunTile>;
+export type RunTile = z.infer<typeof zRunTile>;

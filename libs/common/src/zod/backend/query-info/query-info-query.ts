@@ -8,17 +8,17 @@ export let zQueryInfoQuery = z
     connectionType: z.enum(ConnectionTypeEnum),
     queryId: z.string(),
     status: z.enum(QueryStatusEnum),
-    lastRunBy: z.string().optional(),
-    lastRunTs: z.number().optional(),
-    lastCancelTs: z.number().optional(),
-    lastCompleteTs: z.number().optional(),
-    lastCompleteDuration: z.number().optional(),
-    lastErrorMessage: z.string().optional(),
-    lastErrorTs: z.number().optional(),
-    data: z.any().optional(),
-    malloy: z.string().optional(),
-    sql: z.string().optional()
+    lastRunBy: z.string().nullish(),
+    lastRunTs: z.number().nullish(),
+    lastCancelTs: z.number().nullish(),
+    lastCompleteTs: z.number().nullish(),
+    lastCompleteDuration: z.number().nullish(),
+    lastErrorMessage: z.string().nullish(),
+    lastErrorTs: z.number().nullish(),
+    data: z.any().nullish(),
+    malloy: z.string().nullish(),
+    sql: z.string().nullish()
   })
   .meta({ id: 'QueryInfoQuery' });
 
-export type ZQueryInfoQuery = z.infer<typeof zQueryInfoQuery>;
+export type QueryInfoQuery = z.infer<typeof zQueryInfoQuery>;

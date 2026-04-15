@@ -8,4 +8,4 @@ export let zQueryInfoTile = z
   })
   .meta({ id: 'QueryInfoTile' });
 
-export type ZQueryInfoTile = z.infer<typeof zQueryInfoTile>;
+export type QueryInfoTile = z.infer<typeof zQueryInfoTile>;

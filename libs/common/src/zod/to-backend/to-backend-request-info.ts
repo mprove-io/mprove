@@ -10,4 +10,4 @@ export let zToBackendRequestInfo = zRequestInfo
   })
   .meta({ id: 'ToBackendRequestInfo' });
 
-export type ZToBackendRequestInfo = z.infer<typeof zToBackendRequestInfo>;
+export type ToBackendRequestInfo = z.infer<typeof zToBackendRequestInfo>;

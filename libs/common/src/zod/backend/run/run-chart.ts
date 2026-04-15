@@ -10,4 +10,4 @@ export let zRunChart = z
   })
   .meta({ id: 'RunChart' });
 
-export type ZRunChart = z.infer<typeof zRunChart>;
+export type RunChart = z.infer<typeof zRunChart>;

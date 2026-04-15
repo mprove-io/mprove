@@ -18,4 +18,4 @@ export let zUser = z
   })
   .meta({ id: 'User' });
 
-export type ZUser = z.infer<typeof zUser>;
+export type User = z.infer<typeof zUser>;

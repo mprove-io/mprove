@@ -10,12 +10,12 @@ import { MCP_TOOL_GET_QUERY_INFO } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { ToBackendGetQueryInfoResponsePayload } from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
 import {
   type McpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoOutput
-} from '#common/interfaces/to-backend/query-info/mcp-tool-get-query-info';
-import { ToBackendGetQueryInfoResponsePayload } from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
+} from '#common/zod/to-backend/query-info/mcp-tool-get-query-info';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

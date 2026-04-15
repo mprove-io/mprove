@@ -8,4 +8,4 @@ export let zMyRequest = z
   })
   .meta({ id: 'MyRequest' });
 
-export type ZMyRequest = z.infer<typeof zMyRequest>;
+export type MyRequest = z.infer<typeof zMyRequest>;

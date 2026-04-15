@@ -55,9 +55,9 @@ export let zMcpToolGetQueryInfoInput = z
 
 export let zMcpToolGetQueryInfoOutput = z
   .object({
-    chart: zQueryInfoChart.optional(),
-    dashboard: zQueryInfoDashboard.optional(),
-    report: zQueryInfoReport.optional()
+    chart: zQueryInfoChart.nullish(),
+    dashboard: zQueryInfoDashboard.nullish(),
+    report: zQueryInfoReport.nullish()
   })
   .meta({ id: 'McpToolGetQueryInfoOutput' });
 

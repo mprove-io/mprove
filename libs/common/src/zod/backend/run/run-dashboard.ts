@@ -10,4 +10,4 @@ export let zRunDashboard = z
   })
   .meta({ id: 'RunDashboard' });
 
-export type ZRunDashboard = z.infer<typeof zRunDashboard>;
+export type RunDashboard = z.infer<typeof zRunDashboard>;

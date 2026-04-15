@@ -8,32 +8,32 @@ import { zKeyValuePair } from '#common/zod/blockml/key-value-pair';
 export let zModelField = z
   .object({
     id: z.string(),
-    malloyFieldName: z.string().optional(),
-    malloyFieldPath: z.array(z.string()).optional(),
-    malloyTags: z.array(zKeyValuePair).optional(),
-    mproveTags: z.array(zKeyValuePair).optional(),
+    malloyFieldName: z.string().nullish(),
+    malloyFieldPath: z.array(z.string()).nullish(),
+    malloyTags: z.array(zKeyValuePair).nullish(),
+    mproveTags: z.array(zKeyValuePair).nullish(),
     hidden: z.boolean(),
     required: z.boolean(),
-    maxFractions: z.number().optional(),
+    maxFractions: z.number().nullish(),
     label: z.string(),
     fieldClass: z.enum(FieldClassEnum),
-    result: z.enum(FieldResultEnum).optional(),
-    suggestModelDimension: z.string().optional(),
+    result: z.enum(FieldResultEnum).nullish(),
+    suggestModelDimension: z.string().nullish(),
     sqlName: z.string(),
     topId: z.string(),
     topLabel: z.string(),
-    description: z.string().optional(),
-    type: z.enum(FieldTypeEnum).optional(),
-    groupId: z.string().optional(),
-    groupLabel: z.string().optional(),
-    groupDescription: z.string().optional(),
-    formatNumber: z.string().optional(),
-    currencyPrefix: z.string().optional(),
-    currencySuffix: z.string().optional(),
-    buildMetrics: z.boolean().optional(),
-    timeframe: z.string().optional(),
-    detail: z.enum(DetailUnitEnum).optional()
+    description: z.string().nullish(),
+    type: z.enum(FieldTypeEnum).nullish(),
+    groupId: z.string().nullish(),
+    groupLabel: z.string().nullish(),
+    groupDescription: z.string().nullish(),
+    formatNumber: z.string().nullish(),
+    currencyPrefix: z.string().nullish(),
+    currencySuffix: z.string().nullish(),
+    buildMetrics: z.boolean().nullish(),
+    timeframe: z.string().nullish(),
+    detail: z.enum(DetailUnitEnum).nullish()
   })
   .meta({ id: 'ModelField' });
 
-export type ZModelField = z.infer<typeof zModelField>;
+export type ModelField = z.infer<typeof zModelField>;

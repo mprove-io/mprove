@@ -1,21 +1,36 @@
 import { z } from 'zod';
 
-export type ZDiskCatalogNode = {
-  id: string;
-  isFolder: boolean;
-  name: string;
-  fileId: string;
-  children: ZDiskCatalogNode[];
-};
+// Previous z.lazy()-based recursion — kept commented for reference.
+// export type DiskCatalogNode = {
+//   id: string;
+//   isFolder: boolean;
+//   name: string;
+//   fileId: string;
+//   children: DiskCatalogNode[];
+// };
+//
+// export let zDiskCatalogNode: z.ZodType<DiskCatalogNode> = z.lazy(() =>
+//   z
+//     .object({
+//       id: z.string(),
+//       isFolder: z.boolean(),
+//       name: z.string(),
+//       fileId: z.string(),
+//       children: z.array(zDiskCatalogNode)
+//     })
+//     .meta({ id: 'DiskCatalogNode' })
+// );
 
-export let zDiskCatalogNode: z.ZodType<ZDiskCatalogNode> = z.lazy(() =>
-  z
-    .object({
-      id: z.string(),
-      isFolder: z.boolean(),
-      name: z.string(),
-      fileId: z.string(),
-      children: z.array(zDiskCatalogNode)
-    })
-    .meta({ id: 'DiskCatalogNode' })
-);
+export let zDiskCatalogNode = z
+  .object({
+    id: z.string(),
+    isFolder: z.boolean(),
+    name: z.string(),
+    fileId: z.string(),
+    get children() {
+      return z.array(zDiskCatalogNode);
+    }
+  })
+  .meta({ id: 'DiskCatalogNode' });
+
+export type DiskCatalogNode = z.infer<typeof zDiskCatalogNode>;

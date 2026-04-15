@@ -9,7 +9,21 @@ export let zRawSchemaForeignKey = z
   })
   .meta({ id: 'RawSchemaForeignKey' });
 
-export type ZRawSchemaForeignKey = z.infer<typeof zRawSchemaForeignKey>;
+export type RawSchemaForeignKey = z.infer<typeof zRawSchemaForeignKey>;
+
+export let zRawSchemaColumn = z
+  .object({
+    columnName: z.string(),
+    dataType: z.string(),
+    elementType: z.string().nullish(),
+    isNullable: z.boolean(),
+    isPrimaryKey: z.boolean().nullish(),
+    isUnique: z.boolean().nullish(),
+    foreignKeys: z.array(zRawSchemaForeignKey)
+  })
+  .meta({ id: 'RawSchemaColumn' });
+
+export type RawSchemaColumn = z.infer<typeof zRawSchemaColumn>;
 
 export let zRawSchemaIndex = z
   .object({
@@ -20,4 +34,26 @@ export let zRawSchemaIndex = z
   })
   .meta({ id: 'RawSchemaIndex' });
 
-export type ZRawSchemaIndex = z.infer<typeof zRawSchemaIndex>;
+export type RawSchemaIndex = z.infer<typeof zRawSchemaIndex>;
+
+export let zRawSchemaTable = z
+  .object({
+    schemaName: z.string(),
+    tableName: z.string(),
+    tableType: z.string(),
+    columns: z.array(zRawSchemaColumn),
+    indexes: z.array(zRawSchemaIndex)
+  })
+  .meta({ id: 'RawSchemaTable' });
+
+export type RawSchemaTable = z.infer<typeof zRawSchemaTable>;
+
+export let zConnectionRawSchema = z
+  .object({
+    tables: z.array(zRawSchemaTable),
+    lastRefreshedTs: z.number(),
+    errorMessage: z.string().nullish()
+  })
+  .meta({ id: 'ConnectionRawSchema' });
+
+export type ConnectionRawSchema = z.infer<typeof zConnectionRawSchema>;

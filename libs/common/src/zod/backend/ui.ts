@@ -26,4 +26,4 @@ export let zUi = z
   })
   .meta({ id: 'Ui' });
 
-export type ZUi = z.infer<typeof zUi>;
+export type Ui = z.infer<typeof zUi>;

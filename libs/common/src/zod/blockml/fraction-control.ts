@@ -14,4 +14,4 @@ export let zFractionControl = z
   })
   .meta({ id: 'FractionControl' });
 
-export type ZFractionControl = z.infer<typeof zFractionControl>;
+export type FractionControl = z.infer<typeof zFractionControl>;

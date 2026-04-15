@@ -9,10 +9,10 @@ export interface FileStoreFractionType {
   label_line_num?: number;
 
   meta?: any;
-  meta_line_num?: any;
+  meta_line_num?: number;
 
   controls?: FileStoreFractionControl[];
-  controls_line_num?: any;
+  controls_line_num?: number;
 
   //
 

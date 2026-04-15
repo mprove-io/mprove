@@ -49,7 +49,7 @@ export class SetUserNameController {
     description: "Update the user's first and last name."
   })
   @ApiOkResponse({
-    type: ToBackendSetUserNameResponseDto.Output,
+    type: ToBackendSetUserNameResponseDto,
     description: 'Updated user'
   })
   async setUserName(

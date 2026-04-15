@@ -9,7 +9,7 @@ export let zValidateFilesRepoConflict = z
   })
   .meta({ id: 'ValidateFilesRepoConflict' });
 
-export type ZValidateFilesRepoConflict = z.infer<
+export type ValidateFilesRepoConflict = z.infer<
   typeof zValidateFilesRepoConflict
 >;
 
@@ -24,4 +24,4 @@ export let zValidateFilesRepo = z
   })
   .meta({ id: 'ValidateFilesRepo' });
 
-export type ZValidateFilesRepo = z.infer<typeof zValidateFilesRepo>;
+export type ValidateFilesRepo = z.infer<typeof zValidateFilesRepo>;

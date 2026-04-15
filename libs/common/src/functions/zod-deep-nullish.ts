@@ -15,10 +15,23 @@
 //   3. Public function takes `{ schema }` instead of a positional schema arg, per
 //      the repo's single-object-arg convention (see CLAUDE.md "Function and method args").
 //   4. `let` instead of `const`, per repo style.
+//
+// Delta #8: `ZodCustom` branch substitutes `z.any()` for `z.custom<T>()`.
+// `z.custom<>()` has no JSON Schema representation in zod v4: its
+// `customProcessor` throws when `z.toJSONSchema()` walks it, which is what
+// `@rekog/mcp-nest` does at bootstrap on every `@Tool` output. Replacing with
+// `z.any()` (which renders as `{}`) unblocks emission. Source-schema `.meta()`
+// is forwarded onto the `z.any()` replacement so any description / title /
+// external-docs metadata still appears in the emitted JSON Schema. Safe:
+//   - source schemas are untouched, so consumer TS types still infer the real
+//     `T` from `z.custom<T>()`;
+//   - at runtime, `z.custom()` with no refine is a no-op validator — identical
+//     to `z.any()` — so pass-through behavior is unchanged.
 
 import {
   ZodArray,
   ZodCatch,
+  ZodCustom,
   ZodDefault,
   ZodDiscriminatedUnion,
   ZodIntersection,
@@ -113,12 +126,37 @@ function zodDeepNullishInternal<T extends z.core.SomeType>(
   // variants, all carrying the same `*Nullish` meta id. `z.toJSONSchema`
   // rejects that with "Duplicate schema id". Memoizing keeps one variant per
   // source, preserving referential identity across parents.
+  //
+  // Delta #7: pre-seed the cache with a `z.lazy()` placeholder before calling
+  // `buildNullish`. Required after `zModelNode` / `zDiskCatalogNode` migrated
+  // away from top-level `z.lazy()` to getter-based recursion: those schemas
+  // are now plain `ZodObject`s whose `children` getter recursively
+  // re-references the same instance. The previous code only `cache.set`-ed
+  // *after* `buildNullish` returned, so a self-reference during the build hit
+  // a cache miss and infinite-looped. The placeholder resolves any in-flight
+  // self-reference through `resultRef.current`, which is filled in once
+  // `buildNullish` completes.
+
+  // Previous body:
+  // let cached = cache.get(schema);
+  // if (cached !== undefined) {
+  //   return cached;
+  // }
+  // let result = buildNullish(schema, isTopLevel, cache);
+  // cache.set(schema, result);
+  // return result;
+
   let cached = cache.get(schema);
   if (cached !== undefined) {
     return cached;
   }
-
+  let resultRef: { current: any } = { current: undefined };
+  cache.set(
+    schema,
+    z.lazy(() => resultRef.current)
+  );
   let result = buildNullish(schema, isTopLevel, cache);
+  resultRef.current = result;
   cache.set(schema, result);
   return result;
 }
@@ -312,6 +350,19 @@ function buildNullish<T extends z.core.SomeType>(
 
   if (schema instanceof ZodPipe) {
     return schema;
+  }
+
+  if (schema instanceof ZodCustom) {
+    let replacement: z.ZodType = z.any();
+    let srcMeta = (
+      schema as unknown as {
+        meta?: () => Record<string, unknown> | undefined;
+      }
+    ).meta?.();
+    if (srcMeta && Object.keys(srcMeta).length > 0) {
+      replacement = replacement.meta(srcMeta);
+    }
+    return replacement.nullish();
   }
 
   return (schema as any).nullish();

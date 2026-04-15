@@ -5,8 +5,8 @@ export let zRunQuery = z
   .object({
     queryId: z.string(),
     status: z.enum(QueryStatusEnum),
-    lastErrorMessage: z.string().optional()
+    lastErrorMessage: z.string().nullish()
   })
   .meta({ id: 'RunQuery' });
 
-export type ZRunQuery = z.infer<typeof zRunQuery>;
+export type RunQuery = z.infer<typeof zRunQuery>;
