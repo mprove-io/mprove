@@ -1,16 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '#common/enums/er.enum';
-import {
-  ToDiskDeleteProjectRequest,
-  ToDiskDeleteProjectResponsePayload
-} from '#common/interfaces/to-disk/02-projects/to-disk-delete-project';
+import type { ToDiskDeleteProjectResponsePayload } from '#common/zod/to-disk/02-projects/to-disk-delete-project';
+import { zToDiskDeleteProjectRequest } from '#common/zod/to-disk/02-projects/to-disk-delete-project';
 import { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
-import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class DeleteProjectService {
@@ -26,8 +24,8 @@ export class DeleteProjectService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = transformValidSync({
-      classType: ToDiskDeleteProjectRequest,
+    let requestValid = zodParseOrThrow({
+      schema: zToDiskDeleteProjectRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),

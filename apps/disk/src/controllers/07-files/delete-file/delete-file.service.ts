@@ -2,14 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
-import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
-import {
-  ToDiskDeleteFileRequest,
-  ToDiskDeleteFileResponsePayload
-} from '#common/interfaces/to-disk/07-files/to-disk-delete-file';
 import { ServerError } from '#common/models/server-error';
+import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { ToDiskDeleteFileResponsePayload } from '#common/zod/to-disk/07-files/to-disk-delete-file';
+import { zToDiskDeleteFileRequest } from '#common/zod/to-disk/07-files/to-disk-delete-file';
 import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
@@ -23,7 +21,7 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
-import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class DeleteFileService {
@@ -39,8 +37,8 @@ export class DeleteFileService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = transformValidSync({
-      classType: ToDiskDeleteFileRequest,
+    let requestValid = zodParseOrThrow({
+      schema: zToDiskDeleteFileRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),

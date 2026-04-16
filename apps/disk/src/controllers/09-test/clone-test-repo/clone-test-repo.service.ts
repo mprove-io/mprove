@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { ensureDir, remove } from 'fs-extra';
 import { simpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToDiskCloneTestRepoRequest } from '#common/interfaces/to-disk/10-test/to-disk-clone-test-repo';
+import { zToDiskCloneTestRepoRequest } from '#common/zod/to-disk/10-test/to-disk-clone-test-repo';
 import { DiskConfig } from '#disk/config/disk-config';
-import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class CloneTestRepoService {
@@ -15,8 +15,8 @@ export class CloneTestRepoService {
   ) {}
 
   async process(request: any) {
-    let requestValid = transformValidSync({
-      classType: ToDiskCloneTestRepoRequest,
+    let requestValid = zodParseOrThrow({
+      schema: zToDiskCloneTestRepoRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),

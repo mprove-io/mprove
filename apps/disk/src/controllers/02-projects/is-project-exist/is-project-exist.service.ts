@@ -1,15 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '#common/enums/er.enum';
-import {
-  ToDiskIsProjectExistRequest,
-  ToDiskIsProjectExistResponsePayload
-} from '#common/interfaces/to-disk/02-projects/to-disk-is-project-exist';
+import type { ToDiskIsProjectExistResponsePayload } from '#common/zod/to-disk/02-projects/to-disk-is-project-exist';
+import { zToDiskIsProjectExistRequest } from '#common/zod/to-disk/02-projects/to-disk-is-project-exist';
 import { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
-import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class IsProjectExistService {
@@ -25,8 +23,8 @@ export class IsProjectExistService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = transformValidSync({
-      classType: ToDiskIsProjectExistRequest,
+    let requestValid = zodParseOrThrow({
+      schema: zToDiskIsProjectExistRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),

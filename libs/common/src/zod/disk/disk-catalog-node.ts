@@ -26,9 +26,9 @@ export let zDiskCatalogNode = z
     id: z.string(),
     isFolder: z.boolean(),
     name: z.string(),
-    fileId: z.string(),
+    fileId: z.string().nullish(),
     get children() {
-      return z.array(zDiskCatalogNode);
+      return z.array(zDiskCatalogNode).nullish();
     }
   })
   .meta({ id: 'DiskCatalogNode' });

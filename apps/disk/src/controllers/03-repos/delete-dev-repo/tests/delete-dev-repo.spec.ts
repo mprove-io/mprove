@@ -4,14 +4,14 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import { BaseProject } from '#common/interfaces/backend/base-project';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
-import { ToDiskCreateOrgRequest } from '#common/interfaces/to-disk/01-orgs/to-disk-create-org';
-import { ToDiskCreateProjectRequest } from '#common/interfaces/to-disk/02-projects/to-disk-create-project';
-import {
+import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/to-disk-create-org';
+import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/to-disk-create-project';
+import type {
   ToDiskDeleteDevRepoRequest,
   ToDiskDeleteDevRepoResponse
-} from '#common/interfaces/to-disk/03-repos/to-disk-delete-dev-repo';
+} from '#common/zod/to-disk/03-repos/to-disk-delete-dev-repo';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 

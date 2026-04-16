@@ -1,18 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '#common/enums/er.enum';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
-import {
-  ToDiskIsBranchExistRequest,
-  ToDiskIsBranchExistResponsePayload
-} from '#common/interfaces/to-disk/05-branches/to-disk-is-branch-exist';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { ToDiskIsBranchExistResponsePayload } from '#common/zod/to-disk/05-branches/to-disk-is-branch-exist';
+import { zToDiskIsBranchExistRequest } from '#common/zod/to-disk/05-branches/to-disk-is-branch-exist';
 import { DiskConfig } from '#disk/config/disk-config';
 import { createGit } from '#disk/functions/git/create-git';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
-import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class IsBranchExistService {
@@ -28,8 +26,8 @@ export class IsBranchExistService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = transformValidSync({
-      classType: ToDiskIsBranchExistRequest,
+    let requestValid = zodParseOrThrow({
+      schema: zToDiskIsBranchExistRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),

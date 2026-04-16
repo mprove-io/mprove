@@ -1,14 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '#common/enums/er.enum';
-import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
-import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
-import {
-  ToDiskRenameCatalogNodeRequest,
-  ToDiskRenameCatalogNodeResponsePayload
-} from '#common/interfaces/to-disk/04-catalogs/to-disk-rename-catalog-node';
 import { ServerError } from '#common/models/server-error';
+import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { ToDiskRenameCatalogNodeResponsePayload } from '#common/zod/to-disk/04-catalogs/to-disk-rename-catalog-node';
+import { zToDiskRenameCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/to-disk-rename-catalog-node';
 import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
@@ -20,7 +18,7 @@ import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
-import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class RenameCatalogNodeService {
@@ -36,8 +34,8 @@ export class RenameCatalogNodeService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = transformValidSync({
-      classType: ToDiskRenameCatalogNodeRequest,
+    let requestValid = zodParseOrThrow({
+      schema: zToDiskRenameCatalogNodeRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),

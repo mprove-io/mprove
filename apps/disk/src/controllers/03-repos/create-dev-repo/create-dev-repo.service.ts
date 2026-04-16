@@ -3,13 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
-import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
-import {
-  ToDiskCreateDevRepoRequest,
-  ToDiskCreateDevRepoResponsePayload
-} from '#common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
+import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { ToDiskCreateDevRepoResponsePayload } from '#common/zod/to-disk/03-repos/to-disk-create-dev-repo';
+import { zToDiskCreateDevRepoRequest } from '#common/zod/to-disk/03-repos/to-disk-create-dev-repo';
 import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
@@ -19,7 +17,7 @@ import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
-import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class CreateDevRepoService {
@@ -35,8 +33,8 @@ export class CreateDevRepoService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = transformValidSync({
-      classType: ToDiskCreateDevRepoRequest,
+    let requestValid = zodParseOrThrow({
+      schema: zToDiskCreateDevRepoRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),

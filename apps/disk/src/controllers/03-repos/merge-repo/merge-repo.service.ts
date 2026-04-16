@@ -1,14 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '#common/enums/er.enum';
-import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
-import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
-import {
-  ToDiskMergeRepoRequest,
-  ToDiskMergeRepoResponsePayload
-} from '#common/interfaces/to-disk/03-repos/to-disk-merge-repo';
 import { ServerError } from '#common/models/server-error';
+import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { ToDiskMergeRepoResponsePayload } from '#common/zod/to-disk/03-repos/to-disk-merge-repo';
+import { zToDiskMergeRepoRequest } from '#common/zod/to-disk/03-repos/to-disk-merge-repo';
 import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -19,7 +17,7 @@ import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist'
 import { merge } from '#disk/functions/git/merge';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
-import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class MergeRepoService {
@@ -35,8 +33,8 @@ export class MergeRepoService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = transformValidSync({
-      classType: ToDiskMergeRepoRequest,
+    let requestValid = zodParseOrThrow({
+      schema: zToDiskMergeRepoRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),

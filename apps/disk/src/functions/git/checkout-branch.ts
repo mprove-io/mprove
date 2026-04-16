@@ -2,8 +2,8 @@ import { SimpleGit } from 'simple-git';
 
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
-import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
 import { ServerError } from '#common/models/server-error';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { getRepoStatus } from './get-repo-status';
 

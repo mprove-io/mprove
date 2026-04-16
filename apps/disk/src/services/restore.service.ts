@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ProjectLt } from '#common/interfaces/st-lt';
+import type { ProjectLt } from '#common/zod/st-lt';
 import { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';

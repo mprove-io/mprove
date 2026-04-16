@@ -2,14 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
-import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
-import {
-  ToDiskCreateProjectRequest,
-  ToDiskCreateProjectResponsePayload
-} from '#common/interfaces/to-disk/02-projects/to-disk-create-project';
 import { ServerError } from '#common/models/server-error';
+import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { ToDiskCreateProjectResponsePayload } from '#common/zod/to-disk/02-projects/to-disk-create-project';
+import { zToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/to-disk-create-project';
 import { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
@@ -20,7 +18,7 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
-import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class CreateProjectService {
@@ -36,8 +34,8 @@ export class CreateProjectService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = transformValidSync({
-      classType: ToDiskCreateProjectRequest,
+    let requestValid = zodParseOrThrow({
+      schema: zToDiskCreateProjectRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),

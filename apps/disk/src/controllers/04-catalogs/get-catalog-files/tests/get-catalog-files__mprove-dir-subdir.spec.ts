@@ -4,17 +4,17 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import { BaseProject } from '#common/interfaces/backend/base-project';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
-import { ToDiskCreateOrgRequest } from '#common/interfaces/to-disk/01-orgs/to-disk-create-org';
-import { ToDiskCreateProjectRequest } from '#common/interfaces/to-disk/02-projects/to-disk-create-project';
-import {
+import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/to-disk-create-org';
+import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/to-disk-create-project';
+import type {
   ToDiskGetCatalogFilesRequest,
   ToDiskGetCatalogFilesResponse
-} from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
-import { ToDiskCreateFolderRequest } from '#common/interfaces/to-disk/06-folders/to-disk-create-folder';
-import { ToDiskCreateFileRequest } from '#common/interfaces/to-disk/07-files/to-disk-create-file';
-import { ToDiskSaveFileRequest } from '#common/interfaces/to-disk/07-files/to-disk-save-file';
+} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-files';
+import type { ToDiskCreateFolderRequest } from '#common/zod/to-disk/06-folders/to-disk-create-folder';
+import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/to-disk-create-file';
+import type { ToDiskSaveFileRequest } from '#common/zod/to-disk/07-files/to-disk-save-file';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 

@@ -203,6 +203,18 @@ import { McpToolGetSchemasInput, zMcpToolGetSchemasInput } from '#common/...';
 
 Why: the apps run via `@swc-node/register/esm-register`, which does not elide value-style imports of names that turn out to be type-only. Native Node ESM resolution then fails because the source file exports the name only as a `type`.
 
+### Zod optional fields — use `.nullish()`
+
+For optional fields in zod schemas, use `.nullish()` (not `.optional()`). `.nullish()` accepts both `null` and `undefined`, matching the looseness of interface definitions and runtime data from upstream systems.
+
+```ts
+// correct
+status: z.enum(FileStatusEnum).nullish(),
+
+// wrong
+status: z.enum(FileStatusEnum).optional(),
+```
+
 ### No calls in conditions
 
 Do not call functions or methods inside `if` conditions. Extract the result to a variable first.
