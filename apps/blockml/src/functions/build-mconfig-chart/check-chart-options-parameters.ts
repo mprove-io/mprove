@@ -8,9 +8,9 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { FileChartOptions } from '#common/interfaces/blockml/internal/file-chart-options';
 import { MyRegex } from '#common/models/my-regex';
 import { drcType } from '#common/types/drc-type';
+import type { FileChartOptions } from '#common/zod/blockml/internal/file-chart-options';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckChartOptionsParameters;

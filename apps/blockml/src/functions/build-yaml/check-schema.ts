@@ -11,11 +11,11 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { FileSchema } from '#common/interfaces/blockml/internal/file-schema';
-import { FileSchemaColumn } from '#common/interfaces/blockml/internal/file-schema-column';
-import { FileSchemaRelationship } from '#common/interfaces/blockml/internal/file-schema-relationship';
-import { FileSchemaTable } from '#common/interfaces/blockml/internal/file-schema-table';
 import { MyRegex } from '#common/models/my-regex';
+import type { FileSchema } from '#common/zod/blockml/internal/file-schema';
+import type { FileSchemaColumn } from '#common/zod/blockml/internal/file-schema-column';
+import type { FileSchemaRelationship } from '#common/zod/blockml/internal/file-schema-relationship';
+import type { FileSchemaTable } from '#common/zod/blockml/internal/file-schema-table';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckSchema;

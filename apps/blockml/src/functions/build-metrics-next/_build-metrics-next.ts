@@ -2,9 +2,9 @@ import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { Model } from '#common/interfaces/blockml/model';
-import { ModelMetric } from '#common/interfaces/blockml/model-metric';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { Model } from '#common/zod/blockml/model';
+import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import { createModelMetrics } from './create-model-metrics';
 
 export function buildMetricsNext(

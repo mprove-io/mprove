@@ -5,9 +5,9 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { File2 } from '#common/interfaces/blockml/internal/file-2';
-import { File3 } from '#common/interfaces/blockml/internal/file-3';
-import { FileErrorLine } from '#common/interfaces/blockml/internal/file-error-line';
+import type { File2 } from '#common/zod/blockml/internal/file-2';
+import type { File3 } from '#common/zod/blockml/internal/file-3';
+import type { FileErrorLine } from '#common/zod/blockml/internal/file-error-line';
 import { log } from '../extra/log';
 
 let func = FuncEnum.DeduplicateFileNames;

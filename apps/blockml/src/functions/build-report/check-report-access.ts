@@ -4,7 +4,7 @@ import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { FileReport } from '#common/interfaces/blockml/internal/file-report';
+import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import { checkAccess } from '../extra/check-access';
 import { log } from '../extra/log';
 

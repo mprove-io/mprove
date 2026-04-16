@@ -8,9 +8,8 @@ import { makeErrorResponseBlockml } from '#blockml/functions/extra/make-error-re
 import { makeOkResponseBlockml } from '#blockml/functions/extra/make-ok-response-blockml';
 import { METHOD_RPC } from '#common/constants/top';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
-import { RpcRequestData } from '#common/interfaces/rpc-request-data';
-import { MyResponse } from '#common/interfaces/to/my-response';
-
+import type { RpcRequestData } from '#common/zod/rpc-request-data';
+import type { MyResponse } from '#common/zod/to/my-response';
 @Injectable()
 export class ConsumerMainService {
   redisClient: Redis;

@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { checkStoreBuildMetrics } from './check-store-build-metrics';
 import { checkStoreRequiredParameters } from './check-store-required-parameters';
 

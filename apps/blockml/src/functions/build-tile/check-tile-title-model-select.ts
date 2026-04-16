@@ -9,12 +9,12 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { FileErrorLine } from '#common/interfaces/blockml/internal/file-error-line';
-import { FilePartTile } from '#common/interfaces/blockml/internal/file-part-tile';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { Model } from '#common/interfaces/blockml/model';
 import { MyRegex } from '#common/models/my-regex';
 import { dcType } from '#common/types/dc-type';
+import type { FileErrorLine } from '#common/zod/blockml/internal/file-error-line';
+import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { Model } from '#common/zod/blockml/model';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckTileTitleModelSelect;

@@ -9,8 +9,8 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ProjectConnection } from '#common/interfaces/backend/project-connection';
 import { MyRegex } from '#common/models/my-regex';
+import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckConnections;

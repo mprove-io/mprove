@@ -9,8 +9,8 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { MyRegex } from '#common/models/my-regex';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckStoreRequiredParameters;

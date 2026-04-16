@@ -9,9 +9,9 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { FileChartOptionsYAxisElement } from '#common/interfaces/blockml/internal/file-chart-options-y-axis';
 import { MyRegex } from '#common/models/my-regex';
 import { drcType } from '#common/types/drc-type';
+import type { FileChartOptionsYAxisElement } from '#common/zod/blockml/internal/file-chart-options-y-axis';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckChartOptionsYAxisParameters;

@@ -11,7 +11,7 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { File3 } from '#common/interfaces/blockml/internal/file-3';
+import type { File3 } from '#common/zod/blockml/internal/file-3';
 
 let caller = CallerEnum.BuildYaml;
 let func = FuncEnum.DeduplicateFileNames;

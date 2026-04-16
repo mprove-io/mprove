@@ -11,9 +11,9 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { FileStoreBuildMetric } from '#common/interfaces/blockml/internal/file-store-build-metric';
 import { MyRegex } from '#common/models/my-regex';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { FileStoreBuildMetric } from '#common/zod/blockml/internal/file-store-build-metric';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckStoreBuildMetrics;

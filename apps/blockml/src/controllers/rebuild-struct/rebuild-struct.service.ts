@@ -55,40 +55,38 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
-import {
+import { MyRegex } from '#common/models/my-regex';
+import { ServerError } from '#common/models/server-error';
+import type {
   ExtraSchema,
   ExtraSchemaColumn,
   ExtraSchemaRelationship,
   ExtraSchemaTable
-} from '#common/interfaces/backend/connection-schemas/extra-schema';
-import { Ev } from '#common/interfaces/backend/ev';
-import { MproveConfig } from '#common/interfaces/backend/mprove-config';
-import { ProjectConnection } from '#common/interfaces/backend/project-connection';
-import { BmlFile } from '#common/interfaces/blockml/bml-file';
-import { FileChart } from '#common/interfaces/blockml/internal/file-chart';
-import { FileDashboard } from '#common/interfaces/blockml/internal/file-dashboard';
-import { FileMod } from '#common/interfaces/blockml/internal/file-mod';
-import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
-import { FileReport } from '#common/interfaces/blockml/internal/file-report';
-import { FileSchema } from '#common/interfaces/blockml/internal/file-schema';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { Model } from '#common/interfaces/blockml/model';
-import { ModelMetric } from '#common/interfaces/blockml/model-metric';
-import { Preset } from '#common/interfaces/blockml/preset';
-import { ConnectionLt, ConnectionSt } from '#common/interfaces/st-lt';
-import {
-  ToBlockmlRebuildStructRequest,
-  ToBlockmlRebuildStructResponsePayload
-} from '#common/interfaces/to-blockml/api/to-blockml-rebuild-struct';
-import { MyRegex } from '#common/models/my-regex';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/backend/connection-schemas/extra-schema';
+import type { Ev } from '#common/zod/backend/ev';
+import type { MproveConfig } from '#common/zod/backend/mprove-config';
+import type { ProjectConnection } from '#common/zod/backend/project-connection';
+import type { BmlFile } from '#common/zod/blockml/bml-file';
+import type { FileChart } from '#common/zod/blockml/internal/file-chart';
+import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
+import type { FileMod } from '#common/zod/blockml/internal/file-mod';
+import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
+import type { FileReport } from '#common/zod/blockml/internal/file-report';
+import type { FileSchema } from '#common/zod/blockml/internal/file-schema';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { Model } from '#common/zod/blockml/model';
+import type { ModelMetric } from '#common/zod/blockml/model-metric';
+import type { Preset } from '#common/zod/blockml/preset';
+import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
+import type { ToBlockmlRebuildStructResponsePayload } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
+import { zToBlockmlRebuildStructRequest } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
 import { getMproveDir } from '#node-common/functions/get-mprove-dir';
 import {
-  MalloyConnection,
+  type MalloyConnection,
   makeMalloyConnections
 } from '#node-common/functions/make-malloy-connections';
 import { prePopulateMalloySchemaCache } from '#node-common/functions/schema-parse/pre-populate-malloy-schema-cache';
-import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 interface RebuildStructPrep {
   errors: BmError[];
@@ -123,8 +121,8 @@ export class RebuildStructService {
       });
     }
 
-    let reqValid = transformValidSync({
-      classType: ToBlockmlRebuildStructRequest,
+    let reqValid = zodParseOrThrow({
+      schema: zToBlockmlRebuildStructRequest,
       object: body,
       errorMessage: ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
       logIsJson:
@@ -472,13 +470,17 @@ export class RebuildStructService {
       });
     });
 
+    // TODO: drop `as any` once node-common helpers are migrated to zod types
+    // (zod `.nullish()` infers `T | null | undefined` which is not assignable
+    // to the interface's `field?: T` — plan `zod-migrate-node-common.md`)
     let malloyConnections: MalloyConnection[] = makeMalloyConnections({
-      connections: item.projectConnections
+      connections: item.projectConnections as any
     });
 
+    // TODO: drop `as any` once node-common helpers are migrated to zod types
     prePopulateMalloySchemaCache({
       malloyConnections: malloyConnections,
-      projectConnections: item.projectConnections
+      projectConnections: item.projectConnections as any
     });
 
     mods =

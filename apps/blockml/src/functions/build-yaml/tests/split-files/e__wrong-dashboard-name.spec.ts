@@ -12,9 +12,9 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ProjectConnection } from '#common/interfaces/backend/project-connection';
-import { FileChart } from '#common/interfaces/blockml/internal/file-chart';
-import { FileDashboard } from '#common/interfaces/blockml/internal/file-dashboard';
+import type { ProjectConnection } from '#common/zod/backend/project-connection';
+import type { FileChart } from '#common/zod/blockml/internal/file-chart';
+import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
 
 let caller = CallerEnum.BuildYaml;
 let func = FuncEnum.SplitFiles;

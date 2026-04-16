@@ -5,9 +5,9 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { FileReport } from '#common/interfaces/blockml/internal/file-report';
-import { ModelMetric } from '#common/interfaces/blockml/model-metric';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { FileReport } from '#common/zod/blockml/internal/file-report';
+import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
 import { log } from '../extra/log';
 
@@ -48,7 +48,10 @@ export function buildReportRowParameterFractions(
             let r = bricksToFractions({
               filterBricks: bricks,
               result: rowParameter.notStoreApplyToResult,
-              fractions: fractions,
+              // TODO: drop `as any` once node-common helpers migrate to zod types
+              // (zod nullish fields infer `T | null | undefined`, incompatible
+              // with interface `field?: T`)
+              fractions: fractions as any,
               isGetTimeRange: false
             });
 

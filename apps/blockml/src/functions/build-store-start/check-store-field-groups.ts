@@ -9,9 +9,9 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { FileStoreFieldGroup } from '#common/interfaces/blockml/internal/file-store-field-group';
 import { MyRegex } from '#common/models/my-regex';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { FileStoreFieldGroup } from '#common/zod/blockml/internal/file-store-field-group';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckStoreFieldGroups;

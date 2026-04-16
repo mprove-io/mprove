@@ -16,9 +16,9 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { Model } from '#common/interfaces/blockml/model';
-import { ModelMetric } from '#common/interfaces/blockml/model-metric';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { Model } from '#common/zod/blockml/model';
+import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CreateModelMetrics;

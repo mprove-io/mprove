@@ -1,5 +1,5 @@
-import { FileChart } from '#common/interfaces/blockml/internal/file-chart';
-import { FileDashboard } from '#common/interfaces/blockml/internal/file-dashboard';
-import { FileReport } from '#common/interfaces/blockml/internal/file-report';
+import type { FileChart } from '#common/zod/blockml/internal/file-chart';
+import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
+import type { FileReport } from '#common/zod/blockml/internal/file-report';
 
 export type drcType = FileDashboard | FileReport | FileChart;

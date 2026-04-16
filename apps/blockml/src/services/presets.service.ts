@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Preset } from '#common/interfaces/blockml/preset';
-
+import type { Preset } from '#common/zod/blockml/preset';
 @Injectable()
 export class PresetsService {
   presets: Preset[] = [];

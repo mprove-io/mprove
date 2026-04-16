@@ -11,11 +11,11 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
-import { FileChartOptionsSeriesElement } from '#common/interfaces/blockml/internal/file-chart-options-series';
-import { FilePartTile } from '#common/interfaces/blockml/internal/file-part-tile';
-import { FileReport } from '#common/interfaces/blockml/internal/file-report';
 import { MyRegex } from '#common/models/my-regex';
 import { drcType } from '#common/types/drc-type';
+import type { FileChartOptionsSeriesElement } from '#common/zod/blockml/internal/file-chart-options-series';
+import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
+import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckChartOptionsSeriesParameters;

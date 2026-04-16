@@ -8,8 +8,8 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { Preset } from '#common/interfaces/blockml/preset';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { Preset } from '#common/zod/blockml/preset';
 import { log } from '../extra/log';
 
 let func = FuncEnum.ApplyStorePresets;

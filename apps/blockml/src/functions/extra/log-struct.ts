@@ -4,11 +4,11 @@ import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { FileChart } from '#common/interfaces/blockml/internal/file-chart';
-import { FileDashboard } from '#common/interfaces/blockml/internal/file-dashboard';
-import { FileReport } from '#common/interfaces/blockml/internal/file-report';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { ModelMetric } from '#common/interfaces/blockml/model-metric';
+import type { FileChart } from '#common/zod/blockml/internal/file-chart';
+import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
+import type { FileReport } from '#common/zod/blockml/internal/file-report';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import { log } from './log';
 
 let func = FuncEnum.LogStruct;

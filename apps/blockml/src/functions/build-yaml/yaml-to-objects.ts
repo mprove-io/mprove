@@ -8,8 +8,8 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { File3 } from '#common/interfaces/blockml/internal/file-3';
 import { MyRegex } from '#common/models/my-regex';
+import type { File3 } from '#common/zod/blockml/internal/file-3';
 import { log } from '../extra/log';
 
 let func = FuncEnum.YamlToObjects;

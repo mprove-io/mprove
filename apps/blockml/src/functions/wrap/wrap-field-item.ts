@@ -10,8 +10,8 @@ import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined';
 import { parseTags } from '#common/functions/parse-tags';
-import { ModelField } from '#common/interfaces/blockml/model-field';
-import { ModelNode } from '#common/interfaces/blockml/model-node';
+import type { ModelField } from '#common/zod/blockml/model-field';
+import type { ModelNode } from '#common/zod/blockml/model-node';
 import { FieldItem } from '../extra/get-field-items';
 
 export interface FieldItemX extends FieldItem {

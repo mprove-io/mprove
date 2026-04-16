@@ -7,8 +7,8 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { FileStoreFractionControl } from '#common/interfaces/blockml/internal/file-store-fraction-control';
 import { MyRegex } from '#common/models/my-regex';
+import type { FileStoreFractionControl } from '#common/zod/blockml/internal/file-store-fraction-control';
 import { log } from './log';
 
 let func = FuncEnum.CheckStoreFractionControlsUse;

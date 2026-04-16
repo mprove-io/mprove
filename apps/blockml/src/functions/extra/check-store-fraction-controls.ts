@@ -10,9 +10,9 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { FileErrorLine } from '#common/interfaces/blockml/internal/file-error-line';
-import { FileStoreFractionControl } from '#common/interfaces/blockml/internal/file-store-fraction-control';
 import { MyRegex } from '#common/models/my-regex';
+import type { FileErrorLine } from '#common/zod/blockml/internal/file-error-line';
+import type { FileStoreFractionControl } from '#common/zod/blockml/internal/file-store-fraction-control';
 import { checkStoreFractionControlOptions } from './check-store-fraction-control-options';
 import { log } from './log';
 

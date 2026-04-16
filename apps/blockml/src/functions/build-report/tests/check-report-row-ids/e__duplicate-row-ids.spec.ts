@@ -12,8 +12,8 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ProjectConnection } from '#common/interfaces/backend/project-connection';
-import { FileReport } from '#common/interfaces/blockml/internal/file-report';
+import type { ProjectConnection } from '#common/zod/backend/project-connection';
+import type { FileReport } from '#common/zod/blockml/internal/file-report';
 
 let caller = CallerEnum.BuildReport;
 let func = FuncEnum.CheckReportRowIds;

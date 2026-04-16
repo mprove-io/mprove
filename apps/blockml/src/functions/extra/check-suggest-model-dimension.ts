@@ -9,11 +9,11 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { FieldAny } from '#common/interfaces/blockml/internal/field-any';
-import { Model } from '#common/interfaces/blockml/model';
-import { ModelField } from '#common/interfaces/blockml/model-field';
 import { MyRegex } from '#common/models/my-regex';
 import { sdrType } from '#common/types/sdr-type';
+import type { FieldAny } from '#common/zod/blockml/internal/field-any';
+import type { Model } from '#common/zod/blockml/model';
+import type { ModelField } from '#common/zod/blockml/model-field';
 import { log } from './log';
 
 let func = FuncEnum.CheckSuggestModelDimension;

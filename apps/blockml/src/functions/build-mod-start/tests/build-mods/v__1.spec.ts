@@ -12,8 +12,8 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ProjectConnection } from '#common/interfaces/backend/project-connection';
-import { FileMod } from '#common/interfaces/blockml/internal/file-mod';
+import type { ProjectConnection } from '#common/zod/backend/project-connection';
+import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 
 let caller = CallerEnum.BuildModStart;
 let func = FuncEnum.BuildMods;

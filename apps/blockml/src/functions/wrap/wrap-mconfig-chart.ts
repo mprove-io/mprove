@@ -6,13 +6,12 @@ import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeCopy } from '#common/functions/make-copy';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
-import { FileChartData } from '#common/interfaces/blockml/internal/file-chart-data';
-import { FileChartOptions } from '#common/interfaces/blockml/internal/file-chart-options';
-import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
-import { MconfigChartSeries } from '#common/interfaces/blockml/mconfig-chart-series';
-import { MconfigChartXAxis } from '#common/interfaces/blockml/mconfig-chart-x-axis';
-import { MconfigChartYAxis } from '#common/interfaces/blockml/mconfig-chart-y-axis';
-
+import type { FileChartData } from '#common/zod/blockml/internal/file-chart-data';
+import type { FileChartOptions } from '#common/zod/blockml/internal/file-chart-options';
+import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
+import type { MconfigChartSeries } from '#common/zod/blockml/mconfig-chart-series';
+import type { MconfigChartXAxis } from '#common/zod/blockml/mconfig-chart-x-axis';
+import type { MconfigChartYAxis } from '#common/zod/blockml/mconfig-chart-y-axis';
 export function wrapMconfigChart(item: {
   title: string;
   type: ChartTypeEnum;

@@ -50,7 +50,10 @@ export function checkFilterConditions<T extends sdrType>(
       let p = bricksToFractions({
         filterBricks: field.conditions,
         result: field.result,
-        fractions: field.apiFractions,
+        // TODO: drop `as any` once node-common helpers migrate to zod types
+        // (zod nullish fields infer `T | null | undefined`, incompatible
+        // with interface `field?: T`)
+        fractions: field.apiFractions as any,
         isGetTimeRange: false
       });
 

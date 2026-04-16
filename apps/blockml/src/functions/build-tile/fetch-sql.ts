@@ -12,15 +12,15 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { ProjectConnection } from '#common/interfaces/backend/project-connection';
-import { QueryOperation } from '#common/interfaces/backend/query-operation';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { FileChart } from '#common/interfaces/blockml/internal/file-chart';
-import { FileDashboard } from '#common/interfaces/blockml/internal/file-dashboard';
-import { FilePartTile } from '#common/interfaces/blockml/internal/file-part-tile';
-import { Mconfig } from '#common/interfaces/blockml/mconfig';
-import { Model } from '#common/interfaces/blockml/model';
 import { dcType } from '#common/types/dc-type';
+import type { ProjectConnection } from '#common/zod/backend/project-connection';
+import type { QueryOperation } from '#common/zod/backend/query-operation';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { FileChart } from '#common/zod/blockml/internal/file-chart';
+import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
+import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
+import type { Mconfig } from '#common/zod/blockml/mconfig';
+import type { Model } from '#common/zod/blockml/model';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
 import { MalloyConnection } from '#node-common/functions/make-malloy-connections';
@@ -125,7 +125,10 @@ export async function fetchSql<T extends dcType>(
           filterBricks: tile.combinedFilters[fieldId],
           result: modelField.result,
           isGetTimeRange: false,
-          fractions: fractions
+          // TODO: drop `as any` once node-common helpers migrate to zod types
+          // (zod nullish fields infer `T | null | undefined`, incompatible
+          // with interface `field?: T`)
+          fractions: fractions as any
         });
 
         mFilters.push({
@@ -145,8 +148,11 @@ export async function fetchSql<T extends dcType>(
             structId: structId,
             mconfigParentType: mconfigParentType,
             mconfigParentId: tile.mconfigParentId,
-            model: apiModel,
-            mconfig: mconfig,
+            // TODO: drop `as any` once node-common helpers migrate to zod types
+            // (zod nullish fields infer `T | null | undefined`, incompatible
+            // with interface `field?: T`)
+            model: apiModel as any,
+            mconfig: mconfig as any,
             malloyConnections: item.malloyConnections,
             queryOperations: [
               ...tile.select.map(x => {
@@ -176,7 +182,8 @@ export async function fetchSql<T extends dcType>(
                 };
                 return op;
               })
-            ]
+              // TODO: drop `as any` once node-common helpers migrate to zod types
+            ] as any
           })
       });
 
