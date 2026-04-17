@@ -1,6 +1,6 @@
 {
   "name": "@mprove/front",
-  "version": "12.0.5",
+  "version": "12.0.6",
   "private": true,
   "scripts": {
     "check": "pnpm typecheck && pnpm lint",
