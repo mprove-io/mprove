@@ -778,7 +778,7 @@ importers:
         version: 11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/config':
         specifier: 'catalog:'
-        version: 3.0.1(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
+        version: 3.0.1(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
       '@nestjs/core':
         specifier: 'catalog:'
         version: 11.1.0(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@11.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -904,7 +904,7 @@ importers:
         version: 3.0.1
       nest-winston:
         specifier: 'catalog:'
-        version: 1.9.4(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
+        version: 1.9.4(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
       nestjs-zod:
         specifier: 'catalog:'
         version: 5.3.0(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/swagger@11.2.7(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(class-validator@0.14.2)(reflect-metadata@0.2.2))(rxjs@7.8.1)(zod@4.3.6)
@@ -1109,7 +1109,7 @@ importers:
         version: 11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/config':
         specifier: 'catalog:'
-        version: 3.0.1(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
+        version: 3.0.1(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
       '@nestjs/core':
         specifier: 'catalog:'
         version: 11.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@11.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -1184,7 +1184,7 @@ importers:
         version: 3.0.1
       nest-winston:
         specifier: 'catalog:'
-        version: 1.9.4(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
+        version: 1.9.4(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
       p-iteration:
         specifier: 'catalog:'
         version: 1.1.8
@@ -1317,7 +1317,7 @@ importers:
         version: 11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/config':
         specifier: 'catalog:'
-        version: 3.0.1(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
+        version: 3.0.1(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
       '@nestjs/core':
         specifier: 'catalog:'
         version: 11.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@11.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -1389,7 +1389,7 @@ importers:
         version: 3.0.1
       nest-winston:
         specifier: 'catalog:'
-        version: 1.9.4(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
+        version: 1.9.4(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
       p-iteration:
         specifier: 'catalog:'
         version: 1.1.8
@@ -1884,7 +1884,7 @@ importers:
         version: 3.0.1
       nest-winston:
         specifier: 1.9.4
-        version: 1.9.4(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
+        version: 1.9.4(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
       p-iteration:
         specifier: 1.1.8
         version: 1.1.8
@@ -17198,7 +17198,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@nestjs/config@3.0.1(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)':
+  '@nestjs/config@3.0.1(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)':
     dependencies:
       '@nestjs/common': 11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       dotenv: 16.3.1
@@ -23836,7 +23836,7 @@ snapshots:
 
   neoip@3.0.1: {}
 
-  nest-winston@1.9.4(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2):
+  nest-winston@1.9.4(@nestjs/common@11.1.0(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2):
     dependencies:
       '@nestjs/common': 11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       fast-safe-stringify: 2.1.1
