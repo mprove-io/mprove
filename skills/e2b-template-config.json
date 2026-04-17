@@ -1,14 +1,14 @@
 {
-  "template": "v47",
+  "template": "v49",
   "cpuCount": 4,
   "memoryMB": 8192,
   "skipCache": true,
   "opencode": "1.3.13",
-  "mprove": "12.0.3",
+  "mprove": "12.0.5",
   "repos": {
     "mproveDocsFm": {
       "url": "https://github.com/mprove-io/mprove-docs-fm.git",
-      "commit": "da7ceb2bd82b6f9a4eaf4aa132f9fed9f1283c8c",
+      "commit": "da6584d1394582afb1f8a4ec532509ae980b8a40",
       "path": "/home/user/mprove-docs-fm"
     },
     "malloyDocs": {
