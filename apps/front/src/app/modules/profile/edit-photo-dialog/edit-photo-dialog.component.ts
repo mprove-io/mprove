@@ -11,10 +11,10 @@ import { ImageCropperComponent } from 'ngx-image-cropper';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendSetAvatarRequestPayload,
   ToBackendSetAvatarResponse
-} from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
+} from '#common/zod/to-backend/avatars/to-backend-set-avatar';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 

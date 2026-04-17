@@ -1,8 +1,8 @@
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendLoginUserRequestPayload,
   ToBackendLoginUserResponse
-} from '#common/interfaces/to-backend/users/to-backend-login-user';
+} from '#common/zod/to-backend/users/to-backend-login-user';
 import { mreq } from './mreq';
 
 export async function getTestLoginToken(item: {

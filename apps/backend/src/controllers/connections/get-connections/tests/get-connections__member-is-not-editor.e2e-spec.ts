@@ -13,10 +13,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetConnectionsRequest,
   ToBackendGetConnectionsResponse
-} from '#common/interfaces/to-backend/connections/to-backend-get-connections';
+} from '#common/zod/to-backend/connections/to-backend-get-connections';
 
 let testId = 'backend-get-connections__member-is-not-editor';
 

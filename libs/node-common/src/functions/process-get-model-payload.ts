@@ -1,4 +1,4 @@
-import type { ToBackendGetModelResponsePayload } from '#common/interfaces/to-backend/models/to-backend-get-model';
+import type { ToBackendGetModelResponsePayload } from '#common/zod/to-backend/models/to-backend-get-model';
 
 export function processGetModelPayload(item: {
   payload: ToBackendGetModelResponsePayload;

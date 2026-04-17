@@ -8,6 +8,7 @@ import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
 import { zToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 import { zToBackendRequestInfo } from '#common/zod/to-backend/to-backend-request-info';
+import { zTimezone } from '#common/zod/z-timezone';
 
 export let zToBackendGetReportRequestPayload = z
   .object({
@@ -16,7 +17,7 @@ export let zToBackendGetReportRequestPayload = z
     branchId: z.string(),
     envId: z.string(),
     reportId: z.string(),
-    timezone: z.string(),
+    timezone: zTimezone,
     timeSpec: z.enum(TimeSpecEnum),
     timeRangeFractionBrick: z.string()
   })

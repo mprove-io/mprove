@@ -18,21 +18,21 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
-import { DashboardX } from '#common/interfaces/backend/dashboard-x';
-import { Dashboard } from '#common/interfaces/blockml/dashboard';
-import {
+import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { Dashboard } from '#common/zod/blockml/dashboard';
+import type {
   ToBackendGetDashboardsRequestPayload,
   ToBackendGetDashboardsResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
-import {
+} from '#common/zod/to-backend/dashboards/to-backend-get-dashboards';
+import type {
   ToBackendSaveCreateDashboardRequestPayload,
   ToBackendSaveCreateDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-save-create-dashboard';
-import {
+} from '#common/zod/to-backend/dashboards/to-backend-save-create-dashboard';
+import type {
   ToBackendSaveModifyDashboardRequestPayload,
   ToBackendSaveModifyDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
+} from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

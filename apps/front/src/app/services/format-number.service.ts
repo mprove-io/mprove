@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { MconfigField } from '#common/interfaces/backend/mconfig-field';
-import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
+import type { MconfigField } from '#common/zod/backend/mconfig-field';
+import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
 
 @Injectable({ providedIn: 'root' })
 export class FormatNumberService {

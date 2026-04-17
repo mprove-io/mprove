@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendDeleteSessionRequestPayload } from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
+import type { ToBackendDeleteSessionRequestPayload } from '#common/zod/to-backend/sessions/to-backend-delete-session';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';

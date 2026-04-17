@@ -9,12 +9,12 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { Env } from '#common/interfaces/backend/env';
-import { Ev } from '#common/interfaces/backend/ev';
-import {
+import type { Env } from '#common/zod/backend/env';
+import type { Ev } from '#common/zod/backend/ev';
+import type {
   ToBackendDeleteEnvVarRequestPayload,
   ToBackendDeleteEnvVarResponse
-} from '#common/interfaces/to-backend/envs/to-backend-delete-env-var';
+} from '#common/zod/to-backend/envs/to-backend-delete-env-var';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';

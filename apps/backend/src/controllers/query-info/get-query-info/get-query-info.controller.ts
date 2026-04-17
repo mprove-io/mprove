@@ -1,28 +1,38 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import {
+  ToBackendGetQueryInfoRequestDto,
+  ToBackendGetQueryInfoResponseDto
+} from '#backend/controllers/query-info/get-query-info/get-query-info.dto';
 import { GetQueryInfoService } from '#backend/controllers/query-info/get-query-info/get-query-info.service';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetQueryInfoRequest,
-  ToBackendGetQueryInfoResponsePayload
-} from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
+import type { ToBackendGetQueryInfoResponsePayload } from '#common/zod/to-backend/query-info/to-backend-get-query-info';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('QueryInfo')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetQueryInfoController {
   constructor(private getQueryInfoService: GetQueryInfoService) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo)
-  async getQueryInfo(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetQueryInfoRequest = request.body;
-
-    let { traceId } = reqValid.info;
+  @ApiOperation({
+    summary: 'GetQueryInfo',
+    description: 'Get Malloy, SQL, and data'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetQueryInfoResponseDto
+  })
+  async getQueryInfo(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetQueryInfoRequestDto
+  ) {
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -40,7 +50,7 @@ export class GetQueryInfoController {
       getSql,
       getData,
       isFetch
-    } = reqValid.payload;
+    } = body.payload;
 
     let payload: ToBackendGetQueryInfoResponsePayload =
       await this.getQueryInfoService.getQueryInfo({

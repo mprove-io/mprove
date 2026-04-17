@@ -1,9 +1,13 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
+import {
+  ToBackendGetQueryRequestDto,
+  ToBackendGetQueryResponseDto
+} from '#backend/controllers/queries/get-query/get-query.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -17,13 +21,11 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetQueryRequest,
-  ToBackendGetQueryResponsePayload
-} from '#common/interfaces/to-backend/queries/to-backend-get-query';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendGetQueryResponsePayload } from '#common/zod/to-backend/queries/to-backend-get-query';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Queries')
+@UseGuards(ThrottlerUserIdGuard)
 // chart-dialog.component.ts -> startCheckRunning()
 // models.component.ts -> checkRunning$
 @Throttle({
@@ -57,11 +59,19 @@ export class GetQueryController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetQuery)
-  async getQuery(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetQueryRequest = request.body;
-
+  @ApiOperation({
+    summary: 'GetQuery',
+    description: 'Get a query'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetQueryResponseDto
+  })
+  async getQuery(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetQueryRequestDto
+  ) {
     let { queryId, mconfigId, projectId, repoId, branchId, envId } =
-      reqValid.payload;
+      body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

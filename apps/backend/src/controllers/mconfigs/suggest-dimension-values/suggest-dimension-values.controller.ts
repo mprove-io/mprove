@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSuggestDimensionValuesRequestDto,
+  ToBackendSuggestDimensionValuesResponseDto
+} from '#backend/controllers/mconfigs/suggest-dimension-values/suggest-dimension-values.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -22,7 +27,6 @@ import type {
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -49,15 +53,13 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { QueryOperation } from '#common/interfaces/backend/query-operation';
-import { Mconfig } from '#common/interfaces/blockml/mconfig';
-import {
-  ToBackendSuggestDimensionValuesRequest,
-  ToBackendSuggestDimensionValuesResponsePayload
-} from '#common/interfaces/to-backend/mconfigs/to-backend-suggest-dimension-values';
+import type { QueryOperation } from '#common/zod/backend/query-operation';
+import type { Mconfig } from '#common/zod/blockml/mconfig';
+import type { ToBackendSuggestDimensionValuesResponsePayload } from '#common/zod/to-backend/mconfigs/to-backend-suggest-dimension-values';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Mconfigs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SuggestDimensionValuesController {
@@ -81,13 +83,18 @@ export class SuggestDimensionValuesController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSuggestDimensionValues)
+  @ApiOperation({
+    summary: 'SuggestDimensionValues',
+    description: 'Build a query to suggest values for a dimension'
+  })
+  @ApiOkResponse({
+    type: ToBackendSuggestDimensionValuesResponseDto
+  })
   async suggestDimensionValues(
     @AttachUser() user: UserTab,
-    @Req() request: any
+    @Body() body: ToBackendSuggestDimensionValuesRequestDto
   ) {
-    let reqValid: ToBackendSuggestDimensionValuesRequest = request.body;
-
-    let { traceId } = reqValid.info;
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -103,7 +110,7 @@ export class SuggestDimensionValuesController {
       term,
       cellMetricsStartDateMs,
       cellMetricsEndDateMs
-    } = reqValid.payload;
+    } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

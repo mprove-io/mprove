@@ -12,10 +12,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetMembersRequest,
   ToBackendGetMembersResponse
-} from '#common/interfaces/to-backend/members/to-backend-get-members';
+} from '#common/zod/to-backend/members/to-backend-get-members';
 
 let testId = 'backend-get-members__member-does-not-exist';
 

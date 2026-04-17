@@ -24,17 +24,17 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ConnectionOptions } from '#common/interfaces/backend/connection-parts/connection-options';
-import { ProjectConnection } from '#common/interfaces/backend/project-connection';
-import {
+import type { ConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
+import type { ProjectConnection } from '#common/zod/backend/project-connection';
+import type {
   ToBackendEditConnectionRequestPayload,
   ToBackendEditConnectionResponse
-} from '#common/interfaces/to-backend/connections/to-backend-edit-connection';
-import {
+} from '#common/zod/to-backend/connections/to-backend-edit-connection';
+import type {
   TestConnectionResult,
   ToBackendTestConnectionRequestPayload,
   ToBackendTestConnectionResponse
-} from '#common/interfaces/to-backend/connections/to-backend-test-connection';
+} from '#common/zod/to-backend/connections/to-backend-test-connection';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';

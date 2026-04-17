@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSaveCreateDashboardRequestDto,
+  ToBackendSaveCreateDashboardResponseDto
+} from '#backend/controllers/dashboards/save-create-dashboard/save-create-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -25,7 +30,6 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -54,19 +58,17 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { DashboardX } from '#common/interfaces/backend/dashboard-x';
-import { TileX } from '#common/interfaces/backend/tile-x';
-import {
-  ToBackendSaveCreateDashboardRequest,
-  ToBackendSaveCreateDashboardResponsePayload
-} from '#common/interfaces/to-backend/dashboards/to-backend-save-create-dashboard';
-import {
+import { ServerError } from '#common/models/server-error';
+import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { TileX } from '#common/zod/backend/tile-x';
+import type { ToBackendSaveCreateDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-save-create-dashboard';
+import type {
   ToDiskCreateFileRequest,
   ToDiskCreateFileResponse
-} from '#common/interfaces/to-disk/07-files/to-disk-create-file';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/07-files/to-disk-create-file';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Dashboards')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SaveCreateDashboardController {
@@ -91,12 +93,20 @@ export class SaveCreateDashboardController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSaveCreateDashboard)
-  async saveCreateDashboard(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSaveCreateDashboardRequest = request.body;
-
+  @ApiOperation({
+    summary: 'SaveCreateDashboard',
+    description: 'Save a new dashboard'
+  })
+  @ApiOkResponse({
+    type: ToBackendSaveCreateDashboardResponseDto
+  })
+  async saveCreateDashboard(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendSaveCreateDashboardRequestDto
+  ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = reqValid.info;
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -108,7 +118,7 @@ export class SaveCreateDashboardController {
       accessRoles,
       tilesGrid,
       timezone
-    } = reqValid.payload;
+    } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -266,7 +276,7 @@ export class SaveCreateDashboardController {
     let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

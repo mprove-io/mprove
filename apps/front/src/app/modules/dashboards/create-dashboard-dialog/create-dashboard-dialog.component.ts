@@ -23,11 +23,11 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import { DashboardX } from '#common/interfaces/backend/dashboard-x';
-import {
+import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type {
   ToBackendSaveCreateDashboardRequestPayload,
   ToBackendSaveCreateDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-save-create-dashboard';
+} from '#common/zod/to-backend/dashboards/to-backend-save-create-dashboard';
 import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';

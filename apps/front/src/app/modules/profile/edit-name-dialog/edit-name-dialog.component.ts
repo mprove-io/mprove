@@ -15,7 +15,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { User } from '#common/interfaces/backend/user';
+import type { User } from '#common/zod/backend/user';
 import type {
   ToBackendSetUserNameRequestPayload,
   ToBackendSetUserNameResponse

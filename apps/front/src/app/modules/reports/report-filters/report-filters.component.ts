@@ -7,12 +7,12 @@ import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { getFractionTypeForAny } from '#common/functions/get-fraction-type-for-any';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ReportX } from '#common/interfaces/backend/report-x';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { FractionControl } from '#common/interfaces/blockml/fraction-control';
-import { FractionSubTypeOption } from '#common/interfaces/blockml/fraction-sub-type-option';
-import { ReportField } from '#common/interfaces/blockml/report-field';
-import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
+import type { ReportX } from '#common/zod/backend/report-x';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { FractionControl } from '#common/zod/blockml/fraction-control';
+import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
+import type { ReportField } from '#common/zod/blockml/report-field';
+import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
 import { ModelsQuery } from '#front/app/queries/models.query';
 import { ReportService } from '#front/app/services/report.service';
 

@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteMemberRequestDto,
+  ToBackendDeleteMemberResponseDto
+} from '#backend/controllers/members/delete-member/delete-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -20,7 +25,6 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RpcService } from '#backend/services/rpc.service';
@@ -29,14 +33,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { ToBackendDeleteMemberRequest } from '#common/interfaces/to-backend/members/to-backend-delete-member';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   ToDiskDeleteDevRepoRequest,
   ToDiskDeleteDevRepoResponse
-} from '#common/interfaces/to-disk/03-repos/to-disk-delete-dev-repo';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/03-repos/to-disk-delete-dev-repo';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Members')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteMemberController {
@@ -51,11 +55,19 @@ export class DeleteMemberController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteMember)
-  async deleteMember(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteMemberRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { projectId, memberId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'DeleteMember',
+    description: 'Remove a member from a project'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteMemberResponseDto
+  })
+  async deleteMember(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteMemberRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { projectId, memberId } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

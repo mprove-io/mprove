@@ -8,10 +8,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetSessionProviderModelsRequest,
   ToBackendGetSessionProviderModelsResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
+} from '#common/zod/to-backend/sessions/to-backend-get-session-provider-models';
 
 test('1', async t => {
   let openaiApiKey = process.env.BACKEND_DEMO_PROJECT_OPENAI_API_KEY;

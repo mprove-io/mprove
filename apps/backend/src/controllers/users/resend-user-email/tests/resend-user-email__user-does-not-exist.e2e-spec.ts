@@ -10,10 +10,10 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendResendUserEmailRequest,
   ToBackendResendUserEmailResponse
-} from '#common/interfaces/to-backend/users/to-backend-resend-user-email';
+} from '#common/zod/to-backend/users/to-backend-resend-user-email';
 
 let testId = 'resend-user-email__user-does-not-exist';
 

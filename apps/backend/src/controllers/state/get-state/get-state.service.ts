@@ -27,11 +27,11 @@ import { getDashboardUrl } from '#common/functions/get-dashboard-url';
 import { getModelUrl } from '#common/functions/get-model-url';
 import { getReportUrl } from '#common/functions/get-report-url';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
-import type { ToBackendGetStateResponsePayload } from '#common/interfaces/to-backend/state/to-backend-get-state';
+import type { ToBackendGetStateResponsePayload } from '#common/zod/to-backend/state/to-backend-get-state';
 import type {
   ToDiskGetCatalogNodesRequest,
   ToDiskGetCatalogNodesResponse
-} from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-nodes';
+} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-nodes';
 
 @Injectable()
 export class GetStateService {

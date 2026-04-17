@@ -7,7 +7,7 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import { OcPartLt, OcPartSt } from '#common/interfaces/st-lt';
+import type { OcPartLt, OcPartSt } from '#common/zod/st-lt';
 
 export const ocPartsTable = pgTable(
   'oc_parts',

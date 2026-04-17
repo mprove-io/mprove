@@ -11,14 +11,14 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetUserProfileRequest,
   ToBackendGetUserProfileResponse
-} from '#common/interfaces/to-backend/users/to-backend-get-user-profile';
-import {
+} from '#common/zod/to-backend/users/to-backend-get-user-profile';
+import type {
   ToBackendLoginUserRequest,
   ToBackendLoginUserResponse
-} from '#common/interfaces/to-backend/users/to-backend-login-user';
+} from '#common/zod/to-backend/users/to-backend-login-user';
 
 let testId = 'backend-get-user-profile__idemp-user-mismatch';
 

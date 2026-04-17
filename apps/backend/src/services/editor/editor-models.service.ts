@@ -17,8 +17,8 @@ import {
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { SessionModelApi } from '#common/interfaces/backend/session-model-api';
 import { ServerError } from '#common/models/server-error';
+import type { SessionModelApi } from '#common/zod/backend/session-model-api';
 
 @Injectable()
 export class EditorModelsService {

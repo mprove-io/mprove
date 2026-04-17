@@ -21,15 +21,15 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import {
+import type {
   ConnectionRawSchema,
   RawSchemaColumn,
   RawSchemaIndex,
   RawSchemaTable
-} from '#common/interfaces/backend/connection-schemas/raw-schema';
-import type { MalloyConfigPart } from '#common/interfaces/backend/malloy-config-part';
-import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
-import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
+} from '#common/zod/backend/connection-schemas/raw-schema';
+import type { MalloyConfigPart } from '#common/zod/backend/malloy-config-part';
+import type { FetchSampleResult } from '#common/zod/to-backend/connections/fetch-sample-result';
+import type { TestConnectionResult } from '#common/zod/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
 const { forEachSeries } = pIteration;

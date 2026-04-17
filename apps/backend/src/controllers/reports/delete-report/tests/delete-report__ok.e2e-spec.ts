@@ -17,10 +17,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendDeleteReportRequest,
   ToBackendDeleteReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-delete-report';
+} from '#common/zod/to-backend/reports/to-backend-delete-report';
 
 let testId = 'backend-delete-report__ok';
 

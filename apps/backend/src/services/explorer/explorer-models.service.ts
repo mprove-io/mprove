@@ -14,8 +14,8 @@ import { ALLOWED_MODEL_KEYWORDS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { SessionModelApi } from '#common/interfaces/backend/session-model-api';
 import { ServerError } from '#common/models/server-error';
+import type { SessionModelApi } from '#common/zod/backend/session-model-api';
 
 // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 362-371
 const CODEX_ALLOWED_MODELS: string[] = [

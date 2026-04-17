@@ -16,15 +16,15 @@ import { processRowIds } from '#backend/functions/process-row-ids';
 import { ToBlockmlRequestInfoNameEnum } from '#common/enums/to/to-blockml-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { Ev } from '#common/interfaces/backend/ev';
-import { MproveConfig } from '#common/interfaces/backend/mprove-config';
-import { Model } from '#common/interfaces/blockml/model';
-import { ModelMetric } from '#common/interfaces/blockml/model-metric';
-import { DiskCatalogFile } from '#common/interfaces/disk/disk-catalog-file';
-import {
+import type { Ev } from '#common/zod/backend/ev';
+import type { MproveConfig } from '#common/zod/backend/mprove-config';
+import type { Model } from '#common/zod/blockml/model';
+import type { ModelMetric } from '#common/zod/blockml/model-metric';
+import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
+import type {
   ToBlockmlRebuildStructRequest,
   ToBlockmlRebuildStructResponse
-} from '#common/interfaces/to-blockml/api/to-blockml-rebuild-struct';
+} from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
 import { ChartsService } from './db/charts.service';
 import { ConnectionsService } from './db/connections.service';
 import { DashboardsService } from './db/dashboards.service';

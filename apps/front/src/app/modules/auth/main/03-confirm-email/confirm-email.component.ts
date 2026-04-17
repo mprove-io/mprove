@@ -11,10 +11,10 @@ import { LOCAL_STORAGE_TOKEN } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
+import type {
   ToBackendConfirmUserEmailRequestPayload,
   ToBackendConfirmUserEmailResponse
-} from '#common/interfaces/to-backend/users/to-backend-confirm-user-email';
+} from '#common/zod/to-backend/users/to-backend-confirm-user-email';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { AuthService } from '#front/app/services/auth.service';

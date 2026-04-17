@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config.js';
+import {
+  ToBackendDeleteSessionRequestDto,
+  ToBackendDeleteSessionResponseDto
+} from '#backend/controllers/sessions/delete-session/delete-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -27,7 +32,6 @@ import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { getRetryOption } from '#backend/functions/get-retry-option.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
@@ -44,14 +48,14 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { ToBackendDeleteSessionRequest } from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   ToDiskDeleteDevRepoRequest,
   ToDiskDeleteDevRepoResponse
-} from '#common/interfaces/to-disk/03-repos/to-disk-delete-dev-repo';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/03-repos/to-disk-delete-dev-repo';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Sessions')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteSessionController {
@@ -69,10 +73,19 @@ export class DeleteSessionController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteSession)
-  async deleteSession(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteSessionRequest = request.body;
-    let { traceId } = reqValid.info;
-    let { sessionId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'DeleteSession',
+    description: 'Delete a session'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteSessionResponseDto
+  })
+  async deleteSession(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteSessionRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { sessionId } = body.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId

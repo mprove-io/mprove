@@ -1,9 +1,13 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import {
+  ToBackendGetSessionProviderModelsRequestDto,
+  ToBackendGetSessionProviderModelsResponseDto
+} from '#backend/controllers/sessions/get-session-provider-models/get-session-provider-models.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { EditorModelsService } from '#backend/services/editor/editor-models.service';
@@ -12,12 +16,10 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendGetSessionProviderModelsRequest,
-  ToBackendGetSessionProviderModelsResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
+import type { ToBackendGetSessionProviderModelsResponsePayload } from '#common/zod/to-backend/sessions/to-backend-get-session-provider-models';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Sessions')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetSessionProviderModelsController {
@@ -29,12 +31,18 @@ export class GetSessionProviderModelsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetSessionProviderModels)
+  @ApiOperation({
+    summary: 'GetSessionProviderModels',
+    description: 'List available LLM provider models'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetSessionProviderModelsResponseDto
+  })
   async getSessionProviderModels(
     @AttachUser() user: UserTab,
-    @Req() request: any
+    @Body() body: ToBackendGetSessionProviderModelsRequestDto
   ) {
-    let reqValid: ToBackendGetSessionProviderModelsRequest = request.body;
-    let { sessionTypes, projectId, forceLoadFromCache } = reqValid.payload;
+    let { sessionTypes, projectId, forceLoadFromCache } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

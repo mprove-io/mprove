@@ -22,11 +22,11 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { Chart } from '#common/interfaces/blockml/chart';
-import {
+import type { Chart } from '#common/zod/blockml/chart';
+import type {
   ToBackendSaveModifyChartRequestPayload,
   ToBackendSaveModifyChartResponse
-} from '#common/interfaces/to-backend/charts/to-backend-save-modify-chart';
+} from '#common/zod/to-backend/charts/to-backend-save-modify-chart';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';

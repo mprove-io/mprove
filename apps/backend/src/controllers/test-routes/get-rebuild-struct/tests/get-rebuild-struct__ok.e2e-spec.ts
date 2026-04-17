@@ -13,14 +13,14 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import { BaseProject } from '#common/interfaces/backend/base-project';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
-import { ToBackendGetRebuildStructRequest } from '#common/interfaces/to-backend/test-routes/to-backend-get-rebuild-struct';
-import { ToBlockmlRebuildStructResponse } from '#common/interfaces/to-blockml/api/to-blockml-rebuild-struct';
-import {
+import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { ToBackendGetRebuildStructRequest } from '#common/zod/to-backend/test-routes/to-backend-get-rebuild-struct';
+import type { ToBlockmlRebuildStructResponse } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
+import type {
   ToDiskSeedProjectRequest,
   ToDiskSeedProjectResponse
-} from '#common/interfaces/to-disk/08-seed/to-disk-seed-project';
+} from '#common/zod/to-disk/08-seed/to-disk-seed-project';
 
 let testId = 'get-rebuild-struct__ok';
 

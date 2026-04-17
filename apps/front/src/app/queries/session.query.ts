@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
-import { SessionApi } from '#common/interfaces/backend/session-api';
+import type { SessionApi } from '#common/zod/backend/session-api';
 import { BaseQuery } from './base.query';
 
-export class SessionState extends SessionApi {}
+export type SessionState = SessionApi;
 
 let sessionState: SessionState = {
   sessionId: undefined,

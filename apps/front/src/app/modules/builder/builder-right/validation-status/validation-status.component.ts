@@ -3,10 +3,10 @@ import { take, tap } from 'rxjs/operators';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendValidateFilesRequestPayload,
   ToBackendValidateFilesResponse
-} from '#common/interfaces/to-backend/files/to-backend-validate-files';
+} from '#common/zod/to-backend/files/to-backend-validate-files';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';

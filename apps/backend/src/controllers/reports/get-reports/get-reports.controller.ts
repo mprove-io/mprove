@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { and, eq, inArray } from 'drizzle-orm';
+import {
+  ToBackendGetReportsRequestDto,
+  ToBackendGetReportsResponseDto
+} from '#backend/controllers/reports/get-reports/get-reports.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -9,7 +14,6 @@ import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -23,12 +27,10 @@ import { TabService } from '#backend/services/tab.service';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendGetReportsRequest,
-  ToBackendGetReportsResponsePayload
-} from '#common/interfaces/to-backend/reports/to-backend-get-reports';
+import type { ToBackendGetReportsResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-reports';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Reports')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetReportsController {
   constructor(
@@ -46,10 +48,18 @@ export class GetReportsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetReports)
-  async getReports(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetReportsRequest = request.body;
-
-    let { projectId, repoId, branchId, envId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetReports',
+    description: 'List reports'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetReportsResponseDto
+  })
+  async getReports(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetReportsRequestDto
+  ) {
+    let { projectId, repoId, branchId, envId } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

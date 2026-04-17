@@ -9,7 +9,7 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ConnectionLt, ConnectionSt } from '#common/interfaces/st-lt';
+import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
 
 export const connectionsTable = pgTable(
   'connections',

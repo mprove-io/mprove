@@ -5,12 +5,8 @@ import { zFilter } from '#common/zod/blockml/filter';
 import { zMconfigChart } from '#common/zod/blockml/mconfig-chart';
 import { zSorting } from '#common/zod/blockml/sorting';
 import { zStorePart } from '#common/zod/blockml/store-part';
+import { zTimezone } from '#common/zod/z-timezone';
 
-// TODO: `parentId`, `dateRangeIncludesRightSide`, `storePart`,
-// `modelFilePath`, `malloyQueryStable`, `malloyQueryExtra`, `sorts` tightened
-// (removed `.nullish()`) to match the `Mconfig` interface's required TS
-// fields so zod-typed mconfigs flow into node-common helpers (makeMalloyQuery)
-// without extra `as any` casts. Revisit once node-common migrates to zod.
 export let zMconfig = z
   .object({
     structId: z.string(),
@@ -19,18 +15,18 @@ export let zMconfig = z
     modelId: z.string(),
     modelType: z.enum(ModelTypeEnum),
     parentType: z.enum(MconfigParentTypeEnum),
-    parentId: z.string(),
-    dateRangeIncludesRightSide: z.boolean(),
-    storePart: zStorePart,
+    parentId: z.string().nullish(),
+    dateRangeIncludesRightSide: z.boolean().nullish(),
+    storePart: zStorePart.nullish(),
     modelLabel: z.string(),
-    modelFilePath: z.string(),
-    malloyQueryStable: z.string(),
-    malloyQueryExtra: z.string(),
+    modelFilePath: z.string().nullish(),
+    malloyQueryStable: z.string().nullish(),
+    malloyQueryExtra: z.string().nullish(),
     compiledQuery: z.any(),
     select: z.array(z.string()),
     sortings: z.array(zSorting),
-    sorts: z.string(),
-    timezone: z.string(),
+    sorts: z.string().nullish(),
+    timezone: zTimezone,
     limit: z.number(),
     filters: z.array(zFilter),
     chart: zMconfigChart,

@@ -1,17 +1,22 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateEditorSessionRequestDto,
+  ToBackendCreateEditorSessionResponseDto
+} from '#backend/controllers/sessions/create-editor-session/create-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -27,7 +32,6 @@ import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -53,21 +57,19 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { makeSessionId } from '#common/functions/make-session-id';
-import {
-  ToBackendCreateEditorSessionRequest,
-  ToBackendCreateEditorSessionResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-create-editor-session';
-import {
+import { ServerError } from '#common/models/server-error';
+import type { ToBackendCreateEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
+import type {
   ToDiskCreateDevRepoRequest,
   ToDiskCreateDevRepoResponse
-} from '#common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/03-repos/to-disk-create-dev-repo';
 import { buildSessionApiKey } from '#node-common/functions/api-key/build-session-api-key';
 import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 
 const { forEachSeries } = pIteration;
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Sessions')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateEditorSessionController {
@@ -90,8 +92,17 @@ export class CreateEditorSessionController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateEditorSession)
-  async createEditorSession(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateEditorSessionRequest = request.body;
+  @ApiOperation({
+    summary: 'CreateEditorSession',
+    description: 'Create a new editor session'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateEditorSessionResponseDto
+  })
+  async createEditorSession(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateEditorSessionRequestDto
+  ) {
     let {
       projectId,
       sandboxType,
@@ -105,7 +116,7 @@ export class CreateEditorSessionController {
       messageId,
       partId,
       useCodex
-    } = reqValid.payload;
+    } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -311,7 +322,7 @@ export class CreateEditorSessionController {
       project: project,
       envId: envId,
       initialBranch: initialBranch,
-      traceId: reqValid.info.traceId
+      traceId: body.info.traceId
     });
     // console.log(
     //   `createSessionRepoAsync took ${(Date.now() - createSessionRepoStart) / 1000}s`

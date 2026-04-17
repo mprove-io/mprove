@@ -8,7 +8,7 @@ import { MODELS_LIST_PAGE_TITLE } from '#common/constants/page-titles';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { ModelX } from '#common/interfaces/backend/model-x';
+import type { ModelX } from '#common/zod/backend/model-x';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ModelQuery } from '#front/app/queries/model.query';
 import { ModelsQuery } from '#front/app/queries/models.query';

@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendRevertRepoToLastCommitRequestDto,
+  ToBackendRevertRepoToLastCommitResponseDto
+} from '#backend/controllers/repos/revert-repo-to-last-commit/revert-repo-to-last-commit.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -22,7 +27,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -38,16 +42,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendRevertRepoToLastCommitRequest,
-  ToBackendRevertRepoToLastCommitResponsePayload
-} from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-last-commit';
-import {
+import type { ToBackendRevertRepoToLastCommitResponsePayload } from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
+import type {
   ToDiskRevertRepoToLastCommitRequest,
   ToDiskRevertRepoToLastCommitResponse
-} from '#common/interfaces/to-disk/03-repos/to-disk-revert-repo-to-last-commit';
+} from '#common/zod/to-disk/03-repos/to-disk-revert-repo-to-last-commit';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Repos')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class RevertRepoToLastCommitController {
@@ -68,14 +70,19 @@ export class RevertRepoToLastCommitController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit)
+  @ApiOperation({
+    summary: 'RevertRepoToLastCommit',
+    description: 'Discard uncommitted changes and revert to the last commit'
+  })
+  @ApiOkResponse({
+    type: ToBackendRevertRepoToLastCommitResponseDto
+  })
   async revertRepoToLastCommit(
     @AttachUser() user: UserTab,
-    @Req() request: any
+    @Body() body: ToBackendRevertRepoToLastCommitRequestDto
   ) {
-    let reqValid: ToBackendRevertRepoToLastCommitRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, envId } = reqValid.payload;
+    let { traceId } = body.info;
+    let { projectId, repoId, branchId, envId } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -113,7 +120,7 @@ export class RevertRepoToLastCommitController {
       {
         info: {
           name: ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
-          traceId: reqValid.info.traceId
+          traceId: body.info.traceId
         },
         payload: {
           orgId: project.orgId,

@@ -12,10 +12,10 @@ import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendGetSessionProviderModelsRequestPayload,
   ToBackendGetSessionProviderModelsResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
+} from '#common/zod/to-backend/sessions/to-backend-get-session-provider-models';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';

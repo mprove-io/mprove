@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { eq } from 'drizzle-orm';
+import {
+  ToBackendGetChartsRequestDto,
+  ToBackendGetChartsResponseDto
+} from '#backend/controllers/charts/get-charts/get-charts.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -8,7 +13,6 @@ import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { ChartsService } from '#backend/services/db/charts.service';
@@ -21,13 +25,11 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetChartsRequest,
-  ToBackendGetChartsResponsePayload
-} from '#common/interfaces/to-backend/charts/to-backend-get-charts';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendGetChartsResponsePayload } from '#common/zod/to-backend/charts/to-backend-get-charts';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Charts')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetChartsController {
   constructor(
@@ -45,10 +47,18 @@ export class GetChartsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetCharts)
-  async getCharts(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetChartsRequest = request.body;
-
-    let { projectId, repoId, branchId, envId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetCharts',
+    description: 'List charts the user can access'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetChartsResponseDto
+  })
+  async getCharts(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetChartsRequestDto
+  ) {
+    let { projectId, repoId, branchId, envId } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

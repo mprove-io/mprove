@@ -3,7 +3,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { MyResponse } from '#common/interfaces/to/my-response';
+import type { MyResponse } from '#common/zod/to/my-response';
 import { logToConsole } from './log-to-console';
 import { wrapError } from './wrap-error';
 

@@ -13,7 +13,7 @@ export let zToBackendRunQueriesDryRequestPayload = z
     repoId: z.string(),
     branchId: z.string(),
     envId: z.string(),
-    mconfigIds: z.array(z.string()),
+    mconfigIds: z.array(z.string()).min(1),
     dryId: z.string()
   })
   .meta({ id: 'ToBackendRunQueriesDryRequestPayload' });

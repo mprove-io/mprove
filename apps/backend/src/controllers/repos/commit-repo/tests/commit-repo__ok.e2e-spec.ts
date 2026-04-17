@@ -12,10 +12,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendCommitRepoRequest,
   ToBackendCommitRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
+} from '#common/zod/to-backend/repos/to-backend-commit-repo';
 
 let testId = 'backend-commit-repo__ok';
 

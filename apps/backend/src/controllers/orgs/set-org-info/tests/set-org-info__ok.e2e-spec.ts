@@ -10,10 +10,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendSetOrgInfoRequest,
   ToBackendSetOrgInfoResponse
-} from '#common/interfaces/to-backend/orgs/to-backend-set-org-info';
+} from '#common/zod/to-backend/orgs/to-backend-set-org-info';
 
 let testId = 'backend-set-org-info__ok';
 

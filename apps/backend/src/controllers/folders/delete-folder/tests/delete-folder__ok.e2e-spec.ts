@@ -12,10 +12,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendDeleteFolderRequest,
   ToBackendDeleteFolderResponse
-} from '#common/interfaces/to-backend/folders/to-backend-delete-folder';
+} from '#common/zod/to-backend/folders/to-backend-delete-folder';
 
 let testId = 'backend-delete-folder__ok';
 

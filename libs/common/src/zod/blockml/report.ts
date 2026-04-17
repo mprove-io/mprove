@@ -5,6 +5,7 @@ import { zFraction } from '#common/zod/blockml/fraction';
 import { zMconfigChart } from '#common/zod/blockml/mconfig-chart';
 import { zReportField } from '#common/zod/blockml/report-field';
 import { zRow } from '#common/zod/blockml/row';
+import { zTimezone } from '#common/zod/z-timezone';
 
 export let zReport = z
   .object({
@@ -17,7 +18,7 @@ export let zReport = z
     fields: z.array(zReportField),
     accessRoles: z.array(z.string()),
     title: z.string(),
-    timezone: z.string(),
+    timezone: zTimezone,
     timeSpec: z.enum(TimeSpecEnum),
     timeRangeFraction: zFraction,
     rangeStart: z.number().nullish(),

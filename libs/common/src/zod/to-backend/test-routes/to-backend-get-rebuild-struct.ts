@@ -3,8 +3,11 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { zMproveConfig } from '#common/zod/backend/mprove-config';
 import { zModel } from '#common/zod/blockml/model';
 import { zModelMetric } from '#common/zod/blockml/model-metric';
+import { zMyResponse } from '#common/zod/to/my-response';
+import { zResponseInfo } from '#common/zod/to/response-info';
 import { zToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 import { zToBackendRequestInfo } from '#common/zod/to-backend/to-backend-request-info';
+import { zToBlockmlRebuildStructResponsePayload } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
 
 export let zToBackendGetRebuildStructRequestPayload = z
   .object({
@@ -34,9 +37,34 @@ export let zToBackendGetRebuildStructRequest = zToBackendRequest
   })
   .meta({ id: 'ToBackendGetRebuildStructRequest' });
 
+export let zToBackendGetRebuildStructResponsePayload =
+  zToBlockmlRebuildStructResponsePayload;
+
+export let zToBackendGetRebuildStructResponseInfo = zResponseInfo
+  .extend({
+    path: z.literal(
+      `/${ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct}`
+    ),
+    method: z.literal('POST')
+  })
+  .meta({ id: 'ToBackendGetRebuildStructResponseInfo' });
+
+export let zToBackendGetRebuildStructResponse = zMyResponse
+  .extend({
+    info: zToBackendGetRebuildStructResponseInfo,
+    payload: zToBackendGetRebuildStructResponsePayload
+  })
+  .meta({ id: 'ToBackendGetRebuildStructResponse' });
+
 export type ToBackendGetRebuildStructRequestPayload = z.infer<
   typeof zToBackendGetRebuildStructRequestPayload
 >;
 export type ToBackendGetRebuildStructRequest = z.infer<
   typeof zToBackendGetRebuildStructRequest
+>;
+export type ToBackendGetRebuildStructResponsePayload = z.infer<
+  typeof zToBackendGetRebuildStructResponsePayload
+>;
+export type ToBackendGetRebuildStructResponse = z.infer<
+  typeof zToBackendGetRebuildStructResponse
 >;

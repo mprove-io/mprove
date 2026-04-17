@@ -8,20 +8,20 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeTrackChangeId } from '#common/functions/make-track-change-id';
-import { TileX } from '#common/interfaces/backend/tile-x';
-import { DashboardField } from '#common/interfaces/blockml/dashboard-field';
-import {
+import type { TileX } from '#common/zod/backend/tile-x';
+import type { DashboardField } from '#common/zod/blockml/dashboard-field';
+import type {
   ToBackendCreateDraftDashboardRequestPayload,
   ToBackendCreateDraftDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-create-draft-dashboard';
-import {
+} from '#common/zod/to-backend/dashboards/to-backend-create-draft-dashboard';
+import type {
   ToBackendDeleteDraftDashboardsRequestPayload,
   ToBackendDeleteDraftDashboardsResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-delete-draft-dashboards';
-import {
+} from '#common/zod/to-backend/dashboards/to-backend-delete-draft-dashboards';
+import type {
   ToBackendEditDraftDashboardRequestPayload,
   ToBackendEditDraftDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-edit-draft-dashboard';
+} from '#common/zod/to-backend/dashboards/to-backend-edit-draft-dashboard';
 import { DashboardQuery } from '../queries/dashboard.query';
 import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
 import { NavQuery, NavState } from '../queries/nav.query';

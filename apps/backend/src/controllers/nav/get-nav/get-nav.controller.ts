@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { and, eq, inArray } from 'drizzle-orm';
+import {
+  ToBackendGetNavRequestDto,
+  ToBackendGetNavResponseDto
+} from '#backend/controllers/nav/get-nav/get-nav.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -13,7 +18,6 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
@@ -26,19 +30,17 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { Member } from '#common/interfaces/backend/member';
-import { StructX } from '#common/interfaces/backend/struct-x';
-import { Repo } from '#common/interfaces/disk/repo';
-import {
-  ToBackendGetNavRequest,
-  ToBackendGetNavResponsePayload
-} from '#common/interfaces/to-backend/nav/to-backend-get-nav';
-import {
+import type { Member } from '#common/zod/backend/member';
+import type { StructX } from '#common/zod/backend/struct-x';
+import type { Repo } from '#common/zod/disk/repo';
+import type { ToBackendGetNavResponsePayload } from '#common/zod/to-backend/nav/to-backend-get-nav';
+import type {
   ToDiskGetCatalogNodesRequest,
   ToDiskGetCatalogNodesResponse
-} from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-nodes';
+} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-nodes';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Nav')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetNavController {
   constructor(
@@ -53,10 +55,18 @@ export class GetNavController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetNav)
-  async getNav(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetNavRequest = request.body;
-
-    let { orgId, projectId, getRepo } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetNav',
+    description: 'Get initial navigation context for the current user'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetNavResponseDto
+  })
+  async getNav(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetNavRequestDto
+  ) {
+    let { orgId, projectId, getRepo } = body.payload;
 
     let members = await this.db.drizzle.query.membersTable.findMany({
       where: eq(membersTable.memberId, user.userId)
@@ -172,7 +182,7 @@ export class GetNavController {
       let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
         info: {
           name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
-          traceId: reqValid.info.traceId
+          traceId: body.info.traceId
         },
         payload: {
           orgId: resultProject.orgId,

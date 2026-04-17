@@ -20,7 +20,7 @@ import { TabService } from '#backend/services/tab.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeCopy } from '#common/functions/make-copy';
-import type { ToBackendGetReportResponsePayload } from '#common/interfaces/to-backend/reports/to-backend-get-report';
+import type { ToBackendGetReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-report';
 
 @Injectable()
 export class QueryInfoReportService {

@@ -11,7 +11,7 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
 
-import { ErrorData } from '#common/interfaces/front/error-data';
+import type { ErrorData } from '#common/zod/front/error-data';
 import { UiService } from '#front/app/services/ui.service';
 
 @Component({

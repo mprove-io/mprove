@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteOrgRequestDto,
+  ToBackendDeleteOrgResponseDto
+} from '#backend/controllers/orgs/delete-org/delete-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -24,20 +29,19 @@ import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { ToBackendDeleteOrgRequest } from '#common/interfaces/to-backend/orgs/to-backend-delete-org';
-import {
+import type {
   ToDiskDeleteOrgRequest,
   ToDiskDeleteOrgResponse
-} from '#common/interfaces/to-disk/01-orgs/to-disk-delete-org';
+} from '#common/zod/to-disk/01-orgs/to-disk-delete-org';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Orgs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteOrgController {
@@ -51,10 +55,18 @@ export class DeleteOrgController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteOrg)
-  async deleteOrg(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteOrgRequest = request.body;
-
-    let { orgId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'DeleteOrg',
+    description: 'Delete an organization and all its projects'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteOrgResponseDto
+  })
+  async deleteOrg(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteOrgRequestDto
+  ) {
+    let { orgId } = body.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -66,7 +78,7 @@ export class DeleteOrgController {
     let toDiskDeleteOrgRequest: ToDiskDeleteOrgRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: org.orgId

@@ -17,10 +17,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetChartsRequest,
   ToBackendGetChartsResponse
-} from '#common/interfaces/to-backend/charts/to-backend-get-charts';
+} from '#common/zod/to-backend/charts/to-backend-get-charts';
 
 let testId = 'backend-get-charts__ok';
 

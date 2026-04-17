@@ -12,10 +12,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendCreateProjectRequest,
   ToBackendCreateProjectResponse
-} from '#common/interfaces/to-backend/projects/to-backend-create-project';
+} from '#common/zod/to-backend/projects/to-backend-create-project';
 
 let testId = 'backend-create-project__project-already-exists';
 

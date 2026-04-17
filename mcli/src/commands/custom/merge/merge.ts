@@ -6,11 +6,11 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   ToBackendMergeRepoRequestPayload,
   ToBackendMergeRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-merge-repo';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-backend/repos/to-backend-merge-repo';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';

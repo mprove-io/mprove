@@ -11,17 +11,17 @@ import {
 } from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { Env } from '#common/interfaces/backend/env';
-import { EnvUser } from '#common/interfaces/backend/env-user';
-import { Ev } from '#common/interfaces/backend/ev';
-import {
+import type { Env } from '#common/zod/backend/env';
+import type { EnvUser } from '#common/zod/backend/env-user';
+import type { Ev } from '#common/zod/backend/ev';
+import type {
   ToBackendDeleteEnvUserRequestPayload,
   ToBackendDeleteEnvUserResponse
-} from '#common/interfaces/to-backend/envs/to-backend-delete-env-user';
-import {
+} from '#common/zod/to-backend/envs/to-backend-delete-env-user';
+import type {
   ToBackendEditEnvFallbacksRequestPayload,
   ToBackendEditEnvFallbacksResponse
-} from '#common/interfaces/to-backend/envs/to-backend-edit-env-fallbacks';
+} from '#common/zod/to-backend/envs/to-backend-edit-env-fallbacks';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

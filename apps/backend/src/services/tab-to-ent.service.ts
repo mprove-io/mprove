@@ -56,7 +56,7 @@ import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { DbEntsPack } from '#backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import { isDefined } from '#common/functions/is-defined';
-import {
+import type {
   AvatarLt,
   AvatarSt,
   BranchLt,
@@ -107,7 +107,7 @@ import {
   UconfigSt,
   UserLt,
   UserSt
-} from '#common/interfaces/st-lt';
+} from '#common/zod/st-lt';
 import { encryptData } from '#node-common/functions/encrypt-decrypt';
 import { HashService } from './hash.service';
 

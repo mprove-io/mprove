@@ -1,5 +1,5 @@
-import type { MproveValidationError } from '#common/interfaces/backend/state/mprove-validation-error';
-import type { BmlError } from '#common/interfaces/blockml/bml-error';
+import type { MproveValidationError } from '#common/zod/backend/state/mprove-validation-error';
+import type { BmlError } from '#common/zod/blockml/bml-error';
 
 export function mapBmlErrorsToMproveValidationErrors(item: {
   errors: BmlError[];

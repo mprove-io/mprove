@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { and, eq, inArray, or } from 'drizzle-orm';
+import {
+  ToBackendGetConnectionsRequestDto,
+  ToBackendGetConnectionsResponseDto
+} from '#backend/controllers/connections/get-connections/get-connections.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -9,7 +14,6 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { ConnectionsService } from '#backend/services/db/connections.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
@@ -18,12 +22,10 @@ import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendGetConnectionsRequest,
-  ToBackendGetConnectionsResponsePayload
-} from '#common/interfaces/to-backend/connections/to-backend-get-connections';
+import type { ToBackendGetConnectionsResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connections';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Connections')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetConnectionsController {
   constructor(
@@ -36,10 +38,18 @@ export class GetConnectionsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetConnections)
-  async getConnections(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetConnectionsRequest = request.body;
-
-    let { projectId, envId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetConnections',
+    description: 'Get project connections for an environment'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetConnectionsResponseDto
+  })
+  async getConnections(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetConnectionsRequestDto
+  ) {
+    let { projectId, envId } = body.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

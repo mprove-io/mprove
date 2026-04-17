@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateDraftDashboardRequestDto,
+  ToBackendCreateDraftDashboardResponseDto
+} from '#backend/controllers/dashboards/create-draft-dashboard/create-draft-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -21,7 +26,6 @@ import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -48,15 +52,13 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { TileX } from '#common/interfaces/backend/tile-x';
-import { DiskCatalogFile } from '#common/interfaces/disk/disk-catalog-file';
-import {
-  ToBackendCreateDraftDashboardRequest,
-  ToBackendCreateDraftDashboardResponsePayload
-} from '#common/interfaces/to-backend/dashboards/to-backend-create-draft-dashboard';
 import { ServerError } from '#common/models/server-error';
+import type { TileX } from '#common/zod/backend/tile-x';
+import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
+import type { ToBackendCreateDraftDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-create-draft-dashboard';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Dashboards')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateDraftDashboardController {
@@ -81,10 +83,18 @@ export class CreateDraftDashboardController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard)
-  async createDraftDashboard(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateDraftDashboardRequest = request.body;
-
-    let { traceId } = reqValid.info;
+  @ApiOperation({
+    summary: 'CreateDraftDashboard',
+    description: 'Create a draft dashboard from an existing dashboard'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateDraftDashboardResponseDto
+  })
+  async createDraftDashboard(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateDraftDashboardRequestDto
+  ) {
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -97,7 +107,7 @@ export class CreateDraftDashboardController {
       timezone,
       isQueryCache,
       cachedQueryMconfigIds
-    } = reqValid.payload;
+    } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

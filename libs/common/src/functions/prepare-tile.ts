@@ -2,12 +2,12 @@ import { DEFAULT_LIMIT, MALLOY_FILTER_ANY } from '#common/constants/top';
 import { UI_CHART_TYPES } from '#common/constants/ui-chart-types';
 import { ControlClassEnum } from '#common/enums/control-class.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { MconfigX } from '#common/interfaces/backend/mconfig-x';
-import { TileX } from '#common/interfaces/backend/tile-x';
-import { FileFraction } from '#common/interfaces/blockml/internal/file-fraction';
-import { FileFractionControl } from '#common/interfaces/blockml/internal/file-fraction-control';
-import { FilePartTile } from '#common/interfaces/blockml/internal/file-part-tile';
-import { FileTileParameter } from '#common/interfaces/blockml/internal/file-tile-parameter';
+import type { MconfigX } from '#common/zod/backend/mconfig-x';
+import type { TileX } from '#common/zod/backend/tile-x';
+import type { FileFraction } from '#common/zod/blockml/internal/file-fraction';
+import type { FileFractionControl } from '#common/zod/blockml/internal/file-fraction-control';
+import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
+import type { FileTileParameter } from '#common/zod/blockml/internal/file-tile-parameter';
 import { isDefined } from './is-defined';
 import { toFileChartOptions } from './to-file-chart-options';
 

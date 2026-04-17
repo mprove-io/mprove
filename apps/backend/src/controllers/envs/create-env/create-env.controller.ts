@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateEnvRequestDto,
+  ToBackendCreateEnvResponseDto
+} from '#backend/controllers/envs/create-env/create-env.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -21,7 +26,6 @@ import type {
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
@@ -30,12 +34,10 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendCreateEnvRequest,
-  ToBackendCreateEnvResponsePayload
-} from '#common/interfaces/to-backend/envs/to-backend-create-env';
+import type { ToBackendCreateEnvResponsePayload } from '#common/zod/to-backend/envs/to-backend-create-env';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Envs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateEnvController {
@@ -51,10 +53,18 @@ export class CreateEnvController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateEnv)
-  async createEnv(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateEnvRequest = request.body;
-
-    let { projectId, envId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'CreateEnv',
+    description: 'Create a new environment for a project'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateEnvResponseDto
+  })
+  async createEnv(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateEnvRequestDto
+  ) {
+    let { projectId, envId } = body.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

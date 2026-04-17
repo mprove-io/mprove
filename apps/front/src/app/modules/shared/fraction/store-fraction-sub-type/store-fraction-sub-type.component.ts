@@ -15,11 +15,11 @@ import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { FractionControl } from '#common/interfaces/blockml/fraction-control';
-import { FractionSubTypeOption } from '#common/interfaces/blockml/fraction-sub-type-option';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { FractionControl } from '#common/zod/blockml/fraction-control';
+import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
 
 @Component({
   standalone: false,

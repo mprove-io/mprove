@@ -19,10 +19,10 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeTrackChangeId } from '#common/functions/make-track-change-id';
-import {
+import type {
   ToBackendGetDashboardRequestPayload,
   ToBackendGetDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
+} from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardQuery } from '../queries/dashboard.query';
 import { MemberQuery } from '../queries/member.query';

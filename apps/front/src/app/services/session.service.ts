@@ -6,19 +6,19 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { splitModel } from '#common/functions/split-model';
-import { SessionEventApi } from '#common/interfaces/backend/session-event-api';
-import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
-import { SessionPartApi } from '#common/interfaces/backend/session-part-api';
-import { ErrorData } from '#common/interfaces/front/error-data';
-import {
+import type { SessionEventApi } from '#common/zod/backend/session-event-api';
+import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
+import type { SessionPartApi } from '#common/zod/backend/session-part-api';
+import type { ErrorData } from '#common/zod/front/error-data';
+import type {
   ToBackendCreateSessionSseTicketRequestPayload,
   ToBackendCreateSessionSseTicketResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-create-session-sse-ticket';
-import {
+} from '#common/zod/to-backend/sessions/to-backend-create-session-sse-ticket';
+import type {
   ToBackendGetSessionRequestPayload,
   ToBackendGetSessionResponse,
   ToBackendGetSessionResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-get-session';
+} from '#common/zod/to-backend/sessions/to-backend-get-session';
 import { binarySearch } from '#front/app/functions/binary-search';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
@@ -475,7 +475,7 @@ export class SessionService {
       );
       if (this.reconnectCounter > this.SSE_MAX_RECONNECTS) {
         this.closeSse();
-        let errorData = new ErrorData();
+        let errorData: ErrorData = {};
         errorData.message = 'Session connection lost';
         errorData.description = 'Try to reload session...';
         errorData.leftButtonText = 'Ok';

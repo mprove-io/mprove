@@ -24,8 +24,8 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { prepareTile } from '#common/functions/prepare-tile';
 import { toYaml } from '#common/functions/to-yaml';
-import { ChartX } from '#common/interfaces/backend/chart-x';
-import { FilePartTile } from '#common/interfaces/blockml/internal/file-part-tile';
+import type { ChartX } from '#common/zod/backend/chart-x';
+import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import {

@@ -125,10 +125,7 @@ export async function fetchSql<T extends dcType>(
           filterBricks: tile.combinedFilters[fieldId],
           result: modelField.result,
           isGetTimeRange: false,
-          // TODO: drop `as any` once node-common helpers migrate to zod types
-          // (zod nullish fields infer `T | null | undefined`, incompatible
-          // with interface `field?: T`)
-          fractions: fractions as any
+          fractions: fractions
         });
 
         mFilters.push({
@@ -148,11 +145,8 @@ export async function fetchSql<T extends dcType>(
             structId: structId,
             mconfigParentType: mconfigParentType,
             mconfigParentId: tile.mconfigParentId,
-            // TODO: drop `as any` once node-common helpers migrate to zod types
-            // (zod nullish fields infer `T | null | undefined`, incompatible
-            // with interface `field?: T`)
-            model: apiModel as any,
-            mconfig: mconfig as any,
+            model: apiModel,
+            mconfig: mconfig,
             malloyConnections: item.malloyConnections,
             queryOperations: [
               ...tile.select.map(x => {
@@ -182,8 +176,7 @@ export async function fetchSql<T extends dcType>(
                 };
                 return op;
               })
-              // TODO: drop `as any` once node-common helpers migrate to zod types
-            ] as any
+            ]
           })
       });
 

@@ -14,7 +14,7 @@ import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { Fraction } from '#common/interfaces/blockml/fraction';
+import type { Fraction } from '#common/zod/blockml/fraction';
 import { getMalloyFilterBooleanFractions } from './get-malloy-filter-boolean-fractions';
 import { getMalloyFilterNumberFractions } from './get-malloy-filter-number-fractions';
 import { getMalloyFilterStringFractions } from './get-malloy-filter-string-fractions';

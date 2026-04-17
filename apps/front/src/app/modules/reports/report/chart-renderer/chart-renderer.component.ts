@@ -5,9 +5,9 @@ import { DEFAULT_CHART_SERIES_LINE } from '#common/constants/mconfig-chart';
 import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { makeCopy } from '#common/functions/make-copy';
-import { MconfigChartSeries } from '#common/interfaces/blockml/mconfig-chart-series';
-import { RowChange } from '#common/interfaces/blockml/row-change';
-import { DataRow } from '#common/interfaces/front/data-row';
+import type { MconfigChartSeries } from '#common/zod/blockml/mconfig-chart-series';
+import type { RowChange } from '#common/zod/blockml/row-change';
+import type { DataRow } from '#common/zod/front/data-row';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportService } from '#front/app/services/report.service';
 

@@ -1,17 +1,22 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSpecialRebuildStructsRequestDto,
+  ToBackendSpecialRebuildStructsResponseDto
+} from '#backend/controllers/special/special-rebuild-structs/special-rebuild-structs.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -24,7 +29,6 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RpcService } from '#backend/services/rpc.service';
@@ -38,19 +42,19 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { isUndefined } from '#common/functions/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   BridgeItem,
-  ToBackendSpecialRebuildStructsRequest,
   ToBackendSpecialRebuildStructsResponsePayload
-} from '#common/interfaces/to-backend/special/to-backend-special-rebuild-structs';
-import {
+} from '#common/zod/to-backend/special/to-backend-special-rebuild-structs';
+import type {
   ToDiskGetCatalogFilesRequest,
   ToDiskGetCatalogFilesResponse
-} from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-files';
 
+@ApiTags('Special')
 @SkipJwtCheck()
-@UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
+@UseGuards(ThrottlerIpGuard)
 @Throttle({
   '1s': {
     limit: 3 * THROTTLE_MULTIPLIER
@@ -78,12 +82,18 @@ export class SpecialRebuildStructsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStructs)
-  async specialRebuildStructs(@Req() request: any) {
-    let reqValid: ToBackendSpecialRebuildStructsRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { specialKey, userIds, skipRebuild, overrideTimezone } =
-      reqValid.payload;
+  @ApiOperation({
+    summary: 'SpecialRebuildStructs',
+    description: 'Rebuild state for projects of specified users'
+  })
+  @ApiOkResponse({
+    type: ToBackendSpecialRebuildStructsResponseDto
+  })
+  async specialRebuildStructs(
+    @Body() body: ToBackendSpecialRebuildStructsRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { specialKey, userIds, skipRebuild, overrideTimezone } = body.payload;
 
     let envSpecialKey = this.cs.get<BackendConfig['specialKey']>('specialKey');
 
@@ -158,7 +168,7 @@ export class SpecialRebuildStructsController {
         let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
           info: {
             name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-            traceId: reqValid.info.traceId
+            traceId: body.info.traceId
           },
           payload: {
             orgId: project.orgId,

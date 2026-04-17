@@ -10,10 +10,10 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendSetAvatarRequest,
   ToBackendSetAvatarResponse
-} from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
+} from '#common/zod/to-backend/avatars/to-backend-set-avatar';
 
 let testId = 'backend-set-avatar__wrong-request-params';
 
@@ -80,6 +80,8 @@ test('1', async t => {
     }
 
     assert.equal(resp.info.error.message, ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
+    assert.equal(resp.info.error.displayData[0].code, 'invalid_type');
+    assert.equal(resp.info.error.displayData[0].path, 'payload.avatarSmall');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

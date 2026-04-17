@@ -6,8 +6,8 @@ import type {
   SessionStatus,
   Todo
 } from '@opencode-ai/sdk/v2';
-import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
-import { SessionPartApi } from '#common/interfaces/backend/session-part-api';
+import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
+import type { SessionPartApi } from '#common/zod/backend/session-part-api';
 import { BaseQuery } from './base.query';
 
 export class SessionBundleState {

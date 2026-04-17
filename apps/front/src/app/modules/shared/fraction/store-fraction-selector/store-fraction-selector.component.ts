@@ -10,9 +10,9 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { makeCopy } from '#common/functions/make-copy';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { FractionControl } from '#common/interfaces/blockml/fraction-control';
-import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { FractionControl } from '#common/zod/blockml/fraction-control';
+import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
 
 @Component({
   standalone: false,

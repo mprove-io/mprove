@@ -13,11 +13,11 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ReportX } from '#common/interfaces/backend/report-x';
-import {
+import type { ReportX } from '#common/zod/backend/report-x';
+import type {
   ToBackendDeleteReportRequestPayload,
   ToBackendDeleteReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-delete-report';
+} from '#common/zod/to-backend/reports/to-backend-delete-report';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { ApiService } from '#front/app/services/api.service';

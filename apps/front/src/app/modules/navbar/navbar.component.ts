@@ -16,11 +16,11 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { Member } from '#common/interfaces/backend/member';
-import {
+import type { Member } from '#common/zod/backend/member';
+import type {
   ToBackendCheckLastNavRequestPayload,
   ToBackendCheckLastNavResponse
-} from '#common/interfaces/to-backend/nav/to-backend-check-last-nav';
+} from '#common/zod/to-backend/nav/to-backend-check-last-nav';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';

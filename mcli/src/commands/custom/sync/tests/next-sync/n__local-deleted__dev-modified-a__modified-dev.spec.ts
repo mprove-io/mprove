@@ -10,11 +10,11 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendSaveFileRequestPayload,
   ToBackendSaveFileResponse
-} from '#common/interfaces/to-backend/files/to-backend-save-file';
-import { ToBackendCloneTestRepoResponse } from '#common/interfaces/to-backend/test-routes/to-backend-clone-test-repo';
+} from '#common/zod/to-backend/files/to-backend-save-file';
+import type { ToBackendCloneTestRepoResponse } from '#common/zod/to-backend/test-routes/to-backend-clone-test-repo';
 import { getConfig } from '#mcli/config/get.config';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';

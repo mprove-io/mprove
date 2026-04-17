@@ -15,7 +15,7 @@ export let zToBackendRunRequestPayload = z
     repoId: z.string(),
     branchId: z.string(),
     envId: z.string(),
-    concurrency: z.number().nullish(),
+    concurrency: z.number().int().positive().nullish(),
     wait: z.boolean(),
     sleep: z.number().nullish(),
     dashboardIds: z.string().nullish(),

@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteFileRequestDto,
+  ToBackendDeleteFileResponseDto
+} from '#backend/controllers/files/delete-file/delete-file.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -22,7 +27,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -38,16 +42,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendDeleteFileRequest,
-  ToBackendDeleteFileResponsePayload
-} from '#common/interfaces/to-backend/files/to-backend-delete-file';
-import {
+import type { ToBackendDeleteFileResponsePayload } from '#common/zod/to-backend/files/to-backend-delete-file';
+import type {
   ToDiskDeleteFileRequest,
   ToDiskDeleteFileResponse
-} from '#common/interfaces/to-disk/07-files/to-disk-delete-file';
+} from '#common/zod/to-disk/07-files/to-disk-delete-file';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Files')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteFileController {
@@ -68,11 +70,19 @@ export class DeleteFileController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteFile)
-  async deleteFile(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteFileRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, envId, fileNodeId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'DeleteFile',
+    description: 'Delete a file'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteFileResponseDto
+  })
+  async deleteFile(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteFileRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { projectId, repoId, branchId, envId, fileNodeId } = body.payload;
 
     await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -109,7 +119,7 @@ export class DeleteFileController {
     let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

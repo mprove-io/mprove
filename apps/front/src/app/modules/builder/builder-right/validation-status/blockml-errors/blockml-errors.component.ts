@@ -22,18 +22,13 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { BmlError } from '#common/interfaces/blockml/bml-error';
-import { DiskFileLine } from '#common/interfaces/disk/disk-file-line';
+import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
+import type { BmlErrorExtra } from '#common/zod/front/bml-error-extra';
 import { getFileExtension } from '#front/app/functions/get-file-extension';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { NavigateService } from '#front/app/services/navigate.service';
-
-export class BmlErrorExtra extends BmlError {
-  errorExt: any;
-  sortOrder: number;
-}
 
 export class BmlErrorsNode {
   title: string;

@@ -12,10 +12,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendDeleteMemberRequest,
   ToBackendDeleteMemberResponse
-} from '#common/interfaces/to-backend/members/to-backend-delete-member';
+} from '#common/zod/to-backend/members/to-backend-delete-member';
 
 let testId = 'backend-delete-member__admin-cannot-delete-himself';
 

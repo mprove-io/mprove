@@ -1,15 +1,19 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateOrgRequestDto,
+  ToBackendCreateOrgResponseDto
+} from '#backend/controllers/orgs/create-org/create-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { UsersService } from '#backend/services/db/users.service';
@@ -20,13 +24,11 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendCreateOrgRequest,
-  ToBackendCreateOrgResponsePayload
-} from '#common/interfaces/to-backend/orgs/to-backend-create-org';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendCreateOrgResponsePayload } from '#common/zod/to-backend/orgs/to-backend-create-org';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Orgs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateOrgController {
@@ -41,9 +43,17 @@ export class CreateOrgController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateOrg)
-  async createOrg(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateOrgRequest = request.body;
-
+  @ApiOperation({
+    summary: 'CreateOrg',
+    description: 'Create a new organization owned by the current user'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateOrgResponseDto
+  })
+  async createOrg(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateOrgRequestDto
+  ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
     let allowUsersToCreateOrganizations = this.cs.get<
@@ -62,7 +72,7 @@ export class CreateOrgController {
       });
     }
 
-    let { name } = reqValid.payload;
+    let { name } = body.payload;
 
     let hashSecret = await this.dconfigsService.getDconfigHashSecret();
 
@@ -91,7 +101,7 @@ export class CreateOrgController {
       name: name,
       ownerId: user.userId,
       ownerEmail: user.email,
-      traceId: reqValid.info.traceId
+      traceId: body.info.traceId
     });
 
     let payload: ToBackendCreateOrgResponsePayload = {

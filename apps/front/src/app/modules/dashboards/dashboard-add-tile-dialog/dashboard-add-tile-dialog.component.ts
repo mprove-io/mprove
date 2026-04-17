@@ -12,12 +12,12 @@ import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { Dashboard } from '#common/interfaces/blockml/dashboard';
-import { Model } from '#common/interfaces/blockml/model';
-import {
+import type { Dashboard } from '#common/zod/blockml/dashboard';
+import type { Model } from '#common/zod/blockml/model';
+import type {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
-} from '#common/interfaces/to-backend/models/to-backend-get-models';
+} from '#common/zod/to-backend/models/to-backend-get-models';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';

@@ -28,9 +28,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { makeCopy } from '#common/functions/make-copy';
-import { QueryOperation } from '#common/interfaces/backend/query-operation';
-import type { ToBackendGetChartResponsePayload } from '#common/interfaces/to-backend/charts/to-backend-get-chart';
 import { ServerError } from '#common/models/server-error';
+import type { QueryOperation } from '#common/zod/backend/query-operation';
+import type { ToBackendGetChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-get-chart';
 
 @Injectable()
 export class QueryInfoChartService {

@@ -2,7 +2,7 @@ import type { ExecutionContext } from 'ava';
 import { Prep } from '#backend/interfaces/prep';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
-import { ToBackendCreateEditorSessionResponse } from '#common/interfaces/to-backend/sessions/to-backend-create-editor-session';
+import type { ToBackendCreateEditorSessionResponse } from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
 
 export async function forTestsInspectUi(item: {
   t: ExecutionContext;

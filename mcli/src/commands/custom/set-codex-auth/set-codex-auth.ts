@@ -6,11 +6,11 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   ToBackendSetUserCodexAuthRequestPayload,
   ToBackendSetUserCodexAuthResponse
-} from '#common/interfaces/to-backend/users/to-backend-set-user-codex-auth';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-backend/users/to-backend-set-user-codex-auth';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';

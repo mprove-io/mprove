@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { SessionApi } from '#common/interfaces/backend/session-api';
+import type { SessionApi } from '#common/zod/backend/session-api';
 import { BaseQuery } from './base.query';
 
 export class SessionsState {

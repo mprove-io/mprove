@@ -48,10 +48,7 @@ export function buildReportRowParameterFractions(
             let r = bricksToFractions({
               filterBricks: bricks,
               result: rowParameter.notStoreApplyToResult,
-              // TODO: drop `as any` once node-common helpers migrate to zod types
-              // (zod nullish fields infer `T | null | undefined`, incompatible
-              // with interface `field?: T`)
-              fractions: fractions as any,
+              fractions: fractions,
               isGetTimeRange: false
             });
 

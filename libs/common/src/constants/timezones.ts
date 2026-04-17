@@ -1,4 +1,4 @@
-import { TimezoneGroup } from '#common/interfaces/timezone-group';
+import type { TimezoneGroup } from '#common/zod/timezone-group';
 
 export const timezones: TimezoneGroup[] = [
   {

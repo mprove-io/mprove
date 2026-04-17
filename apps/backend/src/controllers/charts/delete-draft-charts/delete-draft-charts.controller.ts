@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteDraftChartsRequestDto,
+  ToBackendDeleteDraftChartsResponseDto
+} from '#backend/controllers/charts/delete-draft-charts/delete-draft-charts.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -18,7 +23,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -30,10 +34,10 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendDeleteDraftChartsRequest } from '#common/interfaces/to-backend/charts/to-backend-delete-draft-charts';
 import { ServerError } from '#common/models/server-error';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Charts')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteDraftChartsController {
@@ -52,13 +56,21 @@ export class DeleteDraftChartsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteDraftCharts)
-  async deleteDraftCharts(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteDraftChartsRequest = request.body;
-
+  @ApiOperation({
+    summary: 'DeleteDraftCharts',
+    description: "Delete the current user's draft charts"
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteDraftChartsResponseDto
+  })
+  async deleteDraftCharts(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteDraftChartsRequestDto
+  ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, envId, chartIds } = reqValid.payload;
+    let { traceId } = body.info;
+    let { projectId, repoId, branchId, envId, chartIds } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

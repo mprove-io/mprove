@@ -5,8 +5,8 @@ import { StatusResult } from 'simple-git';
 const { forEachSeries } = pIteration;
 
 import { FileStatusEnum } from '#common/enums/file-status.enum';
-import { DiskSyncFile } from '#common/interfaces/disk/disk-sync-file';
-import { FileWithStatusType } from '#common/interfaces/disk/git-file-status-type';
+import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
+import type { FileWithStatusType } from '#common/zod/disk/git-file-status-type';
 import { gitLsFiles } from './git-ls-files';
 import { readFileCheckSize } from './read-file-check-size';
 

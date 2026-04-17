@@ -1,9 +1,13 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import {
+  ToBackendGetFileRequestDto,
+  ToBackendGetFileResponseDto
+} from '#backend/controllers/files/get-file/get-file.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -17,16 +21,14 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import {
-  ToBackendGetFileRequest,
-  ToBackendGetFileResponsePayload
-} from '#common/interfaces/to-backend/files/to-backend-get-file';
-import {
+import type { ToBackendGetFileResponsePayload } from '#common/zod/to-backend/files/to-backend-get-file';
+import type {
   ToDiskGetFileRequest,
   ToDiskGetFileResponse
-} from '#common/interfaces/to-disk/07-files/to-disk-get-file';
+} from '#common/zod/to-disk/07-files/to-disk-get-file';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Files')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetFileController {
@@ -44,11 +46,19 @@ export class GetFileController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetFile)
-  async getFile(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetFileRequest = request.body;
-
+  @ApiOperation({
+    summary: 'GetFile',
+    description: 'Get file'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetFileResponseDto
+  })
+  async getFile(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetFileRequestDto
+  ) {
     let { projectId, repoId, branchId, envId, fileNodeId, builderLeft } =
-      reqValid.payload;
+      body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -73,7 +83,7 @@ export class GetFileController {
     let toDiskGetFileRequest: ToDiskGetFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskGetFile,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

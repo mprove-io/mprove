@@ -1,11 +1,15 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import {
+  ToBackendEditDraftReportRequestDto,
+  ToBackendEditDraftReportResponseDto
+} from '#backend/controllers/reports/edit-draft-report/edit-draft-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -21,12 +25,10 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendEditDraftReportRequest,
-  ToBackendEditDraftReportResponsePayload
-} from '#common/interfaces/to-backend/reports/to-backend-edit-draft-report';
+import type { ToBackendEditDraftReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-edit-draft-report';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Reports')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class EditDraftReportController {
@@ -47,10 +49,18 @@ export class EditDraftReportController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendEditDraftReport)
-  async editDraftRep(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendEditDraftReportRequest = request.body;
-
-    let { traceId } = reqValid.info;
+  @ApiOperation({
+    summary: 'EditDraftReport',
+    description: 'Edit a draft report'
+  })
+  @ApiOkResponse({
+    type: ToBackendEditDraftReportResponseDto
+  })
+  async editDraftRep(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendEditDraftReportRequestDto
+  ) {
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -66,7 +76,7 @@ export class EditDraftReportController {
       newReportFields,
       listeners,
       chart
-    } = reqValid.payload;
+    } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

@@ -1,6 +1,6 @@
 import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { Mconfig } from '#common/interfaces/blockml/mconfig';
-import { ModelField } from '#common/interfaces/blockml/model-field';
+import type { Mconfig } from '#common/zod/blockml/mconfig';
+import type { ModelField } from '#common/zod/blockml/model-field';
 import { isDefined } from './is-defined';
 
 export function setChartTitleOnSelectChange<T extends Mconfig>(item: {

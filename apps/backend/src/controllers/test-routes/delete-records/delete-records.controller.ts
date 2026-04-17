@@ -1,17 +1,22 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteRecordsRequestDto,
+  ToBackendDeleteRecordsResponseDto
+} from '#backend/controllers/test-routes/delete-records/delete-records.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -35,7 +40,6 @@ import { structsTable } from '#backend/drizzle/postgres/schema/structs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { HashService } from '#backend/services/hash.service';
 import { RpcService } from '#backend/services/rpc.service';
@@ -43,18 +47,16 @@ import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendDeleteRecordsRequest,
-  ToBackendDeleteRecordsResponse
-} from '#common/interfaces/to-backend/test-routes/to-backend-delete-records';
-import {
+import type { ToBackendDeleteRecordsResponse } from '#common/zod/to-backend/test-routes/to-backend-delete-records';
+import type {
   ToDiskDeleteOrgRequest,
   ToDiskDeleteOrgResponse
-} from '#common/interfaces/to-disk/01-orgs/to-disk-delete-org';
+} from '#common/zod/to-disk/01-orgs/to-disk-delete-org';
 
+@ApiTags('TestRoutes')
 @SkipJwtCheck()
 @SkipThrottle()
-@UseGuards(TestRoutesGuard, ValidateRequestGuard)
+@UseGuards(TestRoutesGuard)
 @Controller()
 export class DeleteRecordsController {
   constructor(
@@ -68,11 +70,15 @@ export class DeleteRecordsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
-  async deleteRecords(@Req() request: any) {
-    let reqValid: ToBackendDeleteRecordsRequest = request.body;
-
-    let { orgIds, projectIds, emails, orgNames, projectNames } =
-      reqValid.payload;
+  @ApiOperation({
+    summary: 'DeleteRecords',
+    description: 'Delete test orgs, projects, users and related records'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteRecordsResponseDto
+  })
+  async deleteRecords(@Body() body: ToBackendDeleteRecordsRequestDto) {
+    let { orgIds, projectIds, emails, orgNames, projectNames } = body.payload;
 
     emails = emails || [];
     projectIds = projectIds || [];
@@ -125,7 +131,7 @@ export class DeleteRecordsController {
         let deleteOrgRequest: ToDiskDeleteOrgRequest = {
           info: {
             name: ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
-            traceId: reqValid.info.traceId
+            traceId: body.info.traceId
           },
           payload: {
             orgId: x

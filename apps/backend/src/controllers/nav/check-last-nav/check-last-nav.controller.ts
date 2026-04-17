@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { and, eq } from 'drizzle-orm';
+import {
+  ToBackendCheckLastNavRequestDto,
+  ToBackendCheckLastNavResponseDto
+} from '#backend/controllers/nav/check-last-nav/check-last-nav.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -9,7 +14,6 @@ import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -18,12 +22,10 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendCheckLastNavRequest,
-  ToBackendCheckLastNavResponsePayload
-} from '#common/interfaces/to-backend/nav/to-backend-check-last-nav';
+import type { ToBackendCheckLastNavResponsePayload } from '#common/zod/to-backend/nav/to-backend-check-last-nav';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Nav')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class CheckLastNavController {
   constructor(
@@ -37,9 +39,17 @@ export class CheckLastNavController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCheckLastNav)
-  async checkLastNav(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCheckLastNavRequest = request.body;
-
+  @ApiOperation({
+    summary: 'CheckLastNav',
+    description: 'Check if last navigated entities still exist'
+  })
+  @ApiOkResponse({
+    type: ToBackendCheckLastNavResponseDto
+  })
+  async checkLastNav(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCheckLastNavRequestDto
+  ) {
     let {
       projectId,
       repoId,
@@ -49,7 +59,7 @@ export class CheckLastNavController {
       chartId,
       dashboardId,
       reportId
-    } = reqValid.payload;
+    } = body.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

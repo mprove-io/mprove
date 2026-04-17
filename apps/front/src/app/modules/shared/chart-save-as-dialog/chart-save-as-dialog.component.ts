@@ -29,28 +29,28 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { ChartX } from '#common/interfaces/backend/chart-x';
-import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
-import { DashboardX } from '#common/interfaces/backend/dashboard-x';
-import { TileX } from '#common/interfaces/backend/tile-x';
-import { Chart } from '#common/interfaces/blockml/chart';
-import { Model } from '#common/interfaces/blockml/model';
-import {
+import type { ChartX } from '#common/zod/backend/chart-x';
+import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { TileX } from '#common/zod/backend/tile-x';
+import type { Chart } from '#common/zod/blockml/chart';
+import type { Model } from '#common/zod/blockml/model';
+import type {
   ToBackendSaveCreateChartRequestPayload,
   ToBackendSaveCreateChartResponse
-} from '#common/interfaces/to-backend/charts/to-backend-save-create-chart';
-import {
+} from '#common/zod/to-backend/charts/to-backend-save-create-chart';
+import type {
   ToBackendGetDashboardRequestPayload,
   ToBackendGetDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
-import {
+} from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
+import type {
   ToBackendGetDashboardsRequestPayload,
   ToBackendGetDashboardsResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
-import {
+} from '#common/zod/to-backend/dashboards/to-backend-get-dashboards';
+import type {
   ToBackendSaveModifyDashboardRequestPayload,
   ToBackendSaveModifyDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
+} from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ChartsQuery } from '#front/app/queries/charts.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

@@ -6,16 +6,12 @@ import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { zModelField } from '#common/zod/blockml/model-field';
 import { zModelNode } from '#common/zod/blockml/model-node';
 
-// TODO: aligned to interface `Model` for blockml type-flow.
-// `source` is non-nullish because blockml's wrapModels always sets it;
-// `hasAccess` is nullish because blockml builds Models without it — the
-// backend later populates it via checkModelAccess before forwarding to tiles.
 export let zModel = z
   .object({
     structId: z.string(),
     modelId: z.string(),
     type: z.enum(ModelTypeEnum),
-    source: z.string(),
+    source: z.string().nullish(),
     connectionId: z.string(),
     connectionType: z.enum(ConnectionTypeEnum),
     filePath: z.string(),

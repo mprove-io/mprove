@@ -10,10 +10,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendLoginUserRequest,
   ToBackendLoginUserResponse
-} from '#common/interfaces/to-backend/users/to-backend-login-user';
+} from '#common/zod/to-backend/users/to-backend-login-user';
 
 let testId = 'backend-login-user__ok';
 

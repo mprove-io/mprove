@@ -9,7 +9,7 @@ import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_SAMPLE } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ToBackendGetConnectionSampleResponsePayload } from '#common/interfaces/to-backend/connections/to-backend-get-connection-sample';
+import type { ToBackendGetConnectionSampleResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

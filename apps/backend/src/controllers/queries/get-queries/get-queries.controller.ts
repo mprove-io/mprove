@@ -1,17 +1,21 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
 
 const { forEachSeries } = pIteration;
 
+import {
+  ToBackendGetQueriesRequestDto,
+  ToBackendGetQueriesResponseDto
+} from '#backend/controllers/queries/get-queries/get-queries.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -24,12 +28,10 @@ import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetQueriesRequest,
-  ToBackendGetQueriesResponsePayload
-} from '#common/interfaces/to-backend/queries/to-backend-get-queries';
+import type { ToBackendGetQueriesResponsePayload } from '#common/zod/to-backend/queries/to-backend-get-queries';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Queries')
+@UseGuards(ThrottlerUserIdGuard)
 // dashboards.component.ts -> startCheckRunning()
 @Throttle({
   '1s': {
@@ -63,11 +65,19 @@ export class GetQueriesController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetQueries)
-  async getQueries(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetQueriesRequest = request.body;
-
+  @ApiOperation({
+    summary: 'GetQueries',
+    description: 'Get queries for specified mconfigs'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetQueriesResponseDto
+  })
+  async getQueries(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetQueriesRequestDto
+  ) {
     let { projectId, repoId, branchId, envId, mconfigIds, skipData } =
-      reqValid.payload;
+      body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

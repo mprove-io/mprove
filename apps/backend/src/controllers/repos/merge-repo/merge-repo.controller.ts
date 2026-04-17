@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendMergeRepoRequestDto,
+  ToBackendMergeRepoResponseDto
+} from '#backend/controllers/repos/merge-repo/merge-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -22,7 +27,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -40,17 +44,15 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendMergeRepoRequest,
-  ToBackendMergeRepoResponsePayload
-} from '#common/interfaces/to-backend/repos/to-backend-merge-repo';
-import {
+import { ServerError } from '#common/models/server-error';
+import type { ToBackendMergeRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-merge-repo';
+import type {
   ToDiskMergeRepoRequest,
   ToDiskMergeRepoResponse
-} from '#common/interfaces/to-disk/03-repos/to-disk-merge-repo';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/03-repos/to-disk-merge-repo';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Repos')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class MergeRepoController {
@@ -71,10 +73,18 @@ export class MergeRepoController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendMergeRepo)
-  async mergeRepo(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendMergeRepoRequest = request.body;
-
-    let { traceId } = reqValid.info;
+  @ApiOperation({
+    summary: 'MergeRepo',
+    description: 'Merge another branch into the current branch'
+  })
+  @ApiOkResponse({
+    type: ToBackendMergeRepoResponseDto
+  })
+  async mergeRepo(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendMergeRepoRequestDto
+  ) {
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -82,7 +92,7 @@ export class MergeRepoController {
       envId,
       theirBranchId,
       isTheirBranchRemote
-    } = reqValid.payload;
+    } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -134,7 +144,7 @@ export class MergeRepoController {
     let toDiskMergeRepoRequest: ToDiskMergeRepoRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

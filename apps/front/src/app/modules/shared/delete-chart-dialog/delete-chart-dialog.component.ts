@@ -12,11 +12,11 @@ import { EMPTY_CHART_ID } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { Chart } from '#common/interfaces/blockml/chart';
-import {
+import type { Chart } from '#common/zod/blockml/chart';
+import type {
   ToBackendDeleteChartRequestPayload,
   ToBackendDeleteChartResponse
-} from '#common/interfaces/to-backend/charts/to-backend-delete-chart';
+} from '#common/zod/to-backend/charts/to-backend-delete-chart';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';
 import { ApiService } from '#front/app/services/api.service';

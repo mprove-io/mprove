@@ -16,10 +16,10 @@ import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendGetProjectRequestPayload,
   ToBackendGetProjectResponse
-} from '#common/interfaces/to-backend/projects/to-backend-get-project';
+} from '#common/zod/to-backend/projects/to-backend-get-project';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';

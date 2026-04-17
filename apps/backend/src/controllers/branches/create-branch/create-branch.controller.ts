@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateBranchRequestDto,
+  ToBackendCreateBranchResponseDto
+} from '#backend/controllers/branches/create-branch/create-branch.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -25,7 +30,6 @@ import type {
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -41,14 +45,14 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import { ToBackendCreateBranchRequest } from '#common/interfaces/to-backend/branches/to-backend-create-branch';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   ToDiskCreateBranchRequest,
   ToDiskCreateBranchResponse
-} from '#common/interfaces/to-disk/05-branches/to-disk-create-branch';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/05-branches/to-disk-create-branch';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Branches')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateBranchController {
@@ -67,11 +71,19 @@ export class CreateBranchController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateBranch)
-  async createBranch(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateBranchRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { projectId, newBranchId, fromBranchId, repoId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'CreateBranch',
+    description: 'Create a new branch from an existing branch'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateBranchResponseDto
+  })
+  async createBranch(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateBranchRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { projectId, newBranchId, fromBranchId, repoId } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

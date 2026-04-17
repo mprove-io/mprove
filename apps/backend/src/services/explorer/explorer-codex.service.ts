@@ -12,8 +12,8 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { UsersService } from '#backend/services/db/users.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { CodexAuthOpenai } from '#common/interfaces/backend/codex-auth';
 import { ServerError } from '#common/models/server-error';
+import type { CodexAuthOpenai } from '#common/zod/backend/codex-auth';
 
 // Reference: external/opencode/packages/opencode/src/plugin/codex.ts
 const CODEX_CLIENT_ID = 'app_EMoamEEZ73f0CkXaXp7hrann';

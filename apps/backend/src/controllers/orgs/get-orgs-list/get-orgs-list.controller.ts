@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { eq, inArray } from 'drizzle-orm';
+import {
+  ToBackendGetOrgsListRequestDto,
+  ToBackendGetOrgsListResponseDto
+} from '#backend/controllers/orgs/get-orgs-list/get-orgs-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -8,16 +13,13 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetOrgsListRequest,
-  ToBackendGetOrgsListResponsePayload
-} from '#common/interfaces/to-backend/orgs/to-backend-get-orgs-list';
+import type { ToBackendGetOrgsListResponsePayload } from '#common/zod/to-backend/orgs/to-backend-get-orgs-list';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Orgs')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetOrgsListController {
   constructor(
@@ -27,9 +29,17 @@ export class GetOrgsListController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrgsList)
-  async getOrgsList(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetOrgsListRequest = request.body;
-
+  @ApiOperation({
+    summary: 'GetOrgsList',
+    description: 'Get organizations accessible to the current user'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetOrgsListResponseDto
+  })
+  async getOrgsList(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetOrgsListRequestDto
+  ) {
     let userMembers = await this.db.drizzle.query.membersTable.findMany({
       where: eq(membersTable.memberId, user.userId)
     });

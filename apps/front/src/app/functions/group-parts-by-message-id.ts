@@ -1,4 +1,4 @@
-import { SessionPartApi } from '#common/interfaces/backend/session-part-api';
+import type { SessionPartApi } from '#common/zod/backend/session-part-api';
 
 export function groupPartsByMessageId(parts: SessionPartApi[]): {
   [messageId: string]: SessionPartApi[];

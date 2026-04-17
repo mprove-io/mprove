@@ -1,17 +1,22 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import * as bcrypt from 'bcrypt';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSeedRecordsRequestDto,
+  ToBackendSeedRecordsResponseDto
+} from '#backend/controllers/test-routes/seed-records/seed-records.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -36,7 +41,6 @@ import type {
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now';
 import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -69,29 +73,29 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { isDefined } from '#common/functions/is-defined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { BaseProject } from '#common/interfaces/backend/base-project';
-import {
-  ToBackendSeedRecordsRequest,
+import type { BaseProject } from '#common/zod/backend/base-project';
+import type {
   ToBackendSeedRecordsRequestPayloadMembersItem,
   ToBackendSeedRecordsRequestPayloadOrgsItem,
   ToBackendSeedRecordsRequestPayloadProjectsItem,
   ToBackendSeedRecordsRequestPayloadSessionsItem,
   ToBackendSeedRecordsRequestPayloadUsersItem,
   ToBackendSeedRecordsResponse
-} from '#common/interfaces/to-backend/test-routes/to-backend-seed-records';
-import {
+} from '#common/zod/to-backend/test-routes/to-backend-seed-records';
+import type {
   ToDiskCreateOrgRequest,
   ToDiskCreateOrgResponse
-} from '#common/interfaces/to-disk/01-orgs/to-disk-create-org';
-import {
+} from '#common/zod/to-disk/01-orgs/to-disk-create-org';
+import type {
   ToDiskSeedProjectRequest,
   ToDiskSeedProjectResponse
-} from '#common/interfaces/to-disk/08-seed/to-disk-seed-project';
+} from '#common/zod/to-disk/08-seed/to-disk-seed-project';
 import { parseApiKey } from '#node-common/functions/api-key/parse-api-key';
 
+@ApiTags('TestRoutes')
 @SkipJwtCheck()
 @SkipThrottle()
-@UseGuards(TestRoutesGuard, ValidateRequestGuard)
+@UseGuards(TestRoutesGuard)
 @Controller()
 export class SeedRecordsController {
   constructor(
@@ -118,18 +122,23 @@ export class SeedRecordsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
-  async seedRecords(@Req() request: any) {
-    let reqValid: ToBackendSeedRecordsRequest = request.body;
-
-    let payloadUsers = reqValid.payload.users;
-    let payloadMembers = reqValid.payload.members;
-    let payloadOrgs = reqValid.payload.orgs;
-    let payloadProjects = reqValid.payload.projects;
-    let payloadConnections = reqValid.payload.connections;
-    let payloadEnvs = reqValid.payload.envs;
-    let payloadSessions = reqValid.payload.sessions;
-    let payloadQueries = reqValid.payload.queries;
-    let payloadMconfigs = reqValid.payload.mconfigs;
+  @ApiOperation({
+    summary: 'SeedRecords',
+    description: 'Seed users, orgs, projects and related records for tests'
+  })
+  @ApiOkResponse({
+    type: ToBackendSeedRecordsResponseDto
+  })
+  async seedRecords(@Body() body: ToBackendSeedRecordsRequestDto) {
+    let payloadUsers = body.payload.users;
+    let payloadMembers = body.payload.members;
+    let payloadOrgs = body.payload.orgs;
+    let payloadProjects = body.payload.projects;
+    let payloadConnections = body.payload.connections;
+    let payloadEnvs = body.payload.envs;
+    let payloadSessions = body.payload.sessions;
+    let payloadQueries = body.payload.queries;
+    let payloadMconfigs = body.payload.mconfigs;
 
     //
 
@@ -280,7 +289,7 @@ export class SeedRecordsController {
           let createOrgRequest: ToDiskCreateOrgRequest = {
             info: {
               name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
-              traceId: reqValid.info.traceId
+              traceId: body.info.traceId
             },
             payload: {
               orgId: newOrg.orgId
@@ -371,7 +380,7 @@ export class SeedRecordsController {
           let toDiskSeedProjectRequest: ToDiskSeedProjectRequest = {
             info: {
               name: ToDiskRequestInfoNameEnum.ToDiskSeedProject,
-              traceId: reqValid.info.traceId
+              traceId: body.info.traceId
             },
             payload: {
               orgId: baseProject.orgId,
@@ -409,7 +418,7 @@ export class SeedRecordsController {
             mconfigs: devMconfigsApi,
             queries: devQueriesApi
           } = await this.blockmlService.rebuildStruct({
-            traceId: reqValid.info.traceId,
+            traceId: body.info.traceId,
             orgId: newProject.orgId,
             projectId: newProject.projectId,
             repoId: users[0].userId,
@@ -433,7 +442,7 @@ export class SeedRecordsController {
             mconfigs: prodMconfigsApi,
             queries: prodQueriesApi
           } = await this.blockmlService.rebuildStruct({
-            traceId: reqValid.info.traceId,
+            traceId: body.info.traceId,
             orgId: newProject.orgId,
             projectId: newProject.projectId,
             repoId: PROD_REPO_ID,

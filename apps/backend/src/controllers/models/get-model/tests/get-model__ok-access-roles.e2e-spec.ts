@@ -17,10 +17,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetModelRequest,
   ToBackendGetModelResponse
-} from '#common/interfaces/to-backend/models/to-backend-get-model';
+} from '#common/zod/to-backend/models/to-backend-get-model';
 
 let testId = 'backend-get-model__ok-access-roles';
 

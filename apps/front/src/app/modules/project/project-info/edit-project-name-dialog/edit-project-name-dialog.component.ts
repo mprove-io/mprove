@@ -17,10 +17,10 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendSetProjectInfoRequestPayload,
   ToBackendSetProjectInfoResponse
-} from '#common/interfaces/to-backend/projects/to-backend-set-project-info';
+} from '#common/zod/to-backend/projects/to-backend-set-project-info';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';

@@ -23,11 +23,11 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type { ToBackendValidateFilesResponsePayload } from '#common/interfaces/to-backend/files/to-backend-validate-files';
+import type { ToBackendValidateFilesResponsePayload } from '#common/zod/to-backend/files/to-backend-validate-files';
 import type {
   ToDiskGetCatalogFilesRequest,
   ToDiskGetCatalogFilesResponse
-} from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
+} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-files';
 
 @Injectable()
 export class ValidateFilesService {

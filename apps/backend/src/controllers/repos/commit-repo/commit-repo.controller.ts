@@ -1,9 +1,13 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import {
+  ToBackendCommitRepoRequestDto,
+  ToBackendCommitRepoResponseDto
+} from '#backend/controllers/repos/commit-repo/commit-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
@@ -17,17 +21,15 @@ import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import {
-  ToBackendCommitRepoRequest,
-  ToBackendCommitRepoResponsePayload
-} from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
-import {
+import { ServerError } from '#common/models/server-error';
+import type { ToBackendCommitRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-commit-repo';
+import type {
   ToDiskCommitRepoRequest,
   ToDiskCommitRepoResponse
-} from '#common/interfaces/to-disk/03-repos/to-disk-commit-repo';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/03-repos/to-disk-commit-repo';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Repos')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CommitRepoController {
@@ -42,10 +44,18 @@ export class CommitRepoController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
-  async commitRepo(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCommitRepoRequest = request.body;
-
-    let { projectId, branchId, repoId, commitMessage } = reqValid.payload;
+  @ApiOperation({
+    summary: 'CommitRepo',
+    description: 'Commit local changes in a repo branch'
+  })
+  @ApiOkResponse({
+    type: ToBackendCommitRepoResponseDto
+  })
+  async commitRepo(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCommitRepoRequestDto
+  ) {
+    let { projectId, branchId, repoId, commitMessage } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -88,7 +98,7 @@ export class CommitRepoController {
     let toDiskCommitRepoRequest: ToDiskCommitRepoRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

@@ -30,7 +30,7 @@ import { getFractionTsUnits } from '#common/functions/get-fraction-ts-units';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { parseTsLiteral } from '#common/functions/parse-ts-literal';
-import { Fraction } from '#common/interfaces/blockml/fraction';
+import type { Fraction } from '#common/zod/blockml/fraction';
 import { getCurrentUnitStartTs } from './get-current-unit-start-ts';
 import { getMalloyMomentStr } from './get-malloy-moment-str';
 import { getTimeSpecUnitStartTs as getTimeSpecUnitMomentStartTs } from './get-timespec-unit-moment-start-ts';

@@ -18,10 +18,10 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetReportRequest,
   ToBackendGetReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-get-report';
+} from '#common/zod/to-backend/reports/to-backend-get-report';
 
 let testId = 'backend-get-report__ok';
 

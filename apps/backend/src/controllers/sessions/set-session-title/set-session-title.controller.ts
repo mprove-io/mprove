@@ -1,9 +1,13 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import {
+  ToBackendSetSessionTitleRequestDto,
+  ToBackendSetSessionTitleResponseDto
+} from '#backend/controllers/sessions/set-session-title/set-session-title.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
@@ -11,10 +15,10 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendSetSessionTitleRequest } from '#common/interfaces/to-backend/sessions/to-backend-set-session-title';
 import { ServerError } from '#common/models/server-error';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Sessions')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SetSessionTitleController {
@@ -25,9 +29,18 @@ export class SetSessionTitleController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetSessionTitle)
-  async setSessionTitle(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSetSessionTitleRequest = request.body;
-    let { sessionId, title } = reqValid.payload;
+  @ApiOperation({
+    summary: 'SetSessionTitle',
+    description: "Update the session's title"
+  })
+  @ApiOkResponse({
+    type: ToBackendSetSessionTitleResponseDto
+  })
+  async setSessionTitle(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendSetSessionTitleRequestDto
+  ) {
+    let { sessionId, title } = body.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId

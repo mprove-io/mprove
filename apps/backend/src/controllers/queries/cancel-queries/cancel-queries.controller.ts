@@ -1,13 +1,14 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
@@ -17,6 +18,10 @@ const { forEachSeries } = pIteration;
 
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCancelQueriesRequestDto,
+  ToBackendCancelQueriesResponseDto
+} from '#backend/controllers/queries/cancel-queries/cancel-queries.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -31,7 +36,6 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -50,13 +54,11 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import {
-  ToBackendCancelQueriesRequest,
-  ToBackendCancelQueriesResponsePayload
-} from '#common/interfaces/to-backend/queries/to-backend-cancel-queries';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendCancelQueriesResponsePayload } from '#common/zod/to-backend/queries/to-backend-cancel-queries';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Queries')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CancelQueriesController {
@@ -77,10 +79,18 @@ export class CancelQueriesController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
-  async cancelQueries(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCancelQueriesRequest = request.body;
-
-    let { projectId, repoId, branchId, envId, mconfigIds } = reqValid.payload;
+  @ApiOperation({
+    summary: 'CancelQueries',
+    description: 'Cancel running queries for specified mconfigs'
+  })
+  @ApiOkResponse({
+    type: ToBackendCancelQueriesResponseDto
+  })
+  async cancelQueries(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCancelQueriesRequestDto
+  ) {
+    let { projectId, repoId, branchId, envId, mconfigIds } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

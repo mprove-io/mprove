@@ -32,30 +32,30 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { MconfigX } from '#common/interfaces/backend/mconfig-x';
-import { Model } from '#common/interfaces/blockml/model';
-import { ModelFieldY } from '#common/interfaces/blockml/model-field-y';
-import { Query } from '#common/interfaces/blockml/query';
-import {
+import type { MconfigX } from '#common/zod/backend/mconfig-x';
+import type { Model } from '#common/zod/blockml/model';
+import type { ModelFieldY } from '#common/zod/blockml/model-field-y';
+import type { Query } from '#common/zod/blockml/query';
+import type {
   ToBackendDuplicateMconfigAndQueryRequestPayload,
   ToBackendDuplicateMconfigAndQueryResponse
-} from '#common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
-import {
+} from '#common/zod/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
+import type {
   ToBackendGroupMetricByDimensionRequestPayload,
   ToBackendGroupMetricByDimensionResponse
-} from '#common/interfaces/to-backend/mconfigs/to-backend-group-metric-by-dimension';
-import {
+} from '#common/zod/to-backend/mconfigs/to-backend-group-metric-by-dimension';
+import type {
   ToBackendGetModelRequestPayload,
   ToBackendGetModelResponse
-} from '#common/interfaces/to-backend/models/to-backend-get-model';
-import {
+} from '#common/zod/to-backend/models/to-backend-get-model';
+import type {
   ToBackendGetQueryRequestPayload,
   ToBackendGetQueryResponse
-} from '#common/interfaces/to-backend/queries/to-backend-get-query';
-import {
+} from '#common/zod/to-backend/queries/to-backend-get-query';
+import type {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
+} from '#common/zod/to-backend/queries/to-backend-run-queries';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery } from '#front/app/queries/struct.query';

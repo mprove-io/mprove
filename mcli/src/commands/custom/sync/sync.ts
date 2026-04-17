@@ -17,13 +17,13 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
 import { sleep } from '#common/functions/sleep';
-import { DiskSyncFile } from '#common/interfaces/disk/disk-sync-file';
-import { McliSyncConfig } from '#common/interfaces/mcli/mcli-sync-config';
-import {
+import { ServerError } from '#common/models/server-error';
+import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
+import type { McliSyncConfig } from '#common/zod/mcli/mcli-sync-config';
+import type {
   ToBackendSyncRepoRequestPayload,
   ToBackendSyncRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-sync-repo';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-backend/repos/to-backend-sync-repo';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeSyncTime } from '#mcli/functions/make-sync-time';

@@ -27,12 +27,12 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { SessionApi } from '#common/interfaces/backend/session-api';
-import { BranchItem } from '#common/interfaces/front/branch-item';
-import {
+import type { SessionApi } from '#common/zod/backend/session-api';
+import type { BranchItem } from '#common/zod/front/branch-item';
+import type {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
-} from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
+} from '#common/zod/to-backend/branches/to-backend-get-branches-list';
 import { checkNavMain } from '#front/app/functions/check-nav-main';
 import { makeBranchExtraId } from '#front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';

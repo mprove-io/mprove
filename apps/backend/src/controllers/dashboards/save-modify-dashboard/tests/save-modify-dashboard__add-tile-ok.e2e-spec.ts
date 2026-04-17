@@ -19,14 +19,14 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetDashboardRequest,
   ToBackendGetDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
-import {
+} from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
+import type {
   ToBackendSaveModifyDashboardRequest,
   ToBackendSaveModifyDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
+} from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
 
 let testId = 'backend-save-modify-dashboard__add-tile-ok';
 

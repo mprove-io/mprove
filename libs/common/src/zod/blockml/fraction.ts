@@ -15,17 +15,13 @@ import { FractionYesnoValueEnum } from '#common/enums/fraction/fraction-yesno-va
 import { zFractionControl } from '#common/zod/blockml/fraction-control';
 import { zFractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
 
-// TODO: `brick`, `parentBrick`, `operator` are non-nullish to match the
-// `Fraction` interface's required TS fields so zod-typed fractions flow into
-// node-common helpers (bricksToFractions) without `as any` casts everywhere.
-// Revisit once node-common migrates to zod types.
 export let zFraction = z
   .object({
     controls: z.array(zFractionControl).nullish(),
 
-    brick: z.string(),
-    parentBrick: z.string(),
-    operator: z.enum(FractionOperatorEnum),
+    brick: z.string().nullish(),
+    parentBrick: z.string().nullish(),
+    operator: z.enum(FractionOperatorEnum).nullish(),
     logicGroup: z.enum(FractionLogicEnum).nullish(),
     type: z.enum(FractionTypeEnum),
 

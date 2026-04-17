@@ -29,20 +29,19 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeTrackChangeId } from '#common/functions/make-track-change-id';
-import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
-import { DashboardX } from '#common/interfaces/backend/dashboard-x';
-import { Member } from '#common/interfaces/backend/member';
-import { ModelX } from '#common/interfaces/backend/model-x';
-import { Query } from '#common/interfaces/blockml/query';
-import { RefreshItem } from '#common/interfaces/front/refresh-item';
-import {
+import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { Member } from '#common/zod/backend/member';
+import type { Query } from '#common/zod/blockml/query';
+import type { RefreshItem } from '#common/zod/front/refresh-item';
+import type {
   ToBackendGetQueriesRequestPayload,
   ToBackendGetQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-get-queries';
-import {
+} from '#common/zod/to-backend/queries/to-backend-get-queries';
+import type {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
+} from '#common/zod/to-backend/queries/to-backend-run-queries';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
 import { DashboardPartsFilteredQuery } from '#front/app/queries/dashboard-parts-filtered.query';
@@ -58,10 +57,6 @@ import { DashboardService } from '#front/app/services/dashboard.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
-
-export class ModelXWithTotalDashboards extends ModelX {
-  totalDashboards: number;
-}
 
 @Component({
   standalone: false,

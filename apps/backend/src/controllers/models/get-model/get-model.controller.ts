@@ -1,26 +1,36 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ToBackendGetModelRequestDto,
+  ToBackendGetModelResponseDto
+} from '#backend/controllers/models/get-model/get-model.dto';
 import { GetModelService } from '#backend/controllers/models/get-model/get-model.service';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetModelRequest,
-  ToBackendGetModelResponsePayload
-} from '#common/interfaces/to-backend/models/to-backend-get-model';
+import type { ToBackendGetModelResponsePayload } from '#common/zod/to-backend/models/to-backend-get-model';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Models')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetModelController {
   constructor(private getModelService: GetModelService) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetModel)
-  async getModel(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetModelRequest = request.body;
-
+  @ApiOperation({
+    summary: 'GetModel',
+    description: 'Get a model'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetModelResponseDto
+  })
+  async getModel(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetModelRequestDto
+  ) {
     let { projectId, repoId, branchId, modelId, envId, getMalloy } =
-      reqValid.payload;
+      body.payload;
 
     let payload: ToBackendGetModelResponsePayload =
       await this.getModelService.getModel({

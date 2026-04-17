@@ -2,11 +2,11 @@ import { signal, WritableSignal } from '@angular/core';
 import initVizdom, { DirectedGraph, RankDir } from '@vizdom/vizdom-ts-web';
 import { Edge, Node } from 'ngx-vflow';
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
-import {
+import type {
   CombinedSchemaColumn,
   CombinedSchemaTable
-} from '#common/interfaces/backend/connection-schemas/combined-schema';
-import { RawSchemaIndex } from '#common/interfaces/backend/connection-schemas/raw-schema';
+} from '#common/zod/backend/connection-schemas/combined-schema';
+import type { RawSchemaIndex } from '#common/zod/backend/connection-schemas/raw-schema';
 
 let NODE_WIDTH = 250;
 let HEADER_HEIGHT = 40;

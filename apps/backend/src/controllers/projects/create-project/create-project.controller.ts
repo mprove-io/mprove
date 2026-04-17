@@ -1,15 +1,20 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateProjectRequestDto,
+  ToBackendCreateProjectResponseDto
+} from '#backend/controllers/projects/create-project/create-project.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -17,7 +22,6 @@ import type { NoteTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { notesTable } from '#backend/drizzle/postgres/schema/notes';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
@@ -30,13 +34,11 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendCreateProjectRequest,
-  ToBackendCreateProjectResponsePayload
-} from '#common/interfaces/to-backend/projects/to-backend-create-project';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendCreateProjectResponsePayload } from '#common/zod/to-backend/projects/to-backend-create-project';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Projects')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateProjectController {
@@ -52,11 +54,19 @@ export class CreateProjectController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateProject)
-  async createProject(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateProjectRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { name, orgId, remoteType, noteId, gitUrl } = reqValid.payload;
+  @ApiOperation({
+    summary: 'CreateProject',
+    description: 'Create a new project'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateProjectResponseDto
+  })
+  async createProject(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateProjectRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { name, orgId, remoteType, noteId, gitUrl } = body.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -114,7 +124,7 @@ export class CreateProjectController {
     let newProject = await this.projectsService.addProject({
       orgId: orgId,
       name: name,
-      traceId: reqValid.info.traceId,
+      traceId: body.info.traceId,
       user: user,
       testProjectId: undefined,
       remoteType: remoteType,

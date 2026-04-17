@@ -9,9 +9,9 @@ import { CHANNEL_RPC_REPLY } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
-import { RpcRequestData } from '#common/interfaces/rpc-request-data';
-import { MyResponse } from '#common/interfaces/to/my-response';
 import { ServerError } from '#common/models/server-error';
+import type { RpcRequestData } from '#common/zod/rpc-request-data';
+import type { MyResponse } from '#common/zod/to/my-response';
 
 @Injectable()
 export class RpcService implements OnModuleDestroy {

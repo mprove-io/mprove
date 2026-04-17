@@ -17,14 +17,14 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetDashboardRequest,
   ToBackendGetDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
-import {
+} from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
+import type {
   ToBackendGetQueryRequest,
   ToBackendGetQueryResponse
-} from '#common/interfaces/to-backend/queries/to-backend-get-query';
+} from '#common/zod/to-backend/queries/to-backend-get-query';
 
 let testId = 'backend-get-query__ok';
 

@@ -11,10 +11,10 @@ import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendGetChartsRequestPayload,
   ToBackendGetChartsResponse
-} from '#common/interfaces/to-backend/charts/to-backend-get-charts';
+} from '#common/zod/to-backend/charts/to-backend-get-charts';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartsQuery } from '../queries/charts.query';
 import { MemberQuery } from '../queries/member.query';

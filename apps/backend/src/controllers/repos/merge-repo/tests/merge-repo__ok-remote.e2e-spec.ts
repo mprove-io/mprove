@@ -12,26 +12,26 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendCreateBranchRequest,
   ToBackendCreateBranchResponse
-} from '#common/interfaces/to-backend/branches/to-backend-create-branch';
-import {
+} from '#common/zod/to-backend/branches/to-backend-create-branch';
+import type {
   ToBackendSaveFileRequest,
   ToBackendSaveFileResponse
-} from '#common/interfaces/to-backend/files/to-backend-save-file';
-import {
+} from '#common/zod/to-backend/files/to-backend-save-file';
+import type {
   ToBackendCommitRepoRequest,
   ToBackendCommitRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
-import {
+} from '#common/zod/to-backend/repos/to-backend-commit-repo';
+import type {
   ToBackendMergeRepoRequest,
   ToBackendMergeRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-merge-repo';
-import {
+} from '#common/zod/to-backend/repos/to-backend-merge-repo';
+import type {
   ToBackendPushRepoRequest,
   ToBackendPushRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-push-repo';
+} from '#common/zod/to-backend/repos/to-backend-push-repo';
 
 let testId = 'backend-merge-repo__ok-remote';
 

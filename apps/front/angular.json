@@ -62,8 +62,6 @@
             "allowedCommonJsDependencies": [
               "fast-deep-equal",
               "validator",
-              "class-transformer-validator",
-              "class-transformer",
               "clone-deep",
               "mobx",
               "google-libphonenumber",

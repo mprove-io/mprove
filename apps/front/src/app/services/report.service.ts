@@ -6,23 +6,23 @@ import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ReportX } from '#common/interfaces/backend/report-x';
-import { Listener } from '#common/interfaces/blockml/listener';
-import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
-import { ReportField } from '#common/interfaces/blockml/report-field';
-import { RowChange } from '#common/interfaces/blockml/row-change';
-import {
+import type { ReportX } from '#common/zod/backend/report-x';
+import type { Listener } from '#common/zod/blockml/listener';
+import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
+import type { ReportField } from '#common/zod/blockml/report-field';
+import type { RowChange } from '#common/zod/blockml/row-change';
+import type {
   ToBackendCreateDraftReportRequestPayload,
   ToBackendCreateDraftReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-create-draft-report';
-import {
+} from '#common/zod/to-backend/reports/to-backend-create-draft-report';
+import type {
   ToBackendDeleteDraftReportsRequestPayload,
   ToBackendDeleteDraftReportsResponse
-} from '#common/interfaces/to-backend/reports/to-backend-delete-draft-reports';
-import {
+} from '#common/zod/to-backend/reports/to-backend-delete-draft-reports';
+import type {
   ToBackendEditDraftReportRequestPayload,
   ToBackendEditDraftReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-edit-draft-report';
+} from '#common/zod/to-backend/reports/to-backend-edit-draft-report';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportQuery } from '../queries/report.query';

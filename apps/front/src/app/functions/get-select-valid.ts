@@ -3,8 +3,8 @@ import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { MconfigField } from '#common/interfaces/backend/mconfig-field';
-import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
+import type { MconfigField } from '#common/zod/backend/mconfig-field';
+import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
 
 export function getSelectValid(item: {
   chart: MconfigChart;

@@ -12,10 +12,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetOrgsListRequest,
   ToBackendGetOrgsListResponse
-} from '#common/interfaces/to-backend/orgs/to-backend-get-orgs-list';
+} from '#common/zod/to-backend/orgs/to-backend-get-orgs-list';
 
 let testId = 'backend-get-orgs-list__ok';
 

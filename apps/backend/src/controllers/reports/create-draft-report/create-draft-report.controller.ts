@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateDraftReportRequestDto,
+  ToBackendCreateDraftReportResponseDto
+} from '#backend/controllers/reports/create-draft-report/create-draft-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -21,7 +26,6 @@ import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -39,14 +43,12 @@ import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import { Row } from '#common/interfaces/blockml/row';
-import { Rq } from '#common/interfaces/blockml/rq';
-import {
-  ToBackendCreateDraftReportRequest,
-  ToBackendCreateDraftReportResponsePayload
-} from '#common/interfaces/to-backend/reports/to-backend-create-draft-report';
+import type { Row } from '#common/zod/blockml/row';
+import type { Rq } from '#common/zod/blockml/rq';
+import type { ToBackendCreateDraftReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-create-draft-report';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Reports')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateDraftReportController {
@@ -69,10 +71,18 @@ export class CreateDraftReportController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport)
-  async createDraftRep(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateDraftReportRequest = request.body;
-
-    let { traceId } = reqValid.info;
+  @ApiOperation({
+    summary: 'CreateDraftReport',
+    description: 'Create a draft report from an existing report'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateDraftReportResponseDto
+  })
+  async createDraftRep(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateDraftReportRequestDto
+  ) {
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -88,7 +98,7 @@ export class CreateDraftReportController {
       newReportFields,
       listeners,
       chart
-    } = reqValid.payload;
+    } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

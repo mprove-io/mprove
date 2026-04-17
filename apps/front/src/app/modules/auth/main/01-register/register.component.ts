@@ -13,11 +13,11 @@ import {
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendCheckSignUpResponse } from '#common/interfaces/to-backend/check/to-backend-check-sign-up';
-import {
+import type { ToBackendCheckSignUpResponse } from '#common/zod/to-backend/check/to-backend-check-sign-up';
+import type {
   ToBackendRegisterUserRequestPayload,
   ToBackendRegisterUserResponse
-} from '#common/interfaces/to-backend/users/to-backend-register-user';
+} from '#common/zod/to-backend/users/to-backend-register-user';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 

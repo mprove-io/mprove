@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import type { Event } from '@opencode-ai/sdk/v2';
-import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
-import { SessionPartApi } from '#common/interfaces/backend/session-part-api';
+import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
+import type { SessionPartApi } from '#common/zod/backend/session-part-api';
 import { binarySearch } from '../functions/binary-search';
 import { SessionQuery } from '../queries/session.query';
 import {

@@ -1,21 +1,23 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { eq } from 'drizzle-orm';
+import {
+  ToBackendIsOrgExistRequestDto,
+  ToBackendIsOrgExistResponseDto
+} from '#backend/controllers/orgs/is-org-exist/is-org-exist.dto';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendIsOrgExistRequest,
-  ToBackendIsOrgExistResponsePayload
-} from '#common/interfaces/to-backend/orgs/to-backend-is-org-exist';
+import type { ToBackendIsOrgExistResponsePayload } from '#common/zod/to-backend/orgs/to-backend-is-org-exist';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Orgs')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class IsOrgExistController {
   constructor(
@@ -26,10 +28,15 @@ export class IsOrgExistController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendIsOrgExist)
-  async isOrgExist(@Req() request: any) {
-    let reqValid: ToBackendIsOrgExistRequest = request.body;
-
-    let { name } = reqValid.payload;
+  @ApiOperation({
+    summary: 'IsOrgExist',
+    description: 'Check if an organization with the given name exists'
+  })
+  @ApiOkResponse({
+    type: ToBackendIsOrgExistResponseDto
+  })
+  async isOrgExist(@Body() body: ToBackendIsOrgExistRequestDto) {
+    let { name } = body.payload;
 
     let hashSecret = await this.dconfigsService.getDconfigHashSecret();
 

@@ -1,24 +1,26 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { eq } from 'drizzle-orm';
+import {
+  ToBackendIsProjectExistRequestDto,
+  ToBackendIsProjectExistResponseDto
+} from '#backend/controllers/projects/is-project-exist/is-project-exist.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendIsProjectExistRequest,
-  ToBackendIsProjectExistResponsePayload
-} from '#common/interfaces/to-backend/projects/to-backend-is-project-exist';
+import type { ToBackendIsProjectExistResponsePayload } from '#common/zod/to-backend/projects/to-backend-is-project-exist';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Projects')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class IsProjectExistController {
   constructor(
@@ -30,10 +32,18 @@ export class IsProjectExistController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendIsProjectExist)
-  async isProjectExist(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendIsProjectExistRequest = request.body;
-
-    let { name, orgId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'IsProjectExist',
+    description: 'Check if a project with the given name exists'
+  })
+  @ApiOkResponse({
+    type: ToBackendIsProjectExistResponseDto
+  })
+  async isProjectExist(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendIsProjectExistRequestDto
+  ) {
+    let { name, orgId } = body.payload;
 
     await this.orgsService.getOrgCheckExists({ orgId: orgId });
 

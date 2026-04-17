@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { ORGANIZATION_ACCOUNT_PAGE_TITLE } from '#common/constants/page-titles';
-import { Org } from '#common/interfaces/backend/org';
+import type { Org } from '#common/zod/backend/org';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
 import { ApiService } from '#front/app/services/api.service';

@@ -9,12 +9,12 @@ import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_CONNECTIONS_LIST } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
-import { ToBackendGetConnectionsListResponsePayload } from '#common/interfaces/to-backend/connections/to-backend-get-connections-list';
 import {
   type McpToolGetConnectionsListInput,
   zMcpToolGetConnectionsListInput,
   zMcpToolGetConnectionsListOutput
 } from '#common/zod/to-backend/connections/mcp-tool-get-connections-list';
+import type { ToBackendGetConnectionsListResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connections-list';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

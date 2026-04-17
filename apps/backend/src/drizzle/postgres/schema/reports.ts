@@ -9,7 +9,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ReportLt, ReportSt } from '#common/interfaces/st-lt';
+import type { ReportLt, ReportSt } from '#common/zod/st-lt';
 
 export const reportsTable = pgTable(
   'reports',

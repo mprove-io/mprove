@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendPullRepoRequestDto,
+  ToBackendPullRepoResponseDto
+} from '#backend/controllers/repos/pull-repo/pull-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -22,7 +27,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -38,16 +42,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendPullRepoRequest,
-  ToBackendPullRepoResponsePayload
-} from '#common/interfaces/to-backend/repos/to-backend-pull-repo';
-import {
+import type { ToBackendPullRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-pull-repo';
+import type {
   ToDiskPullRepoRequest,
   ToDiskPullRepoResponse
-} from '#common/interfaces/to-disk/03-repos/to-disk-pull-repo';
+} from '#common/zod/to-disk/03-repos/to-disk-pull-repo';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Repos')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class PullRepoController {
@@ -68,11 +70,19 @@ export class PullRepoController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendPullRepo)
-  async pullRepo(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendPullRepoRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, envId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'PullRepo',
+    description: 'Pull remote changes'
+  })
+  @ApiOkResponse({
+    type: ToBackendPullRepoResponseDto
+  })
+  async pullRepo(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendPullRepoRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { projectId, repoId, branchId, envId } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -115,7 +125,7 @@ export class PullRepoController {
     let toDiskPullRepoRequest: ToDiskPullRepoRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskPullRepo,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

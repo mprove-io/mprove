@@ -1,22 +1,24 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import {
+  ToBackendCreateSessionSseTicketRequestDto,
+  ToBackendCreateSessionSseTicketResponseDto
+} from '#backend/controllers/sessions/create-session-sse-ticket/create-session-sse-ticket.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { RedisService } from '#backend/services/redis.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendCreateSessionSseTicketRequest,
-  ToBackendCreateSessionSseTicketResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-create-session-sse-ticket';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendCreateSessionSseTicketResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-session-sse-ticket';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Sessions')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateSessionSseTicketController {
@@ -26,9 +28,18 @@ export class CreateSessionSseTicketController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateSessionSseTicket)
-  async createSseTicket(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateSessionSseTicketRequest = request.body;
-    let { sessionId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'CreateSessionSseTicket',
+    description: 'Issue a short-lived ticket for authorizing the SSE stream'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateSessionSseTicketResponseDto
+  })
+  async createSseTicket(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateSessionSseTicketRequestDto
+  ) {
+    let { sessionId } = body.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId

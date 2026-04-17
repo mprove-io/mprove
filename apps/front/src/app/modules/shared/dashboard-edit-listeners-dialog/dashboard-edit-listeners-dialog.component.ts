@@ -21,28 +21,20 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { DashboardX } from '#common/interfaces/backend/dashboard-x';
-import { TileX } from '#common/interfaces/backend/tile-x';
-import { Dashboard } from '#common/interfaces/blockml/dashboard';
-import { Model } from '#common/interfaces/blockml/model';
-import { ModelField } from '#common/interfaces/blockml/model-field';
-import {
+import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { Dashboard } from '#common/zod/blockml/dashboard';
+import type { Model } from '#common/zod/blockml/model';
+import type { ModelField } from '#common/zod/blockml/model-field';
+import type { DashboardX2 } from '#common/zod/front/dashboard-x-2';
+import type { TileX2 } from '#common/zod/front/tile-x-2';
+import type {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
-} from '#common/interfaces/to-backend/models/to-backend-get-models';
+} from '#common/zod/to-backend/models/to-backend-get-models';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { DashboardService } from '#front/app/services/dashboard.service';
-
-export class TileX2 extends TileX {
-  modelFields?: { [a: string]: ModelField[] };
-  mconfigListenSwap?: { [a: string]: string[] };
-}
-
-export class DashboardX2 extends DashboardX {
-  tiles: TileX2[];
-}
 
 export interface DashboardEditListenersDialogData {
   dashboardService: DashboardService;

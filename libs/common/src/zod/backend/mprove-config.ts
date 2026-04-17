@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import { zTimezone } from '#common/zod/z-timezone';
 
 export let zMproveConfig = z
   .object({
@@ -7,7 +8,7 @@ export let zMproveConfig = z
     caseSensitiveStringFilters: z.boolean().nullish(),
     weekStart: z.enum(ProjectWeekStartEnum).nullish(),
     allowTimezones: z.boolean().nullish(),
-    defaultTimezone: z.string().nullish(),
+    defaultTimezone: zTimezone.nullish(),
     formatNumber: z.string().nullish(),
     currencyPrefix: z.string().nullish(),
     currencySuffix: z.string().nullish(),

@@ -1,23 +1,27 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCompleteUserRegistrationRequestDto,
+  ToBackendCompleteUserRegistrationResponseDto
+} from '#backend/controllers/users/complete-user-registration/complete-user-registration.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { UsersService } from '#backend/services/db/users.service';
@@ -27,12 +31,12 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ToBackendCompleteUserRegistrationRequest } from '#common/interfaces/to-backend/users/to-backend-complete-user-registration';
-import { ToBackendConfirmUserEmailResponsePayload } from '#common/interfaces/to-backend/users/to-backend-confirm-user-email';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendConfirmUserEmailResponsePayload } from '#common/zod/to-backend/users/to-backend-confirm-user-email';
 
+@ApiTags('Users')
 @SkipJwtCheck()
-@UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
+@UseGuards(ThrottlerIpGuard)
 @Controller()
 export class CompleteUserRegistrationController {
   constructor(
@@ -48,11 +52,18 @@ export class CompleteUserRegistrationController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration)
-  async completeUserRegistration(@Req() request: any) {
-    let reqValid: ToBackendCompleteUserRegistrationRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { emailVerificationToken, newPassword } = reqValid.payload;
+  @ApiOperation({
+    summary: 'CompleteUserRegistration',
+    description: 'Verify email, set password and finish registration'
+  })
+  @ApiOkResponse({
+    type: ToBackendCompleteUserRegistrationResponseDto
+  })
+  async completeUserRegistration(
+    @Body() body: ToBackendCompleteUserRegistrationRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { emailVerificationToken, newPassword } = body.payload;
 
     let hashSecret = await this.dconfigsService.getDconfigHashSecret();
 

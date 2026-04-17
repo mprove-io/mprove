@@ -4,11 +4,11 @@ import { take, tap } from 'rxjs/operators';
 import { PROJECT_API_KEYS_PAGE_TITLE } from '#common/constants/page-titles';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { Project } from '#common/interfaces/backend/project';
-import {
+import type { Project } from '#common/zod/backend/project';
+import type {
   ToBackendSetProjectApiKeyRequestPayload,
   ToBackendSetProjectApiKeyResponse
-} from '#common/interfaces/to-backend/projects/to-backend-set-project-api-key';
+} from '#common/zod/to-backend/projects/to-backend-set-project-api-key';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';

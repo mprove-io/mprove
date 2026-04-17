@@ -1,5 +1,5 @@
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionApi } from '#common/interfaces/backend/session-api';
+import type { SessionApi } from '#common/zod/backend/session-api';
 
 export function makeTitle(session: SessionApi): string {
   if (

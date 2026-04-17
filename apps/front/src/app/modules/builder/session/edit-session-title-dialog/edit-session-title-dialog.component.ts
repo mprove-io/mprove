@@ -16,7 +16,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendSetSessionTitleRequestPayload } from '#common/interfaces/to-backend/sessions/to-backend-set-session-title';
+import type { ToBackendSetSessionTitleRequestPayload } from '#common/zod/to-backend/sessions/to-backend-set-session-title';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';

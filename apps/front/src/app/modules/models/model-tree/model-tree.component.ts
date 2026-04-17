@@ -34,14 +34,15 @@ import { setChartFields } from '#common/functions/set-chart-fields';
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change';
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change';
-import { ChartX } from '#common/interfaces/backend/chart-x';
-import { MconfigX } from '#common/interfaces/backend/mconfig-x';
-import { Filter } from '#common/interfaces/blockml/filter';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { FractionControl } from '#common/interfaces/blockml/fraction-control';
-import { FractionSubTypeOption } from '#common/interfaces/blockml/fraction-sub-type-option';
-import { ModelField } from '#common/interfaces/blockml/model-field';
-import { ModelNode } from '#common/interfaces/blockml/model-node';
+import type { ChartX } from '#common/zod/backend/chart-x';
+import type { MconfigX } from '#common/zod/backend/mconfig-x';
+import type { Filter } from '#common/zod/blockml/filter';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { FractionControl } from '#common/zod/blockml/fraction-control';
+import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
+import type { ModelField } from '#common/zod/blockml/model-field';
+import type { ModelNode } from '#common/zod/blockml/model-node';
+import type { ModelNodeExtra } from '#common/zod/front/model-node-extra';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ModelQuery, ModelState } from '#front/app/queries/model.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -50,14 +51,6 @@ import { MconfigService } from '#front/app/services/mconfig.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { StructService } from '#front/app/services/struct.service';
 import { UiService } from '#front/app/services/ui.service';
-
-export class ModelNodeExtra extends ModelNode {
-  isSelected: boolean;
-  isFiltered: boolean;
-  children?: ModelNodeExtra[];
-  joinLabel?: string;
-  timeLabel?: string;
-}
 
 @Component({
   standalone: false,

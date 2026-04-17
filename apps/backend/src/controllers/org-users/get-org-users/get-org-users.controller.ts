@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { and, eq, inArray, sql } from 'drizzle-orm';
+import {
+  ToBackendGetOrgUsersRequestDto,
+  ToBackendGetOrgUsersResponseDto
+} from '#backend/controllers/org-users/get-org-users/get-org-users.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -13,17 +18,16 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { makeFullName } from '#backend/functions/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   OrgUsersItem,
-  ToBackendGetOrgUsersRequest,
   ToBackendGetOrgUsersResponsePayload
-} from '#common/interfaces/to-backend/org-users/to-backend-get-org-users';
+} from '#common/zod/to-backend/org-users/to-backend-get-org-users';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('OrgUsers')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetOrgUsersController {
   constructor(
@@ -33,10 +37,18 @@ export class GetOrgUsersController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
-  async getOrgUsers(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetOrgUsersRequest = request.body;
-
-    let { orgId, perPage, pageNum } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetOrgUsers',
+    description: 'Get a paginated list of users across org projects'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetOrgUsersResponseDto
+  })
+  async getOrgUsers(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetOrgUsersRequestDto
+  ) {
+    let { orgId, perPage, pageNum } = body.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 

@@ -1,8 +1,12 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ToBackendGetDashboardRequestDto,
+  ToBackendGetDashboardResponseDto
+} from '#backend/controllers/dashboards/get-dashboard/get-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -11,12 +15,10 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { QueryInfoDashboardService } from '#backend/services/query-info-dashboard.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetDashboardRequest,
-  ToBackendGetDashboardResponsePayload
-} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
+import type { ToBackendGetDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Dashboards')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetDashboardController {
   constructor(
@@ -30,12 +32,20 @@ export class GetDashboardController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetDashboard)
-  async getDashboard(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetDashboardRequest = request.body;
-
-    let { traceId } = reqValid.info;
+  @ApiOperation({
+    summary: 'GetDashboard',
+    description: 'Get a dashboard'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetDashboardResponseDto
+  })
+  async getDashboard(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetDashboardRequestDto
+  ) {
+    let { traceId } = body.info;
     let { projectId, repoId, branchId, envId, dashboardId, timezone } =
-      reqValid.payload;
+      body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteDashboardRequestDto,
+  ToBackendDeleteDashboardResponseDto
+} from '#backend/controllers/dashboards/delete-dashboard/delete-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -23,7 +28,6 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { DashboardsService } from '#backend/services/db/dashboards.service';
@@ -38,13 +42,13 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { ToBackendDeleteDashboardRequest } from '#common/interfaces/to-backend/dashboards/to-backend-delete-dashboard';
-import {
+import type {
   ToDiskDeleteFileRequest,
   ToDiskDeleteFileResponse
-} from '#common/interfaces/to-disk/07-files/to-disk-delete-file';
+} from '#common/zod/to-disk/07-files/to-disk-delete-file';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Dashboards')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteDashboardController {
@@ -65,13 +69,21 @@ export class DeleteDashboardController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard)
-  async createEmptyDashboard(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteDashboardRequest = request.body;
-
+  @ApiOperation({
+    summary: 'DeleteDashboard',
+    description: 'Delete a dashboard'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteDashboardResponseDto
+  })
+  async createEmptyDashboard(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteDashboardRequestDto
+  ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, envId, dashboardId } = reqValid.payload;
+    let { traceId } = body.info;
+    let { projectId, repoId, branchId, envId, dashboardId } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -136,7 +148,7 @@ export class DeleteDashboardController {
     let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

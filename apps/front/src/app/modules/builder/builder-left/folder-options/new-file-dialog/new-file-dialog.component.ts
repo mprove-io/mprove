@@ -20,14 +20,14 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import {
+import type {
   ToBackendCreateFileRequestPayload,
   ToBackendCreateFileResponse
-} from '#common/interfaces/to-backend/files/to-backend-create-file';
-import {
+} from '#common/zod/to-backend/files/to-backend-create-file';
+import type {
   ToBackendCreateFolderRequestPayload,
   ToBackendCreateFolderResponse
-} from '#common/interfaces/to-backend/folders/to-backend-create-folder';
+} from '#common/zod/to-backend/folders/to-backend-create-folder';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';

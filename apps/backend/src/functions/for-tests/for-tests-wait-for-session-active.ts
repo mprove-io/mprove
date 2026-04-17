@@ -2,7 +2,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type { ToBackendGetSessionResponse } from '#common/interfaces/to-backend/sessions/to-backend-get-session';
+import type { ToBackendGetSessionResponse } from '#common/zod/to-backend/sessions/to-backend-get-session';
 
 export async function forTestsWaitForSessionActive(item: {
   httpServer: any;

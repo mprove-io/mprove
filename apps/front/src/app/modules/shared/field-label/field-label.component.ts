@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ModelField } from '#common/interfaces/blockml/model-field';
+import type { ModelField } from '#common/zod/blockml/model-field';
 
 @Component({
   standalone: false,

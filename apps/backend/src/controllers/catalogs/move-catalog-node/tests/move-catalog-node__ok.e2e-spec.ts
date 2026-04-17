@@ -12,10 +12,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendMoveCatalogNodeRequest,
   ToBackendMoveCatalogNodeResponse
-} from '#common/interfaces/to-backend/catalogs/to-backend-move-catalog-node';
+} from '#common/zod/to-backend/catalogs/to-backend-move-catalog-node';
 
 let testId = 'backend-move-catalog-node__ok';
 

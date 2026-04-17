@@ -7,12 +7,12 @@ import { getFractionTypeForAny } from '#common/functions/get-fraction-type-for-a
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { DashboardX } from '#common/interfaces/backend/dashboard-x';
-import { DashboardField } from '#common/interfaces/blockml/dashboard-field';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { FractionControl } from '#common/interfaces/blockml/fraction-control';
-import { FractionSubTypeOption } from '#common/interfaces/blockml/fraction-sub-type-option';
-import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
+import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { DashboardField } from '#common/zod/blockml/dashboard-field';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { FractionControl } from '#common/zod/blockml/fraction-control';
+import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
+import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { DashboardService } from '#front/app/services/dashboard.service';
 

@@ -12,10 +12,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendRevertRepoToLastCommitRequest,
   ToBackendRevertRepoToLastCommitResponse
-} from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-last-commit';
+} from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
 
 let testId = 'backend-revert-repo-to-last-commit__ok';
 

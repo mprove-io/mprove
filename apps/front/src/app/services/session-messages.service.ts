@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import type { ToolPart } from '@opencode-ai/sdk/v2';
-import { SessionApi } from '#common/interfaces/backend/session-api';
-import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
-import { SessionPartApi } from '#common/interfaces/backend/session-part-api';
+import type { SessionApi } from '#common/zod/backend/session-api';
+import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
+import type { SessionPartApi } from '#common/zod/backend/session-part-api';
 import { unwrapErrorMessage } from '#front/app/functions/unwrap-error-message';
 import {
   ChatMessage,

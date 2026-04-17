@@ -24,13 +24,13 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { ReportDataColumn } from '#common/interfaces/backend/report-data-column';
-import { ReportX } from '#common/interfaces/backend/report-x';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { Row } from '#common/interfaces/blockml/row';
-import { RowRecord } from '#common/interfaces/blockml/row-record';
 import { MyRegex } from '#common/models/my-regex';
 import { ServerError } from '#common/models/server-error';
+import type { ReportDataColumn } from '#common/zod/backend/report-data-column';
+import type { ReportX } from '#common/zod/backend/report-x';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { Row } from '#common/zod/blockml/row';
+import type { RowRecord } from '#common/zod/blockml/row-record';
 import { CycleGraph } from '#node-common/classes/cycle-graph';
 import { nodeFormatTsUnix } from '#node-common/functions/node-format-ts-unix';
 

@@ -23,12 +23,12 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { Mconfig } from '#common/interfaces/blockml/mconfig';
-import { Query } from '#common/interfaces/blockml/query';
-import {
+import type { Mconfig } from '#common/zod/blockml/mconfig';
+import type { Query } from '#common/zod/blockml/query';
+import type {
   ToBackendCancelQueriesRequest,
   ToBackendCancelQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-cancel-queries';
+} from '#common/zod/to-backend/queries/to-backend-cancel-queries';
 
 let testId = 'backend-cancel-queries__array-empty';
 
@@ -207,10 +207,8 @@ test('1', async t => {
     }
 
     assert.equal(resp1.info.error.message, ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
-    assert.equal(
-      resp1.info.error.displayData[0].arrayNotEmpty,
-      'mconfigIds should not be empty'
-    );
+    assert.equal(resp1.info.error.displayData[0].code, 'too_small');
+    assert.equal(resp1.info.error.displayData[0].path, 'payload.mconfigIds');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

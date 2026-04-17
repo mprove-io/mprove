@@ -6,13 +6,13 @@ import { makeCopy } from '#common/functions/make-copy';
 import { prepareTile } from '#common/functions/prepare-tile';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
 import { toYaml } from '#common/functions/to-yaml';
-import { DashboardX } from '#common/interfaces/backend/dashboard-x';
-import { FieldFilter } from '#common/interfaces/blockml/internal/field-filter';
-import { FileDashboard } from '#common/interfaces/blockml/internal/file-dashboard';
-import { FileFraction } from '#common/interfaces/blockml/internal/file-fraction';
-import { FileFractionControl } from '#common/interfaces/blockml/internal/file-fraction-control';
-import { FilePartTile } from '#common/interfaces/blockml/internal/file-part-tile';
 import { MyRegex } from '#common/models/my-regex';
+import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { FieldFilter } from '#common/zod/blockml/internal/field-filter';
+import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
+import type { FileFraction } from '#common/zod/blockml/internal/file-fraction';
+import type { FileFractionControl } from '#common/zod/blockml/internal/file-fraction-control';
+import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
 import { getYYYYMMDDCurrentDateByTimezone } from '#node-common/functions/get-yyyymmdd-current-date-by-timezone';
 
 export function makeDashboardFileText(item: {

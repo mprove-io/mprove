@@ -1,17 +1,22 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteUserRequestDto,
+  ToBackendDeleteUserResponseDto
+} from '#backend/controllers/users/delete-user/delete-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -26,7 +31,6 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
@@ -34,14 +38,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { ToBackendDeleteUserRequest } from '#common/interfaces/to-backend/users/to-backend-delete-user';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   ToDiskDeleteDevRepoRequest,
   ToDiskDeleteDevRepoResponse
-} from '#common/interfaces/to-disk/03-repos/to-disk-delete-dev-repo';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/03-repos/to-disk-delete-dev-repo';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Users')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteUserController {
@@ -55,12 +59,20 @@ export class DeleteUserController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteUser)
-  async deleteUser(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteUserRequest = request.body;
-
+  @ApiOperation({
+    summary: 'DeleteUser',
+    description: 'Delete the current user'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteUserResponseDto
+  })
+  async deleteUser(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteUserRequestDto
+  ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = reqValid.info;
+    let { traceId } = body.info;
 
     let ownerOrgs = await this.db.drizzle.query.orgsTable.findMany({
       where: eq(orgsTable.ownerId, user.userId)

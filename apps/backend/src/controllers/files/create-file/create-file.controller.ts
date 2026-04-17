@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateFileRequestDto,
+  ToBackendCreateFileResponseDto
+} from '#backend/controllers/files/create-file/create-file.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -23,7 +28,6 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeModelFileText } from '#backend/functions/make-model-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -41,16 +45,14 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendCreateFileRequest,
-  ToBackendCreateFileResponsePayload
-} from '#common/interfaces/to-backend/files/to-backend-create-file';
-import {
+import type { ToBackendCreateFileResponsePayload } from '#common/zod/to-backend/files/to-backend-create-file';
+import type {
   ToDiskCreateFileRequest,
   ToDiskCreateFileResponse
-} from '#common/interfaces/to-disk/07-files/to-disk-create-file';
+} from '#common/zod/to-disk/07-files/to-disk-create-file';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Files')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateFileController {
@@ -72,10 +74,18 @@ export class CreateFileController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateFile)
-  async createFile(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateFileRequest = request.body;
-
-    let { traceId } = reqValid.info;
+  @ApiOperation({
+    summary: 'CreateFile',
+    description: 'Create a new file'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateFileResponseDto
+  })
+  async createFile(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateFileRequestDto
+  ) {
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -84,7 +94,7 @@ export class CreateFileController {
       fileName,
       envId,
       modelInfo
-    } = reqValid.payload;
+    } = body.payload;
 
     await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -141,7 +151,7 @@ export class CreateFileController {
     let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

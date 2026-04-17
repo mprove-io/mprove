@@ -14,8 +14,8 @@ import { MALLOY_FILTER_ANY } from '#common/constants/top';
 import { FractionNumberBetweenOptionEnum } from '#common/enums/fraction/fraction-number-between-option.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
 import { ValidationService } from '#front/app/services/validation.service';
 import {
   FractionNumberBetweenOptionItem,

@@ -1,34 +1,36 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSetUserCodexAuthRequestDto,
+  ToBackendSetUserCodexAuthResponseDto
+} from '#backend/controllers/users/set-user-codex-auth/set-user-codex-auth.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { EditorCodexService } from '#backend/services/editor/editor-codex.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendSetUserCodexAuthRequest,
-  ToBackendSetUserCodexAuthResponsePayload
-} from '#common/interfaces/to-backend/users/to-backend-set-user-codex-auth';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendSetUserCodexAuthResponsePayload } from '#common/zod/to-backend/users/to-backend-set-user-codex-auth';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Users')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SetUserCodexAuthController {
@@ -41,12 +43,20 @@ export class SetUserCodexAuthController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetUserCodexAuth)
-  async setUserCodexAuth(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSetUserCodexAuthRequest = request.body;
-
+  @ApiOperation({
+    summary: 'SetUserCodexAuth',
+    description: "Store the user's Codex auth credentials"
+  })
+  @ApiOkResponse({
+    type: ToBackendSetUserCodexAuthResponseDto
+  })
+  async setUserCodexAuth(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendSetUserCodexAuthRequestDto
+  ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { authJson } = reqValid.payload;
+    let { authJson } = body.payload;
 
     let parsed = this.editorCodexService.parseCodexAuthJson({
       authJsonContent: authJson

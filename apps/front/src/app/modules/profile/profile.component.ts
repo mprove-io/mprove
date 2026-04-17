@@ -12,13 +12,13 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendDeleteUserApiKeyResponse } from '#common/interfaces/to-backend/users/to-backend-delete-user-api-key';
-import { ToBackendDeleteUserCodexAuthResponse } from '#common/interfaces/to-backend/users/to-backend-delete-user-codex-auth';
-import { ToBackendGenerateUserApiKeyResponse } from '#common/interfaces/to-backend/users/to-backend-generate-user-api-key';
-import {
+import type { ToBackendDeleteUserApiKeyResponse } from '#common/zod/to-backend/users/to-backend-delete-user-api-key';
+import type { ToBackendDeleteUserCodexAuthResponse } from '#common/zod/to-backend/users/to-backend-delete-user-codex-auth';
+import type { ToBackendGenerateUserApiKeyResponse } from '#common/zod/to-backend/users/to-backend-generate-user-api-key';
+import type {
   ToBackendResetUserPasswordRequestPayload,
   ToBackendResetUserPasswordResponse
-} from '#common/interfaces/to-backend/users/to-backend-reset-user-password';
+} from '#common/zod/to-backend/users/to-backend-reset-user-password';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';

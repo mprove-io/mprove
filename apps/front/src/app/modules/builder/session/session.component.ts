@@ -20,17 +20,17 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { SessionApi } from '#common/interfaces/backend/session-api';
-import { SessionEventApi } from '#common/interfaces/backend/session-event-api';
-import { SessionMessageApi } from '#common/interfaces/backend/session-message-api';
-import {
+import type { SessionApi } from '#common/zod/backend/session-api';
+import type { SessionEventApi } from '#common/zod/backend/session-event-api';
+import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
+import type {
   ToBackendSendMessageToEditorSessionRequestPayload,
   ToBackendSendMessageToEditorSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-editor-session';
-import {
+} from '#common/zod/to-backend/sessions/to-backend-send-message-to-editor-session';
+import type {
   ToBackendSendMessageToExplorerSessionRequestPayload,
   ToBackendSendMessageToExplorerSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-explorer-session';
+} from '#common/zod/to-backend/sessions/to-backend-send-message-to-explorer-session';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
   SessionBundleQuery,

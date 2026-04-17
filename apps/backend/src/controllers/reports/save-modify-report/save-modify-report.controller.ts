@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSaveModifyReportRequestDto,
+  ToBackendSaveModifyReportResponseDto
+} from '#backend/controllers/reports/save-modify-report/save-modify-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -25,7 +30,6 @@ import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeReportFileText } from '#backend/functions/make-report-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -48,18 +52,16 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ModelMetric } from '#common/interfaces/blockml/model-metric';
-import {
-  ToBackendSaveModifyReportRequest,
-  ToBackendSaveModifyReportResponsePayload
-} from '#common/interfaces/to-backend/reports/to-backend-save-modify-report';
-import {
+import { ServerError } from '#common/models/server-error';
+import type { ModelMetric } from '#common/zod/blockml/model-metric';
+import type { ToBackendSaveModifyReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-save-modify-report';
+import type {
   ToDiskSaveFileRequest,
   ToDiskSaveFileResponse
-} from '#common/interfaces/to-disk/07-files/to-disk-save-file';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/07-files/to-disk-save-file';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Reports')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SaveModifyReportController {
@@ -84,12 +86,20 @@ export class SaveModifyReportController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport)
-  async saveModifyRep(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSaveModifyReportRequest = request.body;
-
+  @ApiOperation({
+    summary: 'SaveModifyReport',
+    description: 'Save changes to an existing report'
+  })
+  @ApiOkResponse({
+    type: ToBackendSaveModifyReportResponseDto
+  })
+  async saveModifyRep(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendSaveModifyReportRequestDto
+  ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = reqValid.info;
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -104,7 +114,7 @@ export class SaveModifyReportController {
       timezone,
       newReportFields,
       chart
-    } = reqValid.payload;
+    } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -229,7 +239,7 @@ export class SaveModifyReportController {
     let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

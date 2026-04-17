@@ -1,10 +1,11 @@
 import { z } from 'zod';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { zTimezone } from '#common/zod/z-timezone';
 
 export let zRq = z
   .object({
     fractionBrick: z.string(),
-    timezone: z.string(),
+    timezone: zTimezone,
     timeSpec: z.enum(TimeSpecEnum),
     timeStartTs: z.number().int(),
     timeEndTs: z.number().int(),

@@ -1,4 +1,4 @@
-import type { ToBackendGetConnectionSchemasResponsePayload } from '#common/interfaces/to-backend/connections/to-backend-get-connection-schemas';
+import type { ToBackendGetConnectionSchemasResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connection-schemas';
 
 export function processGetConnectionSchemasPayload(item: {
   payload: ToBackendGetConnectionSchemasResponsePayload;

@@ -37,8 +37,6 @@
     "@opentelemetry/sdk-node": "0.208.0",
     "@opentelemetry/semantic-conventions": "1.38.0",
     "bcrypt": "5.1.1",
-    "class-transformer-validator": "0.9.1",
-    "class-validator": "0.14.2",
     "date-fns": "4.1.0",
     "date-fns-tz": "3.2.0",
     "dayjs": "1.11.19",

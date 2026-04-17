@@ -1,4 +1,4 @@
-import {
+import type {
   AvatarLt,
   AvatarSt,
   BranchLt,
@@ -49,7 +49,7 @@ import {
   UconfigSt,
   UserLt,
   UserSt
-} from '#common/interfaces/st-lt';
+} from '#common/zod/st-lt';
 import { AvatarEnt } from './avatars';
 import { BranchEnt } from './branches';
 import { BridgeEnt } from './bridges';

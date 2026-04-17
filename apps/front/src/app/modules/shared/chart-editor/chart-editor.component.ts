@@ -24,16 +24,16 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { setChartSeries } from '#common/functions/set-chart-series';
-import { MconfigField } from '#common/interfaces/backend/mconfig-field';
-import { ReportX } from '#common/interfaces/backend/report-x';
-import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
-import { MconfigChartSeries } from '#common/interfaces/blockml/mconfig-chart-series';
-import { EventChartDeleteYAxisElement } from '#common/interfaces/front/event-chart-delete-y-axis-element';
-import { EventChartSeriesElementUpdate } from '#common/interfaces/front/event-chart-series-element-update';
-import { EventChartToggleSeries } from '#common/interfaces/front/event-chart-toggle-series';
-import { EventChartToggleYAxisElement } from '#common/interfaces/front/event-chart-toggle-y-axis-element';
-import { EventChartYAxisElementUpdate } from '#common/interfaces/front/event-chart-y-axis-element-update';
-import { SeriesPart } from '#common/interfaces/front/series-part';
+import type { MconfigField } from '#common/zod/backend/mconfig-field';
+import type { ReportX } from '#common/zod/backend/report-x';
+import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
+import type { ChartSeriesWithField } from '#common/zod/front/chart-series-with-field';
+import type { EventChartDeleteYAxisElement } from '#common/zod/front/event-chart-delete-y-axis-element';
+import type { EventChartSeriesElementUpdate } from '#common/zod/front/event-chart-series-element-update';
+import type { EventChartToggleSeries } from '#common/zod/front/event-chart-toggle-series';
+import type { EventChartToggleYAxisElement } from '#common/zod/front/event-chart-toggle-y-axis-element';
+import type { EventChartYAxisElementUpdate } from '#common/zod/front/event-chart-y-axis-element-update';
+import type { SeriesPart } from '#common/zod/front/series-part';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { StructQuery } from '#front/app/queries/struct.query';
@@ -42,20 +42,6 @@ import { DataService } from '#front/app/services/data.service';
 import { FormatNumberService } from '#front/app/services/format-number.service';
 import { ReportService } from '#front/app/services/report.service';
 import { StructService } from '#front/app/services/struct.service';
-
-export class ChartSeriesWithField extends MconfigChartSeries {
-  field: MconfigField;
-  isMetric: boolean;
-  showMetricsModelName: boolean;
-  showMetricsTimeFieldName: boolean;
-  seriesName: string;
-  seriesRowName: string;
-  partNodeLabel: string;
-  partFieldLabel: string;
-  timeNodeLabel: string;
-  timeFieldLabel: string;
-  topLabel: string;
-}
 
 @Component({
   standalone: false,

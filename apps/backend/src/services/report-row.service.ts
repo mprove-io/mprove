@@ -9,12 +9,12 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { rowIdLetterToNumber } from '#common/functions/row-id-letter-to-number';
 import { rowIdNumberToLetter } from '#common/functions/row-id-number-to-letter';
-import { Listener } from '#common/interfaces/blockml/listener';
-import { ModelMetric } from '#common/interfaces/blockml/model-metric';
-import { Parameter } from '#common/interfaces/blockml/parameter';
-import { ReportField } from '#common/interfaces/blockml/report-field';
-import { Row } from '#common/interfaces/blockml/row';
-import { RowChange } from '#common/interfaces/blockml/row-change';
+import type { Listener } from '#common/zod/blockml/listener';
+import type { ModelMetric } from '#common/zod/blockml/model-metric';
+import type { Parameter } from '#common/zod/blockml/parameter';
+import type { ReportField } from '#common/zod/blockml/report-field';
+import type { Row } from '#common/zod/blockml/row';
+import type { RowChange } from '#common/zod/blockml/row-change';
 
 @Injectable()
 export class ReportRowService {

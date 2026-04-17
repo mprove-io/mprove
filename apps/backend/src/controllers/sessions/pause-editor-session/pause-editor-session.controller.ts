@@ -1,9 +1,13 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import {
+  ToBackendPauseEditorSessionRequestDto,
+  ToBackendPauseEditorSessionResponseDto
+} from '#backend/controllers/sessions/pause-editor-session/pause-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
@@ -12,13 +16,11 @@ import { ErEnum } from '#common/enums/er.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendPauseEditorSessionRequest,
-  ToBackendPauseEditorSessionResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-pause-editor-session';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendPauseEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-pause-editor-session';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Sessions')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class PauseEditorSessionController {
@@ -29,9 +31,18 @@ export class PauseEditorSessionController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendPauseEditorSession)
-  async pauseEditorSession(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendPauseEditorSessionRequest = request.body;
-    let { sessionId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'PauseEditorSession',
+    description: 'Pause an editor session and its sandbox'
+  })
+  @ApiOkResponse({
+    type: ToBackendPauseEditorSessionResponseDto
+  })
+  async pauseEditorSession(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendPauseEditorSessionRequestDto
+  ) {
+    let { sessionId } = body.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId

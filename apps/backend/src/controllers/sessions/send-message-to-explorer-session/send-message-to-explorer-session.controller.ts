@@ -1,15 +1,20 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSendMessageToExplorerSessionRequestDto,
+  ToBackendSendMessageToExplorerSessionResponseDto
+} from '#backend/controllers/sessions/send-message-to-explorer-session/send-message-to-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -17,7 +22,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ExplorerCodexService } from '#backend/services/explorer/explorer-codex.service';
@@ -30,13 +34,11 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { splitModel } from '#common/functions/split-model';
-import {
-  ToBackendSendMessageToExplorerSessionRequest,
-  ToBackendSendMessageToExplorerSessionResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-explorer-session';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendSendMessageToExplorerSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-send-message-to-explorer-session';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Sessions')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SendMessageToExplorerSessionController {
@@ -51,11 +53,17 @@ export class SendMessageToExplorerSessionController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSendMessageToExplorerSession)
+  @ApiOperation({
+    summary: 'SendMessageToExplorerSession',
+    description: 'Send a message or interaction to an explorer session'
+  })
+  @ApiOkResponse({
+    type: ToBackendSendMessageToExplorerSessionResponseDto
+  })
   async sendMessageToExplorerSession(
     @AttachUser() user: UserTab,
-    @Req() request: any
+    @Body() body: ToBackendSendMessageToExplorerSessionRequestDto
   ) {
-    let reqValid: ToBackendSendMessageToExplorerSessionRequest = request.body;
     let {
       sessionId,
       interactionType,
@@ -64,7 +72,7 @@ export class SendMessageToExplorerSessionController {
       variant,
       messageId,
       partId
-    } = reqValid.payload;
+    } = body.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId

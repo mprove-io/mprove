@@ -8,18 +8,18 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendCreateBranchRequestPayload,
   ToBackendCreateBranchResponse
-} from '#common/interfaces/to-backend/branches/to-backend-create-branch';
-import {
+} from '#common/zod/to-backend/branches/to-backend-create-branch';
+import type {
   ToBackendSaveFileRequestPayload,
   ToBackendSaveFileResponse
-} from '#common/interfaces/to-backend/files/to-backend-save-file';
-import {
+} from '#common/zod/to-backend/files/to-backend-save-file';
+import type {
   ToBackendCommitRepoRequestPayload,
   ToBackendCommitRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
+} from '#common/zod/to-backend/repos/to-backend-commit-repo';
 import { getConfig } from '#mcli/config/get.config';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';

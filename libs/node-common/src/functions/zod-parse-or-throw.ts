@@ -30,7 +30,7 @@ export function zodParseOrThrow<T extends z.ZodType>(item: {
   let serverError = new ServerError({
     message: errorMessage,
     displayData: constraints,
-    originalError: null
+    originalError: result.error
   });
 
   if (

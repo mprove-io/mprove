@@ -12,8 +12,8 @@ import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
-import type { SessionEventApi } from '#common/interfaces/backend/session-event-api';
 import { ServerError } from '#common/models/server-error';
+import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 import { TabService } from '../tab.service';
 
 @Injectable()

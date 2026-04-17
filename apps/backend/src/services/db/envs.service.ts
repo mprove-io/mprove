@@ -11,11 +11,11 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { Env } from '#common/interfaces/backend/env';
-import { EnvUser } from '#common/interfaces/backend/env-user';
-import { EnvsItem } from '#common/interfaces/backend/envs-item';
-import { Ev } from '#common/interfaces/backend/ev';
 import { ServerError } from '#common/models/server-error';
+import type { Env } from '#common/zod/backend/env';
+import type { EnvUser } from '#common/zod/backend/env-user';
+import type { EnvsItem } from '#common/zod/backend/envs-item';
+import type { Ev } from '#common/zod/backend/ev';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

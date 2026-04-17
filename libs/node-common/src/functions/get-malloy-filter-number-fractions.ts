@@ -9,7 +9,7 @@ import { FractionNumberBetweenOptionEnum } from '#common/enums/fraction/fraction
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { Fraction } from '#common/interfaces/blockml/fraction';
+import type { Fraction } from '#common/zod/blockml/fraction';
 
 export function getMalloyFilterNumberFractions(item: {
   parsed: NumberFilter;

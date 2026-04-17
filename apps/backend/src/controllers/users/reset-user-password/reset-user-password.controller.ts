@@ -1,22 +1,26 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendResetUserPasswordRequestDto,
+  ToBackendResetUserPasswordResponseDto
+} from '#backend/controllers/users/reset-user-password/reset-user-password.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { EmailService } from '#backend/services/email.service';
 import { TabService } from '#backend/services/tab.service';
@@ -27,10 +31,10 @@ import {
 } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import { ToBackendResetUserPasswordRequest } from '#common/interfaces/to-backend/users/to-backend-reset-user-password';
 
+@ApiTags('Users')
 @SkipJwtCheck()
-@UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
+@UseGuards(ThrottlerIpGuard)
 @Throttle({
   '1s': {
     limit: 2 * THROTTLE_MULTIPLIER
@@ -59,10 +63,15 @@ export class ResetUserPasswordController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendResetUserPassword)
-  async resetUserPassword(@Req() request: any) {
-    let reqValid: ToBackendResetUserPasswordRequest = request.body;
-
-    let { email } = reqValid.payload;
+  @ApiOperation({
+    summary: 'ResetUserPassword',
+    description: 'Email a password reset link with a token'
+  })
+  @ApiOkResponse({
+    type: ToBackendResetUserPasswordResponseDto
+  })
+  async resetUserPassword(@Body() body: ToBackendResetUserPasswordRequestDto) {
+    let { email } = body.payload;
 
     let user = await this.usersService.getUserByEmailCheckExists({
       email: email

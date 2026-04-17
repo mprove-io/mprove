@@ -14,9 +14,9 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { getReportUrl } from '#common/functions/get-report-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import type { RunQuery } from '#common/interfaces/backend/run/run-query';
-import type { RunReport } from '#common/interfaces/backend/run/run-report';
 import { ServerError } from '#common/models/server-error';
+import type { RunQuery } from '#common/zod/backend/run/run-query';
+import type { RunReport } from '#common/zod/backend/run/run-report';
 
 interface RunReportPrepRow {
   title: string;

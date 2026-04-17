@@ -29,17 +29,17 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
+import type {
   ColumnCombinedReference,
   CombinedSchema,
   CombinedSchemaColumn,
   CombinedSchemaItem,
   CombinedSchemaTable
-} from '#common/interfaces/backend/connection-schemas/combined-schema';
-import { ExtraSchema } from '#common/interfaces/backend/connection-schemas/extra-schema';
-import { ConnectionRawSchema } from '#common/interfaces/backend/connection-schemas/raw-schema';
-import type { Member } from '#common/interfaces/backend/member';
-import { ConnectionLt, ConnectionSt } from '#common/interfaces/st-lt';
+} from '#common/zod/backend/connection-schemas/combined-schema';
+import type { ExtraSchema } from '#common/zod/backend/connection-schemas/extra-schema';
+import type { ConnectionRawSchema } from '#common/zod/backend/connection-schemas/raw-schema';
+import type { Member } from '#common/zod/backend/member';
+import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
 
 @Injectable()
 export class GetConnectionSchemasService {

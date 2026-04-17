@@ -30,14 +30,14 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendCreateProjectRequestPayload,
   ToBackendCreateProjectResponse
-} from '#common/interfaces/to-backend/projects/to-backend-create-project';
-import {
+} from '#common/zod/to-backend/projects/to-backend-create-project';
+import type {
   ToBackendGenerateProjectRemoteKeyRequestPayload,
   ToBackendGenerateProjectRemoteKeyResponse
-} from '#common/interfaces/to-backend/projects/to-backend-generate-project-remote-key';
+} from '#common/zod/to-backend/projects/to-backend-generate-project-remote-key';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ApiService } from '#front/app/services/api.service';
 import { ValidationService } from '#front/app/services/validation.service';

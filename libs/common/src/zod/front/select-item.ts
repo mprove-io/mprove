@@ -7,3 +7,8 @@ export let zfSelectItem = <T extends z.ZodType>(zT: T) =>
       label: z.string()
     })
     .meta({ id: 'SelectItem' });
+
+export type SelectItem<T> = {
+  value: T;
+  label: string;
+};

@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendRegisterUserRequestDto,
+  ToBackendRegisterUserResponseDto
+} from '#backend/controllers/users/register-user/register-user.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -18,7 +23,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { EmailService } from '#backend/services/email.service';
@@ -35,14 +39,12 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendRegisterUserRequest,
-  ToBackendRegisterUserResponsePayload
-} from '#common/interfaces/to-backend/users/to-backend-register-user';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendRegisterUserResponsePayload } from '#common/zod/to-backend/users/to-backend-register-user';
 
+@ApiTags('Users')
 @SkipJwtCheck()
-@UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
+@UseGuards(ThrottlerIpGuard)
 @Throttle({
   '1s': {
     limit: 2 * THROTTLE_MULTIPLIER
@@ -73,10 +75,15 @@ export class RegisterUserController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
-  async registerUser(@Req() request: any) {
-    let reqValid: ToBackendRegisterUserRequest = request.body;
-
-    let { email, password } = reqValid.payload;
+  @ApiOperation({
+    summary: 'RegisterUser',
+    description: 'Register a new user and send an email verification'
+  })
+  @ApiOkResponse({
+    type: ToBackendRegisterUserResponseDto
+  })
+  async registerUser(@Body() body: ToBackendRegisterUserRequestDto) {
+    let { email, password } = body.payload;
 
     let newUser: UserTab;
 

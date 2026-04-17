@@ -16,10 +16,10 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { makeSessionId } from '#common/functions/make-session-id';
-import {
+import type {
   ToBackendCommitRepoRequest,
   ToBackendCommitRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
+} from '#common/zod/to-backend/repos/to-backend-commit-repo';
 import { buildSessionApiKey } from '#node-common/functions/api-key/build-session-api-key';
 import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 

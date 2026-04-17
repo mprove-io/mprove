@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteChartRequestDto,
+  ToBackendDeleteChartResponseDto
+} from '#backend/controllers/charts/delete-chart/delete-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -23,7 +28,6 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { ChartsService } from '#backend/services/db/charts.service';
@@ -40,14 +44,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { ToBackendDeleteChartRequest } from '#common/interfaces/to-backend/charts/to-backend-delete-chart';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   ToDiskDeleteFileRequest,
   ToDiskDeleteFileResponse
-} from '#common/interfaces/to-disk/07-files/to-disk-delete-file';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/07-files/to-disk-delete-file';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Charts')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteChartController {
@@ -69,11 +73,19 @@ export class DeleteChartController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteChart)
-  async deleteChart(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteChartRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, envId, chartId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'DeleteChart',
+    description: 'Delete a saved chart'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteChartResponseDto
+  })
+  async deleteChart(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteChartRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { projectId, repoId, branchId, envId, chartId } = body.payload;
 
     this.usersService.checkUserIsNotRestricted({ user: user });
 
@@ -151,7 +163,7 @@ export class DeleteChartController {
     let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

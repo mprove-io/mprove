@@ -1,34 +1,36 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSetProjectApiKeyRequestDto,
+  ToBackendSetProjectApiKeyResponseDto
+} from '#backend/controllers/projects/set-project-api-key/set-project-api-key.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendSetProjectApiKeyRequest,
-  ToBackendSetProjectApiKeyResponsePayload
-} from '#common/interfaces/to-backend/projects/to-backend-set-project-api-key';
+import type { ToBackendSetProjectApiKeyResponsePayload } from '#common/zod/to-backend/projects/to-backend-set-project-api-key';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Projects')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SetProjectApiKeyController {
@@ -42,11 +44,19 @@ export class SetProjectApiKeyController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetProjectApiKey)
-  async setProjectApiKey(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSetProjectApiKeyRequest = request.body;
-
+  @ApiOperation({
+    summary: 'SetProjectApiKey',
+    description: 'Update third-party API keys on a project'
+  })
+  @ApiOkResponse({
+    type: ToBackendSetProjectApiKeyResponseDto
+  })
+  async setProjectApiKey(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendSetProjectApiKeyRequestDto
+  ) {
     let { projectId, zenApiKey, anthropicApiKey, openaiApiKey, e2bApiKey } =
-      reqValid.payload;
+      body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteConnectionRequestDto,
+  ToBackendDeleteConnectionResponseDto
+} from '#backend/controllers/connections/delete-connection/delete-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -23,15 +28,14 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendDeleteConnectionRequest } from '#common/interfaces/to-backend/connections/to-backend-delete-connection';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Connections')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteConnectionController {
@@ -45,11 +49,19 @@ export class DeleteConnectionController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteConnection)
-  async deleteConnection(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteConnectionRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { projectId, connectionId, envId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'DeleteConnection',
+    description: 'Delete a connection from a project environment'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteConnectionResponseDto
+  })
+  async deleteConnection(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteConnectionRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { projectId, connectionId, envId } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

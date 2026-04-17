@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateDraftChartRequestDto,
+  ToBackendCreateDraftChartResponseDto
+} from '#backend/controllers/charts/create-draft-chart/create-draft-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -24,7 +29,6 @@ import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { ChartsService } from '#backend/services/db/charts.service';
@@ -46,15 +50,13 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import { Tile } from '#common/interfaces/blockml/tile';
-import {
-  ToBackendCreateDraftChartRequest,
-  ToBackendCreateDraftChartResponsePayload
-} from '#common/interfaces/to-backend/charts/to-backend-create-draft-chart';
 import { ServerError } from '#common/models/server-error';
+import type { Tile } from '#common/zod/blockml/tile';
+import type { ToBackendCreateDraftChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-create-draft-chart';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Charts')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateDraftChartController {
@@ -79,10 +81,18 @@ export class CreateDraftChartController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateDraftChart)
-  async createDraftChart(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateDraftChartRequest = request.body;
-
-    let { traceId } = reqValid.info;
+  @ApiOperation({
+    summary: 'CreateDraftChart',
+    description: 'Create a draft chart'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateDraftChartResponseDto
+  })
+  async createDraftChart(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateDraftChartRequestDto
+  ) {
+    let { traceId } = body.info;
     let {
       mconfig: apiMconfig,
       isKeepQueryId,
@@ -93,7 +103,7 @@ export class CreateDraftChartController {
       cellMetricsStartDateMs,
       cellMetricsEndDateMs,
       queryOperation
-    } = reqValid.payload;
+    } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

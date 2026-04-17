@@ -18,19 +18,19 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
-import type { SessionEventApi } from '#common/interfaces/backend/session-event-api';
-import {
+import type { SessionEventApi } from '#common/zod/backend/session-event-api';
+import type {
   ToBackendCreateEditorSessionRequest,
   ToBackendCreateEditorSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-create-editor-session';
-import {
+} from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
+import type {
   ToBackendDeleteSessionRequest,
   ToBackendDeleteSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
-import {
+} from '#common/zod/to-backend/sessions/to-backend-delete-session';
+import type {
   ToBackendSendMessageToEditorSessionRequest,
   ToBackendSendMessageToEditorSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-editor-session';
+} from '#common/zod/to-backend/sessions/to-backend-send-message-to-editor-session';
 
 export async function forTestsRunEditorSessionE2x(item: {
   t: ExecutionContext;

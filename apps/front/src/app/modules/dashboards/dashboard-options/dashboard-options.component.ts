@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
+import type { DashboardPart } from '#common/zod/backend/dashboard-part';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';

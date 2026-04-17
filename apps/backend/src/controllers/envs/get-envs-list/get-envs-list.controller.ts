@@ -1,24 +1,26 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { eq } from 'drizzle-orm';
+import {
+  ToBackendGetEnvsListRequestDto,
+  ToBackendGetEnvsListResponseDto
+} from '#backend/controllers/envs/get-envs-list/get-envs-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetEnvsListRequest,
-  ToBackendGetEnvsListResponsePayload
-} from '#common/interfaces/to-backend/envs/to-backend-get-envs-list';
+import type { ToBackendGetEnvsListResponsePayload } from '#common/zod/to-backend/envs/to-backend-get-envs-list';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Envs')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetEnvsListController {
   constructor(
@@ -30,10 +32,18 @@ export class GetEnvsListController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetEnvsList)
-  async getEnvsList(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetEnvsListRequest = request.body;
-
-    let { projectId, isFilter } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetEnvsList',
+    description: 'Get a list of project environments'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetEnvsListResponseDto
+  })
+  async getEnvsList(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetEnvsListRequestDto
+  ) {
+    let { projectId, isFilter } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

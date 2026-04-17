@@ -22,14 +22,14 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendCreateDraftReportRequest,
   ToBackendCreateDraftReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-create-draft-report';
-import {
+} from '#common/zod/to-backend/reports/to-backend-create-draft-report';
+import type {
   ToBackendSaveCreateReportRequest,
   ToBackendSaveCreateReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-save-create-report';
+} from '#common/zod/to-backend/reports/to-backend-save-create-report';
 
 let testId = 'backend-save-create-report__ok';
 

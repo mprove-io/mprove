@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
-import { DashboardX } from '#common/interfaces/backend/dashboard-x';
+import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import { BaseQuery } from './base.query';
 
-export class DashboardState extends DashboardX {}
+export type DashboardState = DashboardX;
 
 let dashboardState: DashboardState = {
   structId: undefined,

@@ -59,30 +59,30 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { setChartFields } from '#common/functions/set-chart-fields';
-import { ChartX } from '#common/interfaces/backend/chart-x';
-import { MconfigX } from '#common/interfaces/backend/mconfig-x';
-import { ModelX } from '#common/interfaces/backend/model-x';
-import { QueryEstimate } from '#common/interfaces/backend/query-estimate';
-import { ModelField } from '#common/interfaces/blockml/model-field';
-import { ModelFieldY } from '#common/interfaces/blockml/model-field-y';
-import { Query } from '#common/interfaces/blockml/query';
-import { RefreshItem } from '#common/interfaces/front/refresh-item';
-import {
+import type { ChartX } from '#common/zod/backend/chart-x';
+import type { MconfigX } from '#common/zod/backend/mconfig-x';
+import type { ModelX } from '#common/zod/backend/model-x';
+import type { QueryEstimate } from '#common/zod/backend/query-estimate';
+import type { ModelField } from '#common/zod/blockml/model-field';
+import type { ModelFieldY } from '#common/zod/blockml/model-field-y';
+import type { Query } from '#common/zod/blockml/query';
+import type { RefreshItem } from '#common/zod/front/refresh-item';
+import type {
   ToBackendCancelQueriesRequestPayload,
   ToBackendCancelQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-cancel-queries';
-import {
+} from '#common/zod/to-backend/queries/to-backend-cancel-queries';
+import type {
   ToBackendGetQueryRequestPayload,
   ToBackendGetQueryResponse
-} from '#common/interfaces/to-backend/queries/to-backend-get-query';
-import {
+} from '#common/zod/to-backend/queries/to-backend-get-query';
+import type {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
-import {
+} from '#common/zod/to-backend/queries/to-backend-run-queries';
+import type {
   ToBackendRunQueriesDryRequestPayload,
   ToBackendRunQueriesDryResponse
-} from '#common/interfaces/to-backend/queries/to-backend-run-queries-dry';
+} from '#common/zod/to-backend/queries/to-backend-run-queries-dry';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';

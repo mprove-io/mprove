@@ -10,10 +10,10 @@ import { map, take, tap } from 'rxjs/operators';
 import { MEMBERS_PER_PAGE } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendGetMembersRequestPayload,
   ToBackendGetMembersResponse
-} from '#common/interfaces/to-backend/members/to-backend-get-members';
+} from '#common/zod/to-backend/members/to-backend-get-members';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';

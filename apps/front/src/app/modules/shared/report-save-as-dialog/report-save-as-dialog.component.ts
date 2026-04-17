@@ -17,15 +17,15 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ReportX } from '#common/interfaces/backend/report-x';
-import {
+import type { ReportX } from '#common/zod/backend/report-x';
+import type {
   ToBackendSaveCreateReportRequestPayload,
   ToBackendSaveCreateReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-save-create-report';
-import {
+} from '#common/zod/to-backend/reports/to-backend-save-create-report';
+import type {
   ToBackendSaveModifyReportRequestPayload,
   ToBackendSaveModifyReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-save-modify-report';
+} from '#common/zod/to-backend/reports/to-backend-save-modify-report';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';

@@ -14,22 +14,22 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendCreateEditorSessionRequest,
   ToBackendCreateEditorSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-create-editor-session';
-import {
+} from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
+import type {
   ToBackendDeleteSessionRequest,
   ToBackendDeleteSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-delete-session';
-import {
+} from '#common/zod/to-backend/sessions/to-backend-delete-session';
+import type {
   ToBackendGetSessionRequest,
   ToBackendGetSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-get-session';
-import {
+} from '#common/zod/to-backend/sessions/to-backend-get-session';
+import type {
   ToBackendSendMessageToEditorSessionRequest,
   ToBackendSendMessageToEditorSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-send-message-to-editor-session';
+} from '#common/zod/to-backend/sessions/to-backend-send-message-to-editor-session';
 
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;

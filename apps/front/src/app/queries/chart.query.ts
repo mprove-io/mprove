@@ -9,13 +9,13 @@ import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { makeId } from '#common/functions/make-id';
-import { ChartX } from '#common/interfaces/backend/chart-x';
-import { MconfigX } from '#common/interfaces/backend/mconfig-x';
-import { TileX } from '#common/interfaces/backend/tile-x';
-import { Query } from '#common/interfaces/blockml/query';
+import type { ChartX } from '#common/zod/backend/chart-x';
+import type { MconfigX } from '#common/zod/backend/mconfig-x';
+import type { TileX } from '#common/zod/backend/tile-x';
+import type { Query } from '#common/zod/blockml/query';
 import { BaseQuery } from './base.query';
 
-export class ChartState extends ChartX {}
+export type ChartState = ChartX;
 
 export const emptyMconfig: MconfigX = {
   structId: undefined,

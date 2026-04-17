@@ -20,14 +20,14 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { Ev } from '#common/interfaces/backend/ev';
-import { Project } from '#common/interfaces/backend/project';
-import { ProjectsItem } from '#common/interfaces/backend/projects-item';
-import {
+import { ServerError } from '#common/models/server-error';
+import type { Ev } from '#common/zod/backend/ev';
+import type { Project } from '#common/zod/backend/project';
+import type { ProjectsItem } from '#common/zod/backend/projects-item';
+import type {
   ToDiskCreateProjectRequest,
   ToDiskCreateProjectResponse
-} from '#common/interfaces/to-disk/02-projects/to-disk-create-project';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/02-projects/to-disk-create-project';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';

@@ -3,8 +3,8 @@ import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { rowIdLetterToNumber } from '#common/functions/row-id-letter-to-number';
 import { rowIdNumberToLetter } from '#common/functions/row-id-number-to-letter';
-import { Row } from '#common/interfaces/blockml/row';
 import { MyRegex } from '#common/models/my-regex';
+import type { Row } from '#common/zod/blockml/row';
 
 export function processRowIds(item: {
   rows: Row[];

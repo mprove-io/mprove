@@ -4,9 +4,9 @@ import { ControlClassEnum } from '#common/enums/control-class.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeCopy } from '#common/functions/make-copy';
-import { FilterX } from '#common/interfaces/backend/filter-x';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { DeleteFilterFnItem } from '#common/interfaces/front/delete-filter-fn-item';
+import type { FilterX } from '#common/zod/backend/filter-x';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { DeleteFilterFnItem } from '#common/zod/front/delete-filter-fn-item';
 import { ModelsQuery } from '#front/app/queries/models.query';
 
 @Component({

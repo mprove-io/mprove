@@ -5,11 +5,19 @@ import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { Ui } from '#common/interfaces/backend/ui';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { Ui } from '#common/zod/backend/ui';
 import { UTC } from './top';
 
 export const APP_NAME_BACKEND = 'BACKEND';
 export const APP_NAME_SCHEDULER = 'SCHEDULER';
+
+export const OPEN_API_ALLOWED_PATHS = new Set<string>([
+  ...Object.values(ToBackendRequestInfoNameEnum).map(v => `/${v}`),
+  // route not in enum
+  '/api/sse/session-events' // GetSessionEventsSseController (@Sse)
+  // '/*' // CheckController (@Controller('*') + @Get()) — catch-all 404 handler
+]);
 
 export const CHANNEL_RPC_REPLY = 'rpc-reply';
 export const CHANNEL_OPENCODE_STREAM_COMMAND = 'opencode-stream-command';

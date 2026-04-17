@@ -1,15 +1,10 @@
-import { IsOptional } from 'class-validator';
-
 export class ServerError extends Error {
   message: any;
 
-  @IsOptional()
   displayData?: any;
 
-  @IsOptional()
   customData?: any;
 
-  @IsOptional()
   originalError?: any;
 
   constructor(item: {

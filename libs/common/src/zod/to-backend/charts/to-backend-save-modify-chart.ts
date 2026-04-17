@@ -5,6 +5,7 @@ import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
 import { zToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 import { zToBackendRequestInfo } from '#common/zod/to-backend/to-backend-request-info';
+import { zTimezone } from '#common/zod/z-timezone';
 
 export let zToBackendSaveModifyChartRequestPayload = z
   .object({
@@ -15,7 +16,7 @@ export let zToBackendSaveModifyChartRequestPayload = z
     fromChartId: z.string(),
     chartId: z.string(),
     tileTitle: z.string(),
-    timezone: z.string()
+    timezone: zTimezone
   })
   .meta({ id: 'ToBackendSaveModifyChartRequestPayload' });
 

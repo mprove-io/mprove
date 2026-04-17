@@ -10,9 +10,9 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { getDashboardUrl } from '#common/functions/get-dashboard-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import type { RunDashboard } from '#common/interfaces/backend/run/run-dashboard';
-import type { RunQuery } from '#common/interfaces/backend/run/run-query';
 import { ServerError } from '#common/models/server-error';
+import type { RunDashboard } from '#common/zod/backend/run/run-dashboard';
+import type { RunQuery } from '#common/zod/backend/run/run-query';
 
 interface RunDashboardPrepTile {
   title: string;

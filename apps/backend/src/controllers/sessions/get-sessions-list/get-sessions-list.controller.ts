@@ -1,6 +1,11 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { and, desc, eq, gte, inArray, lt, notInArray } from 'drizzle-orm';
+import {
+  ToBackendGetSessionsListRequestDto,
+  ToBackendGetSessionsListResponseDto
+} from '#backend/controllers/sessions/get-sessions-list/get-sessions-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -10,7 +15,6 @@ import {
   sessionsTable
 } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
@@ -20,12 +24,10 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetSessionsListRequest,
-  ToBackendGetSessionsListResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-get-sessions-list';
+import type { ToBackendGetSessionsListResponsePayload } from '#common/zod/to-backend/sessions/to-backend-get-sessions-list';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Sessions')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetSessionsListController {
@@ -39,15 +41,24 @@ export class GetSessionsListController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetSessionsList)
-  async getSessionsList(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetSessionsListRequest = request.body;
+  @ApiOperation({
+    summary: 'GetSessionsList',
+    description: 'List the user sessions'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetSessionsListResponseDto
+  })
+  async getSessionsList(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetSessionsListRequestDto
+  ) {
     let {
       projectId,
       currentSessionId,
       includeArchived,
       archivedLimit,
       archivedLastCreatedTs
-    } = reqValid.payload;
+    } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

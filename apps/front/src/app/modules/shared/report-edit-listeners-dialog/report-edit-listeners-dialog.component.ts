@@ -22,29 +22,22 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
-import { ReportX } from '#common/interfaces/backend/report-x';
-import { Listener } from '#common/interfaces/blockml/listener';
-import { Model } from '#common/interfaces/blockml/model';
-import { ModelField } from '#common/interfaces/blockml/model-field';
-import { Report } from '#common/interfaces/blockml/report';
-import { Row } from '#common/interfaces/blockml/row';
-import {
+import type { ReportX } from '#common/zod/backend/report-x';
+import type { Listener } from '#common/zod/blockml/listener';
+import type { Model } from '#common/zod/blockml/model';
+import type { ModelField } from '#common/zod/blockml/model-field';
+import type { Report } from '#common/zod/blockml/report';
+import type { Row } from '#common/zod/blockml/row';
+import type { ReportX2 } from '#common/zod/front/report-x-2';
+import type { RowX2 } from '#common/zod/front/row-x-2';
+import type {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
-} from '#common/interfaces/to-backend/models/to-backend-get-models';
+} from '#common/zod/to-backend/models/to-backend-get-models';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { ReportService } from '#front/app/services/report.service';
-
-export class RowX2 extends Row {
-  modelFields?: { [a: string]: ModelField[] };
-  mconfigListenSwap?: { [a: string]: string[] };
-}
-
-export class ReportX2 extends ReportX {
-  rows: RowX2[];
-}
 
 export interface ReportEditListenersDialogData {
   reportService: ReportService;

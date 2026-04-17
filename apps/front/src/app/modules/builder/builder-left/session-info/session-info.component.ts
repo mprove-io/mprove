@@ -5,7 +5,7 @@ import { startWith, tap } from 'rxjs/operators';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionApi } from '#common/interfaces/backend/session-api';
+import type { SessionApi } from '#common/zod/backend/session-api';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { TimeService } from '#front/app/services/time.service';

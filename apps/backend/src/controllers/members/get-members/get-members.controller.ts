@@ -1,8 +1,13 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { and, eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendGetMembersRequestDto,
+  ToBackendGetMembersResponseDto
+} from '#backend/controllers/members/get-members/get-members.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -13,19 +18,16 @@ import {
 } from '#backend/drizzle/postgres/schema/avatars';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendGetMembersRequest,
-  ToBackendGetMembersResponsePayload
-} from '#common/interfaces/to-backend/members/to-backend-get-members';
+import type { ToBackendGetMembersResponsePayload } from '#common/zod/to-backend/members/to-backend-get-members';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Members')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetMembersController {
@@ -38,10 +40,18 @@ export class GetMembersController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetMembers)
-  async getMembers(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetMembersRequest = request.body;
-
-    let { projectId, perPage, pageNum } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetMembers',
+    description: 'Get a paginated list of project members'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetMembersResponseDto
+  })
+  async getMembers(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetMembersRequestDto
+  ) {
+    let { projectId, perPage, pageNum } = body.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

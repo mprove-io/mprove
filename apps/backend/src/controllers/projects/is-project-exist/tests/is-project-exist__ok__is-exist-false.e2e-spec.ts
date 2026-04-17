@@ -10,10 +10,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendIsProjectExistRequest,
   ToBackendIsProjectExistResponse
-} from '#common/interfaces/to-backend/projects/to-backend-is-project-exist';
+} from '#common/zod/to-backend/projects/to-backend-is-project-exist';
 
 let testId = 'backend-is-project-exist__ok__is-exist-false';
 

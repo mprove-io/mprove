@@ -14,8 +14,8 @@ import {
 } from '@malloydata/malloy';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { RawSchemaColumn } from '#common/interfaces/backend/connection-schemas/raw-schema';
-import { ProjectConnection } from '#common/interfaces/backend/project-connection';
+import type { RawSchemaColumn } from '#common/zod/backend/connection-schemas/raw-schema';
+import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import { MalloyConnection } from '#node-common/functions/make-malloy-connections';
 import { BigQueryTypeParser } from '#node-common/functions/schema-parse/parse-bigquery-type';
 import { DatabricksTypeParser } from '#node-common/functions/schema-parse/parse-databricks-type';

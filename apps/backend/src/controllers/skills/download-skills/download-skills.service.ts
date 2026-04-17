@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SKILLS_DATA } from '#common/constants/skills-data';
-import type { ToBackendDownloadSkillsResponsePayload } from '#common/interfaces/to-backend/skills/to-backend-download-skills';
+import type { ToBackendDownloadSkillsResponsePayload } from '#common/zod/to-backend/skills/to-backend-download-skills';
 
 @Injectable()
 export class SkillsService {

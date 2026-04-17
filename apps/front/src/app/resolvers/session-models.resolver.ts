@@ -5,10 +5,10 @@ import { map, take } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendGetSessionProviderModelsRequestPayload,
   ToBackendGetSessionProviderModelsResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-get-session-provider-models';
+} from '#common/zod/to-backend/sessions/to-backend-get-session-provider-models';
 import { NavQuery } from '../queries/nav.query';
 import { SessionModelsQuery } from '../queries/session-models.query';
 import { ApiService } from '../services/api.service';

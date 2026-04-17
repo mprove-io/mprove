@@ -5,15 +5,16 @@ import { PROJECT_TEAM_PAGE_TITLE } from '#common/constants/page-titles';
 import { MEMBERS_PER_PAGE } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { Member } from '#common/interfaces/backend/member';
-import {
+import type { Member } from '#common/zod/backend/member';
+import type { MemberExtended } from '#common/zod/front/member-extended';
+import type {
   ToBackendEditMemberRequestPayload,
   ToBackendEditMemberResponse
-} from '#common/interfaces/to-backend/members/to-backend-edit-member';
-import {
+} from '#common/zod/to-backend/members/to-backend-edit-member';
+import type {
   ToBackendGetMembersRequestPayload,
   ToBackendGetMembersResponse
-} from '#common/interfaces/to-backend/members/to-backend-get-members';
+} from '#common/zod/to-backend/members/to-backend-get-members';
 import { makeInitials } from '#front/app/functions/make-initials';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -21,10 +22,6 @@ import { TeamQuery } from '#front/app/queries/team.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
-
-class MemberExtended extends Member {
-  initials: string;
-}
 
 @Component({
   standalone: false,

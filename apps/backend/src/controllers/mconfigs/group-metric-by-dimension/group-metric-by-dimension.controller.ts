@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendGroupMetricByDimensionRequestDto,
+  ToBackendGroupMetricByDimensionResponseDto
+} from '#backend/controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -22,7 +27,6 @@ import type {
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -44,14 +48,12 @@ import { setChartFields } from '#common/functions/set-chart-fields';
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change';
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change';
-import { QueryOperation } from '#common/interfaces/backend/query-operation';
-import {
-  ToBackendGroupMetricByDimensionRequest,
-  ToBackendGroupMetricByDimensionResponsePayload
-} from '#common/interfaces/to-backend/mconfigs/to-backend-group-metric-by-dimension';
+import type { QueryOperation } from '#common/zod/backend/query-operation';
+import type { ToBackendGroupMetricByDimensionResponsePayload } from '#common/zod/to-backend/mconfigs/to-backend-group-metric-by-dimension';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Mconfigs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GroupMetricByDimensionController {
@@ -75,13 +77,18 @@ export class GroupMetricByDimensionController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGroupMetricByDimension)
+  @ApiOperation({
+    summary: 'GroupMetricByDimension',
+    description: 'Group a metric by dimension'
+  })
+  @ApiOkResponse({
+    type: ToBackendGroupMetricByDimensionResponseDto
+  })
   async groupMetricByDimension(
     @AttachUser() user: UserTab,
-    @Req() request: any
+    @Body() body: ToBackendGroupMetricByDimensionRequestDto
   ) {
-    let reqValid: ToBackendGroupMetricByDimensionRequest = request.body;
-
-    let { traceId } = reqValid.info;
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -92,7 +99,7 @@ export class GroupMetricByDimensionController {
       groupByFieldId,
       cellMetricsStartDateMs,
       cellMetricsEndDateMs
-    } = reqValid.payload;
+    } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

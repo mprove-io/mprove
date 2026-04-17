@@ -7,7 +7,15 @@
 // sidesteps that while keeping source schemas untouched — consumer TS types
 // still infer the real `T` from `z.custom<T>()` at the source.
 //
-// Structure mirrors `zod-deep-nullish.ts` but without the nullish wrapping:
+// Invariant: the only difference between the input and output schema is that
+// every `ZodCustom` node is replaced with `z.any()`. Everything else — array
+// `.min()/.max()/.length()`, string formats, object `.catchall()`, union
+// discriminators, checks, error messages, metadata — is preserved by cloning
+// each compound schema via its own `clone({ ...def, <children swapped> })`
+// rather than by reconstructing it through `z.array(...)`, `z.object(...)`,
+// etc. (which would drop every def field the factory helpers don't accept).
+//
+// Structure:
 //   - module-scoped WeakMap cache so shared sub-schemas produce the same
 //     rebuilt instance (preserves `$ref` reuse in JSON Schema output and
 //     avoids "Duplicate schema id");
@@ -19,7 +27,6 @@ import {
   ZodCatch,
   ZodCustom,
   ZodDefault,
-  ZodDiscriminatedUnion,
   ZodIntersection,
   ZodLazy,
   ZodMap,
@@ -37,6 +44,29 @@ import {
   ZodUnion,
   z
 } from 'zod';
+
+function getMeta(schema: unknown): Record<string, unknown> | undefined {
+  return (
+    schema as { meta?: () => Record<string, unknown> | undefined }
+  ).meta?.();
+}
+
+function applyMeta<T extends z.ZodType>(result: T, src: unknown): T {
+  let meta = getMeta(src);
+  if (meta && Object.keys(meta).length > 0) {
+    return result.meta(meta) as T;
+  }
+  return result;
+}
+
+function rebuild<T extends z.core.SomeType>(
+  schema: T,
+  overrides: Record<string, unknown>
+): any {
+  let anySchema = schema as any;
+  let cloned = anySchema.clone({ ...anySchema.def, ...overrides });
+  return applyMeta(cloned, schema);
+}
 
 function zodStripCustomInternal<T extends z.core.SomeType>(
   schema: T,
@@ -62,149 +92,103 @@ function buildStripped<T extends z.core.SomeType>(
   cache: WeakMap<object, any>
 ): any {
   if (schema instanceof ZodCustom) {
-    let replacement: z.ZodType = z.any();
-    let srcMeta = (
-      schema as unknown as {
-        meta?: () => Record<string, unknown> | undefined;
-      }
-    ).meta?.();
-    if (srcMeta && Object.keys(srcMeta).length > 0) {
-      replacement = replacement.meta(srcMeta);
-    }
-    return replacement;
+    // The sole intended transformation: replace custom types with `z.any()`
+    // so the schema is representable in JSON Schema. Keep meta so ids,
+    // descriptions, and other annotations survive.
+    return applyMeta(z.any(), schema);
   }
 
-  if (schema instanceof ZodOptional) {
-    return zodStripCustomInternal(schema.unwrap(), cache).optional();
-  }
-
-  if (schema instanceof ZodNullable) {
-    return zodStripCustomInternal(schema.unwrap(), cache).nullable();
-  }
-
-  if (schema instanceof ZodDefault) {
-    let innerResult = zodStripCustomInternal(schema.unwrap(), cache);
-    return innerResult.default(schema.def.defaultValue);
-  }
-
-  if (schema instanceof ZodCatch) {
-    let innerResult = zodStripCustomInternal(schema.def.innerType, cache);
-    return innerResult.catch(schema.def.catchValue);
-  }
-
-  if (schema instanceof ZodPrefault) {
-    let innerResult = zodStripCustomInternal(schema.def.innerType, cache);
-    return innerResult.prefault(schema.def.defaultValue);
-  }
-
-  if (schema instanceof ZodNonOptional) {
-    let innerResult = zodStripCustomInternal(schema.def.innerType, cache);
-    return innerResult.nonoptional();
-  }
-
-  if (schema instanceof ZodReadonly) {
-    return zodStripCustomInternal(schema.def.innerType, cache).readonly();
+  if (schema instanceof ZodArray) {
+    let element = zodStripCustomInternal(schema.def.element, cache);
+    return rebuild(schema, { element: element });
   }
 
   if (schema instanceof ZodObject) {
     let shape = schema.shape;
     let newShape: Record<string, any> = {};
-
     for (let key in shape) {
       newShape[key] = zodStripCustomInternal(shape[key], cache);
     }
-
-    let result: z.ZodType = z.object(newShape);
-
-    let srcMeta = (
-      schema as unknown as {
-        meta?: () => Record<string, unknown> | undefined;
-      }
-    ).meta?.();
-    if (srcMeta && Object.keys(srcMeta).length > 0) {
-      result = result.meta(srcMeta);
-    }
-
-    return result;
+    return rebuild(schema, { shape: newShape });
   }
 
-  if (schema instanceof ZodArray) {
-    return z.array(zodStripCustomInternal(schema.def.element, cache));
+  if (
+    schema instanceof ZodOptional ||
+    schema instanceof ZodNullable ||
+    schema instanceof ZodDefault ||
+    schema instanceof ZodCatch ||
+    schema instanceof ZodPrefault ||
+    schema instanceof ZodNonOptional ||
+    schema instanceof ZodReadonly ||
+    schema instanceof ZodPromise
+  ) {
+    let inner = zodStripCustomInternal(schema.def.innerType, cache);
+    return rebuild(schema, { innerType: inner });
   }
 
   if (schema instanceof ZodMap) {
-    return z.map(
-      zodStripCustomInternal(schema.def.keyType, cache),
-      zodStripCustomInternal(schema.def.valueType, cache)
-    );
+    let keyType = zodStripCustomInternal(schema.def.keyType, cache);
+    let valueType = zodStripCustomInternal(schema.def.valueType, cache);
+    return rebuild(schema, { keyType: keyType, valueType: valueType });
   }
 
   if (schema instanceof ZodSet) {
-    return z.set(zodStripCustomInternal(schema.def.valueType, cache));
-  }
-
-  if (schema instanceof ZodPromise) {
-    return z.promise(zodStripCustomInternal(schema.def.innerType, cache));
-  }
-
-  if (schema instanceof ZodUnion) {
-    return z.union(
-      schema.options.map((opt: any) => zodStripCustomInternal(opt, cache))
-    );
-  }
-
-  if (schema instanceof ZodIntersection) {
-    return z.intersection(
-      zodStripCustomInternal(schema.def.left, cache),
-      zodStripCustomInternal(schema.def.right, cache)
-    );
+    let valueType = zodStripCustomInternal(schema.def.valueType, cache);
+    return rebuild(schema, { valueType: valueType });
   }
 
   if (schema instanceof ZodRecord) {
-    return z.record(
-      zodStripCustomInternal(schema.def.keyType, cache),
-      zodStripCustomInternal(schema.def.valueType, cache)
+    let keyType = zodStripCustomInternal(schema.def.keyType, cache);
+    let valueType = zodStripCustomInternal(schema.def.valueType, cache);
+    return rebuild(schema, { keyType: keyType, valueType: valueType });
+  }
+
+  if (schema instanceof ZodUnion) {
+    // Handles both `ZodUnion` and `ZodDiscriminatedUnion` (which extends
+    // `ZodUnion` via trait set). `clone` dispatches on `_zod.constr`, so a
+    // discriminated union is rebuilt as a discriminated union — its
+    // discriminator field and `unionFallback` flag live in `def` and ride
+    // along automatically.
+    let newOptions = schema.def.options.map((opt: any) =>
+      zodStripCustomInternal(opt, cache)
     );
+    return rebuild(schema, { options: newOptions });
+  }
+
+  if (schema instanceof ZodIntersection) {
+    let left = zodStripCustomInternal(schema.def.left, cache);
+    let right = zodStripCustomInternal(schema.def.right, cache);
+    return rebuild(schema, { left: left, right: right });
   }
 
   if (schema instanceof ZodTuple) {
-    return z.tuple(
-      schema.def.items.map((item: any) =>
-        zodStripCustomInternal(item, cache)
-      ) as any
+    let items = schema.def.items.map((item: any) =>
+      zodStripCustomInternal(item, cache)
     );
+    let rest = schema.def.rest
+      ? zodStripCustomInternal(schema.def.rest, cache)
+      : schema.def.rest;
+    return rebuild(schema, { items: items, rest: rest });
   }
 
   if (schema instanceof ZodLazy) {
-    return z.lazy(() => zodStripCustomInternal(schema.def.getter(), cache));
-  }
-
-  if (schema instanceof ZodDiscriminatedUnion) {
-    let options = schema.options.map((option: any) => {
-      if (option instanceof ZodObject) {
-        let shape = option.shape;
-        let newShape: Record<string, any> = {};
-
-        for (let key in shape) {
-          if (key === schema.def.discriminator) {
-            newShape[key] = shape[key];
-          } else {
-            newShape[key] = zodStripCustomInternal(shape[key], cache);
-          }
-        }
-
-        return z.object(newShape);
-      }
-      return zodStripCustomInternal(option, cache);
+    let originalGetter = schema.def.getter;
+    return rebuild(schema, {
+      getter: () => zodStripCustomInternal(originalGetter(), cache)
     });
-
-    return z.discriminatedUnion(schema.def.discriminator, options as any);
   }
 
   if (schema instanceof ZodPipe) {
-    return schema;
+    let in_ = zodStripCustomInternal(schema.def.in, cache);
+    let out = zodStripCustomInternal(schema.def.out, cache);
+    return rebuild(schema, { in: in_, out: out });
   }
 
+  // Leaf types (ZodString, ZodNumber, ZodBoolean, ZodLiteral, ZodEnum,
+  // ZodDate, ZodAny, ZodUnknown, ZodNever, ZodVoid, ZodNull, ZodUndefined,
+  // ZodNaN, ZodBigInt, ZodSymbol, ZodFile, ZodTemplateLiteral) have no
+  // child schemas to recurse into, so return as-is with all their checks
+  // and metadata intact via reference.
   return schema;
 }
 

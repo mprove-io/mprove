@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDuplicateMconfigAndQueryRequestDto,
+  ToBackendDuplicateMconfigAndQueryResponseDto
+} from '#backend/controllers/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -22,7 +27,6 @@ import type {
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -39,13 +43,11 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendDuplicateMconfigAndQueryRequest,
-  ToBackendDuplicateMconfigAndQueryResponsePayload
-} from '#common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
+import type { ToBackendDuplicateMconfigAndQueryResponsePayload } from '#common/zod/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
 import { makeQueryId } from '#node-common/functions/make-query-id';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Mconfigs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DuplicateMconfigAndQueryController {
@@ -68,14 +70,19 @@ export class DuplicateMconfigAndQueryController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDuplicateMconfigAndQuery)
+  @ApiOperation({
+    summary: 'DuplicateMconfigAndQuery',
+    description: 'Duplicate an mconfig and its associated query'
+  })
+  @ApiOkResponse({
+    type: ToBackendDuplicateMconfigAndQueryResponseDto
+  })
   async duplicateMconfigAndQuery(
     @AttachUser() user: UserTab,
-    @Req() request: any
+    @Body() body: ToBackendDuplicateMconfigAndQueryRequestDto
   ) {
-    let reqValid: ToBackendDuplicateMconfigAndQueryRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, envId, oldMconfigId } = reqValid.payload;
+    let { traceId } = body.info;
+    let { projectId, repoId, branchId, envId, oldMconfigId } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

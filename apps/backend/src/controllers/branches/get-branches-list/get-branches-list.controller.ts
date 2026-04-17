@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { and, asc, eq, inArray } from 'drizzle-orm';
+import {
+  ToBackendGetBranchesListRequestDto,
+  ToBackendGetBranchesListResponseDto
+} from '#backend/controllers/branches/get-branches-list/get-branches-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -8,7 +13,6 @@ import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
@@ -16,12 +20,10 @@ import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetBranchesListRequest,
-  ToBackendGetBranchesListResponsePayload
-} from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
+import type { ToBackendGetBranchesListResponsePayload } from '#common/zod/to-backend/branches/to-backend-get-branches-list';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Branches')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetBranchesListController {
   constructor(
@@ -33,10 +35,18 @@ export class GetBranchesListController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetBranchesList)
-  async getBranchesList(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetBranchesListRequest = request.body;
-
-    let { projectId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetBranchesList',
+    description: 'Get branches available to the user'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetBranchesListResponseDto
+  })
+  async getBranchesList(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetBranchesListRequestDto
+  ) {
+    let { projectId } = body.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

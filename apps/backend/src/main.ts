@@ -19,10 +19,10 @@ const { json, urlencoded } = bodyParser;
 import { WinstonModule } from 'nest-winston';
 import {
   APP_NAME_BACKEND,
-  APP_NAME_SCHEDULER
+  APP_NAME_SCHEDULER,
+  OPEN_API_ALLOWED_PATHS
 } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getLoggerOptions } from '#node-common/functions/get-logger-options';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events';
 import { AppModule } from './app.module';
@@ -59,17 +59,47 @@ async function bootstrap() {
     new DocumentBuilder()
       .setTitle('mprove backend')
       .setVersion(config.mproveReleaseTag ?? 'dev')
+      .addTag('Avatars')
+      .addTag('Branches')
+      .addTag('Catalogs')
+      .addTag('Charts')
+      .addTag('Check')
+      .addTag('Connections')
+      .addTag('Dashboards')
+      .addTag('Envs')
+      .addTag('Files')
+      .addTag('Folders')
+      .addTag('Mconfigs')
+      .addTag('Members')
+      .addTag('Models')
+      .addTag('Nav')
+      .addTag('OrgUsers')
+      .addTag('Orgs')
+      .addTag('Projects')
+      .addTag('Queries')
+      .addTag('QueryInfo')
+      .addTag('Reports')
+      .addTag('Repos')
+      .addTag('Run')
+      .addTag('Sessions')
+      .addTag('Skills')
+      .addTag('Special')
+      .addTag('State')
+      .addTag('Structs')
+      .addTag('SuggestFields')
+      .addTag('Telemetry')
+      .addTag('TestRoutes')
       .addTag('Users')
-      .build()
+      .build(),
+    {
+      operationIdFactory: (controllerKey: string, _methodKey: string) =>
+        controllerKey
+    }
   );
-
-  let openApiAllowedPaths = new Set<string>([
-    '/' + ToBackendRequestInfoNameEnum.ToBackendSetUserName
-  ]);
 
   openApiDoc.paths = Object.fromEntries(
     Object.entries(openApiDoc.paths).filter(([path]) =>
-      openApiAllowedPaths.has(path)
+      OPEN_API_ALLOWED_PATHS.has(path)
     )
   );
 

@@ -3,10 +3,10 @@ import { createStore, withProps } from '@ngneat/elf';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID } from '#common/constants/top';
 import { makeCopy } from '#common/functions/make-copy';
-import { ReportX } from '#common/interfaces/backend/report-x';
+import type { ReportX } from '#common/zod/backend/report-x';
 import { BaseQuery } from './base.query';
 
-export class ReportState extends ReportX {}
+export type ReportState = ReportX;
 
 export const emptyReport: ReportState = {
   projectId: undefined,

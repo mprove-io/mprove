@@ -10,8 +10,8 @@ import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { Filter } from '#common/interfaces/blockml/filter';
-import { Model } from '#common/interfaces/blockml/model';
+import type { Filter } from '#common/zod/blockml/filter';
+import type { Model } from '#common/zod/blockml/model';
 import { getMalloyFiltersFractions } from './get-malloy-filters-fractions';
 
 export function processMalloyWhereOrHaving(item: {

@@ -1,34 +1,36 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteEnvUserRequestDto,
+  ToBackendDeleteEnvUserResponseDto
+} from '#backend/controllers/envs/delete-env-user/delete-env-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendDeleteEnvUserRequest,
-  ToBackendDeleteEnvUserResponsePayload
-} from '#common/interfaces/to-backend/envs/to-backend-delete-env-user';
+import type { ToBackendDeleteEnvUserResponsePayload } from '#common/zod/to-backend/envs/to-backend-delete-env-user';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Envs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteEnvUserController {
@@ -43,10 +45,18 @@ export class DeleteEnvUserController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser)
-  async deleteEnvUser(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteEnvUserRequest = request.body;
-
-    let { projectId, envId, envUserId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'DeleteEnvUser',
+    description: 'Revoke a team member access to an environment'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteEnvUserResponseDto
+  })
+  async deleteEnvUser(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteEnvUserRequestDto
+  ) {
+    let { projectId, envId, envUserId } = body.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

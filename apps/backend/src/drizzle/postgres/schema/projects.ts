@@ -9,8 +9,8 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { SessionModelApi } from '#common/interfaces/backend/session-model-api';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
+import type { SessionModelApi } from '#common/zod/backend/session-model-api';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 
 export const projectsTable = pgTable(
   'projects',

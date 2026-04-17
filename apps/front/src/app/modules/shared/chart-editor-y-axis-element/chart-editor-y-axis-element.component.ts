@@ -8,10 +8,10 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { UI_CHART_TYPES } from '#common/constants/ui-chart-types';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { MconfigChartYAxis } from '#common/interfaces/blockml/mconfig-chart-y-axis';
-import { EventChartDeleteYAxisElement } from '#common/interfaces/front/event-chart-delete-y-axis-element';
-import { EventChartToggleYAxisElement } from '#common/interfaces/front/event-chart-toggle-y-axis-element';
-import { EventChartYAxisElementUpdate } from '#common/interfaces/front/event-chart-y-axis-element-update';
+import type { MconfigChartYAxis } from '#common/zod/blockml/mconfig-chart-y-axis';
+import type { EventChartDeleteYAxisElement } from '#common/zod/front/event-chart-delete-y-axis-element';
+import type { EventChartToggleYAxisElement } from '#common/zod/front/event-chart-toggle-y-axis-element';
+import type { EventChartYAxisElementUpdate } from '#common/zod/front/event-chart-y-axis-element-update';
 
 @Component({
   standalone: false,

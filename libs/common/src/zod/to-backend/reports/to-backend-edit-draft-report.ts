@@ -13,6 +13,7 @@ import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
 import { zToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 import { zToBackendRequestInfo } from '#common/zod/to-backend/to-backend-request-info';
+import { zTimezone } from '#common/zod/z-timezone';
 
 export let zToBackendEditDraftReportRequestPayload = z
   .object({
@@ -24,7 +25,7 @@ export let zToBackendEditDraftReportRequestPayload = z
     changeType: z.enum(ChangeTypeEnum),
     rowChange: zRowChange.nullish(),
     rowIds: z.array(z.string()).nullish(),
-    timezone: z.string(),
+    timezone: zTimezone,
     timeSpec: z.enum(TimeSpecEnum),
     timeRangeFractionBrick: z.string(),
     newReportFields: z.array(zReportField),

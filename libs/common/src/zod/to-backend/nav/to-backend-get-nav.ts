@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zMember } from '#common/zod/backend/member';
 import { zStructX } from '#common/zod/backend/struct-x';
@@ -41,7 +42,7 @@ export let zToBackendGetNavResponsePayload = z
     projectName: z.string(),
     projectDefaultBranch: z.string(),
     repoId: z.string(),
-    repoType: z.string(),
+    repoType: z.enum(RepoTypeEnum),
     branchId: z.string(),
     envId: z.string(),
     needValidate: z.boolean(),

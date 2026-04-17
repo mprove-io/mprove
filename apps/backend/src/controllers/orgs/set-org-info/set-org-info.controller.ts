@@ -1,22 +1,26 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSetOrgInfoRequestDto,
+  ToBackendSetOrgInfoResponseDto
+} from '#backend/controllers/orgs/set-org-info/set-org-info.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
 import { DEMO_ORG_NAME } from '#common/constants/top';
@@ -24,13 +28,11 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendSetOrgInfoRequest,
-  ToBackendSetOrgInfoResponsePayload
-} from '#common/interfaces/to-backend/orgs/to-backend-set-org-info';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendSetOrgInfoResponsePayload } from '#common/zod/to-backend/orgs/to-backend-set-org-info';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Orgs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SetOrgInfoController {
@@ -43,10 +45,18 @@ export class SetOrgInfoController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo)
-  async setOrgInfo(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSetOrgInfoRequest = request.body;
-
-    let { orgId, name } = reqValid.payload;
+  @ApiOperation({
+    summary: 'SetOrgInfo',
+    description: "Update an organization's name"
+  })
+  @ApiOkResponse({
+    type: ToBackendSetOrgInfoResponseDto
+  })
+  async setOrgInfo(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendSetOrgInfoRequestDto
+  ) {
+    let { orgId, name } = body.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 

@@ -3,11 +3,10 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { zConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
 import { zConnectionRawSchema } from '#common/zod/backend/connection-schemas/raw-schema';
 
-// TODO: `options` tightened (removed `.nullish()`) to match the
-// `ProjectConnection` interface's required TS field so blockml's
-// rebuild-struct service can pass projectConnections into node-common helpers
-// (makeMalloyConnections, prePopulateMalloySchemaCache). Revisit once
-// node-common migrates to zod types.
+// TODO: `options` is tightened (non-nullish) despite interface `@IsOptional()`.
+// Reason: makeMalloyConnections in libs/node-common dereferences
+// x.options.<provider> directly without null guards. Loosen here only after
+// that helper null-guards options.
 export let zProjectConnection = z
   .object({
     projectId: z.string().nullish(),

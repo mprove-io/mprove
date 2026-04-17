@@ -49,21 +49,21 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
-import { ReportX } from '#common/interfaces/backend/report-x';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { Query } from '#common/interfaces/blockml/query';
-import { DataPoint } from '#common/interfaces/front/data-point';
-import { DataRow } from '#common/interfaces/front/data-row';
-import { RefreshItem } from '#common/interfaces/front/refresh-item';
-import { SeriesPart } from '#common/interfaces/front/series-part';
-import {
+import type { ReportX } from '#common/zod/backend/report-x';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { Query } from '#common/zod/blockml/query';
+import type { DataPoint } from '#common/zod/front/data-point';
+import type { DataRow } from '#common/zod/front/data-row';
+import type { RefreshItem } from '#common/zod/front/refresh-item';
+import type { SeriesPart } from '#common/zod/front/series-part';
+import type {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
-import {
+} from '#common/zod/to-backend/queries/to-backend-run-queries';
+import type {
   ToBackendGetReportRequestPayload,
   ToBackendGetReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-get-report';
+} from '#common/zod/to-backend/reports/to-backend-get-report';
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '#front/app/functions/make-query-params';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';

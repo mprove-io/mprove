@@ -14,11 +14,11 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetChartRequest,
   ToBackendGetChartResponse
-} from '#common/interfaces/to-backend/charts/to-backend-get-chart';
-import { ToBackendSeedRecordsRequestPayloadConnectionsItem } from '#common/interfaces/to-backend/test-routes/to-backend-seed-records';
+} from '#common/zod/to-backend/charts/to-backend-get-chart';
+import type { ToBackendSeedRecordsRequestPayloadConnectionsItem } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
 
 let testId = 'backend-get-chart__ok';
 

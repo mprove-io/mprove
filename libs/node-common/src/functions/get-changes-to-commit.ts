@@ -6,8 +6,8 @@ const { forEachSeries } = pIteration;
 import { FileStatusEnum } from '#common/enums/file-status.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isUndefined } from '#common/functions/is-undefined';
-import { DiskFileChange } from '#common/interfaces/disk/disk-file-change';
-import { FileWithStatusType } from '#common/interfaces/disk/git-file-status-type';
+import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
+import type { FileWithStatusType } from '#common/zod/disk/git-file-status-type';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getChangesToCommit(item: {

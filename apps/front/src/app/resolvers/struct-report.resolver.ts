@@ -14,10 +14,10 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
+import type {
   ToBackendGetReportRequestPayload,
   ToBackendGetReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-get-report';
+} from '#common/zod/to-backend/reports/to-backend-get-report';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';

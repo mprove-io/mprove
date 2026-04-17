@@ -12,8 +12,8 @@ export let zToBackendRunQueriesRequestPayload = z
     repoId: z.string(),
     branchId: z.string(),
     envId: z.string(),
-    mconfigIds: z.array(z.string()),
-    poolSize: z.number().nullish()
+    mconfigIds: z.array(z.string()).min(1),
+    poolSize: z.number().int().positive().nullish()
   })
   .meta({ id: 'ToBackendRunQueriesRequestPayload' });
 

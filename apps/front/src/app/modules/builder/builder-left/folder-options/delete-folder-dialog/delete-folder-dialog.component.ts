@@ -12,10 +12,10 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path';
 import { isDefined } from '#common/functions/is-defined';
-import {
+import type {
   ToBackendDeleteFolderRequestPayload,
   ToBackendDeleteFolderResponse
-} from '#common/interfaces/to-backend/folders/to-backend-delete-folder';
+} from '#common/zod/to-backend/folders/to-backend-delete-folder';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';

@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
+import {
+  ToBackendGetRebuildStructRequestDto,
+  ToBackendGetRebuildStructResponseDto
+} from '#backend/controllers/test-routes/get-rebuild-struct/get-rebuild-struct.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
@@ -7,7 +12,6 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files';
 import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { ConnectionsService } from '#backend/services/db/connections.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
@@ -17,21 +21,21 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToBlockmlRequestInfoNameEnum } from '#common/enums/to/to-blockml-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import { ToBackendGetRebuildStructRequest } from '#common/interfaces/to-backend/test-routes/to-backend-get-rebuild-struct';
-import {
+import type {
   ToBlockmlRebuildStructRequest,
   ToBlockmlRebuildStructResponse
-} from '#common/interfaces/to-blockml/api/to-blockml-rebuild-struct';
-import {
+} from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
+import type {
   ToDiskGetCatalogFilesRequest,
   ToDiskGetCatalogFilesResponse
-} from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
+} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-files';
 
+@ApiTags('TestRoutes')
 // ToBackendGetRebuildStructRequest is for tests only
 // backend use apps/backend/src/services/blockml.service.ts -> rebuildStruct
 @SkipJwtCheck()
 @SkipThrottle()
-@UseGuards(TestRoutesGuard, ValidateRequestGuard)
+@UseGuards(TestRoutesGuard)
 @Controller()
 export class GetRebuildStructController {
   constructor(
@@ -44,9 +48,17 @@ export class GetRebuildStructController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct)
-  async getRebuildStruct(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetRebuildStructRequest = request.body;
-
+  @ApiOperation({
+    summary: 'GetRebuildStruct',
+    description: 'Rebuild a project struct for tests'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetRebuildStructResponseDto
+  })
+  async getRebuildStruct(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetRebuildStructRequestDto
+  ) {
     let {
       orgId,
       projectId,
@@ -58,7 +70,7 @@ export class GetRebuildStructController {
       cachedMproveConfig,
       cachedModels,
       cachedMetrics
-    } = reqValid.payload;
+    } = body.payload;
 
     let structId = makeId();
 
@@ -75,7 +87,7 @@ export class GetRebuildStructController {
     let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: orgId,
@@ -105,7 +117,7 @@ export class GetRebuildStructController {
     let rebuildStructRequest: ToBlockmlRebuildStructRequest = {
       info: {
         name: ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         structId: structId,

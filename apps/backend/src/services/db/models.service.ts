@@ -11,12 +11,12 @@ import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ErEnum } from '#common/enums/er.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { Member } from '#common/interfaces/backend/member';
-import { ModelPart } from '#common/interfaces/backend/model-part';
-import { ModelPartX } from '#common/interfaces/backend/model-part-x';
-import { ModelX } from '#common/interfaces/backend/model-x';
-import { Model } from '#common/interfaces/blockml/model';
 import { ServerError } from '#common/models/server-error';
+import type { Member } from '#common/zod/backend/member';
+import type { ModelPart } from '#common/zod/backend/model-part';
+import type { ModelPartX } from '#common/zod/backend/model-part-x';
+import type { ModelX } from '#common/zod/backend/model-x';
+import type { Model } from '#common/zod/blockml/model';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

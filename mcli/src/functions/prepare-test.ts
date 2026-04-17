@@ -2,14 +2,14 @@ import { createRequire } from 'node:module';
 import { BaseContext, Cli, CommandClass } from 'clipanion';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
+import type {
   ToBackendDeleteRecordsRequestPayload,
   ToBackendDeleteRecordsResponse
-} from '#common/interfaces/to-backend/test-routes/to-backend-delete-records';
-import {
+} from '#common/zod/to-backend/test-routes/to-backend-delete-records';
+import type {
   ToBackendSeedRecordsRequestPayload,
   ToBackendSeedRecordsResponse
-} from '#common/interfaces/to-backend/test-routes/to-backend-seed-records';
+} from '#common/zod/to-backend/test-routes/to-backend-seed-records';
 import { McliConfig } from '#mcli/config/mcli-config';
 import { CustomContext } from '#mcli/models/custom-command';
 import { mreq } from './mreq';

@@ -1,20 +1,24 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendTestConnectionRequestDto,
+  ToBackendTestConnectionResponseDto
+} from '#backend/controllers/connections/test-connection/test-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { ConnectionsService } from '#backend/services/db/connections.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
@@ -35,13 +39,11 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { getMotherduckDatabaseWrongChars } from '#common/functions/check-motherduck-database-name';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import {
-  ToBackendTestConnectionRequest,
-  ToBackendTestConnectionResponsePayload
-} from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendTestConnectionResponsePayload } from '#common/zod/to-backend/connections/to-backend-test-connection';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Connections')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class TestConnectionController {
@@ -65,10 +67,19 @@ export class TestConnectionController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendTestConnection)
-  async testConnection(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendTestConnectionRequest = request.body;
+  @ApiOperation({
+    summary: 'TestConnection',
+    description: 'Verify that a SQL connection can be established'
+  })
+  @ApiOkResponse({
+    type: ToBackendTestConnectionResponseDto
+  })
+  async testConnection(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendTestConnectionRequestDto
+  ) {
     let { projectId, envId, connectionId, type, options, storeMethod } =
-      reqValid.payload;
+      body.payload;
 
     if (isDefined(options.motherduck)) {
       let wrongChars: string[] = getMotherduckDatabaseWrongChars({

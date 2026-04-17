@@ -8,19 +8,20 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { SessionApi } from '#common/interfaces/backend/session-api';
-import {
+import type { SessionApi } from '#common/zod/backend/session-api';
+import type { SessionApiX } from '#common/zod/front/session-api-x';
+import type {
   ToBackendArchiveSessionRequestPayload,
   ToBackendArchiveSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-archive-session';
-import {
+} from '#common/zod/to-backend/sessions/to-backend-archive-session';
+import type {
   ToBackendGetSessionsListRequestPayload,
   ToBackendGetSessionsListResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-get-sessions-list';
-import {
+} from '#common/zod/to-backend/sessions/to-backend-get-sessions-list';
+import type {
   ToBackendPauseEditorSessionRequestPayload,
   ToBackendPauseEditorSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-pause-editor-session';
+} from '#common/zod/to-backend/sessions/to-backend-pause-editor-session';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -34,11 +35,6 @@ import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
 let SESSIONS_SPINNER_NAME = 'sessionsRefresh';
-
-export class SessionApiX extends SessionApi {
-  displayTitle: string;
-  providerLabel: string;
-}
 
 @Component({
   standalone: false,

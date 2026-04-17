@@ -10,10 +10,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendSetAvatarRequest,
   ToBackendSetAvatarResponse
-} from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
+} from '#common/zod/to-backend/avatars/to-backend-set-avatar';
 
 let testId = 'backend-set-avatar__ok';
 

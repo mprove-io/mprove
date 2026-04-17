@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { and, eq, inArray } from 'drizzle-orm';
+import {
+  ToBackendGetOrgRequestDto,
+  ToBackendGetOrgResponseDto
+} from '#backend/controllers/orgs/get-org/get-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -7,18 +12,15 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetOrgRequest,
-  ToBackendGetOrgResponsePayload
-} from '#common/interfaces/to-backend/orgs/to-backend-get-org';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendGetOrgResponsePayload } from '#common/zod/to-backend/orgs/to-backend-get-org';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Orgs')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetOrgController {
   constructor(
@@ -28,10 +30,18 @@ export class GetOrgController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrg)
-  async getOrg(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetOrgRequest = request.body;
-
-    let { orgId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetOrg',
+    description: 'Get an organization'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetOrgResponseDto
+  })
+  async getOrg(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetOrgRequestDto
+  ) {
+    let { orgId } = body.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 

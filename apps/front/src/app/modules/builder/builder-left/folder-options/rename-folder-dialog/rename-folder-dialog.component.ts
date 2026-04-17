@@ -22,10 +22,10 @@ import { decodeFilePath } from '#common/functions/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import {
+import type {
   ToBackendRenameCatalogNodeRequestPayload,
   ToBackendRenameCatalogNodeResponse
-} from '#common/interfaces/to-backend/catalogs/to-backend-rename-catalog-node';
+} from '#common/zod/to-backend/catalogs/to-backend-rename-catalog-node';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';

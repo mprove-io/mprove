@@ -16,12 +16,12 @@ import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { Env } from '#common/interfaces/backend/env';
-import { Ev } from '#common/interfaces/backend/ev';
-import {
+import type { Env } from '#common/zod/backend/env';
+import type { Ev } from '#common/zod/backend/ev';
+import type {
   ToBackendEditEnvVarRequestPayload,
   ToBackendEditEnvVarResponse
-} from '#common/interfaces/to-backend/envs/to-backend-edit-env-var';
+} from '#common/zod/to-backend/envs/to-backend-edit-env-var';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';

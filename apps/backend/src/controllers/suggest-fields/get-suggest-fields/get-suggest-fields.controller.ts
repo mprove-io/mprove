@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { eq } from 'drizzle-orm';
+import {
+  ToBackendGetSuggestFieldsRequestDto,
+  ToBackendGetSuggestFieldsResponseDto
+} from '#backend/controllers/suggest-fields/get-suggest-fields/get-suggest-fields.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -7,7 +12,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { DashboardsService } from '#backend/services/db/dashboards.service';
@@ -24,13 +28,11 @@ import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { SuggestField } from '#common/interfaces/backend/suggest-field';
-import {
-  ToBackendGetSuggestFieldsRequest,
-  ToBackendGetSuggestFieldsResponsePayload
-} from '#common/interfaces/to-backend/suggest-fields/to-backend-get-suggest-fields';
+import type { SuggestField } from '#common/zod/backend/suggest-field';
+import type { ToBackendGetSuggestFieldsResponsePayload } from '#common/zod/to-backend/suggest-fields/to-backend-get-suggest-fields';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('SuggestFields')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetSuggestFieldsController {
   constructor(
@@ -49,11 +51,19 @@ export class GetSuggestFieldsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields)
-  async getSuggestFields(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetSuggestFieldsRequest = request.body;
-
+  @ApiOperation({
+    summary: 'GetSuggestFields',
+    description: 'Get suggested dimension fields for a dashboard or report'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetSuggestFieldsResponseDto
+  })
+  async getSuggestFields(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetSuggestFieldsRequestDto
+  ) {
     let { projectId, repoId, branchId, envId, parentId, parentType } =
-      reqValid.payload;
+      body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

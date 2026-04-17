@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateMemberRequestDto,
+  ToBackendCreateMemberResponseDto
+} from '#backend/controllers/members/create-member/create-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -31,7 +36,6 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -69,17 +73,15 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendCreateMemberRequest,
-  ToBackendCreateMemberResponsePayload
-} from '#common/interfaces/to-backend/members/to-backend-create-member';
-import {
+import { ServerError } from '#common/models/server-error';
+import type { ToBackendCreateMemberResponsePayload } from '#common/zod/to-backend/members/to-backend-create-member';
+import type {
   ToDiskCreateDevRepoRequest,
   ToDiskCreateDevRepoResponse
-} from '#common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/03-repos/to-disk-create-dev-repo';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Members')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle({
   '1s': {
     limit: 3 * THROTTLE_MULTIPLIER
@@ -120,11 +122,19 @@ export class CreateMemberController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateMember)
-  async createMember(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateMemberRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { projectId, email } = reqValid.payload;
+  @ApiOperation({
+    summary: 'CreateMember',
+    description: 'Add a user to a project as a member'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateMemberResponseDto
+  })
+  async createMember(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateMemberRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { projectId, email } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

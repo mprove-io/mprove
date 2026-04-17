@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { User } from '#common/interfaces/backend/user';
+import type { User } from '#common/zod/backend/user';
 import { getFullName } from '../functions/get-full-name';
 import { makeInitials } from '../functions/make-initials';
 import { BaseQuery } from './base.query';
 
-export class UserState extends User {}
+export type UserState = User;
 
 let userState: UserState = {
   userId: undefined,

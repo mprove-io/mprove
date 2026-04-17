@@ -6,11 +6,12 @@ import { zProjectDashboardLink } from '#common/zod/backend/project-dashboard-lin
 import { zProjectModelLink } from '#common/zod/backend/project-model-link';
 import { zProjectReportLink } from '#common/zod/backend/project-report-link';
 import { zFraction } from '#common/zod/blockml/fraction';
+import { zTimezone } from '#common/zod/z-timezone';
 
 export let zUi = z
   .object({
     modelTreeLevels: z.enum(ModelTreeLevelsEnum),
-    timezone: z.string(),
+    timezone: zTimezone,
     timeSpec: z.enum(TimeSpecEnum),
     timeRangeFraction: zFraction,
     projectModelLinks: z.array(zProjectModelLink),

@@ -7,7 +7,7 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import { OcSessionLt, OcSessionSt } from '#common/interfaces/st-lt';
+import type { OcSessionLt, OcSessionSt } from '#common/zod/st-lt';
 
 export const ocSessionsTable = pgTable(
   'oc_sessions',

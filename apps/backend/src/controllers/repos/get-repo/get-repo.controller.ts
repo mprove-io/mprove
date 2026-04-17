@@ -1,9 +1,13 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import {
+  ToBackendGetRepoRequestDto,
+  ToBackendGetRepoResponseDto
+} from '#backend/controllers/repos/get-repo/get-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -18,16 +22,14 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import {
-  ToBackendGetRepoRequest,
-  ToBackendGetRepoResponsePayload
-} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
-import {
+import type { ToBackendGetRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-get-repo';
+import type {
   ToDiskGetCatalogNodesRequest,
   ToDiskGetCatalogNodesResponse
-} from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-nodes';
+} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-nodes';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Repos')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetRepoController {
@@ -46,10 +48,18 @@ export class GetRepoController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetRepo)
-  async getRepo(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetRepoRequest = request.body;
-
-    let { projectId, repoId, branchId, envId, isFetch } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetRepo',
+    description: 'Get repo catalog for a branch'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetRepoResponseDto
+  })
+  async getRepo(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetRepoRequestDto
+  ) {
+    let { projectId, repoId, branchId, envId, isFetch } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -93,7 +103,7 @@ export class GetRepoController {
     let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

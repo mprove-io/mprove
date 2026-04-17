@@ -10,14 +10,14 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { ProjectChartLink } from '#common/interfaces/backend/project-chart-link';
-import { ProjectDashboardLink } from '#common/interfaces/backend/project-dashboard-link';
-import { ProjectModelLink } from '#common/interfaces/backend/project-model-link';
-import { ProjectReportLink } from '#common/interfaces/backend/project-report-link';
-import { Column } from '#common/interfaces/blockml/column';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { ChartPointsData } from '#common/interfaces/front/chart-points-data';
-import { DataRow } from '#common/interfaces/front/data-row';
+import type { ProjectChartLink } from '#common/zod/backend/project-chart-link';
+import type { ProjectDashboardLink } from '#common/zod/backend/project-dashboard-link';
+import type { ProjectModelLink } from '#common/zod/backend/project-model-link';
+import type { ProjectReportLink } from '#common/zod/backend/project-report-link';
+import type { Column } from '#common/zod/blockml/column';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { ChartPointsData } from '#common/zod/front/chart-points-data';
+import type { DataRow } from '#common/zod/front/data-row';
 import { BaseQuery } from './base.query';
 
 export interface RepChartData {

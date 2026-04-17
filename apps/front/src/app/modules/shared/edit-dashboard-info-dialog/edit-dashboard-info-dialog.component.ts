@@ -21,11 +21,11 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
-import {
+import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type {
   ToBackendSaveModifyDashboardRequestPayload,
   ToBackendSaveModifyDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
+} from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';

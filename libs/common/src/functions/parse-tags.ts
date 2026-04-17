@@ -1,6 +1,6 @@
 import { parseAnnotation, Tag } from '@malloydata/malloy-tag';
-import { KeyTagPair } from '#common/interfaces/blockml/key-tag-pair';
-import { KeyValuePair } from '#common/interfaces/blockml/key-value-pair';
+import type { KeyTagPair } from '#common/zod/blockml/key-tag-pair';
+import type { KeyValuePair } from '#common/zod/blockml/key-value-pair';
 import { isDefined } from './is-defined';
 import { isUndefined } from './is-undefined';
 

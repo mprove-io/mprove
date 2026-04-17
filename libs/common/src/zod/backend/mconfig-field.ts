@@ -4,7 +4,7 @@ import { zSorting } from '#common/zod/blockml/sorting';
 
 export let zMconfigField = zModelField
   .extend({
-    sorting: zSorting,
+    sorting: zSorting.nullish(),
     sortingNumber: z.number()
   })
   .meta({ id: 'MconfigField' });

@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendRenameCatalogNodeRequestDto,
+  ToBackendRenameCatalogNodeResponseDto
+} from '#backend/controllers/catalogs/rename-catalog-node/rename-catalog-node.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -22,7 +27,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -38,16 +42,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
-  ToBackendRenameCatalogNodeRequest,
-  ToBackendRenameCatalogNodeResponsePayload
-} from '#common/interfaces/to-backend/catalogs/to-backend-rename-catalog-node';
-import {
+import type { ToBackendRenameCatalogNodeResponsePayload } from '#common/zod/to-backend/catalogs/to-backend-rename-catalog-node';
+import type {
   ToDiskRenameCatalogNodeRequest,
   ToDiskRenameCatalogNodeResponse
-} from '#common/interfaces/to-disk/04-catalogs/to-disk-rename-catalog-node';
+} from '#common/zod/to-disk/04-catalogs/to-disk-rename-catalog-node';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Catalogs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class RenameCatalogNodeController {
@@ -68,12 +70,19 @@ export class RenameCatalogNodeController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode)
-  async renameCatalogNode(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendRenameCatalogNodeRequest = request.body;
-
-    let { traceId } = reqValid.info;
-    let { projectId, repoId, branchId, envId, nodeId, newName } =
-      reqValid.payload;
+  @ApiOperation({
+    summary: 'RenameCatalogNode',
+    description: 'Rename a file or folder in the catalog tree'
+  })
+  @ApiOkResponse({
+    type: ToBackendRenameCatalogNodeResponseDto
+  })
+  async renameCatalogNode(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendRenameCatalogNodeRequestDto
+  ) {
+    let { traceId } = body.info;
+    let { projectId, repoId, branchId, envId, nodeId, newName } = body.payload;
 
     await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -110,7 +119,7 @@ export class RenameCatalogNodeController {
     let toDiskRenameCatalogNodeRequest: ToDiskRenameCatalogNodeRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

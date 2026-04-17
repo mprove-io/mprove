@@ -8,11 +8,11 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   ToBackendGetQueryInfoRequestPayload,
   ToBackendGetQueryInfoResponse
-} from '#common/interfaces/to-backend/query-info/to-backend-get-query-info';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-backend/query-info/to-backend-get-query-info';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';

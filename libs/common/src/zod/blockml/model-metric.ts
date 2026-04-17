@@ -7,7 +7,7 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 
 export let zModelMetric = z
   .object({
-    modelId: z.string(),
+    modelId: z.string().nullish(),
     modelType: z.enum(ModelTypeEnum),
     connectionType: z.enum(ConnectionTypeEnum),
     fieldId: z.string(),

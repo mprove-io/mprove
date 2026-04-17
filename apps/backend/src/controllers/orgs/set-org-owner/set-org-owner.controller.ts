@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSetOrgOwnerRequestDto,
+  ToBackendSetOrgOwnerResponseDto
+} from '#backend/controllers/orgs/set-org-owner/set-org-owner.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -18,7 +23,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { HashService } from '#backend/services/hash.service';
@@ -27,13 +31,11 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import {
-  ToBackendSetOrgOwnerRequest,
-  ToBackendSetOrgOwnerResponsePayload
-} from '#common/interfaces/to-backend/orgs/to-backend-set-org-owner';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendSetOrgOwnerResponsePayload } from '#common/zod/to-backend/orgs/to-backend-set-org-owner';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Orgs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SetOrgOwnerController {
@@ -48,10 +50,18 @@ export class SetOrgOwnerController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner)
-  async setOrgOwner(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSetOrgOwnerRequest = request.body;
-
-    let { orgId, ownerEmail } = reqValid.payload;
+  @ApiOperation({
+    summary: 'SetOrgOwner',
+    description: 'Transfer organization ownership to another verified user'
+  })
+  @ApiOkResponse({
+    type: ToBackendSetOrgOwnerResponseDto
+  })
+  async setOrgOwner(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendSetOrgOwnerRequestDto
+  ) {
+    let { orgId, ownerEmail } = body.payload;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 

@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSaveModifyChartRequestDto,
+  ToBackendSaveModifyChartResponseDto
+} from '#backend/controllers/charts/save-modify-chart/save-modify-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -31,7 +36,6 @@ import { checkModelAccess } from '#backend/functions/check-model-access';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeChartFileText } from '#backend/functions/make-chart-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -57,17 +61,15 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isUndefined } from '#common/functions/is-undefined';
-import {
-  ToBackendSaveModifyChartRequest,
-  ToBackendSaveModifyChartResponsePayload
-} from '#common/interfaces/to-backend/charts/to-backend-save-modify-chart';
-import {
+import { ServerError } from '#common/models/server-error';
+import type { ToBackendSaveModifyChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-save-modify-chart';
+import type {
   ToDiskSaveFileRequest,
   ToDiskSaveFileResponse
-} from '#common/interfaces/to-disk/07-files/to-disk-save-file';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/07-files/to-disk-save-file';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Charts')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SaveModifyChartController {
@@ -93,12 +95,20 @@ export class SaveModifyChartController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart)
-  async saveModifyChart(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSaveModifyChartRequest = request.body;
-
+  @ApiOperation({
+    summary: 'SaveModifyChart',
+    description: 'Save changes to an existing chart'
+  })
+  @ApiOkResponse({
+    type: ToBackendSaveModifyChartResponseDto
+  })
+  async saveModifyChart(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendSaveModifyChartRequestDto
+  ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = reqValid.info;
+    let { traceId } = body.info;
     let {
       projectId,
       repoId,
@@ -108,7 +118,7 @@ export class SaveModifyChartController {
       chartId,
       tileTitle,
       timezone
-    } = reqValid.payload;
+    } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -208,7 +218,7 @@ export class SaveModifyChartController {
     let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

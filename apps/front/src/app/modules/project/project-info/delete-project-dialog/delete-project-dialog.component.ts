@@ -16,10 +16,10 @@ import {
 } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendDeleteProjectRequestPayload,
   ToBackendDeleteProjectResponse
-} from '#common/interfaces/to-backend/projects/to-backend-delete-project';
+} from '#common/zod/to-backend/projects/to-backend-delete-project';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';

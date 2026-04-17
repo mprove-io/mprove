@@ -12,10 +12,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendEditMemberRequest,
   ToBackendEditMemberResponse
-} from '#common/interfaces/to-backend/members/to-backend-edit-member';
+} from '#common/zod/to-backend/members/to-backend-edit-member';
 
 let testId = 'backend-edit-member__admin-cannot-change-his-admin-status';
 

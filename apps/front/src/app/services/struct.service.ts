@@ -5,7 +5,7 @@ import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import { ChartQuery } from '../queries/chart.query';
 import { ModelQuery, ModelState } from '../queries/model.query';
 import { StructQuery, StructState } from '../queries/struct.query';

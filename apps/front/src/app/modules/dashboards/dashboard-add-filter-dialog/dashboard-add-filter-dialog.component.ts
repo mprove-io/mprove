@@ -39,27 +39,27 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { DashboardX } from '#common/interfaces/backend/dashboard-x';
-import { SuggestField } from '#common/interfaces/backend/suggest-field';
-import { DashboardField } from '#common/interfaces/blockml/dashboard-field';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { FractionControl } from '#common/interfaces/blockml/fraction-control';
-import { FractionSubTypeOption } from '#common/interfaces/blockml/fraction-sub-type-option';
-import { Model } from '#common/interfaces/blockml/model';
-import { SelectItem } from '#common/interfaces/front/select-item';
-import {
+import { MyRegex } from '#common/models/my-regex';
+import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { SuggestField } from '#common/zod/backend/suggest-field';
+import type { DashboardField } from '#common/zod/blockml/dashboard-field';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { FractionControl } from '#common/zod/blockml/fraction-control';
+import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
+import type { Model } from '#common/zod/blockml/model';
+import type { SelectItem } from '#common/zod/front/select-item';
+import type {
   ToBackendGetModelRequestPayload,
   ToBackendGetModelResponse
-} from '#common/interfaces/to-backend/models/to-backend-get-model';
-import {
+} from '#common/zod/to-backend/models/to-backend-get-model';
+import type {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
-} from '#common/interfaces/to-backend/models/to-backend-get-models';
-import {
+} from '#common/zod/to-backend/models/to-backend-get-models';
+import type {
   ToBackendGetSuggestFieldsRequestPayload,
   ToBackendGetSuggestFieldsResponse
-} from '#common/interfaces/to-backend/suggest-fields/to-backend-get-suggest-fields';
-import { MyRegex } from '#common/models/my-regex';
+} from '#common/zod/to-backend/suggest-fields/to-backend-get-suggest-fields';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';

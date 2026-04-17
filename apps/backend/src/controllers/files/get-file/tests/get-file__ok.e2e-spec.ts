@@ -13,10 +13,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetFileRequest,
   ToBackendGetFileResponse
-} from '#common/interfaces/to-backend/files/to-backend-get-file';
+} from '#common/zod/to-backend/files/to-backend-get-file';
 
 let testId = 'backend-get-file__ok';
 

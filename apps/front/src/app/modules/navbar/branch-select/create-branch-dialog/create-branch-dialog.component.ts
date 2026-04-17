@@ -32,11 +32,11 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy';
-import { BranchItem } from '#common/interfaces/front/branch-item';
-import {
+import type { BranchItem } from '#common/zod/front/branch-item';
+import type {
   ToBackendCreateBranchRequestPayload,
   ToBackendCreateBranchResponse
-} from '#common/interfaces/to-backend/branches/to-backend-create-branch';
+} from '#common/zod/to-backend/branches/to-backend-create-branch';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';

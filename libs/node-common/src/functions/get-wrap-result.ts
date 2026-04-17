@@ -1,4 +1,4 @@
-import { WrapResult } from '#common/interfaces/wrap-result';
+import type { WrapResult } from '#common/zod/wrap-result';
 
 export async function getWrapResult<T>(item: { promise: Promise<T> }) {
   let startMs = Date.now();

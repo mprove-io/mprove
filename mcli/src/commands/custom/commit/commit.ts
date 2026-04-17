@@ -8,11 +8,11 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   ToBackendCommitRepoRequestPayload,
   ToBackendCommitRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-backend/repos/to-backend-commit-repo';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';

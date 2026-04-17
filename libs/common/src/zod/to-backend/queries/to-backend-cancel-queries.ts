@@ -12,7 +12,7 @@ export let zToBackendCancelQueriesRequestPayload = z
     repoId: z.string(),
     branchId: z.string(),
     envId: z.string(),
-    mconfigIds: z.array(z.string())
+    mconfigIds: z.array(z.string()).min(1)
   })
   .meta({ id: 'ToBackendCancelQueriesRequestPayload' });
 

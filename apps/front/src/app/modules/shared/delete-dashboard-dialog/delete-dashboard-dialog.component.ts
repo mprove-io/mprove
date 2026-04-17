@@ -13,11 +13,11 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
-import {
+import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type {
   ToBackendDeleteDashboardRequestPayload,
   ToBackendDeleteDashboardResponse
-} from '#common/interfaces/to-backend/dashboards/to-backend-delete-dashboard';
+} from '#common/zod/to-backend/dashboards/to-backend-delete-dashboard';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
 import { ApiService } from '#front/app/services/api.service';

@@ -18,16 +18,16 @@ import { DialogRef } from '@ngneat/dialog';
 import { map, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { Env } from '#common/interfaces/backend/env';
-import { EnvUser } from '#common/interfaces/backend/env-user';
-import {
+import type { Env } from '#common/zod/backend/env';
+import type { EnvUser } from '#common/zod/backend/env-user';
+import type {
   ToBackendCreateEnvUserRequestPayload,
   ToBackendCreateEnvUserResponse
-} from '#common/interfaces/to-backend/envs/to-backend-create-env-user';
-import {
+} from '#common/zod/to-backend/envs/to-backend-create-env-user';
+import type {
   ToBackendGetMembersListRequestPayload,
   ToBackendGetMembersListResponse
-} from '#common/interfaces/to-backend/members/to-backend-get-members-list';
+} from '#common/zod/to-backend/members/to-backend-get-members-list';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';

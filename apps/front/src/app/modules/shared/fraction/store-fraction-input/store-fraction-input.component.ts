@@ -31,22 +31,22 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { sleep } from '#common/functions/sleep';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { FractionControl } from '#common/interfaces/blockml/fraction-control';
-import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
-import {
+import { MyRegex } from '#common/models/my-regex';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { FractionControl } from '#common/zod/blockml/fraction-control';
+import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
+import type {
   ToBackendSuggestDimensionValuesRequestPayload,
   ToBackendSuggestDimensionValuesResponse
-} from '#common/interfaces/to-backend/mconfigs/to-backend-suggest-dimension-values';
-import {
+} from '#common/zod/to-backend/mconfigs/to-backend-suggest-dimension-values';
+import type {
   ToBackendGetQueryRequestPayload,
   ToBackendGetQueryResponse
-} from '#common/interfaces/to-backend/queries/to-backend-get-query';
-import {
+} from '#common/zod/to-backend/queries/to-backend-get-query';
+import type {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
-import { MyRegex } from '#common/models/my-regex';
+} from '#common/zod/to-backend/queries/to-backend-run-queries';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 

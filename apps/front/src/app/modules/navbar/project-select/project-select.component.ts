@@ -22,11 +22,11 @@ import {
 } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ProjectsItem } from '#common/interfaces/backend/projects-item';
-import {
+import type { ProjectsItem } from '#common/zod/backend/projects-item';
+import type {
   ToBackendGetProjectsListRequestPayload,
   ToBackendGetProjectsListResponse
-} from '#common/interfaces/to-backend/projects/to-backend-get-projects-list';
+} from '#common/zod/to-backend/projects/to-backend-get-projects-list';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';

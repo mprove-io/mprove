@@ -22,11 +22,11 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { Report } from '#common/interfaces/blockml/report';
-import {
+import type { Report } from '#common/zod/blockml/report';
+import type {
   ToBackendSaveModifyReportRequestPayload,
   ToBackendSaveModifyReportResponse
-} from '#common/interfaces/to-backend/reports/to-backend-save-modify-report';
+} from '#common/zod/to-backend/reports/to-backend-save-modify-report';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';

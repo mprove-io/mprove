@@ -1,5 +1,10 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { and, eq, inArray } from 'drizzle-orm';
+import {
+  ToBackendGetModelsRequestDto,
+  ToBackendGetModelsResponseDto
+} from '#backend/controllers/models/get-models/get-models.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -7,7 +12,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -19,12 +23,10 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendGetModelsRequest,
-  ToBackendGetModelsResponsePayload
-} from '#common/interfaces/to-backend/models/to-backend-get-models';
+import type { ToBackendGetModelsResponsePayload } from '#common/zod/to-backend/models/to-backend-get-models';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Models')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetModelsController {
   constructor(
@@ -41,11 +43,18 @@ export class GetModelsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetModels)
-  async getModels(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetModelsRequest = request.body;
-
-    let { projectId, repoId, branchId, envId, filterByModelIds } =
-      reqValid.payload;
+  @ApiOperation({
+    summary: 'GetModels',
+    description: 'Get models'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetModelsResponseDto
+  })
+  async getModels(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetModelsRequestDto
+  ) {
+    let { projectId, repoId, branchId, envId, filterByModelIds } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

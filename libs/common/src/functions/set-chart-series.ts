@@ -5,9 +5,9 @@ import {
   DEFAULT_CHART_SERIES_SCATTER
 } from '#common/constants/mconfig-chart';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { Mconfig } from '#common/interfaces/blockml/mconfig';
-import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
-import { MconfigChartSeries } from '#common/interfaces/blockml/mconfig-chart-series';
+import type { Mconfig } from '#common/zod/blockml/mconfig';
+import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
+import type { MconfigChartSeries } from '#common/zod/blockml/mconfig-chart-series';
 import { isDefined } from './is-defined';
 import { makeCopy } from './make-copy';
 

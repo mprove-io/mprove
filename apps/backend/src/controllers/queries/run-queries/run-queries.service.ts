@@ -49,8 +49,8 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { ToBackendRunQueriesResponsePayload } from '#common/interfaces/to-backend/queries/to-backend-run-queries';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendRunQueriesResponsePayload } from '#common/zod/to-backend/queries/to-backend-run-queries';
 
 @Injectable()
 export class RunQueriesService {

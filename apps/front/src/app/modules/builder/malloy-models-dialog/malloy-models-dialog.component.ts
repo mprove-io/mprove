@@ -11,7 +11,7 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs';
 import { EMPTY_CHART_ID } from '#common/constants/top';
-import { ModelX } from '#common/interfaces/backend/model-x';
+import type { ModelX } from '#common/zod/backend/model-x';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';

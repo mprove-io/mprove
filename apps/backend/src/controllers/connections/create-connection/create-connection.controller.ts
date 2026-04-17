@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateConnectionRequestDto,
+  ToBackendCreateConnectionResponseDto
+} from '#backend/controllers/connections/create-connection/create-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -22,7 +27,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { ConnectionsService } from '#backend/services/db/connections.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
@@ -34,13 +38,11 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/check-motherduck-database-name';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendCreateConnectionRequest,
-  ToBackendCreateConnectionResponsePayload
-} from '#common/interfaces/to-backend/connections/to-backend-create-connection';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendCreateConnectionResponsePayload } from '#common/zod/to-backend/connections/to-backend-create-connection';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Connections')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateConnectionController {
@@ -57,9 +59,18 @@ export class CreateConnectionController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateConnection)
-  async createConnection(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateConnectionRequest = request.body;
-    let { projectId, envId, connectionId, type, options } = reqValid.payload;
+  @ApiOperation({
+    summary: 'CreateConnection',
+    description: 'Create a new connection in a project environment'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateConnectionResponseDto
+  })
+  async createConnection(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateConnectionRequestDto
+  ) {
+    let { projectId, envId, connectionId, type, options } = body.payload;
 
     if (isDefined(options.storeApi)) {
       await this.storeService.checkStoreApiUrl({

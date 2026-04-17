@@ -12,9 +12,9 @@ import { FractionTsMomentTypeEnum } from '#common/enums/fraction/fraction-ts-mom
 import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { FractionYesnoValueEnum } from '#common/enums/fraction/fraction-yesno-value.enum';
-import { Fraction } from '#common/interfaces/blockml/fraction';
-import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
+import type { Fraction } from '#common/zod/blockml/fraction';
+import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
 
 export class FractionTypeItem {
   label: string;

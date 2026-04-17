@@ -12,10 +12,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetStateRequest,
   ToBackendGetStateResponse
-} from '#common/interfaces/to-backend/state/to-backend-get-state';
+} from '#common/zod/to-backend/state/to-backend-get-state';
 
 let testId = 'backend-jwt-auth-guard__wrong-api-key-format';
 

@@ -1,9 +1,13 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import {
+  ToBackendGetStructRequestDto,
+  ToBackendGetStructResponseDto
+} from '#backend/controllers/structs/get-struct/get-struct.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -15,12 +19,10 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetStructRequest,
-  ToBackendGetStructResponsePayload
-} from '#common/interfaces/to-backend/structs/to-backend-get-struct';
+import type { ToBackendGetStructResponsePayload } from '#common/zod/to-backend/structs/to-backend-get-struct';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Structs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetStructController {
@@ -37,10 +39,18 @@ export class GetStructController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetStruct)
-  async getStruct(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendGetStructRequest = request.body;
-
-    let { projectId, repoId, branchId, envId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'GetStruct',
+    description: 'Get struct'
+  })
+  @ApiOkResponse({
+    type: ToBackendGetStructResponseDto
+  })
+  async getStruct(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendGetStructRequestDto
+  ) {
+    let { projectId, repoId, branchId, envId } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

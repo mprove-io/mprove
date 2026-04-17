@@ -1,31 +1,33 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteUserCodexAuthRequestDto,
+  ToBackendDeleteUserCodexAuthResponseDto
+} from '#backend/controllers/users/delete-user-codex-auth/delete-user-codex-auth.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendDeleteUserCodexAuthRequest,
-  ToBackendDeleteUserCodexAuthResponsePayload
-} from '#common/interfaces/to-backend/users/to-backend-delete-user-codex-auth';
+import type { ToBackendDeleteUserCodexAuthResponsePayload } from '#common/zod/to-backend/users/to-backend-delete-user-codex-auth';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Users')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteUserCodexAuthController {
@@ -37,9 +39,17 @@ export class DeleteUserCodexAuthController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteUserCodexAuth)
-  async deleteUserCodexAuth(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteUserCodexAuthRequest = request.body;
-
+  @ApiOperation({
+    summary: 'DeleteUserCodexAuth',
+    description: "Clear the user's Codex auth credentials"
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteUserCodexAuthResponseDto
+  })
+  async deleteUserCodexAuth(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteUserCodexAuthRequestDto
+  ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
     user.codexAuth = undefined;

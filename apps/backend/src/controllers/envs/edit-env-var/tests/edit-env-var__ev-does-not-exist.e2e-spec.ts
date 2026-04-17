@@ -12,10 +12,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendEditEnvVarRequest,
   ToBackendEditEnvVarResponse
-} from '#common/interfaces/to-backend/envs/to-backend-edit-env-var';
+} from '#common/zod/to-backend/envs/to-backend-edit-env-var';
 
 let testId = 'backend-edit-env-var__ev-does-not-exist';
 

@@ -12,9 +12,9 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { getChartUrl } from '#common/functions/get-chart-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import type { RunChart } from '#common/interfaces/backend/run/run-chart';
-import type { RunQuery } from '#common/interfaces/backend/run/run-query';
 import { ServerError } from '#common/models/server-error';
+import type { RunChart } from '#common/zod/backend/run/run-chart';
+import type { RunQuery } from '#common/zod/backend/run/run-query';
 
 interface RunChartPrep {
   title: string;

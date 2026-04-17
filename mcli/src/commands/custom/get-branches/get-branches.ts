@@ -7,11 +7,11 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import {
+import { ServerError } from '#common/models/server-error';
+import type {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
-} from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-backend/branches/to-backend-get-branches-list';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';

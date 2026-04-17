@@ -5,21 +5,17 @@ import { ORGANIZATION_USERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  OrgUsersItem,
+import type { OrgUserItemExtended } from '#common/zod/front/org-user-item-extended';
+import type {
   ToBackendGetOrgUsersRequestPayload,
   ToBackendGetOrgUsersResponse
-} from '#common/interfaces/to-backend/org-users/to-backend-get-org-users';
+} from '#common/zod/to-backend/org-users/to-backend-get-org-users';
 import { makeInitials } from '#front/app/functions/make-initials';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
 import { UsersQuery } from '#front/app/queries/users.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
-
-class OrgUserItemExtended extends OrgUsersItem {
-  initials: string;
-}
 
 @Component({
   standalone: false,

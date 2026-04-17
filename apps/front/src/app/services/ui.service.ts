@@ -5,15 +5,15 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ProjectChartLink } from '#common/interfaces/backend/project-chart-link';
-import { ProjectDashboardLink } from '#common/interfaces/backend/project-dashboard-link';
-import { ProjectModelLink } from '#common/interfaces/backend/project-model-link';
-import { ProjectReportLink } from '#common/interfaces/backend/project-report-link';
-import { Ui } from '#common/interfaces/backend/ui';
-import {
+import type { ProjectChartLink } from '#common/zod/backend/project-chart-link';
+import type { ProjectDashboardLink } from '#common/zod/backend/project-dashboard-link';
+import type { ProjectModelLink } from '#common/zod/backend/project-model-link';
+import type { ProjectReportLink } from '#common/zod/backend/project-report-link';
+import type { Ui } from '#common/zod/backend/ui';
+import type {
   ToBackendSetUserUiRequestPayload,
   ToBackendSetUserUiResponse
-} from '#common/interfaces/to-backend/users/to-backend-set-user-ui';
+} from '#common/zod/to-backend/users/to-backend-set-user-ui';
 import { NavQuery } from '../queries/nav.query';
 import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';

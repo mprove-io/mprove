@@ -9,10 +9,10 @@ import { PATH_LOGIN, PATH_PASSWORD_RESET_SENT } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendResetUserPasswordRequestPayload,
   ToBackendResetUserPasswordResponse
-} from '#common/interfaces/to-backend/users/to-backend-reset-user-password';
+} from '#common/zod/to-backend/users/to-backend-reset-user-password';
 import { ApiService } from '#front/app/services/api.service';
 
 @Component({

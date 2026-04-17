@@ -20,18 +20,18 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
+import type {
   ToBackendGetRepoRequestPayload,
   ToBackendGetRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
-import {
+} from '#common/zod/to-backend/repos/to-backend-get-repo';
+import type {
   ToBackendPullRepoRequestPayload,
   ToBackendPullRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-pull-repo';
-import {
+} from '#common/zod/to-backend/repos/to-backend-pull-repo';
+import type {
   ToBackendPushRepoRequestPayload,
   ToBackendPushRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-push-repo';
+} from '#common/zod/to-backend/repos/to-backend-push-repo';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendDeleteProjectRequestDto,
+  ToBackendDeleteProjectResponseDto
+} from '#backend/controllers/projects/delete-project/delete-project.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -23,7 +28,6 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RpcService } from '#backend/services/rpc.service';
@@ -31,13 +35,13 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { ToBackendDeleteProjectRequest } from '#common/interfaces/to-backend/projects/to-backend-delete-project';
-import {
+import type {
   ToDiskDeleteProjectRequest,
   ToDiskDeleteProjectResponse
-} from '#common/interfaces/to-disk/02-projects/to-disk-delete-project';
+} from '#common/zod/to-disk/02-projects/to-disk-delete-project';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Projects')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class DeleteProjectController {
@@ -52,10 +56,18 @@ export class DeleteProjectController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteProject)
-  async deleteProject(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendDeleteProjectRequest = request.body;
-
-    let { projectId } = reqValid.payload;
+  @ApiOperation({
+    summary: 'DeleteProject',
+    description: 'Delete a project and all its related data'
+  })
+  @ApiOkResponse({
+    type: ToBackendDeleteProjectResponseDto
+  })
+  async deleteProject(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendDeleteProjectRequestDto
+  ) {
+    let { projectId } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -69,7 +81,7 @@ export class DeleteProjectController {
     let toDiskDeleteProjectRequest: ToDiskDeleteProjectRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskDeleteProject,
-        traceId: reqValid.info.traceId
+        traceId: body.info.traceId
       },
       payload: {
         orgId: project.orgId,

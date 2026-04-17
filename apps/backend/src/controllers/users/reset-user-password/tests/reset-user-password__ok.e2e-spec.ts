@@ -9,10 +9,10 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendResetUserPasswordRequest,
   ToBackendResetUserPasswordResponse
-} from '#common/interfaces/to-backend/users/to-backend-reset-user-password';
+} from '#common/zod/to-backend/users/to-backend-reset-user-password';
 
 let testId = 'backend-reset-user-password__ok';
 

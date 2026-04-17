@@ -16,7 +16,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { SessionApi } from '#common/interfaces/backend/session-api';
+import type { SessionApi } from '#common/zod/backend/session-api';
 
 @Injectable()
 export class SessionArchiveService {

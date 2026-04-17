@@ -15,19 +15,19 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetChartsRequest,
   ToBackendGetChartsResponse
-} from '#common/interfaces/to-backend/charts/to-backend-get-charts';
-import {
+} from '#common/zod/to-backend/charts/to-backend-get-charts';
+import type {
   ToBackendGetQueryRequest,
   ToBackendGetQueryResponse
-} from '#common/interfaces/to-backend/queries/to-backend-get-query';
-import {
+} from '#common/zod/to-backend/queries/to-backend-get-query';
+import type {
   ToBackendRunQueriesRequest,
   ToBackendRunQueriesResponse
-} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
-import { ToBackendSeedRecordsRequestPayloadConnectionsItem } from '#common/interfaces/to-backend/test-routes/to-backend-seed-records';
+} from '#common/zod/to-backend/queries/to-backend-run-queries';
+import type { ToBackendSeedRecordsRequestPayloadConnectionsItem } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
 
 let testId = 'backend-run-queries__ok-postgres';
 

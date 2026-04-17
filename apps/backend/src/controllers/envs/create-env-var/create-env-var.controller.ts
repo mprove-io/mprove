@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
@@ -15,6 +16,10 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateEnvVarRequestDto,
+  ToBackendCreateEnvVarResponseDto
+} from '#backend/controllers/envs/create-env-var/create-env-var.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -22,7 +27,6 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
@@ -31,14 +35,12 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { Ev } from '#common/interfaces/backend/ev';
-import {
-  ToBackendCreateEnvVarRequest,
-  ToBackendCreateEnvVarResponsePayload
-} from '#common/interfaces/to-backend/envs/to-backend-create-env-var';
 import { ServerError } from '#common/models/server-error';
+import type { Ev } from '#common/zod/backend/ev';
+import type { ToBackendCreateEnvVarResponsePayload } from '#common/zod/to-backend/envs/to-backend-create-env-var';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Envs')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateEnvVarController {
@@ -53,10 +55,18 @@ export class CreateEnvVarController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateEnvVar)
-  async createEnvVar(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendCreateEnvVarRequest = request.body;
-
-    let { projectId, envId, evId, val } = reqValid.payload;
+  @ApiOperation({
+    summary: 'CreateEnvVar',
+    description: 'Create a new environment variable'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateEnvVarResponseDto
+  })
+  async createEnvVar(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendCreateEnvVarRequestDto
+  ) {
+    let { projectId, envId, evId, val } = body.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

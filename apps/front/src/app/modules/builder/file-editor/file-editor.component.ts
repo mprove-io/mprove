@@ -55,20 +55,20 @@ import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
-import { Member } from '#common/interfaces/backend/member';
-import { ModelX } from '#common/interfaces/backend/model-x';
-import {
+import type { Member } from '#common/zod/backend/member';
+import type { ModelX } from '#common/zod/backend/model-x';
+import type {
   ToBackendGetChartRequestPayload,
   ToBackendGetChartResponse
-} from '#common/interfaces/to-backend/charts/to-backend-get-chart';
-import {
+} from '#common/zod/to-backend/charts/to-backend-get-chart';
+import type {
   ToBackendSaveFileRequestPayload,
   ToBackendSaveFileResponse
-} from '#common/interfaces/to-backend/files/to-backend-save-file';
-import {
+} from '#common/zod/to-backend/files/to-backend-save-file';
+import type {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
-} from '#common/interfaces/to-backend/models/to-backend-get-models';
+} from '#common/zod/to-backend/models/to-backend-get-models';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

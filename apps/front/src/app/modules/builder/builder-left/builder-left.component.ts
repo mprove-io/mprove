@@ -37,12 +37,12 @@ import { getFileItems } from '#common/functions/get-file-items';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
-import { DiskCatalogNode } from '#common/interfaces/disk/disk-catalog-node';
-import { FileItem } from '#common/interfaces/file-item';
-import {
+import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
+import type { FileItem } from '#common/zod/file-item';
+import type {
   ToBackendMoveCatalogNodeRequestPayload,
   ToBackendMoveCatalogNodeResponse
-} from '#common/interfaces/to-backend/catalogs/to-backend-move-catalog-node';
+} from '#common/zod/to-backend/catalogs/to-backend-move-catalog-node';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';

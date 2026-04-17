@@ -30,10 +30,10 @@ import {
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendCreateOrgRequestPayload,
   ToBackendCreateOrgResponse
-} from '#common/interfaces/to-backend/orgs/to-backend-create-org';
+} from '#common/zod/to-backend/orgs/to-backend-create-org';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';

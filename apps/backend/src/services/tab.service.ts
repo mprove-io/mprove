@@ -58,9 +58,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
-import { BaseProject } from '#common/interfaces/backend/base-project';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
 import { ServerError } from '#common/models/server-error';
+import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { decryptData } from '#node-common/functions/encrypt-decrypt';
 import { TabToEntService } from './tab-to-ent.service';
 

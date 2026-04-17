@@ -6,6 +6,7 @@ import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
 import { zToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 import { zToBackendRequestInfo } from '#common/zod/to-backend/to-backend-request-info';
+import { zTimezone } from '#common/zod/z-timezone';
 
 export let zToBackendGroupMetricByDimensionRequestPayload = z
   .object({
@@ -13,7 +14,7 @@ export let zToBackendGroupMetricByDimensionRequestPayload = z
     repoId: z.string(),
     branchId: z.string(),
     envId: z.string(),
-    timezone: z.string(),
+    timezone: zTimezone,
     mconfigId: z.string(),
     groupByFieldId: z.string(),
     cellMetricsStartDateMs: z.number().nullish(),

@@ -12,13 +12,13 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { Org } from '#common/interfaces/backend/org';
-import { OrgsItem } from '#common/interfaces/backend/orgs-item';
-import {
+import { ServerError } from '#common/models/server-error';
+import type { Org } from '#common/zod/backend/org';
+import type { OrgsItem } from '#common/zod/backend/orgs-item';
+import type {
   ToDiskCreateOrgRequest,
   ToDiskCreateOrgResponse
-} from '#common/interfaces/to-disk/01-orgs/to-disk-create-org';
-import { ServerError } from '#common/models/server-error';
+} from '#common/zod/to-disk/01-orgs/to-disk-create-org';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
 import { TabService } from '../tab.service';

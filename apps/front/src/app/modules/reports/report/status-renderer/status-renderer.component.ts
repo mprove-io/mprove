@@ -9,7 +9,7 @@ import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { getTimeSpecDetail } from '#common/functions/get-timespec-detail';
 import { makeId } from '#common/functions/make-id';
-import { DataRow } from '#common/interfaces/front/data-row';
+import type { DataRow } from '#common/zod/front/data-row';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 

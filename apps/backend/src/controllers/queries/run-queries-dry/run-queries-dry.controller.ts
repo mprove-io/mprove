@@ -1,12 +1,13 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
@@ -16,6 +17,10 @@ const { forEachSeries } = pIteration;
 
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendRunQueriesDryRequestDto,
+  ToBackendRunQueriesDryResponseDto
+} from '#backend/controllers/queries/run-queries-dry/run-queries-dry.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -23,7 +28,6 @@ import type { QueryTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { ConnectionsService } from '#backend/services/db/connections.service';
@@ -39,13 +43,11 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { QueryEstimate } from '#common/interfaces/backend/query-estimate';
-import {
-  ToBackendRunQueriesDryRequest,
-  ToBackendRunQueriesDryResponsePayload
-} from '#common/interfaces/to-backend/queries/to-backend-run-queries-dry';
+import type { QueryEstimate } from '#common/zod/backend/query-estimate';
+import type { ToBackendRunQueriesDryResponsePayload } from '#common/zod/to-backend/queries/to-backend-run-queries-dry';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Queries')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class RunQueriesDryController {
@@ -67,11 +69,19 @@ export class RunQueriesDryController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry)
-  async runQueriesDry(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendRunQueriesDryRequest = request.body;
-
+  @ApiOperation({
+    summary: 'RunQueriesDry',
+    description: 'Dry-run queries'
+  })
+  @ApiOkResponse({
+    type: ToBackendRunQueriesDryResponseDto
+  })
+  async runQueriesDry(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendRunQueriesDryRequestDto
+  ) {
     let { projectId, repoId, branchId, envId, mconfigIds, dryId } =
-      reqValid.payload;
+      body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

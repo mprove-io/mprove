@@ -10,24 +10,24 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { EnvsItem } from '#common/interfaces/backend/envs-item';
-import { SessionApi } from '#common/interfaces/backend/session-api';
-import {
+import type { EnvsItem } from '#common/zod/backend/envs-item';
+import type { SessionApi } from '#common/zod/backend/session-api';
+import type {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
-} from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
-import {
+} from '#common/zod/to-backend/branches/to-backend-get-branches-list';
+import type {
   ToBackendGetEnvsListRequestPayload,
   ToBackendGetEnvsListResponse
-} from '#common/interfaces/to-backend/envs/to-backend-get-envs-list';
-import {
+} from '#common/zod/to-backend/envs/to-backend-get-envs-list';
+import type {
   ToBackendCreateEditorSessionRequestPayload,
   ToBackendCreateEditorSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-create-editor-session';
-import {
+} from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
+import type {
   ToBackendCreateExplorerSessionRequestPayload,
   ToBackendCreateExplorerSessionResponse
-} from '#common/interfaces/to-backend/sessions/to-backend-create-explorer-session';
+} from '#common/zod/to-backend/sessions/to-backend-create-explorer-session';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { NavQuery } from '#front/app/queries/nav.query';

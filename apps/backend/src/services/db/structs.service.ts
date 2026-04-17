@@ -24,10 +24,10 @@ import {
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ModelMetricX } from '#common/interfaces/backend/model-metric-x';
-import { ModelPartX } from '#common/interfaces/backend/model-part-x';
-import { StructX } from '#common/interfaces/backend/struct-x';
 import { ServerError } from '#common/models/server-error';
+import type { ModelMetricX } from '#common/zod/backend/model-metric-x';
+import type { ModelPartX } from '#common/zod/backend/model-part-x';
+import type { StructX } from '#common/zod/backend/struct-x';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

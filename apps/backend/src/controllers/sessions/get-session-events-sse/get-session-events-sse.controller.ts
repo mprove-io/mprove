@@ -1,4 +1,5 @@
 import { Controller, MessageEvent, Query, Sse } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -11,6 +12,7 @@ import { ServerError } from '#common/models/server-error';
 
 export const SSE_SESSION_EVENTS_PATH = 'api/sse/session-events';
 
+@ApiTags('Sessions')
 @SkipJwtCheck()
 @SkipThrottle()
 @Controller()
@@ -22,6 +24,11 @@ export class GetSessionEventsSseController {
   ) {}
 
   @Sse(SSE_SESSION_EVENTS_PATH)
+  @ApiOperation({
+    summary: 'GetSessionEventsSse',
+    description: 'Stream session events over Server-Sent Events'
+  })
+  @ApiOkResponse()
   sessionEventsSse(
     @Query('sessionId') sessionId: string,
     @Query('ticket') ticket: string,

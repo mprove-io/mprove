@@ -33,7 +33,6 @@ import {
   ZodCatch,
   ZodCustom,
   ZodDefault,
-  ZodDiscriminatedUnion,
   ZodIntersection,
   ZodLazy,
   ZodMap,
@@ -51,6 +50,20 @@ import {
   ZodUnion,
   z
 } from 'zod';
+
+// Rebuild a compound schema with `overrides` merged into its `def`, so
+// `.min()/.max()/.length()` checks, `.catchall()`, error messages, and other
+// def-level fields survive (rebuilding via `z.array(...)` / `z.object(...)`
+// etc. would drop everything the factory helper doesn't accept). `clone`
+// dispatches on `_zod.constr`, so subclasses (e.g. `ZodDiscriminatedUnion`)
+// are rebuilt as their own type.
+function rebuild<T extends z.core.SomeType>(
+  schema: T,
+  overrides: Record<string, unknown>
+): any {
+  let anySchema = schema as any;
+  return anySchema.clone({ ...anySchema.def, ...overrides });
+}
 
 export type DeepNullish<T extends z.core.SomeType> =
   T extends ZodOptional<infer Inner>
@@ -229,7 +242,11 @@ function buildNullish<T extends z.core.SomeType>(
     // Delta #2: lib calls `z.object(newShape).partial()` here. We omit `.partial()`
     // because each key is already `.nullish()` (which makes the key optional too),
     // so `.partial()` would be a no-op double-wrap.
-    let result: z.ZodType = z.object(newShape);
+    //
+    // Delta #9: rebuild via `schema.clone({ ...def, shape: newShape })` instead
+    // of `z.object(newShape)` so the source object's `.catchall()`, error
+    // messages, and other non-shape def fields survive the transformation.
+    let result: z.ZodType = rebuild(schema, { shape: newShape });
 
     if (isTopLevel) {
       result = (result as z.ZodObject).strict();
@@ -251,101 +268,80 @@ function buildNullish<T extends z.core.SomeType>(
     return result;
   }
 
+  // Delta #9: every compound-schema branch below rebuilds via
+  // `rebuild(schema, { ...swapped children })` instead of `z.array(...)`,
+  // `z.union(...)`, etc. so array `.min()/.max()/.length()`, map/set/record
+  // size checks, union/intersection-level checks, tuple `rest`, lazy-loader
+  // metadata, and any attached error/refine are preserved. `rebuild` calls
+  // `schema.clone(...)`, which dispatches through `_zod.constr`, so a
+  // `ZodDiscriminatedUnion` flowing through the `ZodUnion` branch is rebuilt
+  // as a discriminated union and its `discriminator`/`unionFallback` def
+  // fields ride along.
   if (schema instanceof ZodArray) {
-    return z
-      .array(zodDeepNullishInternal(schema.def.element, false, cache))
-      .nullish();
+    let element = zodDeepNullishInternal(schema.def.element, false, cache);
+    return rebuild(schema, { element: element }).nullish();
   }
 
   if (schema instanceof ZodMap) {
-    return z
-      .map(
-        zodDeepNullishInternal(schema.def.keyType, false, cache),
-        zodDeepNullishInternal(schema.def.valueType, false, cache)
-      )
-      .nullish();
+    let keyType = zodDeepNullishInternal(schema.def.keyType, false, cache);
+    let valueType = zodDeepNullishInternal(schema.def.valueType, false, cache);
+    return rebuild(schema, {
+      keyType: keyType,
+      valueType: valueType
+    }).nullish();
   }
 
   if (schema instanceof ZodSet) {
-    return z
-      .set(zodDeepNullishInternal(schema.def.valueType, false, cache))
-      .nullish();
+    let valueType = zodDeepNullishInternal(schema.def.valueType, false, cache);
+    return rebuild(schema, { valueType: valueType }).nullish();
   }
 
   if (schema instanceof ZodPromise) {
-    return z
-      .promise(zodDeepNullishInternal(schema.def.innerType, false, cache))
-      .nullish();
+    let innerType = zodDeepNullishInternal(schema.def.innerType, false, cache);
+    return rebuild(schema, { innerType: innerType }).nullish();
   }
 
   if (schema instanceof ZodUnion) {
-    return z
-      .union(
-        schema.options.map((opt: any) =>
-          zodDeepNullishInternal(opt, false, cache)
-        )
-      )
-      .nullish();
+    // Handles both `ZodUnion` and `ZodDiscriminatedUnion` (which extends
+    // `ZodUnion` via the zod v4 trait set). No separate `ZodDiscriminatedUnion`
+    // branch is needed — `clone` uses the original constructor, so the
+    // rebuild comes back as the right subtype.
+    let newOptions = schema.def.options.map((opt: any) =>
+      zodDeepNullishInternal(opt, false, cache)
+    );
+    return rebuild(schema, { options: newOptions }).nullish();
   }
 
   if (schema instanceof ZodIntersection) {
-    return z
-      .intersection(
-        zodDeepNullishInternal(schema.def.left, false, cache),
-        zodDeepNullishInternal(schema.def.right, false, cache)
-      )
-      .nullish();
+    let left = zodDeepNullishInternal(schema.def.left, false, cache);
+    let right = zodDeepNullishInternal(schema.def.right, false, cache);
+    return rebuild(schema, { left: left, right: right }).nullish();
   }
 
   if (schema instanceof ZodRecord) {
-    return z
-      .record(
-        zodDeepNullishInternal(schema.def.keyType, false, cache),
-        zodDeepNullishInternal(schema.def.valueType, false, cache)
-      )
-      .nullish();
+    let keyType = zodDeepNullishInternal(schema.def.keyType, false, cache);
+    let valueType = zodDeepNullishInternal(schema.def.valueType, false, cache);
+    return rebuild(schema, {
+      keyType: keyType,
+      valueType: valueType
+    }).nullish();
   }
 
   if (schema instanceof ZodTuple) {
-    return z
-      .tuple(
-        schema.def.items.map((item: any) =>
-          zodDeepNullishInternal(item, false, cache)
-        ) as any
-      )
-      .nullish();
+    let items = schema.def.items.map((item: any) =>
+      zodDeepNullishInternal(item, false, cache)
+    );
+    let rest = schema.def.rest
+      ? zodDeepNullishInternal(schema.def.rest, false, cache)
+      : schema.def.rest;
+    return rebuild(schema, { items: items, rest: rest }).nullish();
   }
 
   if (schema instanceof ZodLazy) {
-    return z
-      .lazy(() => zodDeepNullishInternal(schema.def.getter(), false, cache))
-      .nullish();
-  }
-
-  if (schema instanceof ZodDiscriminatedUnion) {
-    let options = schema.options.map((option: any) => {
-      if (option instanceof ZodObject) {
-        let shape = option.shape;
-        let newShape: Record<string, any> = {};
-
-        for (let key in shape) {
-          if (key === schema.def.discriminator) {
-            newShape[key] = shape[key];
-          } else {
-            newShape[key] = zodDeepNullishInternal(
-              shape[key],
-              false,
-              cache
-            ).nullish();
-          }
-        }
-
-        return z.object(newShape);
-      }
-      return zodDeepNullishInternal(option, false, cache);
-    });
-
-    return z.discriminatedUnion(schema.def.discriminator, options as any);
+    let originalGetter = schema.def.getter;
+    return rebuild(schema, {
+      getter: () => zodDeepNullishInternal(originalGetter(), false, cache)
+    }).nullish();
   }
 
   if (schema instanceof ZodPipe) {

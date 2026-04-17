@@ -470,17 +470,13 @@ export class RebuildStructService {
       });
     });
 
-    // TODO: drop `as any` once node-common helpers are migrated to zod types
-    // (zod `.nullish()` infers `T | null | undefined` which is not assignable
-    // to the interface's `field?: T` — plan `zod-migrate-node-common.md`)
     let malloyConnections: MalloyConnection[] = makeMalloyConnections({
-      connections: item.projectConnections as any
+      connections: item.projectConnections
     });
 
-    // TODO: drop `as any` once node-common helpers are migrated to zod types
     prePopulateMalloySchemaCache({
       malloyConnections: malloyConnections,
-      projectConnections: item.projectConnections as any
+      projectConnections: item.projectConnections
     });
 
     mods =

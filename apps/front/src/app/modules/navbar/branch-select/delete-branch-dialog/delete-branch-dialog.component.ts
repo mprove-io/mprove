@@ -22,10 +22,10 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
+import type {
   ToBackendDeleteBranchRequestPayload,
   ToBackendDeleteBranchResponse
-} from '#common/interfaces/to-backend/branches/to-backend-delete-branch';
+} from '#common/zod/to-backend/branches/to-backend-delete-branch';
 import { ApiService } from '#front/app/services/api.service';
 
 export interface DeleteBranchDialogData {

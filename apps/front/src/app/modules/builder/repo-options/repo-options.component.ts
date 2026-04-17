@@ -10,26 +10,26 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
+import type {
   ToBackendValidateFilesRequestPayload,
   ToBackendValidateFilesResponse
-} from '#common/interfaces/to-backend/files/to-backend-validate-files';
-import {
+} from '#common/zod/to-backend/files/to-backend-validate-files';
+import type {
   ToBackendGetRepoRequestPayload,
   ToBackendGetRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
-import {
+} from '#common/zod/to-backend/repos/to-backend-get-repo';
+import type {
   ToBackendPullRepoRequestPayload,
   ToBackendPullRepoResponse
-} from '#common/interfaces/to-backend/repos/to-backend-pull-repo';
-import {
+} from '#common/zod/to-backend/repos/to-backend-pull-repo';
+import type {
   ToBackendRevertRepoToLastCommitRequestPayload,
   ToBackendRevertRepoToLastCommitResponse
-} from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-last-commit';
-import {
+} from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
+import type {
   ToBackendRevertRepoToRemoteRequestPayload,
   ToBackendRevertRepoToRemoteResponse
-} from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-remote';
+} from '#common/zod/to-backend/repos/to-backend-revert-repo-to-remote';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';

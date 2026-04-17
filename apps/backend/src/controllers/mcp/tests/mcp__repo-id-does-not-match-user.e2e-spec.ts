@@ -16,10 +16,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGenerateUserApiKeyRequest,
   ToBackendGenerateUserApiKeyResponse
-} from '#common/interfaces/to-backend/users/to-backend-generate-user-api-key';
+} from '#common/zod/to-backend/users/to-backend-generate-user-api-key';
 
 let testId = 'backend-mcp__repo-id-does-not-match-user';
 

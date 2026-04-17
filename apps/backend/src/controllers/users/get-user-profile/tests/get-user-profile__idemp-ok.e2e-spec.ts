@@ -10,10 +10,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendGetUserProfileRequest,
   ToBackendGetUserProfileResponse
-} from '#common/interfaces/to-backend/users/to-backend-get-user-profile';
+} from '#common/zod/to-backend/users/to-backend-get-user-profile';
 
 let testId = 'backend-get-user-profile__idemp-ok';
 

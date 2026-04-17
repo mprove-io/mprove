@@ -31,12 +31,12 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import { ErrorData } from '#common/interfaces/front/error-data';
-import {
+import type { ErrorData } from '#common/zod/front/error-data';
+import type {
   ToBackendGetReportsRequestPayload,
   ToBackendGetReportsResponse
-} from '#common/interfaces/to-backend/reports/to-backend-get-reports';
-import { ToBackendRequest } from '#common/interfaces/to-backend/to-backend-request';
+} from '#common/zod/to-backend/reports/to-backend-get-reports';
+import type { ToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 import { environment } from '#front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';

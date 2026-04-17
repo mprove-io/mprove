@@ -36,9 +36,9 @@ import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { Column } from '#common/interfaces/blockml/column';
-import { Fraction } from '#common/interfaces/blockml/fraction';
 import { ServerError } from '#common/models/server-error';
+import type { Column } from '#common/zod/blockml/column';
+import type { Fraction } from '#common/zod/blockml/fraction';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
 import { nodeFormatTsUnix } from '#node-common/functions/node-format-ts-unix';
 

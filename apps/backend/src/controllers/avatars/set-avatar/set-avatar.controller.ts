@@ -1,15 +1,20 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendSetAvatarRequestDto,
+  ToBackendSetAvatarResponseDto
+} from '#backend/controllers/avatars/set-avatar/set-avatar.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -17,17 +22,14 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import {
-  ToBackendSetAvatarRequest,
-  ToBackendSetAvatarResponsePayload
-} from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
+import type { ToBackendSetAvatarResponsePayload } from '#common/zod/to-backend/avatars/to-backend-set-avatar';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Avatars')
+@UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class SetAvatarController {
   constructor(
@@ -39,10 +41,18 @@ export class SetAvatarController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetAvatar)
-  async setAvatar(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSetAvatarRequest = request.body;
-
-    let { avatarSmall, avatarBig } = reqValid.payload;
+  @ApiOperation({
+    summary: 'SetAvatar',
+    description: "Update the current user's avatar image"
+  })
+  @ApiOkResponse({
+    type: ToBackendSetAvatarResponseDto
+  })
+  async setAvatar(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendSetAvatarRequestDto
+  ) {
+    let { avatarSmall, avatarBig } = body.payload;
 
     this.usersService.checkUserIsNotRestricted({ user: user });
 

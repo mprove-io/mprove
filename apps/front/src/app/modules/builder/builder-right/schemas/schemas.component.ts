@@ -12,16 +12,16 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy';
-import {
+import type {
   ColumnCombinedReference,
   CombinedSchemaItem
-} from '#common/interfaces/backend/connection-schemas/combined-schema';
-import { RawSchemaForeignKey } from '#common/interfaces/backend/connection-schemas/raw-schema';
-import { ToBackendGetConnectionSampleResponse } from '#common/interfaces/to-backend/connections/to-backend-get-connection-sample';
-import {
+} from '#common/zod/backend/connection-schemas/combined-schema';
+import type { RawSchemaForeignKey } from '#common/zod/backend/connection-schemas/raw-schema';
+import type { ToBackendGetConnectionSampleResponse } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
+import type {
   ToBackendGetConnectionSchemasRequestPayload,
   ToBackendGetConnectionSchemasResponse
-} from '#common/interfaces/to-backend/connections/to-backend-get-connection-schemas';
+} from '#common/zod/to-backend/connections/to-backend-get-connection-schemas';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';

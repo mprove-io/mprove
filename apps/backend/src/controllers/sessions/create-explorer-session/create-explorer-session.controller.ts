@@ -1,16 +1,21 @@
 import {
+  Body,
   Controller,
   Inject,
   Logger,
   Post,
-  Req,
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import type { Event } from '@opencode-ai/sdk/v2';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
+import {
+  ToBackendCreateExplorerSessionRequestDto,
+  ToBackendCreateExplorerSessionResponseDto
+} from '#backend/controllers/sessions/create-explorer-session/create-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -21,7 +26,6 @@ import type {
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { OcEventsService } from '#backend/services/db/oc-events.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
@@ -38,13 +42,11 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeSessionId } from '#common/functions/make-session-id';
 import { splitModel } from '#common/functions/split-model';
-import {
-  ToBackendCreateExplorerSessionRequest,
-  ToBackendCreateExplorerSessionResponsePayload
-} from '#common/interfaces/to-backend/sessions/to-backend-create-explorer-session';
 import { ServerError } from '#common/models/server-error';
+import type { ToBackendCreateExplorerSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-explorer-session';
 
-@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@ApiTags('Sessions')
+@UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CreateExplorerSessionController {
@@ -61,11 +63,17 @@ export class CreateExplorerSessionController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateExplorerSession)
+  @ApiOperation({
+    summary: 'CreateExplorerSession',
+    description: 'Create a new explorer session'
+  })
+  @ApiOkResponse({
+    type: ToBackendCreateExplorerSessionResponseDto
+  })
   async createExplorerSession(
     @AttachUser() user: UserTab,
-    @Req() request: any
+    @Body() body: ToBackendCreateExplorerSessionRequestDto
   ) {
-    let reqValid: ToBackendCreateExplorerSessionRequest = request.body;
     let {
       projectId,
       provider,
@@ -77,7 +85,7 @@ export class CreateExplorerSessionController {
       messageId,
       partId,
       useCodex
-    } = reqValid.payload;
+    } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

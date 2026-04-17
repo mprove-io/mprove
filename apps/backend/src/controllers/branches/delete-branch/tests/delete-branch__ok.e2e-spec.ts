@@ -12,14 +12,14 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendCreateBranchRequest,
   ToBackendCreateBranchResponse
-} from '#common/interfaces/to-backend/branches/to-backend-create-branch';
-import {
+} from '#common/zod/to-backend/branches/to-backend-create-branch';
+import type {
   ToBackendDeleteBranchRequest,
   ToBackendDeleteBranchResponse
-} from '#common/interfaces/to-backend/branches/to-backend-delete-branch';
+} from '#common/zod/to-backend/branches/to-backend-delete-branch';
 
 let testId = 'backend-delete-branch__ok';
 

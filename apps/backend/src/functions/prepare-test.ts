@@ -16,21 +16,21 @@ import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import {
+import type {
   ToBackendDeleteRecordsRequest,
   ToBackendDeleteRecordsRequestPayload,
   ToBackendDeleteRecordsResponse
-} from '#common/interfaces/to-backend/test-routes/to-backend-delete-records';
-import {
+} from '#common/zod/to-backend/test-routes/to-backend-delete-records';
+import type {
   ToBackendSeedRecordsRequest,
   ToBackendSeedRecordsRequestPayload,
   ToBackendSeedRecordsResponse
-} from '#common/interfaces/to-backend/test-routes/to-backend-seed-records';
-import {
+} from '#common/zod/to-backend/test-routes/to-backend-seed-records';
+import type {
   ToBackendLoginUserRequest,
   ToBackendLoginUserRequestPayload,
   ToBackendLoginUserResponse
-} from '#common/interfaces/to-backend/users/to-backend-login-user';
+} from '#common/zod/to-backend/users/to-backend-login-user';
 import { sendToBackend } from './send-to-backend';
 
 export async function prepareTest(item: {
