@@ -1,6 +1,7 @@
 import fse from 'fs-extra';
-import { SimpleGit, simpleGit } from 'simple-git';
+import type { SimpleGit } from 'simple-git';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { createSimpleGit } from '#node-common/functions/create-simple-git';
 
 export async function createGit(item: {
   repoDir: string;
@@ -33,9 +34,7 @@ export async function createGit(item: {
     });
     await fse.chmod(askpassPath, 0o700);
 
-    let baseConfig = repoDir ? { baseDir: repoDir } : {};
-
-    return simpleGit(baseConfig).env({
+    return createSimpleGit({ baseDir: repoDir }).env({
       GIT_SSH_COMMAND: `ssh -i ${privateKeyPath} -F /dev/null -o IdentitiesOnly=yes -o StrictHostKeyChecking=no`,
       SSH_PASSPHRASE: passPhrase,
       SSH_ASKPASS: askpassPath,
@@ -44,5 +43,5 @@ export async function createGit(item: {
     });
   }
 
-  return repoDir ? simpleGit({ baseDir: repoDir }) : simpleGit();
+  return createSimpleGit({ baseDir: repoDir });
 }

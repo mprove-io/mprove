@@ -1,7 +1,6 @@
 import { Command, Option } from 'clipanion';
 import fse from 'fs-extra';
 import pIteration from 'p-iteration';
-import { simpleGit } from 'simple-git';
 
 const { forEachSeries } = pIteration;
 
@@ -30,6 +29,7 @@ import { makeSyncTime } from '#mcli/functions/make-sync-time';
 import { mreq } from '#mcli/functions/mreq';
 import { writeSyncConfig } from '#mcli/functions/write-sync-config';
 import { CustomCommand } from '#mcli/models/custom-command';
+import { createSimpleGit } from '#node-common/functions/create-simple-git';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
 import { getSyncFiles } from '#node-common/functions/get-sync-files';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
@@ -108,7 +108,7 @@ export class SyncCommand extends CustomCommand {
 
     let repoDir = isDefined(this.localPath) ? this.localPath : process.cwd();
 
-    let git = simpleGit({ baseDir: repoDir });
+    let git = createSimpleGit({ baseDir: repoDir });
 
     let branchSummary = await git.branch();
     let currentBranchName = branchSummary.current;

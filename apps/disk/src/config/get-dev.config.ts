@@ -47,6 +47,10 @@ export function getDevConfig() {
     diskLogResponseOk: enumToBoolean({
       value: process.env.DISK_LOG_RESPONSE_OK,
       name: 'DISK_LOG_RESPONSE_OK'
+    }),
+    diskIsCheckSymlinksOnStartup: enumToBoolean({
+      value: process.env.DISK_IS_CHECK_SYMLINKS_ON_STARTUP,
+      name: 'DISK_IS_CHECK_SYMLINKS_ON_STARTUP'
     })
   };
   return devConfig;

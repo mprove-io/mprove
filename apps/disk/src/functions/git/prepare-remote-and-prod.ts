@@ -1,10 +1,9 @@
-import { simpleGit } from 'simple-git';
-
 import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { createGit } from '#disk/functions/git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
+import { createSimpleGit } from '#node-common/functions/create-simple-git';
 import { ensureDir } from '../disk/ensure-dir';
 import { createInitialCommitToProd } from './create-initial-commit-to-prod';
 import { pushToRemote } from './push-to-remote';
@@ -33,7 +32,7 @@ export async function prepareRemoteAndProd(item: {
         await ensureDir(centralDir);
 
         // init central repo as bare
-        let centralGit = simpleGit(centralDir);
+        let centralGit = createSimpleGit({ baseDir: centralDir });
         await centralGit.init(true);
         await centralGit.raw([
           'symbolic-ref',
@@ -68,7 +67,7 @@ export async function prepareRemoteAndProd(item: {
           projectName: item.projectName
         });
 
-        let prodGit = simpleGit({ baseDir: prodDir });
+        let prodGit = createSimpleGit({ baseDir: prodDir });
 
         await pushToRemote({
           projectId: item.projectId,

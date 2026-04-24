@@ -1,5 +1,5 @@
-import { simpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
+import { createSimpleGit } from '#node-common/functions/create-simple-git';
 
 export async function getBaseCommitFileContent(item: {
   repoDir: string;
@@ -8,7 +8,7 @@ export async function getBaseCommitFileContent(item: {
   return await addTraceSpan({
     spanName: 'disk.git.getBaseCommitFileContent',
     fn: async () => {
-      let git = simpleGit({ baseDir: item.repoDir });
+      let git = createSimpleGit({ baseDir: item.repoDir });
 
       let branchSummary = await git.branch();
       let currentBranchName = branchSummary.current;

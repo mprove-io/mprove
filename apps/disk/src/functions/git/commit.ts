@@ -1,5 +1,5 @@
-import { simpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
+import { createSimpleGit } from '#node-common/functions/create-simple-git';
 
 export async function commit(item: {
   repoDir: string;
@@ -9,7 +9,7 @@ export async function commit(item: {
   return await addTraceSpan({
     spanName: 'disk.git.commit',
     fn: async () => {
-      let git = simpleGit({ baseDir: item.repoDir });
+      let git = createSimpleGit({ baseDir: item.repoDir });
 
       await git.addConfig('user.email', `${item.userAlias}@`);
       await git.addConfig('user.name', item.userAlias);

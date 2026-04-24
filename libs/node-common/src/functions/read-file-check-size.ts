@@ -8,7 +8,14 @@ export async function readFileCheckSize(item: {
 }) {
   let { filePath, getStat } = item;
 
-  let stat: fse.Stats = await fse.stat(filePath);
+  let stat: fse.Stats = await fse.lstat(filePath);
+
+  if (stat.isSymbolicLink() === true) {
+    throw new ServerError({
+      message: ErEnum.FILE_IS_SYMLINK
+    });
+  }
+
   let fileSizeInBytes = stat.size;
   let fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
 

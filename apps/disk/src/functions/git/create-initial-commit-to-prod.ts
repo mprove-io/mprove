@@ -1,5 +1,3 @@
-import { simpleGit } from 'simple-git';
-
 import {
   BRANCH_MAIN,
   MPROVE_CONFIG_FILENAME,
@@ -8,6 +6,7 @@ import {
 import { TEST_PROJECTS } from '#common/constants/top-disk';
 import { isDefined } from '#common/functions/is-defined';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
+import { createSimpleGit } from '#node-common/functions/create-simple-git';
 import { copyPath } from '../disk/copy-path';
 import { isPathExist } from '../disk/is-path-exist';
 import { writeToFile } from '../disk/write-to-file';
@@ -22,7 +21,7 @@ export async function createInitialCommitToProd(item: {
   return await addTraceSpan({
     spanName: 'disk.git.createInitialCommitToProd',
     fn: async () => {
-      let git = simpleGit({ baseDir: item.prodDir });
+      let git = createSimpleGit({ baseDir: item.prodDir });
 
       let sourceDir = `${TEST_PROJECTS}/${item.testProjectId}`;
 

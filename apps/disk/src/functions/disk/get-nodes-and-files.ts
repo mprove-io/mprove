@@ -81,6 +81,10 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   });
 
   await forEachSeries(dirents, async dirent => {
+    if (dirent.isSymbolicLink() === true) {
+      return;
+    }
+
     if (!dirent.name.match(MyRegex.IGNORED_FILE_NAMES())) {
       let fileAbsolutePath = item.dir + '/' + dirent.name;
 

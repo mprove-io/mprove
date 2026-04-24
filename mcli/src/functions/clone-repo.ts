@@ -1,6 +1,6 @@
 import path from 'node:path';
 import fse from 'fs-extra';
-import { simpleGit } from 'simple-git';
+import { createSimpleGit } from '#node-common/functions/create-simple-git';
 
 export async function cloneRepo(item: {
   repoPath: string;
@@ -33,7 +33,7 @@ export async function cloneRepo(item: {
     });
     await fse.chmod(askpassPath, 0o700);
 
-    let git = simpleGit().env({
+    let git = createSimpleGit({}).env({
       GIT_SSH_COMMAND: `ssh -i ${privateKeyPath} -F /dev/null -o IdentitiesOnly=yes -o StrictHostKeyChecking=no`,
       SSH_PASSPHRASE: passPhrase,
       SSH_ASKPASS: askpassPath,
@@ -43,6 +43,6 @@ export async function cloneRepo(item: {
 
     await git.clone(gitUrl, repoPath);
   } else {
-    await simpleGit().clone(gitUrl, repoPath);
+    await createSimpleGit({}).clone(gitUrl, repoPath);
   }
 }

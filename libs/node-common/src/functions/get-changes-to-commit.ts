@@ -1,5 +1,5 @@
 import pIteration from 'p-iteration';
-import { StatusResult, simpleGit } from 'simple-git';
+import type { StatusResult } from 'simple-git';
 
 const { forEachSeries } = pIteration;
 
@@ -8,6 +8,7 @@ import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { FileWithStatusType } from '#common/zod/disk/git-file-status-type';
+import { createSimpleGit } from './create-simple-git';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getChangesToCommit(item: {
@@ -16,7 +17,7 @@ export async function getChangesToCommit(item: {
 }) {
   let { repoDir, addContent } = item;
 
-  let git = simpleGit({ baseDir: repoDir });
+  let git = createSimpleGit({ baseDir: repoDir });
 
   let statusResult: StatusResult = await git.status();
 

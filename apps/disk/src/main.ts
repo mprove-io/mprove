@@ -14,6 +14,7 @@ import { getLoggerOptions } from '#node-common/functions/get-logger-options';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events';
 import { AppModule } from './app.module';
 import { getConfig } from './config/get.config';
+import { checkSymlinksInDir } from './functions/disk/check-symlinks-in-dir';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
 
 async function bootstrap() {
@@ -36,6 +37,10 @@ async function bootstrap() {
       })
     )
   });
+
+  if (config.diskIsCheckSymlinksOnStartup === true) {
+    await checkSymlinksInDir({ dir: config.diskOrganizationsPath });
+  }
 
   await app.listen(process.env.LISTEN_PORT || 3002);
 }
