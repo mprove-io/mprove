@@ -48,10 +48,14 @@ export function getDevConfig() {
       value: process.env.DISK_LOG_RESPONSE_OK,
       name: 'DISK_LOG_RESPONSE_OK'
     }),
-    diskIsCheckSymlinksOnStartup: enumToBoolean({
-      value: process.env.DISK_IS_CHECK_SYMLINKS_ON_STARTUP,
-      name: 'DISK_IS_CHECK_SYMLINKS_ON_STARTUP'
-    })
+    diskIsCheckSymlinksOnStartup: isDefined(
+      process.env.DISK_IS_CHECK_SYMLINKS_ON_STARTUP
+    )
+      ? enumToBoolean({
+          value: process.env.DISK_IS_CHECK_SYMLINKS_ON_STARTUP,
+          name: 'DISK_IS_CHECK_SYMLINKS_ON_STARTUP'
+        })
+      : undefined
   };
   return devConfig;
 }

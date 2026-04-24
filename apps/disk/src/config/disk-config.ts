@@ -13,7 +13,7 @@ export let zDiskConfig = z.object({
   diskValkeyHost: z.string(),
   diskValkeyPassword: z.string(),
   diskOrganizationsPath: z.string(),
-  diskIsCheckSymlinksOnStartup: z.boolean(),
+  diskIsCheckSymlinksOnStartup: z.boolean().optional(),
   diskTestReposPath: z.string().optional(),
   diskTestLocalSourceGitUrl: z.string().optional(),
   diskLogIsJson: z.boolean(),
