@@ -29,6 +29,7 @@ import pg from 'pg';
 
 const { Client } = pg;
 
+import { backendPackageJson } from '#backend/backend-package-json';
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   DEMO_ORG_NAME,
@@ -82,12 +83,6 @@ import { UsersService } from './services/db/users.service';
 import { HashService } from './services/hash.service';
 import { TabService } from './services/tab.service';
 import { TabCheckerService } from './services/tab-checker.service';
-
-let __dirname = dirname(fileURLToPath(import.meta.url));
-
-let backendPackageJson = fse.readJsonSync(
-  resolve(__dirname, '../package.json')
-);
 
 let configModule = ConfigModule.forRoot({
   load: [getConfig],

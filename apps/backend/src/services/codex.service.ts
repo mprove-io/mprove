@@ -1,10 +1,8 @@
 import os from 'node:os';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
-import fse from 'fs-extra';
+import { backendPackageJson } from '#backend/backend-package-json';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -31,12 +29,6 @@ const CODEX_ORIGINATOR = 'mprove';
 // the backend as the sole refresher, avoiding refresh_token rotation races.
 const CODEX_AUTH_REFRESH_BUFFER_SEC = 5 * 60 * 60;
 const CODEX_AUTH_REFRESH_BUFFER_MS = CODEX_AUTH_REFRESH_BUFFER_SEC * 1000;
-
-let __dirname = dirname(fileURLToPath(import.meta.url));
-
-let backendPackageJson = fse.readJsonSync(
-  resolve(__dirname, '../../package.json')
-);
 
 const CODEX_USER_AGENT_VERSION: string = backendPackageJson.version;
 
