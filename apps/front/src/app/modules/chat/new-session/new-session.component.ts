@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -38,6 +38,7 @@ import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { SessionService } from '#front/app/services/session.service';
 import { UiService } from '#front/app/services/ui.service';
+import { CHAT_SCOPE, ChatScope } from '../chat-scope.token';
 
 @Component({
   standalone: false,
@@ -45,10 +46,7 @@ import { UiService } from '#front/app/services/ui.service';
   templateUrl: './new-session.component.html'
 })
 export class NewSessionComponent implements OnInit {
-  sessionTypeEnum = SessionTypeEnum;
   sessionType: SessionTypeEnum = SessionTypeEnum.Editor;
-  explorerSessionEnabled = false;
-  sessionTypes = [SessionTypeEnum.Explorer, SessionTypeEnum.Editor];
 
   agent = 'build';
 
@@ -58,14 +56,6 @@ export class NewSessionComponent implements OnInit {
 
   toggleUseCodex() {
     this.useCodex = !this.useCodex;
-  }
-
-  onSessionTypeChange() {
-    let uiState = this.uiQuery.getValue();
-    let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
-    this.model = isExplorer
-      ? uiState.newSessionExplorerProviderModel
-      : uiState.newSessionEditorProviderModel;
   }
 
   initialBranch: string;
@@ -88,8 +78,14 @@ export class NewSessionComponent implements OnInit {
     private userQuery: UserQuery,
     private navigateService: NavigateService,
     private sessionService: SessionService,
-    private uiService: UiService
+    private uiService: UiService,
+    @Inject(CHAT_SCOPE) public chatScope: ChatScope
   ) {
+    this.sessionType =
+      this.chatScope === 'explorer'
+        ? SessionTypeEnum.Explorer
+        : SessionTypeEnum.Editor;
+
     let nav = this.navQuery.getValue();
     let isProduction = nav.repoId === PROD_REPO_ID;
     this.initialBranch = isProduction ? nav.branchId : nav.projectDefaultBranch;
@@ -118,7 +114,10 @@ export class NewSessionComponent implements OnInit {
 
   ngOnInit() {
     let uiState = this.uiQuery.getValue();
-    this.model = uiState.newSessionEditorProviderModel;
+    let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
+    this.model = isExplorer
+      ? uiState.newSessionExplorerProviderModel
+      : uiState.newSessionEditorProviderModel;
     this.variant = uiState.newSessionEditorVariant || 'default';
     this.useCodex = uiState.newSessionUseCodex !== false; // "undefined" -> true
   }
@@ -375,12 +374,21 @@ export class NewSessionComponent implements OnInit {
         variant: this.variant
       });
 
-      this.navigateService.navigateToSession({
-        sessionId: sessionId,
-        repoId: repoId,
-        branchId: branchId,
-        envId: envId
-      });
+      if (this.chatScope === 'explorer') {
+        this.navigateService.navigateToExplorerSession({
+          sessionId: sessionId,
+          repoId: repoId,
+          branchId: branchId,
+          envId: envId
+        });
+      } else {
+        this.navigateService.navigateToSession({
+          sessionId: sessionId,
+          repoId: repoId,
+          branchId: branchId,
+          envId: envId
+        });
+      }
 
       this.isSubmitting = false;
       this.cd.detectChanges();

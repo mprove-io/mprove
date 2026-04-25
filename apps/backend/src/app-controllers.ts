@@ -134,12 +134,13 @@ import { GenerateUserApiKeyController } from './controllers/users/generate-user-
 import { GetUserProfileController } from './controllers/users/get-user-profile/get-user-profile.controller';
 import { LoginUserController } from './controllers/users/login-user/login-user.controller';
 import { LogoutUserController } from './controllers/users/logout-user/logout-user.controller';
+import { PollUserCodexAuthController } from './controllers/users/poll-user-codex-auth/poll-user-codex-auth.controller';
 import { RegisterUserController } from './controllers/users/register-user/register-user.controller';
 import { ResendUserEmailController } from './controllers/users/resend-user-email/resend-user-email.controller';
 import { ResetUserPasswordController } from './controllers/users/reset-user-password/reset-user-password.controller';
-import { SetUserCodexAuthController } from './controllers/users/set-user-codex-auth/set-user-codex-auth.controller';
 import { SetUserNameController } from './controllers/users/set-user-name/set-user-name.controller';
 import { SetUserUiController } from './controllers/users/set-user-ui/set-user-ui.controller';
+import { StartUserCodexAuthController } from './controllers/users/start-user-codex-auth/start-user-codex-auth.controller';
 import { UpdateUserPasswordController } from './controllers/users/update-user-password/update-user-password.controller';
 
 export const appControllers = [
@@ -278,7 +279,8 @@ export const appControllers = [
   UpdateUserPasswordController,
   GenerateUserApiKeyController,
   DeleteUserApiKeyController,
-  SetUserCodexAuthController,
+  StartUserCodexAuthController,
+  PollUserCodexAuthController,
   DeleteUserCodexAuthController,
 
   CreateDraftChartController,

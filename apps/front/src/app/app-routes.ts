@@ -26,6 +26,7 @@ import {
   PATH_EMAIL_CONFIRMED,
   PATH_ENV,
   PATH_ENVIRONMENTS,
+  PATH_EXPLORER,
   PATH_FILE,
   PATH_FORGOT_PASSWORD,
   PATH_INFO,
@@ -57,6 +58,7 @@ import {
   PATH_USERS,
   PATH_VERIFY_EMAIL
 } from '#common/constants/top';
+import { environment } from '#front/environments/environment';
 import { DeactivateGuard } from './guards/deactivate.guard';
 import { RegisterComponent } from './modules/auth/main/01-register/register.component';
 import { VerifyEmailComponent } from './modules/auth/main/02-verify-email/verify-email.component';
@@ -72,11 +74,12 @@ import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-passw
 import { BuilderComponent } from './modules/builder/builder.component';
 import { FileEditorComponent } from './modules/builder/file-editor/file-editor.component';
 import { SelectFileComponent } from './modules/builder/select-file/select-file.component';
-import { NewSessionWrapperComponent } from './modules/builder/session/new-session-wrapper/new-session-wrapper.component';
-import { SessionWrapperComponent } from './modules/builder/session/session-wrapper/session-wrapper.component';
+import { NewSessionWrapperComponent } from './modules/chat/new-session-wrapper/new-session-wrapper.component';
+import { SessionWrapperComponent } from './modules/chat/session-wrapper/session-wrapper.component';
 import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
+import { ExplorerComponent } from './modules/explorer/explorer.component';
 import { ChartComponent } from './modules/models/chart/chart.component';
 import { ChartsListComponent } from './modules/models/charts-list/charts-list.component';
 import { ModelComponent } from './modules/models/model/model.component';
@@ -299,6 +302,33 @@ export const appRoutes: Routes = [
                               }
                             ]
                           },
+                          ...(environment.explorerEnabled
+                            ? [
+                                {
+                                  component: ExplorerComponent,
+                                  path: PATH_EXPLORER,
+                                  resolve: [SessionModelsResolver],
+                                  children: [
+                                    {
+                                      path: '',
+                                      redirectTo: PATH_NEW_SESSION,
+                                      pathMatch: 'full' as const
+                                    },
+                                    {
+                                      component: NewSessionWrapperComponent,
+                                      path: PATH_NEW_SESSION
+                                    },
+                                    {
+                                      component: SessionWrapperComponent,
+                                      path:
+                                        PATH_SESSION +
+                                        `/:${PARAMETER_SESSION_ID}`,
+                                      resolve: [SessionResolver]
+                                    }
+                                  ]
+                                }
+                              ]
+                            : []),
                           {
                             component: ModelsComponent,
                             path: PATH_MODELS,

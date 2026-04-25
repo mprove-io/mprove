@@ -66,7 +66,6 @@ src/
 │       ├── push/         # Push to remote
 │       ├── revert/       # Revert changes
 │       ├── run/          # Run queries
-│       ├── set-codex-auth/
 │       ├── sync/         # Sync project
 │       └── validate/     # Validate models
 ├── functions/          # Helper functions

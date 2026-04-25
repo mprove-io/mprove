@@ -8,7 +8,7 @@ import {
   ChatMessage,
   ChatTurn,
   FileDiffInfo
-} from '../modules/builder/session/session-chat.interfaces';
+} from '../modules/chat/session-chat.interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class SessionMessagesService {

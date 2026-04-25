@@ -148,6 +148,7 @@ export const PATH_PROFILE = 'profile';
 export const PATH_ENV_VARIABLES = 'env-variables';
 
 export const PATH_BUILDER = 'builder';
+export const PATH_EXPLORER = 'explorer';
 export const PATH_FILE = 'file';
 export const PATH_MODELS = 'models';
 export const PATH_CHART = 'chart';

@@ -10,6 +10,7 @@ import { RemarkModule } from 'ngx-remark';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
+import { ChatModule } from '../chat/chat.module';
 import { SharedModule } from '../shared/shared.module';
 import { BuilderComponent } from './builder.component';
 import { BuilderLeftComponent } from './builder-left/builder-left.component';
@@ -28,17 +29,6 @@ import { ValidationStatusComponent } from './builder-right/validation-status/val
 import { FileEditorComponent } from './file-editor/file-editor.component';
 import { RepoOptionsComponent } from './repo-options/repo-options.component';
 import { SelectFileComponent } from './select-file/select-file.component';
-import { NewSessionComponent } from './session/new-session/new-session.component';
-import { NewSessionWrapperComponent } from './session/new-session-wrapper/new-session-wrapper.component';
-import { QuestionPromptComponent } from './session/question-prompt/question-prompt.component';
-import { SessionComponent } from './session/session.component';
-import { SessionDebugEventsComponent } from './session/session-debug-events/session-debug-events.component';
-import { AutoAcceptToggleComponent } from './session/session-input/auto-accept-toggle/auto-accept-toggle.component';
-import { ContextUsageCircleComponent } from './session/session-input/context-usage-circle/context-usage-circle.component';
-import { SessionInputComponent } from './session/session-input/session-input.component';
-import { SessionMessagesComponent } from './session/session-messages/session-messages.component';
-import { SessionMessagesContentComponent } from './session/session-messages-content/session-messages-content.component';
-import { SessionWrapperComponent } from './session/session-wrapper/session-wrapper.component';
 
 @NgModule({
   declarations: [
@@ -55,17 +45,6 @@ import { SessionWrapperComponent } from './session/session-wrapper/session-wrapp
     SecondFileComponent,
     SchemasComponent,
     SessionsComponent,
-    NewSessionComponent,
-    NewSessionWrapperComponent,
-    SessionComponent,
-    SessionWrapperComponent,
-    SessionDebugEventsComponent,
-    SessionInputComponent,
-    AutoAcceptToggleComponent,
-    ContextUsageCircleComponent,
-    QuestionPromptComponent,
-    SessionMessagesContentComponent,
-    SessionMessagesComponent,
     BlockmlErrorsComponent,
     RepoConflictsComponent,
     ValidationStatusComponent,
@@ -76,6 +55,7 @@ import { SessionWrapperComponent } from './session/session-wrapper/session-wrapp
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
+    ChatModule,
     RouterModule,
     TreeModule,
     TippyDirective,

@@ -21,8 +21,10 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { CodexService } from '#backend/services/codex.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { UsersService } from '#backend/services/db/users.service';
 import { EditorCodexService } from '#backend/services/editor/editor-codex.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
@@ -47,10 +49,12 @@ export class SendMessageToEditorSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
+    private usersService: UsersService,
     private editorStreamService: EditorStreamService,
     private editorOpencodeService: EditorOpencodeService,
     private editorCodexService: EditorCodexService,
     private editorSandboxService: EditorSandboxService,
+    private codexService: CodexService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -121,18 +125,23 @@ export class SendMessageToEditorSessionController {
       });
     }
 
+    if (session.useCodex === true) {
+      await this.codexService.prewarmCodexAuth({
+        userId: user.userId
+      });
+
+      user = await this.usersService.getUserCheckExists({
+        userId: user.userId
+      });
+    }
+
     let sandboxInfo = await this.editorSandboxService.getSandboxInfo({
       sandboxId: session.sandboxId,
       e2bApiKey: project.e2bApiKey
     });
 
-    let wasSessionPaused = false;
-    let isUserUpdated = false;
-
     if (isDefined(sandboxInfo) === true) {
       if (sandboxInfo.state === 'paused') {
-        wasSessionPaused = true;
-
         let isLockExist =
           await this.editorStreamService.publishStopSessionStream({
             sessionId: session.sessionId
@@ -171,48 +180,16 @@ export class SendMessageToEditorSessionController {
           sandboxBaseUrl: session.sandboxBaseUrl
         });
 
-        if (session.useCodex === true) {
-          let sandboxAuthContent =
-            await this.editorCodexService.readAuthJsonFromSandbox({
-              sandboxId: session.sandboxId,
-              e2bApiKey: project.e2bApiKey
-            });
-
-          let sandboxAuth = isDefined(sandboxAuthContent)
-            ? this.editorCodexService.parseCodexAuthJson({
-                authJsonContent: sandboxAuthContent
-              })
-            : undefined;
-
-          let userAuth = user.codexAuth;
-
-          let accountIdsMatch =
-            isDefined(sandboxAuth) &&
-            isDefined(userAuth) &&
-            sandboxAuth.openai.accountId === userAuth.openai.accountId;
-
-          if (
-            accountIdsMatch &&
-            sandboxAuth.openai.expires > userAuth.openai.expires
-          ) {
-            user.codexAuth = sandboxAuth;
-            user.codexAuthUpdateTs = Date.now();
-            user.codexAuthExpiresTs = sandboxAuth.openai.expires;
-            session.codexAuthUpdateTs = user.codexAuthUpdateTs;
-
-            isUserUpdated = true;
-          } else if (
-            wasSessionPaused &&
-            accountIdsMatch &&
-            userAuth.openai.expires > sandboxAuth.openai.expires
-          ) {
-            await this.editorCodexService.writeAuthJsonToSandbox({
-              sandboxId: session.sandboxId,
-              e2bApiKey: project.e2bApiKey,
-              codexAuth: user.codexAuth
-            });
-            session.codexAuthUpdateTs = user.codexAuthUpdateTs;
-          }
+        if (
+          session.useCodex === true &&
+          user.codexAuthUpdateTs !== session.codexAuthUpdateTs
+        ) {
+          await this.editorCodexService.writeAuthJsonToSandbox({
+            sandboxId: session.sandboxId,
+            e2bApiKey: project.e2bApiKey,
+            codexAuth: user.codexAuth
+          });
+          session.codexAuthUpdateTs = user.codexAuthUpdateTs;
         }
 
         session.status = SessionStatusEnum.Active;
@@ -329,8 +306,7 @@ export class SendMessageToEditorSessionController {
             await this.db.packer.write({
               tx: tx,
               insertOrUpdate: {
-                sessions: [session],
-                users: isUserUpdated ? [user] : []
+                sessions: [session]
               }
             })
         ),

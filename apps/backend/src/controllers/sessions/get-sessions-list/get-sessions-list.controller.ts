@@ -57,7 +57,8 @@ export class GetSessionsListController {
       currentSessionId,
       includeArchived,
       archivedLimit,
-      archivedLastCreatedTs
+      archivedLastCreatedTs,
+      sessionType
     } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -69,7 +70,7 @@ export class GetSessionsListController {
       memberId: user.userId
     });
 
-    if (project.e2bApiKey) {
+    if (project.e2bApiKey && sessionType === SessionTypeEnum.Editor) {
       let editorSessions = await this.db.drizzle.query.sessionsTable
         .findMany({
           where: and(
@@ -97,7 +98,8 @@ export class GetSessionsListController {
         notInArray(sessionsTable.status, [
           SessionStatusEnum.Deleted,
           SessionStatusEnum.Archived
-        ])
+        ]),
+        eq(sessionsTable.type, sessionType)
       ),
       orderBy: [desc(sessionsTable.createdTs)]
     });
@@ -114,7 +116,8 @@ export class GetSessionsListController {
       let baseConditions = [
         eq(sessionsTable.projectId, projectId),
         eq(sessionsTable.userId, user.userId),
-        eq(sessionsTable.status, SessionStatusEnum.Archived)
+        eq(sessionsTable.status, SessionStatusEnum.Archived),
+        eq(sessionsTable.type, sessionType)
       ];
 
       if (
@@ -170,7 +173,8 @@ export class GetSessionsListController {
         where: and(
           eq(sessionsTable.projectId, projectId),
           eq(sessionsTable.userId, user.userId),
-          eq(sessionsTable.status, SessionStatusEnum.Archived)
+          eq(sessionsTable.status, SessionStatusEnum.Archived),
+          eq(sessionsTable.type, sessionType)
         ),
         columns: { sessionId: true }
       });
@@ -186,7 +190,8 @@ export class GetSessionsListController {
             where: and(
               eq(sessionsTable.sessionId, currentSessionId),
               eq(sessionsTable.projectId, projectId),
-              eq(sessionsTable.userId, user.userId)
+              eq(sessionsTable.userId, user.userId),
+              eq(sessionsTable.type, sessionType)
             )
           });
         if (currentSessionEnt) {

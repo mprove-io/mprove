@@ -47,11 +47,13 @@ import { ApiService } from '#front/app/services/api.service';
 import { FileService } from '#front/app/services/file.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { CHAT_SCOPE } from '../chat/chat-scope.token';
 
 @Component({
   standalone: false,
   selector: 'm-builder',
-  templateUrl: './builder.component.html'
+  templateUrl: './builder.component.html',
+  providers: [{ provide: CHAT_SCOPE, useValue: 'builder' }]
 })
 export class BuilderComponent implements OnInit, OnDestroy {
   pageTitle = BUILDER_PAGE_TITLE;

@@ -23,7 +23,6 @@ import { PullCommand } from './commands/custom/pull/pull';
 import { PushCommand } from './commands/custom/push/push';
 import { RevertCommand } from './commands/custom/revert/revert';
 import { RunCommand } from './commands/custom/run/run';
-import { SetCodexAuthCommand } from './commands/custom/set-codex-auth/set-codex-auth';
 import { SyncCommand } from './commands/custom/sync/sync';
 import { ValidateCommand } from './commands/custom/validate/validate';
 import { logToConsoleMcli } from './functions/log-to-console-mcli';
@@ -59,7 +58,6 @@ let appCommands = [
   PushCommand,
   RevertCommand,
   RunCommand,
-  SetCodexAuthCommand,
   SyncCommand,
   ValidateCommand
 ];

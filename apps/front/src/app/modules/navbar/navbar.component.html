@@ -72,6 +72,32 @@
             </div>
 
             <div
+              *ngIf="explorerEnabled"
+              tp="Explorer role required"
+              [tpIsEnabled]="member.isExplorer === false"
+            >
+              <button
+                class="text-s1 flex h-10 w-[90px] select-none items-center justify-center text-left text-base focus:outline-none"
+                [ngClass]="{
+                  'text-s400 cursor-default':
+                    !nav ||
+                    !nav.projectId ||
+                    needSave === true ||
+                    member.isExplorer === false,
+                  'font-semibold': isExplorerRouteActive === true
+                }"
+                (click)="navigateExplorer()"
+                [disabled]="
+                  !nav ||
+                  !nav.projectId ||
+                  needSave === true ||
+                  member.isExplorer === false
+                "
+                >Explorer</button
+              >
+            </div>
+
+            <div
               tp="Explorer role required"
               [tpIsEnabled]="member.isExplorer === false"
             >

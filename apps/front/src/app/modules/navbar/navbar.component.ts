@@ -6,6 +6,7 @@ import {
   EMPTY_REPORT_ID,
   PATH_BUILDER,
   PATH_DASHBOARDS,
+  PATH_EXPLORER,
   PATH_MODELS,
   PATH_REPORTS
 } from '#common/constants/top';
@@ -25,11 +26,14 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { SessionQuery, SessionState } from '#front/app/queries/session.query';
+import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
+import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { environment } from '#front/environments/environment';
 
 @Component({
   standalone: false,
@@ -56,7 +60,10 @@ export class NavbarComponent implements OnInit {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  explorerEnabled = environment.explorerEnabled;
+
   isBuilderRouteActive: boolean;
+  isExplorerRouteActive: boolean;
   isModelsRouteActive: boolean;
   isDashboardsRouteActive: boolean;
   isReportsRouteActive: boolean;
@@ -97,6 +104,8 @@ export class NavbarComponent implements OnInit {
     private navQuery: NavQuery,
     private repoQuery: RepoQuery,
     private sessionQuery: SessionQuery,
+    private sessionBundleQuery: SessionBundleQuery,
+    private sessionEventsQuery: SessionEventsQuery,
     private structQuery: StructQuery,
     private navigateService: NavigateService,
     private uiQuery: UiQuery,
@@ -115,6 +124,9 @@ export class NavbarComponent implements OnInit {
     this.isBuilderRouteActive =
       url.split('?')[0]?.split('/')[11] === PATH_BUILDER;
 
+    this.isExplorerRouteActive =
+      url.split('?')[0]?.split('/')[11] === PATH_EXPLORER;
+
     this.isModelsRouteActive =
       url.split('?')[0]?.split('/')[11] === PATH_MODELS;
 
@@ -132,6 +144,10 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
+    this.sessionQuery.reset();
+    this.sessionBundleQuery.reset();
+    this.sessionEventsQuery.reset();
+
     if (this.nav.repoType === RepoTypeEnum.Session) {
       this.navigateService.navigateToSession({
         sessionId: this.nav.repoId,
@@ -147,6 +163,22 @@ export class NavbarComponent implements OnInit {
         right: BuilderRightEnum.Sessions
       });
     }
+  }
+
+  navigateExplorer() {
+    if (this.explorerEnabled === false) {
+      return;
+    }
+
+    if (this.isExplorerRouteActive === true) {
+      return;
+    }
+
+    this.sessionQuery.reset();
+    this.sessionBundleQuery.reset();
+    this.sessionEventsQuery.reset();
+
+    this.navigateService.navigateToExplorer();
   }
 
   navigateCharts() {

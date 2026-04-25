@@ -5,7 +5,8 @@ import { UiQuery } from '#front/app/queries/ui.query';
 @Component({
   standalone: false,
   selector: 'm-new-session-wrapper',
-  templateUrl: './new-session-wrapper.component.html'
+  templateUrl: './new-session-wrapper.component.html',
+  styleUrls: ['new-session-wrapper.component.scss']
 })
 export class NewSessionWrapperComponent {
   showContent = true;

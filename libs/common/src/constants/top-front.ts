@@ -56,6 +56,8 @@ export const RESULTS_LIST: FieldResultEnum[] = [
 
 export const APP_SPINNER_NAME = 'app';
 
+export const EXPLORER_ENABLED = false;
+
 export const EMPTY_FORMAT_NUMBER = '';
 export const FORMAT_NUMBER_DECIMAL = '.';
 export const FORMAT_NUMBER_GROUPING = [3];

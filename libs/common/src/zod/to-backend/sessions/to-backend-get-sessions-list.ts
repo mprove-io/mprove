@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zSessionApi } from '#common/zod/backend/session-api';
 import { zMyResponse } from '#common/zod/to/my-response';
@@ -12,7 +13,8 @@ export let zToBackendGetSessionsListRequestPayload = z
     currentSessionId: z.string().nullish(),
     includeArchived: z.boolean().nullish(),
     archivedLimit: z.number().nullish(),
-    archivedLastCreatedTs: z.number().nullish()
+    archivedLastCreatedTs: z.number().nullish(),
+    sessionType: z.enum(SessionTypeEnum)
   })
   .meta({ id: 'ToBackendGetSessionsListRequestPayload' });
 

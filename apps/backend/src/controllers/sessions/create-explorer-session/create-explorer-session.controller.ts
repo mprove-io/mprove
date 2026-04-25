@@ -26,11 +26,11 @@ import type {
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { CodexService } from '#backend/services/codex.service';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { OcEventsService } from '#backend/services/db/oc-events.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { ExplorerCodexService } from '#backend/services/explorer/explorer-codex.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -55,7 +55,7 @@ export class CreateExplorerSessionController {
     private sessionsService: SessionsService,
     private membersService: MembersService,
     private ocEventsService: OcEventsService,
-    private explorerCodexService: ExplorerCodexService,
+    private codexService: CodexService,
     private explorerStreamService: ExplorerStreamService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -110,7 +110,7 @@ export class CreateExplorerSessionController {
 
     // Prewarm codex auth so first message (title + stream parallel) starts with fresh token
     if (useCodex) {
-      await this.explorerCodexService.prewarmCodexAuth({
+      await this.codexService.prewarmCodexAuth({
         userId: user.userId
       });
     }

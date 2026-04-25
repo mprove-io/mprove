@@ -1,0 +1,91 @@
+<div class="relative flex h-full w-full flex-col items-center">
+  <div
+    *ngIf="chatScope === 'builder'"
+    class="absolute left-0 top-0 z-10 mt-12 flex flex-col gap-y-3 pl-16 pr-6"
+  >
+    <div class="mt-3 flex flex-row items-center gap-x-5">
+      <div class="text-s400 w-28 whitespace-nowrap text-right text-base"
+        >Base Branch</div
+      >
+      <ng-select
+        #newSessionBranchSelect
+        [fixNgSelectBottom]="newSessionBranchSelect"
+        class="w-[240px] select-none text-base"
+        [items]="branches"
+        [clearable]="false"
+        [searchable]="true"
+        [searchFn]="branchesSearchFn"
+        [(ngModel)]="initialBranch"
+        [loading]="branchesLoading"
+        (open)="openBranchSelect()"
+        placeholder="Initial Branch"
+        bindLabel="extraName"
+        bindValue="branchId"
+      ></ng-select>
+    </div>
+
+    <div class="flex flex-row items-center gap-x-5">
+      <div class="text-s400 w-28 whitespace-nowrap text-right text-base"
+        >Env</div
+      >
+      <ng-select
+        #newSessionEnvSelect
+        [fixNgSelectBottom]="newSessionEnvSelect"
+        class="w-[150px] select-none text-base"
+        [items]="envs"
+        [clearable]="false"
+        [searchable]="false"
+        [(ngModel)]="baseEnvId"
+        [loading]="envsLoading"
+        (open)="openEnvSelect()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); newSessionEnvSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); newSessionEnvSelect.blur()
+        "
+        appendTo="body"
+        placeholder="Env"
+        bindLabel="envId"
+        bindValue="envId"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate"> {{ item.envId }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.envId }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+
+  <div class="flex-1"></div>
+
+  <div
+    class="flex w-full max-w-[860px] flex-shrink-0 flex-col items-center px-6 pt-10"
+  >
+    <div class="mb-10 flex items-center justify-center">
+      <img
+        class="invisible w-40"
+        src="assets/logo/mprove_logo_web-01-b-gray.svg"
+      />
+    </div>
+
+    <div class="w-full">
+      <m-session-input
+        [(model)]="model"
+        [(agent)]="agent"
+        [(variant)]="variant"
+        [sessionType]="sessionType"
+        [disabled]="isSubmitting"
+        [scrollableInput]="true"
+        [(useCodex)]="useCodex"
+        (send)="sendMessage($event)"
+      ></m-session-input>
+    </div>
+  </div>
+
+  <div class="flex-1"></div>
+</div>
+<div *ngIf="navBranch$ | async"></div>

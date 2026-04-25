@@ -61,6 +61,7 @@ export class SessionsComponent implements OnInit {
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {
       this.sessions = x
+        .filter(s => s.type === SessionTypeEnum.Editor)
         .map(s =>
           Object.assign({}, s, <SessionApiX>{
             displayTitle: makeTitle(s),
@@ -107,12 +108,7 @@ export class SessionsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let isListLoaded = this.sessionsQuery.getValue().isListLoaded;
-    if (!isListLoaded) {
-      this.loadSessions();
-    } else {
-      this.sessionsLoaded = true;
-    }
+    this.loadSessions();
   }
 
   loadSessions() {
@@ -127,7 +123,8 @@ export class SessionsComponent implements OnInit {
 
     let payload: ToBackendGetSessionsListRequestPayload = {
       projectId: projectId,
-      currentSessionId: currentSessionId
+      currentSessionId: currentSessionId,
+      sessionType: SessionTypeEnum.Editor
     };
 
     this.isRefreshing = true;
@@ -345,7 +342,8 @@ export class SessionsComponent implements OnInit {
       includeArchived: true,
       archivedLimit: 10,
       archivedLastCreatedTs: this.archivedLastCreatedTs,
-      currentSessionId: this.currentSession?.sessionId
+      currentSessionId: this.currentSession?.sessionId,
+      sessionType: SessionTypeEnum.Editor
     };
 
     this.isLoadingArchived = true;

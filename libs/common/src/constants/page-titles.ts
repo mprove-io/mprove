@@ -24,6 +24,7 @@ export const PROJECT_TEAM_PAGE_TITLE = 'Project - Team';
 export const PROJECT_API_KEYS_PAGE_TITLE = 'Project - API Keys';
 
 export const BUILDER_PAGE_TITLE = 'Builder';
+export const EXPLORER_PAGE_TITLE = 'Explorer';
 export const CHARTS_PAGE_TITLE = 'Models';
 export const CHARTS_LIST_PAGE_TITLE = 'Charts List';
 export const MODELS_LIST_PAGE_TITLE = 'Models List';

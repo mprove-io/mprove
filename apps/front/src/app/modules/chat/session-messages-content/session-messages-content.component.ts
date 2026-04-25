@@ -5,7 +5,7 @@ import { Extension } from '@codemirror/state';
 import type { ToolPart } from '@opencode-ai/sdk/v2';
 import { VS_LIGHT_THEME_EXTRA_SINGLE_SESSION_READ } from '#common/constants/code-themes/themes';
 import type { SessionApi } from '#common/zod/backend/session-api';
-import { MyDialogService } from '../../../../services/my-dialog.service';
+import { MyDialogService } from '../../../services/my-dialog.service';
 import {
   ChatMessage,
   ChatTurn,

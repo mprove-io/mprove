@@ -1,0 +1,60 @@
+<div class="bg-m1 flex h-full cursor-default flex-col">
+  <div class="mx-6 mb-6 mt-8 flex flex-1 flex-col">
+    <div class="flex h-11 flex-shrink-0 flex-row items-center">
+      <div
+        data-cy="explorerTitle"
+        class="text-s1 flex select-none items-center self-center text-2xl font-semibold"
+      >
+        {{ pageTitle }}
+      </div>
+    </div>
+
+    <div class="mt-6 flex h-2 flex-1 flex-row">
+      <ng-container *ngIf="!isSessionRoute">
+        <div class="bg-m0 flex h-full w-full flex-grow rounded shadow">
+          <router-outlet></router-outlet>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="isSessionRoute">
+        <div class="bg-m0 flex w-[480px] flex-shrink-0 flex-col rounded shadow">
+          <div
+            class="border-s200 flex h-11 flex-shrink-0 items-center justify-between border-b px-4"
+          >
+            <button
+              class="text-s1 select-none text-base focus:outline-none"
+              [ngClass]="{ 'font-semibold': showSessions === true }"
+              (click)="toggleSessions()"
+              >{{ showSessions ? 'Chat' : 'Sessions' }}</button
+            >
+            <button
+              *ngIf="showSessions"
+              class="text-s1 select-none text-base focus:outline-none"
+              (click)="newSession()"
+              >New</button
+            >
+          </div>
+          <div class="flex flex-1 overflow-hidden">
+            <m-explorer-sessions
+              *ngIf="showSessions"
+              class="h-full w-full"
+            ></m-explorer-sessions>
+            <router-outlet *ngIf="!showSessions"></router-outlet>
+          </div>
+        </div>
+
+        <div class="bg-m0 ml-6 flex flex-1 flex-col rounded shadow">
+          <m-explorer-tabs class="flex-shrink-0"></m-explorer-tabs>
+          <div
+            class="text-s500 flex flex-1 select-none items-center justify-center"
+          >
+            No tab selected
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="routerEvents$ | async"></div>

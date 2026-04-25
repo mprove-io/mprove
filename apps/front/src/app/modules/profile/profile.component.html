@@ -137,7 +137,7 @@
                 >
                   <button
                     data-cy="profileChangePasswordButton"
-                    class="select-none rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
+                    class="select-none rounded border px-4 py-2 text-base font-medium shadow-sm focus:outline-none"
                     [ngClass]="{
                       'text-s400 cursor-default': alias === restrictedUserAlias,
                       'border-s3 text-s1': alias !== restrictedUserAlias
@@ -156,7 +156,7 @@
                 >
                   <button
                     data-cy="profileDeleteUserButton"
-                    class="select-none rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
+                    class="select-none rounded border px-4 py-3 text-base font-medium shadow-sm focus:outline-none"
                     [ngClass]="{
                       'text-s400 cursor-default': alias === restrictedUserAlias,
                       'border-r1 text-r1': alias !== restrictedUserAlias
@@ -177,7 +177,7 @@
                 >
                   <button
                     data-cy="profileEditPhotoButton"
-                    class="select-none rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                    class="select-none rounded border px-4 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
                       'text-s400 cursor-default': alias === restrictedUserAlias,
                       'border-s3 text-s1': alias !== restrictedUserAlias
@@ -196,7 +196,7 @@
                 >
                   <button
                     data-cy="profileEditNameButton"
-                    class="select-none rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                    class="select-none rounded border px-4 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
                       'text-s400 cursor-default': alias === restrictedUserAlias,
                       'border-s3 text-s1': alias !== restrictedUserAlias
@@ -215,7 +215,7 @@
                 >
                   <button
                     data-cy="profileGenerateApiKeyButton"
-                    class="select-none rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                    class="select-none rounded border px-4 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
                       'text-s400 cursor-default': alias === restrictedUserAlias,
                       'border-s3 text-s1': alias !== restrictedUserAlias
@@ -253,14 +253,14 @@
                   [tpIsEnabled]="alias === restrictedUserAlias"
                 >
                   <button
-                    class="select-none rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                    class="select-none rounded border px-4 py-3 text-base font-medium leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
                       'text-s400 cursor-default': alias === restrictedUserAlias,
                       'border-s3 text-s1': alias !== restrictedUserAlias
                     }"
                     (click)="setCodexAuth()"
                     [disabled]="alias === restrictedUserAlias"
-                    >{{ isCodexAuthSet ? 'Edit' : 'Set' }}</button
+                    >Sign In with ChatGPT</button
                   ></div
                 >
                 <div

@@ -50,19 +50,19 @@ import {
 import {
   DeleteSessionDialogComponent,
   DeleteSessionDialogData
-} from '../modules/builder/session/delete-session-dialog/delete-session-dialog.component';
+} from '../modules/chat/delete-session-dialog/delete-session-dialog.component';
 import {
   EditSessionTitleDialogComponent,
   EditSessionTitleDialogData
-} from '../modules/builder/session/edit-session-title-dialog/edit-session-title-dialog.component';
+} from '../modules/chat/edit-session-title-dialog/edit-session-title-dialog.component';
 import {
   FileDiffsDialogComponent,
   FileDiffsDialogData
-} from '../modules/builder/session/file-diffs-dialog/file-diffs-dialog.component';
+} from '../modules/chat/file-diffs-dialog/file-diffs-dialog.component';
 import {
   ToolOutputDialogComponent,
   ToolOutputDialogData
-} from '../modules/builder/session/tool-output-dialog/tool-output-dialog.component';
+} from '../modules/chat/tool-output-dialog/tool-output-dialog.component';
 import {
   CreateDashboardDialogComponent,
   CreateDashboardDialogData

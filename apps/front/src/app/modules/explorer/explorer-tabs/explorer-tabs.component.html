@@ -1,0 +1,23 @@
+<div
+  class="border-s200 flex h-12 w-full flex-row items-stretch overflow-x-auto border-b"
+>
+  <button
+    *ngFor="let tab of tabs; trackBy: trackByTabId"
+    type="button"
+    class="text-s1 hover:bg-m50 group relative flex max-w-[200px] flex-shrink-0 select-none flex-row items-center gap-x-2 px-4 text-sm focus:outline-none"
+    [ngClass]="{
+      'text-m600 border-m600 border-b-2 font-semibold': tab.id === activeTabId,
+      'text-s500': tab.id !== activeTabId
+    }"
+    (click)="onSelect(tab)"
+    (mousedown)="onMiddleClick($event, tab)"
+  >
+    <span class="truncate">{{ tab.label }}</span>
+    <span
+      *ngIf="tab.closable"
+      class="hover:bg-m200 invisible flex h-5 w-5 items-center justify-center rounded group-hover:visible"
+      (click)="onClose($event, tab)"
+      >x</span
+    >
+  </button>
+</div>

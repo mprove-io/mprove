@@ -33,11 +33,13 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
+import { CodexService } from '#backend/services/codex.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { UsersService } from '#backend/services/db/users.service';
 import { EditorCodexService } from '#backend/services/editor/editor-codex.service';
 import { EditorConnectionsService } from '#backend/services/editor/editor-connections.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
@@ -77,9 +79,11 @@ export class CreateEditorSessionController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private sessionsService: SessionsService,
+    private usersService: UsersService,
     private editorStreamService: EditorStreamService,
     private editorOpencodeService: EditorOpencodeService,
     private editorCodexService: EditorCodexService,
+    private codexService: CodexService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
@@ -153,6 +157,16 @@ export class CreateEditorSessionController {
     if (useCodex === true && isUndefined(user.codexAuth)) {
       throw new ServerError({
         message: ErEnum.BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET
+      });
+    }
+
+    if (useCodex === true) {
+      await this.codexService.prewarmCodexAuth({
+        userId: user.userId
+      });
+
+      user = await this.usersService.getUserCheckExists({
+        userId: user.userId
       });
     }
 

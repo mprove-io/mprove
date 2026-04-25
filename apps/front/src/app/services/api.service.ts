@@ -390,6 +390,11 @@ export class ApiService {
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
+      } else if (
+        infoErrorMessage === ErEnum.BACKEND_CODEX_AUTH_SIGN_IN_REQUIRED
+      ) {
+        errorData.description = `Sign in to ChatGPT on user profile page to refresh auth`;
+        this.myDialogService.showError({ errorData, isThrow: false });
       } else if (infoErrorMessage === ErEnum.BACKEND_RESTRICTED_USER) {
         errorData.description = `Demo user is restricted. Sign Up at https://mprove.io to create your own project.`;
         this.myDialogService.showError({ errorData, isThrow: false });

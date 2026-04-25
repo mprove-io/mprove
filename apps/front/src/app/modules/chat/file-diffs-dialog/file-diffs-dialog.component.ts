@@ -28,7 +28,7 @@ import {
   HighLightService,
   PlaceNameEnum
 } from '#front/app/services/highlight.service';
-import { SharedModule } from '../../../shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 
 export interface FileDiffDialogItem {
   file: string;

@@ -10,6 +10,7 @@ import {
   PATH_DASHBOARDS,
   PATH_DASHBOARDS_LIST,
   PATH_ENV,
+  PATH_EXPLORER,
   PATH_FILE,
   PATH_MODEL,
   PATH_MODELS,
@@ -118,6 +119,48 @@ export class NavigateService {
       ],
       { queryParams: { left, right } }
     );
+  }
+
+  async navigateToExplorer() {
+    return this.router.navigate([
+      PATH_ORG,
+      this.nav.orgId,
+      PATH_PROJECT,
+      this.nav.projectId,
+      PATH_REPO,
+      this.nav.repoId,
+      PATH_BRANCH,
+      this.nav.branchId,
+      PATH_ENV,
+      this.nav.envId,
+      PATH_EXPLORER,
+      PATH_NEW_SESSION
+    ]);
+  }
+
+  async navigateToExplorerSession(item: {
+    sessionId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+  }) {
+    let { sessionId, repoId, branchId, envId } = item;
+
+    return this.router.navigate([
+      PATH_ORG,
+      this.nav.orgId,
+      PATH_PROJECT,
+      this.nav.projectId,
+      PATH_REPO,
+      repoId,
+      PATH_BRANCH,
+      branchId,
+      PATH_ENV,
+      envId,
+      PATH_EXPLORER,
+      PATH_SESSION,
+      sessionId
+    ]);
   }
 
   async navigateToFileLine(item: {

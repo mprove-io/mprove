@@ -22,9 +22,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeAscendingIdAfter } from '#common/functions/make-ascending-id';
 import { ServerError } from '#common/models/server-error';
+import { CodexService } from '../codex.service';
 import { SessionDrainService } from '../session/session-drain.service';
 import { TabService } from '../tab.service';
-import { ExplorerCodexService } from './explorer-codex.service';
 import { ExplorerEventsMakerService } from './explorer-events-maker.service';
 import { ExplorerModelsService } from './explorer-models.service';
 import { ExplorerPromptsService } from './explorer-prompts.service';
@@ -66,7 +66,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private sessionDrainService: SessionDrainService,
-    private explorerCodexService: ExplorerCodexService,
+    private codexService: CodexService,
     private explorerModelsService: ExplorerModelsService,
     private explorerPromptsService: ExplorerPromptsService,
     private explorerTitleService: ExplorerTitleService,
@@ -644,7 +644,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     // Build codex fetch if needed (reads fresh auth from DB)
     let codexFetch =
       useCodex === true && userId
-        ? await this.explorerCodexService.buildCodexFetch({
+        ? await this.codexService.buildCodexFetch({
             userId: userId,
             sessionId: sessionId
           })

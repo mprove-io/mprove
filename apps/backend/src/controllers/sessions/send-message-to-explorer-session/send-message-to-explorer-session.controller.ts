@@ -22,9 +22,9 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { CodexService } from '#backend/services/codex.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { ExplorerCodexService } from '#backend/services/explorer/explorer-codex.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -45,7 +45,7 @@ export class SendMessageToExplorerSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private explorerCodexService: ExplorerCodexService,
+    private codexService: CodexService,
     private explorerStreamService: ExplorerStreamService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -130,7 +130,7 @@ export class SendMessageToExplorerSessionController {
 
       // Ensure codex auth is fresh in DB before stream / interact dispatch
       if (isCodex) {
-        await this.explorerCodexService.prewarmCodexAuth({
+        await this.codexService.prewarmCodexAuth({
           userId: user.userId
         });
       }
