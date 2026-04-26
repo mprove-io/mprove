@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output
+} from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -15,21 +21,25 @@ import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
-let EXPLORER_SESSIONS_SPINNER_NAME = 'explorerSessionsRefresh';
+let EXPLORER_HISTORY_SPINNER_NAME = 'explorerHistoryRefresh';
 
 @Component({
   standalone: false,
-  selector: 'm-explorer-sessions',
-  templateUrl: './explorer-sessions.component.html'
+  selector: 'm-explorer-history',
+  templateUrl: './explorer-history.component.html',
+  styleUrl: './explorer-history.component.scss'
 })
-export class ExplorerSessionsComponent implements OnInit {
+export class ExplorerHistoryComponent implements OnInit {
+  @Output() close = new EventEmitter<void>();
+
   sessions: SessionApiX[] = [];
   sessionsLoaded = false;
   isRefreshing = false;
   currentSession: SessionApi;
-  spinnerName = EXPLORER_SESSIONS_SPINNER_NAME;
+  spinnerName = EXPLORER_HISTORY_SPINNER_NAME;
 
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {
@@ -39,6 +49,7 @@ export class ExplorerSessionsComponent implements OnInit {
           Object.assign({}, s, <SessionApiX>{ displayTitle: makeTitle(s) })
         )
         .sort((a, b) => b.createdTs - a.createdTs);
+
       this.cd.detectChanges();
     })
   );
@@ -56,6 +67,7 @@ export class ExplorerSessionsComponent implements OnInit {
     private navQuery: NavQuery,
     private apiService: ApiService,
     private navigateService: NavigateService,
+    private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
     private spinner: NgxSpinnerService
   ) {}
@@ -80,7 +92,9 @@ export class ExplorerSessionsComponent implements OnInit {
     };
 
     this.isRefreshing = true;
-    this.spinner.show(EXPLORER_SESSIONS_SPINNER_NAME);
+
+    this.spinner.show(EXPLORER_HISTORY_SPINNER_NAME);
+
     this.cd.detectChanges();
 
     this.apiService
@@ -110,8 +124,11 @@ export class ExplorerSessionsComponent implements OnInit {
           }
 
           this.isRefreshing = false;
-          this.spinner.hide(EXPLORER_SESSIONS_SPINNER_NAME);
+
+          this.spinner.hide(EXPLORER_HISTORY_SPINNER_NAME);
+
           this.sessionsLoaded = true;
+
           this.cd.detectChanges();
         }),
         take(1)
@@ -119,16 +136,42 @@ export class ExplorerSessionsComponent implements OnInit {
       .subscribe();
   }
 
-  openSession(session: SessionApi) {
-    this.navigateService.navigateToExplorerSession({
+  async openSession(session: SessionApi) {
+    await this.navigateService.navigateToExplorerSession({
       sessionId: session.sessionId,
       repoId: session.repoId,
       branchId: session.branchId,
       envId: session.envId
     });
+
+    this.close.emit();
+  }
+
+  renameSession(event: MouseEvent, session: SessionApiX) {
+    event.stopPropagation();
+
+    this.myDialogService.showEditSessionTitle({
+      apiService: this.apiService,
+      sessionId: session.sessionId,
+      title: makeTitle(session)
+    });
+  }
+
+  deleteSession(event: MouseEvent, session: SessionApiX) {
+    event.stopPropagation();
+
+    this.myDialogService.showDeleteSession({
+      apiService: this.apiService,
+      sessionId: session.sessionId,
+      title: makeTitle(session)
+    });
   }
 
   trackBySessionId(_index: number, session: SessionApiX) {
     return session.sessionId;
+  }
+
+  closeOverlay() {
+    this.close.emit();
   }
 }

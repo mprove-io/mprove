@@ -1,0 +1,25 @@
+.explorer-history-backdrop {
+  animation: explorer-history-backdrop-open 0.3s;
+}
+
+.explorer-history-panel {
+  animation: explorer-history-panel-open 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes explorer-history-backdrop-open {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes explorer-history-panel-open {
+  0% {
+    transform: translateX(-50px);
+  }
+  100% {
+    transform: none;
+  }
+}

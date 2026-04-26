@@ -173,7 +173,7 @@
     <div class="mx-auto max-w-[860px]">
       <div class="flex items-start">
         <div class="mr-3 w-3 flex-shrink-0"></div>
-        <div class="min-w-0 flex-1">
+        <div class="min-w-0 flex-1" [class.invisible]="!showSessionInput">
           <m-session-input
             [(agent)]="agent"
             [(model)]="model"
@@ -197,3 +197,4 @@
 <div *ngIf="sessionAndData$ | async"></div>
 <div *ngIf="liveEvents$ | async"></div>
 <div *ngIf="isOptimisticLoading$ | async"></div>
+<div *ngIf="showSessionInput$ | async"></div>

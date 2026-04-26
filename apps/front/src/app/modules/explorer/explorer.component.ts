@@ -23,7 +23,7 @@ import { CHAT_SCOPE } from '../chat/chat-scope.token';
 export class ExplorerComponent implements OnInit {
   pageTitle = EXPLORER_PAGE_TITLE;
 
-  showSessions = false;
+  showHistory = false;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -50,7 +50,10 @@ export class ExplorerComponent implements OnInit {
       }
 
       this.spinner.hide(APP_SPINNER_NAME);
-      this.uiQuery.updatePart({ showContent: true });
+      this.uiQuery.updatePart({
+        showContent: true,
+        showSessionInput: true
+      });
       this.cd.detectChanges();
     })
   );
@@ -75,12 +78,11 @@ export class ExplorerComponent implements OnInit {
     this.isSessionRoute = ar.includes(PATH_SESSION);
   }
 
-  toggleSessions() {
-    this.showSessions = !this.showSessions;
+  toggleHistory() {
+    this.showHistory = !this.showHistory;
   }
 
-  newSession() {
-    this.showSessions = false;
+  newChat() {
     this.navigateService.navigateToExplorer();
   }
 }

@@ -1,0 +1,124 @@
+<div
+  class="explorer-history-backdrop fixed inset-0 z-40 bg-black/[0.32]"
+  (click)="closeOverlay()"
+></div>
+
+<div
+  class="explorer-history-panel bg-m0 fixed inset-y-0 left-0 z-50 flex w-1/4 flex-col shadow-xl"
+>
+  <div
+    class="border-s200 flex h-[72px] flex-shrink-0 items-center justify-between border-b pl-7 pr-4"
+  >
+    <div class="flex flex-row items-center">
+      <div class="text-s1 select-none text-2xl font-semibold">Chat History</div>
+
+      <button
+        type="button"
+        class="hover:bg-m200 ml-7 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+        (click)="loadSessions()"
+      >
+        <m-refresh-icon></m-refresh-icon>
+      </button>
+
+      <div class="relative ml-2 flex h-7 w-7 flex-shrink-0">
+        <ngx-spinner
+          *ngIf="isRefreshing"
+          [name]="spinnerName"
+          color="#0084d1"
+          bdColor="#00000000"
+          size="default"
+          type="ball-clip-rotate"
+          [fullScreen]="false"
+          [disableAnimation]="true"
+          [zIndex]="10"
+        ></ngx-spinner>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="hover:bg-m200 ml-2 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      (click)="closeOverlay()"
+    >
+      <m-chevron-left-icon></m-chevron-left-icon>
+    </button>
+  </div>
+
+  <div class="relative flex h-2 flex-1 flex-col">
+    <div
+      *ngIf="sessionsLoaded && sessions.length === 0"
+      class="pointer-events-none absolute inset-0 flex select-none items-center justify-center text-lg"
+    >
+      History is empty
+    </div>
+
+    <div
+      *ngIf="sessions.length > 0"
+      class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
+    >
+      <ng-scrollbar
+        [orientation]="'vertical'"
+        [visibility]="'hover'"
+        [appearance]="'compact'"
+      >
+        <div class="mt-2 h-full w-full pb-6">
+          <div
+            *ngFor="let session of sessions; trackBy: trackBySessionId"
+            class="hover:bg-m50 group mx-4 flex h-11 cursor-pointer select-none flex-row items-center rounded pl-3 pr-2"
+            (click)="openSession(session)"
+          >
+            <span
+              class="min-w-0 flex-1 truncate text-[17px]"
+              [ngClass]="{
+                'text-m600 font-semibold':
+                  session.sessionId === currentSession?.sessionId,
+                'text-s1': session.sessionId !== currentSession?.sessionId
+              }"
+              >{{ session.displayTitle }}</span
+            >
+
+            <span
+              *ngIf="session.status !== 'Active'"
+              class="text-s400 ml-3 flex-shrink-0 text-[16px]"
+              >{{ session.status }}</span
+            >
+
+            <div
+              class="ml-2 flex h-9 w-9 flex-shrink-0 items-center justify-center"
+            >
+              <button
+                class="hover:bg-m200 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+                [tp]="templateSessionMenu"
+                [tpHideOnEscape]="true"
+                tpVariation="menu"
+                className="my-menu"
+                #tpRef="tippy"
+                (click)="$event.stopPropagation()"
+              >
+                <m-dots-vertical-icon></m-dots-vertical-icon>
+              </button>
+
+              <ng-template #templateSessionMenu>
+                <div class="border-s4 bg-m0 w-48 rounded-md border-2 shadow-xl">
+                  <button
+                    class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                    (click)="tpRef.hide(); renameSession($event, session)"
+                    >Rename Session</button
+                  >
+                  <button
+                    class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                    (click)="tpRef.hide(); deleteSession($event, session)"
+                    >Delete Session</button
+                  >
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </ng-scrollbar>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="sessions$ | async"></div>
+<div *ngIf="session$ | async"></div>

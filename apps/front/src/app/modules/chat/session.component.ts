@@ -120,6 +120,14 @@ export class SessionComponent implements OnInit, OnDestroy {
     })
   );
 
+  showSessionInput = true;
+  showSessionInput$ = this.uiQuery.showSessionInput$.pipe(
+    tap(x => {
+      this.showSessionInput = x;
+      this.cd.detectChanges();
+    })
+  );
+
   sessionAndData$ = combineLatest([
     this.sessionQuery.select(),
     this.sessionBundleQuery.select()

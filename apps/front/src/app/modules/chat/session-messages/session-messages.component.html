@@ -9,7 +9,11 @@
     [visibility]="'hover'"
     [appearance]="'compact'"
   >
-    <div class="px-12 pb-4 pt-12">
+    <div
+      [ngClass]="
+        chatScope === 'explorer' ? 'px-4 pb-4 pt-12' : 'px-12 pb-4 pt-12'
+      "
+    >
       <div class="mx-auto flex min-h-full flex-col">
         <ng-content></ng-content>
         <div class="flex-grow"></div>

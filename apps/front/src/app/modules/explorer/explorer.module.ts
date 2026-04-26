@@ -8,13 +8,13 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { ChatModule } from '../chat/chat.module';
 import { SharedModule } from '../shared/shared.module';
 import { ExplorerComponent } from './explorer.component';
-import { ExplorerSessionsComponent } from './explorer-sessions/explorer-sessions.component';
+import { ExplorerHistoryComponent } from './explorer-history/explorer-history.component';
 import { ExplorerTabsComponent } from './explorer-tabs/explorer-tabs.component';
 
 @NgModule({
   declarations: [
     ExplorerComponent,
-    ExplorerSessionsComponent,
+    ExplorerHistoryComponent,
     ExplorerTabsComponent
   ],
   imports: [

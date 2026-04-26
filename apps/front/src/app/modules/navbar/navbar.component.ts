@@ -144,6 +144,7 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
+    this.uiQuery.updatePart({ showSessionInput: false });
     this.sessionQuery.reset();
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();
@@ -174,6 +175,7 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
+    this.uiQuery.updatePart({ showSessionInput: false });
     this.sessionQuery.reset();
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();

@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  Inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -9,6 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { NgScrollbar } from 'ngx-scrollbar';
+import { CHAT_SCOPE, ChatScope } from '../chat-scope.token';
 
 @Component({
   standalone: false,
@@ -33,7 +35,10 @@ export class SessionMessagesComponent
   private mutationObserver: MutationObserver | null = null;
   private autoScrollTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(
+    private cd: ChangeDetectorRef,
+    @Inject(CHAT_SCOPE) public chatScope: ChatScope
+  ) {}
 
   ngAfterViewInit() {
     if (this.chatScrollbar) {
