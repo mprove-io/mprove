@@ -9,11 +9,14 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { map, take, tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
+  PATH_BUILDER,
   PATH_ENV,
+  PATH_FILE,
   PATH_ORG,
   PATH_PROJECT,
   PATH_REPO,
   PATH_REPORTS,
+  PATH_SELECT_FILE,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
@@ -24,7 +27,10 @@ import type {
   ToBackendGetEnvsListResponse
 } from '#common/zod/to-backend/envs/to-backend-get-envs-list';
 import { checkNavMain } from '#front/app/functions/check-nav-main';
+import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
+import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -89,6 +95,9 @@ export class EnvSelectComponent {
     private uiQuery: UiQuery,
     private userQuery: UserQuery,
     private navQuery: NavQuery,
+    private fileQuery: FileQuery,
+    private sessionBundleQuery: SessionBundleQuery,
+    private sessionEventsQuery: SessionEventsQuery,
     private apiService: ApiService,
     private cd: ChangeDetectorRef,
     private router: Router
@@ -121,7 +130,40 @@ export class EnvSelectComponent {
   }
 
   envChange() {
-    let urlParts = this.router.url.split('/');
+    let urlTree = this.router.parseUrl(this.router.url);
+    let queryParams = urlTree.queryParams;
+    let urlParts = this.router.url.split('?')[0].split('/');
+
+    let baseNavArray = [
+      PATH_ORG,
+      this.nav.orgId,
+      PATH_PROJECT,
+      this.nav.projectId,
+      PATH_REPO,
+      this.nav.repoId,
+      PATH_BRANCH,
+      this.nav.branchId,
+      PATH_ENV,
+      this.selectedEnvId
+    ];
+
+    if (urlParts[11] === PATH_REPORTS) {
+      let uiState = this.uiQuery.getValue();
+      uiState.gridApi?.deselectAll();
+    }
+
+    this.sessionBundleQuery.reset();
+    this.sessionEventsQuery.reset();
+
+    if (
+      this.nav.repoType === RepoTypeEnum.Session &&
+      urlParts[12] !== PATH_FILE
+    ) {
+      this.router.navigate([...baseNavArray, PATH_BUILDER, PATH_SELECT_FILE], {
+        queryParams: queryParams
+      });
+      return;
+    }
 
     let uiState = this.uiQuery.getValue();
 
@@ -140,29 +182,14 @@ export class EnvSelectComponent {
 
     let navArray = checkNavMain({
       urlParts: urlParts,
-      navArray: [
-        PATH_ORG,
-        this.nav.orgId,
-        PATH_PROJECT,
-        this.nav.projectId,
-        PATH_REPO,
-        this.nav.repoId,
-        PATH_BRANCH,
-        this.nav.branchId,
-        PATH_ENV,
-        this.selectedEnvId
-      ],
+      navArray: baseNavArray,
       lastDashboardId: pDashboardLink?.dashboardId,
       lastModelId: pModelLink?.modelId,
       lastChartId: pChartLink?.chartId,
-      lastReportId: pReportLink?.reportId
+      lastReportId: pReportLink?.reportId,
+      fileId: this.fileQuery.getValue().fileId
     });
 
-    if (urlParts[11] === PATH_REPORTS) {
-      let uiState = this.uiQuery.getValue();
-      uiState.gridApi?.deselectAll();
-    }
-
-    this.router.navigate(navArray);
+    this.router.navigate(navArray, { queryParams: queryParams });
   }
 }

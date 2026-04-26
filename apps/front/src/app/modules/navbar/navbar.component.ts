@@ -149,21 +149,13 @@ export class NavbarComponent implements OnInit {
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();
 
-    if (this.nav.repoType === RepoTypeEnum.Session) {
-      this.navigateService.navigateToSession({
-        sessionId: this.nav.repoId,
-        repoId: this.nav.repoId,
-        branchId: this.nav.repoId,
-        envId: this.nav.envId,
-        left: BuilderLeftEnum.Info,
-        right: BuilderRightEnum.Sessions
-      });
-    } else {
-      this.navigateService.navigateToBuilder({
-        left: BuilderLeftEnum.Info,
-        right: BuilderRightEnum.Sessions
-      });
-    }
+    this.navigateService.navigateToBuilder({
+      left: BuilderLeftEnum.Tree,
+      right:
+        this.nav.repoType === RepoTypeEnum.Session
+          ? BuilderRightEnum.Sessions
+          : BuilderRightEnum.Schema
+    });
   }
 
   navigateExplorer() {

@@ -12,13 +12,11 @@ import {
   PATH_BUILDER,
   PATH_ENV,
   PATH_FILE,
-  PATH_NEW_SESSION,
   PATH_ORG,
   PATH_PROJECT,
   PATH_REPO,
   PATH_REPORTS,
   PATH_SELECT_FILE,
-  PATH_SESSION,
   PROD_REPO_ID
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
@@ -329,6 +327,9 @@ export class BranchSelectComponent {
       this.nav.envId
     ];
 
+    this.sessionBundleQuery.reset();
+    this.sessionEventsQuery.reset();
+
     if (urlParts[11] === PATH_BUILDER) {
       let uiState = this.uiQuery.getValue();
 
@@ -342,34 +343,31 @@ export class BranchSelectComponent {
         right: uiState.builderRight
       };
 
-      if (newSelectedBranchItem.repoType === RepoTypeEnum.Session) {
+      let isTargetSession =
+        newSelectedBranchItem.repoType === RepoTypeEnum.Session;
+
+      let isSourceSession = this.nav.repoType === RepoTypeEnum.Session;
+
+      let isFileSelected =
+        urlParts[12] === PATH_FILE && isDefined(this.file.fileId);
+
+      if (isChangeView) {
+        navArray.push(PATH_SELECT_FILE);
+      } else if (isFileSelected) {
+        navArray.push(PATH_FILE);
+        navArray.push(this.file.fileId);
+      } else if (isTargetSession) {
         let currentSession = this.sessionQuery.getValue();
+
         if (currentSession?.sessionId) {
           this.uiQuery.updatePart({ showContent: false });
         }
-        this.sessionBundleQuery.reset();
-        this.sessionEventsQuery.reset();
 
-        let session = this.sessionsList.find(
-          s => s.repoId === newSelectedBranchItem.repoId
-        );
-        if (session) {
-          this.sessionQuery.update({ ...session, firstMessage: undefined });
-        }
-
-        navArray.push(PATH_SESSION);
-        navArray.push(newSelectedBranchItem.repoId);
+        navArray.push(PATH_SELECT_FILE);
+      } else if (isSourceSession) {
+        navArray.push(PATH_SELECT_FILE);
       } else {
-        if (isChangeView) {
-          navArray.push(PATH_SELECT_FILE);
-        } else if (urlParts[12] === PATH_FILE && isDefined(urlParts[13])) {
-          navArray.push(PATH_FILE);
-          navArray.push(urlParts[13]);
-        } else if (urlParts[12] === PATH_SESSION && isDefined(urlParts[13])) {
-          navArray.push(PATH_NEW_SESSION);
-        } else {
-          navArray.push(urlParts[12] || PATH_NEW_SESSION);
-        }
+        navArray.push(urlParts[12] || PATH_SELECT_FILE);
       }
 
       this.router.navigate(navArray, { queryParams });
@@ -395,7 +393,8 @@ export class BranchSelectComponent {
         lastDashboardId: pDashboardLink?.dashboardId,
         lastModelId: pModelLink?.modelId,
         lastChartId: pChartLink?.chartId,
-        lastReportId: pReportLink?.reportId
+        lastReportId: pReportLink?.reportId,
+        fileId: this.file.fileId
       });
 
       this.router.navigate(navArray);

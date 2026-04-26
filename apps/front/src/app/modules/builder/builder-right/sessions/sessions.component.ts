@@ -91,6 +91,14 @@ export class SessionsComponent implements OnInit {
     })
   );
 
+  selectedRepoId: string;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.selectedRepoId = x.repoId;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,

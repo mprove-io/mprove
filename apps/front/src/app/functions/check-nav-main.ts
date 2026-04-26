@@ -5,12 +5,17 @@ import {
   PATH_DASHBOARD,
   PATH_DASHBOARDS,
   PATH_DASHBOARDS_LIST,
+  PATH_EXPLORER,
+  PATH_FILE,
   PATH_MODEL,
   PATH_MODELS,
   PATH_MODELS_LIST,
+  PATH_NEW_SESSION,
   PATH_REPORT,
   PATH_REPORTS,
-  PATH_REPORTS_LIST
+  PATH_REPORTS_LIST,
+  PATH_SELECT_FILE,
+  PATH_SESSION
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined';
 
@@ -21,6 +26,7 @@ export function checkNavMain(item: {
   lastModelId?: string;
   lastChartId?: string;
   lastReportId?: string;
+  fileId?: string;
 }) {
   let {
     navArray,
@@ -28,7 +34,8 @@ export function checkNavMain(item: {
     lastDashboardId,
     lastModelId,
     lastChartId,
-    lastReportId
+    lastReportId,
+    fileId
   } = item;
 
   let nextNavAr = [...navArray];
@@ -79,8 +86,22 @@ export function checkNavMain(item: {
     } else {
       nextNavAr.push(PATH_REPORTS_LIST);
     }
+  } else if (urlParts[11] === PATH_EXPLORER) {
+    nextNavAr.push(PATH_EXPLORER);
+    nextNavAr.push(PATH_NEW_SESSION);
   } else {
     nextNavAr.push(PATH_BUILDER);
+    if (urlParts[12] === PATH_FILE && isDefined(fileId)) {
+      nextNavAr.push(PATH_FILE);
+      nextNavAr.push(fileId);
+    } else if (urlParts[12] === PATH_SESSION && isDefined(urlParts[13])) {
+      nextNavAr.push(PATH_SESSION);
+      nextNavAr.push(urlParts[13]);
+    } else if (urlParts[12] === PATH_SELECT_FILE) {
+      nextNavAr.push(PATH_SELECT_FILE);
+    } else if (urlParts[12] === PATH_NEW_SESSION) {
+      nextNavAr.push(PATH_NEW_SESSION);
+    }
   }
 
   return nextNavAr;

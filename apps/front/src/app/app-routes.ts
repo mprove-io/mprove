@@ -58,6 +58,8 @@ import {
   PATH_USERS,
   PATH_VERIFY_EMAIL
 } from '#common/constants/top';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { environment } from '#front/environments/environment';
 import { DeactivateGuard } from './guards/deactivate.guard';
 import { RegisterComponent } from './modules/auth/main/01-register/register.component';
@@ -277,7 +279,7 @@ export const appRoutes: Routes = [
                             children: [
                               {
                                 path: '',
-                                redirectTo: PATH_NEW_SESSION,
+                                redirectTo: `${PATH_SELECT_FILE}?left=${BuilderLeftEnum.Tree}&right=${BuilderRightEnum.Schema}`,
                                 pathMatch: 'full'
                               },
                               {

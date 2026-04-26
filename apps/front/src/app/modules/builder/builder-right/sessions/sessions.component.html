@@ -105,8 +105,10 @@
           <span
             class="min-w-0 flex-1 truncate text-[17px]"
             [ngClass]="{
-              'text-m600 font-semibold':
-                session.sessionId === currentSession?.sessionId,
+              'text-m600': session.sessionId === currentSession?.sessionId,
+              'font-semibold':
+                session.sessionId === currentSession?.sessionId ||
+                session.sessionId === selectedRepoId,
               'text-s400':
                 session.status === 'Archived' &&
                 session.sessionId !== currentSession?.sessionId,
@@ -236,3 +238,4 @@
 <div *ngIf="sessions$ | async"></div>
 <div *ngIf="hasMoreArchived$ | async"></div>
 <div *ngIf="session$ | async"></div>
+<div *ngIf="nav$ | async"></div>

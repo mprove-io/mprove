@@ -100,7 +100,7 @@ export class NavigateService {
         ? PATH_NEW_SESSION
         : isLeftChanges
           ? PATH_SELECT_FILE
-          : PATH_NEW_SESSION;
+          : PATH_SELECT_FILE;
 
     return this.router.navigate(
       [
