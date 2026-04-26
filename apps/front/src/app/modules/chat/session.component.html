@@ -19,7 +19,13 @@
   </div>
 
   <!-- Working indicator -->
-  <div class="ml-[105px] flex h-[30px] flex-col justify-center">
+  <div
+    class="flex h-[30px] flex-col justify-center"
+    [ngClass]="{
+      'ml-[50px]': session?.type === sessionTypeEnum.Explorer,
+      'ml-[105px]': session?.type !== sessionTypeEnum.Explorer
+    }"
+  >
     <div
       *ngIf="isWorking"
       class="relative h-9 w-9"

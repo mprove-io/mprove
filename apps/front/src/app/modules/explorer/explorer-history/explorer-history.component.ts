@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  HostListener,
   OnInit,
   Output
 } from '@angular/core';
@@ -173,5 +174,10 @@ export class ExplorerHistoryComponent implements OnInit {
 
   closeOverlay() {
     this.close.emit();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    this.closeOverlay();
   }
 }
