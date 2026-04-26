@@ -154,7 +154,7 @@ export class NavbarComponent implements OnInit {
       right:
         this.nav.repoType === RepoTypeEnum.Session
           ? BuilderRightEnum.Sessions
-          : BuilderRightEnum.Schema
+          : BuilderRightEnum.Validation
     });
   }
 

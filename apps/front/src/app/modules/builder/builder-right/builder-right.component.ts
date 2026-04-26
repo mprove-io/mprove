@@ -13,7 +13,7 @@ export class BuilderRightComponent {
   builderRightSchema = BuilderRightEnum.Schema;
   builderRightValidation = BuilderRightEnum.Validation;
 
-  builderRight = BuilderRightEnum.Sessions;
+  builderRight = BuilderRightEnum.Validation;
   builderRight$ = this.uiQuery.builderRight$.pipe(
     tap(x => {
       this.builderRight = x;

@@ -99,7 +99,7 @@ let uiState: UiState = {
   searchSchemaWord: undefined,
   searchMetricsWord: undefined,
   builderLeft: BuilderLeftEnum.Tree,
-  builderRight: BuilderRightEnum.Sessions,
+  builderRight: BuilderRightEnum.Validation,
   needSave: false,
   showTileParameters: false,
   showDashboardsLeftPanel: true,

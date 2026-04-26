@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, type Routes } from '@angular/router';
 import {
   PARAMETER_BRANCH_ID,
   PARAMETER_CHART_ID,
@@ -279,7 +280,19 @@ export const appRoutes: Routes = [
                             children: [
                               {
                                 path: '',
-                                redirectTo: `${PATH_SELECT_FILE}?left=${BuilderLeftEnum.Tree}&right=${BuilderRightEnum.Schema}`,
+                                redirectTo: () => {
+                                  let router = inject(Router);
+
+                                  let currentPath =
+                                    router
+                                      .currentNavigation()
+                                      ?.extractedUrl?.toString()
+                                      .split('?')[0] ?? '';
+
+                                  return router.parseUrl(
+                                    `${currentPath}/${PATH_SELECT_FILE}?left=${BuilderLeftEnum.Tree}&right=${BuilderRightEnum.Validation}`
+                                  );
+                                },
                                 pathMatch: 'full'
                               },
                               {

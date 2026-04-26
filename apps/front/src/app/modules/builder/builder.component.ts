@@ -143,7 +143,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
     tap(x => (this.builderLeft = x))
   );
 
-  builderRight = BuilderRightEnum.Sessions;
+  builderRight = BuilderRightEnum.Validation;
   builderRight$ = this.uiQuery.builderRight$.pipe(
     tap(x => {
       this.builderRight = x;
