@@ -13,9 +13,8 @@
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.claude,target=/root/.claude,type=bind,consistency=cached",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.claude.json,target=/root/.claude.json,type=bind,consistency=cached",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.claude.json.backup,target=/root/.claude.json.backup,type=bind,consistency=cached",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.codex,target=/root/.codex,type=bind,consistency=cached",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/opencode,target=/root/.local/share/opencode,type=bind,consistency=cached",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.config/opencode,target=/root/.config/opencode,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.codex/auth.json,target=/root/.codex/auth.json,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/opencode/auth.json,target=/root/.local/share/opencode/auth.json,type=bind,consistency=cached",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/root/.zsh_history,type=bind,consistency=cached",
     "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind,consistency=cached",
     "source=mprove-pnpm-store,target=${containerWorkspaceFolder}/.pnpm-store,type=volume",
@@ -54,6 +53,7 @@
     "vscode": {
       "extensions": [
         "anthropic.claude-code",
+        "tamasfe.even-better-toml",
         "yzhang.markdown-all-in-one",
         "yoavbls.pretty-ts-errors",
         "kraftwer1.darcula-extra",

@@ -30,6 +30,7 @@
     "lint": "pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts",
     "circular": "pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts",
     "build": "pnpm build:turbo && pnpm build:mcli",
+    "build-docs": "pnpm --filter @mprove/backend build-docs",
     "start": "turbo run start",
     "debug": "turbo run debug",
     "test": "turbo run test",

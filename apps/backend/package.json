@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "lint": "biome lint src",
     "circular": "madge --circular .",
+    "build-docs": "node build-docs.mjs",
     "build": "swc src -d dist --source-maps && node build.mjs",
     "node-serve": "dotenv -e ../../.env -v BACKEND_IS_SCHEDULER=TRUE -- node --enable-source-maps --disable-warning=DEP0169 dist/main.js",
     "start": "dotenv -e ../../.env -v BACKEND_IS_SCHEDULER=TRUE -v SWC_NODE_PROJECT=tsconfig.app.json -- node --import @swc-node/register/esm-register --disable-warning=DEP0169 --watch src/main.ts",

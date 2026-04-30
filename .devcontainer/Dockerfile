@@ -24,4 +24,6 @@ RUN curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/downloa
 
 RUN npm install -g @malloydata/cli
 
+RUN npm install -g @openai/codex
 
+RUN npm install -g opencode-ai
