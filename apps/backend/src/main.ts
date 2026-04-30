@@ -67,6 +67,7 @@ async function bootstrap() {
       .addTag('Connections')
       .addTag('Dashboards')
       .addTag('Envs')
+      .addTag('Explorer')
       .addTag('Files')
       .addTag('Folders')
       .addTag('Mconfigs')

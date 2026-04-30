@@ -175,5 +175,8 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendSendMessageToExplorerSession = 'api/ToBackendSendMessageToExplorerSession',
   ToBackendSetSessionTitle = 'api/ToBackendSetSessionTitle',
   //
+  ToBackendProduceExplorerChart = 'api/ToBackendProduceExplorerChart',
+  ToBackendOpenExplorerChartTab = 'api/ToBackendOpenExplorerChartTab',
+  //
   ToBackendDownloadSkills = 'api/ToBackendDownloadSkills'
 }

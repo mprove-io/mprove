@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import type { Event } from '@opencode-ai/sdk/v2';
+import { SESSION_TAB_CREATED_EVENT_TYPE } from '#common/constants/top';
 
 @Injectable()
 export class ExplorerEventsMakerService {
@@ -156,6 +157,23 @@ export class ExplorerEventsMakerService {
       type: 'session.error',
       properties: {
         error: { message: item.errorMessage }
+      }
+    } as unknown as Event;
+  }
+
+  makeChartTabEvent(item: {
+    tabId: string;
+    chartId: string;
+    title: string;
+    modelId: string;
+  }): Event {
+    return {
+      type: SESSION_TAB_CREATED_EVENT_TYPE,
+      properties: {
+        tabId: item.tabId,
+        chartId: item.chartId,
+        title: item.title,
+        modelId: item.modelId
       }
     } as unknown as Event;
   }

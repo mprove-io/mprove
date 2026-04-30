@@ -9,6 +9,8 @@ import { GetConnectionSchemasService } from './controllers/connections/get-conne
 import { GetConnectionSchemasTool } from './controllers/connections/get-connection-schemas/get-connection-schemas.tool';
 import { GetConnectionsListService } from './controllers/connections/get-connections-list/get-connections-list.service';
 import { GetConnectionsListTool } from './controllers/connections/get-connections-list/get-connections-list.tool';
+import { OpenExplorerChartTabService } from './controllers/explorer/open-explorer-chart-tab/open-explorer-chart-tab.service';
+import { ProduceExplorerChartService } from './controllers/explorer/produce-explorer-chart/produce-explorer-chart.service';
 import { ValidateFilesService } from './controllers/files/validate-files/validate-files.service';
 import { ValidateFilesTool } from './controllers/files/validate-files/validate-files.tool';
 import { GetModelService } from './controllers/models/get-model/get-model.service';
@@ -66,6 +68,8 @@ import { EditorOpencodeService } from './services/editor/editor-opencode.service
 import { EditorSandboxService } from './services/editor/editor-sandbox.service';
 import { EditorStreamService } from './services/editor/editor-stream.service';
 import { EmailService } from './services/email.service';
+import { ExplorerChartRebuildService } from './services/explorer/explorer-chart-rebuild.service';
+import { ExplorerDocsService } from './services/explorer/explorer-docs.service';
 import { ExplorerEventsMakerService } from './services/explorer/explorer-events-maker.service';
 import { ExplorerModelsService } from './services/explorer/explorer-models.service';
 import { ExplorerPromptsService } from './services/explorer/explorer-prompts.service';
@@ -164,9 +168,13 @@ export const appProviders = [
   ExplorerTitleService,
   ExplorerToolsService,
   ExplorerModelsService,
+  ExplorerChartRebuildService,
+  ExplorerDocsService,
   EditorConnectionsService,
   EditorModelsService,
   ExplorerStreamService,
+  ProduceExplorerChartService,
+  OpenExplorerChartTabService,
   //
   ToolService,
   GetConnectionSampleService,
