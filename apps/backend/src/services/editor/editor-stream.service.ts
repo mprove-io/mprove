@@ -14,7 +14,7 @@ import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events.js';
+import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import {
   CHANNEL_OPENCODE_FETCH_REPLY,

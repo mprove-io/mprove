@@ -23,7 +23,7 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex.service';
-import { ProjectsService } from '#backend/services/db/projects.service.js';
+import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';

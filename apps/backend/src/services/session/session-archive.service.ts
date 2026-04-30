@@ -10,7 +10,6 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
-import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
@@ -25,7 +24,6 @@ export class SessionArchiveService {
     private sessionsService: SessionsService,
     private editorSandboxService: EditorSandboxService,
     private editorStreamService: EditorStreamService,
-    private explorerStreamService: ExplorerStreamService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {}
@@ -36,6 +34,8 @@ export class SessionArchiveService {
     e2bApiKey: string;
   }): Promise<SessionApi> {
     let { session, archiveReason, e2bApiKey } = item;
+
+    // TODO: check session type is editor
 
     let isActiveOrPaused =
       [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
@@ -70,20 +70,7 @@ export class SessionArchiveService {
     );
 
     setTimeout(() => {
-      if (session.type === SessionTypeEnum.Explorer) {
-        this.explorerStreamService
-          .publishStopSessionStream({
-            sessionId: session.sessionId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: e,
-              logLevel: LogLevelEnum.Error,
-              logger: this.logger,
-              cs: this.cs
-            });
-          });
-      } else if (session.type === SessionTypeEnum.Editor) {
+      if (session.type === SessionTypeEnum.Editor) {
         this.editorStreamService
           .publishStopSessionStream({
             sessionId: session.sessionId

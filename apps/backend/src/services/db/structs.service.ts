@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -172,7 +172,12 @@ WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts/1000) < (NOW() - INTERVAL
 
       await this.db.drizzle
         .delete(chartsTable)
-        .where(inArray(chartsTable.structId, structIds));
+        .where(
+          and(
+            inArray(chartsTable.structId, structIds),
+            isNull(chartsTable.sessionId)
+          )
+        );
 
       await this.db.drizzle
         .delete(dashboardsTable)
@@ -188,11 +193,21 @@ WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts/1000) < (NOW() - INTERVAL
 
       await this.db.drizzle
         .delete(mconfigsTable)
-        .where(inArray(mconfigsTable.structId, structIds));
+        .where(
+          and(
+            inArray(mconfigsTable.structId, structIds),
+            isNull(mconfigsTable.sessionId)
+          )
+        );
 
       await this.db.drizzle
         .delete(queriesTable)
-        .where(inArray(queriesTable.reportStructId, structIds));
+        .where(
+          and(
+            inArray(queriesTable.reportStructId, structIds),
+            isNull(queriesTable.sessionId)
+          )
+        );
     }
   }
 }

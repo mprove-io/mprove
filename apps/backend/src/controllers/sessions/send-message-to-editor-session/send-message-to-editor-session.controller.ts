@@ -22,7 +22,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex.service';
-import { ProjectsService } from '#backend/services/db/projects.service.js';
+import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { EditorCodexService } from '#backend/services/editor/editor-codex.service';

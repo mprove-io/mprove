@@ -8,8 +8,8 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { MembersService } from '#backend/services/db/members.service.js';
-import { ProjectsService } from '#backend/services/db/projects.service.js';
+import { MembersService } from '#backend/services/db/members.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
 import { EditorModelsService } from '#backend/services/editor/editor-models.service';
 import { ExplorerModelsService } from '#backend/services/explorer/explorer-models.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';

@@ -14,7 +14,7 @@ import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ProjectsService } from '#backend/services/db/projects.service.js';
+import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';

@@ -11,7 +11,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config.js';
+import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteSessionRequestDto,
   ToBackendDeleteSessionResponseDto
@@ -25,11 +25,14 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
+import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { getRetryOption } from '#backend/functions/get-retry-option.js';
+import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ProjectsService } from '#backend/services/db/projects.service';
@@ -174,6 +177,20 @@ export class DeleteSessionController {
           await tx
             .delete(ocSessionsTable)
             .where(and(eq(ocSessionsTable.sessionId, sessionId)));
+
+          if (session.type === SessionTypeEnum.Explorer) {
+            await tx
+              .delete(chartsTable)
+              .where(eq(chartsTable.sessionId, sessionId));
+
+            await tx
+              .delete(mconfigsTable)
+              .where(eq(mconfigsTable.sessionId, sessionId));
+
+            await tx
+              .delete(queriesTable)
+              .where(eq(queriesTable.sessionId, sessionId));
+          }
 
           if (session.type === SessionTypeEnum.Editor) {
             await tx

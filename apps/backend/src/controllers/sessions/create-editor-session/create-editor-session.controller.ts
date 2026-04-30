@@ -28,7 +28,7 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -36,8 +36,8 @@ import { BlockmlService } from '#backend/services/blockml.service';
 import { CodexService } from '#backend/services/codex.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
-import { MembersService } from '#backend/services/db/members.service.js';
-import { ProjectsService } from '#backend/services/db/projects.service.js';
+import { MembersService } from '#backend/services/db/members.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { EditorCodexService } from '#backend/services/editor/editor-codex.service';
@@ -45,7 +45,7 @@ import { EditorConnectionsService } from '#backend/services/editor/editor-connec
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { RpcService } from '#backend/services/rpc.service';
-import { TabService } from '#backend/services/tab.service.js';
+import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';

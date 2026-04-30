@@ -116,6 +116,7 @@ export class MconfigsService {
       limit: apiMconfig.limit,
       filters: apiMconfig.filters,
       chart: apiMconfig.chart,
+      sessionId: undefined,
       keyTag: undefined,
       serverTs: apiMconfig.serverTs
     };
@@ -286,6 +287,7 @@ export class MconfigsService {
       bigqueryConsecutiveErrorsGetJob: 0,
       bigqueryConsecutiveErrorsGetResults: 0,
       apiUrlHash: undefined, // tab-to-ent
+      sessionId: undefined,
       keyTag: undefined,
       serverTs: 1
     };

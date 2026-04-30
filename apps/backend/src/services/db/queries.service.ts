@@ -117,6 +117,7 @@ export class QueriesService {
       lastErrorMessage: apiQuery.lastErrorMessage,
       data: apiQuery.data,
       apiUrlHash: undefined, // tab-to-ent
+      sessionId: undefined,
       keyTag: undefined,
       serverTs: apiQuery.serverTs
     };
@@ -297,7 +298,9 @@ export class QueriesService {
 SELECT
   q.query_id
 FROM queries as q
-WHERE q.report_id is NULL AND to_timestamp(q.server_ts/1000) < (NOW() - INTERVAL '7 days')
+WHERE q.report_id is NULL
+  AND to_timestamp(q.server_ts/1000) < (NOW() - INTERVAL '7 days')
+  AND q.session_id IS NULL
 `);
 
     let queryIds: string[] = rawData.rows.map((x: any) => x.query_id) || [];

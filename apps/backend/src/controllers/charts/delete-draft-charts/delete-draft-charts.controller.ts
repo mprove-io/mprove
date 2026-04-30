@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteDraftChartsRequestDto,
@@ -123,7 +123,11 @@ export class DeleteDraftChartsController {
                 inArray(chartsTable.chartId, chartIds),
                 eq(chartsTable.draft, true),
                 eq(chartsTable.creatorId, user.userId),
-                eq(chartsTable.structId, bridge.structId)
+                eq(chartsTable.structId, bridge.structId),
+                or(
+                  isNull(chartsTable.isExplorer),
+                  eq(chartsTable.isExplorer, false)
+                )
               )
             );
         }),

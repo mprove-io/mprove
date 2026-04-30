@@ -416,6 +416,9 @@ export class TabToEntService {
       creatorId: tab.creatorId,
       chartType: tab.chartType,
       draft: tab.draft,
+      isExplorer: tab.isExplorer,
+      sessionId: tab.sessionId,
+      chartYaml: tab.chartYaml,
       ...this.getEntProps({
         dataSt: chartSt,
         dataLt: chartLt,
@@ -613,6 +616,7 @@ export class TabToEntService {
       modelType: tab.modelType,
       parentType: tab.parentType,
       parentId: tab.parentId,
+      sessionId: tab.sessionId,
       ...this.getEntProps({
         dataSt: mconfigSt,
         dataLt: mconfigLt,
@@ -855,6 +859,7 @@ export class TabToEntService {
         input: tab.apiUrl,
         hashSecret: hashSecret
       }),
+      sessionId: tab.sessionId,
       serverTs: tab.serverTs
     };
 

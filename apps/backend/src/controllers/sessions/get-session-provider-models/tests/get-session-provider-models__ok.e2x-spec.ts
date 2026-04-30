@@ -1,5 +1,5 @@
 import test from 'ava';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend.js';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { BRANCH_MAIN } from '#common/constants/top';

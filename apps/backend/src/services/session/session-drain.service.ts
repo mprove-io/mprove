@@ -26,7 +26,7 @@ import type {
   OcPartTab,
   OcSessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events.js';
+import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';

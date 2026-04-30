@@ -1,6 +1,6 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull, or } from 'drizzle-orm';
 import {
   ToBackendGetChartsRequestDto,
   ToBackendGetChartsResponseDto
@@ -103,7 +103,10 @@ export class GetChartsController {
 
     let charts = await this.db.drizzle.query.chartsTable
       .findMany({
-        where: eq(chartsTable.structId, bridge.structId)
+        where: and(
+          eq(chartsTable.structId, bridge.structId),
+          or(isNull(chartsTable.isExplorer), eq(chartsTable.isExplorer, false))
+        )
       })
       .then(xs => xs.map(x => this.tabService.chartEntToTab(x)));
 

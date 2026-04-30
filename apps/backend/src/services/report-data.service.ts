@@ -402,6 +402,7 @@ export class ReportDataService {
                 : timeColumnsLimit,
             filters: model.type === ModelTypeEnum.Malloy ? [] : filters,
             chart: makeCopy(DEFAULT_CHART),
+            sessionId: undefined, // TODO: report sessionId
             keyTag: undefined,
             serverTs: 1
           };
