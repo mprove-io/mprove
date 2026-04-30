@@ -24,6 +24,9 @@ export const chartsTable = pgTable(
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     chartType: varchar('chart_type').$type<ChartTypeEnum>(),
     draft: boolean('draft'),
+    isExplorer: boolean('is_explorer'),
+    sessionId: varchar('session_id', { length: 255 }),
+    chartYaml: text('chart_yaml'),
     st: json('st').$type<{ encrypted: string; decrypted: ChartSt }>().notNull(),
     lt: json('lt').$type<{ encrypted: string; decrypted: ChartLt }>().notNull(),
     keyTag: text('key_tag'),
@@ -35,6 +38,7 @@ export const chartsTable = pgTable(
     idxChartsChartId: index('idx_charts_chart_id').on(table.chartId),
     idxChartsModelId: index('idx_charts_model_id').on(table.modelId),
     idxChartsKeyTag: index('idx_charts_key_tag').on(table.keyTag),
+    idxChartsSessionId: index('idx_charts_session_id').on(table.sessionId),
     //
     uidxChartsStructIdChartId: uniqueIndex('uidx_charts_struct_id_chart_id').on(
       table.structId,

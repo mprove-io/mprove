@@ -43,6 +43,7 @@ export const queriesTable = pgTable(
     lt: json('lt').$type<{ encrypted: string; decrypted: QueryLt }>().notNull(),
     keyTag: text('key_tag'),
     apiUrlHash: varchar('api_url_hash'),
+    sessionId: varchar('session_id', { length: 255 }),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -61,7 +62,8 @@ export const queriesTable = pgTable(
     idxQueriesApiUrlHash: index('idx_queries_api_url_hash').on(
       table.apiUrlHash
     ),
-    idxQueriesKeyTag: index('idx_queries_key_tag').on(table.keyTag)
+    idxQueriesKeyTag: index('idx_queries_key_tag').on(table.keyTag),
+    idxQueriesSessionId: index('idx_queries_session_id').on(table.sessionId)
   })
 );
 

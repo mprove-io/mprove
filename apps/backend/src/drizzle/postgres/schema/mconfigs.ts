@@ -21,6 +21,7 @@ export const mconfigsTable = pgTable(
     modelType: varchar('model_type').$type<ModelTypeEnum>(),
     parentType: varchar('parent_type').$type<MconfigParentTypeEnum>(),
     parentId: varchar('parent_id', { length: 32 }),
+    sessionId: varchar('session_id', { length: 255 }),
     st: json('st')
       .$type<{ encrypted: string; decrypted: MconfigSt }>()
       .notNull(),
@@ -34,7 +35,8 @@ export const mconfigsTable = pgTable(
     idxMconfigsServerTs: index('idx_mconfigs_server_ts').on(table.serverTs),
     idxMconfigsStructId: index('idx_mconfigs_struct_id').on(table.structId),
     idxMconfigsQueryId: index('idx_mconfigs_query_id').on(table.queryId),
-    idxMconfigsKeyTag: index('idx_mconfigs_key_tag').on(table.keyTag)
+    idxMconfigsKeyTag: index('idx_mconfigs_key_tag').on(table.keyTag),
+    idxMconfigsSessionId: index('idx_mconfigs_session_id').on(table.sessionId)
   })
 );
 
