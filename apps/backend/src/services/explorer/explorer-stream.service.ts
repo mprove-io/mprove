@@ -1,16 +1,17 @@
 import crypto from 'node:crypto';
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type { Event } from '@opencode-ai/sdk/v2';
 import type { ModelMessage } from 'ai';
-import { streamText } from 'ai';
+import { stepCountIs, streamText } from 'ai';
 import { asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages.js';
-import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts.js';
+import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
+import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import {
   CHANNEL_AI_INTERACT_REPLY,
@@ -20,15 +21,19 @@ import {
 import { AiStreamCommandEnum } from '#common/enums/ai-stream-command.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { makeAscendingIdAfter } from '#common/functions/make-ascending-id';
 import { ServerError } from '#common/models/server-error';
 import { CodexService } from '../codex.service';
+import { SessionsService } from '../db/sessions.service';
+import { UsersService } from '../db/users.service';
 import { SessionDrainService } from '../session/session-drain.service';
 import { TabService } from '../tab.service';
 import { ExplorerEventsMakerService } from './explorer-events-maker.service';
 import { ExplorerModelsService } from './explorer-models.service';
 import { ExplorerPromptsService } from './explorer-prompts.service';
 import { ExplorerTitleService } from './explorer-title.service';
+import { ExplorerToolsService } from './explorer-tools.service';
 
 const { forEachSeries } = pIteration;
 
@@ -71,6 +76,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
     private explorerPromptsService: ExplorerPromptsService,
     private explorerTitleService: ExplorerTitleService,
     private explorerEventsMakerService: ExplorerEventsMakerService,
+    private explorerToolsService: ExplorerToolsService,
+    private sessionsService: SessionsService,
+    private usersService: UsersService,
     private tabService: TabService,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -690,29 +698,161 @@ export class ExplorerStreamService implements OnModuleDestroy {
           })
         : undefined;
 
+    let session = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId: sessionId
+    });
+
+    let user = userId
+      ? await this.usersService.getUserCheckExists({ userId: userId })
+      : undefined;
+
+    let traceId = crypto.randomUUID();
+
+    let tools =
+      session.type === SessionTypeEnum.Explorer && user
+        ? this.explorerToolsService.getTools({
+            user: user,
+            sessionId: sessionId,
+            projectId: session.projectId,
+            repoId: session.repoId,
+            branchId: session.branchId,
+            envId: session.envId,
+            traceId: traceId
+          })
+        : undefined;
+
     let result = streamText({
       model: model,
       messages: messages,
       abortSignal: abortController.signal,
-      providerOptions: providerOptions
+      providerOptions: providerOptions,
+      tools: tools,
+      stopWhen: stepCountIs(8)
     });
 
-    let fullContent = '';
     let wasAborted = false;
+    let toolPartIds = new Map<string, string>();
+    let lastPartId = assistantPartId;
+    let currentTextPartId: string | undefined = assistantPartId;
+    let textPartContents = new Map<string, string>([[assistantPartId, '']]);
 
     try {
-      for await (let chunk of result.textStream) {
-        fullContent += chunk;
+      for await (let chunk of result.fullStream) {
+        if (chunk.type === 'text-delta') {
+          let delta = chunk.text;
 
-        let deltaEvent = this.explorerEventsMakerService.makeTextDeltaEvent({
-          messageId: assistantMessageId,
-          partId: assistantPartId,
-          delta: chunk
-        });
-        this.sessionDrainService.enqueue({
-          sessionId: sessionId,
-          event: deltaEvent
-        });
+          if (!delta) continue;
+
+          if (!currentTextPartId) {
+            currentTextPartId = makeAscendingIdAfter({
+              prefix: 'prt',
+              afterId: lastPartId
+            });
+
+            lastPartId = currentTextPartId;
+            textPartContents.set(currentTextPartId, '');
+
+            let assistantPartEvent =
+              this.explorerEventsMakerService.makeAssistantPartEvent({
+                partId: currentTextPartId,
+                messageId: assistantMessageId,
+                sessionId: sessionId
+              });
+
+            this.sessionDrainService.enqueue({
+              sessionId: sessionId,
+              event: assistantPartEvent
+            });
+          }
+
+          let currentTextContent =
+            textPartContents.get(currentTextPartId) || '';
+          textPartContents.set(currentTextPartId, currentTextContent + delta);
+
+          let deltaEvent = this.explorerEventsMakerService.makeTextDeltaEvent({
+            messageId: assistantMessageId,
+            partId: currentTextPartId,
+            delta: delta
+          });
+
+          this.sessionDrainService.enqueue({
+            sessionId: sessionId,
+            event: deltaEvent
+          });
+        } else if (chunk.type === 'tool-call') {
+          currentTextPartId = undefined;
+
+          let toolPartId = makeAscendingIdAfter({
+            prefix: 'prt',
+            afterId: lastPartId
+          });
+
+          lastPartId = toolPartId;
+
+          toolPartIds.set(chunk.toolCallId, toolPartId);
+
+          let toolPartEvent = {
+            type: 'message.part.updated',
+            properties: {
+              part: {
+                id: toolPartId,
+                messageID: assistantMessageId,
+                sessionID: sessionId,
+                type: 'tool',
+                tool: chunk.toolName,
+                callID: chunk.toolCallId,
+                state: {
+                  status: 'running',
+                  input: chunk.input
+                }
+              }
+            }
+          } as unknown as Event;
+
+          this.sessionDrainService.enqueue({
+            sessionId: sessionId,
+            event: toolPartEvent
+          });
+        } else if (chunk.type === 'tool-result') {
+          let toolPartId = toolPartIds.get(chunk.toolCallId);
+
+          if (!toolPartId) continue;
+
+          let outputText: string;
+
+          try {
+            outputText =
+              typeof chunk.output === 'string'
+                ? chunk.output
+                : JSON.stringify(chunk.output);
+          } catch {
+            outputText = String(chunk.output);
+          }
+
+          let toolPartEvent = {
+            type: 'message.part.updated',
+            properties: {
+              part: {
+                id: toolPartId,
+                messageID: assistantMessageId,
+                sessionID: sessionId,
+                type: 'tool',
+                tool: chunk.toolName,
+                callID: chunk.toolCallId,
+                state: {
+                  status: 'completed',
+                  input: chunk.input,
+                  output: outputText
+                }
+              }
+            }
+          } as unknown as Event;
+
+          this.sessionDrainService.enqueue({
+            sessionId: sessionId,
+            event: toolPartEvent
+          });
+        }
       }
     } catch (e: any) {
       if (e.name === 'AbortError') {
@@ -723,16 +863,20 @@ export class ExplorerStreamService implements OnModuleDestroy {
     }
 
     if (wasAborted) {
-      let finalPartEvent = this.explorerEventsMakerService.makeFinalPartEvent({
-        partId: assistantPartId,
-        messageId: assistantMessageId,
-        sessionId: sessionId,
-        text: fullContent
-      });
+      textPartContents.forEach((text, partId) => {
+        let finalPartEvent = this.explorerEventsMakerService.makeFinalPartEvent(
+          {
+            partId: partId,
+            messageId: assistantMessageId,
+            sessionId: sessionId,
+            text: text
+          }
+        );
 
-      this.sessionDrainService.enqueue({
-        sessionId: sessionId,
-        event: finalPartEvent
+        this.sessionDrainService.enqueue({
+          sessionId: sessionId,
+          event: finalPartEvent
+        });
       });
 
       let abortedMsgEvent =
@@ -753,15 +897,20 @@ export class ExplorerStreamService implements OnModuleDestroy {
         event: idleEvent
       });
     } else {
-      let finalPartEvent = this.explorerEventsMakerService.makeFinalPartEvent({
-        partId: assistantPartId,
-        messageId: assistantMessageId,
-        sessionId: sessionId,
-        text: fullContent
-      });
-      this.sessionDrainService.enqueue({
-        sessionId: sessionId,
-        event: finalPartEvent
+      textPartContents.forEach((text, partId) => {
+        let finalPartEvent = this.explorerEventsMakerService.makeFinalPartEvent(
+          {
+            partId: partId,
+            messageId: assistantMessageId,
+            sessionId: sessionId,
+            text: text
+          }
+        );
+
+        this.sessionDrainService.enqueue({
+          sessionId: sessionId,
+          event: finalPartEvent
+        });
       });
 
       let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
