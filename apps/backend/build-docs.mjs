@@ -18,7 +18,7 @@ let docsIndexUrl = `${docsOrigin}${docsIndexPath}`;
 
 let docsPathPrefix = '/content/docs/';
 
-let outDir = resolve(__dirname, 'mprove-docs-cache');
+let outDir = resolve(__dirname, 'src/mprove-docs-cache');
 
 let tocFilePath = resolve(outDir, 'toc.ts');
 

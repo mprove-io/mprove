@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { toc } from '../../../mprove-docs-cache/toc';
-import { tocToContent } from '../../../mprove-docs-cache/toc-to-content';
+import { toc } from '#backend/mprove-docs-cache/toc';
+import { tocToContent } from '#backend/mprove-docs-cache/toc-to-content';
 
 type ReadDocResult =
   | { ok: true; mode: 'index'; files: readonly string[] }
