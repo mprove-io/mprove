@@ -241,10 +241,23 @@
                 type="button"
                 tp="Sample"
                 tpPlacement="top"
-                class="hover:bg-m200 hover:text-s1 text-s500 invisible ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+                class="text-s500 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                [ngClass]="{
+                  'hover:bg-m200 hover:text-s1':
+                    sampleSpinnerNodeId !== node.data.id,
+                  'invisible group-hover:visible':
+                    sampleSpinnerNodeId !== node.data.id
+                }"
                 (click)="sampleOnClick({ node: node, event: $event })"
               >
-                <m-table-icon></m-table-icon>
+                <div
+                  *ngIf="sampleSpinnerNodeId === node.data.id"
+                  class="border-s200 border-t-m600 h-6 w-6 flex-shrink-0 animate-spin rounded-full border-2 [animation-duration:750ms]"
+                >
+                </div>
+                <m-table-icon
+                  *ngIf="sampleSpinnerNodeId !== node.data.id"
+                ></m-table-icon>
               </button>
 
               <div
@@ -364,10 +377,23 @@
                 type="button"
                 tp="Sample"
                 tpPlacement="top"
-                class="hover:bg-m200 hover:text-s1 text-s500 invisible ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+                class="text-s500 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                [ngClass]="{
+                  'hover:bg-m200 hover:text-s1':
+                    sampleSpinnerNodeId !== node.data.id,
+                  'invisible group-hover:visible':
+                    sampleSpinnerNodeId !== node.data.id
+                }"
                 (click)="sampleOnClick({ node: node, event: $event })"
               >
-                <m-table-icon></m-table-icon>
+                <div
+                  *ngIf="sampleSpinnerNodeId === node.data.id"
+                  class="border-s200 border-t-m600 h-6 w-6 flex-shrink-0 animate-spin rounded-full border-2 [animation-duration:750ms]"
+                >
+                </div>
+                <m-table-icon
+                  *ngIf="sampleSpinnerNodeId !== node.data.id"
+                ></m-table-icon>
               </button>
             </div>
           </ng-template>

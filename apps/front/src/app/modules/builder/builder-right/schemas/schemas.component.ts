@@ -6,7 +6,7 @@ import {
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { map, take, tap } from 'rxjs/operators';
+import { finalize, map, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -62,6 +62,8 @@ export class SchemasComponent implements OnInit {
   schemasLoaded = false;
   isRefreshing = false;
   spinnerName = SCHEMAS_SPINNER_NAME;
+  sampleSpinnerNodeId: string;
+  sampleRequestId = 0;
   treeNodes: SchemaTreeNode[] = [];
   filteredTreeNodes: SchemaTreeNode[] = [];
   combinedSchemaItems: CombinedSchemaItem[] = [];
@@ -367,6 +369,10 @@ export class SchemasComponent implements OnInit {
     let { node, event } = item;
     event.stopPropagation();
 
+    if (isDefined(this.sampleSpinnerNodeId)) {
+      return;
+    }
+
     let data = node.data as SchemaTreeNode;
     let nav = this.navQuery.getValue();
 
@@ -400,6 +406,12 @@ export class SchemasComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
 
+    this.sampleRequestId += 1;
+    let currentSampleRequestId = this.sampleRequestId;
+
+    this.sampleSpinnerNodeId = data.id;
+    this.cd.detectChanges();
+
     this.apiService
       .req({
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionSample,
@@ -414,6 +426,10 @@ export class SchemasComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendGetConnectionSampleResponse) => {
+          if (currentSampleRequestId !== this.sampleRequestId) {
+            return;
+          }
+
           let dialogData: SampleDialogData = {
             title: title,
             subtitle: subtitle,
@@ -441,6 +457,14 @@ export class SchemasComponent implements OnInit {
           }
 
           this.myDialogService.showSample(dialogData);
+        }),
+        finalize(() => {
+          if (currentSampleRequestId !== this.sampleRequestId) {
+            return;
+          }
+
+          this.sampleSpinnerNodeId = undefined;
+          this.cd.detectChanges();
         }),
         take(1)
       )
