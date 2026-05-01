@@ -60,14 +60,29 @@
           >
             <remark [markdown]="msg.text">
               <ng-template [remarkTemplate]="'link'" let-node>
-                <a
-                  [href]="node.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  [title]="node.title ?? ''"
-                  [remarkNode]="node"
-                ></a>
+                <ng-container
+                  *ngIf="parseMproveTabUrl(node.url) as tabId; else extLink"
+                >
+                  <button
+                    type="button"
+                    class="text-m600 underline"
+                    [title]="node.title ?? ''"
+                    (click)="onMproveTabLinkClick(tabId)"
+                    [remarkNode]="node"
+                  ></button>
+                </ng-container>
+
+                <ng-template #extLink>
+                  <a
+                    [href]="node.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    [title]="node.title ?? ''"
+                    [remarkNode]="node"
+                  ></a>
+                </ng-template>
               </ng-template>
+
               <ng-template [remarkTemplate]="'code'" let-node>
                 <code-editor
                   class="border-s200 block max-h-96 overflow-auto rounded-lg border"
@@ -79,6 +94,7 @@
                   [setup]="null"
                 ></code-editor>
               </ng-template>
+
               <ng-template [remarkTemplate]="'image'" let-node>
                 <a
                   class="block"

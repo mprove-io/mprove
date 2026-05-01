@@ -29,13 +29,6 @@ export class ExplorerTabsComponent {
     this.tabClose.emit(tab.id);
   }
 
-  onMiddleClick(event: MouseEvent, tab: ExplorerTab) {
-    if (event.button === 1 && tab.closable) {
-      event.preventDefault();
-      this.tabClose.emit(tab.id);
-    }
-  }
-
   trackByTabId(_index: number, tab: ExplorerTab) {
     return tab.id;
   }

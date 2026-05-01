@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import type { Event } from '@opencode-ai/sdk/v2';
+import { SESSION_TAB_CREATED_EVENT_TYPE } from '#common/constants/top';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
 import type { SessionPartApi } from '#common/zod/backend/session-part-api';
+import type { SessionTabCreatedEventProperties } from '#common/zod/backend/session-tab-created-event';
 import { binarySearch } from '../functions/binary-search';
+import { ExplorerTabsQuery } from '../queries/explorer-tabs.query';
 import { SessionQuery } from '../queries/session.query';
 import {
   SessionBundleQuery,
@@ -15,10 +18,14 @@ export class SessionEventsService {
 
   constructor(
     private sessionBundleQuery: SessionBundleQuery,
-    private sessionQuery: SessionQuery
+    private sessionQuery: SessionQuery,
+    private explorerTabsQuery: ExplorerTabsQuery
   ) {}
 
   applyEvent(event: Event) {
+    if (this.applySpecialEvent(event)) {
+      return;
+    }
     let state = this.sessionBundleQuery.getValue();
     let newState = this.reduceEvent(state, event);
     if (newState !== state) {
@@ -29,6 +36,9 @@ export class SessionEventsService {
   applyEvents(events: Event[]) {
     let state = this.sessionBundleQuery.getValue();
     events.forEach(event => {
+      if (this.applySpecialEvent(event)) {
+        return;
+      }
       if (event.type === 'message.part.delta') {
         let props = event.properties;
         let messageParts = state.parts[props.messageID];
@@ -69,6 +79,42 @@ export class SessionEventsService {
   resetAll() {
     this.seenFirstDeltaPartIds = new Set();
     this.sessionBundleQuery.reset();
+    this.explorerTabsQuery.resetTabs();
+  }
+
+  private applySpecialEvent(event: Event): boolean {
+    let raw = event as unknown as { type?: string; properties?: unknown };
+
+    if (raw.type !== SESSION_TAB_CREATED_EVENT_TYPE) {
+      return false;
+    }
+
+    let props = raw.properties as SessionTabCreatedEventProperties;
+
+    let mproveSessionId = this.sessionQuery.getValue()?.sessionId;
+
+    if (!mproveSessionId) return true;
+
+    let state = this.explorerTabsQuery.getValue();
+
+    if (state.sessionId !== mproveSessionId) {
+      this.explorerTabsQuery.setSession({ sessionId: mproveSessionId });
+    }
+
+    this.explorerTabsQuery.appendTab({
+      tab: {
+        id: props.tabId,
+        label: props.title,
+        kind: 'chart',
+        chartId: props.chartId,
+        modelId: props.modelId,
+        closable: false
+      }
+    });
+
+    this.explorerTabsQuery.setActive({ tabId: props.tabId });
+
+    return true;
   }
 
   private reduceEvent(

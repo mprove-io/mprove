@@ -2,17 +2,21 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { filter, tap } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { filter, map, tap } from 'rxjs/operators';
 import { EXPLORER_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_SESSION } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ExplorerTabsQuery } from '#front/app/queries/explorer-tabs.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { UiQuery } from '#front/app/queries/ui.query';
+import { ExplorerTabService } from '#front/app/services/explorer-tab.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { CHAT_SCOPE } from '../chat/chat-scope.token';
+import type { ExplorerTab, ExplorerTabContent } from './explorer-tab.interface';
 
 @Component({
   standalone: false,
@@ -35,6 +39,27 @@ export class ExplorerComponent implements OnInit {
 
   isSessionRoute = false;
 
+  tabs$ = this.explorerTabsQuery.tabs$;
+
+  activeTabId$ = this.explorerTabsQuery.activeTabId$;
+
+  activeTabContent$ = combineLatest([
+    this.activeTabId$,
+    this.explorerTabsQuery.contents$
+  ]).pipe(
+    map(([activeTabId, contents]): ExplorerTabContent | null =>
+      activeTabId ? (contents[activeTabId] ?? { status: 'idle' }) : null
+    )
+  );
+
+  activeTabOpener$ = this.activeTabId$.pipe(
+    tap(activeTabId => {
+      if (!activeTabId) return;
+
+      this.openExplorerTab({ tabId: activeTabId });
+    })
+  );
+
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
     tap((x: any) => {
@@ -47,6 +72,7 @@ export class ExplorerComponent implements OnInit {
         this.sessionQuery.reset();
         this.sessionBundleQuery.reset();
         this.sessionEventsQuery.reset();
+        this.explorerTabsQuery.resetTabs();
       }
 
       this.spinner.hide(APP_SPINNER_NAME);
@@ -67,9 +93,56 @@ export class ExplorerComponent implements OnInit {
     private sessionQuery: SessionQuery,
     private sessionBundleQuery: SessionBundleQuery,
     private sessionEventsQuery: SessionEventsQuery,
+    private explorerTabsQuery: ExplorerTabsQuery,
+    private explorerTabService: ExplorerTabService,
     private uiQuery: UiQuery,
     private navigateService: NavigateService
   ) {}
+
+  onTabSelect(tabId: string) {
+    let state = this.explorerTabsQuery.getValue();
+
+    this.explorerTabsQuery.setContent({
+      tabId: tabId,
+      content: { status: 'loading' }
+    });
+
+    this.explorerTabsQuery.setActive({ tabId: tabId });
+
+    if (state.activeTabId === tabId) {
+      this.openExplorerTab({ tabId: tabId });
+    }
+  }
+
+  onTabClose(tabId: string) {
+    this.explorerTabsQuery.removeTab({ tabId: tabId });
+  }
+
+  syntheticTile(content: { chart: any; mconfig: any }) {
+    return content.chart?.tiles?.[0] ?? {};
+  }
+
+  trackTab(_index: number, tab: ExplorerTab) {
+    return tab.id;
+  }
+
+  private openExplorerTab(item: { tabId: string }) {
+    let state = this.explorerTabsQuery.getValue();
+
+    let tab = state.tabs.find(t => t.id === item.tabId);
+
+    if (!tab || !tab.chartId) return;
+
+    let session = this.sessionQuery.getValue();
+
+    if (!session?.sessionId) return;
+
+    this.explorerTabService.openTab({
+      sessionId: session.sessionId,
+      tabId: item.tabId,
+      chartId: tab.chartId
+    });
+  }
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);

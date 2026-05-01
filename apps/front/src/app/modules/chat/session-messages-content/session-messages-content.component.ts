@@ -5,6 +5,7 @@ import { Extension } from '@codemirror/state';
 import type { ToolPart } from '@opencode-ai/sdk/v2';
 import { VS_LIGHT_THEME_EXTRA_SINGLE_SESSION_READ } from '#common/constants/code-themes/themes';
 import type { SessionApi } from '#common/zod/backend/session-api';
+import { ExplorerTabsQuery } from '../../../queries/explorer-tabs.query';
 import { MyDialogService } from '../../../services/my-dialog.service';
 import {
   ChatMessage,
@@ -129,7 +130,26 @@ export class SessionMessagesContentComponent {
     return index;
   }
 
-  constructor(private myDialogService: MyDialogService) {}
+  constructor(
+    private myDialogService: MyDialogService,
+    private explorerTabsQuery: ExplorerTabsQuery
+  ) {}
+
+  parseMproveTabUrl(url: string): string {
+    if (!url) return;
+
+    let prefix = 'mprove-tab://';
+
+    if (url.startsWith(prefix)) {
+      return url.substring(prefix.length);
+    }
+
+    return;
+  }
+
+  onMproveTabLinkClick(tabId: string) {
+    this.explorerTabsQuery.setActive({ tabId: tabId });
+  }
 
   getToolTitle(name: string): string {
     return TOOL_TITLE_MAP[name] || name;
