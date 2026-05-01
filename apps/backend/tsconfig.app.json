@@ -12,6 +12,6 @@
       "#node-common/*": ["../../libs/node-common/src/*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "build-docs.ts"],
   "exclude": ["node_modules", "dist"]
 }
