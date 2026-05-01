@@ -14,7 +14,6 @@
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.claude.json,target=/root/.claude.json,type=bind,consistency=cached",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.claude.json.backup,target=/root/.claude.json.backup,type=bind,consistency=cached",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.codex/auth.json,target=/root/.codex/auth.json,type=bind,consistency=cached",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.local/share/opencode/auth.json,target=/root/.local/share/opencode/auth.json,type=bind,consistency=cached",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/root/.zsh_history,type=bind,consistency=cached",
     "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind,consistency=cached",
     "source=mprove-pnpm-store,target=${containerWorkspaceFolder}/.pnpm-store,type=volume",
@@ -23,6 +22,7 @@
     "source=mprove-front-angular,target=${containerWorkspaceFolder}/apps/front/.angular,type=volume",
     "source=mprove-mcli-bun,target=${containerWorkspaceFolder}/mcli/.bun,type=volume",
 
+    "source=mprove-opencode,target=/root/.local/share/opencode,type=volume",
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=mprove-backend-node_modules,target=${containerWorkspaceFolder}/apps/backend/node_modules,type=volume",
     "source=mprove-blockml-node_modules,target=${containerWorkspaceFolder}/apps/blockml/node_modules,type=volume",

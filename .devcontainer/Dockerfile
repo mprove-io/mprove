@@ -4,11 +4,14 @@
 ARG VARIANT=4.0.9-24-bookworm
 FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:${VARIANT}
 
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends \
+RUN apt-get update && \
+    export DEBIAN_FRONTEND=noninteractive && \
+    apt-get -y install --no-install-recommends \
+    ca-certificates \
     direnv \
     sqlite3 \
-    uuid-runtime
+    uuid-runtime && \
+    update-ca-certificates
 
 RUN chsh -s /bin/zsh root \
   && chsh -s /bin/zsh node    
