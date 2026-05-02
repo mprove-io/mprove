@@ -36,6 +36,54 @@ function tryFormatJson(item: { text: string }): string {
   return text;
 }
 
+function parseJson(item: { text: string }): unknown {
+  let { text } = item;
+  let trimmed = text.trim();
+  if (!trimmed) return undefined;
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    return undefined;
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function formatReadDocsOutput(item: { text: string }): string | undefined {
+  let { text } = item;
+  let parsed = parseJson({ text: text });
+  let isObject = isRecord(parsed);
+  if (!isObject) return undefined;
+
+  let result = parsed as Record<string, unknown>;
+
+  let ok = result['ok'];
+  if (ok === false) {
+    let error = result['error'];
+    return typeof error === 'string' ? error : undefined;
+  }
+
+  let mode = result['mode'];
+  if (mode === 'file') {
+    let content = result['content'];
+    return typeof content === 'string' ? content : undefined;
+  }
+
+  if (mode === 'index') {
+    let files = result['files'];
+    let isArray = Array.isArray(files);
+    if (!isArray) return undefined;
+
+    let fileList = files as unknown[];
+    let isStringArray = fileList.every(f => typeof f === 'string');
+    return isStringArray ? (fileList as string[]).join('\n') : undefined;
+  }
+
+  return undefined;
+}
+
 function extractReadContent(item: { text: string }): string {
   let { text } = item;
   let contentMatch = text.match(/<content>([\s\S]*)<\/content>/);
@@ -236,7 +284,9 @@ export class SessionMessagesContentComponent {
     }
     if (!output) return;
     let displayOutput: string;
-    if (toolPart.tool === 'read') {
+    if (toolPart.tool === 'read_docs') {
+      displayOutput = formatReadDocsOutput({ text: output }) || output;
+    } else if (toolPart.tool === 'read') {
       displayOutput = extractReadContent({ text: output });
     } else if (toolPart.tool === 'task') {
       displayOutput = extractTaskResult({ text: output });
@@ -252,12 +302,16 @@ export class SessionMessagesContentComponent {
     } else {
       displayOutput = output;
     }
-    let rawOutput = displayOutput !== output ? output : undefined;
+    let rawOutput =
+      displayOutput !== output && toolPart.tool !== 'read_docs'
+        ? output
+        : undefined;
     this.myDialogService.showToolOutput({
       title: this.getToolTitle(toolPart.tool),
       subtitle: this.getToolSubtitle(toolPart),
       output: displayOutput,
       rawOutput: rawOutput,
+      wrapText: toolPart.tool !== 'read_docs',
       isError: toolPart.state?.status === 'error'
     });
   }

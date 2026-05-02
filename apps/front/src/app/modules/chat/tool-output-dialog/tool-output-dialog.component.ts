@@ -15,6 +15,7 @@ export interface ToolOutputDialogData {
   output: string;
   rawOutput?: string;
   isError: boolean;
+  wrapText?: boolean;
 }
 
 @Component({

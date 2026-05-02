@@ -19,14 +19,19 @@
   </div>
 
   <ng-scrollbar
-    [orientation]="'vertical'"
+    [orientation]="dataItem.wrapText === false ? 'auto' : 'vertical'"
     [visibility]="'hover'"
     [appearance]="'compact'"
     class="flex-1"
   >
     <div class="px-8 py-5">
       <pre
-        class="text-s600 whitespace-pre-wrap break-words font-mono text-[16px]"
+        class="text-s600 font-mono text-[16px]"
+        [ngClass]="
+          dataItem.wrapText === false
+            ? 'whitespace-pre'
+            : 'whitespace-pre-wrap break-words'
+        "
         >{{ showXml ? dataItem.rawOutput : dataItem.output }}</pre
       >
     </div>
