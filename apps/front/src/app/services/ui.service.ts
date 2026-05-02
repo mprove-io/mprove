@@ -7,6 +7,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { ProjectChartLink } from '#common/zod/backend/project-chart-link';
 import type { ProjectDashboardLink } from '#common/zod/backend/project-dashboard-link';
+import type { ProjectExplorerSessionLink } from '#common/zod/backend/project-explorer-session-link';
 import type { ProjectModelLink } from '#common/zod/backend/project-model-link';
 import type { ProjectReportLink } from '#common/zod/backend/project-report-link';
 import type { Ui } from '#common/zod/backend/ui';
@@ -32,6 +33,7 @@ export class UiService {
     projectModelLinks?: ProjectModelLink[];
     projectChartLinks?: ProjectChartLink[];
     projectDashboardLinks?: ProjectDashboardLink[];
+    projectExplorerSessionLinks?: ProjectExplorerSessionLink[];
     projectReportLinks?: ProjectReportLink[];
     permissionsAutoAcceptSessionIds?: string[];
     newSessionPermissionsAutoAccept?: boolean;
@@ -46,6 +48,7 @@ export class UiService {
       projectModelLinks,
       projectChartLinks,
       projectDashboardLinks,
+      projectExplorerSessionLinks,
       projectReportLinks,
       permissionsAutoAcceptSessionIds,
       newSessionPermissionsAutoAccept,
@@ -73,6 +76,9 @@ export class UiService {
       projectDashboardLinks: isDefined(projectDashboardLinks)
         ? projectDashboardLinks
         : uiState.projectDashboardLinks,
+      projectExplorerSessionLinks: isDefined(projectExplorerSessionLinks)
+        ? projectExplorerSessionLinks
+        : uiState.projectExplorerSessionLinks,
       projectReportLinks: isDefined(projectReportLinks)
         ? projectReportLinks
         : uiState.projectReportLinks,
@@ -327,6 +333,65 @@ export class UiService {
 
     this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });
     this.setUserUi({ projectReportLinks: newProjectReportLinks });
+  }
+
+  setProjectExplorerSessionLink(item: {
+    sessionId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    tabId: string;
+  }) {
+    let { sessionId, repoId, branchId, envId, tabId } = item;
+
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(sessionId) || isUndefined(nav.projectId)) {
+      return;
+    }
+
+    let links = this.uiQuery.getValue().projectExplorerSessionLinks ?? [];
+
+    let link = links.find(l => l.projectId === nav.projectId);
+
+    if (
+      link?.sessionId === sessionId &&
+      link?.repoId === repoId &&
+      link?.branchId === branchId &&
+      link?.envId === envId &&
+      link?.tabId === tabId
+    ) {
+      return;
+    }
+
+    let newLink: ProjectExplorerSessionLink = {
+      projectId: nav.projectId,
+      sessionId: sessionId,
+      repoId: repoId,
+      branchId: branchId,
+      envId: envId,
+      tabId: tabId,
+      navTs: Date.now()
+    };
+
+    let newProjectExplorerSessionLinks = [
+      newLink,
+      ...links.filter(r => !(r.projectId === nav.projectId))
+    ];
+
+    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+    newProjectExplorerSessionLinks = newProjectExplorerSessionLinks.filter(
+      l => l.navTs >= oneYearAgoTimestamp
+    );
+
+    this.uiQuery.updatePart({
+      projectExplorerSessionLinks: newProjectExplorerSessionLinks
+    });
+
+    this.setUserUi({
+      projectExplorerSessionLinks: newProjectExplorerSessionLinks
+    });
   }
 
   clearProjectChartLink() {

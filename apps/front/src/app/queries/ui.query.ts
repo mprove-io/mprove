@@ -12,6 +12,7 @@ import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import type { ProjectChartLink } from '#common/zod/backend/project-chart-link';
 import type { ProjectDashboardLink } from '#common/zod/backend/project-dashboard-link';
+import type { ProjectExplorerSessionLink } from '#common/zod/backend/project-explorer-session-link';
 import type { ProjectModelLink } from '#common/zod/backend/project-model-link';
 import type { ProjectReportLink } from '#common/zod/backend/project-report-link';
 import type { Column } from '#common/zod/blockml/column';
@@ -68,6 +69,7 @@ export class UiState {
   projectModelLinks: ProjectModelLink[];
   projectChartLinks: ProjectChartLink[];
   projectDashboardLinks: ProjectDashboardLink[];
+  projectExplorerSessionLinks: ProjectExplorerSessionLink[];
   projectReportLinks: ProjectReportLink[];
   permissionsAutoAcceptSessionIds: string[];
   isOptimisticLoading: boolean;
@@ -129,6 +131,7 @@ let uiState: UiState = {
   projectModelLinks: [],
   projectChartLinks: [],
   projectDashboardLinks: [],
+  projectExplorerSessionLinks: [],
   projectReportLinks: [],
   permissionsAutoAcceptSessionIds: [],
   newSessionPermissionsAutoAccept: false,
@@ -179,6 +182,10 @@ export class UiQuery extends BaseQuery<UiState> {
 
   projectDashboardLinks$ = this.store.pipe(
     select(state => state.projectDashboardLinks)
+  );
+
+  projectExplorerSessionLinks$ = this.store.pipe(
+    select(state => state.projectExplorerSessionLinks)
   );
 
   projectReportLinks$ = this.store.pipe(

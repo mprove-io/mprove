@@ -122,6 +122,7 @@ export const DEFAULT_SRV_UI: Ui = {
   projectModelLinks: [],
   projectChartLinks: [],
   projectDashboardLinks: [],
+  projectExplorerSessionLinks: [],
   projectReportLinks: [],
   permissionsAutoAcceptSessionIds: [],
   newSessionPermissionsAutoAccept: false,

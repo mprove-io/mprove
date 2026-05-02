@@ -172,7 +172,28 @@ export class NavbarComponent implements OnInit {
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();
 
-    this.navigateService.navigateToExplorer();
+    let pLink = this.uiQuery
+      .getValue()
+      .projectExplorerSessionLinks?.find(
+        link => link.projectId === this.nav.projectId
+      );
+
+    if (
+      isDefined(pLink?.sessionId) &&
+      pLink.repoId === this.nav.repoId &&
+      pLink.branchId === this.nav.branchId &&
+      pLink.envId === this.nav.envId
+    ) {
+      this.navigateService.navigateToExplorerSession({
+        sessionId: pLink.sessionId,
+        repoId: pLink.repoId,
+        branchId: pLink.branchId,
+        envId: pLink.envId
+      });
+      return;
+    } else {
+      this.navigateService.navigateToExplorer();
+    }
   }
 
   navigateCharts() {

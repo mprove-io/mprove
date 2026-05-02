@@ -64,6 +64,12 @@ export class UsersService {
           ? user.ui?.projectDashboardLinks
           : defaultSrvUi.projectDashboardLinks,
         //
+        projectExplorerSessionLinks: isDefined(
+          user.ui?.projectExplorerSessionLinks
+        )
+          ? user.ui?.projectExplorerSessionLinks
+          : defaultSrvUi.projectExplorerSessionLinks,
+        //
         projectReportLinks: isDefined(user.ui?.projectReportLinks)
           ? user.ui?.projectReportLinks
           : defaultSrvUi.projectReportLinks,

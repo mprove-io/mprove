@@ -15,6 +15,7 @@ import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ExplorerTabService } from '#front/app/services/explorer-tab.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 import { CHAT_SCOPE } from '../chat/chat-scope.token';
 import type { ExplorerTab, ExplorerTabContent } from './explorer-tab.interface';
 
@@ -56,6 +57,8 @@ export class ExplorerComponent implements OnInit {
 
   activeTabOpener$ = this.activeTabId$.pipe(
     tap(activeTabId => {
+      this.persistCurrentSessionLink({ tabId: activeTabId });
+
       if (!activeTabId) return;
 
       this.openExplorerTab({ tabId: activeTabId });
@@ -99,6 +102,7 @@ export class ExplorerComponent implements OnInit {
     private explorerTabsQuery: ExplorerTabsQuery,
     private explorerTabService: ExplorerTabService,
     private uiQuery: UiQuery,
+    private uiService: UiService,
     private navigateService: NavigateService
   ) {}
 
@@ -157,6 +161,21 @@ export class ExplorerComponent implements OnInit {
     let ar = this.router.url.split('?')[0].split('/');
     this.isSessionRoute = ar.includes(PATH_SESSION);
     this.isNewSessionRoute = ar.includes(PATH_NEW_SESSION);
+
+    let nav = this.navQuery.getValue();
+
+    let pLink = this.uiQuery
+      .getValue()
+      .projectExplorerSessionLinks?.find(
+        link => link.projectId === nav.projectId
+      );
+
+    if (
+      pLink?.sessionId === this.sessionQuery.getValue()?.sessionId &&
+      pLink.tabId
+    ) {
+      this.explorerTabsQuery.setActive({ tabId: pLink.tabId });
+    }
   }
 
   toggleHistory() {
@@ -165,5 +184,19 @@ export class ExplorerComponent implements OnInit {
 
   newChat() {
     this.navigateService.navigateToExplorer();
+  }
+
+  private persistCurrentSessionLink(item: { tabId: string }) {
+    let session = this.sessionQuery.getValue();
+
+    if (!session?.sessionId) return;
+
+    this.uiService.setProjectExplorerSessionLink({
+      sessionId: session.sessionId,
+      repoId: session.repoId,
+      branchId: session.branchId,
+      envId: session.envId,
+      tabId: item.tabId
+    });
   }
 }
