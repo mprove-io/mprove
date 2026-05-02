@@ -168,7 +168,8 @@ export class SessionsService {
       firstMessage: session.firstMessage,
       title: ocSession?.openSession?.title,
       opencodeSessionId: session.opencodeSessionId,
-      useCodex: session.useCodex
+      useCodex: session.useCodex,
+      closedExplorerTabIds: session.closedExplorerTabIds
     };
   }
 

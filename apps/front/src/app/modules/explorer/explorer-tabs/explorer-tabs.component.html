@@ -12,7 +12,11 @@
     <button
       type="button"
       class="text-s400 hover:text-s500 hover:bg-m200 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none [&_svg]:h-4 [&_svg]:w-4"
+      [ngClass]="{
+        invisible: tab.id !== activeTabId
+      }"
       (click)="onClose($event, tab)"
+      [disabled]="tab.id !== activeTabId"
     >
       <m-delete-icon></m-delete-icon>
     </button>
