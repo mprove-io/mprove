@@ -102,16 +102,14 @@ export class ExplorerComponent implements OnInit {
   onTabSelect(tabId: string) {
     let state = this.explorerTabsQuery.getValue();
 
+    if (state.activeTabId === tabId) return;
+
     this.explorerTabsQuery.setContent({
       tabId: tabId,
       content: { status: 'loading' }
     });
 
     this.explorerTabsQuery.setActive({ tabId: tabId });
-
-    if (state.activeTabId === tabId) {
-      this.openExplorerTab({ tabId: tabId });
-    }
   }
 
   onTabClose(tabId: string) {

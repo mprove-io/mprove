@@ -3,11 +3,12 @@
 >
   <div
     *ngFor="let tab of tabs; trackBy: trackByTabId"
-    class="text-s1 hover:bg-m50 group relative flex h-12 min-w-36 max-w-[30rem] flex-shrink-0 select-none flex-row items-center gap-x-2 px-3 text-base"
+    class="text-s1 hover:bg-m50 group relative flex h-12 min-w-36 max-w-[30rem] flex-shrink-0 cursor-pointer select-none flex-row items-center gap-x-2 px-3 text-base"
     [ngClass]="{
       'text-m600': tab.id === activeTabId,
       'text-s500': tab.id !== activeTabId
     }"
+    (click)="onSelect(tab)"
   >
     <button
       type="button"
@@ -24,7 +25,6 @@
     <button
       type="button"
       class="min-w-0 flex-1 truncate text-left focus:outline-none"
-      (click)="onSelect(tab)"
       >{{ tab.label }}</button
     >
     <span
