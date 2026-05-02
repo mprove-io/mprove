@@ -1,3 +1,4 @@
+import type { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { BmlError } from '#common/zod/blockml/bml-error';
@@ -8,6 +9,7 @@ export interface ExplorerTab {
   label: string;
   closable?: boolean;
   kind?: string;
+  chartType?: ChartTypeEnum;
   chartId?: string;
   modelId?: string;
 }

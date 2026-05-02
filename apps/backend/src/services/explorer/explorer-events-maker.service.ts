@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import type { Event } from '@opencode-ai/sdk/v2';
 import { SESSION_TAB_CREATED_EVENT_TYPE } from '#common/constants/top';
+import type { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 
 @Injectable()
 export class ExplorerEventsMakerService {
@@ -164,6 +165,7 @@ export class ExplorerEventsMakerService {
   makeChartTabEvent(item: {
     tabId: string;
     chartId: string;
+    chartType: ChartTypeEnum;
     title: string;
     modelId: string;
   }): Event {
@@ -172,6 +174,7 @@ export class ExplorerEventsMakerService {
       properties: {
         tabId: item.tabId,
         chartId: item.chartId,
+        chartType: item.chartType,
         title: item.title,
         modelId: item.modelId
       }

@@ -56,16 +56,28 @@ export class ExplorerTabsQuery extends BaseQuery<ExplorerTabsState> {
     let state = this.getValue();
 
     let allExists = state.allTabs.some(t => t.id === item.tab.id);
-    let allTabs = allExists ? state.allTabs : [...state.allTabs, item.tab];
+    let allTabs = allExists
+      ? state.allTabs.map(t => (t.id === item.tab.id ? item.tab : t))
+      : [...state.allTabs, item.tab];
+
     let isClosed = state.closedTabIds.indexOf(item.tab.id) > -1;
+
     let exists = state.tabs.some(t => t.id === item.tab.id);
 
     if (exists || isClosed) {
-      this.updatePart({ allTabs: allTabs });
+      let tabs = state.tabs.map(t => (t.id === item.tab.id ? item.tab : t));
+
+      this.updatePart({
+        tabs: tabs,
+        allTabs: allTabs
+      });
       return false;
     }
 
-    this.updatePart({ allTabs: allTabs, tabs: [...state.tabs, item.tab] });
+    this.updatePart({
+      allTabs: allTabs,
+      tabs: [...state.tabs, item.tab]
+    });
     return true;
   }
 

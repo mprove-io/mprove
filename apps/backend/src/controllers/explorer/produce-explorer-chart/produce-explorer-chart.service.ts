@@ -103,6 +103,7 @@ export class ProduceExplorerChartService {
     let tabEvent = this.explorerEventsMakerService.makeChartTabEvent({
       tabId: tabId,
       chartId: chart.chartId,
+      chartType: chart.chartType,
       title: title,
       modelId: modelId
     });

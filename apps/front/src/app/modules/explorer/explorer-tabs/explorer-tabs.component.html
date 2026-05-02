@@ -10,6 +10,41 @@
     }"
     (click)="onSelect(tab)"
   >
+    <div
+      *ngIf="tab.chartType"
+      class="flex h-5 w-5 flex-shrink-0 items-center justify-center [&_svg]:h-5 [&_svg]:w-5"
+    >
+      <m-chart-table-icon
+        *ngIf="tab.chartType === chartTypeEnum.Table"
+      ></m-chart-table-icon>
+
+      <m-chart-line-icon
+        *ngIf="tab.chartType === chartTypeEnum.Line"
+      ></m-chart-line-icon>
+
+      <m-chart-bar-icon
+        *ngIf="tab.chartType === chartTypeEnum.Bar"
+      ></m-chart-bar-icon>
+
+      <m-chart-scatter-icon
+        *ngIf="tab.chartType === chartTypeEnum.Scatter"
+      ></m-chart-scatter-icon>
+
+      <m-chart-single-icon
+        *ngIf="tab.chartType === chartTypeEnum.Single"
+      ></m-chart-single-icon>
+
+      <m-chart-pie-icon
+        *ngIf="tab.chartType === chartTypeEnum.Pie"
+      ></m-chart-pie-icon>
+    </div>
+
+    <button
+      type="button"
+      class="min-w-0 flex-1 truncate text-left focus:outline-none"
+      >{{ tab.label }}</button
+    >
+
     <button
       type="button"
       class="text-s400 hover:text-s500 hover:bg-m200 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none [&_svg]:h-4 [&_svg]:w-4"
@@ -22,11 +57,6 @@
       <m-delete-icon></m-delete-icon>
     </button>
 
-    <button
-      type="button"
-      class="min-w-0 flex-1 truncate text-left focus:outline-none"
-      >{{ tab.label }}</button
-    >
     <span
       *ngIf="tab.id === activeTabId"
       class="bg-m600 absolute bottom-0 left-0 h-[2px] w-full"

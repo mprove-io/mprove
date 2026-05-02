@@ -65,11 +65,46 @@
                 >
                   <button
                     type="button"
-                    class="text-m600 underline"
+                    class="text-m600 inline-flex items-center gap-1 underline"
                     [title]="node.title ?? ''"
                     (click)="onMproveTabLinkClick(tabId)"
-                    [remarkNode]="node"
-                  ></button>
+                  >
+                    <ng-container
+                      *ngIf="
+                        getMproveTabChartType({ tabId: tabId }) as chartType
+                      "
+                    >
+                      <span
+                        class="inline-flex h-5 w-5 flex-shrink-0 items-center justify-center align-[-0.125em] [&_svg]:h-5 [&_svg]:w-5"
+                      >
+                        <m-chart-table-icon
+                          *ngIf="chartType === chartTypeEnum.Table"
+                        ></m-chart-table-icon>
+
+                        <m-chart-line-icon
+                          *ngIf="chartType === chartTypeEnum.Line"
+                        ></m-chart-line-icon>
+
+                        <m-chart-bar-icon
+                          *ngIf="chartType === chartTypeEnum.Bar"
+                        ></m-chart-bar-icon>
+
+                        <m-chart-scatter-icon
+                          *ngIf="chartType === chartTypeEnum.Scatter"
+                        ></m-chart-scatter-icon>
+
+                        <m-chart-single-icon
+                          *ngIf="chartType === chartTypeEnum.Single"
+                        ></m-chart-single-icon>
+
+                        <m-chart-pie-icon
+                          *ngIf="chartType === chartTypeEnum.Pie"
+                        ></m-chart-pie-icon>
+                      </span>
+                    </ng-container>
+
+                    <span [remarkNode]="node"></span>
+                  </button>
                 </ng-container>
 
                 <ng-template #extLink>

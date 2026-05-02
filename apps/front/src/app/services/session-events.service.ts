@@ -111,6 +111,7 @@ export class SessionEventsService {
         id: props.tabId,
         label: props.title,
         kind: 'chart',
+        chartType: props.chartType,
         chartId: props.chartId,
         modelId: props.modelId,
         closable: false
