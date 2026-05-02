@@ -5,7 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { EXPLORER_PAGE_TITLE } from '#common/constants/page-titles';
-import { PATH_SESSION } from '#common/constants/top';
+import { PATH_NEW_SESSION, PATH_SESSION } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ExplorerTabsQuery } from '#front/app/queries/explorer-tabs.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -39,6 +39,8 @@ export class ExplorerComponent implements OnInit {
 
   isSessionRoute = false;
 
+  isNewSessionRoute = false;
+
   tabs$ = this.explorerTabsQuery.tabs$;
 
   activeTabId$ = this.explorerTabsQuery.activeTabId$;
@@ -67,6 +69,7 @@ export class ExplorerComponent implements OnInit {
 
       let wasSessionRoute = this.isSessionRoute;
       this.isSessionRoute = ar.includes(PATH_SESSION);
+      this.isNewSessionRoute = ar.includes(PATH_NEW_SESSION);
 
       if (wasSessionRoute && !this.isSessionRoute) {
         this.sessionQuery.reset();
@@ -153,6 +156,7 @@ export class ExplorerComponent implements OnInit {
 
     let ar = this.router.url.split('?')[0].split('/');
     this.isSessionRoute = ar.includes(PATH_SESSION);
+    this.isNewSessionRoute = ar.includes(PATH_NEW_SESSION);
   }
 
   toggleHistory() {
