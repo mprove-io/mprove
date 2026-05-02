@@ -89,19 +89,7 @@
         ></m-chart-view>
       </div>
 
-      <div
-        class="mt-10 flex flex-row"
-        [ngClass]="{
-          'max-h-[24%] min-h-[24%]':
-            mconfig?.chart.type === chartTypeEnumLine ||
-            mconfig?.chart.type === chartTypeEnumBar ||
-            mconfig?.chart.type === chartTypeEnumScatter,
-          'max-h-[23%] min-h-[23%]':
-            mconfig?.chart.type !== chartTypeEnumLine &&
-            mconfig?.chart.type !== chartTypeEnumBar &&
-            mconfig?.chart.type !== chartTypeEnumScatter
-        }"
-      >
+      <div class="mt-10 flex max-h-[24%] min-h-[24%] flex-row">
         <div
           *ngIf="mconfig?.fields?.length > 0"
           class="flex w-full max-w-max flex-1 overflow-auto"
