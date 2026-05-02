@@ -104,11 +104,6 @@ export class ExplorerComponent implements OnInit {
 
     if (state.activeTabId === tabId) return;
 
-    this.explorerTabsQuery.setContent({
-      tabId: tabId,
-      content: { status: 'loading' }
-    });
-
     this.explorerTabsQuery.setActive({ tabId: tabId });
   }
 
@@ -141,6 +136,10 @@ export class ExplorerComponent implements OnInit {
     let session = this.sessionQuery.getValue();
 
     if (!session?.sessionId) return;
+
+    let content = state.contents[item.tabId];
+
+    if (content?.status === 'ready') return;
 
     this.explorerTabService.openTab({
       sessionId: session.sessionId,
