@@ -3,16 +3,16 @@
 >
   <div
     *ngFor="let tab of tabs; trackBy: trackByTabId"
-    class="text-s1 hover:bg-m50 group relative flex h-12 min-w-36 max-w-[30rem] flex-shrink-0 cursor-pointer select-none flex-row items-center gap-x-2 px-3 text-base"
-    [ngClass]="{
-      'text-m600': tab.id === activeTabId,
-      'text-s500': tab.id !== activeTabId
-    }"
+    class="text-s1 hover:bg-m50 group relative flex min-h-12 min-w-36 max-w-[30rem] flex-shrink-0 cursor-pointer select-none flex-row items-center gap-x-2 px-4 py-4 text-base"
     (click)="onSelect(tab)"
   >
     <div
       *ngIf="tab.chartType"
-      class="flex h-5 w-5 flex-shrink-0 items-center justify-center [&_svg]:h-5 [&_svg]:w-5"
+      class="flex h-6 w-6 flex-shrink-0 items-center justify-center [&_svg]:h-6 [&_svg]:w-6"
+      [ngClass]="{
+        'text-m600': tab.id === activeTabId,
+        'text-s400': tab.id !== activeTabId
+      }"
     >
       <m-chart-table-icon
         *ngIf="tab.chartType === chartTypeEnum.Table"
@@ -41,7 +41,11 @@
 
     <button
       type="button"
-      class="min-w-0 flex-1 truncate text-left focus:outline-none"
+      class="min-w-0 flex-1 truncate text-left text-[17px] focus:outline-none"
+      [ngClass]="{
+        'text-m600': tab.id === activeTabId,
+        'text-s500': tab.id !== activeTabId
+      }"
       >{{ tab.label }}</button
     >
 

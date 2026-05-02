@@ -65,7 +65,7 @@
                 >
                   <button
                     type="button"
-                    class="text-m600 inline-flex items-center gap-1 underline"
+                    class="text-m600 ml-2 inline-flex h-6 items-center gap-2 align-middle leading-6"
                     [title]="node.title ?? ''"
                     (click)="onMproveTabLinkClick(tabId)"
                   >
@@ -75,7 +75,7 @@
                       "
                     >
                       <span
-                        class="inline-flex h-5 w-5 flex-shrink-0 items-center justify-center align-[-0.125em] [&_svg]:h-5 [&_svg]:w-5"
+                        class="inline-flex h-6 w-6 flex-shrink-0 items-center justify-center align-middle [&_svg]:h-6 [&_svg]:w-6"
                       >
                         <m-chart-table-icon
                           *ngIf="chartType === chartTypeEnum.Table"
