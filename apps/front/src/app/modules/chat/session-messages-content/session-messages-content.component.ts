@@ -6,6 +6,7 @@ import type { ToolPart } from '@opencode-ai/sdk/v2';
 import { VS_LIGHT_THEME_EXTRA_SINGLE_SESSION_READ } from '#common/constants/code-themes/themes';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import { ExplorerTabsQuery } from '../../../queries/explorer-tabs.query';
+import { ExplorerTabService } from '../../../services/explorer-tab.service';
 import { MyDialogService } from '../../../services/my-dialog.service';
 import {
   ChatMessage,
@@ -132,7 +133,8 @@ export class SessionMessagesContentComponent {
 
   constructor(
     private myDialogService: MyDialogService,
-    private explorerTabsQuery: ExplorerTabsQuery
+    private explorerTabsQuery: ExplorerTabsQuery,
+    private explorerTabService: ExplorerTabService
   ) {}
 
   parseMproveTabUrl(url: string): string {
@@ -148,6 +150,14 @@ export class SessionMessagesContentComponent {
   }
 
   onMproveTabLinkClick(tabId: string) {
+    if (this.session?.sessionId) {
+      this.explorerTabService.reopenTab({
+        sessionId: this.session.sessionId,
+        tabId: tabId
+      });
+      return;
+    }
+
     this.explorerTabsQuery.setActive({ tabId: tabId });
   }
 

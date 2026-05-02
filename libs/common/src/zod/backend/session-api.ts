@@ -25,7 +25,8 @@ export let zSessionApi = z
     lastActivityTs: z.number().int(),
     firstMessage: z.string().nullish(),
     title: z.string().nullish(),
-    useCodex: z.boolean()
+    useCodex: z.boolean(),
+    closedExplorerTabIds: z.array(z.string()).nullish()
   })
   .meta({ id: 'SessionApi' });
 

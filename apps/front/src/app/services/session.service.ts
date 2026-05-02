@@ -22,6 +22,7 @@ import type {
 import { binarySearch } from '#front/app/functions/binary-search';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
+import { ExplorerTabsQuery } from '#front/app/queries/explorer-tabs.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
@@ -77,6 +78,7 @@ export class SessionService {
     private sessionQuery: SessionQuery,
     private sessionEventsQuery: SessionEventsQuery,
     private sessionBundleQuery: SessionBundleQuery,
+    private explorerTabsQuery: ExplorerTabsQuery,
     private sessionsQuery: SessionsQuery,
     private sessionEventsService: SessionEventsService,
     private myDialogService: MyDialogService,
@@ -219,6 +221,13 @@ export class SessionService {
     let { payload, withOptimisticMerge } = item;
 
     this.sessionQuery.update(payload.session);
+
+    let closedTabIds = payload.session.closedExplorerTabIds ?? [];
+
+    this.explorerTabsQuery.setSession({
+      sessionId: payload.session.sessionId,
+      closedTabIds: closedTabIds
+    });
 
     let messages = payload.messages;
 

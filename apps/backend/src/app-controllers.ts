@@ -103,6 +103,7 @@ import { RevertRepoToRemoteController } from './controllers/repos/revert-repo-to
 import { SyncRepoController } from './controllers/repos/sync-repo/sync-repo.controller';
 import { RunController } from './controllers/run/run/run.controller';
 import { ArchiveSessionController } from './controllers/sessions/archive-session/archive-session.controller';
+import { CloseExplorerSessionTabController } from './controllers/sessions/close-explorer-session-tab/close-explorer-session-tab.controller';
 import { CreateEditorSessionController } from './controllers/sessions/create-editor-session/create-editor-session.controller';
 import { CreateExplorerSessionController } from './controllers/sessions/create-explorer-session/create-explorer-session.controller';
 import { CreateSessionSseTicketController } from './controllers/sessions/create-session-sse-ticket/create-session-sse-ticket.controller';
@@ -157,6 +158,7 @@ export const appControllers = [
   PauseEditorSessionController,
   GetSessionsListController,
   GetSessionController,
+  CloseExplorerSessionTabController,
   SetSessionTitleController,
   GetSessionProviderModelsController,
 

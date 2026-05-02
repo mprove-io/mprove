@@ -98,10 +98,15 @@ export class SessionEventsService {
     let state = this.explorerTabsQuery.getValue();
 
     if (state.sessionId !== mproveSessionId) {
-      this.explorerTabsQuery.setSession({ sessionId: mproveSessionId });
+      let session = this.sessionQuery.getValue();
+
+      this.explorerTabsQuery.setSession({
+        sessionId: mproveSessionId,
+        closedTabIds: session?.closedExplorerTabIds ?? []
+      });
     }
 
-    this.explorerTabsQuery.appendTab({
+    let isOpened = this.explorerTabsQuery.appendTab({
       tab: {
         id: props.tabId,
         label: props.title,
@@ -112,7 +117,9 @@ export class SessionEventsService {
       }
     });
 
-    this.explorerTabsQuery.setActive({ tabId: props.tabId });
+    if (isOpened) {
+      this.explorerTabsQuery.setActive({ tabId: props.tabId });
+    }
 
     return true;
   }

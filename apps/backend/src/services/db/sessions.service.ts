@@ -82,6 +82,7 @@ export class SessionsService {
       apiKeyPrefix: item.apiKeyPrefix,
       apiKeySecretHash: item.apiKeySecretHash,
       apiKeySalt: item.apiKeySalt,
+      closedExplorerTabIds: [],
       initialBranch: item.initialBranch,
       envId: item.envId,
       initialCommit: item.initialCommit,

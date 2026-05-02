@@ -344,7 +344,8 @@ export let zSessionSt = z
     opencodePassword: z.string().nullish(),
     firstMessage: z.string().nullish(),
     apiKeySecretHash: z.string().nullish(),
-    apiKeySalt: z.string().nullish()
+    apiKeySalt: z.string().nullish(),
+    closedExplorerTabIds: z.array(z.string()).nullish()
   })
   .meta({ id: 'SessionSt' });
 export type SessionSt = z.infer<typeof zSessionSt>;

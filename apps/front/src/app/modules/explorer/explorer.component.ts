@@ -115,7 +115,14 @@ export class ExplorerComponent implements OnInit {
   }
 
   onTabClose(tabId: string) {
-    this.explorerTabsQuery.removeTab({ tabId: tabId });
+    let session = this.sessionQuery.getValue();
+
+    if (!session?.sessionId) return;
+
+    this.explorerTabService.closeTab({
+      sessionId: session.sessionId,
+      tabId: tabId
+    });
   }
 
   syntheticTile(content: { chart: any; mconfig: any }) {

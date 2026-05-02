@@ -173,6 +173,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendPauseEditorSession = 'api/ToBackendPauseEditorSession',
   ToBackendSendMessageToEditorSession = 'api/ToBackendSendMessageToEditorSession',
   ToBackendSendMessageToExplorerSession = 'api/ToBackendSendMessageToExplorerSession',
+  ToBackendCloseExplorerSessionTab = 'api/ToBackendCloseExplorerSessionTab',
   ToBackendSetSessionTitle = 'api/ToBackendSetSessionTitle',
   //
   ToBackendProduceExplorerChart = 'api/ToBackendProduceExplorerChart',

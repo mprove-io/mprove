@@ -7,7 +7,9 @@ import type {
   ToBackendOpenExplorerChartTabRequestPayload,
   ToBackendOpenExplorerChartTabResponse
 } from '#common/zod/to-backend/explorer/to-backend-open-explorer-chart-tab';
+import type { ToBackendCloseExplorerSessionTabRequestPayload } from '#common/zod/to-backend/sessions/to-backend-close-explorer-session-tab';
 import { ExplorerTabsQuery } from '#front/app/queries/explorer-tabs.query';
+import { SessionQuery } from '#front/app/queries/session.query';
 import { ApiService } from '#front/app/services/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -16,7 +18,8 @@ export class ExplorerTabService {
 
   constructor(
     private apiService: ApiService,
-    private explorerTabsQuery: ExplorerTabsQuery
+    private explorerTabsQuery: ExplorerTabsQuery,
+    private sessionQuery: SessionQuery
   ) {}
 
   openTab(item: { sessionId: string; tabId: string; chartId: string }) {
@@ -57,6 +60,53 @@ export class ExplorerTabService {
           }, delayMs);
         })
       )
+      .subscribe();
+  }
+
+  closeTab(item: { sessionId: string; tabId: string }) {
+    let closedExplorerTabIds = this.explorerTabsQuery.closeTab({
+      tabId: item.tabId
+    });
+
+    this.persistClosedTabs({
+      sessionId: item.sessionId,
+      closedExplorerTabIds: closedExplorerTabIds
+    });
+  }
+
+  reopenTab(item: { sessionId: string; tabId: string }) {
+    let closedExplorerTabIds = this.explorerTabsQuery.reopenTab({
+      tabId: item.tabId
+    });
+
+    this.persistClosedTabs({
+      sessionId: item.sessionId,
+      closedExplorerTabIds: closedExplorerTabIds
+    });
+  }
+
+  private persistClosedTabs(item: {
+    sessionId: string;
+    closedExplorerTabIds: string[];
+  }) {
+    let payload: ToBackendCloseExplorerSessionTabRequestPayload = {
+      sessionId: item.sessionId,
+      closedExplorerTabIds: item.closedExplorerTabIds
+    };
+
+    let session = this.sessionQuery.getValue();
+    if (session?.sessionId === item.sessionId) {
+      this.sessionQuery.updatePart({
+        closedExplorerTabIds: item.closedExplorerTabIds
+      });
+    }
+
+    this.apiService
+      .req({
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendCloseExplorerSessionTab,
+        payload: payload
+      })
       .subscribe();
   }
 

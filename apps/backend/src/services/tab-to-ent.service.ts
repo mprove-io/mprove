@@ -1023,7 +1023,8 @@ export class TabToEntService {
       opencodePassword: tab.opencodePassword,
       firstMessage: tab.firstMessage,
       apiKeySecretHash: tab.apiKeySecretHash,
-      apiKeySalt: tab.apiKeySalt
+      apiKeySalt: tab.apiKeySalt,
+      closedExplorerTabIds: tab.closedExplorerTabIds
     };
 
     let sessionLt: SessionLt = {};
