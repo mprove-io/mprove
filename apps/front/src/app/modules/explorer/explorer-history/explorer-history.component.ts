@@ -8,6 +8,11 @@ import {
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
+import {
+  BRANCH_MAIN,
+  PROD_REPO_ID,
+  PROJECT_ENV_PROD
+} from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -25,6 +30,12 @@ import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
+type HistorySessionGroup = {
+  title: string;
+  sessions: SessionApiX[];
+};
+
+let ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 let EXPLORER_HISTORY_SPINNER_NAME = 'explorerHistoryRefresh';
 
 @Component({
@@ -37,6 +48,7 @@ export class ExplorerHistoryComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
 
   sessions: SessionApiX[] = [];
+  sessionGroups: HistorySessionGroup[] = [];
   sessionsLoaded = false;
   isRefreshing = false;
   currentSession: SessionApi;
@@ -50,6 +62,7 @@ export class ExplorerHistoryComponent implements OnInit {
           Object.assign({}, s, <SessionApiX>{ displayTitle: makeTitle(s) })
         )
         .sort((a, b) => b.createdTs - a.createdTs);
+      this.sessionGroups = this.groupSessions({ sessions: this.sessions });
 
       this.cd.detectChanges();
     })
@@ -75,6 +88,49 @@ export class ExplorerHistoryComponent implements OnInit {
 
   ngOnInit() {
     this.loadSessions();
+  }
+
+  showSessionEnvRepoBranch(item: { session: SessionApiX }) {
+    return (
+      item.session.envId !== PROJECT_ENV_PROD ||
+      item.session.repoId !== PROD_REPO_ID ||
+      item.session.branchId !== BRANCH_MAIN
+    );
+  }
+
+  groupSessions(item: { sessions: SessionApiX[] }) {
+    let now = Date.now();
+    let groups: HistorySessionGroup[] = [];
+
+    item.sessions.forEach(session => {
+      let title = this.makeGroupTitle({
+        createdTs: session.createdTs,
+        now: now
+      });
+      let group = groups.find(g => g.title === title);
+
+      if (group) {
+        group.sessions.push(session);
+      } else {
+        groups.push({ title: title, sessions: [session] });
+      }
+    });
+
+    return groups;
+  }
+
+  makeGroupTitle(item: { createdTs: number; now: number }) {
+    let date = new Date(item.createdTs);
+
+    if (item.now - item.createdTs < ONE_WEEK_MS) {
+      return new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date);
+    }
+
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    }).format(date);
   }
 
   loadSessions() {
@@ -144,8 +200,6 @@ export class ExplorerHistoryComponent implements OnInit {
       branchId: session.branchId,
       envId: session.envId
     });
-
-    this.close.emit();
   }
 
   renameSession(event: MouseEvent, session: SessionApiX) {
@@ -170,6 +224,10 @@ export class ExplorerHistoryComponent implements OnInit {
 
   trackBySessionId(_index: number, session: SessionApiX) {
     return session.sessionId;
+  }
+
+  trackByGroupTitle(_index: number, group: HistorySessionGroup) {
+    return group.title;
   }
 
   closeOverlay() {

@@ -1,24 +1,12 @@
 <div class="bg-m1 flex h-full cursor-default flex-col overflow-hidden">
   <div class="mx-6 mb-6 mt-8 flex min-h-0 flex-1 flex-col">
     <div class="flex h-11 flex-shrink-0 flex-row items-center">
-      <div class="flex w-1/4 flex-row items-center">
+      <div class="flex flex-row items-center">
         <div
           data-cy="explorerTitle"
           class="text-s1 flex select-none items-center self-center text-2xl font-semibold"
         >
           {{ pageTitle }}
-        </div>
-
-        <div class="flex flex-1"></div>
-
-        <div class="ml-7 flex cursor-pointer flex-row items-center">
-          <button
-            data-cy="explorerHistoryButton"
-            type="button"
-            class="text-s500 flex items-center justify-center text-lg focus:outline-none"
-            (click)="toggleHistory()"
-            >History</button
-          >
         </div>
 
         <div class="ml-10 flex-shrink-0">
@@ -31,6 +19,22 @@
             <div>New Chat</div>
           </button>
         </div>
+      </div>
+
+      <div class="flex flex-1"></div>
+
+      <div class="ml-7 mr-5 flex cursor-pointer flex-row items-center">
+        <button
+          data-cy="explorerHistoryButton"
+          type="button"
+          class="flex w-[70px] items-center justify-center text-lg focus:outline-none"
+          [ngClass]="{
+            'text-m500 font-semibold': showHistory,
+            'text-s500': !showHistory
+          }"
+          (click)="toggleHistory()"
+          >History</button
+        >
       </div>
     </div>
 
