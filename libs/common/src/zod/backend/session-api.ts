@@ -18,7 +18,7 @@ export let zSessionApi = z
     pauseReason: z.enum(PauseReasonEnum).nullish(),
     repoId: z.string(),
     branchId: z.string(),
-    initialBranch: z.string(),
+    initialBranch: z.string().nullish(),
     envId: z.string().nullish(),
     initialCommit: z.string().nullish(),
     createdTs: z.number().int(),

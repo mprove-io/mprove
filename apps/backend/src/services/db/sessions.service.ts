@@ -49,7 +49,7 @@ export class SessionsService {
     apiKeyPrefix?: string;
     apiKeySecretHash?: string;
     apiKeySalt?: string;
-    initialBranch: string;
+    initialBranch?: string;
     envId?: string;
     initialCommit?: string;
     useCodex: boolean;

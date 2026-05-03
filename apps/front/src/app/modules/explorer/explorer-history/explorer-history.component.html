@@ -87,7 +87,7 @@
                   <span
                     class="text-s400 ml-3 max-w-[200px] flex-shrink-0 truncate text-[15px]"
                   >
-                    {{ session.repoId }} - {{ session.branchId }}
+                    {{ makeSessionRepoBranchName({ session: session }) }}
                   </span>
                 </ng-container>
               </div>

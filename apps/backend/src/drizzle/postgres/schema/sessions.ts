@@ -50,7 +50,7 @@ export const sessionsTable = pgTable(
     lt: json('lt')
       .$type<{ encrypted: string; decrypted: SessionLt }>()
       .notNull(),
-    initialBranch: varchar('initial_branch', { length: 255 }).notNull(),
+    initialBranch: varchar('initial_branch', { length: 255 }),
     initialCommit: varchar('initial_commit', { length: 64 }),
     apiKeyPrefix: varchar('api_key_prefix', { length: 32 }),
     keyTag: text('key_tag'),

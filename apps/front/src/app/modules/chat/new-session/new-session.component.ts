@@ -239,11 +239,12 @@ export class NewSessionComponent implements OnInit {
     if (isSessionExplorer) {
       let explorerPayload: ToBackendCreateExplorerSessionRequestPayload = {
         projectId: nav.projectId,
+        repoId: nav.repoId,
         provider: provider,
         model: this.model,
         variant: this.variant,
-        initialBranch: this.initialBranch,
-        envId: this.baseEnvId,
+        branchId: nav.branchId,
+        envId: nav.envId,
         firstMessage: text,
         messageId: messageId,
         partId: partId,

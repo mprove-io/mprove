@@ -8,10 +8,11 @@ import { zToBackendRequestInfo } from '#common/zod/to-backend/to-backend-request
 export let zToBackendCreateExplorerSessionRequestPayload = z
   .object({
     projectId: z.string(),
+    repoId: z.string(),
     provider: z.string(),
     model: z.string(),
     variant: z.string(),
-    initialBranch: z.string(),
+    branchId: z.string(),
     envId: z.string(),
     firstMessage: z.string().nullish(),
     messageId: z.string(),

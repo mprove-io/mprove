@@ -32,7 +32,6 @@ import { OcEventsService } from '#backend/services/db/oc-events.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -76,10 +75,11 @@ export class CreateExplorerSessionController {
   ) {
     let {
       projectId,
+      repoId,
       provider,
       model,
       variant,
-      initialBranch,
+      branchId,
       envId,
       firstMessage,
       messageId,
@@ -125,8 +125,8 @@ export class CreateExplorerSessionController {
         session = this.sessionsService.makeSession({
           sessionId: sessionId,
           type: SessionTypeEnum.Explorer,
-          repoId: PROD_REPO_ID,
-          branchId: initialBranch,
+          repoId: repoId,
+          branchId: branchId,
           userId: user.userId,
           projectId: projectId,
           sandboxType: undefined,
@@ -136,7 +136,7 @@ export class CreateExplorerSessionController {
           lastMessageVariant: variant,
           agent: undefined,
           firstMessage: firstMessage,
-          initialBranch: initialBranch,
+          initialBranch: undefined,
           envId: envId,
           initialCommit: undefined,
           useCodex: useCodex,

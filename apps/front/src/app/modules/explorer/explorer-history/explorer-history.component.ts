@@ -13,6 +13,7 @@ import {
   PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -22,10 +23,12 @@ import type {
   ToBackendGetSessionsListRequestPayload,
   ToBackendGetSessionsListResponse
 } from '#common/zod/to-backend/sessions/to-backend-get-sessions-list';
+import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
+import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
@@ -79,6 +82,7 @@ export class ExplorerHistoryComponent implements OnInit {
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
     private navQuery: NavQuery,
+    private userQuery: UserQuery,
     private apiService: ApiService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
@@ -96,6 +100,22 @@ export class ExplorerHistoryComponent implements OnInit {
       item.session.repoId !== PROD_REPO_ID ||
       item.session.branchId !== BRANCH_MAIN
     );
+  }
+
+  makeSessionRepoBranchName(item: { session: SessionApiX }) {
+    let user = this.userQuery.getValue();
+    let repoType =
+      item.session.repoId === PROD_REPO_ID
+        ? RepoTypeEnum.Production
+        : item.session.repoId === user.userId
+          ? RepoTypeEnum.Dev
+          : RepoTypeEnum.Session;
+
+    return makeBranchExtraName({
+      repoType: repoType,
+      branchId: item.session.branchId,
+      alias: user.alias
+    });
   }
 
   groupSessions(item: { sessions: SessionApiX[] }) {

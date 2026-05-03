@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ALTER COLUMN "initial_branch" DROP NOT NULL;
