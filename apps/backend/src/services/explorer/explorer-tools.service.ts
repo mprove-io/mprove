@@ -5,7 +5,7 @@ import { GenerateChartIdToolService } from './tools/generate-chart-id.tool';
 import { GetModelToolService } from './tools/get-model.tool';
 import { GetStateToolService } from './tools/get-state.tool';
 import { ListDocsToolService } from './tools/list-docs.tool';
-import { ProduceChartToolService } from './tools/produce-chart.tool';
+import { ProduceChartToolService } from './tools/produce-chart/produce-chart.tool';
 import { ReadDocsToolService } from './tools/read-docs.tool';
 
 @Injectable()

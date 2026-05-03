@@ -10,7 +10,6 @@ import { GetConnectionSchemasService } from './controllers/connections/get-conne
 import { GetConnectionSchemasTool } from './controllers/connections/get-connection-schemas/get-connection-schemas.tool';
 import { GetConnectionsListService } from './controllers/connections/get-connections-list/get-connections-list.service';
 import { GetConnectionsListTool } from './controllers/connections/get-connections-list/get-connections-list.tool';
-import { ProduceExplorerChartService } from './controllers/explorer/produce-explorer-chart/produce-explorer-chart.service';
 import { ValidateFilesService } from './controllers/files/validate-files/validate-files.service';
 import { ValidateFilesTool } from './controllers/files/validate-files/validate-files.tool';
 import { GetModelService } from './controllers/models/get-model/get-model.service';
@@ -80,7 +79,8 @@ import { GenerateChartIdToolService } from './services/explorer/tools/generate-c
 import { GetModelToolService } from './services/explorer/tools/get-model.tool';
 import { GetStateToolService } from './services/explorer/tools/get-state.tool';
 import { ListDocsToolService } from './services/explorer/tools/list-docs.tool';
-import { ProduceChartToolService } from './services/explorer/tools/produce-chart.tool';
+import { ProduceChartToolService } from './services/explorer/tools/produce-chart/produce-chart.tool';
+import { ProduceExplorerChartService } from './services/explorer/tools/produce-chart/produce-explorer-chart.service';
 import { ReadDocsToolService } from './services/explorer/tools/read-docs.tool';
 import { HashService } from './services/hash.service';
 import { MalloyService } from './services/malloy.service';

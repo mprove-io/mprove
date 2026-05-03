@@ -43,7 +43,6 @@ import { EditEnvFallbacksController } from './controllers/envs/edit-env-fallback
 import { EditEnvVarController } from './controllers/envs/edit-env-var/edit-env-var.controller';
 import { GetEnvsController } from './controllers/envs/get-envs/get-envs.controller';
 import { GetEnvsListController } from './controllers/envs/get-envs-list/get-envs-list.controller';
-import { ProduceExplorerChartController } from './controllers/explorer/produce-explorer-chart/produce-explorer-chart.controller';
 import { CreateFileController } from './controllers/files/create-file/create-file.controller';
 import { DeleteFileController } from './controllers/files/delete-file/delete-file.controller';
 import { GetFileController } from './controllers/files/get-file/get-file.controller';
@@ -296,8 +295,6 @@ export const appControllers = [
   GetChartsController,
   SaveCreateChartController,
   SaveModifyChartController,
-
-  ProduceExplorerChartController,
 
   CreateDraftDashboardController,
   DeleteDashboardController,

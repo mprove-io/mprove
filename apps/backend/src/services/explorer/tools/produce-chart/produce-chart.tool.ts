@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { type Tool, tool } from 'ai';
 import { z } from 'zod';
-import { ProduceExplorerChartService } from '#backend/controllers/explorer/produce-explorer-chart/produce-explorer-chart.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { ProduceExplorerChartService } from './produce-explorer-chart.service';
 
 @Injectable()
 export class ProduceChartToolService {
