@@ -5,9 +5,13 @@
   "workbench.tree.enableStickyScroll": false,
   "editor.stickyScroll.enabled": false,
   "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.preferences.organizeImports": false,
+  "typescript.preferences.importModuleSpecifierEnding": "minimal",
+  "javascript.preferences.importModuleSpecifierEnding": "minimal",
   "[typescript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
+  "eslint.enable": false,
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
@@ -34,6 +38,10 @@
     "**/.angular": true,
     "**/mprove_data": true,
     "**/node_modules": true,
+    "**/dist-test": true,
+    "**/dist-e2e": true,
+    "**/dist-e2x": true,
+    "**/dist-swc": true,
     "**/dist": true
   },
   "workbench.editor.closeOnFileDelete": true,
