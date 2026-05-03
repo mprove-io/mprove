@@ -188,15 +188,16 @@ export class ExplorerChartRebuildService {
     let newQuery = this.queriesService.apiToTab({ apiQuery: apiQuery });
 
     let chartTab = this.chartsService.apiToTab({
-      apiChart: apiChart,
+      apiChart: {
+        ...apiChart,
+        draft: true,
+        isExplorer: true,
+        sessionId: session.sessionId,
+        chartYaml: chartYaml,
+        creatorId: session.userId
+      },
       chartType: apiMconfig.chart.type
     });
-
-    chartTab.draft = true;
-    chartTab.isExplorer = true;
-    chartTab.sessionId = session.sessionId;
-    chartTab.chartYaml = chartYaml;
-    chartTab.creatorId = session.userId;
 
     newMconfig.sessionId = session.sessionId;
     newQuery.sessionId = session.sessionId;
