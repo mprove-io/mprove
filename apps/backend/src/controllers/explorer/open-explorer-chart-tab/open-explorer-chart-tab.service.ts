@@ -6,7 +6,13 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ChartTab,
+  MconfigTab,
+  MemberTab,
+  QueryTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
@@ -207,11 +213,11 @@ export class OpenExplorerChartTabService {
   }
 
   private async buildApiPayload(item: {
-    chart: import('#backend/drizzle/postgres/schema/_tabs').ChartTab;
-    mconfig: import('#backend/drizzle/postgres/schema/_tabs').MconfigTab;
-    query: import('#backend/drizzle/postgres/schema/_tabs').QueryTab;
+    chart: ChartTab;
+    mconfig: MconfigTab;
+    query: QueryTab;
     structId: string;
-    userMember: import('#backend/drizzle/postgres/schema/_tabs').MemberTab;
+    userMember: MemberTab;
   }) {
     let { chart, mconfig, query, structId, userMember } = item;
 
