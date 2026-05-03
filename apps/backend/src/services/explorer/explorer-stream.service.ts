@@ -862,23 +862,21 @@ export class ExplorerStreamService implements OnModuleDestroy {
       }
     }
 
-    if (wasAborted) {
-      textPartContents.forEach((text, partId) => {
-        let finalPartEvent = this.explorerEventsMakerService.makeFinalPartEvent(
-          {
-            partId: partId,
-            messageId: assistantMessageId,
-            sessionId: sessionId,
-            text: text
-          }
-        );
-
-        this.sessionDrainService.enqueue({
-          sessionId: sessionId,
-          event: finalPartEvent
-        });
+    textPartContents.forEach((text, partId) => {
+      let finalPartEvent = this.explorerEventsMakerService.makeFinalPartEvent({
+        partId: partId,
+        messageId: assistantMessageId,
+        sessionId: sessionId,
+        text: text
       });
 
+      this.sessionDrainService.enqueue({
+        sessionId: sessionId,
+        event: finalPartEvent
+      });
+    });
+
+    if (wasAborted) {
       let abortedMsgEvent =
         this.explorerEventsMakerService.makeAbortedMessageEvent({
           messageId: assistantMessageId,
@@ -897,22 +895,6 @@ export class ExplorerStreamService implements OnModuleDestroy {
         event: idleEvent
       });
     } else {
-      textPartContents.forEach((text, partId) => {
-        let finalPartEvent = this.explorerEventsMakerService.makeFinalPartEvent(
-          {
-            partId: partId,
-            messageId: assistantMessageId,
-            sessionId: sessionId,
-            text: text
-          }
-        );
-
-        this.sessionDrainService.enqueue({
-          sessionId: sessionId,
-          event: finalPartEvent
-        });
-      });
-
       let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
       this.sessionDrainService.enqueue({
         sessionId: sessionId,
