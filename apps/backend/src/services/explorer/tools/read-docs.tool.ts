@@ -9,21 +9,19 @@ export class ReadDocsToolService {
 
   makeTool(): Tool {
     return tool({
-      description: `Read cached Mprove documentation files sourced from https://docs.mprove.io/content/docs/docs-for-ai.mdx. 
-Call with no arguments to list all available content/docs MDX files. 
-Call with a filePath to read that file. 
-Use this to look up chart YAML fields, model syntax, and other Mprove concepts.`,
+      description: `Read Mprove documentation files sourced from https://docs.mprove.io/content/docs/docs-for-ai.mdx. 
+Call with filePaths to read one or more files in one tool call.`,
       inputSchema: z.object({
-        filePath: z
-          .string()
-          .nullish()
+        filePaths: z
+          .array(z.string())
+          .min(1)
           .describe(
-            'Path of the MDX file relative to content/docs, e.g. "reference/chart.mdx". Omit to list all files.'
+            'One or more MDX file paths relative to content/docs, e.g. ["reference/chart.mdx"]. Use list_docs to see available files.'
           )
       }),
       execute: async input => {
-        let result = await this.explorerDocsService.readDoc({
-          filePath: input.filePath
+        let result = await this.explorerDocsService.readDocs({
+          filePaths: input.filePaths
         });
 
         return result;

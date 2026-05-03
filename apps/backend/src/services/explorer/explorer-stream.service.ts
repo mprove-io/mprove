@@ -727,7 +727,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       abortSignal: abortController.signal,
       providerOptions: providerOptions,
       tools: tools,
-      stopWhen: stepCountIs(8)
+      stopWhen: stepCountIs(20)
     });
 
     let wasAborted = false;
@@ -954,10 +954,55 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     messageTabs.forEach(msg => {
       let msgParts = partsByMessageId.get(msg.messageId) || [];
-      let textContent = msgParts
-        .filter(p => p.type === 'text')
-        .map(p => ((p.ocPart as Record<string, unknown>).text as string) || '')
-        .join('');
+      let contentParts: string[] = [];
+
+      msgParts.forEach(part => {
+        if (part.type === 'text') {
+          let text =
+            ((part.ocPart as Record<string, unknown>).text as string) || '';
+          if (text) {
+            contentParts.push(text);
+          }
+        } else if (part.type === 'tool') {
+          let toolPart = part.ocPart as Record<string, unknown>;
+          let tool = toolPart['tool'];
+          let state = toolPart['state'];
+
+          let stateRecord =
+            typeof state === 'object' && state !== null
+              ? (state as Record<string, unknown>)
+              : undefined;
+
+          let status = stateRecord?.['status'];
+          let input = stateRecord?.['input'];
+          let output = stateRecord?.['output'];
+          let error = stateRecord?.['error'];
+
+          let toolHistoryParts = [
+            '<tool_result>',
+            `tool: ${typeof tool === 'string' ? tool : 'unknown'}`,
+            `status: ${typeof status === 'string' ? status : 'unknown'}`,
+            `input: ${this.stringifyToolHistoryValue({ value: input })}`
+          ];
+
+          if (output !== undefined) {
+            toolHistoryParts.push(
+              `output: ${this.stringifyToolHistoryValue({ value: output })}`
+            );
+          }
+
+          if (error !== undefined) {
+            toolHistoryParts.push(
+              `error: ${this.stringifyToolHistoryValue({ value: error })}`
+            );
+          }
+
+          toolHistoryParts.push('</tool_result>');
+          contentParts.push(toolHistoryParts.join('\n'));
+        }
+      });
+
+      let textContent = contentParts.join('\n\n');
 
       if (msg.role === 'user') {
         coreMessages.push({ role: 'user', content: textContent });
@@ -967,6 +1012,20 @@ export class ExplorerStreamService implements OnModuleDestroy {
     });
 
     return coreMessages;
+  }
+
+  private stringifyToolHistoryValue(item: { value: unknown }): string {
+    let { value } = item;
+
+    if (value === undefined) return '';
+
+    if (typeof value === 'string') return value;
+
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return String(value);
+    }
   }
 
   onModuleDestroy() {

@@ -79,6 +79,7 @@ import { ExplorerToolsService } from './services/explorer/explorer-tools.service
 import { GenerateChartIdToolService } from './services/explorer/tools/generate-chart-id.tool';
 import { GetModelToolService } from './services/explorer/tools/get-model.tool';
 import { GetStateToolService } from './services/explorer/tools/get-state.tool';
+import { ListDocsToolService } from './services/explorer/tools/list-docs.tool';
 import { ProduceChartToolService } from './services/explorer/tools/produce-chart.tool';
 import { ReadDocsToolService } from './services/explorer/tools/read-docs.tool';
 import { HashService } from './services/hash.service';
@@ -173,6 +174,7 @@ export const appProviders = [
   ExplorerTitleService,
   GetStateToolService,
   GetModelToolService,
+  ListDocsToolService,
   ReadDocsToolService,
   GenerateChartIdToolService,
   ProduceChartToolService,

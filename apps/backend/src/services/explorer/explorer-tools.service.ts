@@ -4,6 +4,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { GenerateChartIdToolService } from './tools/generate-chart-id.tool';
 import { GetModelToolService } from './tools/get-model.tool';
 import { GetStateToolService } from './tools/get-state.tool';
+import { ListDocsToolService } from './tools/list-docs.tool';
 import { ProduceChartToolService } from './tools/produce-chart.tool';
 import { ReadDocsToolService } from './tools/read-docs.tool';
 
@@ -12,6 +13,7 @@ export class ExplorerToolsService {
   constructor(
     private getStateToolService: GetStateToolService,
     private getModelToolService: GetModelToolService,
+    private listDocsToolService: ListDocsToolService,
     private readDocsToolService: ReadDocsToolService,
     private generateChartIdToolService: GenerateChartIdToolService,
     private produceChartToolService: ProduceChartToolService
@@ -29,6 +31,7 @@ export class ExplorerToolsService {
     let { user, sessionId, projectId, repoId, branchId, envId, traceId } = item;
 
     return {
+      list_docs: this.listDocsToolService.makeTool(),
       read_docs: this.readDocsToolService.makeTool(),
       get_state: this.getStateToolService.makeTool({
         projectId: projectId,

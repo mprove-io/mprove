@@ -54,31 +54,72 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function formatReadDocsOutput(item: { text: string }): string | undefined {
   let { text } = item;
+
   let parsed = parseJson({ text: text });
+
   let isObject = isRecord(parsed);
+
   if (!isObject) return undefined;
 
   let result = parsed as Record<string, unknown>;
 
   let ok = result['ok'];
+
   if (ok === false) {
     let error = result['error'];
     return typeof error === 'string' ? error : undefined;
   }
 
   let mode = result['mode'];
+
   if (mode === 'file') {
     let content = result['content'];
+
     return typeof content === 'string' ? content : undefined;
+  }
+
+  if (mode === 'files') {
+    let files = result['files'];
+
+    let isArray = Array.isArray(files);
+
+    if (!isArray) return undefined;
+
+    let outputParts: string[] = [];
+
+    (files as unknown[]).forEach(file => {
+      let isFileObject = isRecord(file);
+
+      if (!isFileObject) return;
+
+      let fileRecord = file as Record<string, unknown>;
+
+      let filePath = fileRecord['filePath'];
+
+      let content = fileRecord['content'];
+
+      let hasFileContent =
+        typeof filePath === 'string' && typeof content === 'string';
+
+      if (!hasFileContent) return;
+
+      outputParts.push(`# ${filePath}\n\n${content}`);
+    });
+
+    let hasOutputParts = outputParts.length > 0;
+
+    return hasOutputParts ? outputParts.join('\n\n---\n\n') : undefined;
   }
 
   if (mode === 'index') {
     let files = result['files'];
     let isArray = Array.isArray(files);
+
     if (!isArray) return undefined;
 
     let fileList = files as unknown[];
     let isStringArray = fileList.every(f => typeof f === 'string');
+
     return isStringArray ? (fileList as string[]).join('\n') : undefined;
   }
 
@@ -294,7 +335,7 @@ export class SessionMessagesContentComponent {
     }
     if (!output) return;
     let displayOutput: string;
-    if (toolPart.tool === 'read_docs') {
+    if (toolPart.tool === 'list_docs' || toolPart.tool === 'read_docs') {
       displayOutput = formatReadDocsOutput({ text: output }) || output;
     } else if (toolPart.tool === 'read') {
       displayOutput = extractReadContent({ text: output });
@@ -313,7 +354,9 @@ export class SessionMessagesContentComponent {
       displayOutput = output;
     }
     let rawOutput =
-      displayOutput !== output && toolPart.tool !== 'read_docs'
+      displayOutput !== output &&
+      toolPart.tool !== 'list_docs' &&
+      toolPart.tool !== 'read_docs'
         ? output
         : undefined;
     this.myDialogService.showToolOutput({
@@ -321,7 +364,7 @@ export class SessionMessagesContentComponent {
       subtitle: this.getToolSubtitle(toolPart),
       output: displayOutput,
       rawOutput: rawOutput,
-      wrapText: toolPart.tool !== 'read_docs',
+      wrapText: toolPart.tool !== 'list_docs' && toolPart.tool !== 'read_docs',
       isError: toolPart.state?.status === 'error'
     });
   }
