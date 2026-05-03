@@ -12,6 +12,7 @@ import { DeleteDraftChartsController } from './controllers/charts/delete-draft-c
 import { EditDraftChartController } from './controllers/charts/edit-draft-chart/edit-draft-chart.controller';
 import { GetChartController } from './controllers/charts/get-chart/get-chart.controller';
 import { GetChartsController } from './controllers/charts/get-charts/get-charts.controller';
+import { GetExplorerChartTabController } from './controllers/charts/get-explorer-chart-tab/get-explorer-chart-tab.controller';
 import { SaveCreateChartController } from './controllers/charts/save-create-chart/save-create-chart.controller';
 import { SaveModifyChartController } from './controllers/charts/save-modify-chart/save-modify-chart.controller';
 import { CheckController } from './controllers/check/check/check.controller';
@@ -42,7 +43,6 @@ import { EditEnvFallbacksController } from './controllers/envs/edit-env-fallback
 import { EditEnvVarController } from './controllers/envs/edit-env-var/edit-env-var.controller';
 import { GetEnvsController } from './controllers/envs/get-envs/get-envs.controller';
 import { GetEnvsListController } from './controllers/envs/get-envs-list/get-envs-list.controller';
-import { OpenExplorerChartTabController } from './controllers/explorer/open-explorer-chart-tab/open-explorer-chart-tab.controller';
 import { ProduceExplorerChartController } from './controllers/explorer/produce-explorer-chart/produce-explorer-chart.controller';
 import { CreateFileController } from './controllers/files/create-file/create-file.controller';
 import { DeleteFileController } from './controllers/files/delete-file/delete-file.controller';
@@ -291,13 +291,13 @@ export const appControllers = [
   DeleteChartController,
   DeleteDraftChartsController,
   EditDraftChartController,
+  GetExplorerChartTabController,
   GetChartController,
   GetChartsController,
   SaveCreateChartController,
   SaveModifyChartController,
 
   ProduceExplorerChartController,
-  OpenExplorerChartTabController,
 
   CreateDraftDashboardController,
   DeleteDashboardController,

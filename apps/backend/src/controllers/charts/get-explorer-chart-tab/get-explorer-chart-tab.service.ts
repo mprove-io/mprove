@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -31,15 +31,15 @@ import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
-import type { ToBackendOpenExplorerChartTabResponsePayload } from '#common/zod/to-backend/explorer/to-backend-open-explorer-chart-tab';
+import type { ToBackendGetExplorerChartTabResponsePayload } from '#common/zod/to-backend/charts/to-backend-get-explorer-chart-tab';
 
-type OpenExplorerChartTabErrors = Extract<
-  ToBackendOpenExplorerChartTabResponsePayload,
+type GetExplorerChartTabErrors = Extract<
+  ToBackendGetExplorerChartTabResponsePayload,
   { status: 'error' }
 >['errors'];
 
 @Injectable()
-export class OpenExplorerChartTabService {
+export class GetExplorerChartTabService {
   constructor(
     private sessionsService: SessionsService,
     private membersService: MembersService,
@@ -55,12 +55,12 @@ export class OpenExplorerChartTabService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async openExplorerChartTab(item: {
+  async getExplorerChartTab(item: {
     user: UserTab;
     traceId: string;
     sessionId: string;
     chartId: string;
-  }): Promise<ToBackendOpenExplorerChartTabResponsePayload> {
+  }): Promise<ToBackendGetExplorerChartTabResponsePayload> {
     let { user, traceId, sessionId, chartId } = item;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
@@ -117,7 +117,7 @@ export class OpenExplorerChartTabService {
     let chart: ChartTab | undefined;
     let mconfig: MconfigTab | undefined;
     let query: QueryTab | undefined;
-    let rebuildErrors: OpenExplorerChartTabErrors | undefined;
+    let rebuildErrors: GetExplorerChartTabErrors | undefined;
 
     let chartAtCurrent = await this.db.drizzle.query.chartsTable
       .findFirst({
@@ -211,12 +211,12 @@ export class OpenExplorerChartTabService {
     }
 
     let hasRebuildErrors = !isUndefined(rebuildErrors);
-    let apiPayload: ToBackendOpenExplorerChartTabResponsePayload;
+    let apiPayload: ToBackendGetExplorerChartTabResponsePayload;
 
     if (hasRebuildErrors) {
       apiPayload = {
         status: 'error',
-        errors: rebuildErrors as OpenExplorerChartTabErrors
+        errors: rebuildErrors as GetExplorerChartTabErrors
       };
     } else {
       if (!chart || !mconfig || !query) {

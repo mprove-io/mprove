@@ -2,45 +2,43 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import {
-  ToBackendOpenExplorerChartTabRequestDto,
-  ToBackendOpenExplorerChartTabResponseDto
-} from '#backend/controllers/explorer/open-explorer-chart-tab/open-explorer-chart-tab.dto';
-import { OpenExplorerChartTabService } from '#backend/controllers/explorer/open-explorer-chart-tab/open-explorer-chart-tab.service';
+  ToBackendGetExplorerChartTabRequestDto,
+  ToBackendGetExplorerChartTabResponseDto
+} from '#backend/controllers/charts/get-explorer-chart-tab/get-explorer-chart-tab.dto';
+import { GetExplorerChartTabService } from '#backend/controllers/charts/get-explorer-chart-tab/get-explorer-chart-tab.service';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendOpenExplorerChartTabRequestPayload } from '#common/zod/to-backend/explorer/to-backend-open-explorer-chart-tab';
+import type { ToBackendGetExplorerChartTabRequestPayload } from '#common/zod/to-backend/charts/to-backend-get-explorer-chart-tab';
 
-@ApiTags('Explorer')
+@ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class OpenExplorerChartTabController {
-  constructor(
-    private openExplorerChartTabService: OpenExplorerChartTabService
-  ) {}
+export class GetExplorerChartTabController {
+  constructor(private getExplorerChartTabService: GetExplorerChartTabService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendOpenExplorerChartTab)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetExplorerChartTab)
   @ApiOperation({
-    summary: 'OpenExplorerChartTab',
+    summary: 'GetExplorerChartTab',
     description:
       'Rebuild explorer session chart (tab) against the current struct'
   })
   @ApiOkResponse({
-    type: ToBackendOpenExplorerChartTabResponseDto
+    type: ToBackendGetExplorerChartTabResponseDto
   })
-  async openExplorerChartTab(
+  async getExplorerChartTab(
     @AttachUser() user: UserTab,
-    @Body() body: ToBackendOpenExplorerChartTabRequestDto
+    @Body() body: ToBackendGetExplorerChartTabRequestDto
   ) {
     let { traceId } = body.info;
 
-    let { sessionId, chartId }: ToBackendOpenExplorerChartTabRequestPayload =
+    let { sessionId, chartId }: ToBackendGetExplorerChartTabRequestPayload =
       body.payload;
 
-    let payload = await this.openExplorerChartTabService.openExplorerChartTab({
+    let payload = await this.getExplorerChartTabService.getExplorerChartTab({
       user: user,
       traceId: traceId,
       sessionId: sessionId,

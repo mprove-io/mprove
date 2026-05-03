@@ -4,9 +4,9 @@ import { concatMap, tap } from 'rxjs/operators';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type {
-  ToBackendOpenExplorerChartTabRequestPayload,
-  ToBackendOpenExplorerChartTabResponse
-} from '#common/zod/to-backend/explorer/to-backend-open-explorer-chart-tab';
+  ToBackendGetExplorerChartTabRequestPayload,
+  ToBackendGetExplorerChartTabResponse
+} from '#common/zod/to-backend/charts/to-backend-get-explorer-chart-tab';
 import type { ToBackendCloseExplorerSessionTabRequestPayload } from '#common/zod/to-backend/sessions/to-backend-close-explorer-session-tab';
 import { ExplorerTabsQuery } from '#front/app/queries/explorer-tabs.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -34,19 +34,18 @@ export class ExplorerTabService {
       content: { status: 'loading' }
     });
 
-    let payload: ToBackendOpenExplorerChartTabRequestPayload = {
+    let payload: ToBackendGetExplorerChartTabRequestPayload = {
       sessionId: sessionId,
       chartId: chartId
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendOpenExplorerChartTab,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetExplorerChartTab,
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendOpenExplorerChartTabResponse) => {
+        tap((resp: ToBackendGetExplorerChartTabResponse) => {
           let elapsed = Date.now() - loadingStartedAt;
           let delayMs = Math.max(0, 150 - elapsed);
 
@@ -114,7 +113,7 @@ export class ExplorerTabService {
     sessionId: string;
     tabId: string;
     chartId: string;
-    respPayload: ToBackendOpenExplorerChartTabResponse['payload'];
+    respPayload: ToBackendGetExplorerChartTabResponse['payload'];
   }) {
     let { sessionId, tabId, chartId, respPayload } = item;
 
@@ -159,7 +158,7 @@ export class ExplorerTabService {
 
     if (this.pollingByTabId.has(tabId)) return;
 
-    let payload: ToBackendOpenExplorerChartTabRequestPayload = {
+    let payload: ToBackendGetExplorerChartTabRequestPayload = {
       sessionId: sessionId,
       chartId: chartId
     };
@@ -169,11 +168,11 @@ export class ExplorerTabService {
         concatMap(() =>
           this.apiService.req({
             pathInfoName:
-              ToBackendRequestInfoNameEnum.ToBackendOpenExplorerChartTab,
+              ToBackendRequestInfoNameEnum.ToBackendGetExplorerChartTab,
             payload: payload
           })
         ),
-        tap((resp: ToBackendOpenExplorerChartTabResponse) => {
+        tap((resp: ToBackendGetExplorerChartTabResponse) => {
           this.setTabPayload({
             sessionId: sessionId,
             tabId: tabId,

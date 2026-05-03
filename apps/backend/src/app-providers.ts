@@ -3,13 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
+import { GetExplorerChartTabService } from './controllers/charts/get-explorer-chart-tab/get-explorer-chart-tab.service';
 import { GetConnectionSampleService } from './controllers/connections/get-connection-sample/get-connection-sample.service';
 import { GetConnectionSampleTool } from './controllers/connections/get-connection-sample/get-connection-sample.tool';
 import { GetConnectionSchemasService } from './controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import { GetConnectionSchemasTool } from './controllers/connections/get-connection-schemas/get-connection-schemas.tool';
 import { GetConnectionsListService } from './controllers/connections/get-connections-list/get-connections-list.service';
 import { GetConnectionsListTool } from './controllers/connections/get-connections-list/get-connections-list.tool';
-import { OpenExplorerChartTabService } from './controllers/explorer/open-explorer-chart-tab/open-explorer-chart-tab.service';
 import { ProduceExplorerChartService } from './controllers/explorer/produce-explorer-chart/produce-explorer-chart.service';
 import { ValidateFilesService } from './controllers/files/validate-files/validate-files.service';
 import { ValidateFilesTool } from './controllers/files/validate-files/validate-files.tool';
@@ -174,7 +174,7 @@ export const appProviders = [
   EditorModelsService,
   ExplorerStreamService,
   ProduceExplorerChartService,
-  OpenExplorerChartTabService,
+  GetExplorerChartTabService,
   //
   ToolService,
   GetConnectionSampleService,
