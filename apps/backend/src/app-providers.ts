@@ -76,6 +76,11 @@ import { ExplorerPromptsService } from './services/explorer/explorer-prompts.ser
 import { ExplorerStreamService } from './services/explorer/explorer-stream.service';
 import { ExplorerTitleService } from './services/explorer/explorer-title.service';
 import { ExplorerToolsService } from './services/explorer/explorer-tools.service';
+import { GenerateChartIdToolService } from './services/explorer/tools/generate-chart-id.tool';
+import { GetModelToolService } from './services/explorer/tools/get-model.tool';
+import { GetStateToolService } from './services/explorer/tools/get-state.tool';
+import { ProduceChartToolService } from './services/explorer/tools/produce-chart.tool';
+import { ReadDocsToolService } from './services/explorer/tools/read-docs.tool';
 import { HashService } from './services/hash.service';
 import { MalloyService } from './services/malloy.service';
 import { ParentService } from './services/parent.service';
@@ -166,6 +171,11 @@ export const appProviders = [
   ExplorerEventsMakerService,
   ExplorerPromptsService,
   ExplorerTitleService,
+  GetStateToolService,
+  GetModelToolService,
+  ReadDocsToolService,
+  GenerateChartIdToolService,
+  ProduceChartToolService,
   ExplorerToolsService,
   ExplorerModelsService,
   ExplorerChartRebuildService,
