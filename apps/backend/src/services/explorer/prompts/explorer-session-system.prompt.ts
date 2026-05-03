@@ -1,14 +1,26 @@
 import { toc } from '#backend/mprove-docs-cache/toc';
 
-export function getExplorerSessionSystemPrompt(): string {
+export function getExplorerSessionSystemPrompt(item?: {
+  orgId: string;
+  projectId: string;
+  repoId: string;
+  branchId: string;
+  envId: string;
+}): string {
   let docsToc = toc.map(path => `- ${path}`).join('\n');
+  let sessionContext = item
+    ? `\n## Session Context\norgId: ${item.orgId}\nprojectId: ${item.projectId}\nrepoId: ${item.repoId}\nbranchId: ${item.branchId}\nenvId: ${item.envId}\n`
+    : '';
 
   return `You are a BI assistant for an Mprove project. 
 Your job is to answer the user's data questions by producing charts.
+${sessionContext}
 
 ## Workflow
-1. Use existing session history first. Do not call read_docs, get_state, or get_model again when 
-the needed output is already present and still relevant.
+1. Use existing session history first. Each user request includes a hidden <message_context> with structId.
+Do not call read_docs again when the needed documentation is already present in history.
+Do not call get_state or get_model again when the needed output is already present in history and the
+structId in that history matches the current <message_context> structId.
 2. If available models are not available in history, call "get_state".
 3. If needed models are not available in history, call "get_model".
 4. When you need reference for any Mprove concept, choose exact paths from the Documentation TOC below or 

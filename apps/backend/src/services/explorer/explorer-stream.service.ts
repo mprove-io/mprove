@@ -4,12 +4,13 @@ import { ConfigService } from '@nestjs/config';
 import type { Event } from '@opencode-ai/sdk/v2';
 import type { ModelMessage } from 'ai';
 import { stepCountIs, streamText } from 'ai';
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
@@ -25,6 +26,7 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { makeAscendingIdAfter } from '#common/functions/make-ascending-id';
 import { ServerError } from '#common/models/server-error';
 import { CodexService } from '../codex.service';
+import { ProjectsService } from '../db/projects.service';
 import { SessionsService } from '../db/sessions.service';
 import { UsersService } from '../db/users.service';
 import { SessionDrainService } from '../session/session-drain.service';
@@ -78,6 +80,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     private explorerEventsMakerService: ExplorerEventsMakerService,
     private explorerToolsService: ExplorerToolsService,
     private sessionsService: SessionsService,
+    private projectsService: ProjectsService,
     private usersService: UsersService,
     private tabService: TabService,
     private logger: Logger,
@@ -682,25 +685,51 @@ export class ExplorerStreamService implements OnModuleDestroy {
       codexFetch: codexFetch
     });
 
-    let messages = [
-      ...history,
-      { role: 'user' as const, content: userMessage }
-    ];
+    let session = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId: sessionId
+    });
+
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: session.projectId
+    });
+
+    let bridge = await this.db.drizzle.query.bridgesTable.findFirst({
+      where: and(
+        eq(bridgesTable.projectId, session.projectId),
+        eq(bridgesTable.repoId, session.repoId),
+        eq(bridgesTable.branchId, session.branchId),
+        eq(bridgesTable.envId, session.envId)
+      )
+    });
+
+    let explorerSystemPrompt =
+      this.explorerPromptsService.getExplorerSessionSystemPrompt({
+        orgId: project.orgId,
+        projectId: session.projectId,
+        repoId: session.repoId,
+        branchId: session.branchId,
+        envId: session.envId
+      });
 
     let providerOptions =
       useCodex === true
         ? this.explorerModelsService.buildCodexProviderOptions({
             modelId: modelId,
             sessionId: sessionId,
-            instructions:
-              this.explorerPromptsService.getExplorerSessionSystemPrompt(),
+            instructions: explorerSystemPrompt,
             isSmall: false
           })
         : undefined;
 
-    let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: sessionId
+    let userMessageContent = this.buildUserMessageContent({
+      structId: bridge?.structId || '',
+      userMessage: userMessage
     });
+
+    let messages = [
+      ...history,
+      { role: 'user' as const, content: userMessageContent }
+    ];
 
     let user = userId
       ? await this.usersService.getUserCheckExists({ userId: userId })
@@ -723,6 +752,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let result = streamText({
       model: model,
+      system: useCodex === true ? undefined : explorerSystemPrompt,
       messages: messages,
       abortSignal: abortController.signal,
       providerOptions: providerOptions,
@@ -1026,6 +1056,21 @@ export class ExplorerStreamService implements OnModuleDestroy {
     } catch {
       return String(value);
     }
+  }
+
+  private buildUserMessageContent(item: {
+    structId: string;
+    userMessage: string;
+  }): string {
+    let { structId, userMessage } = item;
+
+    return `<message_context>
+structId: ${structId}
+</message_context>
+
+<user_request>
+${userMessage}
+</user_request>`;
   }
 
   onModuleDestroy() {

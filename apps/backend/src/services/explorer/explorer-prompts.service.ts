@@ -4,8 +4,14 @@ import { getTitleSystemPrompt } from './prompts/title-system.prompt';
 
 @Injectable()
 export class ExplorerPromptsService {
-  getExplorerSessionSystemPrompt(): string {
-    return getExplorerSessionSystemPrompt();
+  getExplorerSessionSystemPrompt(item?: {
+    orgId: string;
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+  }): string {
+    return getExplorerSessionSystemPrompt(item);
   }
 
   getTitleSystemPrompt(): string {

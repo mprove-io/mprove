@@ -54,6 +54,7 @@ export class GetStateToolService {
         });
 
         return {
+          structId: payload.structId,
           modelItems: payload.modelItems,
           chartItems: payload.chartItems,
           dashboardItems: payload.dashboardItems,
