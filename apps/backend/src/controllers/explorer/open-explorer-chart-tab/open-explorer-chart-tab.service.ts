@@ -9,7 +9,6 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ChartTab,
   MconfigTab,
-  MemberTab,
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -33,6 +32,11 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendOpenExplorerChartTabResponsePayload } from '#common/zod/to-backend/explorer/to-backend-open-explorer-chart-tab';
+
+type OpenExplorerChartTabErrors = Extract<
+  ToBackendOpenExplorerChartTabResponsePayload,
+  { status: 'error' }
+>['errors'];
 
 @Injectable()
 export class OpenExplorerChartTabService {
@@ -110,6 +114,10 @@ export class OpenExplorerChartTabService {
 
     let chartYaml = originalChart.chartYaml;
     let modelId = originalChart.modelId;
+    let chart: ChartTab | undefined;
+    let mconfig: MconfigTab | undefined;
+    let query: QueryTab | undefined;
+    let rebuildErrors: OpenExplorerChartTabErrors | undefined;
 
     let chartAtCurrent = await this.db.drizzle.query.chartsTable
       .findFirst({
@@ -131,138 +139,133 @@ export class OpenExplorerChartTabService {
         )
       });
 
-      let mconfig = this.tabService.mconfigEntToTab(mconfigEnt);
+      let existingMconfig = this.tabService.mconfigEntToTab(mconfigEnt);
 
       let queryEnt = await this.db.drizzle.query.queriesTable.findFirst({
         where: eq(queriesTable.queryId, chartTile.queryId)
       });
 
-      let query = this.tabService.queryEntToTab(queryEnt);
+      let existingQuery = this.tabService.queryEntToTab(queryEnt);
 
-      if (mconfig && query) {
-        let apiPayload = await this.buildApiPayload({
-          chart: chartAtCurrent,
-          mconfig: mconfig,
-          query: query,
-          structId: bridge.structId,
-          userMember: userMember
-        });
-
-        return apiPayload;
+      if (existingMconfig && existingQuery) {
+        chart = chartAtCurrent;
+        mconfig = existingMconfig;
+        query = existingQuery;
       }
     }
 
-    let rebuildResult = await this.explorerChartRebuildService.rebuildFromYaml({
-      traceId: traceId,
-      session: session,
-      chartId: chartId,
-      modelId: modelId,
-      chartYaml: chartYaml
-    });
+    if (!chart || !mconfig || !query) {
+      let rebuildResult =
+        await this.explorerChartRebuildService.rebuildFromYaml({
+          traceId: traceId,
+          session: session,
+          chartId: chartId,
+          modelId: modelId,
+          chartYaml: chartYaml
+        });
 
-    if (rebuildResult.ok === false) {
-      return { status: 'error', errors: rebuildResult.errors };
+      if (rebuildResult.ok === false) {
+        rebuildErrors = rebuildResult.errors;
+      } else {
+        let rebuiltChart = rebuildResult.chart;
+        let rebuiltMconfig = rebuildResult.mconfig;
+        let rebuiltQuery = rebuildResult.query;
+
+        rebuiltChart.title = originalChart.title;
+
+        await retry(
+          async () =>
+            await this.db.drizzle.transaction(
+              async tx =>
+                await this.db.packer.write({
+                  tx: tx,
+                  insert: {
+                    charts: [rebuiltChart],
+                    mconfigs: [rebuiltMconfig]
+                  },
+                  insertOrDoNothing: {
+                    queries: [rebuiltQuery]
+                  }
+                })
+            ),
+          getRetryOption(this.cs, this.logger)
+        );
+
+        await this.runQueriesService.runQueries({
+          user: user,
+          projectId: session.projectId,
+          repoId: session.repoId,
+          branchId: session.branchId,
+          envId: session.envId,
+          mconfigIds: [rebuiltMconfig.mconfigId]
+        });
+
+        let queryEnt = await this.db.drizzle.query.queriesTable.findFirst({
+          where: eq(queriesTable.queryId, rebuiltQuery.queryId)
+        });
+
+        chart = rebuiltChart;
+        mconfig = rebuiltMconfig;
+        query = this.tabService.queryEntToTab(queryEnt) ?? rebuiltQuery;
+      }
     }
 
-    let { chart, mconfig, query } = rebuildResult;
+    let hasRebuildErrors = !isUndefined(rebuildErrors);
+    let apiPayload: ToBackendOpenExplorerChartTabResponsePayload;
 
-    chart.title = originalChart.title;
+    if (hasRebuildErrors) {
+      apiPayload = {
+        status: 'error',
+        errors: rebuildErrors as OpenExplorerChartTabErrors
+      };
+    } else {
+      if (!chart || !mconfig || !query) {
+        throw new ServerError({ message: ErEnum.BACKEND_CHART_DOES_NOT_EXIST });
+      }
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                charts: [chart],
-                mconfigs: [mconfig]
-              },
-              insertOrDoNothing: {
-                queries: [query]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
-
-    await this.runQueriesService.runQueries({
-      user: user,
-      projectId: session.projectId,
-      repoId: session.repoId,
-      branchId: session.branchId,
-      envId: session.envId,
-      mconfigIds: [mconfig.mconfigId]
-    });
-
-    let queryEnt = await this.db.drizzle.query.queriesTable.findFirst({
-      where: eq(queriesTable.queryId, query.queryId)
-    });
-
-    let freshQuery = this.tabService.queryEntToTab(queryEnt) ?? query;
-
-    let apiPayload = await this.buildApiPayload({
-      chart: chart,
-      mconfig: mconfig,
-      query: freshQuery,
-      structId: bridge.structId,
-      userMember: userMember
-    });
-
-    return apiPayload;
-  }
-
-  private async buildApiPayload(item: {
-    chart: ChartTab;
-    mconfig: MconfigTab;
-    query: QueryTab;
-    structId: string;
-    userMember: MemberTab;
-  }) {
-    let { chart, mconfig, query, structId, userMember } = item;
-
-    let allModels = await this.db.drizzle.query.modelsTable
-      .findMany({
-        where: eq(modelsTable.structId, structId)
-      })
-      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
-
-    let model = allModels.find(x => x.modelId === mconfig.modelId);
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
-    let apiModels = allModels.map(m =>
-      this.modelsService.tabToApi({
-        model: m,
-        hasAccess: checkModelAccess({
-          member: userMember,
-          modelAccessRoles: m.accessRoles
+      let allModels = await this.db.drizzle.query.modelsTable
+        .findMany({
+          where: eq(modelsTable.structId, bridge.structId)
         })
-      })
-    );
+        .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
-    let apiQuery = this.queriesService.tabToApi({ query: query });
+      let model = allModels.find(x => x.modelId === mconfig.modelId);
 
-    let mconfigX = this.mconfigsService.tabToApi({
-      mconfig: mconfig,
-      modelFields: model ? model.fields : []
-    });
+      let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
-    let chartX = this.chartsService.tabToApi({
-      chart: chart,
-      mconfigs: [mconfigX],
-      queries: [apiQuery],
-      member: apiUserMember,
-      models: apiModels,
-      isAddMconfigAndQuery: true
-    });
+      let apiModels = allModels.map(m =>
+        this.modelsService.tabToApi({
+          model: m,
+          hasAccess: checkModelAccess({
+            member: userMember,
+            modelAccessRoles: m.accessRoles
+          })
+        })
+      );
 
-    let apiPayload: ToBackendOpenExplorerChartTabResponsePayload = {
-      status: 'ok',
-      chart: chartX,
-      mconfig: mconfigX,
-      query: apiQuery
-    };
+      let apiQuery = this.queriesService.tabToApi({ query: query });
+
+      let mconfigX = this.mconfigsService.tabToApi({
+        mconfig: mconfig,
+        modelFields: model ? model.fields : []
+      });
+
+      let chartX = this.chartsService.tabToApi({
+        chart: chart,
+        mconfigs: [mconfigX],
+        queries: [apiQuery],
+        member: apiUserMember,
+        models: apiModels,
+        isAddMconfigAndQuery: true
+      });
+
+      apiPayload = {
+        status: 'ok',
+        chart: chartX,
+        mconfig: mconfigX,
+        query: apiQuery
+      };
+    }
 
     return apiPayload;
   }
