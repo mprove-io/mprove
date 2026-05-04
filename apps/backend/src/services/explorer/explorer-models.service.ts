@@ -10,24 +10,15 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import type { ModelsDevResponse } from '#backend/functions/opencode-models-dev';
-import { ALLOWED_MODEL_KEYWORDS } from '#common/constants/top-backend';
+import {
+  ALLOWED_MODEL_KEYWORDS,
+  CODEX_ALLOWED_MODELS
+} from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
 import type { SessionModelApi } from '#common/zod/backend/session-model-api';
-
-// Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 362-371
-const CODEX_ALLOWED_MODELS: string[] = [
-  'gpt-5.1-codex',
-  'gpt-5.1-codex-max',
-  'gpt-5.1-codex-mini',
-  'gpt-5.2',
-  'gpt-5.2-codex',
-  'gpt-5.3-codex',
-  'gpt-5.4',
-  'gpt-5.4-mini'
-];
 
 @Injectable()
 export class ExplorerModelsService {
