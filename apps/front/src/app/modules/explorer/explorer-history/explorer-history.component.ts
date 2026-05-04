@@ -41,7 +41,6 @@ type HistorySessionGroup = {
   sessions: SessionApiX[];
 };
 
-let ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 let EXPLORER_HISTORY_SPINNER_NAME = 'explorerHistoryRefresh';
 
 @Component({
@@ -147,8 +146,11 @@ export class ExplorerHistoryComponent implements OnInit {
 
   makeGroupTitle(item: { createdTs: number; now: number }) {
     let date = new Date(item.createdTs);
+    let startOfWeekdayGroupsTs = this.makeStartOfWeekdayGroupsTs({
+      now: item.now
+    });
 
-    if (item.now - item.createdTs < ONE_WEEK_MS) {
+    if (item.createdTs >= startOfWeekdayGroupsTs) {
       return new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date);
     }
 
@@ -157,6 +159,15 @@ export class ExplorerHistoryComponent implements OnInit {
       day: 'numeric',
       year: 'numeric'
     }).format(date);
+  }
+
+  makeStartOfWeekdayGroupsTs(item: { now: number }) {
+    let date = new Date(item.now);
+
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - 6);
+
+    return date.getTime();
   }
 
   loadSessions() {

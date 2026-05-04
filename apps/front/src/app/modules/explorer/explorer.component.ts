@@ -42,6 +42,15 @@ export class ExplorerComponent implements OnInit {
 
   isNewSessionRoute = false;
 
+  showContent = true;
+
+  showContent$ = this.uiQuery.showContent$.pipe(
+    tap(showContent => {
+      this.showContent = showContent;
+      this.cd.detectChanges();
+    })
+  );
+
   tabs: ExplorerTab[] = [];
 
   tabs$ = this.explorerTabsQuery.tabs$.pipe(

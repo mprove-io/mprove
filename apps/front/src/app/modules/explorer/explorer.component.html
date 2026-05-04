@@ -50,7 +50,7 @@
         </div>
       </ng-container>
 
-      <ng-container *ngIf="isSessionRoute">
+      <ng-container *ngIf="isSessionRoute && showContent">
         <div
           class="bg-m0 flex h-full w-1/4 flex-shrink-0 flex-col rounded shadow"
         >
@@ -128,6 +128,12 @@
           </ng-template>
         </div>
       </ng-container>
+
+      <ng-container *ngIf="isSessionRoute && !showContent">
+        <div class="bg-m0 h-full w-1/4 flex-shrink-0 rounded shadow"></div>
+
+        <div class="bg-m0 ml-6 min-h-0 min-w-0 flex-1 rounded shadow"></div>
+      </ng-container>
     </div>
   </div>
 </div>
@@ -142,3 +148,4 @@
 <div *ngIf="tabs$ | async"></div>
 <div *ngIf="activeTabId$ | async"></div>
 <div *ngIf="activeTabContent$ | async"></div>
+<div *ngIf="showContent$ | async"></div>
