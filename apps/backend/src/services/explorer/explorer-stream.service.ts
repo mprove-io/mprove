@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Event } from '@opencode-ai/sdk/v2';
-import type { ModelMessage } from 'ai';
+import type { LanguageModelUsage, ModelMessage, ProviderMetadata } from 'ai';
 import { stepCountIs, streamText } from 'ai';
 import { and, asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
@@ -629,7 +629,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let assistantMsgEvent =
       this.explorerEventsMakerService.makeAssistantMessageEvent({
         messageId: assistantMessageId,
-        sessionId: sessionId
+        sessionId: sessionId,
+        provider: provider,
+        modelId: modelId
       });
     this.sessionDrainService.enqueue({
       sessionId: sessionId,
@@ -765,6 +767,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let lastPartId = assistantPartId;
     let currentTextPartId: string | undefined = assistantPartId;
     let textPartContents = new Map<string, string>([[assistantPartId, '']]);
+    let lastStepUsage: LanguageModelUsage | undefined;
+    let lastStepMetadata: ProviderMetadata | undefined;
+    let finishReason: string | undefined;
 
     try {
       for await (let chunk of result.fullStream) {
@@ -882,6 +887,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
             sessionId: sessionId,
             event: toolPartEvent
           });
+        } else if (chunk.type === 'finish-step') {
+          lastStepUsage = chunk.usage;
+          lastStepMetadata = chunk.providerMetadata;
+          finishReason = chunk.finishReason;
         }
       }
     } catch (e: any) {
@@ -925,6 +934,28 @@ export class ExplorerStreamService implements OnModuleDestroy {
         event: idleEvent
       });
     } else {
+      if (lastStepUsage) {
+        let tokens = this.aiUsageToOpenCodeTokens({
+          usage: lastStepUsage,
+          metadata: lastStepMetadata
+        });
+
+        let completedMsgEvent =
+          this.explorerEventsMakerService.makeAssistantMessageEvent({
+            messageId: assistantMessageId,
+            sessionId: sessionId,
+            provider: provider,
+            modelId: modelId,
+            tokens: tokens,
+            finish: finishReason
+          });
+
+        this.sessionDrainService.enqueue({
+          sessionId: sessionId,
+          event: completedMsgEvent
+        });
+      }
+
       let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
       this.sessionDrainService.enqueue({
         sessionId: sessionId,
@@ -946,6 +977,62 @@ export class ExplorerStreamService implements OnModuleDestroy {
         }
       }
     }
+  }
+
+  aiUsageToOpenCodeTokens(item: {
+    usage: LanguageModelUsage;
+    metadata?: ProviderMetadata;
+  }): {
+    total?: number;
+    input: number;
+    output: number;
+    reasoning: number;
+    cache: { read: number; write: number };
+  } {
+    let { usage, metadata } = item;
+
+    let safe = (item: { value: number | undefined }) => {
+      let { value } = item;
+      if (!Number.isFinite(value)) return 0;
+      return value || 0;
+    };
+
+    let inputTokens = safe({ value: usage.inputTokens });
+    let output = safe({ value: usage.outputTokens });
+    let reasoning = safe({
+      value: usage.reasoningTokens || usage.outputTokenDetails.reasoningTokens
+    });
+    let cacheRead = safe({
+      value: usage.cachedInputTokens || usage.inputTokenDetails.cacheReadTokens
+    });
+    let cacheWrite = safe({
+      value:
+        usage.inputTokenDetails.cacheWriteTokens ||
+        (metadata?.['anthropic']?.['cacheCreationInputTokens'] as
+          | number
+          | undefined) ||
+        (metadata?.['vertex']?.['cacheCreationInputTokens'] as
+          | number
+          | undefined) ||
+        ((
+          metadata?.['bedrock']?.['usage'] as
+            | Record<string, unknown>
+            | undefined
+        )?.['cacheWriteInputTokens'] as number | undefined)
+    });
+    let input = safe({ value: inputTokens - cacheRead - cacheWrite });
+    let total = usage.totalTokens;
+
+    return {
+      total: total,
+      input: input,
+      output: output,
+      reasoning: reasoning,
+      cache: {
+        read: cacheRead,
+        write: cacheWrite
+      }
+    };
   }
 
   async loadMessageHistory(item: {

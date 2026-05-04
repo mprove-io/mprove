@@ -80,25 +80,14 @@ export class ExplorerModelsService {
 
     let models = await this.fetchModels({
       openaiApiKey: isUserCodexAuthSet === true ? undefined : openaiApiKey,
-      anthropicApiKey: anthropicApiKey
+      anthropicApiKey: anthropicApiKey,
+      isUserCodexAuthSet: isUserCodexAuthSet
     });
 
     models = models.filter(m => {
       let idLower = m.id.toLowerCase();
       return ALLOWED_MODEL_KEYWORDS.some(kw => idLower.includes(kw));
     });
-
-    // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 362-371
-    if (isUserCodexAuthSet === true) {
-      CODEX_ALLOWED_MODELS.forEach(modelId => {
-        models.push({
-          id: modelId,
-          name: modelId,
-          providerId: 'openai',
-          providerName: 'OpenAI'
-        });
-      });
-    }
 
     await this.writeCache({
       projectId: projectId,
@@ -179,8 +168,9 @@ export class ExplorerModelsService {
   private async fetchModels(item: {
     openaiApiKey?: string;
     anthropicApiKey?: string;
+    isUserCodexAuthSet?: boolean;
   }): Promise<SessionModelApi[]> {
-    let { openaiApiKey, anthropicApiKey } = item;
+    let { openaiApiKey, anthropicApiKey, isUserCodexAuthSet } = item;
 
     let openaiPromise = openaiApiKey
       ? this.fetchOpenaiModels({ apiKey: openaiApiKey })
@@ -217,6 +207,28 @@ export class ExplorerModelsService {
 
         return isNotDeprecated && hasToolCall && hasTextOutput;
       });
+
+      models = models.map(m => ({
+        id: m.id,
+        name: m.name,
+        providerId: m.providerId,
+        providerName: m.providerName,
+        variants: m.variants,
+        contextLimit: capMap.get(m.id)?.contextLimit
+      }));
+
+      // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 362-371
+      if (isUserCodexAuthSet === true) {
+        CODEX_ALLOWED_MODELS.forEach(modelId => {
+          models.push({
+            id: modelId,
+            name: modelId,
+            providerId: 'openai',
+            providerName: 'OpenAI',
+            contextLimit: capMap.get(modelId)?.contextLimit
+          });
+        });
+      }
     }
 
     return models;
@@ -375,7 +387,15 @@ export class ExplorerModelsService {
   private async fetchModelsDevCapabilities(item: {
     providerIds: string[];
   }): Promise<
-    | Map<string, { toolcall: boolean; outputText: boolean; status: string }>
+    | Map<
+        string,
+        {
+          toolcall: boolean;
+          outputText: boolean;
+          status: string;
+          contextLimit?: number;
+        }
+      >
     | undefined
   > {
     let { providerIds } = item;
@@ -389,7 +409,12 @@ export class ExplorerModelsService {
 
       let capMap = new Map<
         string,
-        { toolcall: boolean; outputText: boolean; status: string }
+        {
+          toolcall: boolean;
+          outputText: boolean;
+          status: string;
+          contextLimit?: number;
+        }
       >();
 
       Object.entries(modelsDevResponse).forEach(([providerId, mdProvider]) => {
@@ -403,7 +428,8 @@ export class ExplorerModelsService {
           capMap.set(model.id, {
             toolcall: model.tool_call,
             outputText: model.modalities?.output?.includes('text') ?? false,
-            status: model.status ?? 'active'
+            status: model.status ?? 'active',
+            contextLimit: model.limit?.context
           });
         });
       });

@@ -69,6 +69,11 @@
     <m-auto-accept-toggle [sessionId]="sessionId"></m-auto-accept-toggle>
   </div>
 
+  <div
+    *ngIf="sessionType === sessionTypeEnum.Explorer"
+    class="h-10 w-10 flex-shrink-0"
+  ></div>
+
   <ng-select
     #sessionAgentSelect
     [fixNgSelectBottom]="sessionAgentSelect"
@@ -151,10 +156,7 @@
     placeholder="Thinking"
   ></ng-select>
 
-  <div
-    *ngIf="sessionType !== sessionTypeEnum.Explorer"
-    class="h-10 w-10 flex-shrink-0"
-  >
+  <div class="h-10 w-10 flex-shrink-0">
     <m-context-usage-circle></m-context-usage-circle>
   </div>
 </div>

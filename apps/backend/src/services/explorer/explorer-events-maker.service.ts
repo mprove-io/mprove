@@ -61,6 +61,19 @@ export class ExplorerEventsMakerService {
   makeAssistantMessageEvent(item: {
     messageId: string;
     sessionId: string;
+    provider?: string;
+    modelId?: string;
+    tokens?: {
+      total?: number;
+      input: number;
+      output: number;
+      reasoning: number;
+      cache: {
+        read: number;
+        write: number;
+      };
+    };
+    finish?: string;
   }): Event {
     return {
       type: 'message.updated',
@@ -68,7 +81,11 @@ export class ExplorerEventsMakerService {
         info: {
           id: item.messageId,
           sessionID: item.sessionId,
-          role: 'assistant'
+          role: 'assistant',
+          providerID: item.provider,
+          modelID: item.modelId,
+          tokens: item.tokens,
+          finish: item.finish
         }
       }
     } as Event;

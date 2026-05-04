@@ -2,6 +2,8 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import type { AssistantMessage } from '@opencode-ai/sdk/v2';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
+import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionModelsQuery } from '#front/app/queries/session-models.query';
 
@@ -24,9 +26,10 @@ export class ContextUsageCircleComponent {
 
   contextUsage$ = combineLatest([
     this.sessionBundleQuery.messages$,
-    this.sessionModelsQuery.modelsOpencode$
+    this.sessionModelsQuery.modelsOpencode$,
+    this.sessionModelsQuery.modelsAi$
   ]).pipe(
-    tap(([messages, models]) => {
+    tap(([messages, modelsOpencode, modelsAi]) => {
       this.percentage = 0;
       this.total = 0;
       this.contextLimit = undefined;
@@ -63,6 +66,12 @@ export class ContextUsageCircleComponent {
 
         this.total = total;
         this.hasData = true;
+
+        let session = this.sessionQuery.getValue();
+
+        let models =
+          session.type === SessionTypeEnum.Explorer ? modelsAi : modelsOpencode;
+
         let model = models.find(m => m.id === assistantMessage.modelID);
         this.contextLimit = model?.contextLimit;
 
@@ -70,7 +79,10 @@ export class ContextUsageCircleComponent {
           this.percentage = Math.round((total / this.contextLimit) * 100);
           let clamped = Math.max(0, Math.min(100, this.percentage));
           this.dashOffset = this.circumference * (1 - clamped / 100);
-          this.tooltipText = `${this.percentage}% of context limit`;
+          let contextLimit = this.formatTokenCount({
+            count: this.contextLimit
+          });
+          this.tooltipText = `${this.percentage}% of context limit ${contextLimit}`;
         } else {
           this.dashOffset = this.circumference;
           this.tooltipText = '';
@@ -81,7 +93,18 @@ export class ContextUsageCircleComponent {
     })
   );
 
+  formatTokenCount(item: { count: number }): string {
+    let { count } = item;
+
+    if (count >= 1_000) {
+      return `${Math.round(count / 1000)}k`;
+    }
+
+    return `${count}`;
+  }
+
   constructor(
+    private sessionQuery: SessionQuery,
     private sessionBundleQuery: SessionBundleQuery,
     private sessionModelsQuery: SessionModelsQuery,
     private cd: ChangeDetectorRef
