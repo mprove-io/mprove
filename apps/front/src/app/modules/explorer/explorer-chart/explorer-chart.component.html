@@ -89,7 +89,7 @@
         ></m-chart-view>
       </div>
 
-      <div class="mt-10 flex max-h-[24%] min-h-[24%] flex-row">
+      <div *ngIf="isData" class="mt-10 flex max-h-[24%] min-h-[24%] flex-row">
         <div
           *ngIf="mconfig?.fields?.length > 0"
           class="flex w-full max-w-max flex-1 overflow-auto"
@@ -126,7 +126,7 @@
       <div class="mt-7 flex cursor-default flex-row items-center justify-end">
         <div class="flex flex-row items-center justify-end">
           <div
-            *ngIf="mconfig?.fields?.length > 0"
+            *ngIf="mconfig?.fields?.length > 0 && isData"
             class="flex h-11 cursor-pointer flex-row items-center"
             (click)="toggleFormat()"
           >
@@ -137,6 +137,25 @@
             <ui-switch
               class="mb-1 ml-5 flex flex-row items-center"
               [checked]="isFormat"
+              color="#64BD63"
+            ></ui-switch>
+          </div>
+
+          <div
+            *ngIf="
+              mconfig?.fields?.length > 0 &&
+              mconfig?.chart.type === chartTypeEnumTable
+            "
+            class="ml-10 flex h-11 cursor-pointer flex-row items-center"
+            (click)="toggleData()"
+          >
+            <div class="text-s1 flex h-11 select-none items-center text-base"
+              >Data
+            </div>
+
+            <ui-switch
+              class="mb-1 ml-5 flex flex-row items-center"
+              [checked]="isData"
               color="#64BD63"
             ></ui-switch>
           </div>

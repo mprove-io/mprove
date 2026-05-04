@@ -84,6 +84,8 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
 
   isFormat = true;
 
+  isData = true;
+
   checkRunning$: Subscription;
 
   constructor(
@@ -102,6 +104,10 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes.mconfig) {
+      this.isData = this.mconfig?.chart.type !== ChartTypeEnum.Table;
+    }
+
     if (changes.query || changes.mconfig) {
       this.updateChartData();
     }
@@ -137,6 +143,10 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
 
   toggleFormat() {
     this.isFormat = !this.isFormat;
+  }
+
+  toggleData() {
+    this.isData = !this.isData;
   }
 
   run() {
