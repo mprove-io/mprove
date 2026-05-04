@@ -27,7 +27,10 @@ import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
+import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
+import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
+import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
@@ -81,6 +84,9 @@ export class ExplorerHistoryComponent implements OnInit {
   constructor(
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
+    private sessionBundleQuery: SessionBundleQuery,
+    private sessionEventsQuery: SessionEventsQuery,
+    private uiQuery: UiQuery,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
@@ -214,12 +220,24 @@ export class ExplorerHistoryComponent implements OnInit {
   }
 
   async openSession(session: SessionApi) {
+    if (session.sessionId === this.currentSession?.sessionId) {
+      this.closeOverlay();
+      return;
+    }
+
+    this.uiQuery.updatePart({ showContent: false });
+    this.sessionBundleQuery.reset();
+    this.sessionEventsQuery.reset();
+    this.sessionQuery.update({ ...session, firstMessage: undefined });
+
     await this.navigateService.navigateToExplorerSession({
       sessionId: session.sessionId,
       repoId: session.repoId,
       branchId: session.branchId,
       envId: session.envId
     });
+
+    this.closeOverlay();
   }
 
   renameSession(event: MouseEvent, session: SessionApiX) {
