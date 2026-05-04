@@ -21,6 +21,8 @@ export const UTC = 'UTC';
 
 export const MALLOY_FILTER_ANY = 'f``';
 
+export const EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE = 75;
+
 export const PROJECT_CONFIG_ALLOW_TIMEZONES = 'true';
 export const PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS = 'false';
 export const PROJECT_CONFIG_DEFAULT_TIMEZONE = UTC;

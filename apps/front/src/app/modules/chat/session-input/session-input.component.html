@@ -3,6 +3,15 @@
 </div>
 
 <div
+  *ngIf="showUsageWarning && sessionType === sessionTypeEnum.Explorer"
+  class="mb-3 text-center text-base font-medium text-amber-600"
+>
+  Create a new session to keep full context ({{
+    contextUsageWarningPercentage
+  }}% of limit used)
+</div>
+
+<div
   class="overflow-hidden rounded-3xl border-[1.5px]"
   [ngClass]="{
     'border-s300 focus-within:border-s500': !effectiveDisabled,
@@ -125,17 +134,24 @@
     </ng-template>
 
     <ng-template ng-option-tmp let-item="item">
-      <div class="ml-1 flex items-center truncate">
-        <m-provider-icon
-          *ngIf="item.providerId"
-          [providerId]="item.providerId"
-          class="mr-2 flex-shrink-0"
-          [ngClass]="{
-            'text-green-600': useCodex && item.providerId === 'openai',
-            'text-s500': !(useCodex && item.providerId === 'openai')
-          }"
-        ></m-provider-icon>
-        <span>{{ item.modelId }}</span>
+      <div class="ml-1 flex items-center gap-2 truncate">
+        <div class="flex min-w-0 items-center truncate">
+          <m-provider-icon
+            *ngIf="item.providerId"
+            [providerId]="item.providerId"
+            class="mr-2 flex-shrink-0"
+            [ngClass]="{
+              'text-green-600': useCodex && item.providerId === 'openai',
+              'text-s500': !(useCodex && item.providerId === 'openai')
+            }"
+          ></m-provider-icon>
+          <span class="truncate">{{ item.modelId }}</span>
+        </div>
+        <span
+          *ngIf="item.contextLimitFormatted"
+          class="text-s400 ml-auto flex-shrink-0 text-sm"
+          >{{ item.contextLimitFormatted }}</span
+        >
       </div>
     </ng-template>
   </ng-select>
@@ -157,7 +173,10 @@
   ></ng-select>
 
   <div class="h-10 w-10 flex-shrink-0">
-    <m-context-usage-circle></m-context-usage-circle>
+    <m-context-usage-circle
+      [model]="model"
+      (usageWarningChange)="showUsageWarning = $event"
+    ></m-context-usage-circle>
   </div>
 </div>
 

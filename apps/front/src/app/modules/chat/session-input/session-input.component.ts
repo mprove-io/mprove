@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { take, tap } from 'rxjs/operators';
+import { EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE } from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -65,6 +66,8 @@ export class SessionInputComponent implements OnChanges {
     modelId: string;
     providerId: string;
     providerName: string;
+    contextLimit?: number;
+    contextLimitFormatted: string;
   }[] = [];
   modelsLoading = false;
   agents = ['build', 'plan'];
@@ -77,6 +80,8 @@ export class SessionInputComponent implements OnChanges {
   projectHasAnyApiKeyOrSubscription = true;
 
   providerHasApiKeyOrSubscription = true;
+  showUsageWarning = false;
+  contextUsageWarningPercentage = EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -289,6 +294,7 @@ export class SessionInputComponent implements OnChanges {
       providerId: string;
       providerName: string;
       variants?: string[];
+      contextLimit?: number;
     }[]
   ) {
     this.modelVariantsMap.clear();
@@ -302,7 +308,11 @@ export class SessionInputComponent implements OnChanges {
         label: `${m.id}`,
         modelId: m.id,
         providerId: m.providerId,
-        providerName: m.providerName
+        providerName: m.providerName,
+        contextLimit: m.contextLimit,
+        contextLimitFormatted: this.formatContextLimit({
+          contextLimit: m.contextLimit
+        })
       };
     });
     let providerOrder: Record<string, number> = {
@@ -320,6 +330,24 @@ export class SessionInputComponent implements OnChanges {
     });
     this.models = modelOptions;
     this.updateVariants();
+  }
+
+  formatContextLimit(item: { contextLimit?: number }) {
+    let { contextLimit } = item;
+
+    if (!contextLimit) {
+      return '';
+    }
+
+    if (contextLimit >= 1000000) {
+      return `${Math.round(contextLimit / 1000000)}M`;
+    }
+
+    if (contextLimit >= 1000) {
+      return `${Math.round(contextLimit / 1000)}K`;
+    }
+
+    return contextLimit.toString();
   }
 
   openModelSelect() {
