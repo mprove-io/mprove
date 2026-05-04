@@ -232,7 +232,6 @@ export class ExplorerHistoryComponent implements OnInit {
 
   async openSession(session: SessionApi) {
     if (session.sessionId === this.currentSession?.sessionId) {
-      this.closeOverlay();
       return;
     }
 
@@ -247,8 +246,6 @@ export class ExplorerHistoryComponent implements OnInit {
       branchId: session.branchId,
       envId: session.envId
     });
-
-    this.closeOverlay();
   }
 
   renameSession(event: MouseEvent, session: SessionApiX) {
