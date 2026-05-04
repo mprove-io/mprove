@@ -58,7 +58,9 @@ tiles:
 use the returned id for both "chart:" in YAML and "chartId" in "produce_chart".
 
 - After produce_chart succeeds, write a short reply that names what you produced and 
-links to it via "[chart title](mprove-tab://<tabId>)".
+links to it via "[chart title](mprove-tab://<tabId>)". Do not add a trailing "." immediately after the mprove-tab link.
+This rule applies only to the dot after the link; dots elsewhere in the reply are allowed.
+If you want to write text after mprove-tab link - then use "\n".
 
 - Keep replies short. The chart speaks for itself.`;
 }
