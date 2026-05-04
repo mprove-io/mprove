@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { interval, type Subscription } from 'rxjs';
-import { concatMap, tap } from 'rxjs/operators';
+import { interval, type Observable, type Subscription } from 'rxjs';
+import { exhaustMap, tap } from 'rxjs/operators';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type {
@@ -25,8 +25,6 @@ export class ExplorerTabService {
   openTab(item: { sessionId: string; tabId: string; chartId: string }) {
     let { sessionId, tabId, chartId } = item;
 
-    let loadingStartedAt = Date.now();
-
     this.stopPolling({ tabId: tabId });
 
     this.explorerTabsQuery.setContent({
@@ -34,36 +32,22 @@ export class ExplorerTabService {
       content: { status: 'loading' }
     });
 
-    let payload: ToBackendGetExplorerChartTabRequestPayload = {
-      sessionId: sessionId,
-      chartId: chartId
-    };
-
-    this.apiService
-      .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetExplorerChartTab,
-        payload: payload
-      })
+    this.fetchTab({ sessionId: sessionId, chartId: chartId })
       .pipe(
         tap((resp: ToBackendGetExplorerChartTabResponse) => {
-          let elapsed = Date.now() - loadingStartedAt;
-          let delayMs = Math.max(0, 150 - elapsed);
-
-          setTimeout(() => {
-            this.setTabPayload({
-              sessionId: sessionId,
-              tabId: tabId,
-              chartId: chartId,
-              respPayload: resp.payload
-            });
-          }, delayMs);
+          this.setTabPayload({
+            sessionId: sessionId,
+            tabId: tabId,
+            chartId: chartId,
+            respPayload: resp.payload
+          });
         })
       )
       .subscribe();
   }
 
-  closeTab(item: { sessionId: string; tabId: string }) {
-    let closedExplorerTabIds = this.explorerTabsQuery.closeTab({
+  openTabFromMessages(item: { sessionId: string; tabId: string }) {
+    let closedExplorerTabIds = this.explorerTabsQuery.reopenTab({
       tabId: item.tabId
     });
 
@@ -73,8 +57,10 @@ export class ExplorerTabService {
     });
   }
 
-  reopenTab(item: { sessionId: string; tabId: string }) {
-    let closedExplorerTabIds = this.explorerTabsQuery.reopenTab({
+  closeTab(item: { sessionId: string; tabId: string }) {
+    this.stopPolling({ tabId: item.tabId });
+
+    let closedExplorerTabIds = this.explorerTabsQuery.closeTab({
       tabId: item.tabId
     });
 
@@ -107,6 +93,29 @@ export class ExplorerTabService {
         payload: payload
       })
       .subscribe();
+  }
+
+  stopAllPolling() {
+    this.pollingByTabId.forEach(sub => {
+      sub.unsubscribe();
+    });
+
+    this.pollingByTabId.clear();
+  }
+
+  private fetchTab(item: {
+    sessionId: string;
+    chartId: string;
+  }): Observable<ToBackendGetExplorerChartTabResponse> {
+    let payload: ToBackendGetExplorerChartTabRequestPayload = {
+      sessionId: item.sessionId,
+      chartId: item.chartId
+    };
+
+    return this.apiService.req({
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetExplorerChartTab,
+      payload: payload
+    });
   }
 
   private setTabPayload(item: {
@@ -158,19 +167,10 @@ export class ExplorerTabService {
 
     if (this.pollingByTabId.has(tabId)) return;
 
-    let payload: ToBackendGetExplorerChartTabRequestPayload = {
-      sessionId: sessionId,
-      chartId: chartId
-    };
-
-    let sub = interval(3000)
+    let sub = interval(2500)
       .pipe(
-        concatMap(() =>
-          this.apiService.req({
-            pathInfoName:
-              ToBackendRequestInfoNameEnum.ToBackendGetExplorerChartTab,
-            payload: payload
-          })
+        exhaustMap(() =>
+          this.fetchTab({ sessionId: sessionId, chartId: chartId })
         ),
         tap((resp: ToBackendGetExplorerChartTabResponse) => {
           this.setTabPayload({
@@ -192,6 +192,7 @@ export class ExplorerTabService {
     if (!sub) return;
 
     sub.unsubscribe();
+
     this.pollingByTabId.delete(item.tabId);
   }
 }

@@ -75,6 +75,7 @@ export class ExplorerComponent implements OnInit {
       this.isNewSessionRoute = ar.includes(PATH_NEW_SESSION);
 
       if (wasSessionRoute && !this.isSessionRoute) {
+        this.explorerTabService.stopAllPolling();
         this.sessionQuery.reset();
         this.sessionBundleQuery.reset();
         this.sessionEventsQuery.reset();

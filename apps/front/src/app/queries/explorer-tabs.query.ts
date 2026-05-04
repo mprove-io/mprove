@@ -65,6 +65,8 @@ export class ExplorerTabsQuery extends BaseQuery<ExplorerTabsState> {
     let exists = state.tabs.some(t => t.id === item.tab.id);
 
     if (exists || isClosed) {
+      console.log('appendTab: exists || isClosed');
+
       let tabs = state.tabs.map(t => (t.id === item.tab.id ? item.tab : t));
 
       this.updatePart({

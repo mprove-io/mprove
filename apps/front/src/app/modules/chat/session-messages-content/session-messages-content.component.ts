@@ -243,7 +243,7 @@ export class SessionMessagesContentComponent {
 
   onMproveTabLinkClick(tabId: string) {
     if (this.session?.sessionId) {
-      this.explorerTabService.reopenTab({
+      this.explorerTabService.openTabFromMessages({
         sessionId: this.session.sessionId,
         tabId: tabId
       });
