@@ -21,7 +21,8 @@ export class ContextUsageCircleComponent {
   percentage = 0;
   total = 0;
   contextLimit: number | undefined;
-  tooltipText = '';
+  totalFormatted = '';
+  contextLimitFormatted = '';
   hasData = false;
 
   contextUsage$ = combineLatest([
@@ -33,7 +34,8 @@ export class ContextUsageCircleComponent {
       this.percentage = 0;
       this.total = 0;
       this.contextLimit = undefined;
-      this.tooltipText = '';
+      this.totalFormatted = '';
+      this.contextLimitFormatted = '';
       this.hasData = false;
       this.dashOffset = this.circumference;
 
@@ -65,6 +67,7 @@ export class ContextUsageCircleComponent {
           assistantMessage.tokens.cache.write;
 
         this.total = total;
+        this.totalFormatted = this.formatTokenCount({ count: total });
         this.hasData = true;
 
         let session = this.sessionQuery.getValue();
@@ -79,13 +82,12 @@ export class ContextUsageCircleComponent {
           this.percentage = Math.round((total / this.contextLimit) * 100);
           let clamped = Math.max(0, Math.min(100, this.percentage));
           this.dashOffset = this.circumference * (1 - clamped / 100);
-          let contextLimit = this.formatTokenCount({
+          this.contextLimitFormatted = this.formatTokenCount({
             count: this.contextLimit
           });
-          this.tooltipText = `${this.percentage}% of context limit ${contextLimit}`;
         } else {
           this.dashOffset = this.circumference;
-          this.tooltipText = '';
+          this.contextLimitFormatted = '';
         }
       }
 
@@ -96,11 +98,7 @@ export class ContextUsageCircleComponent {
   formatTokenCount(item: { count: number }): string {
     let { count } = item;
 
-    if (count >= 1_000) {
-      return `${Math.round(count / 1000)}k`;
-    }
-
-    return `${count}`;
+    return count.toLocaleString('en-US').split(',').join(' ');
   }
 
   constructor(

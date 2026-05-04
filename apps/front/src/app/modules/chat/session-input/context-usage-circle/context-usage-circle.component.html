@@ -1,8 +1,8 @@
 <div
   *ngIf="hasData"
   class="flex h-10 w-10 flex-shrink-0 items-center justify-center"
-  [tp]="tooltipText"
-  [tpIsEnabled]="!!tooltipText"
+  [tp]="tooltipTemplate"
+  [tpIsEnabled]="hasData"
   tpPlacement="top"
 >
   <svg
@@ -34,4 +34,20 @@
     />
   </svg>
 </div>
+
+<ng-template #tooltipTemplate>
+  <div class="grid grid-cols-[auto_auto] gap-x-3 gap-y-1 whitespace-nowrap">
+    <div *ngIf="contextLimit">Usage</div>
+    <div *ngIf="contextLimit" class="text-right font-semibold">
+      {{ percentage }}%
+    </div>
+    <div>Tokens</div>
+    <div class="text-right font-semibold">{{ totalFormatted }}</div>
+    <div *ngIf="contextLimit">Limit</div>
+    <div *ngIf="contextLimit" class="text-right font-semibold">
+      {{ contextLimitFormatted }}
+    </div>
+  </div>
+</ng-template>
+
 <div *ngIf="contextUsage$ | async"></div>
