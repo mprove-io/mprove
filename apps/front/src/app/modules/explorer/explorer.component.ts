@@ -42,26 +42,43 @@ export class ExplorerComponent implements OnInit {
 
   isNewSessionRoute = false;
 
-  tabs$ = this.explorerTabsQuery.tabs$;
+  tabs: ExplorerTab[] = [];
 
-  activeTabId$ = this.explorerTabsQuery.activeTabId$;
+  tabs$ = this.explorerTabsQuery.tabs$.pipe(
+    tap(tabs => {
+      this.tabs = tabs;
+      this.cd.detectChanges();
+    })
+  );
+
+  activeTabId: string;
+
+  activeTabId$ = this.explorerTabsQuery.activeTabId$.pipe(
+    tap(activeTabId => {
+      this.activeTabId = activeTabId;
+
+      this.persistCurrentSessionLink({ tabId: activeTabId });
+
+      if (activeTabId) {
+        this.openExplorerTab({ tabId: activeTabId });
+      }
+
+      this.cd.detectChanges();
+    })
+  );
+
+  activeTabContent: ExplorerTabContent | null;
 
   activeTabContent$ = combineLatest([
-    this.activeTabId$,
+    this.explorerTabsQuery.activeTabId$,
     this.explorerTabsQuery.contents$
   ]).pipe(
     map(([activeTabId, contents]): ExplorerTabContent | null =>
       activeTabId ? (contents[activeTabId] ?? { status: 'idle' }) : null
-    )
-  );
-
-  activeTabOpener$ = this.activeTabId$.pipe(
-    tap(activeTabId => {
-      this.persistCurrentSessionLink({ tabId: activeTabId });
-
-      if (!activeTabId) return;
-
-      this.openExplorerTab({ tabId: activeTabId });
+    ),
+    tap(content => {
+      this.activeTabContent = content;
+      this.cd.detectChanges();
     })
   );
 
@@ -162,6 +179,11 @@ export class ExplorerComponent implements OnInit {
     let ar = this.router.url.split('?')[0].split('/');
     this.isSessionRoute = ar.includes(PATH_SESSION);
     this.isNewSessionRoute = ar.includes(PATH_NEW_SESSION);
+
+    this.uiQuery.updatePart({
+      showContent: true,
+      showSessionInput: true
+    });
 
     let nav = this.navQuery.getValue();
 

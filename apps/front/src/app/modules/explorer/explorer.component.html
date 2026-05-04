@@ -64,15 +64,13 @@
         >
           <m-explorer-tabs
             class="flex-shrink-0"
-            [tabs]="(tabs$ | async) ?? []"
-            [activeTabId]="activeTabId$ | async"
+            [tabs]="tabs"
+            [activeTabId]="activeTabId"
             (tabSelect)="onTabSelect($event)"
             (tabClose)="onTabClose($event)"
           ></m-explorer-tabs>
 
-          <ng-container
-            *ngIf="activeTabContent$ | async as content; else noTab"
-          >
+          <ng-container *ngIf="activeTabContent as content; else noTab">
             @switch (content.status) {
               @case ('idle') {
                 <div
@@ -141,4 +139,6 @@
 
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="routerEvents$ | async"></div>
-<div *ngIf="activeTabOpener$ | async"></div>
+<div *ngIf="tabs$ | async"></div>
+<div *ngIf="activeTabId$ | async"></div>
+<div *ngIf="activeTabContent$ | async"></div>
