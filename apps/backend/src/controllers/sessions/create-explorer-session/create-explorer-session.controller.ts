@@ -102,14 +102,24 @@ export class CreateExplorerSessionController {
       });
     }
 
-    if (useCodex && isUndefined(user.codexAuth)) {
+    let split = splitModel(model);
+
+    let modelProvider = split ? split.providerID : provider;
+
+    let modelId = split ? split.modelID : model;
+
+    let isOpenaiOauth = modelProvider === 'openai' && useCodex === true;
+
+    let isCodexAuthUnset = isUndefined(user.codexAuth);
+
+    if (isOpenaiOauth && isCodexAuthUnset) {
       throw new ServerError({
         message: ErEnum.BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET
       });
     }
 
     // Prewarm codex auth so first message (title + stream parallel) starts with fresh token
-    if (useCodex) {
+    if (isOpenaiOauth) {
       await this.codexService.prewarmCodexAuth({
         userId: user.userId
       });
@@ -139,10 +149,10 @@ export class CreateExplorerSessionController {
           initialBranch: undefined,
           envId: envId,
           initialCommit: undefined,
-          useCodex: useCodex,
+          useCodex: isOpenaiOauth,
           status: SessionStatusEnum.Active,
           lastActivityTs: now,
-          codexAuthUpdateTs: useCodex ? user.codexAuthUpdateTs : undefined,
+          codexAuthUpdateTs: isOpenaiOauth ? user.codexAuthUpdateTs : undefined,
           createdTs: now
         });
 
@@ -196,10 +206,6 @@ export class CreateExplorerSessionController {
 
     // Fire-and-forget first message streaming
     if (firstMessage) {
-      let split = splitModel(model);
-      let modelProvider = split ? split.providerID : provider;
-      let modelId = split ? split.modelID : model;
-
       let apiKey = '';
       if (modelProvider === 'openai') {
         apiKey = project.openaiApiKey || '';
@@ -217,8 +223,8 @@ export class CreateExplorerSessionController {
           messageId: messageId,
           partId: partId,
           isLockAcquired: false,
-          useCodex: useCodex,
-          userId: useCodex ? user.userId : undefined
+          useCodex: isOpenaiOauth,
+          userId: isOpenaiOauth ? user.userId : undefined
         })
         .catch(e => {
           logToConsoleBackend({

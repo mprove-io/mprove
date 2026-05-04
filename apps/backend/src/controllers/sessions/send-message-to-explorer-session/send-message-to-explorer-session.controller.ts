@@ -117,10 +117,11 @@ export class SendMessageToExplorerSessionController {
       let modelProvider = split ? split.providerID : session.provider;
       let modelId = split ? split.modelID : model;
 
-      let isCodex = session.useCodex === true;
+      let isOpenaiOauth =
+        modelProvider === 'openai' && session.useCodex === true;
 
       let apiKey = '';
-      if (!isCodex) {
+      if (!isOpenaiOauth) {
         if (modelProvider === 'openai') {
           apiKey = project.openaiApiKey || '';
         } else if (modelProvider === 'anthropic') {
@@ -129,7 +130,7 @@ export class SendMessageToExplorerSessionController {
       }
 
       // Ensure codex auth is fresh in DB before stream / interact dispatch
-      if (isCodex) {
+      if (isOpenaiOauth) {
         await this.codexService.prewarmCodexAuth({
           userId: user.userId
         });
@@ -173,8 +174,8 @@ export class SendMessageToExplorerSessionController {
             messageId: messageId,
             partId: partId,
             isLockAcquired: true,
-            useCodex: isCodex,
-            userId: user.userId
+            useCodex: isOpenaiOauth,
+            userId: isOpenaiOauth ? user.userId : undefined
           })
           .catch(e => {
             logToConsoleBackend({
@@ -194,8 +195,8 @@ export class SendMessageToExplorerSessionController {
           userMessage: message,
           messageId: messageId,
           partId: partId,
-          useCodex: isCodex,
-          userId: user.userId
+          useCodex: isOpenaiOauth,
+          userId: isOpenaiOauth ? user.userId : undefined
         });
       }
     } else if (interactionType === InteractionTypeEnum.Stop) {

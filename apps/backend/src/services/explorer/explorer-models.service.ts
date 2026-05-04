@@ -167,24 +167,36 @@ export class ExplorerModelsService {
       ? this.fetchOpenaiModels({ apiKey: openaiApiKey })
       : Promise.resolve([]);
 
-    let anthropicPromise = anthropicApiKey
-      ? this.fetchAnthropicModels({ apiKey: anthropicApiKey })
-      : Promise.resolve([]);
-
     let capMapPromise = this.fetchModelsDevCapabilities({
       providerIds: ['openai', 'anthropic']
     });
 
-    let [openaiModels, anthropicModels, capMap] = await Promise.all([
+    let [openaiModels, capMap] = await Promise.all([
       openaiPromise,
-      anthropicPromise,
       capMapPromise
     ]);
 
     let models: SessionModelApi[] = [];
-    models.push(...openaiModels, ...anthropicModels);
+
+    models.push(...openaiModels);
 
     if (capMap) {
+      if (anthropicApiKey) {
+        capMap.forEach((cap, modelId) => {
+          if (cap.providerId !== 'anthropic') {
+            return;
+          }
+
+          models.push({
+            id: modelId,
+            name: cap.name,
+            providerId: cap.providerId,
+            providerName: cap.providerName,
+            contextLimit: cap.contextLimit
+          });
+        });
+      }
+
       models = models.filter(m => {
         let cap = capMap.get(m.id);
         if (!cap) {
@@ -263,47 +275,6 @@ export class ExplorerModelsService {
     }
   }
 
-  private async fetchAnthropicModels(item: {
-    apiKey: string;
-  }): Promise<SessionModelApi[]> {
-    try {
-      let response = await fetch('https://api.anthropic.com/v1/models', {
-        headers: {
-          'x-api-key': item.apiKey,
-          'anthropic-version': '2023-06-01'
-        }
-      });
-
-      if (!response.ok) {
-        return [];
-      }
-
-      let data = (await response.json()) as {
-        data: { id: string; display_name: string }[];
-      };
-
-      let models = data.data.map(m => ({
-        id: m.id,
-        name: m.display_name || m.id,
-        providerId: 'anthropic',
-        providerName: 'Anthropic'
-      }));
-
-      return models;
-    } catch (e) {
-      logToConsoleBackend({
-        log: new ServerError({
-          message: ErEnum.BACKEND_MODELS_CACHE_PROVIDER_MODELS_ERROR,
-          originalError: e
-        }),
-        logLevel: LogLevelEnum.Info,
-        logger: this.logger,
-        cs: this.cs
-      });
-      return [];
-    }
-  }
-
   getModel(item: {
     provider: string;
     modelId: string;
@@ -334,19 +305,21 @@ export class ExplorerModelsService {
   // Reference: external/opencode/packages/opencode/src/provider/transform.ts
   // - options() lines 746-864 (chat/non-small)
   // - smallOptions() lines 866-879 (title/small)
-  buildCodexProviderOptions(item: {
+  buildOpenaiProviderOptions(item: {
     modelId: string;
     sessionId: string;
-    instructions: string;
+    instructions?: string;
     isSmall: boolean;
   }): { openai: Record<string, any> } {
     let { modelId, sessionId, instructions, isSmall } = item;
 
     let openai: Record<string, any> = {
-      instructions: instructions,
-      store: false,
-      promptCacheKey: sessionId
+      store: false
     };
+
+    if (isDefined(instructions)) {
+      openai.instructions = instructions;
+    }
 
     let isGpt5 = modelId.includes('gpt-5');
 
@@ -362,6 +335,8 @@ export class ExplorerModelsService {
         openai.reasoningEffort = 'medium';
         openai.reasoningSummary = 'auto';
       }
+
+      openai.promptCacheKey = sessionId;
 
       let isGpt5Dotted = modelId.includes('gpt-5.');
       let isCodexVariant = modelId.includes('codex');
@@ -381,6 +356,9 @@ export class ExplorerModelsService {
     | Map<
         string,
         {
+          providerId: string;
+          providerName: string;
+          name: string;
           toolcall: boolean;
           outputText: boolean;
           status: string;
@@ -401,6 +379,9 @@ export class ExplorerModelsService {
       let capMap = new Map<
         string,
         {
+          providerId: string;
+          providerName: string;
+          name: string;
           toolcall: boolean;
           outputText: boolean;
           status: string;
@@ -417,6 +398,9 @@ export class ExplorerModelsService {
 
         Object.entries(mdProvider.models).forEach(([_modelKey, model]) => {
           capMap.set(model.id, {
+            providerId: providerId,
+            providerName: mdProvider.name,
+            name: model.name,
             toolcall: model.tool_call,
             outputText: model.modalities?.output?.includes('text') ?? false,
             status: model.status ?? 'active',

@@ -23,6 +23,7 @@ import { AiStreamCommandEnum } from '#common/enums/ai-stream-command.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { makeAscendingIdAfter } from '#common/functions/make-ascending-id';
 import { ServerError } from '#common/models/server-error';
 import { CodexService } from '../codex.service';
@@ -656,12 +657,15 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     // Build codex fetch if needed (reads fresh auth from DB)
     let codexFetch =
-      useCodex === true && userId
+      provider === 'openai' && useCodex === true && userId
         ? await this.codexService.buildCodexFetch({
             userId: userId,
             sessionId: sessionId
           })
         : undefined;
+
+    let isOpenaiOauth =
+      provider === 'openai' && useCodex === true && isDefined(codexFetch);
 
     // Start title generation in parallel
     let isFirstMessage = history.length === 0;
@@ -714,11 +718,11 @@ export class ExplorerStreamService implements OnModuleDestroy {
       });
 
     let providerOptions =
-      useCodex === true
-        ? this.explorerModelsService.buildCodexProviderOptions({
+      provider === 'openai'
+        ? this.explorerModelsService.buildOpenaiProviderOptions({
             modelId: modelId,
             sessionId: sessionId,
-            instructions: explorerSystemPrompt,
+            instructions: isOpenaiOauth ? explorerSystemPrompt : undefined,
             isSmall: false
           })
         : undefined;
@@ -754,7 +758,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let result = streamText({
       model: model,
-      system: useCodex === true ? undefined : explorerSystemPrompt,
+      system: isOpenaiOauth ? undefined : explorerSystemPrompt,
       messages: messages,
       abortSignal: abortController.signal,
       providerOptions: providerOptions,

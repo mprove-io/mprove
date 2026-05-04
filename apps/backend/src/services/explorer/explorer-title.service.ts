@@ -5,6 +5,7 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
 import { ExplorerModelsService } from './explorer-models.service';
 import { ExplorerPromptsService } from './explorer-prompts.service';
@@ -47,23 +48,31 @@ export class ExplorerTitleService {
 
     let systemPrompt = this.explorerPromptsService.getTitleSystemPrompt();
 
+    let isOpenaiOauth =
+      provider === 'openai' && useCodex === true && isDefined(codexFetch);
+
+    let providerOptions =
+      provider === 'openai'
+        ? this.explorerModelsService.buildOpenaiProviderOptions({
+            modelId: modelId,
+            sessionId: sessionId,
+            instructions: isOpenaiOauth ? systemPrompt : undefined,
+            isSmall: true
+          })
+        : undefined;
+
     try {
       let result = streamText({
         model: model,
-        ...(useCodex
+        ...(isOpenaiOauth
           ? {
               prompt: `Generate a title for this conversation:\n${userMessage}`,
-              providerOptions:
-                this.explorerModelsService.buildCodexProviderOptions({
-                  modelId: modelId,
-                  sessionId: sessionId,
-                  instructions: systemPrompt,
-                  isSmall: true
-                })
+              providerOptions: providerOptions
             }
           : {
               system: systemPrompt,
-              prompt: `Generate a title for this conversation:\n${userMessage}`
+              prompt: `Generate a title for this conversation:\n${userMessage}`,
+              providerOptions: providerOptions
             })
       });
 
