@@ -552,6 +552,7 @@ export class TabToEntService {
       memberIds: tab.memberIds,
       isFallbackToProdConnections: tab.isFallbackToProdConnections,
       isFallbackToProdVariables: tab.isFallbackToProdVariables,
+      useProdCache: tab.useProdCache,
       ...this.getEntProps({
         dataSt: envSt,
         dataLt: envLt,

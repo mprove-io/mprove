@@ -12,7 +12,8 @@ export let zToBackendEditEnvFallbacksRequestPayload = z
     projectId: z.string(),
     envId: z.string(),
     isFallbackToProdConnections: z.boolean(),
-    isFallbackToProdVariables: z.boolean()
+    isFallbackToProdVariables: z.boolean(),
+    useProdCache: z.boolean()
   })
   .meta({ id: 'ToBackendEditEnvFallbacksRequestPayload' });
 

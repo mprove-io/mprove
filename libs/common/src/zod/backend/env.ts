@@ -9,6 +9,7 @@ export let zEnv = z
     envUsers: z.array(zEnvUser),
     isFallbackToProdConnections: z.boolean(),
     isFallbackToProdVariables: z.boolean(),
+    useProdCache: z.boolean(),
     envConnectionIds: z.array(z.string()),
     envConnectionIdsWithFallback: z.array(z.string()),
     fallbackConnectionIds: z.array(z.string()),

@@ -66,7 +66,8 @@ export class EditEnvFallbacksController {
       projectId,
       envId,
       isFallbackToProdConnections,
-      isFallbackToProdVariables
+      isFallbackToProdVariables,
+      useProdCache
     } = body.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -92,6 +93,7 @@ export class EditEnvFallbacksController {
 
     env.isFallbackToProdConnections = isFallbackToProdConnections;
     env.isFallbackToProdVariables = isFallbackToProdVariables;
+    env.useProdCache = useProdCache;
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(

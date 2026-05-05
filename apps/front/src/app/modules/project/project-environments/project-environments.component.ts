@@ -169,7 +169,8 @@ export class ProjectEnvironmentsComponent implements OnInit {
       projectId: env.projectId,
       envId: env.envId,
       isFallbackToProdConnections: !env.isFallbackToProdConnections,
-      isFallbackToProdVariables: env.isFallbackToProdVariables
+      isFallbackToProdVariables: env.isFallbackToProdVariables,
+      useProdCache: env.useProdCache
     };
 
     this.apiService
@@ -195,7 +196,35 @@ export class ProjectEnvironmentsComponent implements OnInit {
       projectId: env.projectId,
       envId: env.envId,
       isFallbackToProdConnections: env.isFallbackToProdConnections,
-      isFallbackToProdVariables: !env.isFallbackToProdVariables
+      isFallbackToProdVariables: !env.isFallbackToProdVariables,
+      useProdCache: env.useProdCache
+    };
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: ToBackendEditEnvFallbacksResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.memberQuery.update(resp.payload.userMember);
+            this.environmentsQuery.update({ environments: resp.payload.envs });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  useProdCacheChange(env: Env) {
+    let payload: ToBackendEditEnvFallbacksRequestPayload = {
+      projectId: env.projectId,
+      envId: env.envId,
+      isFallbackToProdConnections: env.isFallbackToProdConnections,
+      isFallbackToProdVariables: env.isFallbackToProdVariables,
+      useProdCache: !env.useProdCache
     };
 
     this.apiService

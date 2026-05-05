@@ -48,6 +48,12 @@
                   </div>
                 </th>
 
+                <th class="select-none text-center">
+                  <div class="flex flex-col">
+                    <div>Use Prod Cache</div>
+                  </div>
+                </th>
+
                 <!-- <th class="select-none text-center">
                   <div class="flex flex-col">
                     <div>Variables Fallback</div>
@@ -249,6 +255,39 @@
                       >
                         <m-check-icon
                           *ngIf="environment.isFallbackToProdConnections"
+                        ></m-check-icon>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="w-[140px]">
+                  <div class="flex justify-center">
+                    <div tp="This env is prod">
+                      <div *ngIf="environment.envId === envProd">—</div>
+                    </div>
+                    <div
+                      *ngIf="environment.envId !== envProd"
+                      tp="Admin role required"
+                      [tpIsEnabled]="isAdmin === false"
+                    >
+                      <button
+                        class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
+                        [ngClass]="{
+                          'bg-m600':
+                            environment.useProdCache === true &&
+                            isAdmin === true,
+                          'bg-s400 cursor-default':
+                            environment.useProdCache === true &&
+                            isAdmin === false,
+                          'border-m600': isAdmin === true,
+                          'border-s400 cursor-default': isAdmin === false
+                        }"
+                        (click)="useProdCacheChange(environment)"
+                        [disabled]="isAdmin === false"
+                      >
+                        <m-check-icon
+                          *ngIf="environment.useProdCache"
                         ></m-check-icon>
                       </button>
                     </div>

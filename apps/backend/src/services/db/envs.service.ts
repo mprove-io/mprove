@@ -40,6 +40,7 @@ export class EnvsService {
       memberIds: [],
       isFallbackToProdConnections: true,
       isFallbackToProdVariables: true,
+      useProdCache: true,
       evs: evs,
       keyTag: undefined,
       serverTs: undefined
@@ -122,7 +123,8 @@ export class EnvsService {
       ),
       envUsers: envUsers,
       isFallbackToProdConnections: env.isFallbackToProdConnections,
-      isFallbackToProdVariables: env.isFallbackToProdVariables
+      isFallbackToProdVariables: env.isFallbackToProdVariables,
+      useProdCache: env.useProdCache
     };
 
     return apiEnv;
