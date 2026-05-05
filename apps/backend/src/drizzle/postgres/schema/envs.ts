@@ -24,6 +24,7 @@ export const envsTable = pgTable(
     isFallbackToProdVariables: boolean('is_fallback_to_prod_variables').default(
       false
     ),
+    useProdCache: boolean('use_prod_cache'),
     st: json('st').$type<{ encrypted: string; decrypted: EnvSt }>().notNull(),
     lt: json('lt').$type<{ encrypted: string; decrypted: EnvLt }>().notNull(),
     keyTag: text('key_tag'),

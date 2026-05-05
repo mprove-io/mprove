@@ -85,6 +85,7 @@ export let zBackendConfig = z.object({
   backendLogIsJson: z.boolean(),
   backendLogResponseError: z.boolean(),
   backendLogResponseOk: z.boolean(),
+  dwhColumnUniqueValuesCacheLimit: z.number(),
   demoProjectZenApiKey: z.string().optional(),
   demoProjectAnthropicApiKey: z.string().optional(),
   demoProjectOpenaiApiKey: z.string().optional(),

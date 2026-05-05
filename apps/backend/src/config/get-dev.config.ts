@@ -262,6 +262,12 @@ export function getDevConfig() {
       name: 'BACKEND_LOG_RESPONSE_OK'
     }),
 
+    dwhColumnUniqueValuesCacheLimit: isDefined(
+      process.env.BACKEND_DWH_COLUMN_UNIQUE_VALUES_CACHE_LIMIT
+    )
+      ? Number(process.env.BACKEND_DWH_COLUMN_UNIQUE_VALUES_CACHE_LIMIT)
+      : 5000,
+
     demoProjectE2bApiKey: process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY,
 
     demoProjectZenApiKey: process.env.BACKEND_DEMO_PROJECT_ZEN_API_KEY,

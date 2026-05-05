@@ -1,6 +1,8 @@
 import * as avatars from '#backend/drizzle/postgres/schema/avatars';
 import * as branches from '#backend/drizzle/postgres/schema/branches';
 import * as bridges from '#backend/drizzle/postgres/schema/bridges';
+import * as cachedColumns from '#backend/drizzle/postgres/schema/cached-columns';
+import * as cachedParts from '#backend/drizzle/postgres/schema/cached-parts';
 import * as charts from '#backend/drizzle/postgres/schema/charts';
 import * as connections from '#backend/drizzle/postgres/schema/connections';
 import * as dashboards from '#backend/drizzle/postgres/schema/dashboards';
@@ -27,6 +29,8 @@ import * as users from '#backend/drizzle/postgres/schema/users';
 export const schemaPostgres = {
   ...avatars,
   ...branches,
+  ...cachedColumns,
+  ...cachedParts,
   ...bridges,
   ...charts,
   ...connections,
