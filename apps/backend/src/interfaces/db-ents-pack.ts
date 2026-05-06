@@ -1,6 +1,8 @@
 import { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
 import { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
 import { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
+import { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
+import { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
 import { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
 import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
@@ -28,6 +30,8 @@ export class DbEntsPack {
   avatars?: AvatarEnt[];
   branches?: BranchEnt[];
   bridges?: BridgeEnt[];
+  cachedColumns?: CachedColumnsEnt[];
+  cachedParts?: CachedPartsEnt[];
   connections?: ConnectionEnt[];
   dashboards?: DashboardEnt[];
   dconfigs?: DconfigEnt[];

@@ -16,6 +16,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CachedColumnService } from '#backend/services/db/cached-column.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -33,6 +34,7 @@ export class ViewCachedColumnController {
     private cachedColumnService: CachedColumnService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private hashService: HashService,
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -93,13 +95,16 @@ export class ViewCachedColumnController {
 
     let cachedColumn = await this.db.drizzle.query.cachedColumnsTable
       .findFirst({
-        where: and(
-          eq(cachedColumnsTable.projectId, projectId),
-          eq(cachedColumnsTable.connectionId, connectionId),
-          eq(cachedColumnsTable.envId, cacheEnvId),
-          eq(cachedColumnsTable.schemaName, schemaName),
-          eq(cachedColumnsTable.tableName, tableName),
-          eq(cachedColumnsTable.columnName, columnName)
+        where: eq(
+          cachedColumnsTable.cachedColumnFullId,
+          this.hashService.makeCachedColumnFullId({
+            projectId: projectId,
+            connectionId: connectionId,
+            envId: cacheEnvId,
+            schemaName: schemaName,
+            tableName: tableName,
+            columnName: columnName
+          })
         )
       })
       .then(x => this.tabService.cachedColumnEntToTab(x))

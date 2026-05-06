@@ -5,6 +5,7 @@ import { DeleteBranchController } from './controllers/branches/delete-branch/del
 import { GetBranchesListController } from './controllers/branches/get-branches-list/get-branches-list.controller';
 import { IsBranchExistController } from './controllers/branches/is-branch-exist/is-branch-exist.controller';
 import { ClearCachedColumnController } from './controllers/cached-columns/clear-cached-column/clear-cached-column.controller';
+import { GetCachedColumnsController } from './controllers/cached-columns/get-cached-columns/get-cached-columns.controller';
 import { RefreshCachedColumnController } from './controllers/cached-columns/refresh-cached-column/refresh-cached-column.controller';
 import { ViewCachedColumnController } from './controllers/cached-columns/view-cached-column/view-cached-column.controller';
 import { MoveCatalogNodeController } from './controllers/catalogs/move-catalog-node/move-catalog-node.controller';
@@ -182,6 +183,7 @@ export const appControllers = [
   GetConnectionsController,
   GetConnectionSchemasController,
   GetConnectionSampleController,
+  GetCachedColumnsController,
   ViewCachedColumnController,
   RefreshCachedColumnController,
   ClearCachedColumnController,

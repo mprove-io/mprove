@@ -86,6 +86,55 @@ export class HashService {
     return hash;
   }
 
+  makeCachedColumnFullId(item: {
+    projectId: string;
+    connectionId: string;
+    envId: string;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+  }) {
+    let { projectId, connectionId, envId, schemaName, tableName, columnName } =
+      item;
+
+    let text =
+      projectId + connectionId + envId + schemaName + tableName + columnName;
+    let hash = crypto.createHash('sha256').update(text).digest('hex');
+    return hash;
+  }
+
+  makeCachedPartFullId(item: {
+    projectId: string;
+    connectionId: string;
+    envId: string;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    columnValue: string | null | undefined;
+  }) {
+    let {
+      projectId,
+      connectionId,
+      envId,
+      schemaName,
+      tableName,
+      columnName,
+      columnValue
+    } = item;
+
+    let text = JSON.stringify([
+      projectId,
+      connectionId,
+      envId,
+      schemaName,
+      tableName,
+      columnName,
+      columnValue
+    ]);
+    let hash = crypto.createHash('sha256').update(text).digest('hex');
+    return hash;
+  }
+
   makeDashboardFullId(item: { structId: string; dashboardId: string }) {
     let { structId, dashboardId } = item;
 

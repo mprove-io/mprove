@@ -13,6 +13,9 @@ import type { CachedPartLt, CachedPartSt } from '#common/zod/st-lt';
 export const cachedPartsTable = pgTable(
   'cached_parts',
   {
+    cachedPartFullId: varchar('cached_part_full_id', { length: 64 })
+      .notNull()
+      .primaryKey(),
     projectId: varchar('project_id').notNull(),
     connectionId: varchar('connection_id').notNull(),
     envId: varchar('env_id').notNull(),

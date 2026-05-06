@@ -5,6 +5,8 @@ import type {
   AvatarTab,
   BranchTab,
   BridgeTab,
+  CachedColumnTab,
+  CachedPartTab,
   ChartTab,
   ConnectionTab,
   DashboardTab,
@@ -31,6 +33,8 @@ import type {
 import { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
 import { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
 import { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
+import { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
+import { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
 import { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
 import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
@@ -63,6 +67,10 @@ import type {
   BranchSt,
   BridgeLt,
   BridgeSt,
+  CachedColumnLt,
+  CachedColumnSt,
+  CachedPartLt,
+  CachedPartSt,
   ChartLt,
   ChartSt,
   ConnectionLt,
@@ -152,6 +160,18 @@ export class TabToEntService {
           ?.filter(x => isDefined(x))
           .map(x => this.bridgeTabToEnt({ tab: x, hashSecret: hashSecret })) ??
         [],
+      cachedColumns:
+        tabsPack.cachedColumns
+          ?.filter(x => isDefined(x))
+          .map(x =>
+            this.cachedColumnTabToEnt({ tab: x, hashSecret: hashSecret })
+          ) ?? [],
+      cachedParts:
+        tabsPack.cachedParts
+          ?.filter(x => isDefined(x))
+          .map(x =>
+            this.cachedPartTabToEnt({ tab: x, hashSecret: hashSecret })
+          ) ?? [],
       charts:
         tabsPack.charts
           ?.filter(x => isDefined(x))
@@ -391,6 +411,88 @@ export class TabToEntService {
     };
 
     return bridgeEnt;
+  }
+
+  cachedColumnTabToEnt(item: {
+    tab: CachedColumnTab;
+    hashSecret: string;
+  }): CachedColumnsEnt {
+    let { tab, hashSecret } = item;
+
+    let cachedColumnSt: CachedColumnSt = { emptyData: tab.emptyData };
+    let cachedColumnLt: CachedColumnLt = { emptyData: tab.emptyData };
+
+    let cachedColumnEnt: CachedColumnsEnt = {
+      cachedColumnFullId: this.hashService.makeCachedColumnFullId({
+        projectId: tab.projectId,
+        connectionId: tab.connectionId,
+        envId: tab.envId,
+        schemaName: tab.schemaName,
+        tableName: tab.tableName,
+        columnName: tab.columnName
+      }),
+      projectId: tab.projectId,
+      connectionId: tab.connectionId,
+      envId: tab.envId,
+      schemaName: tab.schemaName,
+      tableName: tab.tableName,
+      columnName: tab.columnName,
+      requestedByUserId: tab.requestedByUserId,
+      status: tab.status,
+      errorMessage: tab.errorMessage,
+      ...this.getEntProps({
+        dataSt: cachedColumnSt,
+        dataLt: cachedColumnLt,
+        isMetadata: false
+      }),
+      startedTs: tab.startedTs,
+      completedTs: tab.completedTs,
+      completedDurationMs: tab.completedDurationMs,
+      limit: tab.limit,
+      isLimitReached: tab.isLimitReached,
+      uniqueValuesCount: tab.uniqueValuesCount,
+      serverTs: tab.serverTs
+    };
+
+    return cachedColumnEnt;
+  }
+
+  cachedPartTabToEnt(item: {
+    tab: CachedPartTab;
+    hashSecret: string;
+  }): CachedPartsEnt {
+    let { tab, hashSecret } = item;
+
+    let cachedPartSt: CachedPartSt = { emptyData: tab.emptyData };
+    let cachedPartLt: CachedPartLt = { emptyData: tab.emptyData };
+
+    let cachedPartEnt: CachedPartsEnt = {
+      cachedPartFullId: this.hashService.makeCachedPartFullId({
+        projectId: tab.projectId,
+        connectionId: tab.connectionId,
+        envId: tab.envId,
+        schemaName: tab.schemaName,
+        tableName: tab.tableName,
+        columnName: tab.columnName,
+        columnValue: tab.columnValue
+      }),
+      projectId: tab.projectId,
+      connectionId: tab.connectionId,
+      envId: tab.envId,
+      schemaName: tab.schemaName,
+      tableName: tab.tableName,
+      columnName: tab.columnName,
+      columnValue: tab.columnValue,
+      count: tab.count,
+      ...this.getEntProps({
+        dataSt: cachedPartSt,
+        dataLt: cachedPartLt,
+        isMetadata: false
+      }),
+      serverTs: tab.serverTs
+    };
+
+    return cachedPartEnt;
   }
 
   chartTabToEnt(item: { tab: ChartTab; hashSecret: string }): ChartEnt {

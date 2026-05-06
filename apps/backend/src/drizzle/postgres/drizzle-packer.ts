@@ -22,6 +22,8 @@ import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
 import { avatarsTable } from './schema/avatars';
 import { branchesTable } from './schema/branches';
 import { bridgesTable } from './schema/bridges';
+import { cachedColumnsTable } from './schema/cached-columns';
+import { cachedPartsTable } from './schema/cached-parts';
 import { chartsTable } from './schema/charts';
 import { connectionsTable } from './schema/connections';
 import { dashboardsTable } from './schema/dashboards';
@@ -186,6 +188,14 @@ export class DrizzlePacker {
         await tx.insert(bridgesTable).values(insertEnts.bridges);
       }
 
+      if (insertEnts.cachedColumns.length > 0) {
+        await tx.insert(cachedColumnsTable).values(insertEnts.cachedColumns);
+      }
+
+      if (insertEnts.cachedParts.length > 0) {
+        await tx.insert(cachedPartsTable).values(insertEnts.cachedParts);
+      }
+
       if (insertEnts.connections.length > 0) {
         await tx.insert(connectionsTable).values(insertEnts.connections);
       }
@@ -319,6 +329,36 @@ export class DrizzlePacker {
             .update(bridgesTable)
             .set(x)
             .where(eq(bridgesTable.bridgeFullId, x.bridgeFullId));
+        });
+      }
+
+      if (updateEnts.cachedColumns.length > 0) {
+        updateEnts.cachedColumns = setUndefinedToNull({
+          ents: updateEnts.cachedColumns,
+          table: cachedColumnsTable
+        });
+
+        await forEachSeries(updateEnts.cachedColumns, async x => {
+          await tx
+            .update(cachedColumnsTable)
+            .set(x)
+            .where(
+              eq(cachedColumnsTable.cachedColumnFullId, x.cachedColumnFullId)
+            );
+        });
+      }
+
+      if (updateEnts.cachedParts.length > 0) {
+        updateEnts.cachedParts = setUndefinedToNull({
+          ents: updateEnts.cachedParts,
+          table: cachedPartsTable
+        });
+
+        await forEachSeries(updateEnts.cachedParts, async x => {
+          await tx
+            .update(cachedPartsTable)
+            .set(x)
+            .where(eq(cachedPartsTable.cachedPartFullId, x.cachedPartFullId));
         });
       }
 
@@ -696,6 +736,52 @@ export class DrizzlePacker {
           .onConflictDoUpdate({
             target: bridgesTable.bridgeFullId,
             set: drizzleSetAllColumnsFull({ table: bridgesTable })
+          });
+      }
+
+      if (insOrUpdEnts.cachedColumns.length > 0) {
+        let uniqueCachedColumnIds = [
+          ...new Set(insOrUpdEnts.cachedColumns.map(x => x.cachedColumnFullId))
+        ];
+
+        insOrUpdEnts.cachedColumns = uniqueCachedColumnIds.map(id =>
+          insOrUpdEnts.cachedColumns.find(x => x.cachedColumnFullId === id)
+        );
+
+        insOrUpdEnts.cachedColumns = setUndefinedToNull({
+          ents: insOrUpdEnts.cachedColumns,
+          table: cachedColumnsTable
+        });
+
+        await tx
+          .insert(cachedColumnsTable)
+          .values(insOrUpdEnts.cachedColumns)
+          .onConflictDoUpdate({
+            target: cachedColumnsTable.cachedColumnFullId,
+            set: drizzleSetAllColumnsFull({ table: cachedColumnsTable })
+          });
+      }
+
+      if (insOrUpdEnts.cachedParts.length > 0) {
+        let uniqueCachedPartIds = [
+          ...new Set(insOrUpdEnts.cachedParts.map(x => x.cachedPartFullId))
+        ];
+
+        insOrUpdEnts.cachedParts = uniqueCachedPartIds.map(id =>
+          insOrUpdEnts.cachedParts.find(x => x.cachedPartFullId === id)
+        );
+
+        insOrUpdEnts.cachedParts = setUndefinedToNull({
+          ents: insOrUpdEnts.cachedParts,
+          table: cachedPartsTable
+        });
+
+        await tx
+          .insert(cachedPartsTable)
+          .values(insOrUpdEnts.cachedParts)
+          .onConflictDoUpdate({
+            target: cachedPartsTable.cachedPartFullId,
+            set: drizzleSetAllColumnsFull({ table: cachedPartsTable })
           });
       }
 

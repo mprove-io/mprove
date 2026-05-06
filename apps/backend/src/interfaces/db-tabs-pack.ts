@@ -2,6 +2,8 @@ import type {
   AvatarTab,
   BranchTab,
   BridgeTab,
+  CachedColumnTab,
+  CachedPartTab,
   ChartTab,
   ConnectionTab,
   DashboardTab,
@@ -30,6 +32,8 @@ export class DbTabsPack {
   avatars?: AvatarTab[];
   branches?: BranchTab[];
   bridges?: BridgeTab[];
+  cachedColumns?: CachedColumnTab[];
+  cachedParts?: CachedPartTab[];
   connections?: ConnectionTab[];
   dashboards?: DashboardTab[];
   dconfigs?: DconfigTab[];

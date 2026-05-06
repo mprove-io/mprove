@@ -7,7 +7,6 @@ import {
   json,
   pgTable,
   text,
-  uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import type { CachedColumnLt, CachedColumnSt } from '#common/zod/st-lt';
@@ -17,6 +16,9 @@ export type CachedColumnStatus = 'running' | 'completed' | 'error';
 export const cachedColumnsTable = pgTable(
   'cached_columns',
   {
+    cachedColumnFullId: varchar('cached_column_full_id', { length: 64 })
+      .notNull()
+      .primaryKey(),
     projectId: varchar('project_id').notNull(),
     connectionId: varchar('connection_id').notNull(),
     envId: varchar('env_id').notNull(),
@@ -61,14 +63,6 @@ export const cachedColumnsTable = pgTable(
     idxCachedColumnsStatus: index('idx_cached_columns_status').on(table.status),
     idxCachedColumnsKeyTag: index('idx_cached_columns_key_tag').on(
       table.keyTag
-    ),
-    uidxCachedColumnsLookup: uniqueIndex('uidx_cached_columns_lookup').on(
-      table.projectId,
-      table.connectionId,
-      table.envId,
-      table.schemaName,
-      table.tableName,
-      table.columnName
     ),
     idxCachedColumnsServerTs: index('idx_cached_columns_server_ts').on(
       table.serverTs

@@ -379,7 +379,7 @@
                 tpPlacement="top"
               >
                 <div
-                  *ngIf="cachedColumnSpinnerNodeId === node.data.id"
+                  *ngIf="isCachedColumnSpinning({ nodeId: node.data.id })"
                   class="border-s200 border-t-m600 mr-2 h-5 w-5 flex-shrink-0 animate-spin rounded-full border-2 [animation-duration:750ms]"
                 >
                 </div>
@@ -394,8 +394,9 @@
                     'text-s500':
                       node.data.cachedColumn?.status !== 'completed' &&
                       node.data.cachedColumn?.status !== 'error',
-                    'hover:bg-m200 hover:text-s1':
-                      cachedColumnSpinnerNodeId !== node.data.id
+                    'hover:bg-m200 hover:text-s1': !isCachedColumnSpinning({
+                      nodeId: node.data.id
+                    })
                   }"
                   [tp]="templateCachedColumnMenu"
                   [tpHideOnEscape]="true"
@@ -428,10 +429,13 @@
                     <button
                       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
                       [ngClass]="{
-                        'text-s400 cursor-default':
-                          cachedColumnSpinnerNodeId === node.data.id
+                        'text-s400 cursor-default': isCachedColumnSpinning({
+                          nodeId: node.data.id
+                        })
                       }"
-                      [disabled]="cachedColumnSpinnerNodeId === node.data.id"
+                      [disabled]="
+                        isCachedColumnSpinning({ nodeId: node.data.id })
+                      "
                       (click)="
                         cachedColumnTpRef.hide();
                         refreshCachedColumn({
@@ -445,10 +449,13 @@
                     <button
                       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
                       [ngClass]="{
-                        'text-s400 cursor-default':
-                          cachedColumnSpinnerNodeId === node.data.id
+                        'text-s400 cursor-default': isCachedColumnSpinning({
+                          nodeId: node.data.id
+                        })
                       }"
-                      [disabled]="cachedColumnSpinnerNodeId === node.data.id"
+                      [disabled]="
+                        isCachedColumnSpinning({ nodeId: node.data.id })
+                      "
                       (click)="
                         cachedColumnTpRef.hide();
                         refreshCachedColumnSample({
