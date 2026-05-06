@@ -376,7 +376,7 @@ export class MysqlService {
         ? `(SELECT \`${columnName}\` FROM \`${schemaName}\`.\`${tableName}\` LIMIT ${sampleSize}) sub`
         : `\`${schemaName}\`.\`${tableName}\``;
 
-      let sqlText = `SELECT \`${columnName}\` AS column_value, COUNT(*) AS count FROM ${sourceSql} GROUP BY \`${columnName}\` ORDER BY count DESC LIMIT ${cacheLimit}`;
+      let sqlText = `SELECT \`${columnName}\` AS column_value, COUNT(*) AS count FROM ${sourceSql} WHERE \`${columnName}\` IS NOT NULL AND CAST(\`${columnName}\` AS CHAR) <> '' GROUP BY \`${columnName}\` ORDER BY count DESC LIMIT ${cacheLimit}`;
 
       let [resultRows] = await mc.query(sqlText);
 
@@ -384,8 +384,7 @@ export class MysqlService {
 
       return {
         values: dataRows.map(row => ({
-          columnValue:
-            row.column_value === null ? 'NULL' : String(row.column_value),
+          columnValue: String(row.column_value),
           count: Number(row.count)
         }))
       };

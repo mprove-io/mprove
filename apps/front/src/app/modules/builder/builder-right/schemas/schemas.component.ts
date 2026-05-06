@@ -3,10 +3,17 @@ import {
   TreeComponent,
   TreeNode
 } from '@ali-hm/angular-tree-component';
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { finalize, map, take, tap } from 'rxjs/operators';
+import { interval, of, type Subscription } from 'rxjs';
+import { exhaustMap, finalize, map, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -19,6 +26,7 @@ import type {
 import type { RawSchemaForeignKey } from '#common/zod/backend/connection-schemas/raw-schema';
 import type { CachedColumn } from '#common/zod/to-backend/connections/cached-column';
 import type { ToBackendClearCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-clear-cached-column';
+import type { ToBackendGetCachedColumnsResponse } from '#common/zod/to-backend/connections/to-backend-get-cached-columns';
 import type { ToBackendGetConnectionSampleResponse } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
 import type {
   ToBackendGetConnectionSchemasRequestPayload,
@@ -64,14 +72,14 @@ interface SchemaTreeNode {
   templateUrl: './schemas.component.html',
   styleUrls: ['schemas.component.scss']
 })
-export class SchemasComponent implements OnInit {
+export class SchemasComponent implements OnInit, OnDestroy {
   schemasLoaded = false;
   isRefreshing = false;
   spinnerName = SCHEMAS_SPINNER_NAME;
   sampleSpinnerNodeId: string;
   sampleRequestId = 0;
-  cachedColumnSpinnerNodeId: string;
-  cachedColumnRequestId = 0;
+  cachedColumnSpinnerNodeIds = new Set<string>();
+  cachedColumnsPollingSub: Subscription;
   treeNodes: SchemaTreeNode[] = [];
   filteredTreeNodes: SchemaTreeNode[] = [];
   combinedSchemaItems: CombinedSchemaItem[] = [];
@@ -129,6 +137,14 @@ export class SchemasComponent implements OnInit {
     this.loadSchemas({ isRefreshExistingCache: false });
   }
 
+  ngOnDestroy() {
+    this.stopCachedColumnsPolling();
+
+    if (this.searchTimer) {
+      clearTimeout(this.searchTimer);
+    }
+  }
+
   loadSchemas(item: { isRefreshExistingCache: boolean }) {
     let { isRefreshExistingCache } = item;
 
@@ -160,6 +176,8 @@ export class SchemasComponent implements OnInit {
               combinedSchemaItems: this.combinedSchemaItems
             });
             this.applyFilter();
+            this.syncRunningCachedColumnSpinners();
+            this.startCachedColumnsPolling();
           }
 
           this.isRefreshing = false;
@@ -433,6 +451,155 @@ export class SchemasComponent implements OnInit {
     }
   }
 
+  isCachedColumnSpinning(item: { nodeId: string }): boolean {
+    let { nodeId } = item;
+    return this.cachedColumnSpinnerNodeIds.has(nodeId);
+  }
+
+  addCachedColumnSpinner(item: { nodeId: string }) {
+    let { nodeId } = item;
+    this.cachedColumnSpinnerNodeIds.add(nodeId);
+  }
+
+  removeCachedColumnSpinner(item: { nodeId: string }) {
+    let { nodeId } = item;
+    this.cachedColumnSpinnerNodeIds.delete(nodeId);
+  }
+
+  syncRunningCachedColumnSpinners() {
+    let runningNodes = this.getRunningCachedColumnNodes();
+    let runningNodeIds = new Set(runningNodes.map(x => x.id));
+
+    this.cachedColumnSpinnerNodeIds.forEach(nodeId => {
+      let isNodeRunning = runningNodeIds.has(nodeId);
+
+      if (isNodeRunning === false) {
+        this.cachedColumnSpinnerNodeIds.delete(nodeId);
+      }
+    });
+
+    runningNodes.forEach(node => {
+      this.cachedColumnSpinnerNodeIds.add(node.id);
+    });
+  }
+
+  getRunningCachedColumnNodes(): SchemaTreeNode[] {
+    let columnNodes = this.getColumnNodes({ nodes: this.treeNodes });
+    return columnNodes.filter(node => node.cachedColumn?.status === 'running');
+  }
+
+  startCachedColumnsPolling() {
+    let hasPollingSub = isDefined(this.cachedColumnsPollingSub);
+
+    if (hasPollingSub === true) {
+      return;
+    }
+
+    let runningNodes = this.getRunningCachedColumnNodes();
+
+    if (runningNodes.length === 0) {
+      return;
+    }
+
+    this.cachedColumnsPollingSub = interval(2500)
+      .pipe(exhaustMap(() => this.pollRunningCachedColumns()))
+      .subscribe();
+  }
+
+  stopCachedColumnsPolling() {
+    let hasPollingSub = isDefined(this.cachedColumnsPollingSub);
+
+    if (hasPollingSub === false) {
+      return;
+    }
+
+    this.cachedColumnsPollingSub.unsubscribe();
+    this.cachedColumnsPollingSub = undefined;
+  }
+
+  pollRunningCachedColumns() {
+    let runningNodes = this.getRunningCachedColumnNodes();
+
+    if (runningNodes.length === 0) {
+      this.stopCachedColumnsPolling();
+      this.syncRunningCachedColumnSpinners();
+      this.cd.detectChanges();
+      return of(undefined);
+    }
+
+    let nav = this.navQuery.getValue();
+
+    return this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetCachedColumns,
+        payload: {
+          projectId: nav.projectId,
+          envId: nav.envId,
+          columns: runningNodes.map(node => ({
+            connectionId: node.connectionId,
+            schemaName: node.schemaDisplayName,
+            tableName: node.tableName,
+            columnName: node.columnName
+          }))
+        }
+      })
+      .pipe(
+        map((resp: ToBackendGetCachedColumnsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            let returnedColumnIds = new Set(
+              resp.payload.cachedColumns.map(
+                cachedColumn =>
+                  `${cachedColumn.connectionId}__${cachedColumn.schemaName}__${cachedColumn.tableName}__${cachedColumn.columnName}`
+              )
+            );
+
+            resp.payload.cachedColumns.forEach(cachedColumn => {
+              let node = runningNodes.find(
+                x =>
+                  x.connectionId === cachedColumn.connectionId &&
+                  x.schemaDisplayName === cachedColumn.schemaName &&
+                  x.tableName === cachedColumn.tableName &&
+                  x.columnName === cachedColumn.columnName
+              );
+
+              let isNodeDefined = isDefined(node);
+
+              if (isNodeDefined === true) {
+                node.cachedColumn = cachedColumn;
+
+                if (cachedColumn.status !== 'running') {
+                  this.removeCachedColumnSpinner({ nodeId: node.id });
+                }
+              }
+            });
+
+            runningNodes.forEach(node => {
+              let returnedColumnId = `${node.connectionId}__${node.schemaDisplayName}__${node.tableName}__${node.columnName}`;
+              let isColumnReturned = returnedColumnIds.has(returnedColumnId);
+
+              if (isColumnReturned === false) {
+                node.cachedColumn = undefined;
+                this.removeCachedColumnSpinner({ nodeId: node.id });
+              }
+            });
+
+            this.applyFilter();
+          }
+
+          this.syncRunningCachedColumnSpinners();
+
+          let stillRunningNodes = this.getRunningCachedColumnNodes();
+
+          if (stillRunningNodes.length === 0) {
+            this.stopCachedColumnsPolling();
+          }
+
+          this.cd.detectChanges();
+        }),
+        take(1)
+      );
+  }
+
   cachedColumnTooltip(item: { node: TreeNode }): string {
     let { node } = item;
     let data = node.data as SchemaTreeNode;
@@ -569,9 +736,7 @@ export class SchemasComponent implements OnInit {
     let data = node.data as SchemaTreeNode;
     let nav = this.navQuery.getValue();
 
-    this.cachedColumnRequestId += 1;
-    let currentRequestId = this.cachedColumnRequestId;
-    this.cachedColumnSpinnerNodeId = data.id;
+    this.addCachedColumnSpinner({ nodeId: data.id });
     this.cd.detectChanges();
 
     this.apiService
@@ -596,14 +761,24 @@ export class SchemasComponent implements OnInit {
               cachedColumn: resp.payload.cachedColumn
             });
             this.applyFilter();
+
+            if (resp.payload.cachedColumn?.status === 'running') {
+              this.startCachedColumnsPolling();
+            } else {
+              this.removeCachedColumnSpinner({ nodeId: data.id });
+            }
           }
         }),
         finalize(() => {
-          if (currentRequestId !== this.cachedColumnRequestId) {
-            return;
+          let columnNodes = this.getColumnNodes({ nodes: this.treeNodes });
+          let columnNode = columnNodes.find(x => x.id === data.id);
+          let isColumnStillRunning =
+            columnNode?.cachedColumn?.status === 'running';
+
+          if (isColumnStillRunning === false) {
+            this.removeCachedColumnSpinner({ nodeId: data.id });
           }
 
-          this.cachedColumnSpinnerNodeId = undefined;
           this.cd.detectChanges();
         }),
         take(1)
@@ -655,6 +830,7 @@ export class SchemasComponent implements OnInit {
               nodeId: data.id,
               cachedColumn: undefined
             });
+            this.removeCachedColumnSpinner({ nodeId: data.id });
             this.applyFilter();
             this.cd.detectChanges();
           }

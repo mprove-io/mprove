@@ -238,7 +238,7 @@ export class DuckDbService {
         ? `(SELECT "${columnName}" FROM "${schemaName}"."${tableName}" LIMIT ${sampleSize}) sub`
         : `"${schemaName}"."${tableName}"`;
 
-      let sqlText = `SELECT "${columnName}" AS column_value, COUNT(*) AS count FROM ${sourceSql} GROUP BY "${columnName}" ORDER BY count DESC LIMIT ${cacheLimit}`;
+      let sqlText = `SELECT "${columnName}" AS column_value, COUNT(*) AS count FROM ${sourceSql} WHERE "${columnName}" IS NOT NULL AND CAST("${columnName}" AS VARCHAR) <> '' GROUP BY "${columnName}" ORDER BY count DESC LIMIT ${cacheLimit}`;
 
       let reader = await dc.runAndReadAll(sqlText);
 
@@ -246,8 +246,7 @@ export class DuckDbService {
 
       return {
         values: resultRows.map(row => ({
-          columnValue:
-            row.column_value === null ? 'NULL' : String(row.column_value),
+          columnValue: String(row.column_value),
           count: Number(row.count)
         }))
       };

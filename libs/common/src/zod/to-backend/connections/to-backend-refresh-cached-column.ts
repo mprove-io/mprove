@@ -60,3 +60,6 @@ export type ToBackendRefreshCachedColumnRequestPayload = z.infer<
 export type ToBackendRefreshCachedColumnResponse = z.infer<
   typeof zToBackendRefreshCachedColumnResponse
 >;
+export type ToBackendRefreshCachedColumnResponsePayload = z.infer<
+  typeof zToBackendRefreshCachedColumnResponsePayload
+>;

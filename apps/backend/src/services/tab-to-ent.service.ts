@@ -419,8 +419,8 @@ export class TabToEntService {
   }): CachedColumnsEnt {
     let { tab, hashSecret } = item;
 
-    let cachedColumnSt: CachedColumnSt = { emptyData: tab.emptyData };
-    let cachedColumnLt: CachedColumnLt = { emptyData: tab.emptyData };
+    let cachedColumnSt: CachedColumnSt = {};
+    let cachedColumnLt: CachedColumnLt = {};
 
     let cachedColumnEnt: CachedColumnsEnt = {
       cachedColumnFullId: this.hashService.makeCachedColumnFullId({
@@ -463,8 +463,8 @@ export class TabToEntService {
   }): CachedPartsEnt {
     let { tab, hashSecret } = item;
 
-    let cachedPartSt: CachedPartSt = { emptyData: tab.emptyData };
-    let cachedPartLt: CachedPartLt = { emptyData: tab.emptyData };
+    let cachedPartSt: CachedPartSt = {};
+    let cachedPartLt: CachedPartLt = {};
 
     let cachedPartEnt: CachedPartsEnt = {
       cachedPartFullId: this.hashService.makeCachedPartFullId({

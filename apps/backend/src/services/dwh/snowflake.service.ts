@@ -271,7 +271,7 @@ export class SnowFlakeService {
         ? `(SELECT "${columnName}" FROM "${schemaName}"."${tableName}" LIMIT ${sampleSize}) sub`
         : `"${schemaName}"."${tableName}"`;
 
-      let sqlText = `SELECT "${columnName}" AS column_value, COUNT(*) AS count FROM ${sourceSql} GROUP BY "${columnName}" ORDER BY count DESC LIMIT ${cacheLimit}`;
+      let sqlText = `SELECT "${columnName}" AS column_value, COUNT(*) AS count FROM ${sourceSql} WHERE "${columnName}" IS NOT NULL AND CAST("${columnName}" AS VARCHAR) <> '' GROUP BY "${columnName}" ORDER BY count DESC LIMIT ${cacheLimit}`;
 
       let result = await this.snowflakeConnectionExecute(snowflakeConnection, {
         sqlText: sqlText
@@ -281,8 +281,7 @@ export class SnowFlakeService {
 
       return {
         values: resultRows.map(row => ({
-          columnValue:
-            row.COLUMN_VALUE === null ? 'NULL' : String(row.COLUMN_VALUE),
+          columnValue: String(row.COLUMN_VALUE),
           count: Number(row.COUNT)
         }))
       };

@@ -231,13 +231,13 @@ export class PrestoService {
         ? `(SELECT "${columnName}" FROM "${catalog}"."${schemaName}"."${tableName}" LIMIT ${sampleSize}) sub`
         : `"${catalog}"."${schemaName}"."${tableName}"`;
 
-      let sqlText = `SELECT "${columnName}" AS column_value, COUNT(*) AS count FROM ${sourceSql} GROUP BY "${columnName}" ORDER BY count DESC LIMIT ${cacheLimit}`;
+      let sqlText = `SELECT "${columnName}" AS column_value, COUNT(*) AS count FROM ${sourceSql} WHERE "${columnName}" IS NOT NULL AND CAST("${columnName}" AS VARCHAR) <> '' GROUP BY "${columnName}" ORDER BY count DESC LIMIT ${cacheLimit}`;
 
       let result: PrestoQuery = await pc.query(sqlText);
 
       return {
         values: result.data.map(row => ({
-          columnValue: row[0] === null ? 'NULL' : String(row[0]),
+          columnValue: String(row[0]),
           count: Number(row[1])
         }))
       };
