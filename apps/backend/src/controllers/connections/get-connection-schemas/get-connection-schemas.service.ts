@@ -7,6 +7,7 @@ const { forEachSeries } = pIteration;
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { sortSchemaColumns } from '#backend/functions/sort-schema-columns';
@@ -183,11 +184,26 @@ export class GetConnectionSchemasService {
 
     let cacheEnvId = apiEnv?.useProdCache === true ? PROJECT_ENV_PROD : envId;
 
-    let cachedColumns = await this.cachedColumnService.getCachedColumns({
-      projectId: projectId,
-      envId: cacheEnvId,
-      connectionIds: eligibleConnections.map(x => x.connectionId)
-    });
+    let connectionIds = eligibleConnections.map(x => x.connectionId);
+
+    let cachedColumns: CachedColumn[] = [];
+
+    if (connectionIds.length > 0) {
+      cachedColumns = await this.db.drizzle.query.cachedColumnsTable
+        .findMany({
+          where: and(
+            eq(cachedColumnsTable.projectId, projectId),
+            eq(cachedColumnsTable.envId, cacheEnvId),
+            inArray(cachedColumnsTable.connectionId, connectionIds)
+          )
+        })
+        .then(xs => xs.map(x => this.tabService.cachedColumnEntToTab(x)))
+        .then(xs =>
+          xs.map(x =>
+            this.cachedColumnService.cachedColumnTabToApi({ cachedColumn: x })
+          )
+        );
+    }
 
     let combinedSchemaItems = this.buildCombinedSchema({
       rawSchemasByConnection: rawSchemasByConnection,
