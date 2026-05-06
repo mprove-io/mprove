@@ -3,10 +3,12 @@ import {
   bigint,
   index,
   integer,
+  json,
   pgTable,
   text,
   varchar
 } from 'drizzle-orm/pg-core';
+import type { CachedPartLt, CachedPartSt } from '#common/zod/st-lt';
 
 export const cachedPartsTable = pgTable(
   'cached_parts',
@@ -19,6 +21,13 @@ export const cachedPartsTable = pgTable(
     columnName: text('column_name').notNull(),
     columnValue: text('column_value'),
     count: integer('count').notNull(),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: CachedPartSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: CachedPartLt }>()
+      .notNull(),
+    keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -41,6 +50,7 @@ export const cachedPartsTable = pgTable(
     idxCachedPartsColumnValue: index('idx_cached_parts_column_value').on(
       table.columnValue
     ),
+    idxCachedPartsKeyTag: index('idx_cached_parts_key_tag').on(table.keyTag),
     idxCachedPartsGetColumnValues: index(
       'idx_cached_parts_get_column_values'
     ).on(

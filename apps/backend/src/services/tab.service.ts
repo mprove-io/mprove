@@ -6,6 +6,8 @@ import type {
   AvatarTab,
   BranchTab,
   BridgeTab,
+  CachedColumnTab,
+  CachedPartTab,
   ChartTab,
   ConnectionTab,
   DashboardTab,
@@ -32,6 +34,8 @@ import type {
 import { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
 import { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
 import { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
+import { CachedColumnsEnt } from '#backend/drizzle/postgres/schema/cached-columns';
+import { CachedPartsEnt } from '#backend/drizzle/postgres/schema/cached-parts';
 import { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
 import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
@@ -302,6 +306,32 @@ export class TabService {
     };
 
     return bridge;
+  }
+
+  cachedColumnEntToTab(cachedColumnEnt: CachedColumnsEnt): CachedColumnTab {
+    if (isUndefined(cachedColumnEnt)) {
+      return;
+    }
+
+    let cachedColumn: CachedColumnTab = {
+      ...cachedColumnEnt,
+      ...this.getTabProps({ ent: cachedColumnEnt })
+    };
+
+    return cachedColumn;
+  }
+
+  cachedPartEntToTab(cachedPartEnt: CachedPartsEnt): CachedPartTab {
+    if (isUndefined(cachedPartEnt)) {
+      return;
+    }
+
+    let cachedPart: CachedPartTab = {
+      ...cachedPartEnt,
+      ...this.getTabProps({ ent: cachedPartEnt })
+    };
+
+    return cachedPart;
   }
 
   chartEntToTab(chartEnt: ChartEnt): ChartTab {

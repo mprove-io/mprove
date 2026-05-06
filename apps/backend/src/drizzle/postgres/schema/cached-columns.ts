@@ -4,10 +4,12 @@ import {
   boolean,
   index,
   integer,
+  json,
   pgTable,
   text,
   varchar
 } from 'drizzle-orm/pg-core';
+import type { CachedColumnLt, CachedColumnSt } from '#common/zod/st-lt';
 
 export type CachedColumnStatus = 'running' | 'completed' | 'error';
 
@@ -23,6 +25,13 @@ export const cachedColumnsTable = pgTable(
     requestedByUserId: varchar('requested_by_user_id'),
     status: varchar('status').$type<CachedColumnStatus>().notNull(),
     errorMessage: text('error_message'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: CachedColumnSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: CachedColumnLt }>()
+      .notNull(),
+    keyTag: text('key_tag'),
     startedTs: bigint('started_ts', { mode: 'number' }).notNull(),
     completedTs: bigint('completed_ts', { mode: 'number' }),
     completedDurationMs: bigint('completed_duration_ms', { mode: 'number' }),
@@ -49,6 +58,9 @@ export const cachedColumnsTable = pgTable(
       table.columnName
     ),
     idxCachedColumnsStatus: index('idx_cached_columns_status').on(table.status),
+    idxCachedColumnsKeyTag: index('idx_cached_columns_key_tag').on(
+      table.keyTag
+    ),
     idxCachedColumnsLookup: index('idx_cached_columns_lookup').on(
       table.projectId,
       table.connectionId,

@@ -5,6 +5,10 @@ import type {
   BranchSt,
   BridgeLt,
   BridgeSt,
+  CachedColumnLt,
+  CachedColumnSt,
+  CachedPartLt,
+  CachedPartSt,
   ChartLt,
   ChartSt,
   ConnectionLt,
@@ -53,6 +57,8 @@ import type {
 import { AvatarEnt } from './avatars';
 import { BranchEnt } from './branches';
 import { BridgeEnt } from './bridges';
+import { CachedColumnsEnt } from './cached-columns';
+import { CachedPartsEnt } from './cached-parts';
 import { ChartEnt } from './charts';
 import { ConnectionEnt } from './connections';
 import { DashboardEnt } from './dashboards';
@@ -90,6 +96,16 @@ export interface BridgeTab
   extends Omit<BridgeEnt, 'st' | 'lt'>,
     BridgeSt,
     BridgeLt {}
+
+export interface CachedColumnTab
+  extends Omit<CachedColumnsEnt, 'st' | 'lt'>,
+    CachedColumnSt,
+    CachedColumnLt {}
+
+export interface CachedPartTab
+  extends Omit<CachedPartsEnt, 'st' | 'lt'>,
+    CachedPartSt,
+    CachedPartLt {}
 
 export interface ChartTab
   extends Omit<ChartEnt, 'st' | 'lt'>,

@@ -62,6 +62,26 @@ export let zBridgeLt = z
   .meta({ id: 'BridgeLt' });
 export type BridgeLt = z.infer<typeof zBridgeLt>;
 
+export let zCachedColumnSt = z
+  .object({ emptyData: z.number().nullish() })
+  .meta({ id: 'CachedColumnSt' });
+export type CachedColumnSt = z.infer<typeof zCachedColumnSt>;
+
+export let zCachedColumnLt = z
+  .object({ emptyData: z.number().nullish() })
+  .meta({ id: 'CachedColumnLt' });
+export type CachedColumnLt = z.infer<typeof zCachedColumnLt>;
+
+export let zCachedPartSt = z
+  .object({ emptyData: z.number().nullish() })
+  .meta({ id: 'CachedPartSt' });
+export type CachedPartSt = z.infer<typeof zCachedPartSt>;
+
+export let zCachedPartLt = z
+  .object({ emptyData: z.number().nullish() })
+  .meta({ id: 'CachedPartLt' });
+export type CachedPartLt = z.infer<typeof zCachedPartLt>;
+
 export let zChartSt = z
   .object({
     title: z.string(),
