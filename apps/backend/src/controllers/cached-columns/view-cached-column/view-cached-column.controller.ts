@@ -1,0 +1,125 @@
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
+import { and, desc, eq } from 'drizzle-orm';
+import {
+  ToBackendViewCachedColumnRequestDto,
+  ToBackendViewCachedColumnResponseDto
+} from '#backend/controllers/cached-columns/view-cached-column/view-cached-column.dto';
+import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
+import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { CachedColumnService } from '#backend/services/db/cached-column.service';
+import { MembersService } from '#backend/services/db/members.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { TabService } from '#backend/services/tab.service';
+import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isUndefined } from '#common/functions/is-undefined';
+import { ServerError } from '#common/models/server-error';
+import type { ToBackendViewCachedColumnResponsePayload } from '#common/zod/to-backend/connections/to-backend-view-cached-column';
+
+@ApiTags('CachedColumns')
+@UseGuards(ThrottlerUserIdGuard)
+@Throttle(THROTTLE_CUSTOM)
+@Controller()
+export class ViewCachedColumnController {
+  constructor(
+    private cachedColumnService: CachedColumnService,
+    private projectsService: ProjectsService,
+    private membersService: MembersService,
+    private tabService: TabService,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
+
+  @Post(ToBackendRequestInfoNameEnum.ToBackendViewCachedColumn)
+  @ApiOperation({
+    summary: 'ViewCachedColumn',
+    description: 'View cached column'
+  })
+  @ApiOkResponse({ type: ToBackendViewCachedColumnResponseDto })
+  async viewCachedColumn(
+    @AttachUser() user: UserTab,
+    @Body() body: ToBackendViewCachedColumnRequestDto
+  ) {
+    let {
+      projectId,
+      envId,
+      connectionId,
+      schemaName,
+      tableName,
+      columnName,
+      offset
+    } = body.payload;
+
+    if (!Number.isInteger(offset) || offset < 0) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_WRONG_OFFSET
+      });
+    }
+
+    let cacheEnvId = await this.cachedColumnService.getCacheEnvId({
+      projectId: projectId,
+      envId: envId
+    });
+
+    await this.projectsService.getProjectCheckExists({ projectId: projectId });
+
+    await this.membersService.getMemberCheckIsEditorOrAdmin({
+      memberId: user.userId,
+      projectId: projectId
+    });
+
+    let rows = await this.db.drizzle.query.cachedPartsTable
+      .findMany({
+        where: and(
+          eq(cachedPartsTable.projectId, projectId),
+          eq(cachedPartsTable.connectionId, connectionId),
+          eq(cachedPartsTable.envId, cacheEnvId),
+          eq(cachedPartsTable.schemaName, schemaName),
+          eq(cachedPartsTable.tableName, tableName),
+          eq(cachedPartsTable.columnName, columnName)
+        ),
+        orderBy: desc(cachedPartsTable.count),
+        limit: 100,
+        offset: offset
+      })
+      .then(xs => xs.map(x => this.tabService.cachedPartEntToTab(x)));
+
+    let cachedColumn = await this.db.drizzle.query.cachedColumnsTable
+      .findFirst({
+        where: and(
+          eq(cachedColumnsTable.projectId, projectId),
+          eq(cachedColumnsTable.connectionId, connectionId),
+          eq(cachedColumnsTable.envId, cacheEnvId),
+          eq(cachedColumnsTable.schemaName, schemaName),
+          eq(cachedColumnsTable.tableName, tableName),
+          eq(cachedColumnsTable.columnName, columnName)
+        )
+      })
+      .then(x => this.tabService.cachedColumnEntToTab(x))
+      .then(x => {
+        if (isUndefined(x)) {
+          return;
+        }
+
+        return this.cachedColumnService.cachedColumnTabToApi({
+          cachedColumn: x
+        });
+      });
+
+    let payload: ToBackendViewCachedColumnResponsePayload = {
+      cachedColumn: cachedColumn,
+      columnNames: ['Value', 'Count'],
+      rows: rows.map(row => [row.columnValue ?? '', row.count.toString()]),
+      errorMessage: cachedColumn?.errorMessage
+    };
+
+    return payload;
+  }
+}

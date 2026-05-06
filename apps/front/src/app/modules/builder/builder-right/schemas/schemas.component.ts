@@ -507,7 +507,8 @@ export class SchemasComponent implements OnInit {
           connectionId: data.connectionId,
           schemaName: data.schemaDisplayName,
           tableName: data.tableName,
-          columnName: data.columnName
+          columnName: data.columnName,
+          offset: 0
         },
         showSpinner: true
       })

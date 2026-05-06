@@ -14,7 +14,7 @@ export let zToBackendViewCachedColumnRequestPayload = z
     schemaName: z.string(),
     tableName: z.string(),
     columnName: z.string(),
-    offset: z.number().nullish()
+    offset: z.number()
   })
   .meta({
     id: 'ToBackendViewCachedColumnRequestPayload'
