@@ -28,6 +28,7 @@ export const cachedColumnsTable = pgTable(
     completedDurationMs: bigint('completed_duration_ms', { mode: 'number' }),
     limit: integer('limit').notNull(),
     isLimitReached: boolean('is_limit_reached'),
+    uniqueValuesCount: integer('unique_values_count'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

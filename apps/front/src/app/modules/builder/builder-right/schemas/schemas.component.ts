@@ -17,16 +17,21 @@ import type {
   CombinedSchemaItem
 } from '#common/zod/backend/connection-schemas/combined-schema';
 import type { RawSchemaForeignKey } from '#common/zod/backend/connection-schemas/raw-schema';
+import type { CachedColumn } from '#common/zod/to-backend/connections/cached-column';
+import type { ToBackendClearCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-clear-cached-column';
 import type { ToBackendGetConnectionSampleResponse } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
 import type {
   ToBackendGetConnectionSchemasRequestPayload,
   ToBackendGetConnectionSchemasResponse
 } from '#common/zod/to-backend/connections/to-backend-get-connection-schemas';
+import type { ToBackendRefreshCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-refresh-cached-column';
+import type { ToBackendViewCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-view-cached-column';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { SampleDialogData } from './sample-dialog/sample-dialog.component';
 import { SchemaGraphDialogData } from './schema-graph-dialog/schema-graph-dialog.component';
+import { ViewCachedUniqueValuesDialogData } from './view-cached-unique-values-dialog/view-cached-unique-values-dialog.component';
 
 let SCHEMAS_SPINNER_NAME = 'schemasRefresh';
 
@@ -50,6 +55,7 @@ interface SchemaTreeNode {
   description?: string;
   example?: string;
   errorMessage?: string;
+  cachedColumn?: CachedColumn | null;
 }
 
 @Component({
@@ -64,6 +70,8 @@ export class SchemasComponent implements OnInit {
   spinnerName = SCHEMAS_SPINNER_NAME;
   sampleSpinnerNodeId: string;
   sampleRequestId = 0;
+  cachedColumnSpinnerNodeId: string;
+  cachedColumnRequestId = 0;
   treeNodes: SchemaTreeNode[] = [];
   filteredTreeNodes: SchemaTreeNode[] = [];
   combinedSchemaItems: CombinedSchemaItem[] = [];
@@ -303,7 +311,8 @@ export class SchemasComponent implements OnInit {
                 foreignKeys: col.foreignKeys,
                 references: col.references,
                 description: col.description,
-                example: col.example
+                example: col.example,
+                cachedColumn: col.cachedColumn
               })
             );
 
@@ -392,6 +401,266 @@ export class SchemasComponent implements OnInit {
     let { text, event } = item;
     event.stopPropagation();
     navigator.clipboard.writeText(text);
+  }
+
+  getColumnNodes(item: { nodes: SchemaTreeNode[] }): SchemaTreeNode[] {
+    let { nodes } = item;
+    let columnNodes: SchemaTreeNode[] = [];
+
+    nodes.forEach(node => {
+      if (node.nodeType === 'column') {
+        columnNodes.push(node);
+      }
+
+      if (node.children?.length > 0) {
+        columnNodes.push(...this.getColumnNodes({ nodes: node.children }));
+      }
+    });
+
+    return columnNodes;
+  }
+
+  updateCachedColumn(item: {
+    nodeId: string;
+    cachedColumn: CachedColumn | null | undefined;
+  }) {
+    let { nodeId, cachedColumn } = item;
+    let columnNodes = this.getColumnNodes({ nodes: this.treeNodes });
+    let columnNode = columnNodes.find(x => x.id === nodeId);
+
+    if (isDefined(columnNode)) {
+      columnNode.cachedColumn = cachedColumn;
+    }
+  }
+
+  cachedColumnTooltip(item: { node: TreeNode }): string {
+    let { node } = item;
+    let data = node.data as SchemaTreeNode;
+    let cachedColumn = data.cachedColumn;
+
+    if (cachedColumn == null) {
+      return 'Cached column is empty';
+    }
+
+    if (cachedColumn.status === 'running') {
+      return 'Cache refresh is running';
+    }
+
+    return [
+      `${cachedColumn.uniqueValuesCount ?? 0} unique values`,
+      `limit ${this.formatNumber({ value: cachedColumn.limit ?? 10000 })}`,
+      `Cached ${this.formatDate({ ts: cachedColumn.completedTs })}`,
+      `Duration - ${this.formatDuration({ completedDurationMs: cachedColumn.completedDurationMs })}`
+    ].join('\n');
+  }
+
+  formatNumber(item: { value: number }): string {
+    let { value } = item;
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+
+  formatDate(item: { ts: number }): string {
+    let { ts } = item;
+
+    if (!isDefined(ts)) {
+      return '';
+    }
+
+    return new Date(ts).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+
+  formatDuration(item: { completedDurationMs: number }): string {
+    let { completedDurationMs } = item;
+
+    if (!isDefined(completedDurationMs)) {
+      return '';
+    }
+
+    let secondsTotal = Math.round(completedDurationMs / 1000);
+    let minutes = Math.floor(secondsTotal / 60);
+    let seconds = secondsTotal % 60;
+
+    if (minutes > 0) {
+      return `${minutes} min ${seconds} seconds`;
+    }
+
+    return `${seconds} seconds`;
+  }
+
+  viewCachedColumn(item: { node: TreeNode; event: MouseEvent }) {
+    let { node, event } = item;
+    event.stopPropagation();
+
+    let data = node.data as SchemaTreeNode;
+    let nav = this.navQuery.getValue();
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendViewCachedColumn,
+        payload: {
+          projectId: nav.projectId,
+          envId: nav.envId,
+          connectionId: data.connectionId,
+          schemaName: data.schemaDisplayName,
+          tableName: data.tableName,
+          columnName: data.columnName
+        },
+        showSpinner: true
+      })
+      .pipe(
+        map((resp: ToBackendViewCachedColumnResponse) => {
+          let dialogData: ViewCachedUniqueValuesDialogData = {
+            title: `${data.connectionId} - ${data.schemaDisplayName}`,
+            subtitle: data.tableName,
+            columnName: data.columnName,
+            columnNames: [],
+            rows: [],
+            errorMessage: undefined,
+            projectId: nav.projectId,
+            envId: nav.envId,
+            connectionId: data.connectionId,
+            schemaName: data.schemaDisplayName,
+            tableName: data.tableName
+          };
+
+          let isRespPayloadErrorMessageDefined = isDefined(
+            resp.payload.errorMessage
+          );
+
+          if (
+            resp.info?.status === ResponseInfoStatusEnum.Ok &&
+            isRespPayloadErrorMessageDefined
+          ) {
+            dialogData.errorMessage = resp.payload.errorMessage;
+          } else if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            dialogData.columnNames = resp.payload.columnNames;
+            dialogData.rows = resp.payload.rows;
+            this.updateCachedColumn({
+              nodeId: data.id,
+              cachedColumn: undefined
+            });
+            this.applyFilter();
+          } else {
+            dialogData.errorMessage = 'Failed to fetch cached column';
+          }
+
+          this.myDialogService.showViewCachedUniqueValues(dialogData);
+          this.cd.detectChanges();
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  refreshCachedColumn(item: {
+    node: TreeNode;
+    event: MouseEvent;
+    refreshType: 'full' | 'sample';
+    sampleSize?: number;
+  }) {
+    let { node, event, refreshType, sampleSize } = item;
+    event.stopPropagation();
+
+    let data = node.data as SchemaTreeNode;
+    let nav = this.navQuery.getValue();
+
+    this.cachedColumnRequestId += 1;
+    let currentRequestId = this.cachedColumnRequestId;
+    this.cachedColumnSpinnerNodeId = data.id;
+    this.cd.detectChanges();
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRefreshCachedColumn,
+        payload: {
+          projectId: nav.projectId,
+          envId: nav.envId,
+          connectionId: data.connectionId,
+          schemaName: data.schemaDisplayName,
+          tableName: data.tableName,
+          columnName: data.columnName,
+          refreshType: refreshType,
+          sampleSize: sampleSize
+        }
+      })
+      .pipe(
+        map((resp: ToBackendRefreshCachedColumnResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.updateCachedColumn({
+              nodeId: data.id,
+              cachedColumn: resp.payload.cachedColumn
+            });
+            this.applyFilter();
+          }
+        }),
+        finalize(() => {
+          if (currentRequestId !== this.cachedColumnRequestId) {
+            return;
+          }
+
+          this.cachedColumnSpinnerNodeId = undefined;
+          this.cd.detectChanges();
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  refreshCachedColumnSample(item: { node: TreeNode; event: MouseEvent }) {
+    let { node, event } = item;
+    event.stopPropagation();
+
+    this.myDialogService.showCacheColumnFromSample({
+      sampleSize: 10000,
+      onSubmit: sampleSize => {
+        this.refreshCachedColumn({
+          node: node,
+          event: event,
+          refreshType: 'sample',
+          sampleSize: sampleSize
+        });
+      }
+    });
+  }
+
+  clearCachedColumn(item: { node: TreeNode; event: MouseEvent }) {
+    let { node, event } = item;
+    event.stopPropagation();
+
+    let data = node.data as SchemaTreeNode;
+    let nav = this.navQuery.getValue();
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendClearCachedColumn,
+        payload: {
+          projectId: nav.projectId,
+          envId: nav.envId,
+          connectionId: data.connectionId,
+          schemaName: data.schemaDisplayName,
+          tableName: data.tableName,
+          columnName: data.columnName
+        },
+        showSpinner: true
+      })
+      .pipe(
+        map((resp: ToBackendClearCachedColumnResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.updateCachedColumn({
+              nodeId: data.id,
+              cachedColumn: undefined
+            });
+            this.applyFilter();
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   sampleOnClick(item: { node: TreeNode; event: MouseEvent }) {

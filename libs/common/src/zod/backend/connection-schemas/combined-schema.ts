@@ -4,6 +4,7 @@ import {
   zRawSchemaForeignKey,
   zRawSchemaIndex
 } from '#common/zod/backend/connection-schemas/raw-schema';
+import { zCachedColumn } from '#common/zod/to-backend/connections/cached-column';
 
 export let zColumnCombinedReference = z
   .object({
@@ -27,7 +28,8 @@ export let zCombinedSchemaColumn = z
     foreignKeys: z.array(zRawSchemaForeignKey),
     description: z.string().nullish(),
     example: z.string().nullish(),
-    references: z.array(zColumnCombinedReference).nullish()
+    references: z.array(zColumnCombinedReference).nullish(),
+    cachedColumn: zCachedColumn.nullish()
   })
   .meta({ id: 'CombinedSchemaColumn' });
 

@@ -1,0 +1,36 @@
+<div class="flex w-[520px] flex-col px-8 py-7">
+  <div class="text-s1 text-xl font-semibold">Refresh Cache Sample</div>
+  <div class="text-s500 mt-3 text-base">
+    Specify how many source rows should be sampled before unique values are
+    counted.
+  </div>
+
+  <label class="text-s500 mt-7 text-base">Sample size</label>
+  <input
+    class="form-input focus:border-m600 border-s400 mt-2 h-10 rounded"
+    type="number"
+    min="1"
+    step="1"
+    [(ngModel)]="sampleSize"
+  />
+
+  <div class="mt-8 flex justify-end">
+    <button
+      type="button"
+      class="border-s400 text-s500 hover:bg-s100 mr-3 rounded border px-5 py-2 text-base focus:outline-none"
+      (click)="ref.close()"
+      >Cancel</button
+    >
+    <button
+      type="button"
+      class="text-m0 bg-m600 rounded px-5 py-2 text-base focus:outline-none"
+      [ngClass]="{
+        'bg-s400 cursor-default':
+          !sampleSize || sampleSize < 1 || sampleSize % 1 !== 0
+      }"
+      [disabled]="!sampleSize || sampleSize < 1 || sampleSize % 1 !== 0"
+      (click)="submit()"
+      >Refresh</button
+    >
+  </div>
+</div>

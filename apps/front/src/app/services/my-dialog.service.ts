@@ -32,6 +32,10 @@ import {
   RenameFolderDialogData
 } from '../modules/builder/builder-left/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import {
+  CacheColumnFromSampleDialogComponent,
+  CacheColumnFromSampleDialogData
+} from '../modules/builder/builder-right/schemas/cache-column-from-sample-dialog/cache-column-from-sample-dialog.component';
+import {
   SampleDialogComponent,
   SampleDialogData
 } from '../modules/builder/builder-right/schemas/sample-dialog/sample-dialog.component';
@@ -39,6 +43,10 @@ import {
   SchemaGraphDialogComponent,
   SchemaGraphDialogData
 } from '../modules/builder/builder-right/schemas/schema-graph-dialog/schema-graph-dialog.component';
+import {
+  ViewCachedUniqueValuesDialogComponent,
+  ViewCachedUniqueValuesDialogData
+} from '../modules/builder/builder-right/schemas/view-cached-unique-values-dialog/view-cached-unique-values-dialog.component';
 import {
   CommitDialogComponent,
   CommitDialogDialogData
@@ -710,6 +718,24 @@ export class MyDialogService {
 
   showDeleteConnection(item: DeleteConnectionDialogData): void {
     this.dialogService.open(DeleteConnectionDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showViewCachedUniqueValues(item: ViewCachedUniqueValuesDialogData): void {
+    this.dialogService.open(ViewCachedUniqueValuesDialogComponent, {
+      enableClose: false,
+      closeButton: true,
+      data: item,
+      width: '66vw',
+      height: '77vh'
+    });
+  }
+
+  showCacheColumnFromSample(item: CacheColumnFromSampleDialogData): void {
+    this.dialogService.open(CacheColumnFromSampleDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

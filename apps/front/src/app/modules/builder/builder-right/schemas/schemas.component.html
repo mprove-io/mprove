@@ -372,6 +372,107 @@
                 <m-copy-icon></m-copy-icon>
               </button>
 
+              <div
+                *ngIf="node.data.nodeType === 'column'"
+                class="ml-2 flex flex-shrink-0 items-center"
+                [tp]="cachedColumnTooltip({ node: node })"
+                tpPlacement="top"
+              >
+                <div
+                  *ngIf="cachedColumnSpinnerNodeId === node.data.id"
+                  class="border-s200 border-t-m600 mr-2 h-5 w-5 flex-shrink-0 animate-spin rounded-full border-2 [animation-duration:750ms]"
+                >
+                </div>
+
+                <button
+                  type="button"
+                  class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  [ngClass]="{
+                    'text-blue-500':
+                      node.data.cachedColumn?.status === 'completed',
+                    'text-red-600': node.data.cachedColumn?.status === 'error',
+                    'text-s500':
+                      node.data.cachedColumn?.status !== 'completed' &&
+                      node.data.cachedColumn?.status !== 'error',
+                    'hover:bg-m200 hover:text-s1':
+                      cachedColumnSpinnerNodeId !== node.data.id
+                  }"
+                  [tp]="templateCachedColumnMenu"
+                  [tpHideOnEscape]="true"
+                  tpVariation="menu"
+                  className="my-menu"
+                  #cachedColumnTpRef="tippy"
+                  (click)="$event.stopPropagation()"
+                >
+                  <m-database-zap-icon></m-database-zap-icon>
+                </button>
+
+                <ng-template #templateCachedColumnMenu>
+                  <div
+                    class="border-s4 bg-m0 w-60 rounded-md border-2 py-2 shadow-xl"
+                  >
+                    <!-- <div class="text-s500 px-4 py-2 text-sm font-semibold">
+                      Cached Column
+                    </div> -->
+                    <button
+                      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                      (click)="
+                        cachedColumnTpRef.hide();
+                        viewCachedColumn({
+                          node: node,
+                          event: $event
+                        })
+                      "
+                      >view cached unique values</button
+                    >
+                    <button
+                      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                      [ngClass]="{
+                        'text-s400 cursor-default':
+                          cachedColumnSpinnerNodeId === node.data.id
+                      }"
+                      [disabled]="cachedColumnSpinnerNodeId === node.data.id"
+                      (click)="
+                        cachedColumnTpRef.hide();
+                        refreshCachedColumn({
+                          node: node,
+                          event: $event,
+                          refreshType: 'full'
+                        })
+                      "
+                      >refresh cache from full table</button
+                    >
+                    <button
+                      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                      [ngClass]="{
+                        'text-s400 cursor-default':
+                          cachedColumnSpinnerNodeId === node.data.id
+                      }"
+                      [disabled]="cachedColumnSpinnerNodeId === node.data.id"
+                      (click)="
+                        cachedColumnTpRef.hide();
+                        refreshCachedColumnSample({
+                          node: node,
+                          event: $event
+                        })
+                      "
+                      >refresh cache from sample</button
+                    >
+                    <button
+                      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                      (click)="
+                        cachedColumnTpRef.hide();
+                        clearCachedColumn({
+                          node: node,
+                          event: $event
+                        })
+                      "
+                      >clear cache</button
+                    >
+                  </div>
+                </ng-template>
+              </div>
+
               <button
                 *ngIf="node.data.nodeType === 'column'"
                 type="button"
