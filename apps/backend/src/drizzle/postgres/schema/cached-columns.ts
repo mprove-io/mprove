@@ -7,6 +7,7 @@ import {
   json,
   pgTable,
   text,
+  uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import type { CachedColumnLt, CachedColumnSt } from '#common/zod/st-lt';
@@ -61,7 +62,7 @@ export const cachedColumnsTable = pgTable(
     idxCachedColumnsKeyTag: index('idx_cached_columns_key_tag').on(
       table.keyTag
     ),
-    idxCachedColumnsLookup: index('idx_cached_columns_lookup').on(
+    uidxCachedColumnsLookup: uniqueIndex('uidx_cached_columns_lookup').on(
       table.projectId,
       table.connectionId,
       table.envId,

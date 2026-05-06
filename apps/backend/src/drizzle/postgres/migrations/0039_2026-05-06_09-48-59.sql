@@ -1,0 +1,2 @@
+DROP INDEX IF EXISTS "idx_cached_columns_lookup";--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "uidx_cached_columns_lookup" ON "cached_columns" USING btree ("project_id","connection_id","env_id","schema_name","table_name","column_name");

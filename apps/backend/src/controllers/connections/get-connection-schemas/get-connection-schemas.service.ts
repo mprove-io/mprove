@@ -11,6 +11,7 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { sortSchemaColumns } from '#backend/functions/sort-schema-columns';
 import { BridgesService } from '#backend/services/db/bridges.service';
+import { CachedColumnService } from '#backend/services/db/cached-column.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
@@ -40,11 +41,13 @@ import type { ExtraSchema } from '#common/zod/backend/connection-schemas/extra-s
 import type { ConnectionRawSchema } from '#common/zod/backend/connection-schemas/raw-schema';
 import type { Member } from '#common/zod/backend/member';
 import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
+import type { CachedColumn } from '#common/zod/to-backend/connections/cached-column';
 
 @Injectable()
 export class GetConnectionSchemasService {
   constructor(
     private tabService: TabService,
+    private cachedColumnService: CachedColumnService,
     private tabToEntService: TabToEntService,
     private projectsService: ProjectsService,
     private bridgesService: BridgesService,
@@ -178,9 +181,18 @@ export class GetConnectionSchemasService {
       }
     }
 
+    let cacheEnvId = apiEnv?.useProdCache === true ? PROJECT_ENV_PROD : envId;
+
+    let cachedColumns = await this.cachedColumnService.getCachedColumns({
+      projectId: projectId,
+      envId: cacheEnvId,
+      connectionIds: eligibleConnections.map(x => x.connectionId)
+    });
+
     let combinedSchemaItems = this.buildCombinedSchema({
       rawSchemasByConnection: rawSchemasByConnection,
-      extraSchemas: extraSchemas
+      extraSchemas: extraSchemas,
+      cachedColumns: cachedColumns
     });
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
@@ -277,8 +289,9 @@ export class GetConnectionSchemasService {
       schema: ConnectionRawSchema;
     }[];
     extraSchemas: ExtraSchema[];
+    cachedColumns: CachedColumn[];
   }): CombinedSchemaItem[] {
-    let { rawSchemasByConnection, extraSchemas } = item;
+    let { rawSchemasByConnection, extraSchemas, cachedColumns } = item;
 
     // Build relationship lookup
     let relLookup: {
@@ -389,6 +402,14 @@ export class GetConnectionSchemasService {
                 c => c.column === rawCol.columnName
               );
 
+              let cachedColumn = cachedColumns.find(
+                x =>
+                  x.connectionId === connectionId &&
+                  x.schemaName === schemaName &&
+                  x.tableName === rawTable.tableName &&
+                  x.columnName === rawCol.columnName
+              );
+
               let combinedRefs: ColumnCombinedReference[] = [];
 
               // Add FK entries
@@ -448,7 +469,8 @@ export class GetConnectionSchemasService {
                 foreignKeys: rawCol.foreignKeys,
                 description: extraCol?.description,
                 example: extraCol?.example,
-                references: combinedRefs.length > 0 ? combinedRefs : undefined
+                references: combinedRefs.length > 0 ? combinedRefs : undefined,
+                cachedColumn: cachedColumn
               };
 
               return combinedColumn;
