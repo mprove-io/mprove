@@ -14,6 +14,7 @@ import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
+import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -217,6 +218,83 @@ export class TrinoService {
         rows: [],
         errorMessage: `Sample fetch failed: ${e.message}`
       };
+    }
+  }
+
+  async fetchCachedParts(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    sampleSize?: number;
+    cacheLimit: number;
+  }): Promise<CachedPartsResult> {
+    let {
+      connection,
+      schemaName,
+      tableName,
+      columnName,
+      sampleSize,
+      cacheLimit
+    } = item;
+
+    let trinoConnectionOptions = this.optionsToTrinoOptions({
+      connection: connection
+    });
+
+    try {
+      let tc = Trino.create(trinoConnectionOptions);
+
+      let catalog = connection.options.trino.catalog;
+
+      let sourceSql = isDefined(sampleSize)
+        ? `(SELECT "${columnName}" FROM "${catalog}"."${schemaName}"."${tableName}" LIMIT ${sampleSize}) sub`
+        : `"${catalog}"."${schemaName}"."${tableName}"`;
+
+      let sqlText = `SELECT "${columnName}" AS column_value, COUNT(*) AS count FROM ${sourceSql} GROUP BY "${columnName}" ORDER BY count DESC LIMIT ${cacheLimit}`;
+
+      let result = await tc.query(sqlText);
+
+      let queryResult = await result.next();
+
+      if (
+        isUndefined(queryResult?.value) ||
+        isDefined(queryResult?.value?.error)
+      ) {
+        let errorMsg = isUndefined(queryResult?.value)
+          ? 'queryResult.value is not defined'
+          : queryResult?.value?.error?.message;
+
+        return {
+          values: [],
+          errorMessage: `Column cache failed: ${errorMsg}`
+        };
+      }
+
+      let outputRows: unknown[][] = [];
+
+      while (queryResult !== null) {
+        let dataRows = queryResult.value.data ?? [];
+
+        dataRows.forEach((row: any) => {
+          outputRows.push(row as unknown[]);
+        });
+
+        if (!queryResult.done) {
+          queryResult = await result.next();
+        } else {
+          break;
+        }
+      }
+
+      return {
+        values: outputRows.map(row => ({
+          columnValue: row[0] === null ? 'NULL' : String(row[0]),
+          count: Number(row[1])
+        }))
+      };
+    } catch (e: any) {
+      return { values: [], errorMessage: `Column cache failed: ${e.message}` };
     }
   }
 

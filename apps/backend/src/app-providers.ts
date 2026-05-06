@@ -4,6 +4,7 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { GetExplorerChartTabService } from './controllers/charts/get-explorer-chart-tab/get-explorer-chart-tab.service';
+import { CachedColumnService } from './controllers/connections/cached-column/cached-column.service';
 import { GetConnectionSampleService } from './controllers/connections/get-connection-sample/get-connection-sample.service';
 import { GetConnectionSampleTool } from './controllers/connections/get-connection-sample/get-connection-sample.tool';
 import { GetConnectionSchemasService } from './controllers/connections/get-connection-schemas/get-connection-schemas.service';
@@ -192,6 +193,7 @@ export const appProviders = [
   GetConnectionSampleService,
   GetConnectionsListService,
   GetConnectionSchemasService,
+  CachedColumnService,
   ValidateFilesService,
   QueryInfoChartService,
   QueryInfoDashboardService,

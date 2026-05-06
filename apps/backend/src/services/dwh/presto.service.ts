@@ -17,6 +17,7 @@ import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
+import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -197,6 +198,51 @@ export class PrestoService {
         rows: [],
         errorMessage: `Sample fetch failed: ${e.message}`
       };
+    }
+  }
+
+  async fetchCachedParts(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    sampleSize?: number;
+    cacheLimit: number;
+  }): Promise<CachedPartsResult> {
+    let {
+      connection,
+      schemaName,
+      tableName,
+      columnName,
+      sampleSize,
+      cacheLimit
+    } = item;
+
+    let prestoClientConfig = this.optionsToPrestoClientConfig({
+      connection: connection
+    });
+
+    try {
+      let pc = new PrestoClient(prestoClientConfig);
+
+      let catalog = connection.options.presto.catalog;
+
+      let sourceSql = isDefined(sampleSize)
+        ? `(SELECT "${columnName}" FROM "${catalog}"."${schemaName}"."${tableName}" LIMIT ${sampleSize}) sub`
+        : `"${catalog}"."${schemaName}"."${tableName}"`;
+
+      let sqlText = `SELECT "${columnName}" AS column_value, COUNT(*) AS count FROM ${sourceSql} GROUP BY "${columnName}" ORDER BY count DESC LIMIT ${cacheLimit}`;
+
+      let result: PrestoQuery = await pc.query(sqlText);
+
+      return {
+        values: result.data.map(row => ({
+          columnValue: row[0] === null ? 'NULL' : String(row[0]),
+          count: Number(row[1])
+        }))
+      };
+    } catch (e: any) {
+      return { values: [], errorMessage: `Column cache failed: ${e.message}` };
     }
   }
 

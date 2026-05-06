@@ -17,6 +17,7 @@ import { SaveCreateChartController } from './controllers/charts/save-create-char
 import { SaveModifyChartController } from './controllers/charts/save-modify-chart/save-modify-chart.controller';
 import { CheckController } from './controllers/check/check/check.controller';
 import { CheckSignUpController } from './controllers/check/check-sign-up/check-sign-up.controller';
+import { ClearCachedColumnController } from './controllers/connections/clear-cached-column/clear-cached-column.controller';
 import { CreateConnectionController } from './controllers/connections/create-connection/create-connection.controller';
 import { DeleteConnectionController } from './controllers/connections/delete-connection/delete-connection.controller';
 import { EditConnectionController } from './controllers/connections/edit-connection/edit-connection.controller';
@@ -24,7 +25,9 @@ import { GetConnectionSampleController } from './controllers/connections/get-con
 import { GetConnectionSchemasController } from './controllers/connections/get-connection-schemas/get-connection-schemas.controller';
 import { GetConnectionsController } from './controllers/connections/get-connections/get-connections.controller';
 import { GetConnectionsListController } from './controllers/connections/get-connections-list/get-connections-list.controller';
+import { RefreshCachedColumnController } from './controllers/connections/refresh-cached-column/refresh-cached-column.controller';
 import { TestConnectionController } from './controllers/connections/test-connection/test-connection.controller';
+import { ViewCachedColumnController } from './controllers/connections/view-cached-column/view-cached-column.controller';
 import { CreateDraftDashboardController } from './controllers/dashboards/create-draft-dashboard/create-draft-dashboard.controller';
 import { DeleteDashboardController } from './controllers/dashboards/delete-dashboard/delete-dashboard.controller';
 import { DeleteDraftDashboardsController } from './controllers/dashboards/delete-draft-dashboards/delete-draft-dashboards.controller';
@@ -179,6 +182,9 @@ export const appControllers = [
   GetConnectionsController,
   GetConnectionSchemasController,
   GetConnectionSampleController,
+  ViewCachedColumnController,
+  RefreshCachedColumnController,
+  ClearCachedColumnController,
   GetConnectionsListController,
 
   CreateFileController,

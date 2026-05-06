@@ -12,6 +12,7 @@ import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
+import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
@@ -229,6 +230,78 @@ export class SnowFlakeService {
         isSuccess: false,
         errorMessage: `Connection failed: ${err.message}`
       };
+    }
+  }
+
+  async fetchCachedParts(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    sampleSize?: number;
+    cacheLimit: number;
+  }): Promise<CachedPartsResult> {
+    let {
+      connection,
+      schemaName,
+      tableName,
+      columnName,
+      sampleSize,
+      cacheLimit
+    } = item;
+
+    let snoflakeOptions = this.optionsToSnowFlakeOptions({
+      connection: connection
+    });
+
+    let snowflakeConnection = snowflake.createConnection(snoflakeOptions);
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        snowflakeConnection.connect((err, conn) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+
+      let sourceSql = isDefined(sampleSize)
+        ? `(SELECT "${columnName}" FROM "${schemaName}"."${tableName}" LIMIT ${sampleSize}) sub`
+        : `"${schemaName}"."${tableName}"`;
+
+      let sqlText = `SELECT "${columnName}" AS column_value, COUNT(*) AS count FROM ${sourceSql} GROUP BY "${columnName}" ORDER BY count DESC LIMIT ${cacheLimit}`;
+
+      let result = await this.snowflakeConnectionExecute(snowflakeConnection, {
+        sqlText: sqlText
+      });
+
+      let resultRows = result.rows as any[];
+
+      return {
+        values: resultRows.map(row => ({
+          columnValue:
+            row.COLUMN_VALUE === null ? 'NULL' : String(row.COLUMN_VALUE),
+          count: Number(row.COUNT)
+        }))
+      };
+    } catch (e: any) {
+      return { values: [], errorMessage: `Column cache failed: ${e.message}` };
+    } finally {
+      snowflakeConnection.destroy(destroyErr => {
+        if (destroyErr) {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,
+              originalError: destroyErr
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
+        }
+      });
     }
   }
 

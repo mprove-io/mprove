@@ -13,6 +13,7 @@ import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
+import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
@@ -356,6 +357,53 @@ export class PgService {
         rows: [],
         errorMessage: `Sample fetch failed: ${e.message}`
       };
+    } finally {
+      pgDb.$pool.end();
+    }
+  }
+
+  async fetchCachedParts(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    sampleSize?: number;
+    cacheLimit: number;
+  }): Promise<CachedPartsResult> {
+    let {
+      connection,
+      schemaName,
+      tableName,
+      columnName,
+      sampleSize,
+      cacheLimit
+    } = item;
+
+    let postgresConnectionOptions: pg.IConnectionParameters<pg.IClient> =
+      this.optionsToPostgresOptions({ connection: connection });
+
+    let pgp = pgPromise({ noWarnings: true });
+
+    let pgDb = pgp(postgresConnectionOptions);
+
+    try {
+      let sourceSql = isDefined(sampleSize)
+        ? `(SELECT "${columnName}" FROM "${schemaName}"."${tableName}" LIMIT ${sampleSize}) sub`
+        : `"${schemaName}"."${tableName}"`;
+
+      let sqlText = `SELECT "${columnName}" AS column_value, COUNT(*) AS count FROM ${sourceSql} GROUP BY "${columnName}" ORDER BY count DESC LIMIT ${cacheLimit}`;
+
+      let resultRows = await pgDb.any(sqlText);
+
+      return {
+        values: resultRows.map(row => ({
+          columnValue:
+            row.column_value === null ? 'NULL' : String(row.column_value),
+          count: Number(row.count)
+        }))
+      };
+    } catch (e: any) {
+      return { values: [], errorMessage: `Column cache failed: ${e.message}` };
     } finally {
       pgDb.$pool.end();
     }

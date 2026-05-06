@@ -78,6 +78,9 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendTestConnection = 'api/ToBackendTestConnection',
   ToBackendGetConnectionSchemas = 'api/ToBackendGetConnectionSchemas',
   ToBackendGetConnectionSample = 'api/ToBackendGetConnectionSample',
+  ToBackendViewCachedColumn = 'api/ToBackendViewCachedColumn',
+  ToBackendRefreshCachedColumn = 'api/ToBackendRefreshCachedColumn',
+  ToBackendClearCachedColumn = 'api/ToBackendClearCachedColumn',
   ToBackendGetConnectionsList = 'api/ToBackendGetConnectionsList',
   //
   ToBackendGetBranchesList = 'api/ToBackendGetBranchesList',
