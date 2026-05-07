@@ -413,12 +413,12 @@
                   <m-database-icon></m-database-icon>
                 </button>
 
-                <ng-template #templateCachedColumnTooltip>
+                <ng-template #templateCachedColumnInfo>
                   <div
                     *ngIf="node.data.cachedColumn == null"
                     class="whitespace-nowrap"
                   >
-                    Cache is empty
+                    Unique values cache is empty
                   </div>
 
                   <div
@@ -474,13 +474,12 @@
                   </div>
                 </ng-template>
 
+                <ng-template #templateCachedColumnTooltip> Cache </ng-template>
+
                 <ng-template #templateCachedColumnMenu>
                   <div
-                    class="border-s4 bg-m0 w-60 rounded-md border-2 py-2 shadow-xl"
+                    class="border-s4 bg-m0 w-72 rounded-md border-2 shadow-xl"
                   >
-                    <!-- <div class="text-s500 px-4 py-2 text-sm font-semibold">
-                      Cached Column
-                    </div> -->
                     <button
                       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
                       [ngClass]="{
@@ -494,7 +493,7 @@
                           event: $event
                         })
                       "
-                      >View cached values</button
+                      >View cached unique values</button
                     >
                     <button
                       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
@@ -546,6 +545,13 @@
                       "
                       >Clear cache</button
                     >
+                    <div
+                      class="border-s4 text-s500 mt-2 border-t px-4 py-2 text-base"
+                    >
+                      <ng-container
+                        *ngTemplateOutlet="templateCachedColumnInfo"
+                      ></ng-container>
+                    </div>
                   </div>
                 </ng-template>
               </div>
