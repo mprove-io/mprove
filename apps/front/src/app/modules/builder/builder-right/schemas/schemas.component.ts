@@ -664,6 +664,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
             title: `${data.connectionId} - ${data.schemaDisplayName}`,
             subtitle: data.tableName,
             columnName: data.columnName,
+            cachedColumn: data.cachedColumn,
             columnNames: [],
             rows: [],
             errorMessage: undefined,
@@ -684,6 +685,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
           ) {
             dialogData.errorMessage = resp.payload.errorMessage;
           } else if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            dialogData.cachedColumn = resp.payload.cachedColumn;
             dialogData.columnNames = resp.payload.columnNames;
             dialogData.rows = resp.payload.rows;
             this.updateCachedColumn({

@@ -13,6 +13,7 @@ import { map, take } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
+import type { CachedColumn } from '#common/zod/to-backend/connections/cached-column';
 import type { ToBackendViewCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-view-cached-column';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -21,6 +22,7 @@ export interface ViewCachedUniqueValuesDialogData {
   title: string;
   subtitle: string;
   columnName: string;
+  cachedColumn: CachedColumn | null | undefined;
   columnNames: string[];
   rows: string[][];
   errorMessage: string;
@@ -105,6 +107,7 @@ export class ViewCachedUniqueValuesDialogComponent implements OnInit {
             } else if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               this.dataItem.columnNames = resp.payload.columnNames;
               this.dataItem.rows = resp.payload.rows;
+              this.dataItem.cachedColumn = resp.payload.cachedColumn;
               this.dataItem.errorMessage = undefined;
               this.offset += 100;
 
@@ -123,5 +126,42 @@ export class ViewCachedUniqueValuesDialogComponent implements OnInit {
         take(1)
       )
       .subscribe();
+  }
+
+  formatNumber(item: { value: number }): string {
+    let { value } = item;
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+
+  formatDate(item: { ts: number }): string {
+    let { ts } = item;
+
+    if (!isDefined(ts)) {
+      return '';
+    }
+
+    return new Date(ts).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+
+  formatDuration(item: { completedDurationMs: number }): string {
+    let { completedDurationMs } = item;
+
+    if (!isDefined(completedDurationMs)) {
+      return '';
+    }
+
+    let secondsTotal = Math.ceil(completedDurationMs / 1000);
+    let minutes = Math.floor(secondsTotal / 60);
+    let seconds = secondsTotal % 60;
+
+    if (minutes > 0) {
+      return `${minutes} min ${seconds} seconds`;
+    }
+
+    return `${seconds} seconds`;
   }
 }
