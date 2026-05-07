@@ -299,7 +299,7 @@ export function checkSchema(
             [
               ParameterEnum.Column.toString(),
               ParameterEnum.Example.toString(),
-              ParameterEnum.Index.toString(),
+              ParameterEnum.CacheUniqueValues.toString(),
               ParameterEnum.Description.toString(),
               ParameterEnum.Relationships.toString()
             ].indexOf(parameter) < 0
@@ -371,14 +371,14 @@ export function checkSchema(
           }
 
           if (
-            parameter === ParameterEnum.Index.toString() &&
+            parameter === ParameterEnum.CacheUniqueValues.toString() &&
             !columnElement[parameter as keyof FileSchemaColumn]
               .toString()
               .match(MyRegex.TRUE_FALSE())
           ) {
             item.errors.push(
               new BmError({
-                title: ErTitleEnum.WRONG_SCHEMA_COLUMN_INDEX,
+                title: ErTitleEnum.WRONG_SCHEMA_COLUMN_CACHE_UNIQUE_VALUES,
                 message: `parameter "${parameter}:" must be "true" or "false" if specified`,
                 lines: [
                   {

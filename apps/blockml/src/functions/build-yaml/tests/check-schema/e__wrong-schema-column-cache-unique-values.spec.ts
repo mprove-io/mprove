@@ -16,7 +16,7 @@ import type { ProjectConnection } from '#common/zod/backend/project-connection';
 
 let caller = CallerEnum.BuildYaml;
 let func = FuncEnum.CheckSchema;
-let testId = 'e__wrong-schema-column-index';
+let testId = 'e__wrong-schema-column-cache-unique-values';
 
 test('1', async t => {
   let errors: BmError[];
@@ -69,6 +69,6 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(errors[0].title, ErTitleEnum.WRONG_SCHEMA_COLUMN_INDEX);
+  t.is(errors[0].title, ErTitleEnum.WRONG_SCHEMA_COLUMN_CACHE_UNIQUE_VALUES);
   t.is(errors[0].lines[0].line, 6);
 });

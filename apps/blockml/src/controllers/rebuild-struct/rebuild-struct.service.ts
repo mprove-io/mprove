@@ -785,8 +785,8 @@ export class RebuildStructService {
                   column: col.column,
                   example: col.example,
                   description: col.description,
-                  index: isDefined(col.index)
-                    ? toBooleanFromLowercaseString(col.index)
+                  cacheUniqueValues: isDefined(col.cache_unique_values)
+                    ? toBooleanFromLowercaseString(col.cache_unique_values)
                     : undefined,
                   relationships: (col.relationships ?? []).map(rel => {
                     let extraRel: ExtraSchemaRelationship = {

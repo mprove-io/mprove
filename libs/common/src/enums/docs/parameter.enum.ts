@@ -128,7 +128,7 @@ export enum ParameterEnum {
   Column = 'column',
   Columns = 'columns',
   Example = 'example',
-  Index = 'index',
+  CacheUniqueValues = 'cache_unique_values',
   To = 'to',
   ToSchema = 'to_schema'
 }

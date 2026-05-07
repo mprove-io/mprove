@@ -3,4 +3,4 @@ tables:
 - table: t1
   columns:
   - column: c1
-    index: unknown
+    cache_unique_values: true

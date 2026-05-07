@@ -8,7 +8,7 @@ import type { ProjectConnection } from '#common/zod/backend/project-connection';
 
 let caller = CallerEnum.BuildYaml;
 let func = FuncEnum.CheckSchema;
-let testId = 'u__schema-column-index';
+let testId = 'u__schema-column-cache-unique-values';
 
 test('1', async t => {
   let { structService, traceId, structId, dataDir } = await prepareTest(
@@ -34,5 +34,5 @@ test('1', async t => {
   });
 
   t.is(prep.errors.length, 0);
-  t.is(prep.extraSchemas[0].tables[0].columns[0].index, true);
+  t.is(prep.extraSchemas[0].tables[0].columns[0].cacheUniqueValues, true);
 });

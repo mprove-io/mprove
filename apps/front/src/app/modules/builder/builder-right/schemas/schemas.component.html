@@ -193,6 +193,21 @@
                 </button>
               </div>
 
+              <button
+                *ngIf="
+                  (node.data.nodeType === 'connection' ||
+                    node.data.nodeType === 'table') &&
+                  node.data.hasUncachedCacheUniqueValuesRecommendation === true
+                "
+                type="button"
+                tp="Contains columns recommended to cache unique values that are not cached"
+                tpPlacement="top"
+                class="text-a500 ml-2 mr-1 mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                (click)="$event.stopPropagation()"
+              >
+                <m-exclamation-icon></m-exclamation-icon>
+              </button>
+
               <!-- <button
                 *ngIf="node.data.nodeType === 'connection'"
                 type="button"
@@ -391,17 +406,25 @@
                     'text-blue-500':
                       node.data.cachedColumn?.status === 'completed',
                     'text-red-600': node.data.cachedColumn?.status === 'error',
-                    'text-amber-600':
-                      node.data.index === true && !node.data.cachedColumn,
+                    'text-a500':
+                      node.data.cacheUniqueValues === true &&
+                      !node.data.cachedColumn,
                     'text-s500':
                       node.data.cachedColumn?.status !== 'completed' &&
                       node.data.cachedColumn?.status !== 'error' &&
-                      !(node.data.index === true && !node.data.cachedColumn),
+                      !(
+                        node.data.cacheUniqueValues === true &&
+                        !node.data.cachedColumn
+                      ),
                     'hover:bg-m200': !isCachedColumnSpinning({
                       nodeId: node.data.id
                     }),
                     'hover:text-s1':
                       node.data.cachedColumn?.status !== 'completed' &&
+                      !(
+                        node.data.cacheUniqueValues === true &&
+                        !node.data.cachedColumn
+                      ) &&
                       !isCachedColumnSpinning({
                         nodeId: node.data.id
                       })
@@ -480,7 +503,8 @@
                 <ng-template #templateCachedColumnTooltip>
                   <ng-container
                     *ngIf="
-                      node.data.index === true && !node.data.cachedColumn;
+                      node.data.cacheUniqueValues === true &&
+                        !node.data.cachedColumn;
                       else templateCachedColumnDefaultTooltip
                     "
                   >

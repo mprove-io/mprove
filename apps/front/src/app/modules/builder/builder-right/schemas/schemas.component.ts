@@ -58,13 +58,14 @@ interface SchemaTreeNode {
   isNullable?: boolean;
   isPrimaryKey?: boolean;
   isUnique?: boolean;
-  index?: boolean;
+  cacheUniqueValues?: boolean;
   foreignKeys?: RawSchemaForeignKey[];
   references?: ColumnCombinedReference[];
   description?: string;
   example?: string;
   errorMessage?: string;
   cachedColumn?: CachedColumn | null;
+  hasUncachedCacheUniqueValuesRecommendation?: boolean;
 }
 
 @Component({
@@ -282,6 +283,35 @@ export class SchemasComponent implements OnInit, OnDestroy {
     return idxs != null && idxs.length > 0;
   }
 
+  isCacheRecommendedAndEmpty(item: { node: SchemaTreeNode }): boolean {
+    let { node } = item;
+    return (
+      node.nodeType === 'column' &&
+      node.cacheUniqueValues === true &&
+      !node.cachedColumn
+    );
+  }
+
+  syncCacheUniqueValuesRecommendationWarnings(item: {
+    nodes: SchemaTreeNode[];
+  }) {
+    let { nodes } = item;
+
+    nodes.forEach(node => {
+      if (node.children?.length > 0) {
+        this.syncCacheUniqueValuesRecommendationWarnings({
+          nodes: node.children
+        });
+      }
+
+      node.hasUncachedCacheUniqueValuesRecommendation =
+        this.isCacheRecommendedAndEmpty({ node: node }) ||
+        node.children?.some(
+          child => child.hasUncachedCacheUniqueValuesRecommendation
+        ) === true;
+    });
+  }
+
   buildTreeNodes(item: {
     combinedSchemaItems: CombinedSchemaItem[];
   }): SchemaTreeNode[] {
@@ -304,15 +334,8 @@ export class SchemasComponent implements OnInit, OnDestroy {
       cs.schemas.forEach(combinedSchema => {
         let schemaName = combinedSchema.schemaName;
 
-        let connectionNode: SchemaTreeNode = {
-          id: `${cs.connectionId}__${schemaName}`,
-          name: `${cs.connectionId} - ${schemaName}`,
-          searchName: `${cs.connectionId} ${schemaName}`,
-          nodeType: 'connection',
-          connectionId: cs.connectionId,
-          schemaDisplayName: schemaName,
-          description: combinedSchema.description,
-          children: combinedSchema.tables.map(table => {
+        let tableChildren: SchemaTreeNode[] = combinedSchema.tables.map(
+          table => {
             let columnChildren: SchemaTreeNode[] = table.columns.map(
               (col, colIdx) => ({
                 id: `${cs.connectionId}__${schemaName}__${table.tableName}__col__${colIdx}`,
@@ -327,7 +350,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
                 isNullable: col.isNullable,
                 isPrimaryKey: col.isPrimaryKey,
                 isUnique: col.isUnique,
-                index: col.index,
+                cacheUniqueValues: col.cacheUniqueValues,
                 foreignKeys: col.foreignKeys,
                 references: col.references,
                 description: col.description,
@@ -367,7 +390,18 @@ export class SchemasComponent implements OnInit, OnDestroy {
             };
 
             return tableNode;
-          })
+          }
+        );
+
+        let connectionNode: SchemaTreeNode = {
+          id: `${cs.connectionId}__${schemaName}`,
+          name: `${cs.connectionId} - ${schemaName}`,
+          searchName: `${cs.connectionId} ${schemaName}`,
+          nodeType: 'connection',
+          connectionId: cs.connectionId,
+          schemaDisplayName: schemaName,
+          description: combinedSchema.description,
+          children: tableChildren
         };
 
         nodes.push(connectionNode);
@@ -375,6 +409,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
     });
 
     nodes.sort((a, b) => a.name.localeCompare(b.name));
+    this.syncCacheUniqueValuesRecommendationWarnings({ nodes: nodes });
 
     return nodes;
   }
@@ -450,6 +485,9 @@ export class SchemasComponent implements OnInit, OnDestroy {
 
     if (isDefined(columnNode)) {
       columnNode.cachedColumn = cachedColumn;
+      this.syncCacheUniqueValuesRecommendationWarnings({
+        nodes: this.treeNodes
+      });
     }
   }
 
@@ -585,6 +623,9 @@ export class SchemasComponent implements OnInit, OnDestroy {
               }
             });
 
+            this.syncCacheUniqueValuesRecommendationWarnings({
+              nodes: this.treeNodes
+            });
             this.applyFilter();
           }
 

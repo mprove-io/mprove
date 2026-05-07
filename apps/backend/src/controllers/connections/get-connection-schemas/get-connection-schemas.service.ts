@@ -485,7 +485,7 @@ export class GetConnectionSchemasService {
                 foreignKeys: rawCol.foreignKeys,
                 description: extraCol?.description,
                 example: extraCol?.example,
-                index: extraCol?.index,
+                cacheUniqueValues: extraCol?.cacheUniqueValues,
                 references: combinedRefs.length > 0 ? combinedRefs : undefined,
                 cachedColumn: cachedColumn
               };

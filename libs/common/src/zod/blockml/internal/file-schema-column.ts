@@ -9,8 +9,8 @@ export let zFileSchemaColumn = z
     example_line_num: z.number().nullish(),
     description: z.string().nullish(),
     description_line_num: z.number().nullish(),
-    index: z.string().nullish(),
-    index_line_num: z.number().nullish(),
+    cache_unique_values: z.string().nullish(),
+    cache_unique_values_line_num: z.number().nullish(),
     relationships: z.array(zFileSchemaRelationship).nullish(),
     relationships_line_num: z.number().nullish()
   })
