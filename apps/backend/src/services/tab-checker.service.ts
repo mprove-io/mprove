@@ -18,6 +18,8 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
+import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
@@ -93,6 +95,8 @@ export class TabCheckerService {
     await this.checkAvatars(isAllRecords);
     await this.checkBranches(isAllRecords);
     await this.checkBridges(isAllRecords);
+    await this.checkCachedColumns(isAllRecords);
+    await this.checkCachedParts(isAllRecords);
     await this.checkConnections(isAllRecords);
     await this.checkDconfigs(isAllRecords);
     await this.checkUconfigs(isAllRecords);
@@ -371,6 +375,172 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Bridges, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  async checkCachedColumns(isAllRecords: boolean) {
+    let startTs = Date.now();
+    let cachedColumnLatest = await this.db.drizzle.query.cachedColumnsTable
+      .findFirst({
+        orderBy: desc(cachedColumnsTable.serverTs)
+      })
+      .then(x => this.tabService.cachedColumnEntToTab(x));
+
+    if (isUndefined(cachedColumnLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(cachedColumnsTable.serverTs, cachedColumnLatest.serverTs)
+        : this.isEncryptDb === true
+          ? or(
+              isNull(cachedColumnsTable.keyTag),
+              eq(cachedColumnsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(cachedColumnsTable.keyTag, this.keyTag),
+              eq(cachedColumnsTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let cachedColumn = await this.db.drizzle.query.cachedColumnsTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.cachedColumnEntToTab(x));
+
+      if (isUndefined(cachedColumn)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  cachedColumns: [cachedColumn]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let cachedColumnsResult = await this.db.drizzle
+      .select({
+        record: cachedColumnsTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(cachedColumnsTable)
+      .where(
+        and(
+          isNotNull(cachedColumnsTable.keyTag),
+          notInArray(cachedColumnsTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (cachedColumnsResult.length > 0 && cachedColumnsResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'cached_columns',
+          count: cachedColumnsResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Cached Columns, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  async checkCachedParts(isAllRecords: boolean) {
+    let startTs = Date.now();
+    let cachedPartLatest = await this.db.drizzle.query.cachedPartsTable
+      .findFirst({
+        orderBy: desc(cachedPartsTable.serverTs)
+      })
+      .then(x => this.tabService.cachedPartEntToTab(x));
+
+    if (isUndefined(cachedPartLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(cachedPartsTable.serverTs, cachedPartLatest.serverTs)
+        : this.isEncryptDb === true
+          ? or(
+              isNull(cachedPartsTable.keyTag),
+              eq(cachedPartsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(cachedPartsTable.keyTag, this.keyTag),
+              eq(cachedPartsTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let cachedPart = await this.db.drizzle.query.cachedPartsTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.cachedPartEntToTab(x));
+
+      if (isUndefined(cachedPart)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  cachedParts: [cachedPart]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let cachedPartsResult = await this.db.drizzle
+      .select({
+        record: cachedPartsTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(cachedPartsTable)
+      .where(
+        and(
+          isNotNull(cachedPartsTable.keyTag),
+          notInArray(cachedPartsTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (cachedPartsResult.length > 0 && cachedPartsResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'cached_parts',
+          count: cachedPartsResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Cached Parts, ${durationMs} ms`,
       logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs
