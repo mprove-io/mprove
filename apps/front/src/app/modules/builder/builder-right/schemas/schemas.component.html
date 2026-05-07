@@ -375,7 +375,7 @@
               <div
                 *ngIf="node.data.nodeType === 'column'"
                 class="ml-2 flex flex-shrink-0 items-center"
-                [tp]="cachedColumnTooltip({ node: node })"
+                [tp]="templateCachedColumnTooltip"
                 tpPlacement="top"
               >
                 <div
@@ -394,9 +394,14 @@
                     'text-s500':
                       node.data.cachedColumn?.status !== 'completed' &&
                       node.data.cachedColumn?.status !== 'error',
-                    'hover:bg-m200 hover:text-s1': !isCachedColumnSpinning({
+                    'hover:bg-m200': !isCachedColumnSpinning({
                       nodeId: node.data.id
-                    })
+                    }),
+                    'hover:text-s1':
+                      node.data.cachedColumn?.status !== 'completed' &&
+                      !isCachedColumnSpinning({
+                        nodeId: node.data.id
+                      })
                   }"
                   [tp]="templateCachedColumnMenu"
                   [tpHideOnEscape]="true"
@@ -408,6 +413,67 @@
                   <m-database-icon></m-database-icon>
                 </button>
 
+                <ng-template #templateCachedColumnTooltip>
+                  <div
+                    *ngIf="node.data.cachedColumn == null"
+                    class="whitespace-nowrap"
+                  >
+                    Cache is empty
+                  </div>
+
+                  <div
+                    *ngIf="node.data.cachedColumn?.status === 'running'"
+                    class="whitespace-nowrap"
+                  >
+                    Cache refresh is running
+                  </div>
+
+                  <div
+                    *ngIf="
+                      node.data.cachedColumn != null &&
+                      node.data.cachedColumn?.status !== 'running'
+                    "
+                    class="grid grid-cols-[auto_auto] gap-x-3 gap-y-1 whitespace-nowrap"
+                  >
+                    <div>Unique values</div>
+                    <div class="text-right font-semibold">
+                      {{
+                        formatNumber({
+                          value: node.data.cachedColumn.uniqueValuesCount ?? 0
+                        })
+                      }}
+                    </div>
+                    <div *ngIf="node.data.cachedColumn.sampleSize != null">
+                      Sample size
+                    </div>
+                    <div
+                      *ngIf="node.data.cachedColumn.sampleSize != null"
+                      class="text-right font-semibold"
+                    >
+                      {{
+                        formatNumber({
+                          value: node.data.cachedColumn.sampleSize
+                        })
+                      }}
+                    </div>
+                    <div>Cached</div>
+                    <div class="text-right font-semibold">
+                      {{
+                        formatDate({ ts: node.data.cachedColumn.completedTs })
+                      }}
+                    </div>
+                    <div>Duration</div>
+                    <div class="text-right font-semibold">
+                      {{
+                        formatDuration({
+                          completedDurationMs:
+                            node.data.cachedColumn.completedDurationMs
+                        })
+                      }}
+                    </div>
+                  </div>
+                </ng-template>
+
                 <ng-template #templateCachedColumnMenu>
                   <div
                     class="border-s4 bg-m0 w-60 rounded-md border-2 py-2 shadow-xl"
@@ -417,6 +483,10 @@
                     </div> -->
                     <button
                       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                      [ngClass]="{
+                        'text-s400 cursor-default': !node.data.cachedColumn
+                      }"
+                      [disabled]="!node.data.cachedColumn"
                       (click)="
                         cachedColumnTpRef.hide();
                         viewCachedColumn({

@@ -228,6 +228,7 @@ export class RefreshCachedColumnController {
         completedDurationMs: undefined,
         uniqueValuesCount: 0,
         limit: cacheLimit,
+        sampleSize: undefined,
         isLimitReached: undefined,
         serverTs: undefined
       };
@@ -392,6 +393,7 @@ export class RefreshCachedColumnController {
         currentCachedColumn.completedDurationMs = completedTs - startedTs;
         currentCachedColumn.isLimitReached = uniqueValues.length >= cacheLimit;
         currentCachedColumn.uniqueValuesCount = uniqueValues.length;
+        currentCachedColumn.sampleSize = sampleSize;
 
         await this.db.packer.write({
           tx: tx,

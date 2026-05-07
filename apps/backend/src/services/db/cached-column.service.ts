@@ -35,6 +35,7 @@ export class CachedColumnService {
       completedTs: cachedColumn.completedTs,
       completedDurationMs: cachedColumn.completedDurationMs,
       limit: cachedColumn.limit,
+      sampleSize: cachedColumn.sampleSize,
       isLimitReached: cachedColumn.isLimitReached,
       serverTs: cachedColumn.serverTs,
       uniqueValuesCount: cachedColumn.uniqueValuesCount

@@ -14,6 +14,7 @@ export let zCachedColumn = z.object({
   completedTs: z.number().nullish(),
   completedDurationMs: z.number().nullish(),
   limit: z.number(),
+  sampleSize: z.number().nullish(),
   isLimitReached: z.boolean().nullish(),
   serverTs: z.number(),
   uniqueValuesCount: z.number().nullish()

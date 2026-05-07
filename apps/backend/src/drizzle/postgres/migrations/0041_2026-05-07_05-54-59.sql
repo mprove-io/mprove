@@ -1,0 +1,1 @@
+ALTER TABLE "cached_columns" ADD COLUMN "sample_size" integer;

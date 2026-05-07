@@ -449,6 +449,7 @@ export class TabToEntService {
       completedTs: tab.completedTs,
       completedDurationMs: tab.completedDurationMs,
       limit: tab.limit,
+      sampleSize: tab.sampleSize,
       isLimitReached: tab.isLimitReached,
       uniqueValuesCount: tab.uniqueValuesCount,
       serverTs: tab.serverTs

@@ -600,27 +600,6 @@ export class SchemasComponent implements OnInit, OnDestroy {
       );
   }
 
-  cachedColumnTooltip(item: { node: TreeNode }): string {
-    let { node } = item;
-    let data = node.data as SchemaTreeNode;
-    let cachedColumn = data.cachedColumn;
-
-    if (cachedColumn == null) {
-      return 'Cached column is empty';
-    }
-
-    if (cachedColumn.status === 'running') {
-      return 'Cache refresh is running';
-    }
-
-    return [
-      `${cachedColumn.uniqueValuesCount ?? 0} unique values`,
-      `limit ${this.formatNumber({ value: cachedColumn.limit ?? 10000 })}`,
-      `Cached ${this.formatDate({ ts: cachedColumn.completedTs })}`,
-      `Duration - ${this.formatDuration({ completedDurationMs: cachedColumn.completedDurationMs })}`
-    ].join('\n');
-  }
-
   formatNumber(item: { value: number }): string {
     let { value } = item;
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
@@ -709,7 +688,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
             dialogData.rows = resp.payload.rows;
             this.updateCachedColumn({
               nodeId: data.id,
-              cachedColumn: undefined
+              cachedColumn: resp.payload.cachedColumn
             });
             this.applyFilter();
           } else {
