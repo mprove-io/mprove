@@ -13,6 +13,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CachedColumnService } from '#backend/services/db/cached-column.service';
+import { EnvsService } from '#backend/services/db/envs.service.js';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { HashService } from '#backend/services/hash.service';
@@ -33,6 +34,7 @@ export class GetCachedColumnsController {
     private membersService: MembersService,
     private hashService: HashService,
     private tabService: TabService,
+    private envsService: EnvsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -48,16 +50,22 @@ export class GetCachedColumnsController {
   ) {
     let { projectId, envId, columns } = body.payload;
 
+    await this.projectsService.getProjectCheckExists({ projectId: projectId });
+
+    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
+      memberId: user.userId,
+      projectId: projectId
+    });
+
+    await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
+
     let cacheEnvId = await this.cachedColumnService.getCacheEnvId({
       projectId: projectId,
       envId: envId
-    });
-
-    await this.projectsService.getProjectCheckExists({ projectId: projectId });
-
-    await this.membersService.getMemberCheckIsEditorOrAdmin({
-      memberId: user.userId,
-      projectId: projectId
     });
 
     let cachedColumns: CachedColumn[] = [];

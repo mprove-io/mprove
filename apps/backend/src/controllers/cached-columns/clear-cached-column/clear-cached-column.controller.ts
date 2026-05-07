@@ -14,9 +14,11 @@ import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-colu
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CachedColumnService } from '#backend/services/db/cached-column.service';
+import { EnvsService } from '#backend/services/db/envs.service.js';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { HashService } from '#backend/services/hash.service';
+import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { ToBackendClearCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-clear-cached-column';
@@ -31,6 +33,7 @@ export class ClearCachedColumnController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private hashService: HashService,
+    private envsService: EnvsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -47,17 +50,30 @@ export class ClearCachedColumnController {
     let { projectId, envId, connectionId, schemaName, tableName, columnName } =
       body.payload;
 
+    await this.projectsService.getProjectCheckExists({ projectId: projectId });
+
+    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
+      memberId: user.userId,
+      projectId: projectId
+    });
+
+    await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
+
     let cacheEnvId = await this.cachedColumnService.getCacheEnvId({
       projectId: projectId,
       envId: envId
     });
 
-    await this.projectsService.getProjectCheckExists({ projectId: projectId });
-
-    await this.membersService.getMemberCheckIsEditorOrAdmin({
-      memberId: user.userId,
-      projectId: projectId
-    });
+    if (cacheEnvId === PROJECT_ENV_PROD) {
+      await this.membersService.getMemberCheckIsAdmin({
+        memberId: user.userId,
+        projectId: projectId
+      });
+    }
 
     await this.db.drizzle.transaction(async tx => {
       await tx

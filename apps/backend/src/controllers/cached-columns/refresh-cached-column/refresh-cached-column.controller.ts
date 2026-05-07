@@ -93,15 +93,28 @@ export class RefreshCachedColumnController {
 
     await this.projectsService.getProjectCheckExists({ projectId: projectId });
 
-    await this.membersService.getMemberCheckIsEditorOrAdmin({
+    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
       memberId: user.userId,
       projectId: projectId
+    });
+
+    await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
     });
 
     let cacheEnvId = await this.cachedColumnService.getCacheEnvId({
       projectId: projectId,
       envId: envId
     });
+
+    if (cacheEnvId === PROJECT_ENV_PROD) {
+      await this.membersService.getMemberCheckIsAdmin({
+        memberId: user.userId,
+        projectId: projectId
+      });
+    }
 
     let apiEnvs = await this.envsService.getApiEnvs({ projectId: projectId });
     let apiEnv = apiEnvs.find(x => x.envId === cacheEnvId);
