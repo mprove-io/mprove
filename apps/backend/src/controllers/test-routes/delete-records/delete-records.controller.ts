@@ -23,6 +23,8 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
+import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
@@ -223,6 +225,14 @@ export class DeleteRecordsController {
             await tx
               .delete(sessionsTable)
               .where(inArray(sessionsTable.projectId, projectIds));
+
+            await tx
+              .delete(cachedPartsTable)
+              .where(inArray(cachedPartsTable.projectId, projectIds));
+
+            await tx
+              .delete(cachedColumnsTable)
+              .where(inArray(cachedColumnsTable.projectId, projectIds));
           }
 
           if (structIds.length > 0) {

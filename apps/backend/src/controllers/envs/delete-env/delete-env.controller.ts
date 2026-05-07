@@ -21,6 +21,8 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
+import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -97,6 +99,24 @@ export class DeleteEnvController {
               and(
                 eq(bridgesTable.projectId, projectId),
                 eq(bridgesTable.envId, envId)
+              )
+            );
+
+          await tx
+            .delete(cachedPartsTable)
+            .where(
+              and(
+                eq(cachedPartsTable.projectId, projectId),
+                eq(cachedPartsTable.envId, envId)
+              )
+            );
+
+          await tx
+            .delete(cachedColumnsTable)
+            .where(
+              and(
+                eq(cachedColumnsTable.projectId, projectId),
+                eq(cachedColumnsTable.envId, envId)
               )
             );
         }),

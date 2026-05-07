@@ -22,6 +22,8 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
+import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
@@ -122,6 +124,14 @@ export class DeleteProjectController {
           await tx
             .delete(bridgesTable)
             .where(eq(bridgesTable.projectId, projectId));
+
+          await tx
+            .delete(cachedPartsTable)
+            .where(eq(cachedPartsTable.projectId, projectId));
+
+          await tx
+            .delete(cachedColumnsTable)
+            .where(eq(cachedColumnsTable.projectId, projectId));
         }),
       getRetryOption(this.cs, this.logger)
     );
