@@ -369,6 +369,31 @@ export function checkSchema(
             columnHasError = true;
             return;
           }
+
+          if (
+            parameter === ParameterEnum.Index.toString() &&
+            !columnElement[parameter as keyof FileSchemaColumn]
+              .toString()
+              .match(MyRegex.TRUE_FALSE())
+          ) {
+            item.errors.push(
+              new BmError({
+                title: ErTitleEnum.WRONG_SCHEMA_COLUMN_INDEX,
+                message: `parameter "${parameter}:" must be "true" or "false" if specified`,
+                lines: [
+                  {
+                    line: columnElement[
+                      (parameter + LINE_NUM) as keyof FileSchemaColumn
+                    ] as number,
+                    name: schema.fileName,
+                    path: schema.filePath
+                  }
+                ]
+              })
+            );
+            columnHasError = true;
+            return;
+          }
         });
 
         if (columnHasError) {
