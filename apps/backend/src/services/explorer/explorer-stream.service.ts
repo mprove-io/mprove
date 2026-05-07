@@ -25,6 +25,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeAscendingIdAfter } from '#common/functions/make-ascending-id';
+import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import { CodexService } from '../codex.service';
 import { ProjectsService } from '../db/projects.service';
@@ -33,6 +34,7 @@ import { UsersService } from '../db/users.service';
 import { SessionDrainService } from '../session/session-drain.service';
 import { TabService } from '../tab.service';
 import { ExplorerEventsMakerService } from './explorer-events-maker.service';
+import { ExplorerModelPartsService } from './explorer-model-parts.service';
 import { ExplorerModelsService } from './explorer-models.service';
 import { ExplorerPromptsService } from './explorer-prompts.service';
 import { ExplorerTitleService } from './explorer-title.service';
@@ -80,6 +82,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     private explorerTitleService: ExplorerTitleService,
     private explorerEventsMakerService: ExplorerEventsMakerService,
     private explorerToolsService: ExplorerToolsService,
+    private explorerModelPartsService: ExplorerModelPartsService,
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private usersService: UsersService,
@@ -708,13 +711,27 @@ export class ExplorerStreamService implements OnModuleDestroy {
       )
     });
 
+    let traceId = makeId();
+
+    let explorerModelParts = userId
+      ? await this.explorerModelPartsService.getExplorerModelParts({
+          userId: userId,
+          projectId: session.projectId,
+          repoId: session.repoId,
+          branchId: session.branchId,
+          envId: session.envId,
+          traceId: traceId
+        })
+      : [];
+
     let explorerSystemPrompt =
       this.explorerPromptsService.getExplorerSessionSystemPrompt({
         orgId: project.orgId,
         projectId: session.projectId,
         repoId: session.repoId,
         branchId: session.branchId,
-        envId: session.envId
+        envId: session.envId,
+        explorerModelParts: explorerModelParts
       });
 
     let providerOptions =
@@ -740,8 +757,6 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let user = userId
       ? await this.usersService.getUserCheckExists({ userId: userId })
       : undefined;
-
-    let traceId = crypto.randomUUID();
 
     let tools =
       session.type === SessionTypeEnum.Explorer && user

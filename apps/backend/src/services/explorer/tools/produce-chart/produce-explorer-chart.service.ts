@@ -17,6 +17,8 @@ import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendProduceExplorerChartResponsePayload } from '#common/zod/to-backend/explorer/to-backend-produce-explorer-chart';
 
+export const CHART_ID_PLACEHOLDER = '<chart-id-placeholder>';
+
 @Injectable()
 export class ProduceExplorerChartService {
   constructor(
@@ -34,12 +36,28 @@ export class ProduceExplorerChartService {
     user: UserTab;
     traceId: string;
     sessionId: string;
-    chartId: string;
     modelId: string;
     chartYaml: string;
     title: string;
   }): Promise<ToBackendProduceExplorerChartResponsePayload> {
-    let { user, traceId, sessionId, chartId, modelId, chartYaml, title } = item;
+    let { user, traceId, sessionId, modelId, chartYaml, title } = item;
+
+    let hasChartIdPlaceholder = chartYaml.includes(CHART_ID_PLACEHOLDER);
+    if (!hasChartIdPlaceholder) {
+      return {
+        status: 'error',
+        errors: [
+          {
+            title: 'Missing chart id placeholder',
+            message: `chartYaml must contain ${CHART_ID_PLACEHOLDER} as the chart id placeholder. Put it in the top-level chart field.`,
+            lines: []
+          }
+        ]
+      };
+    }
+
+    let chartId = makeId();
+    chartYaml = chartYaml.split(CHART_ID_PLACEHOLDER).join(chartId);
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId

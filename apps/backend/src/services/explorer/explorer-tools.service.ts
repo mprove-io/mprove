@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import type { Tool } from 'ai';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { GenerateChartIdToolService } from './tools/generate-chart-id.tool';
-import { GetModelToolService } from './tools/get-model.tool';
+import { GetModelsToolService } from './tools/get-models.tool';
 import { GetStateToolService } from './tools/get-state.tool';
 import { ProduceChartToolService } from './tools/produce-chart/produce-chart.tool';
 import { ReadDocsToolService } from './tools/read-docs.tool';
@@ -12,10 +11,9 @@ import { SearchCachedUniqueValuesToolService } from './tools/search-cached-uniqu
 export class ExplorerToolsService {
   constructor(
     private getStateToolService: GetStateToolService,
-    private getModelToolService: GetModelToolService,
+    private getModelsToolService: GetModelsToolService,
     private readDocsToolService: ReadDocsToolService,
     private searchCachedUniqueValuesToolService: SearchCachedUniqueValuesToolService,
-    private generateChartIdToolService: GenerateChartIdToolService,
     private produceChartToolService: ProduceChartToolService
   ) {}
 
@@ -31,30 +29,32 @@ export class ExplorerToolsService {
     let { user, sessionId, projectId, repoId, branchId, envId, traceId } = item;
 
     return {
+      // get_state: this.getStateToolService.makeTool({
+      //   projectId: projectId,
+      //   repoId: repoId,
+      //   branchId: branchId,
+      //   envId: envId,
+      //   user: user,
+      //   traceId: traceId
+      // })
       // list_docs is omitted because the docs TOC is embedded in the explorer system prompt.
-      read_docs: this.readDocsToolService.makeTool(),
-      get_state: this.getStateToolService.makeTool({
-        projectId: projectId,
-        repoId: repoId,
-        branchId: branchId,
-        envId: envId,
-        user: user,
-        traceId: traceId
-      }),
-      get_model: this.getModelToolService.makeTool({
-        projectId: projectId,
-        repoId: repoId,
-        branchId: branchId,
-        envId: envId,
-        user: user
-      }),
       search_cached_unique_values:
         this.searchCachedUniqueValuesToolService.makeTool({
           projectId: projectId,
+          repoId: repoId,
+          branchId: branchId,
           envId: envId,
           user: user
         }),
-      generate_chart_id: this.generateChartIdToolService.makeTool(),
+      get_models: this.getModelsToolService.makeTool({
+        projectId: projectId,
+        repoId: repoId,
+        branchId: branchId,
+        envId: envId,
+        traceId: traceId,
+        user: user
+      }),
+      read_docs: this.readDocsToolService.makeTool(),
       produce_chart: this.produceChartToolService.makeTool({
         user: user,
         sessionId: sessionId,

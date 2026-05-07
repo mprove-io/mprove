@@ -71,13 +71,13 @@ import { EmailService } from './services/email.service';
 import { ExplorerChartRebuildService } from './services/explorer/explorer-chart-rebuild.service';
 import { ExplorerDocsService } from './services/explorer/explorer-docs.service';
 import { ExplorerEventsMakerService } from './services/explorer/explorer-events-maker.service';
+import { ExplorerModelPartsService } from './services/explorer/explorer-model-parts.service';
 import { ExplorerModelsService } from './services/explorer/explorer-models.service';
 import { ExplorerPromptsService } from './services/explorer/explorer-prompts.service';
 import { ExplorerStreamService } from './services/explorer/explorer-stream.service';
 import { ExplorerTitleService } from './services/explorer/explorer-title.service';
 import { ExplorerToolsService } from './services/explorer/explorer-tools.service';
-import { GenerateChartIdToolService } from './services/explorer/tools/generate-chart-id.tool';
-import { GetModelToolService } from './services/explorer/tools/get-model.tool';
+import { GetModelsToolService } from './services/explorer/tools/get-models.tool';
 import { GetStateToolService } from './services/explorer/tools/get-state.tool';
 import { ListDocsToolService } from './services/explorer/tools/list-docs.tool';
 import { ProduceChartToolService } from './services/explorer/tools/produce-chart/produce-chart.tool';
@@ -172,14 +172,14 @@ export const appProviders = [
   EditorStreamService,
   EditorSandboxService,
   ExplorerEventsMakerService,
+  ExplorerModelPartsService,
   ExplorerPromptsService,
   ExplorerTitleService,
   GetStateToolService,
-  GetModelToolService,
+  GetModelsToolService,
   ListDocsToolService,
   ReadDocsToolService,
   SearchCachedUniqueValuesToolService,
-  GenerateChartIdToolService,
   ProduceChartToolService,
   ExplorerToolsService,
   ExplorerModelsService,

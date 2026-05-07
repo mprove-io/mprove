@@ -9,7 +9,6 @@ import { zToBackendRequestInfo } from '#common/zod/to-backend/to-backend-request
 export let zToBackendProduceExplorerChartRequestPayload = z
   .object({
     sessionId: z.string(),
-    chartId: z.string(),
     modelId: z.string(),
     chartYaml: z.string(),
     title: z.string()
