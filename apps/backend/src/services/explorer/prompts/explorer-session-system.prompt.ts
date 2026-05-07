@@ -1,4 +1,9 @@
 import { toc } from '#backend/mprove-docs-cache/toc';
+import {
+  UNIQUE_VALUES_MATCH_FIELDS_LIMIT,
+  UNIQUE_VALUES_MATCH_VALUES_LIMIT,
+  UNIQUE_VALUES_SEARCH_TEXTS_LIMIT
+} from '#backend/services/explorer/tools/search-cached-unique-values.tool';
 
 export function getExplorerSessionSystemPrompt(item?: {
   orgId: string;
@@ -23,16 +28,22 @@ Do not call get_state or get_model again when the needed output is already prese
 structId in that history matches the current <message_context> structId.
 2. If available models are not available in history, call "get_state".
 3. If needed models are not available in history, call "get_model".
-4. When you need reference for any Mprove concept, choose exact paths from the Documentation TOC below or 
+4. If the user's question mentions an ambiguous literal value the right field is not obvious, 
+call "search_cached_unique_values" to find candidate fields. Use precise search texts when possible, 
+maximum ${UNIQUE_VALUES_SEARCH_TEXTS_LIMIT}. Prefer exact distinctive values from the user's question. 
+The tool returns up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matched field, and 
+up to ${UNIQUE_VALUES_MATCH_FIELDS_LIMIT} matched fields per search text. 
+Do not use it for ordinary numeric/date aggregation unless a literal value needs field discovery.
+5. When you need reference for any Mprove concept, choose exact paths from the Documentation TOC below or 
 history and call "read_docs" with "{ "filePaths": ["reference/chart.mdx"] }". 
 Include multiple paths in filePaths when useful.
-5. Call "generate_chart_id" to get a backend-generated chart id.
-6. Write chart YAML where the top-level "chart:" value is exactly the reserved chart id.
-7. Call "produce_chart" with the reserved chart id and chart YAML to create a chart. 
+6. Call "generate_chart_id" to get a backend-generated chart id.
+7. Write chart YAML where the top-level "chart:" value is exactly the reserved chart id.
+8. Call "produce_chart" with the reserved chart id and chart YAML to create a chart. 
 The tool runs the YAML through the compiler and either persists the chart on success or returns compile errors.
-8. If "produce_chart" returns errors, READ them, fix the YAML, and call "produce_chart" again. 
+9. If "produce_chart" returns errors, READ them, fix the YAML, and call "produce_chart" again. 
 Do not ask the user to fix it. Keep iterating until it succeeds.
-9. When you reference a chart you produced in your reply, link to it using 
+10. When you reference a chart you produced in your reply, link to it using 
 the URL scheme "mprove-tab://<tabId>" so the user can open it in a tab.
 
 ## Documentation TOC

@@ -83,6 +83,7 @@ import { ListDocsToolService } from './services/explorer/tools/list-docs.tool';
 import { ProduceChartToolService } from './services/explorer/tools/produce-chart/produce-chart.tool';
 import { ProduceExplorerChartService } from './services/explorer/tools/produce-chart/produce-explorer-chart.service';
 import { ReadDocsToolService } from './services/explorer/tools/read-docs.tool';
+import { SearchCachedUniqueValuesToolService } from './services/explorer/tools/search-cached-unique-values.tool';
 import { HashService } from './services/hash.service';
 import { MalloyService } from './services/malloy.service';
 import { ParentService } from './services/parent.service';
@@ -177,6 +178,7 @@ export const appProviders = [
   GetModelToolService,
   ListDocsToolService,
   ReadDocsToolService,
+  SearchCachedUniqueValuesToolService,
   GenerateChartIdToolService,
   ProduceChartToolService,
   ExplorerToolsService,

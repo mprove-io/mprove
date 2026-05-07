@@ -6,6 +6,7 @@ import { GetModelToolService } from './tools/get-model.tool';
 import { GetStateToolService } from './tools/get-state.tool';
 import { ProduceChartToolService } from './tools/produce-chart/produce-chart.tool';
 import { ReadDocsToolService } from './tools/read-docs.tool';
+import { SearchCachedUniqueValuesToolService } from './tools/search-cached-unique-values.tool';
 
 @Injectable()
 export class ExplorerToolsService {
@@ -13,6 +14,7 @@ export class ExplorerToolsService {
     private getStateToolService: GetStateToolService,
     private getModelToolService: GetModelToolService,
     private readDocsToolService: ReadDocsToolService,
+    private searchCachedUniqueValuesToolService: SearchCachedUniqueValuesToolService,
     private generateChartIdToolService: GenerateChartIdToolService,
     private produceChartToolService: ProduceChartToolService
   ) {}
@@ -46,6 +48,12 @@ export class ExplorerToolsService {
         envId: envId,
         user: user
       }),
+      search_cached_unique_values:
+        this.searchCachedUniqueValuesToolService.makeTool({
+          projectId: projectId,
+          envId: envId,
+          user: user
+        }),
       generate_chart_id: this.generateChartIdToolService.makeTool(),
       produce_chart: this.produceChartToolService.makeTool({
         user: user,
