@@ -14,6 +14,7 @@ export let zExtraSchemaColumn = z
     column: z.string(),
     description: z.string().nullish(),
     example: z.string().nullish(),
+    index: z.boolean().nullish(),
     relationships: z.array(zExtraSchemaRelationship)
   })
   .meta({ id: 'ExtraSchemaColumn' });

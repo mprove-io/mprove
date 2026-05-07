@@ -128,6 +128,7 @@ export enum ParameterEnum {
   Column = 'column',
   Columns = 'columns',
   Example = 'example',
+  Index = 'index',
   To = 'to',
   ToSchema = 'to_schema'
 }

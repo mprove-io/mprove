@@ -299,6 +299,7 @@ export function checkSchema(
             [
               ParameterEnum.Column.toString(),
               ParameterEnum.Example.toString(),
+              ParameterEnum.Index.toString(),
               ParameterEnum.Description.toString(),
               ParameterEnum.Relationships.toString()
             ].indexOf(parameter) < 0

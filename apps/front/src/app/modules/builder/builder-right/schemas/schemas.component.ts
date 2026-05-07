@@ -58,6 +58,7 @@ interface SchemaTreeNode {
   isNullable?: boolean;
   isPrimaryKey?: boolean;
   isUnique?: boolean;
+  index?: boolean;
   foreignKeys?: RawSchemaForeignKey[];
   references?: ColumnCombinedReference[];
   description?: string;
@@ -326,6 +327,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
                 isNullable: col.isNullable,
                 isPrimaryKey: col.isPrimaryKey,
                 isUnique: col.isUnique,
+                index: col.index,
                 foreignKeys: col.foreignKeys,
                 references: col.references,
                 description: col.description,

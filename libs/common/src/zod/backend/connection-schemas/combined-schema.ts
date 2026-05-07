@@ -28,6 +28,7 @@ export let zCombinedSchemaColumn = z
     foreignKeys: z.array(zRawSchemaForeignKey),
     description: z.string().nullish(),
     example: z.string().nullish(),
+    index: z.boolean().nullish(),
     references: z.array(zColumnCombinedReference).nullish(),
     cachedColumn: zCachedColumn.nullish()
   })

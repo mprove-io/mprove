@@ -391,9 +391,12 @@
                     'text-blue-500':
                       node.data.cachedColumn?.status === 'completed',
                     'text-red-600': node.data.cachedColumn?.status === 'error',
+                    'text-amber-600':
+                      node.data.index === true && !node.data.cachedColumn,
                     'text-s500':
                       node.data.cachedColumn?.status !== 'completed' &&
-                      node.data.cachedColumn?.status !== 'error',
+                      node.data.cachedColumn?.status !== 'error' &&
+                      !(node.data.index === true && !node.data.cachedColumn),
                     'hover:bg-m200': !isCachedColumnSpinning({
                       nodeId: node.data.id
                     }),
@@ -474,7 +477,19 @@
                   </div>
                 </ng-template>
 
-                <ng-template #templateCachedColumnTooltip> Cache </ng-template>
+                <ng-template #templateCachedColumnTooltip>
+                  <ng-container
+                    *ngIf="
+                      node.data.index === true && !node.data.cachedColumn;
+                      else templateCachedColumnDefaultTooltip
+                    "
+                  >
+                    Recommended to cache unique values
+                  </ng-container>
+                  <ng-template #templateCachedColumnDefaultTooltip>
+                    Cache
+                  </ng-template>
+                </ng-template>
 
                 <ng-template #templateCachedColumnMenu>
                   <div
