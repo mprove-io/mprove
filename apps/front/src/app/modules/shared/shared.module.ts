@@ -78,6 +78,7 @@ import { ChevronUpIconComponent } from './icons/chevron-up-icon/chevron-up-icon.
 import { ClockIconComponent } from './icons/clock-icon/clock-icon.component';
 import { CopyIconComponent } from './icons/copy-icon/copy-icon.component';
 import { CurrencyDollarIconComponent } from './icons/currency-dollar-icon/currency-dollar-icon.component';
+import { DatabaseIconComponent } from './icons/database-icon/database-icon.component';
 import { DatabaseZapIconComponent } from './icons/database-zap-icon/database-zap-icon.component';
 import { DeleteBigIconComponent } from './icons/delete-big-icon/delete-big-icon.component';
 import { DeleteIconComponent } from './icons/delete-icon/delete-icon.component';
@@ -242,6 +243,7 @@ let sharedComponents = [
   ListIconComponent,
   ScrollIconComponent,
   DatabaseZapIconComponent,
+  DatabaseIconComponent,
   ArrowDropDownIconComponent,
   DragIconComponent,
   ResizeIconComponent,

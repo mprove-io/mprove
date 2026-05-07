@@ -90,7 +90,7 @@
 
     <div class="flex flex-1"></div>
 
-    <button
+    <!-- <button
       *ngIf="schemasLoaded && treeNodes.length > 0"
       tp="Graph"
       tpPlacement="top"
@@ -99,7 +99,7 @@
       (click)="graphAllOnClick()"
     >
       <m-network-icon></m-network-icon>
-    </button>
+    </button> -->
   </div>
 
   <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
@@ -193,7 +193,7 @@
                 </button>
               </div>
 
-              <button
+              <!-- <button
                 *ngIf="node.data.nodeType === 'connection'"
                 type="button"
                 tp="Copy schema name"
@@ -207,20 +207,20 @@
                 "
               >
                 <m-copy-icon></m-copy-icon>
-              </button>
+              </button> -->
 
               <button
                 *ngIf="node.data.nodeType === 'connection'"
                 type="button"
                 tp="Graph"
                 tpPlacement="top"
-                class="hover:bg-m200 hover:text-s1 text-s500 invisible ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+                class="hover:bg-m200 hover:text-s1 text-s500 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                 (click)="graphOnClick({ node: node, event: $event })"
               >
                 <m-network-icon></m-network-icon>
               </button>
 
-              <button
+              <!-- <button
                 *ngIf="node.data.nodeType === 'table'"
                 type="button"
                 tp="Copy table name"
@@ -234,7 +234,7 @@
                 "
               >
                 <m-copy-icon></m-copy-icon>
-              </button>
+              </button> -->
 
               <button
                 *ngIf="node.data.nodeType === 'table'"
@@ -356,7 +356,7 @@
                 </button>
               </div>
 
-              <button
+              <!-- <button
                 *ngIf="node.data.nodeType === 'column'"
                 type="button"
                 tp="Copy column name"
@@ -370,7 +370,7 @@
                 "
               >
                 <m-copy-icon></m-copy-icon>
-              </button>
+              </button> -->
 
               <div
                 *ngIf="node.data.nodeType === 'column'"
@@ -405,7 +405,7 @@
                   #cachedColumnTpRef="tippy"
                   (click)="$event.stopPropagation()"
                 >
-                  <m-database-zap-icon></m-database-zap-icon>
+                  <m-database-icon></m-database-icon>
                 </button>
 
                 <ng-template #templateCachedColumnMenu>
@@ -424,7 +424,7 @@
                           event: $event
                         })
                       "
-                      >view cached unique values</button
+                      >View cached values</button
                     >
                     <button
                       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
@@ -444,7 +444,7 @@
                           refreshType: 'full'
                         })
                       "
-                      >refresh cache from full table</button
+                      >Refresh cache</button
                     >
                     <button
                       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
@@ -463,7 +463,7 @@
                           event: $event
                         })
                       "
-                      >refresh cache from sample</button
+                      >Refresh cache by sample</button
                     >
                     <button
                       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
@@ -474,35 +474,11 @@
                           event: $event
                         })
                       "
-                      >clear cache</button
+                      >Clear cache</button
                     >
                   </div>
                 </ng-template>
               </div>
-
-              <button
-                *ngIf="node.data.nodeType === 'column'"
-                type="button"
-                tp="Sample"
-                tpPlacement="top"
-                class="text-s500 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                [ngClass]="{
-                  'hover:bg-m200 hover:text-s1':
-                    sampleSpinnerNodeId !== node.data.id,
-                  'invisible group-hover:visible':
-                    sampleSpinnerNodeId !== node.data.id
-                }"
-                (click)="sampleOnClick({ node: node, event: $event })"
-              >
-                <div
-                  *ngIf="sampleSpinnerNodeId === node.data.id"
-                  class="border-s200 border-t-m600 h-6 w-6 flex-shrink-0 animate-spin rounded-full border-2 [animation-duration:750ms]"
-                >
-                </div>
-                <m-table-icon
-                  *ngIf="sampleSpinnerNodeId !== node.data.id"
-                ></m-table-icon>
-              </button>
             </div>
           </ng-template>
         </tree-root>
