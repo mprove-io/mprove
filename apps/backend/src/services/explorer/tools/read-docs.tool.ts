@@ -20,7 +20,7 @@ Call with filePaths to read one or more files in one tool call.`,
           )
       }),
       execute: async input => {
-        let result = await this.explorerDocsService.readDocs({
+        let result = this.explorerDocsService.readDocs({
           filePaths: input.filePaths
         });
 
