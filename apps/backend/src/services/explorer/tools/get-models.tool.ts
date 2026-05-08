@@ -17,6 +17,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type {
   ToDiskGetCatalogFilesRequest,
@@ -162,17 +163,22 @@ export class GetModelsToolService {
               );
             });
 
+            let malloySource =
+              model.type === ModelTypeEnum.Malloy
+                ? {
+                    source: model.source,
+                    filePath: catalogFile?.pathString ?? model.filePath,
+                    fileText: catalogFile?.content ?? model.fileText
+                  }
+                : undefined;
+
             return {
               modelId: model.modelId,
               label: model.label,
               type: model.type,
               connectionId: model.connectionId,
               connectionType: model.connectionType,
-              source: model.source,
-              topSourceFile: {
-                filePath: catalogFile?.pathString ?? model.filePath,
-                fileText: catalogFile?.content ?? model.fileText
-              },
+              malloySource: malloySource,
               fields: model.fields
             };
           })

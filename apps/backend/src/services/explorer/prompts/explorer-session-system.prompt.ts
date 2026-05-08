@@ -1,9 +1,13 @@
 import { toc } from '#backend/mprove-docs-cache/toc';
 import {
-  UNIQUE_VALUES_MATCH_FIELDS_LIMIT,
-  UNIQUE_VALUES_MATCH_VALUES_LIMIT,
-  UNIQUE_VALUES_SEARCH_TEXTS_LIMIT
-} from '#backend/services/explorer/tools/search-cached-unique-values.tool';
+  SEARCH_FIELD_VALUE_MATCH_FIELDS_LIMIT,
+  SEARCH_FIELD_VALUE_MATCH_VALUES_LIMIT,
+  SEARCH_FIELD_VALUES_LIMIT
+} from '#backend/services/explorer/tools/search-model-fields/search-cached-field-values.service';
+import {
+  SEARCH_FIELD_NAME_MATCH_FIELDS_LIMIT,
+  SEARCH_FIELD_NAMES_LIMIT
+} from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names.service';
 import type { ExplorerModelPart } from '../types/explorer-model-part';
 
 export function getExplorerSessionSystemPrompt(item?: {
@@ -33,22 +37,31 @@ ${sessionContext}
 Do not call read_docs again when the needed documentation is already present in history.
 Do not call get_models again when the needed output is already present in history and the
 structId in that history matches the current <message_context> structId.
+
 2. Use the Available Models to choose relevant model ids. They include model metadata and Malloy top source file text.
+
 3. Call "get_models" with selected model ids before writing chart YAML. The result includes fields.
-4. If the user's question mentions an ambiguous literal value the right field is not obvious, 
-call "search_cached_unique_values" to find candidate fields. Use precise search texts when possible, 
-maximum ${UNIQUE_VALUES_SEARCH_TEXTS_LIMIT}. Prefer exact distinctive values from the user's question. 
-The tool returns up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matched field, and 
-up to ${UNIQUE_VALUES_MATCH_FIELDS_LIMIT} matched fields per search text, with modelIds for models that use each field. 
-Do not use it for ordinary numeric/date aggregation unless a literal value needs field discovery.
+
+4. If the user's question mentions an ambiguous literal value or unclear field concept, 
+call "search_model_fields" to find candidate fields and models. 
+Use searchFieldValues for parts of literal values, maximum ${SEARCH_FIELD_VALUES_LIMIT}. 
+Use searchFieldNames for field names, labels or descriptions, maximum ${SEARCH_FIELD_NAMES_LIMIT}. 
+Value search returns up to ${SEARCH_FIELD_VALUE_MATCH_VALUES_LIMIT} values per matched field and 
+up to ${SEARCH_FIELD_VALUE_MATCH_FIELDS_LIMIT} matched fields per search value. 
+Name search returns up to ${SEARCH_FIELD_NAME_MATCH_FIELDS_LIMIT} matched fields per search name. 
+
 5. When you need reference for any Mprove concept, choose exact paths from the Documentation TOC below or 
 history and call "read_docs" with "{ "filePaths": ["reference/chart.mdx"] }". 
 Include multiple paths in filePaths when useful.
+
 6. Write chart YAML where the top-level "chart:" value is exactly "<chart-id-placeholder>".
+
 7. Call "produce_chart" with the chart YAML to create a chart. 
 The tool runs the YAML through the compiler and either persists the chart on success or returns compile errors.
+
 8. If "produce_chart" returns errors, READ them, fix the YAML, and call "produce_chart" again. 
 Do not ask the user to fix it. Keep iterating until it succeeds.
+
 9. When you reference a chart you produced in your reply, link to it using 
 the URL scheme "mprove-tab://<tabId>" so the user can open it in a tab.
 

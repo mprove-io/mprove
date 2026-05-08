@@ -4,14 +4,14 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { GetModelsToolService } from './tools/get-models.tool';
 import { ProduceChartToolService } from './tools/produce-chart/produce-chart.tool';
 import { ReadDocsToolService } from './tools/read-docs.tool';
-import { SearchCachedUniqueValuesToolService } from './tools/search-cached-unique-values.tool';
+import { SearchModelFieldsToolService } from './tools/search-model-fields/search-model-fields.tool';
 
 @Injectable()
 export class ExplorerToolsService {
   constructor(
     private getModelsToolService: GetModelsToolService,
     private readDocsToolService: ReadDocsToolService,
-    private searchCachedUniqueValuesToolService: SearchCachedUniqueValuesToolService,
+    private searchModelFieldsToolService: SearchModelFieldsToolService,
     private produceChartToolService: ProduceChartToolService
   ) {}
 
@@ -27,14 +27,13 @@ export class ExplorerToolsService {
     let { user, sessionId, projectId, repoId, branchId, envId, traceId } = item;
 
     return {
-      search_cached_unique_values:
-        this.searchCachedUniqueValuesToolService.makeTool({
-          projectId: projectId,
-          repoId: repoId,
-          branchId: branchId,
-          envId: envId,
-          user: user
-        }),
+      search_model_fields: this.searchModelFieldsToolService.makeTool({
+        projectId: projectId,
+        repoId: repoId,
+        branchId: branchId,
+        envId: envId,
+        user: user
+      }),
       get_models: this.getModelsToolService.makeTool({
         projectId: projectId,
         repoId: repoId,

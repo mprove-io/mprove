@@ -81,7 +81,10 @@ import { GetModelsToolService } from './services/explorer/tools/get-models.tool'
 import { ProduceChartToolService } from './services/explorer/tools/produce-chart/produce-chart.tool';
 import { ProduceExplorerChartService } from './services/explorer/tools/produce-chart/produce-explorer-chart.service';
 import { ReadDocsToolService } from './services/explorer/tools/read-docs.tool';
-import { SearchCachedUniqueValuesToolService } from './services/explorer/tools/search-cached-unique-values.tool';
+import { SearchCachedFieldValuesService } from './services/explorer/tools/search-model-fields/search-cached-field-values.service';
+import { SearchDwhSchemaFieldNamesService } from './services/explorer/tools/search-model-fields/search-dwh-schema-field-names.service';
+import { SearchModelFieldLeafNamesService } from './services/explorer/tools/search-model-fields/search-model-field-leaf-names.service';
+import { SearchModelFieldsToolService } from './services/explorer/tools/search-model-fields/search-model-fields.tool';
 import { HashService } from './services/hash.service';
 import { MalloyService } from './services/malloy.service';
 import { ParentService } from './services/parent.service';
@@ -175,7 +178,10 @@ export const appProviders = [
   ExplorerTitleService,
   GetModelsToolService,
   ReadDocsToolService,
-  SearchCachedUniqueValuesToolService,
+  SearchCachedFieldValuesService,
+  SearchModelFieldLeafNamesService,
+  SearchDwhSchemaFieldNamesService,
+  SearchModelFieldsToolService,
   ProduceChartToolService,
   ExplorerToolsService,
   ExplorerModelsService,

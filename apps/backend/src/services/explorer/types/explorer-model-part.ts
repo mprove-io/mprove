@@ -7,8 +7,8 @@ export type ExplorerModelPart = {
   type: ModelTypeEnum;
   connectionId: string;
   connectionType: ConnectionTypeEnum;
-  malloySource?: string | null;
-  malloyTopSourceFile: {
+  malloySource?: {
+    source?: string | null;
     filePath: string;
     fileText: string;
   };
