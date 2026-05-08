@@ -1,22 +1,36 @@
+import type {
+  FieldDef as MalloyFieldDef,
+  ModelDef as MalloyModelDef,
+  SourceDef as MalloySourceDef
+} from '@malloydata/malloy';
 import { Inject, Injectable } from '@nestjs/common';
 import { type Tool, tool } from 'ai';
-import { sql } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { checkModelAccess } from '#backend/functions/check-model-access';
+import { BranchesService } from '#backend/services/db/branches.service';
+import { BridgesService } from '#backend/services/db/bridges.service';
 import { CachedColumnService } from '#backend/services/db/cached-column.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
+import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
+import { TabService } from '#backend/services/tab.service';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
 
 type CachedUniqueValueSearchMatch = {
   connectionId: string;
   schemaName: string;
   tableName: string;
   columnName: string;
+  modelIds: string[];
   matchedValues: { value: string; count: number }[];
 };
 
@@ -35,6 +49,11 @@ type CachedUniqueValueSearchRow = {
   count: number;
 };
 
+interface CachedUniqueValueFieldModelIds {
+  fieldKey: string;
+  modelIds: string[];
+}
+
 export const UNIQUE_VALUES_SEARCH_TEXTS_LIMIT = 10;
 export const UNIQUE_VALUES_MATCH_FIELDS_LIMIT = 30;
 export const UNIQUE_VALUES_MATCH_VALUES_LIMIT = 20;
@@ -43,20 +62,31 @@ export const UNIQUE_VALUES_MATCH_VALUES_LIMIT = 20;
 export class SearchCachedUniqueValuesToolService {
   constructor(
     private cachedColumnService: CachedColumnService,
+    private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private branchesService: BranchesService,
     private envsService: EnvsService,
+    private bridgesService: BridgesService,
+    private modelsService: ModelsService,
+    private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  makeTool(item: { user: UserTab; projectId: string; envId: string }): Tool {
-    let { user, projectId, envId } = item;
+  makeTool(item: {
+    user: UserTab;
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+  }): Tool {
+    let { user, projectId, repoId, branchId, envId } = item;
 
     return tool({
       description: `Search cached unique values to identify which database fields may contain user-mentioned values. 
 Use this tool when a question references ambiguous literals and you need to find the right fields.
 Prefer exact distinctive values (up to ${UNIQUE_VALUES_SEARCH_TEXTS_LIMIT}) over broad words or generated synonyms.
-The tool will return up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matched field, and up to ${UNIQUE_VALUES_MATCH_FIELDS_LIMIT} matched fields per search text.`,
+The tool will return up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matched field, up to ${UNIQUE_VALUES_MATCH_FIELDS_LIMIT} matched fields per search text, and modelIds for Mprove models that use each field.`,
       inputSchema: z.object({
         searchTexts: z
           .array(z.string())
@@ -70,6 +100,8 @@ The tool will return up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matche
         let result = await this.searchCachedUniqueValues({
           user: user,
           projectId: projectId,
+          repoId: repoId,
+          branchId: branchId,
           envId: envId,
           searchTexts: input.searchTexts
         });
@@ -82,10 +114,12 @@ The tool will return up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matche
   private async searchCachedUniqueValues(item: {
     user: UserTab;
     projectId: string;
+    repoId: string;
+    branchId: string;
     envId: string;
     searchTexts: string[];
   }): Promise<CachedUniqueValueSearchResult> {
-    let { user, projectId, envId, searchTexts } = item;
+    let { user, projectId, repoId, branchId, envId, searchTexts } = item;
 
     let trimmedSearchTexts = searchTexts
       .map(searchText => searchText.trim())
@@ -96,6 +130,13 @@ The tool will return up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matche
     if (isSearchTextsEmpty) {
       return [];
     }
+
+    await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId,
+      allowProdRepo: true
+    });
 
     await this.projectsService.getProjectCheckExists({ projectId: projectId });
 
@@ -110,6 +151,66 @@ The tool will return up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matche
       member: userMember
     });
 
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
+      envId: envId
+    });
+
+    let modelTabs = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: eq(modelsTable.structId, bridge.structId)
+      })
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
+
+    let fieldModelIds: CachedUniqueValueFieldModelIds[] = [];
+
+    modelTabs
+      .filter(model =>
+        checkModelAccess({
+          member: userMember,
+          modelAccessRoles: model.accessRoles
+        })
+      )
+      .map(model =>
+        this.modelsService.tabToApi({
+          model: model,
+          hasAccess: true
+        })
+      )
+      .filter(model => model.type === ModelTypeEnum.Malloy)
+      .forEach(model => {
+        let malloyModelDef: MalloyModelDef = model.malloyModelDef;
+
+        Object.values(malloyModelDef?.contents ?? {})
+          .map(sourceDef => ({ sourceDef: sourceDef }))
+          .filter(
+            (
+              sourceDefItem
+            ): sourceDefItem is { sourceDef: MalloySourceDef } => {
+              return (
+                'fields' in sourceDefItem.sourceDef &&
+                'connection' in sourceDefItem.sourceDef
+              );
+            }
+          )
+          .forEach(sourceDefItem => {
+            this.collectSourceDwhReferences({
+              modelId: model.modelId,
+              connectionId: model.connectionId,
+              sourceDef: sourceDefItem.sourceDef,
+              fieldModelIds: fieldModelIds
+            });
+          });
+      });
+
     let cacheEnvId = await this.cachedColumnService.getCacheEnvId({
       projectId: projectId,
       envId: envId
@@ -118,24 +219,141 @@ The tool will return up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matche
     return this.searchCachedUniqueValueFields({
       projectId: projectId,
       cacheEnvId: cacheEnvId,
-      searchTexts: trimmedSearchTexts
+      searchTexts: trimmedSearchTexts,
+      fieldModelIds: fieldModelIds
     });
+  }
+
+  private collectSourceDwhReferences(item: {
+    modelId: string;
+    connectionId: string;
+    sourceDef: MalloySourceDef | MalloyFieldDef;
+    fieldModelIds: CachedUniqueValueFieldModelIds[];
+  }) {
+    let { modelId, connectionId, sourceDef, fieldModelIds } = item;
+    let isTableSource = sourceDef.type === 'table';
+
+    if (isTableSource) {
+      let tablePath = 'tablePath' in sourceDef ? sourceDef.tablePath : '';
+
+      let tablePathParts = tablePath
+        .split('.')
+        .map(part => part.trim().replace(/^['"`]+|['"`]+$/g, ''))
+        .filter(part => part.length > 0);
+
+      let schemaName =
+        tablePathParts.length > 1 ? tablePathParts.at(-2) : undefined;
+
+      let tableName = tablePathParts.at(-1);
+
+      let fields: MalloyFieldDef[] =
+        'fields' in sourceDef ? sourceDef.fields : [];
+
+      let hasFields = Array.isArray(fields);
+
+      if (hasFields) {
+        fields.forEach(field => {
+          let isStringField = field.type === 'string';
+
+          if (isStringField === false) {
+            return;
+          }
+
+          let columnName = this.getDwhColumnNameFromField({
+            field: field
+          });
+
+          if (!columnName) {
+            return;
+          }
+
+          let fieldKey = this.makeFieldKey({
+            connectionId: connectionId,
+            schemaName: schemaName,
+            tableName: tableName,
+            columnName: columnName
+          });
+
+          let fieldModelId = fieldModelIds.find(x => x.fieldKey === fieldKey);
+
+          if (!fieldModelId) {
+            fieldModelId = {
+              fieldKey: fieldKey,
+              modelIds: []
+            };
+
+            fieldModelIds.push(fieldModelId);
+          }
+
+          let hasModelId = fieldModelId.modelIds.includes(modelId);
+
+          if (hasModelId === false) {
+            fieldModelId.modelIds.push(modelId);
+            fieldModelId.modelIds.sort();
+          }
+        });
+      }
+    }
+
+    let fields: MalloyFieldDef[] =
+      'fields' in sourceDef ? sourceDef.fields : [];
+
+    let hasFields = Array.isArray(fields);
+
+    if (hasFields === false) {
+      return;
+    }
+
+    fields.forEach(field => {
+      this.collectSourceDwhReferences({
+        modelId: modelId,
+        connectionId: connectionId,
+        sourceDef: field,
+        fieldModelIds: fieldModelIds
+      });
+    });
+  }
+
+  private getDwhColumnNameFromField(item: {
+    field: MalloyFieldDef;
+  }): string | undefined {
+    let { field } = item;
+
+    if (!('e' in field) || field.e === undefined) {
+      return 'name' in field ? field.name : undefined;
+    }
+
+    if (field.e.node !== 'field') {
+      return undefined;
+    }
+
+    let isSimpleFieldReference = field.e.path.length === 1;
+
+    if (isSimpleFieldReference === false) {
+      return undefined;
+    }
+
+    return field.e.path[0];
   }
 
   private async searchCachedUniqueValueFields(item: {
     projectId: string;
     cacheEnvId: string;
     searchTexts: string[];
+    fieldModelIds: CachedUniqueValueFieldModelIds[];
   }): Promise<CachedUniqueValueSearchResult> {
-    let { projectId, cacheEnvId, searchTexts } = item;
+    let { projectId, cacheEnvId, searchTexts, fieldModelIds } = item;
 
     let searchTermValues = searchTexts.map(searchText => {
-      let escapedSearchText = this.escapeLikePattern({ value: searchText });
+      let escapedSearchText = searchText.replace(/[\\%_]/g, x => `\\${x}`);
+
       let searchPattern = `%${escapedSearchText.toLowerCase()}%`;
 
       return sql`(${searchText}, ${searchPattern})`;
     });
-    let rawData: any = await this.db.drizzle.execute(sql`
+
+    let rawData: { rows: CachedUniqueValueSearchRow[] } =
+      await this.db.drizzle.execute(sql`
 WITH search_terms(search_text, search_pattern) AS (
   VALUES ${sql.join(searchTermValues, sql`, `)}
 ),
@@ -216,11 +434,16 @@ WHERE value_rank <= ${UNIQUE_VALUES_MATCH_VALUES_LIMIT}
 ORDER BY "searchText", field_rank, value_rank;
 `);
 
-    let rows = (rawData.rows as CachedUniqueValueSearchRow[]) || [];
-    let result = searchTexts.map(searchText => ({
-      searchText: searchText,
-      matchFields: [] as CachedUniqueValueSearchMatch[]
-    }));
+    let rows = rawData.rows || [];
+
+    let result: CachedUniqueValueSearchResult = searchTexts.map(searchText => {
+      let matchFields: CachedUniqueValueSearchMatch[] = [];
+
+      return {
+        searchText: searchText,
+        matchFields: matchFields
+      };
+    });
 
     rows.forEach(row => {
       let resultItem = result.find(x => x.searchText === row.searchText);
@@ -243,6 +466,17 @@ ORDER BY "searchText", field_rank, value_rank;
           schemaName: row.schemaName,
           tableName: row.tableName,
           columnName: row.columnName,
+          modelIds:
+            fieldModelIds.find(
+              x =>
+                x.fieldKey ===
+                this.makeFieldKey({
+                  connectionId: row.connectionId,
+                  schemaName: row.schemaName,
+                  tableName: row.tableName,
+                  columnName: row.columnName
+                })
+            )?.modelIds ?? [],
           matchedValues: []
         };
 
@@ -258,9 +492,21 @@ ORDER BY "searchText", field_rank, value_rank;
     return result;
   }
 
-  private escapeLikePattern(item: { value: string }) {
-    let { value } = item;
+  private makeFieldKey(item: {
+    connectionId: string;
+    schemaName: string | undefined;
+    tableName: string | undefined;
+    columnName: string;
+  }): string {
+    let { connectionId, schemaName, tableName, columnName } = item;
 
-    return value.replace(/[\\%_]/g, x => `\\${x}`);
+    return [connectionId, schemaName, tableName, columnName]
+      .map(value =>
+        (value ?? '')
+          .trim()
+          .replace(/^['"`]+|['"`]+$/g, '')
+          .toLowerCase()
+      )
+      .join('.');
   }
 }
