@@ -4,7 +4,6 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
-import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
@@ -26,7 +25,6 @@ export class ExplorerModelPartsService {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private branchesService: BranchesService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private modelsService: ModelsService,
@@ -55,12 +53,6 @@ export class ExplorerModelPartsService {
       memberId: userId
     });
 
-    let branch = await this.branchesService.getBranchCheckExists({
-      projectId: projectId,
-      repoId: repoId,
-      branchId: branchId
-    });
-
     await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
@@ -68,9 +60,9 @@ export class ExplorerModelPartsService {
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId,
       envId: envId
     });
 

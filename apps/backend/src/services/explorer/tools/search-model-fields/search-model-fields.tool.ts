@@ -7,7 +7,6 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
-import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { CachedColumnService } from '#backend/services/db/cached-column.service';
 import { EnvsService } from '#backend/services/db/envs.service';
@@ -40,7 +39,6 @@ export class SearchModelFieldsToolService {
     private cachedColumnService: CachedColumnService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private branchesService: BranchesService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private tabService: TabService,
@@ -155,16 +153,10 @@ export class SearchModelFieldsToolService {
       member: userMember
     });
 
-    let branch = await this.branchesService.getBranchCheckExists({
+    let bridge = await this.bridgesService.getBridgeCheckExists({
       projectId: projectId,
       repoId: repoId,
-      branchId: branchId
-    });
-
-    let bridge = await this.bridgesService.getBridgeCheckExists({
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
+      branchId: branchId,
       envId: envId
     });
 
