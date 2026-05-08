@@ -24,6 +24,7 @@ export interface ChatMessage {
   modelId?: string;
   variant?: string;
   summaryDiffs?: FileDiffInfo[];
+  systemPrompt?: string;
 }
 
 export interface ChatTurn {

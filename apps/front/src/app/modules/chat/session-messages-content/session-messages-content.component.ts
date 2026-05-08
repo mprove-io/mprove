@@ -5,7 +5,9 @@ import { Extension } from '@codemirror/state';
 import type { ToolPart } from '@opencode-ai/sdk/v2';
 import { VS_LIGHT_THEME_EXTRA_SINGLE_SESSION_READ } from '#common/constants/code-themes/themes';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import type { SessionApi } from '#common/zod/backend/session-api';
+import { environment } from '#front/environments/environment';
 import { ExplorerTabsQuery } from '../../../queries/explorer-tabs.query';
 import { ExplorerTabService } from '../../../services/explorer-tab.service';
 import { MyDialogService } from '../../../services/my-dialog.service';
@@ -188,6 +190,8 @@ const TOOL_TITLE_MAP: Record<string, string> = {
 })
 export class SessionMessagesContentComponent {
   chartTypeEnum = ChartTypeEnum;
+  sessionTypeEnum = SessionTypeEnum;
+  showPromptEnabled = environment.showPromptEnabled;
 
   @Input() turns: ChatTurn[] = [];
   @Input() session: SessionApi;
@@ -366,6 +370,18 @@ export class SessionMessagesContentComponent {
       rawOutput: rawOutput,
       wrapText: toolPart.tool !== 'list_docs' && toolPart.tool !== 'read_docs',
       isError: toolPart.state?.status === 'error'
+    });
+  }
+
+  openSystemPrompt(item: { systemPrompt: string }) {
+    let { systemPrompt } = item;
+
+    this.myDialogService.showToolOutput({
+      title: 'System Prompt',
+      subtitle: '',
+      output: systemPrompt,
+      isError: false,
+      wrapText: true
     });
   }
 

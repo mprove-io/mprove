@@ -39,13 +39,26 @@
       </div>
     </div>
     <!-- Meta info: agent / model / variant -->
-    <div
-      *ngIf="turn.userMessage.agentName || turn.userMessage.modelId"
-      class="ml-4 mt-1 flex justify-start"
-    >
-      <span class="text-s500 text-base font-medium">{{
-        getMetaText(turn.userMessage)
-      }}</span>
+    <div class="ml-4 mt-1 flex items-center justify-start gap-3">
+      <span
+        *ngIf="turn.userMessage.agentName || turn.userMessage.modelId"
+        class="text-s500 text-base font-medium"
+        >{{ getMetaText(turn.userMessage) }}</span
+      >
+
+      <button
+        *ngIf="
+          showPromptEnabled &&
+          session?.type === sessionTypeEnum.Explorer &&
+          turn.userMessage.systemPrompt
+        "
+        type="button"
+        class="text-m600 hover:text-m700 text-base font-medium focus:outline-none"
+        (click)="
+          openSystemPrompt({ systemPrompt: turn.userMessage.systemPrompt })
+        "
+        >Show Prompt</button
+      >
     </div>
   </div>
 

@@ -24,6 +24,7 @@ export class ExplorerEventsMakerService {
     sessionId: string;
     provider: string;
     modelId: string;
+    system?: string;
   }): Event {
     return {
       type: 'message.updated',
@@ -32,7 +33,8 @@ export class ExplorerEventsMakerService {
           id: item.messageId,
           sessionID: item.sessionId,
           role: 'user',
-          model: { providerID: item.provider, modelID: item.modelId }
+          model: { providerID: item.provider, modelID: item.modelId },
+          system: item.system
         }
       }
     } as Event;

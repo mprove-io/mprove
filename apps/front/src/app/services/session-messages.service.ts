@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { ToolPart } from '@opencode-ai/sdk/v2';
+import type { ToolPart, UserMessage } from '@opencode-ai/sdk/v2';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
 import type { SessionPartApi } from '#common/zod/backend/session-part-api';
@@ -70,7 +70,7 @@ export class SessionMessagesService {
         }
 
         // Extract metadata from ocMessage (UserMessage type)
-        let userOcMsg = msg.ocMessage as any;
+        let userOcMsg = msg.ocMessage as UserMessage;
         let agentName = userOcMsg?.agent || '';
         let modelId = userOcMsg?.model?.modelID || '';
         let rawVariant = userOcMsg?.variant || '';
@@ -112,7 +112,8 @@ export class SessionMessagesService {
           agentName: agentName,
           modelId: modelId,
           variant: msgVariant,
-          summaryDiffs: summaryDiffs
+          summaryDiffs: summaryDiffs,
+          systemPrompt: userOcMsg?.system
         });
       } else {
         // Assistant message - process each part

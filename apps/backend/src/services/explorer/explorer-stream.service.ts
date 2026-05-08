@@ -591,6 +591,46 @@ export class ExplorerStreamService implements OnModuleDestroy {
       sessionId: sessionId
     });
 
+    let session = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId: sessionId
+    });
+
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: session.projectId
+    });
+
+    let bridge = await this.db.drizzle.query.bridgesTable.findFirst({
+      where: and(
+        eq(bridgesTable.projectId, session.projectId),
+        eq(bridgesTable.repoId, session.repoId),
+        eq(bridgesTable.branchId, session.branchId),
+        eq(bridgesTable.envId, session.envId)
+      )
+    });
+
+    let traceId = makeId();
+
+    let explorerModelParts = userId
+      ? await this.explorerModelPartsService.getExplorerModelParts({
+          userId: userId,
+          projectId: session.projectId,
+          repoId: session.repoId,
+          branchId: session.branchId,
+          envId: session.envId,
+          traceId: traceId
+        })
+      : [];
+
+    let explorerSystemPrompt =
+      this.explorerPromptsService.getExplorerSessionSystemPrompt({
+        orgId: project.orgId,
+        projectId: session.projectId,
+        repoId: session.repoId,
+        branchId: session.branchId,
+        envId: session.envId,
+        explorerModelParts: explorerModelParts
+      });
+
     // Pre-streaming events
     let busyEvent = this.explorerEventsMakerService.makeBusyEvent();
 
@@ -605,7 +645,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
       messageId: userMessageId,
       sessionId: sessionId,
       provider: provider,
-      modelId: modelId
+      modelId: modelId,
+      system: explorerSystemPrompt
     });
     this.sessionDrainService.enqueue({
       sessionId: sessionId,
@@ -693,46 +734,6 @@ export class ExplorerStreamService implements OnModuleDestroy {
       useCodex: useCodex,
       codexFetch: codexFetch
     });
-
-    let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: sessionId
-    });
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: session.projectId
-    });
-
-    let bridge = await this.db.drizzle.query.bridgesTable.findFirst({
-      where: and(
-        eq(bridgesTable.projectId, session.projectId),
-        eq(bridgesTable.repoId, session.repoId),
-        eq(bridgesTable.branchId, session.branchId),
-        eq(bridgesTable.envId, session.envId)
-      )
-    });
-
-    let traceId = makeId();
-
-    let explorerModelParts = userId
-      ? await this.explorerModelPartsService.getExplorerModelParts({
-          userId: userId,
-          projectId: session.projectId,
-          repoId: session.repoId,
-          branchId: session.branchId,
-          envId: session.envId,
-          traceId: traceId
-        })
-      : [];
-
-    let explorerSystemPrompt =
-      this.explorerPromptsService.getExplorerSessionSystemPrompt({
-        orgId: project.orgId,
-        projectId: session.projectId,
-        repoId: session.repoId,
-        branchId: session.branchId,
-        envId: session.envId,
-        explorerModelParts: explorerModelParts
-      });
 
     let providerOptions =
       provider === 'openai'
