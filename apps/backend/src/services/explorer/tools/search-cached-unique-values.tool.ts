@@ -1,8 +1,3 @@
-import type {
-  FieldDef as MalloyFieldDef,
-  ModelDef as MalloyModelDef,
-  SourceDef as MalloySourceDef
-} from '@malloydata/malloy';
 import { Inject, Injectable } from '@nestjs/common';
 import { type Tool, tool } from 'ai';
 import { eq, sql } from 'drizzle-orm';
@@ -12,6 +7,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
+import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { BranchesService } from '#backend/services/db/branches.service';
@@ -19,10 +15,10 @@ import { BridgesService } from '#backend/services/db/bridges.service';
 import { CachedColumnService } from '#backend/services/db/cached-column.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
-import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 
 type CachedUniqueValueSearchMatch = {
@@ -47,12 +43,8 @@ type CachedUniqueValueSearchRow = {
   columnName: string;
   value: string | null;
   count: number;
-};
-
-interface CachedUniqueValueFieldModelIds {
-  fieldKey: string;
   modelIds: string[];
-}
+};
 
 export const UNIQUE_VALUES_SEARCH_TEXTS_LIMIT = 10;
 export const UNIQUE_VALUES_MATCH_FIELDS_LIMIT = 30;
@@ -68,7 +60,6 @@ export class SearchCachedUniqueValuesToolService {
     private branchesService: BranchesService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private modelsService: ModelsService,
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -170,179 +161,54 @@ The tool will return up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matche
       })
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
-    let fieldModelIds: CachedUniqueValueFieldModelIds[] = [];
-
-    modelTabs
+    let accessibleMalloyModelIds = modelTabs
       .filter(model =>
         checkModelAccess({
           member: userMember,
           modelAccessRoles: model.accessRoles
         })
       )
-      .map(model =>
-        this.modelsService.tabToApi({
-          model: model,
-          hasAccess: true
-        })
-      )
       .filter(model => model.type === ModelTypeEnum.Malloy)
-      .forEach(model => {
-        let malloyModelDef: MalloyModelDef = model.malloyModelDef;
+      .map(model => model.modelId);
 
-        Object.values(malloyModelDef?.contents ?? {})
-          .map(sourceDef => ({ sourceDef: sourceDef }))
-          .filter(
-            (
-              sourceDefItem
-            ): sourceDefItem is { sourceDef: MalloySourceDef } => {
-              return (
-                'fields' in sourceDefItem.sourceDef &&
-                'connection' in sourceDefItem.sourceDef
-              );
-            }
-          )
-          .forEach(sourceDefItem => {
-            this.collectSourceDwhReferences({
-              modelId: model.modelId,
-              connectionId: model.connectionId,
-              sourceDef: sourceDefItem.sourceDef,
-              fieldModelIds: fieldModelIds
-            });
-          });
+    let hasAccessibleMalloyModels = accessibleMalloyModelIds.length > 0;
+    let result: CachedUniqueValueSearchResult;
+
+    if (hasAccessibleMalloyModels === true) {
+      let cacheEnvId = await this.cachedColumnService.getCacheEnvId({
+        projectId: projectId,
+        envId: envId
       });
 
-    let cacheEnvId = await this.cachedColumnService.getCacheEnvId({
-      projectId: projectId,
-      envId: envId
-    });
-
-    return this.searchCachedUniqueValueFields({
-      projectId: projectId,
-      cacheEnvId: cacheEnvId,
-      searchTexts: trimmedSearchTexts,
-      fieldModelIds: fieldModelIds
-    });
-  }
-
-  private collectSourceDwhReferences(item: {
-    modelId: string;
-    connectionId: string;
-    sourceDef: MalloySourceDef | MalloyFieldDef;
-    fieldModelIds: CachedUniqueValueFieldModelIds[];
-  }) {
-    let { modelId, connectionId, sourceDef, fieldModelIds } = item;
-    let isTableSource = sourceDef.type === 'table';
-
-    if (isTableSource) {
-      let tablePath = 'tablePath' in sourceDef ? sourceDef.tablePath : '';
-
-      let tablePathParts = tablePath
-        .split('.')
-        .map(part => part.trim().replace(/^['"`]+|['"`]+$/g, ''))
-        .filter(part => part.length > 0);
-
-      let schemaName =
-        tablePathParts.length > 1 ? tablePathParts.at(-2) : undefined;
-
-      let tableName = tablePathParts.at(-1);
-
-      let fields: MalloyFieldDef[] =
-        'fields' in sourceDef ? sourceDef.fields : [];
-
-      let hasFields = Array.isArray(fields);
-
-      if (hasFields) {
-        fields.forEach(field => {
-          let isStringField = field.type === 'string';
-
-          if (isStringField === false) {
-            return;
-          }
-
-          let columnName = this.getDwhColumnNameFromField({
-            field: field
-          });
-
-          if (!columnName) {
-            return;
-          }
-
-          let fieldKey = this.makeFieldKey({
-            connectionId: connectionId,
-            schemaName: schemaName,
-            tableName: tableName,
-            columnName: columnName
-          });
-
-          let fieldModelId = fieldModelIds.find(x => x.fieldKey === fieldKey);
-
-          if (!fieldModelId) {
-            fieldModelId = {
-              fieldKey: fieldKey,
-              modelIds: []
-            };
-
-            fieldModelIds.push(fieldModelId);
-          }
-
-          let hasModelId = fieldModelId.modelIds.includes(modelId);
-
-          if (hasModelId === false) {
-            fieldModelId.modelIds.push(modelId);
-            fieldModelId.modelIds.sort();
-          }
-        });
-      }
-    }
-
-    let fields: MalloyFieldDef[] =
-      'fields' in sourceDef ? sourceDef.fields : [];
-
-    let hasFields = Array.isArray(fields);
-
-    if (hasFields === false) {
-      return;
-    }
-
-    fields.forEach(field => {
-      this.collectSourceDwhReferences({
-        modelId: modelId,
-        connectionId: connectionId,
-        sourceDef: field,
-        fieldModelIds: fieldModelIds
+      result = await this.searchCachedUniqueValueFields({
+        projectId: projectId,
+        structId: bridge.structId,
+        cacheEnvId: cacheEnvId,
+        searchTexts: trimmedSearchTexts,
+        modelIds: accessibleMalloyModelIds
       });
-    });
-  }
+    } else {
+      result = trimmedSearchTexts.map(searchText => {
+        let matchFields: CachedUniqueValueSearchMatch[] = [];
 
-  private getDwhColumnNameFromField(item: {
-    field: MalloyFieldDef;
-  }): string | undefined {
-    let { field } = item;
-
-    if (!('e' in field) || field.e === undefined) {
-      return 'name' in field ? field.name : undefined;
+        return {
+          searchText: searchText,
+          matchFields: matchFields
+        };
+      });
     }
 
-    if (field.e.node !== 'field') {
-      return undefined;
-    }
-
-    let isSimpleFieldReference = field.e.path.length === 1;
-
-    if (isSimpleFieldReference === false) {
-      return undefined;
-    }
-
-    return field.e.path[0];
+    return result;
   }
 
   private async searchCachedUniqueValueFields(item: {
     projectId: string;
+    structId: string;
     cacheEnvId: string;
     searchTexts: string[];
-    fieldModelIds: CachedUniqueValueFieldModelIds[];
+    modelIds: string[];
   }): Promise<CachedUniqueValueSearchResult> {
-    let { projectId, cacheEnvId, searchTexts, fieldModelIds } = item;
+    let { projectId, structId, cacheEnvId, searchTexts, modelIds } = item;
 
     let searchTermValues = searchTexts.map(searchText => {
       let escapedSearchText = searchText.replace(/[\\%_]/g, x => `\\${x}`);
@@ -352,10 +218,15 @@ The tool will return up to ${UNIQUE_VALUES_MATCH_VALUES_LIMIT} values per matche
       return sql`(${searchText}, ${searchPattern})`;
     });
 
+    let modelIdValues = modelIds.map(modelId => sql`(${modelId})`);
+
     let rawData: { rows: CachedUniqueValueSearchRow[] } =
       await this.db.drizzle.execute(sql`
 WITH search_terms(search_text, search_pattern) AS (
   VALUES ${sql.join(searchTermValues, sql`, `)}
+),
+accessible_models(model_id) AS (
+  VALUES ${sql.join(modelIdValues, sql`, `)}
 ),
 matched_fields_base AS (
   SELECT
@@ -365,7 +236,8 @@ matched_fields_base AS (
     cached_parts.schema_name,
     cached_parts.table_name,
     cached_parts.column_name,
-    max(cached_parts.count) AS max_count
+    max(cached_parts.count) AS max_count,
+    array_agg(DISTINCT model_field_leafs.model_id ORDER BY model_field_leafs.model_id) AS model_ids
   FROM ${cachedPartsTable} AS cached_parts
   INNER JOIN ${cachedColumnsTable} AS cached_columns
     ON cached_columns.project_id = cached_parts.project_id
@@ -374,6 +246,17 @@ matched_fields_base AS (
     AND cached_columns.schema_name = cached_parts.schema_name
     AND cached_columns.table_name = cached_parts.table_name
     AND cached_columns.column_name = cached_parts.column_name
+  INNER JOIN ${modelFieldLeafsTable} AS model_field_leafs
+    ON model_field_leafs.struct_id = ${structId}
+    AND model_field_leafs.model_type = ${ModelTypeEnum.Malloy}
+    AND model_field_leafs.field_result = ${FieldResultEnum.String}
+    AND model_field_leafs.column_name IS NOT NULL
+    AND lower(coalesce(model_field_leafs.connection_id, '')) = lower(coalesce(cached_parts.connection_id, ''))
+    AND lower(coalesce(model_field_leafs.schema_name, '')) = lower(coalesce(cached_parts.schema_name, ''))
+    AND lower(coalesce(model_field_leafs.table_name, '')) = lower(coalesce(cached_parts.table_name, ''))
+    AND lower(coalesce(model_field_leafs.column_name, '')) = lower(coalesce(cached_parts.column_name, ''))
+  INNER JOIN accessible_models
+    ON accessible_models.model_id = model_field_leafs.model_id
   INNER JOIN search_terms
     ON lower(coalesce(cached_parts.column_value, '')) LIKE search_terms.search_pattern ESCAPE '\'
   WHERE cached_parts.project_id = ${projectId}
@@ -404,6 +287,7 @@ ranked_values AS (
     matched_fields.column_name AS "columnName",
     cached_parts.column_value AS "value",
     cached_parts.count AS "count",
+    matched_fields.model_ids AS "modelIds",
     matched_fields.max_count,
     matched_fields.field_rank,
     row_number() OVER (
@@ -428,7 +312,8 @@ SELECT
   "tableName",
   "columnName",
   "value",
-  "count"
+  "count",
+  "modelIds"
 FROM ranked_values
 WHERE value_rank <= ${UNIQUE_VALUES_MATCH_VALUES_LIMIT}
 ORDER BY "searchText", field_rank, value_rank;
@@ -466,17 +351,7 @@ ORDER BY "searchText", field_rank, value_rank;
           schemaName: row.schemaName,
           tableName: row.tableName,
           columnName: row.columnName,
-          modelIds:
-            fieldModelIds.find(
-              x =>
-                x.fieldKey ===
-                this.makeFieldKey({
-                  connectionId: row.connectionId,
-                  schemaName: row.schemaName,
-                  tableName: row.tableName,
-                  columnName: row.columnName
-                })
-            )?.modelIds ?? [],
+          modelIds: row.modelIds ?? [],
           matchedValues: []
         };
 
@@ -490,23 +365,5 @@ ORDER BY "searchText", field_rank, value_rank;
     });
 
     return result;
-  }
-
-  private makeFieldKey(item: {
-    connectionId: string;
-    schemaName: string | undefined;
-    tableName: string | undefined;
-    columnName: string;
-  }): string {
-    let { connectionId, schemaName, tableName, columnName } = item;
-
-    return [connectionId, schemaName, tableName, columnName]
-      .map(value =>
-        (value ?? '')
-          .trim()
-          .replace(/^['"`]+|['"`]+$/g, '')
-          .toLowerCase()
-      )
-      .join('.');
   }
 }

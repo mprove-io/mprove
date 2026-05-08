@@ -9,6 +9,7 @@ import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
@@ -169,6 +170,10 @@ WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts/1000) < (NOW() - INTERVAL
       await this.db.drizzle
         .delete(modelsTable)
         .where(inArray(modelsTable.structId, structIds));
+
+      await this.db.drizzle
+        .delete(modelFieldLeafsTable)
+        .where(inArray(modelFieldLeafsTable.structId, structIds));
 
       await this.db.drizzle
         .delete(chartsTable)

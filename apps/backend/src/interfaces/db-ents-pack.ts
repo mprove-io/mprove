@@ -11,6 +11,7 @@ import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
+import { ModelFieldLeafEnt } from '#backend/drizzle/postgres/schema/model-field-leafs';
 import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
 import { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
@@ -41,6 +42,7 @@ export class DbEntsPack {
   mconfigs?: MconfigEnt[];
   members?: MemberEnt[];
   ocMessages?: OcMessageEnt[];
+  modelFieldLeafs?: ModelFieldLeafEnt[];
   models?: ModelEnt[];
   notes?: NoteEnt[];
   ocSessions?: OcSessionEnt[];

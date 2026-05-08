@@ -15,6 +15,7 @@ import type {
   KitTab,
   MconfigTab,
   MemberTab,
+  ModelFieldLeafTab,
   ModelTab,
   NoteTab,
   OcEventTab,
@@ -43,6 +44,7 @@ import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
+import { ModelFieldLeafEnt } from '#backend/drizzle/postgres/schema/model-field-leafs';
 import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
 import { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
@@ -217,6 +219,12 @@ export class TabToEntService {
           ?.filter(x => isDefined(x))
           .map(x =>
             this.ocMessageTabToEnt({ tab: x, hashSecret: hashSecret })
+          ) ?? [],
+      modelFieldLeafs:
+        tabsPack.modelFieldLeafs
+          ?.filter(x => isDefined(x))
+          .map(x =>
+            this.modelFieldLeafTabToEnt({ tab: x, hashSecret: hashSecret })
           ) ?? [],
       models:
         tabsPack.models
@@ -812,6 +820,53 @@ export class TabToEntService {
     };
 
     return modelEnt;
+  }
+
+  modelFieldLeafTabToEnt(item: {
+    tab: ModelFieldLeafTab;
+    hashSecret: string;
+  }): ModelFieldLeafEnt {
+    let { tab } = item;
+
+    let modelFieldLeafEnt: ModelFieldLeafEnt = {
+      modelFieldLeafFullId: this.hashService.makeModelFieldLeafFullId({
+        structId: tab.structId,
+        modelId: tab.modelId,
+        fieldId: tab.fieldId
+      }),
+      structId: tab.structId,
+      modelId: tab.modelId,
+      modelType: tab.modelType,
+      connectionId: tab.connectionId,
+      connectionType: tab.connectionType,
+      fieldId: tab.fieldId,
+      fieldName: tab.fieldName,
+      fieldPath: tab.fieldPath,
+      fieldClass: tab.fieldClass,
+      fieldResult: tab.fieldResult,
+      fieldType: tab.fieldType,
+      label: tab.label,
+      description: tab.description,
+      hidden: tab.hidden,
+      required: tab.required,
+      sqlName: tab.sqlName,
+      topId: tab.topId,
+      topLabel: tab.topLabel,
+      groupId: tab.groupId,
+      groupLabel: tab.groupLabel,
+      malloyFieldName: tab.malloyFieldName,
+      malloyFieldPath: tab.malloyFieldPath,
+      malloyTags: tab.malloyTags,
+      mproveTags: tab.mproveTags,
+      schemaName: tab.schemaName,
+      tableName: tab.tableName,
+      columnName: tab.columnName,
+      field: tab.field,
+      malloyFieldDef: tab.malloyFieldDef,
+      serverTs: tab.serverTs
+    };
+
+    return modelFieldLeafEnt;
   }
 
   noteTabToEnt(item: { tab: NoteTab; hashSecret: string }): NoteEnt {

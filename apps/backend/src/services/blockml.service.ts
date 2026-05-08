@@ -10,6 +10,7 @@ import type {
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { buildModelFieldLeafs } from '#backend/functions/build-model-field-leafs';
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { processRowIds } from '#backend/functions/process-row-ids';
@@ -182,40 +183,44 @@ export class BlockmlService {
     if (isUndefined(skipDb) || skipDb === false) {
       await retry(
         async () => {
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insert: {
-                  structs: [struct],
-                  charts: rs.charts.map(x =>
-                    this.chartsService.apiToTab({
-                      apiChart: x,
-                      chartType: rs.mconfigs.find(
-                        mconfig => mconfig.mconfigId === x.tiles[0].mconfigId
-                      ).chart.type
-                    })
-                  ),
-                  models: rs.models.map(x =>
-                    this.modelsService.apiToTab({ apiModel: x })
-                  ),
-                  reports: rs.reports.map(x =>
-                    this.reportsService.apiToTab({ apiReport: x })
-                  ),
-                  mconfigs: rs.mconfigs.map(x =>
-                    this.mconfigsService.apiToTab({ apiMconfig: x })
-                  ),
-                  dashboards: rs.dashboards.map(x =>
-                    this.dashboardsService.apiToTab({ apiDashboard: x })
-                  )
-                },
-                insertOrDoNothing: {
-                  queries: rs.queries.map(x =>
-                    this.queriesService.apiToTab({ apiQuery: x })
-                  )
-                }
-              })
-          );
+          let modelFieldLeafs = buildModelFieldLeafs({
+            models: rs.models
+          });
+
+          await this.db.drizzle.transaction(async tx => {
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                structs: [struct],
+                charts: rs.charts.map(x =>
+                  this.chartsService.apiToTab({
+                    apiChart: x,
+                    chartType: rs.mconfigs.find(
+                      mconfig => mconfig.mconfigId === x.tiles[0].mconfigId
+                    ).chart.type
+                  })
+                ),
+                models: rs.models.map(x =>
+                  this.modelsService.apiToTab({ apiModel: x })
+                ),
+                modelFieldLeafs: modelFieldLeafs,
+                reports: rs.reports.map(x =>
+                  this.reportsService.apiToTab({ apiReport: x })
+                ),
+                mconfigs: rs.mconfigs.map(x =>
+                  this.mconfigsService.apiToTab({ apiMconfig: x })
+                ),
+                dashboards: rs.dashboards.map(x =>
+                  this.dashboardsService.apiToTab({ apiDashboard: x })
+                )
+              },
+              insertOrDoNothing: {
+                queries: rs.queries.map(x =>
+                  this.queriesService.apiToTab({ apiQuery: x })
+                )
+              }
+            });
+          });
         },
         getRetryOption(this.cs, this.logger)
       );

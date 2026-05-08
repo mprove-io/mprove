@@ -32,6 +32,7 @@ import { envsTable } from './schema/envs';
 import { kitsTable } from './schema/kits';
 import { mconfigsTable } from './schema/mconfigs';
 import { membersTable } from './schema/members';
+import { modelFieldLeafsTable } from './schema/model-field-leafs';
 import { modelsTable } from './schema/models';
 import { notesTable } from './schema/notes';
 import { ocEventsTable } from './schema/oc-events';
@@ -230,6 +231,12 @@ export class DrizzlePacker {
 
       if (insertEnts.models.length > 0) {
         await tx.insert(modelsTable).values(insertEnts.models);
+      }
+
+      if (insertEnts.modelFieldLeafs.length > 0) {
+        await tx
+          .insert(modelFieldLeafsTable)
+          .values(insertEnts.modelFieldLeafs);
       }
 
       if (insertEnts.notes.length > 0) {

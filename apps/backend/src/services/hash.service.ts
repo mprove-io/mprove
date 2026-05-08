@@ -183,6 +183,18 @@ export class HashService {
     return hash;
   }
 
+  makeModelFieldLeafFullId(item: {
+    structId: string;
+    modelId: string;
+    fieldId: string;
+  }) {
+    let { structId, modelId, fieldId } = item;
+
+    let text = structId + modelId + fieldId;
+    let hash = crypto.createHash('sha256').update(text).digest('hex');
+    return hash;
+  }
+
   makeReportFullId(item: { structId: string; reportId: string }) {
     let { structId, reportId } = item;
 

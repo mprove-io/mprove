@@ -11,6 +11,7 @@ import * as envs from '#backend/drizzle/postgres/schema/envs';
 import * as kits from '#backend/drizzle/postgres/schema/kits';
 import * as mconfigs from '#backend/drizzle/postgres/schema/mconfigs';
 import * as members from '#backend/drizzle/postgres/schema/members';
+import * as modelFieldLeafs from '#backend/drizzle/postgres/schema/model-field-leafs';
 import * as models from '#backend/drizzle/postgres/schema/models';
 import * as notes from '#backend/drizzle/postgres/schema/notes';
 import * as ocEvents from '#backend/drizzle/postgres/schema/oc-events';
@@ -40,6 +41,7 @@ export const schemaPostgres = {
   ...kits,
   ...mconfigs,
   ...members,
+  ...modelFieldLeafs,
   ...models,
   ...notes,
   ...ocEvents,

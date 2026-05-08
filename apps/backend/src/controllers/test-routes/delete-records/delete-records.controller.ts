@@ -32,6 +32,7 @@ import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -243,6 +244,10 @@ export class DeleteRecordsController {
             await tx
               .delete(modelsTable)
               .where(inArray(modelsTable.structId, structIds));
+
+            await tx
+              .delete(modelFieldLeafsTable)
+              .where(inArray(modelFieldLeafsTable.structId, structIds));
 
             await tx
               .delete(chartsTable)

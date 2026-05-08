@@ -12,6 +12,7 @@ import type {
   KitTab,
   MconfigTab,
   MemberTab,
+  ModelFieldLeafTab,
   ModelTab,
   NoteTab,
   OcEventTab,
@@ -43,6 +44,7 @@ export class DbTabsPack {
   mconfigs?: MconfigTab[];
   members?: MemberTab[];
   ocMessages?: OcMessageTab[];
+  modelFieldLeafs?: ModelFieldLeafTab[];
   models?: ModelTab[];
   notes?: NoteTab[];
   ocSessions?: OcSessionTab[];

@@ -67,6 +67,7 @@ import { EnvEnt } from './envs';
 import { KitEnt } from './kits';
 import { MconfigEnt } from './mconfigs';
 import { MemberEnt } from './members';
+import { ModelFieldLeafEnt } from './model-field-leafs';
 import { ModelEnt } from './models';
 import { NoteEnt } from './notes';
 import { OcEventEnt } from './oc-events';
@@ -145,6 +146,9 @@ export interface ModelTab
   extends Omit<ModelEnt, 'st' | 'lt'>,
     ModelSt,
     ModelLt {}
+
+export interface ModelFieldLeafTab
+  extends Omit<ModelFieldLeafEnt, 'modelFieldLeafFullId'> {}
 
 export interface NoteTab extends Omit<NoteEnt, 'st' | 'lt'>, NoteSt, NoteLt {}
 
