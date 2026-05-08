@@ -78,8 +78,6 @@ import { ExplorerStreamService } from './services/explorer/explorer-stream.servi
 import { ExplorerTitleService } from './services/explorer/explorer-title.service';
 import { ExplorerToolsService } from './services/explorer/explorer-tools.service';
 import { GetModelsToolService } from './services/explorer/tools/get-models.tool';
-import { GetStateToolService } from './services/explorer/tools/get-state.tool';
-import { ListDocsToolService } from './services/explorer/tools/list-docs.tool';
 import { ProduceChartToolService } from './services/explorer/tools/produce-chart/produce-chart.tool';
 import { ProduceExplorerChartService } from './services/explorer/tools/produce-chart/produce-explorer-chart.service';
 import { ReadDocsToolService } from './services/explorer/tools/read-docs.tool';
@@ -175,9 +173,7 @@ export const appProviders = [
   ExplorerModelPartsService,
   ExplorerPromptsService,
   ExplorerTitleService,
-  GetStateToolService,
   GetModelsToolService,
-  ListDocsToolService,
   ReadDocsToolService,
   SearchCachedUniqueValuesToolService,
   ProduceChartToolService,

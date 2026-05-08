@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import type { Tool } from 'ai';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { GetModelsToolService } from './tools/get-models.tool';
-import { GetStateToolService } from './tools/get-state.tool';
 import { ProduceChartToolService } from './tools/produce-chart/produce-chart.tool';
 import { ReadDocsToolService } from './tools/read-docs.tool';
 import { SearchCachedUniqueValuesToolService } from './tools/search-cached-unique-values.tool';
@@ -10,7 +9,6 @@ import { SearchCachedUniqueValuesToolService } from './tools/search-cached-uniqu
 @Injectable()
 export class ExplorerToolsService {
   constructor(
-    private getStateToolService: GetStateToolService,
     private getModelsToolService: GetModelsToolService,
     private readDocsToolService: ReadDocsToolService,
     private searchCachedUniqueValuesToolService: SearchCachedUniqueValuesToolService,
@@ -29,15 +27,6 @@ export class ExplorerToolsService {
     let { user, sessionId, projectId, repoId, branchId, envId, traceId } = item;
 
     return {
-      // get_state: this.getStateToolService.makeTool({
-      //   projectId: projectId,
-      //   repoId: repoId,
-      //   branchId: branchId,
-      //   envId: envId,
-      //   user: user,
-      //   traceId: traceId
-      // })
-      // list_docs is omitted because the docs TOC is embedded in the explorer system prompt.
       search_cached_unique_values:
         this.searchCachedUniqueValuesToolService.makeTool({
           projectId: projectId,
