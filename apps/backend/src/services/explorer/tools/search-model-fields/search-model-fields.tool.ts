@@ -13,7 +13,6 @@ import { CachedColumnService } from '#backend/services/db/cached-column.service'
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import {
@@ -39,7 +38,6 @@ export const SEARCH_MODEL_FIELDS_INPUT_LIMIT = 10;
 export class SearchModelFieldsToolService {
   constructor(
     private cachedColumnService: CachedColumnService,
-    private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private branchesService: BranchesService,
@@ -144,16 +142,9 @@ export class SearchModelFieldsToolService {
       .map(searchFieldName => searchFieldName.trim())
       .filter(searchFieldName => searchFieldName.length > 0);
 
-    await this.sessionsService.checkRepoId({
-      repoId: repoId,
-      userId: user.userId,
-      projectId: projectId,
-      allowProdRepo: true
-    });
-
     await this.projectsService.getProjectCheckExists({ projectId: projectId });
 
-    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
+    let userMember = await this.membersService.getMemberCheckExists({
       memberId: user.userId,
       projectId: projectId
     });

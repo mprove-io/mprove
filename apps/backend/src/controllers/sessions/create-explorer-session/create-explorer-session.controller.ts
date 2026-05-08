@@ -27,6 +27,9 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex.service';
+import { BranchesService } from '#backend/services/db/branches.service';
+import { BridgesService } from '#backend/services/db/bridges.service';
+import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { OcEventsService } from '#backend/services/db/oc-events.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
@@ -53,6 +56,9 @@ export class CreateExplorerSessionController {
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
     private membersService: MembersService,
+    private branchesService: BranchesService,
+    private envsService: EnvsService,
+    private bridgesService: BridgesService,
     private ocEventsService: OcEventsService,
     private codexService: CodexService,
     private explorerStreamService: ExplorerStreamService,
@@ -101,6 +107,32 @@ export class CreateExplorerSessionController {
         message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
     }
+
+    await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId,
+      allowProdRepo: true
+    });
+
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId
+    });
+
+    await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
+
+    await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
+      envId: envId
+    });
 
     let split = splitModel(model);
 

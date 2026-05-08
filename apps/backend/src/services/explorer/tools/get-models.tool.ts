@@ -13,7 +13,6 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
@@ -27,7 +26,6 @@ import type {
 @Injectable()
 export class GetModelsToolService {
   constructor(
-    private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private branchesService: BranchesService,
@@ -59,13 +57,6 @@ export class GetModelsToolService {
           .describe('Model ids to retrieve, e.g. ["orders", "customers"].')
       }),
       execute: async input => {
-        await this.sessionsService.checkRepoId({
-          repoId: repoId,
-          userId: user.userId,
-          projectId: projectId,
-          allowProdRepo: true
-        });
-
         let project = await this.projectsService.getProjectCheckExists({
           projectId: projectId
         });
