@@ -27,6 +27,7 @@ export class ExplorerToolsService {
     let { user, sessionId, projectId, repoId, branchId, envId, traceId } = item;
 
     return {
+      // read_docs: this.readDocsToolService.makeTool(),
       search_model_fields: this.searchModelFieldsToolService.makeTool({
         projectId: projectId,
         repoId: repoId,
@@ -42,7 +43,6 @@ export class ExplorerToolsService {
         traceId: traceId,
         user: user
       }),
-      read_docs: this.readDocsToolService.makeTool(),
       produce_chart: this.produceChartToolService.makeTool({
         user: user,
         sessionId: sessionId,
