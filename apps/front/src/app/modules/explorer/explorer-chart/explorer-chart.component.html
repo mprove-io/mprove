@@ -89,9 +89,15 @@
         ></m-chart-view>
       </div>
 
-      <div *ngIf="isData" class="mt-10 flex max-h-[24%] min-h-[24%] flex-row">
+      <div
+        *ngIf="
+          (isData && mconfig?.fields?.length > 0) ||
+          mconfig?.filters?.length > 0
+        "
+        class="mt-10 flex max-h-[24%] min-h-[24%] flex-row"
+      >
         <div
-          *ngIf="mconfig?.fields?.length > 0"
+          *ngIf="isData && mconfig?.fields?.length > 0"
           class="flex w-full max-w-max flex-1 overflow-auto"
         >
           <ng-scrollbar
@@ -112,7 +118,7 @@
 
         <div
           class="ml-10 flex flex-shrink-0 flex-row items-start"
-          *ngIf="mconfig?.filters.length > 0"
+          *ngIf="mconfig?.filters?.length > 0"
         >
           <m-bricks
             class="flex max-h-[150px] max-w-max overflow-auto"
