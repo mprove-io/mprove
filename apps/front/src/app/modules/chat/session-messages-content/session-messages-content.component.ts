@@ -363,10 +363,13 @@ export class SessionMessagesContentComponent {
       toolPart.tool !== 'read_docs'
         ? output
         : undefined;
+    let rawInput = toolPart.state?.input;
+    let inputText = rawInput ? JSON.stringify(rawInput, null, 2) : undefined;
     this.myDialogService.showToolOutput({
       title: this.getToolTitle(toolPart.tool),
       subtitle: this.getToolSubtitle(toolPart),
       output: displayOutput,
+      input: inputText,
       rawOutput: rawOutput,
       wrapText: toolPart.tool !== 'list_docs' && toolPart.tool !== 'read_docs',
       isError: toolPart.state?.status === 'error'

@@ -25,6 +25,14 @@
     class="flex-1"
   >
     <div class="px-8 py-5">
+      <ng-container *ngIf="hasInput">
+        <div class="text-s500 mb-2 text-base font-medium uppercase">Input</div>
+        <pre
+          class="text-s600 mb-6 whitespace-pre-wrap break-words font-mono text-[16px]"
+          >{{ inputDisplay }}</pre
+        >
+        <div class="text-s500 mb-2 text-base font-medium uppercase">Output</div>
+      </ng-container>
       <pre
         class="text-s600 font-mono text-[16px]"
         [ngClass]="
@@ -32,7 +40,7 @@
             ? 'whitespace-pre'
             : 'whitespace-pre-wrap break-words'
         "
-        >{{ showXml ? dataItem.rawOutput : dataItem.output }}</pre
+        >{{ outputDisplay }}</pre
       >
     </div>
   </ng-scrollbar>
