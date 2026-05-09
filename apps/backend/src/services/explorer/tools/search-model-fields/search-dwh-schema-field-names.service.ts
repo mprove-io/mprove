@@ -46,6 +46,9 @@ export class SearchDwhSchemaFieldNamesService {
       modelIds
     } = item;
 
+    // console.log('SearchDwhSchemaFieldNamesService item:');
+    // console.log(item);
+
     if (searchFieldNames.length === 0 || modelIds.length === 0) {
       return [];
     }
@@ -207,6 +210,9 @@ export class SearchDwhSchemaFieldNamesService {
         });
       });
     });
+
+    // console.log('SearchDwhSchemaFieldNamesService matches:');
+    // console.log(matches);
 
     return matches;
   }

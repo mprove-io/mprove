@@ -81,13 +81,20 @@ export class DeleteRecordsController {
     type: ToBackendDeleteRecordsResponseDto
   })
   async deleteRecords(@Body() body: ToBackendDeleteRecordsRequestDto) {
-    let { orgIds, projectIds, emails, orgNames, projectNames } = body.payload;
+    let {
+      orgIds,
+      projectIds,
+      emails,
+      orgNames,
+      projectNames,
+      structIds: payloadStructIds
+    } = body.payload;
 
     emails = emails || [];
     projectIds = projectIds || [];
     orgIds = orgIds || [];
 
-    let structIds: string[] = [];
+    let structIds: string[] = payloadStructIds ? [...payloadStructIds] : [];
     let userIds: string[] = [];
 
     let hashSecret = await this.dconfigsService.getDconfigHashSecret();
@@ -175,7 +182,7 @@ export class DeleteRecordsController {
             where: inArray(structsTable.projectId, projectIds)
           });
 
-    structIds = structs.map(struct => struct.structId);
+    structIds = [...structIds, ...structs.map(struct => struct.structId)];
 
     await retry(
       async () =>

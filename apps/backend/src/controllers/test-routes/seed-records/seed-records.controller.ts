@@ -23,12 +23,15 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
   BridgeTab,
+  CachedColumnTab,
+  CachedPartTab,
   ChartTab,
   ConnectionTab,
   DashboardTab,
   EnvTab,
   MconfigTab,
   MemberTab,
+  ModelFieldLeafTab,
   ModelTab,
   OrgTab,
   ProjectTab,
@@ -75,7 +78,10 @@ import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type {
+  ToBackendSeedRecordsRequestPayloadCachedColumnsItem,
+  ToBackendSeedRecordsRequestPayloadCachedPartsItem,
   ToBackendSeedRecordsRequestPayloadMembersItem,
+  ToBackendSeedRecordsRequestPayloadModelFieldLeafsItem,
   ToBackendSeedRecordsRequestPayloadOrgsItem,
   ToBackendSeedRecordsRequestPayloadProjectsItem,
   ToBackendSeedRecordsRequestPayloadSessionsItem,
@@ -139,12 +145,17 @@ export class SeedRecordsController {
     let payloadSessions = body.payload.sessions;
     let payloadQueries = body.payload.queries;
     let payloadMconfigs = body.payload.mconfigs;
+    let payloadCachedColumns = body.payload.cachedColumns;
+    let payloadCachedParts = body.payload.cachedParts;
+    let payloadModelFieldLeafs = body.payload.modelFieldLeafs;
 
     //
 
     // let avatars = ...
     let branches: BranchTab[] = [];
     let bridges: BridgeTab[] = [];
+    let cachedColumns: CachedColumnTab[] = [];
+    let cachedParts: CachedPartTab[] = [];
     let charts: ChartTab[] = [];
     let connections: ConnectionTab[] = [];
     let dashboards: DashboardTab[] = [];
@@ -152,6 +163,7 @@ export class SeedRecordsController {
     // let kits = ...
     let mconfigs: MconfigTab[] = [];
     let members: MemberTab[] = [];
+    let modelFieldLeafs: ModelFieldLeafTab[] = [];
     let models: ModelTab[] = [];
     // let notes = ...
     let orgs: OrgTab[] = [];
@@ -318,6 +330,8 @@ export class SeedRecordsController {
           type: x.type,
           options: x.options
         });
+
+        newConnection.rawSchema = x.rawSchema;
 
         connections.push(newConnection);
       });
@@ -611,6 +625,99 @@ export class SeedRecordsController {
       ];
     }
 
+    if (isDefined(payloadCachedColumns)) {
+      payloadCachedColumns.forEach(
+        (x: ToBackendSeedRecordsRequestPayloadCachedColumnsItem) => {
+          let newCachedColumn: CachedColumnTab = {
+            cachedColumnFullId: undefined, // tab-to-ent
+            projectId: x.projectId,
+            connectionId: x.connectionId,
+            envId: x.envId,
+            schemaName: x.schemaName,
+            tableName: x.tableName,
+            columnName: x.columnName,
+            requestedByUserId: x.requestedByUserId,
+            status: x.status,
+            errorMessage: x.errorMessage,
+            startedTs: x.startedTs,
+            completedTs: x.completedTs,
+            completedDurationMs: x.completedDurationMs,
+            limit: x.limit,
+            sampleSize: x.sampleSize,
+            isLimitReached: x.isLimitReached,
+            uniqueValuesCount: x.uniqueValuesCount,
+            keyTag: undefined,
+            serverTs: undefined
+          };
+
+          cachedColumns.push(newCachedColumn);
+        }
+      );
+    }
+
+    if (isDefined(payloadCachedParts)) {
+      payloadCachedParts.forEach(
+        (x: ToBackendSeedRecordsRequestPayloadCachedPartsItem) => {
+          let newCachedPart: CachedPartTab = {
+            cachedPartFullId: undefined, // tab-to-ent
+            projectId: x.projectId,
+            connectionId: x.connectionId,
+            envId: x.envId,
+            schemaName: x.schemaName,
+            tableName: x.tableName,
+            columnName: x.columnName,
+            columnValue: x.columnValue,
+            count: x.count,
+            keyTag: undefined,
+            serverTs: undefined
+          };
+
+          cachedParts.push(newCachedPart);
+        }
+      );
+    }
+
+    if (isDefined(payloadModelFieldLeafs)) {
+      payloadModelFieldLeafs.forEach(
+        (x: ToBackendSeedRecordsRequestPayloadModelFieldLeafsItem) => {
+          let newModelFieldLeaf: ModelFieldLeafTab = {
+            structId: x.structId,
+            modelId: x.modelId,
+            modelType: x.modelType,
+            connectionId: x.connectionId,
+            connectionType: undefined,
+            fieldId: x.fieldId,
+            fieldName: x.fieldName,
+            fieldPath: undefined,
+            fieldClass: undefined,
+            fieldResult: x.fieldResult,
+            fieldType: undefined,
+            label: x.label,
+            description: x.description,
+            hidden: undefined,
+            required: undefined,
+            sqlName: x.sqlName,
+            topId: undefined,
+            topLabel: undefined,
+            groupId: undefined,
+            groupLabel: undefined,
+            malloyFieldName: x.malloyFieldName,
+            malloyFieldPath: undefined,
+            malloyTags: undefined,
+            mproveTags: undefined,
+            schemaName: x.schemaName,
+            tableName: x.tableName,
+            columnName: x.columnName,
+            field: {} as any,
+            malloyFieldDef: undefined,
+            serverTs: undefined
+          };
+
+          modelFieldLeafs.push(newModelFieldLeaf);
+        }
+      );
+    }
+
     await retry(
       async () =>
         await this.db.drizzle.transaction(
@@ -632,7 +739,10 @@ export class SeedRecordsController {
                 reports: reports,
                 mconfigs: mconfigs,
                 dashboards: dashboards,
-                sessions: sessions
+                sessions: sessions,
+                cachedColumns: cachedColumns,
+                cachedParts: cachedParts,
+                modelFieldLeafs: modelFieldLeafs
               },
               insertOrUpdate: {
                 queries: queries

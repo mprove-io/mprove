@@ -11,7 +11,8 @@ export let zToBackendDeleteRecordsRequestPayload = z
     orgNames: z.array(z.string()).nullish(),
     orgIds: z.array(z.string()).nullish(),
     projectNames: z.array(z.string()).nullish(),
-    projectIds: z.array(z.string()).nullish()
+    projectIds: z.array(z.string()).nullish(),
+    structIds: z.array(z.string()).nullish()
   })
   .meta({ id: 'ToBackendDeleteRecordsRequestPayload' });
 

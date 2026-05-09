@@ -34,6 +34,9 @@ export class SearchCachedFieldValuesService {
   }): Promise<SearchFieldMatch[]> {
     let { projectId, structId, cacheEnvId, searchFieldValues, modelIds } = item;
 
+    // console.log('SearchCachedFieldValuesService item:');
+    // console.log(item);
+
     if (searchFieldValues.length === 0 || modelIds.length === 0) {
       return [];
     }
@@ -185,6 +188,9 @@ ORDER BY "searchFieldValue", field_rank, value_rank;
         count: row.count
       });
     });
+
+    // console.log('SearchCachedFieldValuesService matches:');
+    // console.log(matches);
 
     return matches;
   }

@@ -27,6 +27,9 @@ export class SearchModelFieldLeafNamesService {
   }): Promise<SearchFieldMatch[]> {
     let { structId, searchFieldNames, modelIds } = item;
 
+    // console.log('SearchModelFieldLeafNamesService item:');
+    // console.log(item);
+
     if (searchFieldNames.length === 0 || modelIds.length === 0) {
       return [];
     }
@@ -130,6 +133,9 @@ ORDER BY search_field_name, field_rank;
         matchedOn: row.matchedOn ?? []
       });
     });
+
+    // console.log('SearchModelFieldLeafNamesService matches:');
+    // console.log(matches);
 
     return matches;
   }

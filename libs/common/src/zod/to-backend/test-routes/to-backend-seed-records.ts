@@ -1,10 +1,13 @@
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
+import { zConnectionRawSchema } from '#common/zod/backend/connection-schemas/raw-schema';
 import { zEv } from '#common/zod/backend/ev';
 import { zMconfig } from '#common/zod/blockml/mconfig';
 import { zQuery } from '#common/zod/blockml/query';
@@ -75,7 +78,8 @@ export let zToBackendSeedRecordsRequestPayloadConnectionsItem = z
     envId: z.string(),
     connectionId: z.string(),
     type: z.enum(ConnectionTypeEnum),
-    options: zConnectionOptions.nullish()
+    options: zConnectionOptions.nullish(),
+    rawSchema: zConnectionRawSchema.nullish()
   })
   .meta({ id: 'ToBackendSeedRecordsRequestPayloadConnectionsItem' });
 
@@ -104,6 +108,59 @@ export let zToBackendSeedRecordsRequestPayloadSessionsItem = z
   })
   .meta({ id: 'ToBackendSeedRecordsRequestPayloadSessionsItem' });
 
+export let zToBackendSeedRecordsRequestPayloadCachedColumnsItem = z
+  .object({
+    projectId: z.string(),
+    connectionId: z.string(),
+    envId: z.string(),
+    schemaName: z.string(),
+    tableName: z.string(),
+    columnName: z.string(),
+    status: z.enum(['running', 'completed', 'error']),
+    limit: z.number(),
+    startedTs: z.number(),
+    completedTs: z.number().nullish(),
+    completedDurationMs: z.number().nullish(),
+    sampleSize: z.number().nullish(),
+    isLimitReached: z.boolean().nullish(),
+    uniqueValuesCount: z.number().nullish(),
+    requestedByUserId: z.string().nullish(),
+    errorMessage: z.string().nullish()
+  })
+  .meta({ id: 'ToBackendSeedRecordsRequestPayloadCachedColumnsItem' });
+
+export let zToBackendSeedRecordsRequestPayloadCachedPartsItem = z
+  .object({
+    projectId: z.string(),
+    connectionId: z.string(),
+    envId: z.string(),
+    schemaName: z.string(),
+    tableName: z.string(),
+    columnName: z.string(),
+    columnValue: z.string().nullish(),
+    count: z.number()
+  })
+  .meta({ id: 'ToBackendSeedRecordsRequestPayloadCachedPartsItem' });
+
+export let zToBackendSeedRecordsRequestPayloadModelFieldLeafsItem = z
+  .object({
+    structId: z.string(),
+    modelId: z.string(),
+    modelType: z.enum(ModelTypeEnum),
+    connectionId: z.string().nullish(),
+    fieldId: z.string(),
+    fieldResult: z.enum(FieldResultEnum).nullish(),
+    schemaName: z.string().nullish(),
+    tableName: z.string().nullish(),
+    columnName: z.string().nullish(),
+    fieldName: z.string().nullish(),
+    label: z.string().nullish(),
+    description: z.string().nullish(),
+    malloyFieldName: z.string().nullish(),
+    sqlName: z.string().nullish()
+  })
+  .meta({ id: 'ToBackendSeedRecordsRequestPayloadModelFieldLeafsItem' });
+
 export let zToBackendSeedRecordsRequestPayload = z
   .object({
     users: z.array(zToBackendSeedRecordsRequestPayloadUsersItem).nullish(),
@@ -120,7 +177,16 @@ export let zToBackendSeedRecordsRequestPayload = z
       .array(zToBackendSeedRecordsRequestPayloadSessionsItem)
       .nullish(),
     queries: z.array(zQuery).nullish(),
-    mconfigs: z.array(zMconfig).nullish()
+    mconfigs: z.array(zMconfig).nullish(),
+    cachedColumns: z
+      .array(zToBackendSeedRecordsRequestPayloadCachedColumnsItem)
+      .nullish(),
+    cachedParts: z
+      .array(zToBackendSeedRecordsRequestPayloadCachedPartsItem)
+      .nullish(),
+    modelFieldLeafs: z
+      .array(zToBackendSeedRecordsRequestPayloadModelFieldLeafsItem)
+      .nullish()
   })
   .meta({ id: 'ToBackendSeedRecordsRequestPayload' });
 
@@ -175,6 +241,15 @@ export type ToBackendSeedRecordsRequestPayloadEnvsItem = z.infer<
 >;
 export type ToBackendSeedRecordsRequestPayloadSessionsItem = z.infer<
   typeof zToBackendSeedRecordsRequestPayloadSessionsItem
+>;
+export type ToBackendSeedRecordsRequestPayloadCachedColumnsItem = z.infer<
+  typeof zToBackendSeedRecordsRequestPayloadCachedColumnsItem
+>;
+export type ToBackendSeedRecordsRequestPayloadCachedPartsItem = z.infer<
+  typeof zToBackendSeedRecordsRequestPayloadCachedPartsItem
+>;
+export type ToBackendSeedRecordsRequestPayloadModelFieldLeafsItem = z.infer<
+  typeof zToBackendSeedRecordsRequestPayloadModelFieldLeafsItem
 >;
 export type ToBackendSeedRecordsRequestPayload = z.infer<
   typeof zToBackendSeedRecordsRequestPayload

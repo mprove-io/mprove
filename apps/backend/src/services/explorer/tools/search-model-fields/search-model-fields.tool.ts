@@ -302,6 +302,9 @@ export class SearchModelFieldsToolService {
       });
     });
 
+    // console.log('mergeMatches')
+    // console.log(result)
+
     return result;
   }
 }
