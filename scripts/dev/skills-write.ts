@@ -1,9 +1,8 @@
-import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 let rootDir = resolve(import.meta.dirname, '..', '..');
-let skillsDir = join(rootDir, 'skills');
-let outFile = join(
+let outFile = resolve(
   rootDir,
   'libs',
   'common',
@@ -12,36 +11,30 @@ let outFile = join(
   'skills-data.ts'
 );
 
-// Read skill subdirectories
-let entries = readdirSync(skillsDir, { withFileTypes: true });
+let mproveDocsHost = process.env.MPROVE_DOCS_HOST;
 
-let skills: { name: string; content: string }[] = [];
+if (!mproveDocsHost) {
+  throw new Error('MPROVE_DOCS_HOST is required to generate skills-data.ts');
+}
 
-entries.forEach(entry => {
-  if (entry.isDirectory() === false) {
-    return;
-  }
+let docsOrigin = mproveDocsHost.replace(/\/+$/, '');
+let docsIndexUrl = `${docsOrigin}/content/docs/docs-for-ai.mdx`;
+let skillsPathPrefix = '/content/skills/';
 
-  let skillFilePath = join(skillsDir, entry.name, 'SKILL.md');
+let indexContent = await fetchText({ url: docsIndexUrl });
 
-  let isExist = true;
-  try {
-    statSync(skillFilePath);
-  } catch {
-    isExist = false;
-  }
+let skillNames = getSkillNames({ indexContent: indexContent });
 
-  if (isExist === false) {
-    return;
-  }
-
-  let content = readFileSync(skillFilePath, 'utf-8');
-  skills.push({ name: entry.name, content: content });
-});
+let skills = await Promise.all(
+  skillNames.map(async name => {
+    let url = `${docsOrigin}${skillsPathPrefix}${name}.mdx`;
+    let content = await fetchText({ url: url });
+    return { name: name, content: content };
+  })
+);
 
 skills.sort((a, b) => a.name.localeCompare(b.name));
 
-// Generate TypeScript file
 let lines: string[] = [];
 
 lines.push('// biome-ignore-all format: auto-generated file');
@@ -68,7 +61,37 @@ lines.push('');
 
 writeFileSync(outFile, lines.join('\n'), 'utf-8');
 
-console.log('skills-write: generated ' + outFile);
+console.log(`skills-write: fetched ${docsIndexUrl}`);
+console.log(`skills-write: pulled ${skills.length} skills from docs`);
+console.log(`skills-write: generated ${outFile}`);
 skills.forEach(s => {
   console.log(s.name);
 });
+
+async function fetchText(item: { url: string }) {
+  let { url } = item;
+
+  let response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch ${url}: ${response.status} ${response.statusText}`
+    );
+  }
+
+  return response.text();
+}
+
+function getSkillNames(item: { indexContent: string }) {
+  let { indexContent } = item;
+
+  let matches = indexContent.matchAll(/href="([^"]+\.mdx)"/g);
+
+  let names = Array.from(matches)
+    .map(match => match[1])
+    .filter(path => path.startsWith(skillsPathPrefix))
+    .map(path => path.slice(skillsPathPrefix.length))
+    .map(file => file.replace(/\.mdx$/, ''));
+
+  return Array.from(new Set(names)).sort((a, b) => a.localeCompare(b));
+}
