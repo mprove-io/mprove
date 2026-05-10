@@ -11,9 +11,7 @@ export let zToBackendEditConnectionRequestPayload = z
   .object({
     projectId: z.string(),
     envId: z.string(),
-    connectionId: z.string().refine(value => value === value.toLowerCase(), {
-      message: 'connectionId must be lowercase'
-    }),
+    connectionId: z.string(),
     options: zConnectionOptions.nullish()
   })
   .meta({ id: 'ToBackendEditConnectionRequestPayload' });

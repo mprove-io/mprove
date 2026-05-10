@@ -12,8 +12,9 @@ export let zToBackendCreateConnectionRequestPayload = z
   .object({
     projectId: z.string(),
     envId: z.string(),
-    connectionId: z.string().refine(value => value === value.toLowerCase(), {
-      message: 'connectionId must be lowercase'
+    connectionId: z.string().regex(/^[a-z0-9_]+$/, {
+      message:
+        'connectionId must contain only lowercase letters, digits or underscores'
     }),
     type: z.enum(ConnectionTypeEnum),
     options: zConnectionOptions.nullish()
