@@ -1,5 +1,8 @@
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { join, resolve } from 'node:path';
 import { defaultBuildLogger, Template } from 'e2b';
+import { SKILLS_DATA } from '../libs/common/src/constants/skills-data';
 
 let require = createRequire(import.meta.url);
 let config = require('./e2b-template-config.json');
@@ -18,6 +21,21 @@ let malloyDocs = config.repos.malloyDocs;
 let templateName = `${templateVersion}_opencode_${opencodeVersion.split('.').join('-')}_mprove_${mproveCliVersion.split('.').join('-')}`;
 
 console.log(`Building e2b template: ${templateName}`);
+
+let skillsBuildDir = resolve(import.meta.dirname, '..', 'tmp', 'skills-build');
+
+rmSync(skillsBuildDir, { recursive: true, force: true });
+mkdirSync(skillsBuildDir, { recursive: true });
+
+SKILLS_DATA.forEach(skill => {
+  let skillDir = join(skillsBuildDir, skill.name);
+  mkdirSync(skillDir, { recursive: true });
+  writeFileSync(join(skillDir, 'SKILL.md'), skill.content, 'utf8');
+});
+
+console.log(
+  `e2b: materialized ${SKILLS_DATA.length} skills under ${skillsBuildDir}`
+);
 
 let template = Template()
   .fromImage('node:24.14.0-bookworm')
@@ -58,44 +76,14 @@ let template = Template()
   .copy(
     'mprove-instructions.md',
     '/home/user/.config/opencode/mprove-instructions.md'
-  )
-  .copy(
-    'mprove-basic/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-basic/SKILL.md'
-  )
-  .copy(
-    'mprove-build-chart/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-build-chart/SKILL.md'
-  )
-  .copy(
-    'mprove-build-dashboard/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-build-dashboard/SKILL.md'
-  )
-  .copy(
-    'mprove-build-malloy-model/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-build-malloy-model/SKILL.md'
-  )
-  .copy(
-    'mprove-build-report/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-build-report/SKILL.md'
-  )
-
-  .copy(
-    'mprove-build-store-model/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-build-store-model/SKILL.md'
-  )
-  .copy(
-    'mprove-connection-schemas/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-connection-schemas/SKILL.md'
-  )
-  .copy(
-    'mprove-query-data/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-query-data/SKILL.md'
-  )
-  .copy(
-    'mprove-project-structure/SKILL.md',
-    '/home/user/.config/opencode/skills/mprove-project-structure/SKILL.md'
   );
+
+SKILLS_DATA.forEach(skill => {
+  template = template.copy(
+    `../tmp/skills-build/${skill.name}/SKILL.md`,
+    `/home/user/.config/opencode/skills/${skill.name}/SKILL.md`
+  );
+});
 
 let result = await Template.build(template, templateName, {
   cpuCount: cpuCount,

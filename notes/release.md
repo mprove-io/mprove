@@ -33,7 +33,7 @@ tar -xzf <mprove-cli-downloaded-path>
 xattr -d com.apple.quarantine mprove
 ./mprove version
 
-(update template and mprove versions in skills/e2b-template-config.json)
+(update template and mprove versions in sandbox/e2b-template-config.json)
 
 pnpm e2b:build
 

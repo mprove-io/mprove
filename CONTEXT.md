@@ -262,8 +262,8 @@ notes/
 plans/
 scripts/
 secrets/
+sandbox/
 setup-docker/
-skills/
 tmp/
 .dockerignore
 .DS_Store
