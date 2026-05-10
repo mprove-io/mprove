@@ -66,14 +66,18 @@ export class SearchModelFieldsToolService {
             .max(SEARCH_FIELD_VALUES_LIMIT)
             .nullish()
             .describe(
-              `Zero to ${SEARCH_FIELD_VALUES_LIMIT} literal field values to search for in cached unique values.`
+              `Zero to ${SEARCH_FIELD_VALUES_LIMIT} literal field values to search for in cached unique values. 
+In most cases, each searchFieldValue should be an individual word. 
+So searchFieldValues will be a list of individual words.`
             ),
           searchFieldNames: z
             .array(z.string())
             .max(SEARCH_FIELD_NAMES_LIMIT)
             .nullish()
             .describe(
-              `Zero to ${SEARCH_FIELD_NAMES_LIMIT} field names, labels, or descriptions to search for.`
+              `Zero to ${SEARCH_FIELD_NAMES_LIMIT} field names, labels, or descriptions to search for.
+In most cases, each searchFieldName should be an individual word. 
+So searchFieldNames will be a list of individual words.`
             )
         })
         .refine(
