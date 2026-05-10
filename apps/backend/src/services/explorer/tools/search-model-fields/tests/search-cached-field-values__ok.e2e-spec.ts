@@ -41,9 +41,9 @@ test('1', async t => {
               projectId: projectId,
               connectionId: connectionId,
               envId: envId,
-              schemaName: 'public',
-              tableName: 'orders',
-              columnName: 'status',
+              schemaNameLc: 'public',
+              tableNameLc: 'orders',
+              columnNameLc: 'status',
               status: 'completed',
               limit: 1000,
               startedTs: Date.now()
@@ -54,30 +54,33 @@ test('1', async t => {
               projectId: projectId,
               connectionId: connectionId,
               envId: envId,
-              schemaName: 'public',
-              tableName: 'orders',
-              columnName: 'status',
+              schemaNameLc: 'public',
+              tableNameLc: 'orders',
+              columnNameLc: 'status',
               columnValue: 'active',
+              columnValueLc: 'active',
               count: 42
             },
             {
               projectId: projectId,
               connectionId: connectionId,
               envId: envId,
-              schemaName: 'public',
-              tableName: 'orders',
-              columnName: 'status',
+              schemaNameLc: 'public',
+              tableNameLc: 'orders',
+              columnNameLc: 'status',
               columnValue: 'Pending',
+              columnValueLc: 'pending',
               count: 15
             },
             {
               projectId: projectId,
               connectionId: connectionId,
               envId: envId,
-              schemaName: 'public',
-              tableName: 'orders',
-              columnName: 'status',
+              schemaNameLc: 'public',
+              tableNameLc: 'orders',
+              columnNameLc: 'status',
               columnValue: 'inactive',
+              columnValueLc: 'inactive',
               count: 3
             }
           ],
@@ -89,9 +92,9 @@ test('1', async t => {
               connectionId: connectionId,
               fieldId: fieldId,
               fieldResult: FieldResultEnum.String,
-              schemaName: 'public',
-              tableName: 'orders',
-              columnName: 'status'
+              schemaNameLc: 'public',
+              tableNameLc: 'orders',
+              columnNameLc: 'status'
             }
           ]
         }

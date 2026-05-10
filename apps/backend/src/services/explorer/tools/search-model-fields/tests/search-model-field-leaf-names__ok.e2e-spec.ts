@@ -35,25 +35,25 @@ test('1', async t => {
               modelId: modelId,
               modelType: ModelTypeEnum.Malloy,
               fieldId: 'order_status',
-              fieldName: 'order_status',
-              label: 'Order Status',
-              description: 'Lifecycle state of the order'
+              fieldNameLc: 'order_status',
+              labelLc: 'order status',
+              descriptionLc: 'lifecycle state of the order'
             },
             {
               structId: structId,
               modelId: modelId,
               modelType: ModelTypeEnum.Malloy,
               fieldId: 'cust_id',
-              fieldName: 'cust_id',
-              description: 'Identifier of the customer placing the order'
+              fieldNameLc: 'cust_id',
+              descriptionLc: 'identifier of the customer placing the order'
             },
             {
               structId: structId,
               modelId: modelId,
               modelType: ModelTypeEnum.Malloy,
               fieldId: 'created_at',
-              fieldName: 'created_at',
-              label: 'Created At'
+              fieldNameLc: 'created_at',
+              labelLc: 'created at'
             }
           ]
         }

@@ -149,9 +149,9 @@ test('1', async t => {
               modelType: ModelTypeEnum.Malloy,
               connectionId: connectionId,
               fieldId: 'order_status',
-              schemaName: 'public',
-              tableName: 'orders',
-              columnName: 'status'
+              schemaNameLc: 'public',
+              tableNameLc: 'orders',
+              columnNameLc: 'status'
             }
           ]
         }

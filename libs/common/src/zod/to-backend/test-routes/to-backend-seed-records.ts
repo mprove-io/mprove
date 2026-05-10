@@ -113,9 +113,9 @@ export let zToBackendSeedRecordsRequestPayloadCachedColumnsItem = z
     projectId: z.string(),
     connectionId: z.string(),
     envId: z.string(),
-    schemaName: z.string(),
-    tableName: z.string(),
-    columnName: z.string(),
+    schemaNameLc: z.string(),
+    tableNameLc: z.string(),
+    columnNameLc: z.string(),
     status: z.enum(['running', 'completed', 'error']),
     limit: z.number(),
     startedTs: z.number(),
@@ -134,10 +134,11 @@ export let zToBackendSeedRecordsRequestPayloadCachedPartsItem = z
     projectId: z.string(),
     connectionId: z.string(),
     envId: z.string(),
-    schemaName: z.string(),
-    tableName: z.string(),
-    columnName: z.string(),
+    schemaNameLc: z.string(),
+    tableNameLc: z.string(),
+    columnNameLc: z.string(),
     columnValue: z.string().nullish(),
+    columnValueLc: z.string().nullish(),
     count: z.number()
   })
   .meta({ id: 'ToBackendSeedRecordsRequestPayloadCachedPartsItem' });
@@ -150,14 +151,14 @@ export let zToBackendSeedRecordsRequestPayloadModelFieldLeafsItem = z
     connectionId: z.string().nullish(),
     fieldId: z.string(),
     fieldResult: z.enum(FieldResultEnum).nullish(),
-    schemaName: z.string().nullish(),
-    tableName: z.string().nullish(),
-    columnName: z.string().nullish(),
-    fieldName: z.string().nullish(),
-    label: z.string().nullish(),
-    description: z.string().nullish(),
-    malloyFieldName: z.string().nullish(),
-    sqlName: z.string().nullish()
+    schemaNameLc: z.string().nullish(),
+    tableNameLc: z.string().nullish(),
+    columnNameLc: z.string().nullish(),
+    fieldNameLc: z.string().nullish(),
+    labelLc: z.string().nullish(),
+    descriptionLc: z.string().nullish(),
+    malloyFieldNameLc: z.string().nullish(),
+    sqlNameLc: z.string().nullish()
   })
   .meta({ id: 'ToBackendSeedRecordsRequestPayloadModelFieldLeafsItem' });
 
