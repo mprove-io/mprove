@@ -88,7 +88,27 @@ export const modelFieldLeafsTable = pgTable(
     ).on(table.structId, table.modelType, table.fieldResult),
     uidxModelFieldLeafsStructModelField: uniqueIndex(
       'uidx_model_field_leafs_struct_model_field'
-    ).on(table.structId, table.modelId, table.fieldId)
+    ).on(table.structId, table.modelId, table.fieldId),
+    trgmModelFieldLeafsFieldNameLc: index(
+      'trgm_model_field_leafs_field_name_lc'
+    ).using('gin', table.fieldNameLc.op('gin_trgm_ops')),
+    trgmModelFieldLeafsFieldId: index('trgm_model_field_leafs_field_id').using(
+      'gin',
+      table.fieldId.op('gin_trgm_ops')
+    ),
+    trgmModelFieldLeafsMalloyFieldNameLc: index(
+      'trgm_model_field_leafs_malloy_field_name_lc'
+    ).using('gin', table.malloyFieldNameLc.op('gin_trgm_ops')),
+    trgmModelFieldLeafsSqlNameLc: index(
+      'trgm_model_field_leafs_sql_name_lc'
+    ).using('gin', table.sqlNameLc.op('gin_trgm_ops')),
+    trgmModelFieldLeafsLabelLc: index('trgm_model_field_leafs_label_lc').using(
+      'gin',
+      table.labelLc.op('gin_trgm_ops')
+    ),
+    trgmModelFieldLeafsDescriptionLc: index(
+      'trgm_model_field_leafs_description_lc'
+    ).using('gin', table.descriptionLc.op('gin_trgm_ops'))
   })
 );
 

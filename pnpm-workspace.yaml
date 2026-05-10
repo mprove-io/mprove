@@ -147,7 +147,7 @@ catalog:
   dayjs: 1.11.19
   dotenv: 17.2.3
   dotenv-cli: 11.0.0
-  drizzle-kit: 0.27.1
+  drizzle-kit: 0.28.0
   drizzle-orm: 0.36.0
   echarts: 5.5.1
   esbuild: 0.24.0

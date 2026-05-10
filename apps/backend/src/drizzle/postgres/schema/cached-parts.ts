@@ -72,7 +72,10 @@ export const cachedPartsTable = pgTable(
     ),
     idxCachedPartsServerTs: index('idx_cached_parts_server_ts').on(
       table.serverTs
-    )
+    ),
+    trgmCachedPartsColumnValueLc: index(
+      'trgm_cached_parts_column_value_lc'
+    ).using('gin', table.columnValueLc.op('gin_trgm_ops'))
   })
 );
 
