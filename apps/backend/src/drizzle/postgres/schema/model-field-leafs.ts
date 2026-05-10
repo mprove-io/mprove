@@ -30,27 +30,27 @@ export const modelFieldLeafsTable = pgTable(
     connectionId: varchar('connection_id'),
     connectionType: varchar('connection_type').$type<ConnectionTypeEnum>(),
     fieldId: text('field_id').notNull(),
-    fieldName: text('field_name'),
+    fieldNameLc: text('field_name_lc'),
     fieldPath: json('field_path').$type<string[]>(),
     fieldClass: varchar('field_class').$type<FieldClassEnum>(),
     fieldResult: varchar('field_result').$type<FieldResultEnum>(),
     fieldType: varchar('field_type').$type<FieldTypeEnum>(),
-    label: text('label'),
-    description: text('description'),
+    labelLc: text('label_lc'),
+    descriptionLc: text('description_lc'),
     hidden: boolean('hidden'),
     required: boolean('required'),
-    sqlName: text('sql_name'),
+    sqlNameLc: text('sql_name_lc'),
     topId: text('top_id'),
     topLabel: text('top_label'),
     groupId: text('group_id'),
     groupLabel: text('group_label'),
-    malloyFieldName: text('malloy_field_name'),
+    malloyFieldNameLc: text('malloy_field_name_lc'),
     malloyFieldPath: json('malloy_field_path').$type<string[]>(),
     malloyTags: json('malloy_tags').$type<KeyValuePair[]>(),
     mproveTags: json('mprove_tags').$type<KeyValuePair[]>(),
-    schemaName: text('schema_name'),
-    tableName: text('table_name'),
-    columnName: text('column_name'),
+    schemaNameLc: text('schema_name_lc'),
+    tableNameLc: text('table_name_lc'),
+    columnNameLc: text('column_name_lc'),
     field: json('field').$type<ModelField>().notNull(),
     malloyFieldDef: json('malloy_field_def').$type<MalloyFieldDef>(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
@@ -71,18 +71,21 @@ export const modelFieldLeafsTable = pgTable(
     idxModelFieldLeafsConnectionId: index(
       'idx_model_field_leafs_connection_id'
     ).on(table.connectionId),
-    idxModelFieldLeafsSchemaName: index('idx_model_field_leafs_schema_name').on(
-      table.schemaName
-    ),
-    idxModelFieldLeafsTableName: index('idx_model_field_leafs_table_name').on(
-      table.tableName
-    ),
-    idxModelFieldLeafsColumnName: index('idx_model_field_leafs_column_name').on(
-      table.columnName
-    ),
+    idxModelFieldLeafsSchemaNameLc: index(
+      'idx_model_field_leafs_schema_name_lc'
+    ).on(table.schemaNameLc),
+    idxModelFieldLeafsTableNameLc: index(
+      'idx_model_field_leafs_table_name_lc'
+    ).on(table.tableNameLc),
+    idxModelFieldLeafsColumnNameLc: index(
+      'idx_model_field_leafs_column_name_lc'
+    ).on(table.columnNameLc),
     idxModelFieldLeafsServerTs: index('idx_model_field_leafs_server_ts').on(
       table.serverTs
     ),
+    idxModelFieldLeafsStructTypeResult: index(
+      'idx_model_field_leafs_struct_type_result'
+    ).on(table.structId, table.modelType, table.fieldResult),
     uidxModelFieldLeafsStructModelField: uniqueIndex(
       'uidx_model_field_leafs_struct_model_field'
     ).on(table.structId, table.modelId, table.fieldId)

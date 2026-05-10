@@ -7,6 +7,7 @@ import {
   json,
   pgTable,
   text,
+  uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import type { CachedColumnLt, CachedColumnSt } from '#common/zod/st-lt';
@@ -22,9 +23,9 @@ export const cachedColumnsTable = pgTable(
     projectId: varchar('project_id').notNull(),
     connectionId: varchar('connection_id').notNull(),
     envId: varchar('env_id').notNull(),
-    schemaName: text('schema_name').notNull(),
-    tableName: text('table_name').notNull(),
-    columnName: text('column_name').notNull(),
+    schemaNameLc: text('schema_name_lc').notNull(),
+    tableNameLc: text('table_name_lc').notNull(),
+    columnNameLc: text('column_name_lc').notNull(),
     requestedByUserId: varchar('requested_by_user_id'),
     status: varchar('status').$type<CachedColumnStatus>().notNull(),
     errorMessage: text('error_message'),
@@ -52,14 +53,14 @@ export const cachedColumnsTable = pgTable(
       table.connectionId
     ),
     idxCachedColumnsEnvId: index('idx_cached_columns_env_id').on(table.envId),
-    idxCachedColumnsSchemaName: index('idx_cached_columns_schema_name').on(
-      table.schemaName
+    idxCachedColumnsSchemaNameLc: index('idx_cached_columns_schema_name_lc').on(
+      table.schemaNameLc
     ),
-    idxCachedColumnsTableName: index('idx_cached_columns_table_name').on(
-      table.tableName
+    idxCachedColumnsTableNameLc: index('idx_cached_columns_table_name_lc').on(
+      table.tableNameLc
     ),
-    idxCachedColumnsColumnName: index('idx_cached_columns_column_name').on(
-      table.columnName
+    idxCachedColumnsColumnNameLc: index('idx_cached_columns_column_name_lc').on(
+      table.columnNameLc
     ),
     idxCachedColumnsStatus: index('idx_cached_columns_status').on(table.status),
     idxCachedColumnsKeyTag: index('idx_cached_columns_key_tag').on(
@@ -67,6 +68,14 @@ export const cachedColumnsTable = pgTable(
     ),
     idxCachedColumnsServerTs: index('idx_cached_columns_server_ts').on(
       table.serverTs
+    ),
+    uidxCachedColumnsLookup: uniqueIndex('uidx_cached_columns_lookup').on(
+      table.projectId,
+      table.connectionId,
+      table.envId,
+      table.schemaNameLc,
+      table.tableNameLc,
+      table.columnNameLc
     )
   })
 );

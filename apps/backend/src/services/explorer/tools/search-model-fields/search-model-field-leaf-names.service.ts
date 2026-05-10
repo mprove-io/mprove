@@ -61,23 +61,23 @@ matched_fields AS (
     model_field_leafs.model_id,
     model_field_leafs.field_id,
     array_remove(ARRAY[
-      CASE WHEN lower(coalesce(model_field_leafs.field_name, '')) LIKE search_terms.search_pattern ESCAPE '\' THEN 'fieldName' END,
-      CASE WHEN lower(coalesce(model_field_leafs.field_id, '')) LIKE search_terms.search_pattern ESCAPE '\' THEN 'fieldId' END,
-      CASE WHEN lower(coalesce(model_field_leafs.malloy_field_name, '')) LIKE search_terms.search_pattern ESCAPE '\' THEN 'malloyFieldName' END,
-      CASE WHEN lower(coalesce(model_field_leafs.sql_name, '')) LIKE search_terms.search_pattern ESCAPE '\' THEN 'sqlName' END,
-      CASE WHEN lower(coalesce(model_field_leafs.label, '')) LIKE search_terms.search_pattern ESCAPE '\' THEN 'label' END,
-      CASE WHEN lower(coalesce(model_field_leafs.description, '')) LIKE search_terms.search_pattern ESCAPE '\' THEN 'description' END
+      CASE WHEN model_field_leafs.field_name_lc LIKE search_terms.search_pattern ESCAPE '\' THEN 'fieldName' END,
+      CASE WHEN model_field_leafs.field_id LIKE search_terms.search_pattern ESCAPE '\' THEN 'fieldId' END,
+      CASE WHEN model_field_leafs.malloy_field_name_lc LIKE search_terms.search_pattern ESCAPE '\' THEN 'malloyFieldName' END,
+      CASE WHEN model_field_leafs.sql_name_lc LIKE search_terms.search_pattern ESCAPE '\' THEN 'sqlName' END,
+      CASE WHEN model_field_leafs.label_lc LIKE search_terms.search_pattern ESCAPE '\' THEN 'label' END,
+      CASE WHEN model_field_leafs.description_lc LIKE search_terms.search_pattern ESCAPE '\' THEN 'description' END
     ], NULL) AS matched_on
   FROM ${modelFieldLeafsTable} AS model_field_leafs
   INNER JOIN accessible_models
     ON accessible_models.model_id = model_field_leafs.model_id
   INNER JOIN search_terms
-    ON lower(coalesce(model_field_leafs.field_name, '')) LIKE search_terms.search_pattern ESCAPE '\'
-    OR lower(coalesce(model_field_leafs.field_id, '')) LIKE search_terms.search_pattern ESCAPE '\'
-    OR lower(coalesce(model_field_leafs.malloy_field_name, '')) LIKE search_terms.search_pattern ESCAPE '\'
-    OR lower(coalesce(model_field_leafs.sql_name, '')) LIKE search_terms.search_pattern ESCAPE '\'
-    OR lower(coalesce(model_field_leafs.label, '')) LIKE search_terms.search_pattern ESCAPE '\'
-    OR lower(coalesce(model_field_leafs.description, '')) LIKE search_terms.search_pattern ESCAPE '\'
+    ON model_field_leafs.field_name_lc LIKE search_terms.search_pattern ESCAPE '\'
+    OR model_field_leafs.field_id LIKE search_terms.search_pattern ESCAPE '\'
+    OR model_field_leafs.malloy_field_name_lc LIKE search_terms.search_pattern ESCAPE '\'
+    OR model_field_leafs.sql_name_lc LIKE search_terms.search_pattern ESCAPE '\'
+    OR model_field_leafs.label_lc LIKE search_terms.search_pattern ESCAPE '\'
+    OR model_field_leafs.description_lc LIKE search_terms.search_pattern ESCAPE '\'
   WHERE model_field_leafs.struct_id = ${structId}
     AND model_field_leafs.model_type = ${ModelTypeEnum.Malloy}
 ),

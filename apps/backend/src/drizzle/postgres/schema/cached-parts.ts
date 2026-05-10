@@ -19,10 +19,11 @@ export const cachedPartsTable = pgTable(
     projectId: varchar('project_id').notNull(),
     connectionId: varchar('connection_id').notNull(),
     envId: varchar('env_id').notNull(),
-    schemaName: text('schema_name').notNull(),
-    tableName: text('table_name').notNull(),
-    columnName: text('column_name').notNull(),
+    schemaNameLc: text('schema_name_lc').notNull(),
+    tableNameLc: text('table_name_lc').notNull(),
+    columnNameLc: text('column_name_lc').notNull(),
     columnValue: text('column_value'),
+    columnValueLc: text('column_value_lc'),
     count: integer('count').notNull(),
     st: json('st')
       .$type<{ encrypted: string; decrypted: CachedPartSt }>()
@@ -41,17 +42,17 @@ export const cachedPartsTable = pgTable(
       table.connectionId
     ),
     idxCachedPartsEnvId: index('idx_cached_parts_env_id').on(table.envId),
-    idxCachedPartsSchemaName: index('idx_cached_parts_schema_name').on(
-      table.schemaName
+    idxCachedPartsSchemaNameLc: index('idx_cached_parts_schema_name_lc').on(
+      table.schemaNameLc
     ),
-    idxCachedPartsTableName: index('idx_cached_parts_table_name').on(
-      table.tableName
+    idxCachedPartsTableNameLc: index('idx_cached_parts_table_name_lc').on(
+      table.tableNameLc
     ),
-    idxCachedPartsColumnName: index('idx_cached_parts_column_name').on(
-      table.columnName
+    idxCachedPartsColumnNameLc: index('idx_cached_parts_column_name_lc').on(
+      table.columnNameLc
     ),
-    idxCachedPartsColumnValue: index('idx_cached_parts_column_value').on(
-      table.columnValue
+    idxCachedPartsColumnValueLc: index('idx_cached_parts_column_value_lc').on(
+      table.columnValueLc
     ),
     idxCachedPartsKeyTag: index('idx_cached_parts_key_tag').on(table.keyTag),
     idxCachedPartsGetColumnValues: index(
@@ -60,15 +61,14 @@ export const cachedPartsTable = pgTable(
       table.projectId,
       table.connectionId,
       table.envId,
-      table.schemaName,
-      table.tableName,
-      table.columnName
+      table.schemaNameLc,
+      table.tableNameLc,
+      table.columnNameLc
     ),
     idxCachedPartsSearchValue: index('idx_cached_parts_search_value').on(
       table.projectId,
-      table.connectionId,
       table.envId,
-      table.columnValue
+      table.columnValueLc
     ),
     idxCachedPartsServerTs: index('idx_cached_parts_server_ts').on(
       table.serverTs

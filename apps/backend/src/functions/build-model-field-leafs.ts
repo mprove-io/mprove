@@ -60,6 +60,8 @@ export function buildModelFieldLeafs(item: {
         );
       }
 
+      let fieldName = field.malloyFieldName ?? field.sqlName;
+
       let row: ModelFieldLeafTab = {
         structId: model.structId,
         modelId: model.modelId,
@@ -67,27 +69,27 @@ export function buildModelFieldLeafs(item: {
         connectionId: model.connectionId,
         connectionType: model.connectionType,
         fieldId: field.id,
-        fieldName: field.malloyFieldName ?? field.sqlName,
+        fieldNameLc: fieldName?.toLowerCase(),
         fieldPath: field.malloyFieldPath ?? [],
         fieldClass: field.fieldClass,
         fieldResult: field.result,
         fieldType: field.type,
-        label: field.label,
-        description: field.description,
+        labelLc: field.label?.toLowerCase(),
+        descriptionLc: field.description?.toLowerCase(),
         hidden: field.hidden,
         required: field.required,
-        sqlName: field.sqlName,
+        sqlNameLc: field.sqlName?.toLowerCase(),
         topId: field.topId,
         topLabel: field.topLabel,
         groupId: field.groupId,
         groupLabel: field.groupLabel,
-        malloyFieldName: field.malloyFieldName,
+        malloyFieldNameLc: field.malloyFieldName?.toLowerCase(),
         malloyFieldPath: field.malloyFieldPath,
         malloyTags: field.malloyTags,
         mproveTags: field.mproveTags,
-        schemaName: malloyFieldLeafInfo?.schemaName,
-        tableName: malloyFieldLeafInfo?.tableName,
-        columnName: malloyFieldLeafInfo?.columnName,
+        schemaNameLc: malloyFieldLeafInfo?.schemaName?.toLowerCase(),
+        tableNameLc: malloyFieldLeafInfo?.tableName?.toLowerCase(),
+        columnNameLc: malloyFieldLeafInfo?.columnName?.toLowerCase(),
         field: field,
         malloyFieldDef: malloyFieldLeafInfo?.fieldDef,
         serverTs: undefined

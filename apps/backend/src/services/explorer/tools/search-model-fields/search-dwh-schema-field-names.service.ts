@@ -152,20 +152,16 @@ export class SearchDwhSchemaFieldNamesService {
     dwhMatches.forEach(dwhMatch => {
       let matchingLeafs = leafs.filter(leaf => {
         let isConnectionMatch =
-          (leaf.connectionId ?? '').toLowerCase() ===
-          dwhMatch.connectionId.toLowerCase();
+          (leaf.connectionId ?? '') === dwhMatch.connectionId;
 
         let isSchemaMatch =
-          (leaf.schemaName ?? '').toLowerCase() ===
-          dwhMatch.schemaName.toLowerCase();
+          (leaf.schemaNameLc ?? '') === dwhMatch.schemaName.toLowerCase();
 
         let isTableMatch =
-          (leaf.tableName ?? '').toLowerCase() ===
-          dwhMatch.tableName.toLowerCase();
+          (leaf.tableNameLc ?? '') === dwhMatch.tableName.toLowerCase();
 
         let isColumnMatch =
-          (leaf.columnName ?? '').toLowerCase() ===
-          dwhMatch.columnName.toLowerCase();
+          (leaf.columnNameLc ?? '') === dwhMatch.columnName.toLowerCase();
 
         return (
           isConnectionMatch && isSchemaMatch && isTableMatch && isColumnMatch

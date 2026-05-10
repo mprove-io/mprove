@@ -216,9 +216,9 @@ export class RefreshCachedColumnController {
         projectId: projectId,
         connectionId: connectionId,
         envId: cacheEnvId,
-        schemaName: schemaName,
-        tableName: tableName,
-        columnName: columnName,
+        schemaNameLc: schemaName.toLowerCase(),
+        tableNameLc: tableName.toLowerCase(),
+        columnNameLc: columnName.toLowerCase(),
         requestedByUserId: user.userId,
         status: 'running',
         errorMessage: undefined,
@@ -339,6 +339,10 @@ export class RefreshCachedColumnController {
           return;
         }
 
+        let schemaNameLc = schemaName.toLowerCase();
+        let tableNameLc = tableName.toLowerCase();
+        let columnNameLc = columnName.toLowerCase();
+
         await tx
           .delete(cachedPartsTable)
           .where(
@@ -346,9 +350,9 @@ export class RefreshCachedColumnController {
               eq(cachedPartsTable.projectId, projectId),
               eq(cachedPartsTable.connectionId, connectionId),
               eq(cachedPartsTable.envId, cacheEnvId),
-              eq(cachedPartsTable.schemaName, schemaName),
-              eq(cachedPartsTable.tableName, tableName),
-              eq(cachedPartsTable.columnName, columnName)
+              eq(cachedPartsTable.schemaNameLc, schemaNameLc),
+              eq(cachedPartsTable.tableNameLc, tableNameLc),
+              eq(cachedPartsTable.columnNameLc, columnNameLc)
             )
           );
 
@@ -368,10 +372,11 @@ export class RefreshCachedColumnController {
             projectId: projectId,
             connectionId: connectionId,
             envId: cacheEnvId,
-            schemaName: schemaName,
-            tableName: tableName,
-            columnName: columnName,
+            schemaNameLc: schemaNameLc,
+            tableNameLc: tableNameLc,
+            columnNameLc: columnNameLc,
             columnValue: row.columnValue,
+            columnValueLc: row.columnValue?.toLowerCase(),
             count: row.count,
             keyTag: undefined as string,
             serverTs: undefined as number

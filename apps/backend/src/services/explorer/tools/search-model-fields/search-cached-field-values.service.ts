@@ -69,31 +69,31 @@ matched_fields_base AS (
     model_field_leafs.model_id,
     model_field_leafs.field_id,
     cached_parts.connection_id,
-    cached_parts.schema_name,
-    cached_parts.table_name,
-    cached_parts.column_name,
+    cached_parts.schema_name_lc,
+    cached_parts.table_name_lc,
+    cached_parts.column_name_lc,
     max(cached_parts.count) AS max_count
   FROM ${cachedPartsTable} AS cached_parts
   INNER JOIN ${cachedColumnsTable} AS cached_columns
     ON cached_columns.project_id = cached_parts.project_id
     AND cached_columns.connection_id = cached_parts.connection_id
     AND cached_columns.env_id = cached_parts.env_id
-    AND cached_columns.schema_name = cached_parts.schema_name
-    AND cached_columns.table_name = cached_parts.table_name
-    AND cached_columns.column_name = cached_parts.column_name
+    AND cached_columns.schema_name_lc = cached_parts.schema_name_lc
+    AND cached_columns.table_name_lc = cached_parts.table_name_lc
+    AND cached_columns.column_name_lc = cached_parts.column_name_lc
   INNER JOIN ${modelFieldLeafsTable} AS model_field_leafs
     ON model_field_leafs.struct_id = ${structId}
     AND model_field_leafs.model_type = ${ModelTypeEnum.Malloy}
     AND model_field_leafs.field_result = ${FieldResultEnum.String}
-    AND model_field_leafs.column_name IS NOT NULL
-    AND lower(coalesce(model_field_leafs.connection_id, '')) = lower(coalesce(cached_parts.connection_id, ''))
-    AND lower(coalesce(model_field_leafs.schema_name, '')) = lower(coalesce(cached_parts.schema_name, ''))
-    AND lower(coalesce(model_field_leafs.table_name, '')) = lower(coalesce(cached_parts.table_name, ''))
-    AND lower(coalesce(model_field_leafs.column_name, '')) = lower(coalesce(cached_parts.column_name, ''))
+    AND model_field_leafs.column_name_lc IS NOT NULL
+    AND model_field_leafs.connection_id = cached_parts.connection_id
+    AND model_field_leafs.schema_name_lc = cached_parts.schema_name_lc
+    AND model_field_leafs.table_name_lc = cached_parts.table_name_lc
+    AND model_field_leafs.column_name_lc = cached_parts.column_name_lc
   INNER JOIN accessible_models
     ON accessible_models.model_id = model_field_leafs.model_id
   INNER JOIN search_terms
-    ON lower(coalesce(cached_parts.column_value, '')) LIKE search_terms.search_pattern ESCAPE '\'
+    ON cached_parts.column_value_lc LIKE search_terms.search_pattern ESCAPE '\'
   WHERE cached_parts.project_id = ${projectId}
     AND cached_parts.env_id = ${cacheEnvId}
   GROUP BY
@@ -102,9 +102,9 @@ matched_fields_base AS (
     model_field_leafs.model_id,
     model_field_leafs.field_id,
     cached_parts.connection_id,
-    cached_parts.schema_name,
-    cached_parts.table_name,
-    cached_parts.column_name
+    cached_parts.schema_name_lc,
+    cached_parts.table_name_lc,
+    cached_parts.column_name_lc
 ),
 matched_fields AS (
   SELECT
@@ -133,11 +133,11 @@ ranked_values AS (
     ON cached_parts.project_id = ${projectId}
     AND cached_parts.env_id = ${cacheEnvId}
     AND cached_parts.connection_id = matched_fields.connection_id
-    AND cached_parts.schema_name = matched_fields.schema_name
-    AND cached_parts.table_name = matched_fields.table_name
-    AND cached_parts.column_name = matched_fields.column_name
+    AND cached_parts.schema_name_lc = matched_fields.schema_name_lc
+    AND cached_parts.table_name_lc = matched_fields.table_name_lc
+    AND cached_parts.column_name_lc = matched_fields.column_name_lc
   WHERE matched_fields.field_rank <= ${SEARCH_FIELD_VALUE_MATCH_FIELDS_LIMIT}
-    AND lower(coalesce(cached_parts.column_value, '')) LIKE matched_fields.search_pattern ESCAPE '\'
+    AND cached_parts.column_value_lc LIKE matched_fields.search_pattern ESCAPE '\'
 )
 SELECT
   "searchFieldValue",

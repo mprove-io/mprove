@@ -98,7 +98,12 @@ export class HashService {
       item;
 
     let text =
-      projectId + connectionId + envId + schemaName + tableName + columnName;
+      projectId +
+      connectionId +
+      envId +
+      schemaName.toLowerCase() +
+      tableName.toLowerCase() +
+      columnName.toLowerCase();
     let hash = crypto.createHash('sha256').update(text).digest('hex');
     return hash;
   }
@@ -126,9 +131,9 @@ export class HashService {
       projectId,
       connectionId,
       envId,
-      schemaName,
-      tableName,
-      columnName,
+      schemaName.toLowerCase(),
+      tableName.toLowerCase(),
+      columnName.toLowerCase(),
       columnValue
     ]);
     let hash = crypto.createHash('sha256').update(text).digest('hex');

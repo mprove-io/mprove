@@ -83,9 +83,9 @@ export class ClearCachedColumnController {
             eq(cachedPartsTable.projectId, projectId),
             eq(cachedPartsTable.connectionId, connectionId),
             eq(cachedPartsTable.envId, cacheEnvId),
-            eq(cachedPartsTable.schemaName, schemaName),
-            eq(cachedPartsTable.tableName, tableName),
-            eq(cachedPartsTable.columnName, columnName)
+            eq(cachedPartsTable.schemaNameLc, schemaName.toLowerCase()),
+            eq(cachedPartsTable.tableNameLc, tableName.toLowerCase()),
+            eq(cachedPartsTable.columnNameLc, columnName.toLowerCase())
           )
         );
 
