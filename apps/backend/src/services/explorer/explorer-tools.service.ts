@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import type { Tool } from 'ai';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { GetModelsToolService } from './tools/get-models.tool';
+import { GetModelsToolService } from './tools/get-models/get-models.tool';
 import { ProduceChartToolService } from './tools/produce-chart/produce-chart.tool';
 import { ReadDocsToolService } from './tools/read-docs.tool';
 import { SearchModelFieldsToolService } from './tools/search-model-fields/search-model-fields.tool';

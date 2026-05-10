@@ -77,7 +77,7 @@ import { ExplorerPromptsService } from './services/explorer/explorer-prompts.ser
 import { ExplorerStreamService } from './services/explorer/explorer-stream.service';
 import { ExplorerTitleService } from './services/explorer/explorer-title.service';
 import { ExplorerToolsService } from './services/explorer/explorer-tools.service';
-import { GetModelsToolService } from './services/explorer/tools/get-models.tool';
+import { GetModelsToolService } from './services/explorer/tools/get-models/get-models.tool';
 import { ProduceChartToolService } from './services/explorer/tools/produce-chart/produce-chart.tool';
 import { ProduceExplorerChartService } from './services/explorer/tools/produce-chart/produce-explorer-chart.service';
 import { ReadDocsToolService } from './services/explorer/tools/read-docs.tool';
