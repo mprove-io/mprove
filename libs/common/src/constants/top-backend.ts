@@ -104,7 +104,7 @@ export const MCP_TOOL_VALIDATE = 'validate';
 export const MCP_TOOL_GET_SAMPLE = 'get-sample';
 export const MCP_TOOL_GET_SCHEMAS = 'get-schemas';
 export const MCP_TOOL_GET_CONNECTIONS_LIST = 'get-connections-list';
-export const MCP_TOOL_DOWNLOAD_SKILLS = 'download-skills';
+export const MCP_TOOL_GET_SKILLS = 'get-skills';
 
 export const BACKEND_E2E_RETRY_OPTIONS = {
   retries: 2,

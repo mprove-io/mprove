@@ -53,13 +53,13 @@ src/
 │       ├── commit/       # Commit changes
 │       ├── create-branch/
 │       ├── delete-branch/
-│       ├── download-skills/
 │       ├── get-branches/
 │       ├── get-connections-list/
 │       ├── get-model/
 │       ├── get-query-info/
 │       ├── get-sample/
 │       ├── get-schemas/
+│       ├── get-skills/
 │       ├── get-state/
 │       ├── merge/        # Merge branches
 │       ├── pull/         # Pull from remote

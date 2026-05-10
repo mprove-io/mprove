@@ -4,21 +4,18 @@ import fse from 'fs-extra';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { SkillItem } from '#common/zod/backend/skill-item';
-import type { ToBackendDownloadSkillsResponse } from '#common/zod/to-backend/skills/to-backend-download-skills';
+import type { ToBackendGetSkillsResponse } from '#common/zod/to-backend/skills/to-backend-get-skills';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
 
-export class DownloadSkillsCommand extends CustomCommand {
-  static paths = [['download-skills']];
+export class GetSkillsCommand extends CustomCommand {
+  static paths = [['get-skills']];
 
   static usage = Command.Usage({
-    description: 'Download mprove skills to a local directory',
+    description: 'Download Mprove skills to a local directory',
     examples: [
-      [
-        'Download skills to a directory',
-        'mprove download-skills --output ./skills'
-      ]
+      ['Download skills to a directory', 'mprove get-skills --output ./skills']
     ]
   });
 
@@ -38,9 +35,9 @@ export class DownloadSkillsCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let downloadSkillsResp = await mreq<ToBackendDownloadSkillsResponse>({
+    let getSkillsResp = await mreq<ToBackendGetSkillsResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDownloadSkills,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSkills,
       payload: {},
       host: this.context.config.mproveCliHost
     });
@@ -49,7 +46,7 @@ export class DownloadSkillsCommand extends CustomCommand {
 
     fse.ensureDirSync(outputDir);
 
-    downloadSkillsResp.payload.skillItems.forEach((skill: SkillItem) => {
+    getSkillsResp.payload.skillItems.forEach((skill: SkillItem) => {
       let skillDir = path.join(outputDir, skill.name);
       fse.ensureDirSync(skillDir);
 

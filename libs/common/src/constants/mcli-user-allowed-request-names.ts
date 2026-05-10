@@ -21,5 +21,5 @@ export const MCLI_USER_ALLOWED_REQUEST_NAMES: ToBackendRequestInfoNameEnum[] = [
   ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit, // revert
   ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote, // revert
   // other
-  ToBackendRequestInfoNameEnum.ToBackendDownloadSkills // download-skills
+  ToBackendRequestInfoNameEnum.ToBackendGetSkills // get-skills
 ];

@@ -119,7 +119,7 @@ import { PauseEditorSessionController } from './controllers/sessions/pause-edito
 import { SendMessageToEditorSessionController } from './controllers/sessions/send-message-to-editor-session/send-message-to-editor-session.controller';
 import { SendMessageToExplorerSessionController } from './controllers/sessions/send-message-to-explorer-session/send-message-to-explorer-session.controller';
 import { SetSessionTitleController } from './controllers/sessions/set-session-title/set-session-title.controller';
-import { DownloadSkillsController } from './controllers/skills/download-skills/download-skills.controller';
+import { GetSkillsController } from './controllers/skills/get-skills/get-skills.controller';
 import { SpecialRebuildStructsController } from './controllers/special/special-rebuild-structs/special-rebuild-structs.controller';
 import { GetStateController } from './controllers/state/get-state/get-state.controller';
 import { GetStructController } from './controllers/structs/get-struct/get-struct.controller';
@@ -326,7 +326,7 @@ export const appControllers = [
   TelemetryMetricsController,
   TelemetryTracesController,
 
-  DownloadSkillsController,
+  GetSkillsController,
 
   CheckController,
   CheckSignUpController

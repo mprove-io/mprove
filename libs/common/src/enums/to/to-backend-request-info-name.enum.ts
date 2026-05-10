@@ -183,5 +183,5 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendProduceExplorerChart = 'api/ToBackendProduceExplorerChart',
   ToBackendGetExplorerChartTab = 'api/ToBackendGetExplorerChartTab',
   //
-  ToBackendDownloadSkills = 'api/ToBackendDownloadSkills'
+  ToBackendGetSkills = 'api/ToBackendGetSkills'
 }
