@@ -14,7 +14,7 @@ import {
   type McpToolRunInput,
   zMcpToolRunInput,
   zMcpToolRunOutput
-} from '#common/zod/to-backend/run/mcp-tool-run';
+} from '#common/zod/to-backend/mcp-tools/mcp-tool-run';
 import type { ToBackendRunResponsePayload } from '#common/zod/to-backend/run/to-backend-run';
 
 @Injectable()

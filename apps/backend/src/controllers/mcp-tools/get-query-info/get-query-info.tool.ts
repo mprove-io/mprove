@@ -14,7 +14,7 @@ import {
   type McpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoOutput
-} from '#common/zod/to-backend/query-info/mcp-tool-get-query-info';
+} from '#common/zod/to-backend/mcp-tools/mcp-tool-get-query-info';
 import type { ToBackendGetQueryInfoResponsePayload } from '#common/zod/to-backend/query-info/to-backend-get-query-info';
 
 @Injectable()

@@ -3,14 +3,12 @@ import type { Tool } from 'ai';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { GetModelsToolService } from './tools/get-models/get-models.tool';
 import { ProduceChartToolService } from './tools/produce-chart/produce-chart.tool';
-import { ReadDocsToolService } from './tools/read-docs.tool';
 import { SearchModelFieldsToolService } from './tools/search-model-fields/search-model-fields.tool';
 
 @Injectable()
 export class ExplorerToolsService {
   constructor(
     private getModelsToolService: GetModelsToolService,
-    private readDocsToolService: ReadDocsToolService,
     private searchModelFieldsToolService: SearchModelFieldsToolService,
     private produceChartToolService: ProduceChartToolService
   ) {}
@@ -27,7 +25,6 @@ export class ExplorerToolsService {
     let { user, sessionId, projectId, repoId, branchId, envId, traceId } = item;
 
     return {
-      // read_docs: this.readDocsToolService.makeTool(),
       search_model_fields: this.searchModelFieldsToolService.makeTool({
         projectId: projectId,
         repoId: repoId,

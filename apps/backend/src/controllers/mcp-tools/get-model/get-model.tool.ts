@@ -13,7 +13,7 @@ import {
   type McpToolGetModelInput,
   zMcpToolGetModelInput,
   zMcpToolGetModelOutput
-} from '#common/zod/to-backend/models/mcp-tool-get-model';
+} from '#common/zod/to-backend/mcp-tools/mcp-tool-get-model';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload';
 
 @Injectable()

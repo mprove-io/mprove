@@ -15,7 +15,10 @@ import { GetModelTool } from './controllers/mcp-tools/get-model/get-model.tool';
 import { GetQueryInfoTool } from './controllers/mcp-tools/get-query-info/get-query-info.tool';
 import { GetSkillsTool } from './controllers/mcp-tools/get-skills/get-skills.tool';
 import { GetStateTool } from './controllers/mcp-tools/get-state/get-state.tool';
+import { ListDocsTool } from './controllers/mcp-tools/list-docs/list-docs.tool';
+import { ReadDocsTool } from './controllers/mcp-tools/read-docs/read-docs.tool';
 import { RunTool } from './controllers/mcp-tools/run/run.tool';
+import { SearchDocsTool } from './controllers/mcp-tools/search-docs/search-docs.tool';
 import { ValidateFilesTool } from './controllers/mcp-tools/validate-files/validate-files.tool';
 import { GetModelService } from './controllers/models/get-model/get-model.service';
 import { RunQueriesService } from './controllers/queries/run-queries/run-queries.service';
@@ -53,6 +56,7 @@ import { SessionsService } from './services/db/sessions.service';
 import { StructsService } from './services/db/structs.service';
 import { UsersService } from './services/db/users.service';
 import { DocService } from './services/doc.service';
+import { DocsService } from './services/docs.service';
 import { BigQueryService } from './services/dwh/bigquery.service';
 import { DatabricksService } from './services/dwh/databricks.service';
 import { DuckDbService } from './services/dwh/duckdb.service';
@@ -69,7 +73,6 @@ import { EditorSandboxService } from './services/editor/editor-sandbox.service';
 import { EditorStreamService } from './services/editor/editor-stream.service';
 import { EmailService } from './services/email.service';
 import { ExplorerChartRebuildService } from './services/explorer/explorer-chart-rebuild.service';
-import { ExplorerDocsService } from './services/explorer/explorer-docs.service';
 import { ExplorerEventsMakerService } from './services/explorer/explorer-events-maker.service';
 import { ExplorerModelPartsService } from './services/explorer/explorer-model-parts.service';
 import { ExplorerModelsService } from './services/explorer/explorer-models.service';
@@ -80,7 +83,6 @@ import { ExplorerToolsService } from './services/explorer/explorer-tools.service
 import { GetModelsToolService } from './services/explorer/tools/get-models/get-models.tool';
 import { ProduceChartToolService } from './services/explorer/tools/produce-chart/produce-chart.tool';
 import { ProduceExplorerChartService } from './services/explorer/tools/produce-chart/produce-explorer-chart.service';
-import { ReadDocsToolService } from './services/explorer/tools/read-docs.tool';
 import { SearchCachedFieldValuesService } from './services/explorer/tools/search-model-fields/search-cached-field-values.service';
 import { SearchDwhSchemaFieldNamesService } from './services/explorer/tools/search-model-fields/search-dwh-schema-field-names.service';
 import { SearchModelFieldLeafNamesService } from './services/explorer/tools/search-model-fields/search-model-field-leaf-names.service';
@@ -177,7 +179,6 @@ export const appProviders = [
   ExplorerPromptsService,
   ExplorerTitleService,
   GetModelsToolService,
-  ReadDocsToolService,
   SearchCachedFieldValuesService,
   SearchModelFieldLeafNamesService,
   SearchDwhSchemaFieldNamesService,
@@ -186,7 +187,7 @@ export const appProviders = [
   ExplorerToolsService,
   ExplorerModelsService,
   ExplorerChartRebuildService,
-  ExplorerDocsService,
+  DocsService,
   EditorConnectionsService,
   EditorModelsService,
   ExplorerStreamService,
@@ -221,6 +222,9 @@ export const appProviders = [
   GetStateTool,
   GetSkillsService,
   GetSkillsTool,
+  ReadDocsTool,
+  ListDocsTool,
+  SearchDocsTool,
   {
     provide: TasksService,
     useFactory: (

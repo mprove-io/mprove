@@ -10,7 +10,7 @@ import {
   type McpToolGetSkillsInput,
   zMcpToolGetSkillsInput,
   zMcpToolGetSkillsOutput
-} from '#common/zod/to-backend/skills/mcp-tool-get-skills';
+} from '#common/zod/to-backend/mcp-tools/mcp-tool-get-skills';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
