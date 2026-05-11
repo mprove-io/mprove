@@ -9,7 +9,6 @@ export const toc: readonly string[] = [
   'builder/openai-codex-setup.mdx',
   'builder/skills.mdx',
   'connections.mdx',
-  'docs-for-ai.mdx',
   'dwh-schema.mdx',
   'environments.mdx',
   'quickstart.mdx',

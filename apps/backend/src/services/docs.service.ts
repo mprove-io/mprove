@@ -42,16 +42,16 @@ export class DocsService {
     wantedPaths.forEach(wantedPath => {
       let normalized = wantedPath.replace(/\\/g, '/').replace(/^\/+/, '');
 
-      let content = tocToContent[normalized];
+      let entry = tocToContent.find(item => item.filePath === normalized);
 
-      if (content === undefined) {
+      if (entry === undefined) {
         missingPaths.push(wantedPath);
         return;
       }
 
       docs.push({
         filePath: normalized,
-        content: content
+        content: entry.content
       });
     });
 
@@ -99,8 +99,10 @@ export class DocsService {
 
     let searchDocsResults: { filePath: string; snippets: string[] }[] = [];
 
-    let entries = Object.entries(tocToContent);
-    entries.forEach(([filePath, content]) => {
+    tocToContent.forEach(entry => {
+      let filePath = entry.filePath;
+      let content = entry.content;
+
       if (searchDocsResults.length >= MAX_FILES) {
         return;
       }

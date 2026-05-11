@@ -2,7 +2,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 import { defaultBuildLogger, Template } from 'e2b';
-import { SKILLS_DATA } from '../libs/common/src/constants/skills-data';
+import { SKILLS_DATA } from '../apps/backend/src/mprove-docs-cache/skills';
 
 let require = createRequire(import.meta.url);
 let config = require('./e2b-template-config.json');

@@ -27,11 +27,11 @@ export function getExplorerSessionSystemPrompt(item?: {
   explorerModelParts: ExplorerModelPart[];
 }): string {
   let includedDocs = ALWAYS_INCLUDED_DOC_PATHS.map(path => {
-    let content = tocToContent[path];
-    if (content === undefined) {
+    let entry = tocToContent.find(item => item.filePath === path);
+    if (entry === undefined) {
       throw new Error(`Explorer system prompt: missing bundled doc "${path}"`);
     }
-    return `### ${path}\n\n${content}`;
+    return `### ${path}\n\n${entry.content}`;
   }).join('\n\n');
 
   let sessionContext = item

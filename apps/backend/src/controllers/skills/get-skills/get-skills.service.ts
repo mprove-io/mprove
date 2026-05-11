@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SKILLS_DATA } from '#common/constants/skills-data';
+import { SKILLS_DATA } from '#backend/mprove-docs-cache/skills';
 import type { ToBackendGetSkillsResponsePayload } from '#common/zod/to-backend/skills/to-backend-get-skills';
 
 @Injectable()
