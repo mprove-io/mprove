@@ -19,8 +19,8 @@ export class ListDocsTool {
 
   @Tool({
     name: MCP_TOOL_LIST_DOCS,
-    description: `List available Mprove documentation filePaths sourced from https://docs.mprove.io/content/docs/docs-for-ai.mdx.
-FilePaths can be used in read-docs tool to get page content.`,
+    description: `List available Mprove documentation pageIds sourced from https://docs.mprove.io/content/docs/docs-for-ai.mdx.
+PageIds can be used in read-docs tool to get page content.`,
     parameters: zMcpToolListDocsInput,
     outputSchema: zodDeepNullish({ schema: zMcpToolListDocsOutput })
   })

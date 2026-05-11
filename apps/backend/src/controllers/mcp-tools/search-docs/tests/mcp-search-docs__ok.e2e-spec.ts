@@ -107,7 +107,7 @@ test('1', async t => {
     assert.ok(Array.isArray(structuredContent.searchDocsResults));
     assert.ok(structuredContent.searchDocsResults.length > 0);
     assert.equal(
-      typeof structuredContent.searchDocsResults[0].filePath,
+      typeof structuredContent.searchDocsResults[0].pageId,
       'string'
     );
     assert.ok(Array.isArray(structuredContent.searchDocsResults[0].snippets));

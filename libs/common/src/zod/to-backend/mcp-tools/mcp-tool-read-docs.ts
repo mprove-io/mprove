@@ -2,11 +2,11 @@ import { z } from 'zod';
 
 export let zMcpToolReadDocsInput = z
   .object({
-    filePaths: z
+    pageIds: z
       .array(z.string())
       .min(1)
       .describe(
-        'One or more MDX file paths. Use list-docs to see available files.'
+        'One or more documentation page ids. Use list-docs to see available ids.'
       )
   })
   .meta({ id: 'McpToolReadDocsInput' });
@@ -17,7 +17,7 @@ export let zMcpToolReadDocsOutput = z
       ok: z.literal(true),
       readDocsResults: z.array(
         z.object({
-          filePath: z.string(),
+          pageId: z.string(),
           content: z.string()
         })
       )

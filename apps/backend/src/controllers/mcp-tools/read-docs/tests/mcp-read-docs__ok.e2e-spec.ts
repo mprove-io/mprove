@@ -79,7 +79,7 @@ test('1', async t => {
         params: {
           name: MCP_TOOL_READ_DOCS,
           arguments: {
-            filePaths: [toc[0]]
+            pageIds: [toc[0]]
           }
         },
         apiKey: generateResp.payload.apiKey
@@ -107,7 +107,7 @@ test('1', async t => {
     assert.equal(structuredContent.ok, true);
     assert.ok(Array.isArray(structuredContent.readDocsResults));
     assert.equal(structuredContent.readDocsResults.length, 1);
-    assert.equal(structuredContent.readDocsResults[0].filePath, toc[0]);
+    assert.equal(structuredContent.readDocsResults[0].pageId, toc[0]);
     assert.equal(typeof structuredContent.readDocsResults[0].content, 'string');
     assert.ok(structuredContent.readDocsResults[0].content.length > 0);
 

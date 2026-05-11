@@ -102,9 +102,9 @@ test('1', async t => {
 
     let structuredContent = response.body.result.structuredContent;
     assert.equal(structuredContent.ok, true);
-    assert.ok(Array.isArray(structuredContent.filePaths));
-    assert.ok(structuredContent.filePaths.length > 0);
-    assert.equal(typeof structuredContent.filePaths[0], 'string');
+    assert.ok(Array.isArray(structuredContent.pageIds));
+    assert.ok(structuredContent.pageIds.length > 0);
+    assert.equal(typeof structuredContent.pageIds[0], 'string');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

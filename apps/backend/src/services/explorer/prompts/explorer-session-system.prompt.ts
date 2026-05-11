@@ -10,12 +10,12 @@ import {
 } from '#backend/services/explorer/tools/search-model-fields/search-model-field-leaf-names.service';
 import type { ExplorerModelPart } from '../types/explorer-model-part';
 
-const ALWAYS_INCLUDED_DOC_PATHS = [
-  'reference/chart.mdx',
-  'reference/dashboard.mdx',
-  'reference/report.mdx',
-  'reference/parameters.mdx',
-  'reference/filter-conditions.mdx'
+const ALWAYS_INCLUDED_DOC_PAGE_IDS = [
+  'reference/chart',
+  'reference/dashboard',
+  'reference/report',
+  'reference/parameters',
+  'reference/filter-conditions'
 ];
 
 export function getExplorerSessionSystemPrompt(item?: {
@@ -26,12 +26,14 @@ export function getExplorerSessionSystemPrompt(item?: {
   envId: string;
   explorerModelParts: ExplorerModelPart[];
 }): string {
-  let includedDocs = ALWAYS_INCLUDED_DOC_PATHS.map(path => {
-    let entry = tocToContent.find(item => item.filePath === path);
+  let includedDocs = ALWAYS_INCLUDED_DOC_PAGE_IDS.map(pageId => {
+    let entry = tocToContent.find(item => item.pageId === pageId);
     if (entry === undefined) {
-      throw new Error(`Explorer system prompt: missing bundled doc "${path}"`);
+      throw new Error(
+        `Explorer system prompt: missing bundled doc "${pageId}"`
+      );
     }
-    return `### ${path}\n\n${entry.content}`;
+    return `### ${pageId}\n\n${entry.content}`;
   }).join('\n\n');
 
   let sessionContext = item

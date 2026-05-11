@@ -17,7 +17,7 @@ export let zMcpToolSearchDocsOutput = z
       ok: z.literal(true),
       searchDocsResults: z.array(
         z.object({
-          filePath: z.string(),
+          pageId: z.string(),
           snippets: z.array(z.string())
         })
       )

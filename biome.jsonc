@@ -13,6 +13,7 @@
       "!.turbo/**",
       "!**/.turbo/**",
       "!apps/backend/src/drizzle/postgres/migrations/**",
+      "!apps/backend/src/mprove-docs-cache/**",
       "!**/dist/**",
       "!mprove_data/**",
       "!node_modules/**",

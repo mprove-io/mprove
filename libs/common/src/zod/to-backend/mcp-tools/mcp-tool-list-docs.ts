@@ -7,7 +7,7 @@ export let zMcpToolListDocsInput = z
 export let zMcpToolListDocsOutput = z
   .object({
     ok: z.literal(true),
-    filePaths: z.array(z.string())
+    pageIds: z.array(z.string())
   })
   .meta({ id: 'McpToolListDocsOutput' });
 

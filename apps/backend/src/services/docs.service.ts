@@ -12,55 +12,53 @@ const MAX_FILES = 50;
 @Injectable()
 export class DocsService {
   listDocs(): McpToolListDocsOutput {
-    return { ok: true, filePaths: [...toc] };
+    return { ok: true, pageIds: [...toc] };
   }
 
-  readDocs(item: { filePaths: string[] }): McpToolReadDocsOutput {
-    let { filePaths } = item;
+  readDocs(item: { pageIds: string[] }): McpToolReadDocsOutput {
+    let { pageIds } = item;
 
-    let wantedPaths: string[] = [];
+    let wantedPageIds: string[] = [];
 
-    filePaths.forEach(path => {
-      let wantedPath = path.trim();
-      if (wantedPath) {
-        wantedPaths.push(wantedPath);
+    pageIds.forEach(pageId => {
+      let wantedPageId = pageId.trim();
+      if (wantedPageId) {
+        wantedPageIds.push(wantedPageId);
       }
     });
 
-    let hasWantedPaths = wantedPaths.length > 0;
-    if (!hasWantedPaths) {
+    let hasWantedPageIds = wantedPageIds.length > 0;
+    if (!hasWantedPageIds) {
       return {
         ok: false,
         error:
-          'Provide filePaths to read documentation content. Call list-docs to list available files.'
+          'Provide pageIds to read documentation content. Call list-docs to list available pageIds.'
       };
     }
 
-    let docs: { filePath: string; content: string }[] = [];
-    let missingPaths: string[] = [];
+    let docs: { pageId: string; content: string }[] = [];
+    let missingPageIds: string[] = [];
 
-    wantedPaths.forEach(wantedPath => {
-      let normalized = wantedPath.replace(/\\/g, '/').replace(/^\/+/, '');
-
-      let entry = tocToContent.find(item => item.filePath === normalized);
+    wantedPageIds.forEach(wantedPageId => {
+      let entry = tocToContent.find(item => item.pageId === wantedPageId);
 
       if (entry === undefined) {
-        missingPaths.push(wantedPath);
+        missingPageIds.push(wantedPageId);
         return;
       }
 
       docs.push({
-        filePath: normalized,
+        pageId: wantedPageId,
         content: entry.content
       });
     });
 
-    let hasMissingPaths = missingPaths.length > 0;
-    if (hasMissingPaths) {
-      let missingList = missingPaths.map(path => `"${path}"`).join(', ');
+    let hasMissingPageIds = missingPageIds.length > 0;
+    if (hasMissingPageIds) {
+      let missingList = missingPageIds.map(pageId => `"${pageId}"`).join(', ');
       return {
         ok: false,
-        error: `File(s) ${missingList} not found. Call list-docs to list available files.`
+        error: `Page id(s) ${missingList} not found. Call list-docs to list available pageIds.`
       };
     }
 
@@ -97,10 +95,10 @@ export class DocsService {
       };
     }
 
-    let searchDocsResults: { filePath: string; snippets: string[] }[] = [];
+    let searchDocsResults: { pageId: string; snippets: string[] }[] = [];
 
     tocToContent.forEach(entry => {
-      let filePath = entry.filePath;
+      let pageId = entry.pageId;
       let content = entry.content;
 
       if (searchDocsResults.length >= MAX_FILES) {
@@ -134,7 +132,7 @@ export class DocsService {
       });
 
       searchDocsResults.push({
-        filePath: filePath,
+        pageId: pageId,
         snippets: snippets
       });
     });

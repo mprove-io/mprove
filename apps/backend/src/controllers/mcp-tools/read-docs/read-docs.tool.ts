@@ -19,8 +19,8 @@ export class ReadDocsTool {
 
   @Tool({
     name: MCP_TOOL_READ_DOCS,
-    description: `Read Mprove documentation files sourced from https://docs.mprove.io/content/docs/docs-for-ai.mdx. 
-Call with filePaths to read one or more files in one tool call.`,
+    description: `Read Mprove documentation pages sourced from https://docs.mprove.io/content/docs/docs-for-ai.mdx.
+Call with pageIds to read one or more pages in one tool call.`,
     parameters: zMcpToolReadDocsInput,
     outputSchema: zodDeepNullish({ schema: zMcpToolReadDocsOutput })
   })
@@ -30,7 +30,7 @@ Call with filePaths to read one or more files in one tool call.`,
     request: Request
   ) {
     return this.docsService.readDocs({
-      filePaths: item.filePaths
+      pageIds: item.pageIds
     });
   }
 }
