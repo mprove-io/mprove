@@ -5,6 +5,7 @@ import type { Request } from 'express';
 import { GetStateService } from '#backend/controllers/state/get-state/get-state.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
+import { MCP_TOOL_GET_STATE_DESCRIPTION } from '#backend/services/mcp-tools-registry';
 import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_STATE } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
@@ -26,8 +27,7 @@ export class GetStateTool {
 
   @Tool({
     name: MCP_TOOL_GET_STATE,
-    description:
-      'Get project state: models, dashboards, charts, reports, metrics, validation errors, and repo info',
+    description: MCP_TOOL_GET_STATE_DESCRIPTION,
     parameters: zMcpToolGetStateInput,
     outputSchema: zodDeepNullish({ schema: zMcpToolGetStateOutput })
   })

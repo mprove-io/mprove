@@ -5,6 +5,7 @@ import type { Request } from 'express';
 import { GetConnectionsListService } from '#backend/controllers/connections/get-connections-list/get-connections-list.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
+import { MCP_TOOL_GET_CONNECTIONS_LIST_DESCRIPTION } from '#backend/services/mcp-tools-registry';
 import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_CONNECTIONS_LIST } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
@@ -26,8 +27,7 @@ export class GetConnectionsListTool {
 
   @Tool({
     name: MCP_TOOL_GET_CONNECTIONS_LIST,
-    description:
-      'Get connection info (type, API endpoints, header keys, OAuth scopes) for project connections',
+    description: MCP_TOOL_GET_CONNECTIONS_LIST_DESCRIPTION,
     parameters: zMcpToolGetConnectionsListInput,
     outputSchema: zodDeepNullish({ schema: zMcpToolGetConnectionsListOutput })
   })

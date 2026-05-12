@@ -5,6 +5,7 @@ import type { Request } from 'express';
 import { GetModelService } from '#backend/controllers/models/get-model/get-model.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
+import { MCP_TOOL_GET_MODEL_DESCRIPTION } from '#backend/services/mcp-tools-registry';
 import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_MODEL } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
@@ -26,8 +27,7 @@ export class GetModelTool {
 
   @Tool({
     name: MCP_TOOL_GET_MODEL,
-    description:
-      'Get a model definition including its fields, dimensions, measures, and access info',
+    description: MCP_TOOL_GET_MODEL_DESCRIPTION,
     parameters: zMcpToolGetModelInput,
     outputSchema: zodDeepNullish({ schema: zMcpToolGetModelOutput })
   })

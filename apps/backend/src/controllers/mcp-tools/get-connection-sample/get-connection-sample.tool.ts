@@ -5,6 +5,7 @@ import type { Request } from 'express';
 import { GetConnectionSampleService } from '#backend/controllers/connections/get-connection-sample/get-connection-sample.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
+import { MCP_TOOL_GET_SAMPLE_DESCRIPTION } from '#backend/services/mcp-tools-registry';
 import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_SAMPLE } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
@@ -26,8 +27,7 @@ export class GetConnectionSampleTool {
 
   @Tool({
     name: MCP_TOOL_GET_SAMPLE,
-    description:
-      'Fetch sample data rows from a database table or column for a project connection',
+    description: MCP_TOOL_GET_SAMPLE_DESCRIPTION,
     parameters: zMcpToolGetSampleInput,
     outputSchema: zodDeepNullish({ schema: zMcpToolGetSampleOutput })
   })

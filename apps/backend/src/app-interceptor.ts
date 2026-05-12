@@ -46,6 +46,7 @@ export class AppInterceptor implements NestInterceptor {
 
     if (
       request?.originalUrl?.startsWith('/api/mcp') ||
+      request?.originalUrl?.startsWith('/api/full-mcp.json') ||
       request?.originalUrl?.startsWith('/' + SSE_SESSION_EVENTS_PATH) ||
       [
         ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs,

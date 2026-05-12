@@ -5,6 +5,7 @@ import type { Request } from 'express';
 import { GetConnectionSchemasService } from '#backend/controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
+import { MCP_TOOL_GET_SCHEMAS_DESCRIPTION } from '#backend/services/mcp-tools-registry';
 import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_GET_SCHEMAS } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
@@ -26,8 +27,7 @@ export class GetConnectionSchemasTool {
 
   @Tool({
     name: MCP_TOOL_GET_SCHEMAS,
-    description:
-      'Fetch database schemas (tables, columns, relationships, indexes) for project SQL connections',
+    description: MCP_TOOL_GET_SCHEMAS_DESCRIPTION,
     parameters: zMcpToolGetSchemasInput,
     outputSchema: zodDeepNullish({ schema: zMcpToolGetSchemasOutput })
   })

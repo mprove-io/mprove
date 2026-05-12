@@ -4,6 +4,7 @@ import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { DocsService } from '#backend/services/docs.service';
+import { MCP_TOOL_LIST_DOCS_DESCRIPTION } from '#backend/services/mcp-tools-registry';
 import { MCP_TOOL_LIST_DOCS } from '#common/constants/top-backend';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
 import {
@@ -19,8 +20,7 @@ export class ListDocsTool {
 
   @Tool({
     name: MCP_TOOL_LIST_DOCS,
-    description: `List available Mprove documentation pageIds sourced from https://docs.mprove.io/content/docs/docs-for-ai.mdx.
-PageIds can be used in read-docs tool to get page content.`,
+    description: MCP_TOOL_LIST_DOCS_DESCRIPTION,
     parameters: zMcpToolListDocsInput,
     outputSchema: zodDeepNullish({ schema: zMcpToolListDocsOutput })
   })

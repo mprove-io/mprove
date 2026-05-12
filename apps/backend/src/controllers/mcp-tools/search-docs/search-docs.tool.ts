@@ -4,6 +4,7 @@ import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { DocsService } from '#backend/services/docs.service';
+import { MCP_TOOL_SEARCH_DOCS_DESCRIPTION } from '#backend/services/mcp-tools-registry';
 import { MCP_TOOL_SEARCH_DOCS } from '#common/constants/top-backend';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
 import {
@@ -19,9 +20,7 @@ export class SearchDocsTool {
 
   @Tool({
     name: MCP_TOOL_SEARCH_DOCS,
-    description: `Search Mprove documentation pages sourced from https://docs.mprove.io/content/docs/docs-for-ai.mdx.
-Whitespace-separated query terms are AND-matched (case-insensitive) across cached docs content;
-returns matching page ids with snippet previews.`,
+    description: MCP_TOOL_SEARCH_DOCS_DESCRIPTION,
     parameters: zMcpToolSearchDocsInput,
     outputSchema: zodDeepNullish({ schema: zMcpToolSearchDocsOutput })
   })

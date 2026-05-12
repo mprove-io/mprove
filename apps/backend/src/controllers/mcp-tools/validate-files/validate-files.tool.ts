@@ -7,6 +7,7 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import { ValidateFilesService } from '#backend/controllers/files/validate-files/validate-files.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
+import { MCP_TOOL_VALIDATE_DESCRIPTION } from '#backend/services/mcp-tools-registry';
 import { ToolService } from '#backend/services/tool.service';
 import { MCP_TOOL_VALIDATE } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
@@ -30,8 +31,7 @@ export class ValidateFilesTool {
 
   @Tool({
     name: MCP_TOOL_VALIDATE,
-    description:
-      'Validate (rebuild) Mprove files for a project branch and environment',
+    description: MCP_TOOL_VALIDATE_DESCRIPTION,
     parameters: zMcpToolValidateFilesInput,
     outputSchema: zodDeepNullish({ schema: zMcpToolValidateFilesOutput })
   })

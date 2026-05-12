@@ -57,6 +57,7 @@ import { DeleteFolderController } from './controllers/folders/delete-folder/dele
 import { DuplicateMconfigAndQueryController } from './controllers/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query.controller';
 import { GroupMetricByDimensionController } from './controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.controller';
 import { SuggestDimensionValuesController } from './controllers/mconfigs/suggest-dimension-values/suggest-dimension-values.controller';
+import { FullMcpJsonController } from './controllers/mcp-tools-full-json/full-mcp-json.controller';
 import { CreateMemberController } from './controllers/members/create-member/create-member.controller';
 import { DeleteMemberController } from './controllers/members/delete-member/delete-member.controller';
 import { EditMemberController } from './controllers/members/edit-member/edit-member.controller';
@@ -327,6 +328,8 @@ export const appControllers = [
   TelemetryTracesController,
 
   GetSkillsController,
+
+  FullMcpJsonController,
 
   CheckController,
   CheckSignUpController
