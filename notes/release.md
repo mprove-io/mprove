@@ -1,3 +1,15 @@
+# docs and backend
+
+// backend 3000
+pnpm start
+
+// docs 3003
+pnpm fetch:backend
+pnpm dev
+
+// backend
+pnpm fetch:docs
+
 # tests and e2e
 
 pnpm inst

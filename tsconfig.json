@@ -14,8 +14,8 @@
   },
   "include": [
     "apps/*/src/**/*.ts",
-    "apps/backend/build-docs.ts",
     "apps/backend/build-temp-mcp-json.ts",
+    "apps/backend/fetch-docs.ts",
     "mcli/src/**/*.ts",
     "libs/*/src/**/*.ts",
     "scripts/**/*.ts"

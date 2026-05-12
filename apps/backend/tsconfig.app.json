@@ -12,6 +12,6 @@
       "#node-common/*": ["../../libs/node-common/src/*"]
     }
   },
-  "include": ["src/**/*.ts", "build-docs.ts", "build-temp-mcp-json.ts"],
+  "include": ["src/**/*.ts", "build-temp-mcp-json.ts", "fetch-docs.ts"],
   "exclude": ["node_modules", "dist"]
 }
