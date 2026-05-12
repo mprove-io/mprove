@@ -7,11 +7,9 @@ import { prepareSeed, prepareTest } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { sendToMcp } from '#backend/functions/send-to-mcp';
 import { PrepTest } from '#backend/interfaces/prep-test';
+import { MCP_TOOL_GET_SCHEMAS } from '#common/constants/mcp-tools-registry';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
-import {
-  BACKEND_E2E_RETRY_OPTIONS,
-  MCP_TOOL_GET_SCHEMAS
-} from '#common/constants/top-backend';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';

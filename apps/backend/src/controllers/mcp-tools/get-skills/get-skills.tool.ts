@@ -4,8 +4,10 @@ import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetSkillsService } from '#backend/controllers/skills/get-skills/get-skills.service';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { MCP_TOOL_GET_SKILLS_DESCRIPTION } from '#backend/services/mcp-tools-registry';
-import { MCP_TOOL_GET_SKILLS } from '#common/constants/top-backend';
+import {
+  MCP_TOOL_GET_SKILLS,
+  MCP_TOOL_GET_SKILLS_DESCRIPTION
+} from '#common/constants/mcp-tools-registry';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
 import {
   type McpToolGetSkillsInput,

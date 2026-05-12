@@ -5,11 +5,9 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToMcp } from '#backend/functions/send-to-mcp';
 import { Prep } from '#backend/interfaces/prep';
+import { MCP_TOOL_GET_STATE } from '#common/constants/mcp-tools-registry';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
-import {
-  BACKEND_E2E_RETRY_OPTIONS,
-  MCP_TOOL_GET_STATE
-} from '#common/constants/top-backend';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';

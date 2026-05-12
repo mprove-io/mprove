@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { mcpToolsRegistry } from '#backend/services/mcp-tools-registry';
+import { mcpToolsRegistry } from '#common/constants/mcp-tools-registry';
 
 export interface FullMcpJsonTool {
   name: string;

@@ -6,10 +6,8 @@ import { prepareSeed, prepareTest } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { sendToMcp } from '#backend/functions/send-to-mcp';
 import { PrepTest } from '#backend/interfaces/prep-test';
-import {
-  BACKEND_E2E_RETRY_OPTIONS,
-  MCP_TOOL_GET_SKILLS
-} from '#common/constants/top-backend';
+import { MCP_TOOL_GET_SKILLS } from '#common/constants/mcp-tools-registry';
+import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';

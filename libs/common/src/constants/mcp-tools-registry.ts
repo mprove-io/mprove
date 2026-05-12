@@ -1,19 +1,5 @@
 import type { z } from 'zod';
 import {
-  MCP_TOOL_GET_CONNECTIONS_LIST,
-  MCP_TOOL_GET_MODEL,
-  MCP_TOOL_GET_QUERY_INFO,
-  MCP_TOOL_GET_SAMPLE,
-  MCP_TOOL_GET_SCHEMAS,
-  MCP_TOOL_GET_SKILLS,
-  MCP_TOOL_GET_STATE,
-  MCP_TOOL_LIST_DOCS,
-  MCP_TOOL_READ_DOCS,
-  MCP_TOOL_RUN,
-  MCP_TOOL_SEARCH_DOCS,
-  MCP_TOOL_VALIDATE
-} from '#common/constants/top-backend';
-import {
   zMcpToolGetConnectionsListInput,
   zMcpToolGetConnectionsListOutput
 } from '#common/zod/to-backend/mcp-tools/mcp-tool-get-connections-list';
@@ -61,6 +47,19 @@ import {
   zMcpToolValidateFilesInput,
   zMcpToolValidateFilesOutput
 } from '#common/zod/to-backend/mcp-tools/mcp-tool-validate-files';
+
+export const MCP_TOOL_RUN = 'run';
+export const MCP_TOOL_GET_STATE = 'get-state';
+export const MCP_TOOL_GET_MODEL = 'get-model';
+export const MCP_TOOL_GET_QUERY_INFO = 'get-query-info';
+export const MCP_TOOL_VALIDATE = 'validate';
+export const MCP_TOOL_GET_SAMPLE = 'get-sample';
+export const MCP_TOOL_GET_SCHEMAS = 'get-schemas';
+export const MCP_TOOL_GET_CONNECTIONS_LIST = 'get-connections-list';
+export const MCP_TOOL_GET_SKILLS = 'get-skills';
+export const MCP_TOOL_READ_DOCS = 'read-docs';
+export const MCP_TOOL_LIST_DOCS = 'list-docs';
+export const MCP_TOOL_SEARCH_DOCS = 'search-docs';
 
 export const MCP_TOOL_GET_SAMPLE_DESCRIPTION =
   'Fetch sample data rows from a database table or column for a project connection';

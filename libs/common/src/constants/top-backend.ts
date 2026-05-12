@@ -96,19 +96,6 @@ export const THROTTLE_TELEMETRY = {
   }
 };
 
-export const MCP_TOOL_RUN = 'run';
-export const MCP_TOOL_GET_STATE = 'get-state';
-export const MCP_TOOL_GET_MODEL = 'get-model';
-export const MCP_TOOL_GET_QUERY_INFO = 'get-query-info';
-export const MCP_TOOL_VALIDATE = 'validate';
-export const MCP_TOOL_GET_SAMPLE = 'get-sample';
-export const MCP_TOOL_GET_SCHEMAS = 'get-schemas';
-export const MCP_TOOL_GET_CONNECTIONS_LIST = 'get-connections-list';
-export const MCP_TOOL_GET_SKILLS = 'get-skills';
-export const MCP_TOOL_READ_DOCS = 'read-docs';
-export const MCP_TOOL_LIST_DOCS = 'list-docs';
-export const MCP_TOOL_SEARCH_DOCS = 'search-docs';
-
 export const BACKEND_E2E_RETRY_OPTIONS = {
   retries: 2,
   minTimeout: 1000,

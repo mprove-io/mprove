@@ -5,9 +5,11 @@ import type { Request } from 'express';
 import { GetConnectionSchemasService } from '#backend/controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { MCP_TOOL_GET_SCHEMAS_DESCRIPTION } from '#backend/services/mcp-tools-registry';
 import { ToolService } from '#backend/services/tool.service';
-import { MCP_TOOL_GET_SCHEMAS } from '#common/constants/top-backend';
+import {
+  MCP_TOOL_GET_SCHEMAS,
+  MCP_TOOL_GET_SCHEMAS_DESCRIPTION
+} from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
 import {
