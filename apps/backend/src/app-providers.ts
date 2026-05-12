@@ -20,6 +20,7 @@ import { ReadDocsTool } from './controllers/mcp-tools/read-docs/read-docs.tool';
 import { RunTool } from './controllers/mcp-tools/run/run.tool';
 import { SearchDocsTool } from './controllers/mcp-tools/search-docs/search-docs.tool';
 import { ValidateFilesTool } from './controllers/mcp-tools/validate-files/validate-files.tool';
+import { FullMcpJsonService } from './controllers/mcp-tools-full-json/full-mcp-json.service';
 import { GetModelService } from './controllers/models/get-model/get-model.service';
 import { RunQueriesService } from './controllers/queries/run-queries/run-queries.service';
 import { GetQueryInfoService } from './controllers/query-info/get-query-info/get-query-info.service';
@@ -205,6 +206,7 @@ export const appProviders = [
   QueryInfoReportService,
   RunQueriesService,
   GetQueryInfoService,
+  FullMcpJsonService,
   GetModelService,
   RunChartService,
   RunDashboardService,

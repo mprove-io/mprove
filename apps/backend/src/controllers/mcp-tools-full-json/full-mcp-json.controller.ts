@@ -2,21 +2,10 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import {
-  buildFullMcpJson,
-  type FullMcpJson
-} from '#backend/functions/build-full-mcp-json';
+import type { FullMcpJson } from '#backend/functions/build-full-mcp-json';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-
-let cachedFullMcpJson: FullMcpJson | undefined;
-
-function getFullMcpJsonCached(): FullMcpJson {
-  if (cachedFullMcpJson === undefined) {
-    cachedFullMcpJson = buildFullMcpJson();
-  }
-  return cachedFullMcpJson;
-}
+import { FullMcpJsonService } from './full-mcp-json.service';
 
 @ApiTags('FullMcpJson')
 @SkipJwtCheck()
@@ -37,7 +26,7 @@ function getFullMcpJsonCached(): FullMcpJson {
 })
 @Controller()
 export class FullMcpJsonController {
-  constructor() {}
+  constructor(private mcpJsonService: FullMcpJsonService) {}
 
   @Get('api/full-mcp.json')
   @ApiOperation({
@@ -47,6 +36,6 @@ export class FullMcpJsonController {
   })
   @ApiOkResponse()
   async getFullMcpJson(): Promise<FullMcpJson> {
-    return getFullMcpJsonCached();
+    return this.mcpJsonService.getFullMcpJsonCached();
   }
 }
