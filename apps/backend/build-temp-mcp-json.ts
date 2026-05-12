@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildFullMcpJson } from '#backend/functions/build-full-mcp-json.ts';
+import { buildFullMcpJson } from '#backend/functions/build-full-mcp-json';
 
 let __dirname = dirname(fileURLToPath(import.meta.url));
 
