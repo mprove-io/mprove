@@ -5,7 +5,7 @@ import type { ExplorerModelPart } from './types/explorer-model-part';
 
 @Injectable()
 export class ExplorerPromptsService {
-  getExplorerSessionSystemPrompt(item?: {
+  getExplorerSessionSystemPrompt(item: {
     orgId: string;
     projectId: string;
     repoId: string;

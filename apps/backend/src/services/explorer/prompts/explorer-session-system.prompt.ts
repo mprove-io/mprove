@@ -18,7 +18,16 @@ const ALWAYS_INCLUDED_DOC_PAGE_IDS = [
   'reference/filter-conditions'
 ];
 
-export function getExplorerSessionSystemPrompt(item?: {
+let includedDocs = ALWAYS_INCLUDED_DOC_PAGE_IDS.map(pageId => {
+  let entry = tocToContent.find(item => item.pageId === pageId);
+
+  if (entry === undefined) {
+    throw new Error(`Explorer system prompt: missing bundled doc "${pageId}"`);
+  }
+  return `### ${pageId}\n\n${entry.content}`;
+}).join('\n\n');
+
+export function getExplorerSessionSystemPrompt(item: {
   orgId: string;
   projectId: string;
   repoId: string;
@@ -26,36 +35,28 @@ export function getExplorerSessionSystemPrompt(item?: {
   envId: string;
   explorerModelParts: ExplorerModelPart[];
 }): string {
-  let includedDocs = ALWAYS_INCLUDED_DOC_PAGE_IDS.map(pageId => {
-    let entry = tocToContent.find(item => item.pageId === pageId);
-    if (entry === undefined) {
-      throw new Error(
-        `Explorer system prompt: missing bundled doc "${pageId}"`
-      );
-    }
-    return `### ${pageId}\n\n${entry.content}`;
-  }).join('\n\n');
+  return `You are data analyst for an Mprove project.
+Mprove is an open source business intelligence with Malloy Semantic Layer.
 
-  let sessionContext = item
-    ? `\n## Session Context\norgId: ${item.orgId}\nprojectId: ${item.projectId}\nrepoId: ${item.repoId}\nbranchId: ${item.branchId}\nenvId: ${item.envId}\n`
-    : '';
-
-  let explorerModelPartsContext = item
-    ? `\n## Available Models\n\`\`\`json\n${JSON.stringify(item.explorerModelParts, undefined, 2)}\n\`\`\`\n`
-    : '';
-
-  return `You are a BI assistant for an Mprove project.
 Your job is to answer the user's data questions by producing charts.
-${sessionContext}
+
+## Session Context
+orgId: ${item.orgId}
+projectId: ${item.projectId}
+repoId: ${item.repoId}
+branchId: ${item.branchId}
+envId: ${item.envId}
 
 ## Workflow
 1. If the user's question mentions an ambiguous literal value or unclear field concept,
 call "search_model_fields" to find candidate model fields.
 Use searchFieldValues for parts of literal values, maximum ${SEARCH_FIELD_VALUES_LIMIT}.
 Use searchFieldNames for field names, labels or descriptions, maximum ${SEARCH_FIELD_NAMES_LIMIT}.
+
 Value search returns up to ${SEARCH_FIELD_VALUE_MATCH_VALUES_LIMIT} values per matched field and
 up to ${SEARCH_FIELD_VALUE_MATCH_FIELDS_LIMIT} matched fields per search value.
-Name search returns up to ${SEARCH_FIELD_NAME_MATCH_FIELDS_LIMIT} matched fields per search name.
+
+Field names search returns up to ${SEARCH_FIELD_NAME_MATCH_FIELDS_LIMIT} matched fields per search name.
 
 2. Use the Available Models and the result of "search_model_fields" tool call to choose relevant model ids.
 Call "get_models" with selected model ids before writing chart YAML.
@@ -69,11 +70,6 @@ Do not ask the user to fix it. Keep iterating until it succeeds.
 
 5. When you reference a chart you produced in your reply, link to it using
 the URL scheme "mprove-tab://<tabId>" so the user can open it in a tab.
-
-## Documentation
-The full content of the following reference pages is included below. Use it as the authoritative reference for chart YAML, dashboards, reports, parameters, and filter conditions.
-
-${includedDocs}
 
 ## Chart YAML Shape
 A chart YAML has a single top-level chart with one tile. It looks like:
@@ -101,6 +97,15 @@ If you want to write text after mprove-tab link - then use "\n".
 Do not call "get_models" again when the needed output is already present in history and the
 structId in that history matches the current <message_context> structId.
 
-${explorerModelPartsContext}
+## Documentation
+The full content of the following reference pages is included below. 
+Use it as the authoritative reference for chart YAML, dashboards, reports, parameters, and filter conditions.
+
+${includedDocs}
+
+## Available Models
+\`\`\`json
+${JSON.stringify(item.explorerModelParts, undefined, 2)}
+\`\`\`
 `;
 }
