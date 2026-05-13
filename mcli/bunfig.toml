@@ -1,2 +1,3 @@
 [install]
 lockfile = "bun.lock"
+minimumReleaseAge = 172800
