@@ -42,19 +42,19 @@ catalog:
   '@kubiks/otel-drizzle': 2.1.0
   '@leeoniya/ufuzzy': 1.0.18
   '@lezer/highlight': 1.2.3
-  '@malloydata/db-bigquery': 0.0.369
-  '@malloydata/db-databricks': 0.0.369
-  '@malloydata/db-duckdb': 0.0.369
-  '@malloydata/db-mysql': 0.0.369
-  '@malloydata/db-postgres': 0.0.369
-  '@malloydata/db-snowflake': 0.0.369
-  '@malloydata/db-trino': 0.0.369
-  '@malloydata/malloy': 0.0.369
-  '@malloydata/malloy-filter': 0.0.369
-  '@malloydata/malloy-interfaces': 0.0.369
-  '@malloydata/malloy-query-builder': 0.0.369
-  '@malloydata/malloy-tag': 0.0.369
-  '@malloydata/render': 0.0.369
+  '@malloydata/db-bigquery': 0.0.393
+  '@malloydata/db-databricks': 0.0.393
+  '@malloydata/db-duckdb': 0.0.393
+  '@malloydata/db-mysql': 0.0.393
+  '@malloydata/db-postgres': 0.0.393
+  '@malloydata/db-snowflake': 0.0.393
+  '@malloydata/db-trino': 0.0.393
+  '@malloydata/malloy': 0.0.393
+  '@malloydata/malloy-filter': 0.0.393
+  '@malloydata/malloy-interfaces': 0.0.393
+  '@malloydata/malloy-query-builder': 0.0.393
+  '@malloydata/malloy-tag': 0.0.393
+  '@malloydata/render': 0.0.393
   '@modelcontextprotocol/sdk': 1.27.1
   '@nest-lab/throttler-storage-redis': 1.1.0
   '@nestjs/common': 11.1.0

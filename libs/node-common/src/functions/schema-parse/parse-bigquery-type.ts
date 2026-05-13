@@ -9,7 +9,8 @@ import type {
   FieldDef,
   RecordTypeDef
 } from '@malloydata/malloy';
-import { mkFieldDef, StandardSQLDialect, TinyParser } from '@malloydata/malloy';
+import { mkFieldDef, StandardSQLDialect } from '@malloydata/malloy';
+import { TinyParser } from '@malloydata/malloy/internal';
 
 export class BigQueryTypeParser extends TinyParser {
   constructor(
@@ -24,37 +25,30 @@ export class BigQueryTypeParser extends TinyParser {
   }
 
   typeDef(): AtomicTypeDef {
-    const typToken = this.next();
+    const typToken = this.read();
     if (typToken.type === 'eof') {
       throw this.parseError('Unexpected EOF parsing type');
     }
     const typText = typToken.text.toLowerCase();
 
     // STRUCT<name TYPE, ...> or RECORD<name TYPE, ...>
-    if (
-      (typText === 'struct' || typText === 'record') &&
-      this.peek().text === '<'
-    ) {
-      this.next('<');
+    if ((typText === 'struct' || typText === 'record') && this.match('<')) {
       const fields: FieldDef[] = [];
       for (;;) {
-        const name = this.next('id');
+        const name = this.expect('id');
         // BigQuery uses space between name and type (no colon)
         const fieldType = this.typeDef();
         fields.push(mkFieldDef(fieldType, name.text));
-        const sep = this.next();
-        if (sep.text === '>') break;
-        if (sep.text === ',') continue;
-        throw this.parseError(`Expected '>' or ',', got '${sep.text}'`);
+        if (this.match('>')) break;
+        this.expect(',');
       }
       return { type: 'record', fields: fields } as RecordTypeDef;
     }
 
     // ARRAY<TYPE>
-    if (typText === 'array' && this.peek().text === '<') {
-      this.next('<');
+    if (typText === 'array' && this.match('<')) {
       const elType = this.typeDef();
-      this.next('>');
+      this.expect('>');
       return elType.type === 'record'
         ? {
             type: 'array',
@@ -66,11 +60,10 @@ export class BigQueryTypeParser extends TinyParser {
 
     // Atomic type — skip parameters like NUMERIC(10,2)
     if (typToken.type === 'id') {
-      if (this.peek().text === '(') {
-        this.next('(');
+      if (this.match('(')) {
         let depth = 1;
         while (depth > 0) {
-          const t = this.next();
+          const t = this.read();
           if (t.text === '(') depth++;
           else if (t.text === ')') depth--;
         }
