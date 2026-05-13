@@ -85,9 +85,9 @@ import { SetProjectInfoController } from './controllers/projects/set-project-inf
 import { CancelQueriesController } from './controllers/queries/cancel-queries/cancel-queries.controller';
 import { GetQueriesController } from './controllers/queries/get-queries/get-queries.controller';
 import { GetQueryController } from './controllers/queries/get-query/get-query.controller';
+import { GetQueryInfoController } from './controllers/queries/get-query-info/get-query-info.controller';
 import { RunQueriesController } from './controllers/queries/run-queries/run-queries.controller';
 import { RunQueriesDryController } from './controllers/queries/run-queries-dry/run-queries-dry.controller';
-import { GetQueryInfoController } from './controllers/query-info/get-query-info/get-query-info.controller';
 import { CreateDraftReportController } from './controllers/reports/create-draft-report/create-draft-report.controller';
 import { DeleteDraftReportsController } from './controllers/reports/delete-draft-reports/delete-draft-reports.controller';
 import { DeleteReportController } from './controllers/reports/delete-report/delete-report.controller';
@@ -251,6 +251,7 @@ export const appControllers = [
   CancelQueriesController,
   GetQueriesController,
   GetQueryController,
+  GetQueryInfoController,
   RunQueriesController,
   RunQueriesDryController,
 
@@ -269,8 +270,6 @@ export const appControllers = [
   SyncRepoController,
 
   SpecialRebuildStructsController,
-
-  GetQueryInfoController,
 
   RunController,
 

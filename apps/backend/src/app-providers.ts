@@ -22,8 +22,8 @@ import { SearchDocsTool } from './controllers/mcp-tools/search-docs/search-docs.
 import { ValidateFilesTool } from './controllers/mcp-tools/validate-files/validate-files.tool';
 import { FullMcpJsonService } from './controllers/mcp-tools-full-json/full-mcp-json.service';
 import { GetModelService } from './controllers/models/get-model/get-model.service';
+import { GetQueryInfoService } from './controllers/queries/get-query-info/get-query-info.service';
 import { RunQueriesService } from './controllers/queries/run-queries/run-queries.service';
-import { GetQueryInfoService } from './controllers/query-info/get-query-info/get-query-info.service';
 import { RunService } from './controllers/run/run/run.service';
 import { RunChartService } from './controllers/run/run/run-chart.service';
 import { RunDashboardService } from './controllers/run/run/run-dashboard.service';

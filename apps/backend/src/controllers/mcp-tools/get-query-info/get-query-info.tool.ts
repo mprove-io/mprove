@@ -2,7 +2,7 @@ import { Injectable, UseFilters } from '@nestjs/common';
 import type { Context } from '@rekog/mcp-nest';
 import { Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
-import { GetQueryInfoService } from '#backend/controllers/query-info/get-query-info/get-query-info.service';
+import { GetQueryInfoService } from '#backend/controllers/queries/get-query-info/get-query-info.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { ToolService } from '#backend/services/tool.service';

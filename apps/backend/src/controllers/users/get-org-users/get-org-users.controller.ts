@@ -26,7 +26,7 @@ import type {
   ToBackendGetOrgUsersResponsePayload
 } from '#common/zod/to-backend/org-users/to-backend-get-org-users';
 
-@ApiTags('OrgUsers')
+@ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetOrgUsersController {

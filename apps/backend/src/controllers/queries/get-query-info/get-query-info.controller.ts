@@ -4,8 +4,8 @@ import { Throttle } from '@nestjs/throttler';
 import {
   ToBackendGetQueryInfoRequestDto,
   ToBackendGetQueryInfoResponseDto
-} from '#backend/controllers/query-info/get-query-info/get-query-info.dto';
-import { GetQueryInfoService } from '#backend/controllers/query-info/get-query-info/get-query-info.service';
+} from '#backend/controllers/queries/get-query-info/get-query-info.dto';
+import { GetQueryInfoService } from '#backend/controllers/queries/get-query-info/get-query-info.service';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -13,7 +13,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { ToBackendGetQueryInfoResponsePayload } from '#common/zod/to-backend/query-info/to-backend-get-query-info';
 
-@ApiTags('QueryInfo')
+@ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
