@@ -5,7 +5,7 @@ psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "postgres" <<-EOSQL
     DO \$\$
     BEGIN
         IF EXISTS (SELECT FROM pg_roles WHERE rolname = '$READ_USER') THEN
-            RAISE NOTICE 'Role % already exists → updating password only', '$READ_USER';
+            RAISE NOTICE 'Role % already exists -> updating password only', '$READ_USER';
             ALTER ROLE "$READ_USER" WITH PASSWORD '$READ_PASSWORD';
         ELSE
             CREATE ROLE "$READ_USER"

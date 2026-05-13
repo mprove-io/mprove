@@ -27,17 +27,17 @@ Your output must be:
 - DO NOT SAY YOU CANNOT GENERATE A TITLE OR COMPLAIN ABOUT THE INPUT
 - Always output something meaningful, even if the input is minimal.
 - If the user message is short or conversational (e.g. "hello", "lol", "what's up", "hey"):
-  → create a title that reflects the user's tone or intent (such as Greeting, Quick check-in, Light chat, Intro message, etc.)
+  -> create a title that reflects the user's tone or intent (such as Greeting, Quick check-in, Light chat, Intro message, etc.)
 
 ## Examples
-"debug 500 errors in production" → Debugging production 500 errors
-"refactor user service" → Refactoring user service
-"why is app.js failing" → app.js failure investigation
-"implement rate limiting" → Rate limiting implementation
-"how do I connect postgres to my API" → Postgres API connection
-"best practices for React hooks" → React hooks best practices
-"@src/auth.ts can you add refresh token support" → Auth refresh token support
-"@utils/parser.ts this is broken" → Parser bug fix
-"look at @config.json" → Config review
-"@App.tsx add dark mode toggle" → Dark mode toggle in App`;
+"debug 500 errors in production" -> Debugging production 500 errors
+"refactor user service" -> Refactoring user service
+"why is app.js failing" -> app.js failure investigation
+"implement rate limiting" -> Rate limiting implementation
+"how do I connect postgres to my API" -> Postgres API connection
+"best practices for React hooks" -> React hooks best practices
+"@src/auth.ts can you add refresh token support" -> Auth refresh token support
+"@utils/parser.ts this is broken" -> Parser bug fix
+"look at @config.json" -> Config review
+"@App.tsx add dark mode toggle" -> Dark mode toggle in App`;
 }

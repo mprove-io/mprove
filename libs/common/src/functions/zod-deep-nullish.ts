@@ -4,7 +4,7 @@
 //   external/zod-deep-partial/src/types.ts (DeepPartial mapped type)
 //
 // Deltas vs. the upstream library:
-//   1. `.optional()` → `.nullish()` on every shape value, branch return, and the
+//   1. `.optional()` -> `.nullish()` on every shape value, branch return, and the
 //      type-level fallback / object-shape wrapper. This is the whole point of the
 //      port: tool outputs from LLMs may emit explicit `null` for missing fields,
 //      so we accept `T | null | undefined` rather than just `T | undefined`.
@@ -135,7 +135,7 @@ function zodDeepNullishInternal<T extends z.core.SomeType>(
 ): any {
   // Delta #5: memoize transformations by source schema instance. Without this,
   // a shared sub-schema (e.g. `zRunQuery` reached through both `zRunChart` and
-  // `zRunDashboard → zRunTile`) gets rebuilt into multiple distinct nullish
+  // `zRunDashboard -> zRunTile`) gets rebuilt into multiple distinct nullish
   // variants, all carrying the same `*Nullish` meta id. `z.toJSONSchema`
   // rejects that with "Duplicate schema id". Memoizing keeps one variant per
   // source, preserving referential identity across parents.
@@ -365,7 +365,7 @@ function buildNullish<T extends z.core.SomeType>(
 }
 
 // Delta #3: lib signature is `zodDeepPartial(schema)`. We use `{ schema }`
-// per repo convention (CLAUDE.md → "Function and method args").
+// per repo convention (CLAUDE.md -> "Function and method args").
 
 // Delta #6: cache is module-scoped (shared across every `zodDeepNullish` call)
 // rather than per-call. Two callers that pass schemas which share a sub-schema

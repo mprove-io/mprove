@@ -2042,7 +2042,7 @@ let data = $RESPONSE_DATA;
         date = new Date(\\\`\\\${value.slice(0, 4)}-\\\${value.slice(4, 6)}-01T00:00:00Z\\\`);
         
       } else if (dimensionName === 'isoYearIsoWeek') {
-        // Parse ISO year and week (e.g., "202504" → year=2025, week=4)
+        // Parse ISO year and week (e.g., "202504" -> year=2025, week=4)
         // Create a date in week 1 of the ISO year (January 4th is always in week 1)
         // Get the Monday of week 1
         // Add weeks to reach the target week
@@ -2057,7 +2057,7 @@ let data = $RESPONSE_DATA;
         date.setUTCDate(date.getUTCDate() + (week - 1) * 7);
         
       } else if (dimensionName === 'yearWeek') {
-        // Parse year and week (e.g., "202505" → year=2025, week=5)
+        // Parse year and week (e.g., "202505" -> year=2025, week=5)
         // Find the first Sunday of the year
         // Add weeks to reach the target week
         let year = parseInt(value.slice(0, 4), 10);

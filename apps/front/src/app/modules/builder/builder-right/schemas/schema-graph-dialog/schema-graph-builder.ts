@@ -369,7 +369,7 @@ export async function buildAllTablesGraph(item: {
     let isReversed = isLeft;
 
     let labelParts: string[] = [];
-    labelParts.push(`${edgeInfo.sourceColumn} → ${edgeInfo.targetColumn}`);
+    labelParts.push(`${edgeInfo.sourceColumn} -> ${edgeInfo.targetColumn}`);
     if (edgeInfo.relationshipType) {
       labelParts.push(edgeInfo.relationshipType);
     }

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'p_db'" | grep -q 1; then
-    echo "Database 'p_db' already exists → skipping creation"
+    echo "Database 'p_db' already exists -> skipping creation"
 else
     echo "Creating database 'p_db'..."
     psql -U postgres -c "CREATE DATABASE p_db WITH OWNER=postgres ENCODING='UTF8' TEMPLATE=template0 LC_COLLATE='en_US.utf8' LC_CTYPE='en_US.utf8';"

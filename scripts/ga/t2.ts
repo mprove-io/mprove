@@ -128,7 +128,7 @@ function monthsUtcMsX(value: string) {
 }
 
 function weeksMondayUtcMsX(value: string) {
-  // Parse ISO year and week (e.g., "202504" → year=2025, week=4)
+  // Parse ISO year and week (e.g., "202504" -> year=2025, week=4)
   let year = parseInt(value.slice(0, 4), 10);
   let week = parseInt(value.slice(4, 6), 10);
 
@@ -146,7 +146,7 @@ function weeksMondayUtcMsX(value: string) {
 }
 
 function weeksSundayUtcMsX(value: string) {
-  // Parse year and week (e.g., "202505" → year=2025, week=5)
+  // Parse year and week (e.g., "202505" -> year=2025, week=5)
   let year = parseInt(value.slice(0, 4), 10);
   let week = parseInt(value.slice(4, 6), 10);
 

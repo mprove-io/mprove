@@ -90,9 +90,9 @@ The \`run\` MCP tool returns \`RunChart\` objects with a \`url\` property contai
 
 IANA timezone identifier, URL-encoded.
 
-- \`America/New_York\` → \`America%2FNew_York\`
-- \`America/Port-au-Prince\` → \`America%2FPort-au-Prince\`
-- \`UTC\` → \`UTC\`
+- \`America/New_York\` -> \`America%2FNew_York\`
+- \`America/Port-au-Prince\` -> \`America%2FPort-au-Prince\`
+- \`UTC\` -> \`UTC\`
 
 Provided timezone is project's \`default_timezone\` from mprove config.
 ` },
@@ -123,9 +123,9 @@ If you build dashboard with top parameters (filters). Tiles should listen to the
 
 IANA timezone identifier, URL-encoded.
 
-- \`America/New_York\` → \`America%2FNew_York\`
-- \`America/Port-au-Prince\` → \`America%2FPort-au-Prince\`
-- \`UTC\` → \`UTC\`
+- \`America/New_York\` -> \`America%2FNew_York\`
+- \`America/Port-au-Prince\` -> \`America%2FPort-au-Prince\`
+- \`UTC\` -> \`UTC\`
 
 Provided timezone is project's \`default_timezone\` from mprove config.
 ` },
@@ -255,9 +255,9 @@ Use single letters as row_id (A, B, C, D, etc...) and "options: {}" as a default
 
 IANA timezone identifier, URL-encoded.
 
-- \`America/New_York\` → \`America%2FNew_York\`
-- \`America/Port-au-Prince\` → \`America%2FPort-au-Prince\`
-- \`UTC\` → \`UTC\`
+- \`America/New_York\` -> \`America%2FNew_York\`
+- \`America/Port-au-Prince\` -> \`America%2FPort-au-Prince\`
+- \`UTC\` -> \`UTC\`
 
 Default: project's \`default_timezone\` from mprove config.
 
@@ -277,7 +277,7 @@ Default: \`\` f\`last 5 days\` \`\`
 
 To put timeRange into the URL, replace \`\` \` \`\` with \`%60\` and space with \`%20\`:
 
-\`\` f\`last 5 days\` \`\` → \`f%60last%205%20days%60\`
+\`\` f\`last 5 days\` \`\` -> \`f%60last%205%20days%60\`
 
 Prefer using the URL returned by the \`run\` MCP tool and only replacing the timeRange query param value when needed.
 

@@ -71,7 +71,7 @@ export async function checkStoreApiHostname(item: { hostname: string }) {
   try {
     instantParsedIp = ipaddr.parse(hostname);
   } catch (e) {
-    instantParsedIp = null; // Not a valid IP → treat as hostname
+    instantParsedIp = null; // Not a valid IP -> treat as hostname
   }
 
   if (instantParsedIp) {

@@ -3,7 +3,7 @@ import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 export function forTestsExtractDialogLines(item: {
   events: SessionEventApi[];
 }): string[] {
-  // First pass: collect messageID → role from message.updated events
+  // First pass: collect messageID -> role from message.updated events
   let messageRoles = new Map<string, string>();
   item.events.forEach(event => {
     let oc = event.ocEvent;

@@ -109,9 +109,9 @@ src/
 │   ├── front/      # Frontend interfaces
 │   ├── mcli/       # CLI interfaces
 │   ├── to/         # Shared request/response types
-│   ├── to-backend/ # Frontend→Backend DTOs
-│   ├── to-blockml/ # Backend→BlockML DTOs
-│   └── to-disk/    # Backend→Disk DTOs
+│   ├── to-backend/ # Frontend->Backend DTOs
+│   ├── to-blockml/ # Backend->BlockML DTOs
+│   └── to-disk/    # Backend->Disk DTOs
 ├── models/         # Shared models (ServerError, MyRegex)
 ├── types/          # TypeScript types
 └── zod/            # Zod validation schemas
@@ -123,9 +123,9 @@ src/
 
 **Interface Organization:**
 
-- `to-backend/` — request/response interfaces for frontend→backend HTTP calls
-- `to-blockml/` — request/response interfaces for backend→blockml RPC
-- `to-disk/` — request/response interfaces for backend→disk RPC
+- `to-backend/` — request/response interfaces for frontend->backend HTTP calls
+- `to-blockml/` — request/response interfaces for backend->blockml RPC
+- `to-disk/` — request/response interfaces for backend->disk RPC
 - Each subdirectory mirrors the controller structure of its target app
 
 **Patterns:**
