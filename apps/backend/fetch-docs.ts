@@ -24,6 +24,18 @@ let skillsPathPrefix = '/content/skills/';
 
 let excludedPageIds = ['docs-for-ai'];
 
+let allowedSkills = [
+  'mprove-basic',
+  'mprove-build-chart',
+  'mprove-build-dashboard',
+  'mprove-build-malloy-model',
+  'mprove-build-report',
+  'mprove-build-store-model',
+  'mprove-connection-schemas',
+  'mprove-project-structure',
+  'mprove-query-data'
+];
+
 let outDir = resolve(__dirname, 'src/mprove-docs-cache');
 
 let tocFilePath = resolve(outDir, 'toc.ts');
@@ -36,7 +48,9 @@ let indexContent = await fetchText({ url: docsIndexUrl });
 
 let toc = getDocPageIds({ indexContent: indexContent });
 
-let skillNames = getSkillNames({ indexContent: indexContent });
+let skillNames = getSkillNames({ indexContent: indexContent }).filter(name =>
+  allowedSkills.includes(name)
+);
 
 let entries = await Promise.all(
   toc.map(async pageId => {

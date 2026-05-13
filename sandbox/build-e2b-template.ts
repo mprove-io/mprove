@@ -21,7 +21,7 @@ let templateName = `${templateVersion}_opencode_${opencodeVersion.split('.').joi
 
 console.log(`Building e2b template: ${templateName}`);
 
-let skillsBuildDir = resolve(import.meta.dirname, '..', 'tmp', 'skills-build');
+let skillsBuildDir = resolve(import.meta.dirname, 'tmp', 'skills-build');
 
 rmSync(skillsBuildDir, { recursive: true, force: true });
 mkdirSync(skillsBuildDir, { recursive: true });
@@ -76,7 +76,7 @@ let template = Template()
 
 SKILLS_DATA.forEach(skill => {
   template = template.copy(
-    `../tmp/skills-build/${skill.name}/SKILL.md`,
+    `tmp/skills-build/${skill.name}/SKILL.md`,
     `/home/user/.config/opencode/skills/${skill.name}/SKILL.md`
   );
 });
