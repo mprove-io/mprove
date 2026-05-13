@@ -12,6 +12,7 @@ import {
 } from '#backend/functions/opencode-models-dev';
 import {
   ALLOWED_MODEL_KEYWORDS,
+  CODEX_ALLOWED_MODELS_EDITOR,
   MODEL_PROVIDERS
 } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -80,7 +81,17 @@ export class EditorModelsService {
 
     models = models.filter(m => {
       let idLower = m.id.toLowerCase();
-      return ALLOWED_MODEL_KEYWORDS.some(kw => idLower.includes(kw));
+      if (!ALLOWED_MODEL_KEYWORDS.some(kw => idLower.includes(kw)))
+        return false;
+
+      if (isUserCodexAuthSet && m.providerId === 'openai') {
+        return (
+          idLower.includes('codex') ||
+          CODEX_ALLOWED_MODELS_EDITOR.includes(m.id)
+        );
+      }
+
+      return true;
     });
 
     await this.writeCache({

@@ -204,7 +204,7 @@ export class ExplorerComponent implements OnInit {
 
     if (
       pLink?.sessionId === this.sessionQuery.getValue()?.sessionId &&
-      pLink.tabId
+      pLink?.tabId
     ) {
       this.explorerTabsQuery.setActive({ tabId: pLink.tabId });
     }
