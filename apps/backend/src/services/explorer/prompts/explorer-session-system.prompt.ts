@@ -97,6 +97,11 @@ If you want to write text after mprove-tab link - then use "\n".
 Do not call "get_models" again when the needed output is already present in history and the
 structId in that history matches the current <message_context> structId.
 
+- Format your responses in markdown. Use headings, bold, italic, code blocks, inline code,
+lists, links, and tables where appropriate to make your responses clear and well-structured.
+
+- Never put URLs inside code blocks or inline code.
+
 ## Documentation
 The full content of the following reference pages is included below. 
 Use it as the authoritative reference for chart YAML, dashboards, reports, parameters, and filter conditions.
