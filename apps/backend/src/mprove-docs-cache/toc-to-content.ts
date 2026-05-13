@@ -47,36 +47,32 @@ If an object has no \`access_roles\` then any project member can access this obj
   A user may have access to the report, but not have access to the models of report rows (metrics).
 </Callout>
 ` },
-  { pageId: 'builder/builder', content: `# Builder
+  { pageId: 'ai-sessions/builder', content: `# Builder
 
 Builder is a lightweight IDE section of Mprove UI.
 
-Users with File Editor role can browse, edit and validate mprove and malloy files.
+Users with File Editor role can browse, edit and validate Mprove and Malloy files.
 
 Mprove validates all files on each file save in UI.
 
 After successful validation Mprove rebuilds consumable state of UI Models, Charts, Reports and Dashboards.
 
-[Editor AI Session](/content/docs/builder/editor-session) can build mprove models and create non-draft reports, charts and dashboards.
+## Editor AI Session
 
-Explorer AI Session (under development) can answer user questions by creating draft charts, reports and dashboards.
-
-` },
-  { pageId: 'builder/editor-ai-session', content: `# Editor AI Session
+Editor AI Session can build Mprove models and create charts, reports and dashboards that are persisted as files (non-drafts).
 
 Editor Session runs in a sandbox ([E2B](https://e2b.dev/) provider).
 
 It is powered by open source [OpenCode](https://opencode.ai/) Server with default agents (build/plan + subagents).
-You can use your own [opencode config](https://opencode.ai/docs/config/) (project's local).
+You can use your own [Opencode config](https://opencode.ai/docs/config/) that is local to project.
 
-AI agent uses [mprove sync](/content/cli/main-commands/sync) CLI command to sync uncommitted changes between sandbox repo and mprove server.
+AI agent uses [mprove sync](/content/cli/main-commands/sync) CLI command to sync uncommitted changes between sandbox repo and Mprove server.
 
 ## Notes
 
 Each Editor Session runs in its own sandbox.
 
-It takes 10 to 20 seconds for session initial activation time (starting sandbox, pulling user project git repo and starting an opencode server).
-It is planned to reduce this time significantly.
+It takes 10 to 15 seconds for session initial activation time (starting sandbox, pulling user project git repo and starting an Opencode server).
 
 After session is activated, there is a safe pause logic in place to save sandbox resources when session is 5 min+ idle.
 To resume a paused session (sandbox) you need to send a new message. Unpause (resume) is fast.
@@ -84,11 +80,11 @@ Session state is preserved on pause/resume.
 
 ## Capabilities
 
-- Setup mprove project
+- Setup Mprove project
 - Add metadata to dwh schemas
-- Build mprove models
-- Build reports (non-draft)
+- Build Mprove models
 - Build charts (non-draft)
+- Build reports (non-draft)
 - Build dashboards (non-draft)
 
 ## E2B Sandbox Template
@@ -96,15 +92,14 @@ Session state is preserved on pause/resume.
 - node 24.14.0
 - brew, curl, git, ripgrep, openssh-client, ca-certificates
 - opencode
-- [opencode global config](https://github.com/mprove-io/mprove/blob/master/skills/opencode-global-config.json) with [mprove-mcp](/content/docs/builder/mcp-server) configured
-- [mprove skills](/content/docs/builder/skills)
-- [mprove cli](/content/cli/install-cli) (only "mprove sync" is needed, other useful commands have corresponding mcp tools)
-- mprove docs repository
-- malloy docs repository
+- [Opencode global config](https://github.com/mprove-io/mprove/blob/master/skills/opencode-global-config.json) with [Mprove MCP Server](/content/mcp/mcp-server) configured
+- [Mprove Skills](/content/skills/download-skill-md)
+- [Mprove CLI](/content/cli/install-cli) (only "mprove sync" is needed, other useful commands have corresponding mcp tools)
+- Malloy Docs repository
 
 ## Credentials
 
-Credentials that are provided to sandbox during session activation: 
+Credentials that are provided to sandbox during session activation:
 
 - LLM provider api key for selected session Model (see project settings API keys)
 - \`MPROVE_CLI_API_KEY\` (has access to mprove session repo branch and session env connections)
@@ -113,43 +108,19 @@ Credentials that are provided to sandbox during session activation:
 
 ## Global Instructions
 
-These global instructions are merged with your project local instruction files. See [opencode docs](https://opencode.ai/docs/rules/).
+These global instructions are merged with your project's local instruction files. See [Opencode Docs](https://opencode.ai/docs/rules/).
 
-- [mprove-instructions.md](https://github.com/mprove-io/mprove/blob/master/skills/mprove-instructions.md)
+- [mprove-instructions.md](https://github.com/mprove-io/mprove/blob/master/sandbox/mprove-instructions.md)
 ` },
-  { pageId: 'builder/mcp-server', content: `# Mprove MCP Server
+  { pageId: 'ai-sessions/explorer', content: `# Explorer
 
-## Configuration
+Explorer is an AI chat section of Mprove UI.
 
-Configuration may vary based on your IDE
-\`\`\`json
-  "mcp": {
-    "mprove-mcp": {
-      "type": "remote",
-      "url": "{env:MPROVE_CLI_HOST}/api/mcp",
-      "enabled": true,
-      "headers": {
-        "Authorization": "Bearer {env:MPROVE_CLI_API_KEY}"
-      },
-      "oauth": false
-    }
-  }
-\`\`\`
+## Explorer AI Session
 
-## Available Tools
-
-- get-connections-list
-- get-schemas
-- get-sample
-- get-state
-- get-model
-- get-query-info
-- run
-- validate
-- download-skills
-
+Explorer AI Session can answer user data questions by creating charts.
 ` },
-  { pageId: 'builder/openai-codex-setup', content: `# OpenAI Codex Setup
+  { pageId: 'ai-sessions/openai-codex-setup', content: `# OpenAI Codex Setup
 
 You can use OPENAI_API_KEY or Codex Subscription for AI Sessions.
 
@@ -161,24 +132,7 @@ Follow instructions to authenticate.
 
 Your AI Session will be able to use Codex Subscription. 
 
-Other mprove users will need to use OPENAI_API_KEY or setup their own Codex Subsctiptions.
-
-` },
-  { pageId: 'builder/skills', content: `# Mprove Skills
-
-You can use \`mprove download-skills --output <output-path>\` CLI command to download skills from mprove server to your local machine.
-
-<Callout type="info">The version of skills on the mprove server may differ from GitHub</Callout>
-
-- [mprove-basic](https://github.com/mprove-io/mprove/blob/master/skills/mprove-basic/SKILL.md)
-- [mprove-project-structure](https://github.com/mprove-io/mprove/blob/master/skills/mprove-project-structure/SKILL.md)
-- [mprove-connection-schemas](https://github.com/mprove-io/mprove/blob/master/skills/mprove-connection-schemas/SKILL.md)
-- [mprove-build-malloy-model](https://github.com/mprove-io/mprove/blob/master/skills/mprove-build-malloy-model/SKILL.md)
-- [mprove-build-store-model](https://github.com/mprove-io/mprove/blob/master/skills/mprove-build-store-model/SKILL.md)
-- [mprove-build-chart](https://github.com/mprove-io/mprove/blob/master/skills/mprove-build-chart/SKILL.md)
-- [mprove-build-dashboard](https://github.com/mprove-io/mprove/blob/master/skills/mprove-build-dashboard/SKILL.md)
-- [mprove-build-report](https://github.com/mprove-io/mprove/blob/master/skills/mprove-build-report/SKILL.md)
-- [mprove-query-data](https://github.com/mprove-io/mprove/blob/master/skills/mprove-query-data/SKILL.md)
+Other Mprove users will need to use OPENAI_API_KEY or setup their own Codex Subsctiptions.
 
 ` },
   { pageId: 'connections', content: `# Connections
@@ -449,7 +403,7 @@ Click the project gear icon in navbar and click the **API Keys** button.
 
 Add Sandbox Provider api key
 
-Add LLM Provider api key or use [OpenAI Codex Setup](/content/docs/builder/openai-codex-setup)
+Add LLM Provider api key or use [OpenAI Codex Setup](/content/docs/ai-sessions/openai-codex-setup)
 
 </div>
 

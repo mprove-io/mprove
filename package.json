@@ -185,7 +185,7 @@
   },
   "lint-staged": {
     "./**/*.{css,ts,js}": [
-      "biome check --write"
+      "biome check --write --no-errors-on-unmatched"
     ],
     "./**/*.{html,scss,json,jsonc,md}": [
       "prettier --write --config .prettierrc.js"
