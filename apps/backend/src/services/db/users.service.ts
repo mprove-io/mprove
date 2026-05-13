@@ -216,7 +216,7 @@ export class UsersService {
       codexAuthExpiresTs: undefined,
       keyTag: undefined,
       serverTs: undefined,
-      createdTs: undefined
+      createdTs: Date.now()
     };
 
     await retry(
@@ -270,7 +270,7 @@ export class UsersService {
       codexAuthExpiresTs: undefined,
       keyTag: undefined,
       serverTs: undefined,
-      createdTs: undefined
+      createdTs: Date.now()
     };
 
     await retry(
