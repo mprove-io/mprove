@@ -67,7 +67,6 @@ import { GetModelController } from './controllers/models/get-model/get-model.con
 import { GetModelsController } from './controllers/models/get-models/get-models.controller';
 import { CheckLastNavController } from './controllers/nav/check-last-nav/check-last-nav.controller';
 import { GetNavController } from './controllers/nav/get-nav/get-nav.controller';
-import { GetOrgUsersController } from './controllers/org-users/get-org-users/get-org-users.controller';
 import { CreateOrgController } from './controllers/orgs/create-org/create-org.controller';
 import { DeleteOrgController } from './controllers/orgs/delete-org/delete-org.controller';
 import { GetOrgController } from './controllers/orgs/get-org/get-org.controller';
@@ -138,6 +137,7 @@ import { DeleteUserController } from './controllers/users/delete-user/delete-use
 import { DeleteUserApiKeyController } from './controllers/users/delete-user-api-key/delete-user-api-key.controller';
 import { DeleteUserCodexAuthController } from './controllers/users/delete-user-codex-auth/delete-user-codex-auth.controller';
 import { GenerateUserApiKeyController } from './controllers/users/generate-user-api-key/generate-user-api-key.controller';
+import { GetOrgUsersController } from './controllers/users/get-org-users/get-org-users.controller';
 import { GetServerUsersController } from './controllers/users/get-server-users/get-server-users.controller';
 import { GetUserProfileController } from './controllers/users/get-user-profile/get-user-profile.controller';
 import { LoginUserController } from './controllers/users/login-user/login-user.controller';

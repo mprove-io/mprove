@@ -31,7 +31,7 @@ import type {
   ToBackendGetServerUsersResponsePayload
 } from '#common/zod/to-backend/users/to-backend-get-server-users';
 
-@ApiTags('ServerUsers')
+@ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
 @Controller()
 export class GetServerUsersController {

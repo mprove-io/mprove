@@ -4,7 +4,7 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 import {
   ToBackendGetOrgUsersRequestDto,
   ToBackendGetOrgUsersResponseDto
-} from '#backend/controllers/org-users/get-org-users/get-org-users.dto';
+} from '#backend/controllers/users/get-org-users/get-org-users.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
