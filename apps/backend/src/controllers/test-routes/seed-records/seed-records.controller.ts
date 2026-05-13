@@ -224,7 +224,8 @@ export class SeedRecordsController {
             codexAuthUpdateTs: undefined,
             codexAuthExpiresTs: undefined,
             keyTag: undefined,
-            serverTs: undefined
+            serverTs: undefined,
+            createdTs: undefined
           };
 
           users.push(newUser);

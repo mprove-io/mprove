@@ -41,6 +41,23 @@
         >LogOut</button
       >
 
+      <ng-container *ngIf="isMproveAdmin">
+        <div
+          class="text-s400 block select-none px-4 py-2 text-base font-semibold"
+          >Admin</div
+        >
+
+        <button
+          class="text-s1 hover:bg-m50 block w-full cursor-pointer select-none px-4 py-2 text-left text-base focus:outline-none"
+          [ngClass]="{
+            'font-semibold': lastUrl === pathServerUsers
+          }"
+          [disabled]="lastUrl === pathServerUsers"
+          (click)="t1.hide(); navigateServerUsers()"
+          >Server Users</button
+        >
+      </ng-container>
+
       <div class="text-s400 block select-none px-4 py-2 text-base font-semibold"
         >Resources</div
       >
@@ -64,3 +81,4 @@
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="mproveVersion$ | async"></div>
+<div *ngIf="isMproveAdmin$ | async"></div>

@@ -52,6 +52,7 @@ import {
   PATH_REPORTS,
   PATH_REPORTS_LIST,
   PATH_SELECT_FILE,
+  PATH_SERVER_USERS,
   PATH_SESSION,
   PATH_TEAM,
   PATH_UPDATE_PASSWORD,
@@ -101,6 +102,7 @@ import { ProjectTeamComponent } from './modules/project/project-team/project-tea
 import { ReportComponent } from './modules/reports/report/report.component';
 import { ReportsComponent } from './modules/reports/reports.component';
 import { ReportsListComponent } from './modules/reports/reports-list/reports-list.component';
+import { ServerUsersComponent } from './modules/server-users/server-users.component';
 import { LoginSuccessComponent } from './modules/special/login-success/login-success.component';
 import { NotFoundComponent } from './modules/special/not-found/not-found.component';
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
@@ -120,6 +122,7 @@ import { ProjectTeamResolver } from './resolvers/project-team.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver';
+import { ServerUsersResolver } from './resolvers/server-users.resolver';
 import { SessionResolver } from './resolvers/session.resolver';
 import { SessionModelsResolver } from './resolvers/session-models.resolver';
 import { StructChartResolver } from './resolvers/struct-chart.resolver';
@@ -203,6 +206,11 @@ export const appRoutes: Routes = [
         component: ProfileComponent,
         path: PATH_PROFILE,
         resolve: [ProfileResolver]
+      },
+      {
+        component: ServerUsersComponent,
+        path: PATH_SERVER_USERS,
+        resolve: [ServerUsersResolver]
       },
       {
         component: OrgDeletedComponent,

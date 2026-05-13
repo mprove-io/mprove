@@ -1,6 +1,8 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { and, eq, inArray } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendGetNavRequestDto,
   ToBackendGetNavResponseDto
@@ -51,6 +53,7 @@ export class GetNavController {
     private modelsService: ModelsService,
     private structsService: StructsService,
     private usersService: UsersService,
+    private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -221,6 +224,9 @@ export class GetNavController {
       needValidate: isDefined(bridge) ? bridge.needValidate : false,
       user: this.usersService.tabToApi({ user: user }),
       serverNowTs: Date.now(),
+      isMproveAdmin:
+        user.email ===
+        this.cs.get<BackendConfig['mproveAdminEmail']>('mproveAdminEmail'),
       userMember: apiMember,
       struct: apiStruct,
       repo: apiRepo

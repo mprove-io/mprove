@@ -20,6 +20,7 @@ export class NavState {
   needValidate: boolean;
   mproveVersion: string;
   serverTimeDiff: number;
+  isMproveAdmin: boolean;
 }
 
 let navState: NavState = {
@@ -37,7 +38,8 @@ let navState: NavState = {
   envId: PROJECT_ENV_PROD,
   needValidate: false,
   mproveVersion: undefined,
-  serverTimeDiff: undefined
+  serverTimeDiff: undefined,
+  isMproveAdmin: false
 };
 
 @Injectable({ providedIn: 'root' })
@@ -65,6 +67,7 @@ export class NavQuery extends BaseQuery<NavState> {
   repoType$ = this.store.pipe(select(state => state.repoType));
   branchId$ = this.store.pipe(select(state => state.branchId));
   mproveVersion$ = this.store.pipe(select(state => state.mproveVersion));
+  isMproveAdmin$ = this.store.pipe(select(state => state.isMproveAdmin));
 
   constructor() {
     super(createStore({ name: 'nav' }, withProps<NavState>(navState)));

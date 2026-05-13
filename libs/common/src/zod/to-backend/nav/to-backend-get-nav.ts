@@ -48,6 +48,7 @@ export let zToBackendGetNavResponsePayload = z
     needValidate: z.boolean(),
     user: zUser,
     serverNowTs: z.number(),
+    isMproveAdmin: z.boolean(),
     struct: zStructX,
     userMember: zMember,
     repo: zRepo

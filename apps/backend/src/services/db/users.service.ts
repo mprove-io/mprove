@@ -215,7 +215,8 @@ export class UsersService {
       codexAuthUpdateTs: undefined,
       codexAuthExpiresTs: undefined,
       keyTag: undefined,
-      serverTs: undefined
+      serverTs: undefined,
+      createdTs: undefined
     };
 
     await retry(
@@ -268,7 +269,8 @@ export class UsersService {
       codexAuthUpdateTs: undefined,
       codexAuthExpiresTs: undefined,
       keyTag: undefined,
-      serverTs: undefined
+      serverTs: undefined,
+      createdTs: undefined
     };
 
     await retry(

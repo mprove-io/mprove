@@ -1141,7 +1141,8 @@ export class TabToEntService {
         hashSecret: hashSecret
       }),
 
-      serverTs: tab.serverTs
+      serverTs: tab.serverTs,
+      createdTs: tab.createdTs
     };
 
     return userEnt;

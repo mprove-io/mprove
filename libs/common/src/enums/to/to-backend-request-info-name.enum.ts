@@ -31,6 +31,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendStartUserCodexAuth = 'api/ToBackendStartUserCodexAuth',
   ToBackendPollUserCodexAuth = 'api/ToBackendPollUserCodexAuth',
   ToBackendDeleteUserCodexAuth = 'api/ToBackendDeleteUserCodexAuth',
+  ToBackendGetServerUsers = 'api/ToBackendGetServerUsers',
   //
   ToBackendCreateOrg = 'api/ToBackendCreateOrg',
   ToBackendGetOrgsList = 'api/ToBackendGetOrgsList',

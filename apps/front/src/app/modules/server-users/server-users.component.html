@@ -1,0 +1,112 @@
+<div class="bg-m1 flex h-full cursor-default flex-col">
+  <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
+    <div class="flex h-11 flex-row items-center">
+      <div
+        data-cy="serverUsersTitle"
+        class="text-s1 flex select-none text-2xl font-semibold"
+        >Server - Users</div
+      >
+    </div>
+
+    <div class="bg-m0 mb-4 mt-6 flex-grow overflow-auto rounded shadow">
+      <ng-scrollbar
+        [orientation]="'auto'"
+        [visibility]="'hover'"
+        [appearance]="'compact'"
+      >
+        <div class="text-s1 mx-5 mt-8">
+          <table class="divide-s500 min-w-full divide-y">
+            <thead>
+              <tr class="h-12 text-sm">
+                <th class="select-none"></th>
+                <th class="select-none text-left">Email</th>
+                <th class="select-none text-left">Alias</th>
+                <th class="select-none text-left">Name</th>
+                <th class="select-none text-left">Created</th>
+                <th class="select-none text-left">UserId</th>
+                <th class="select-none text-left">Memberships</th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-s300 divide-y">
+              <tr *ngIf="serverUsers?.length === 0"> </tr>
+
+              <tr
+                *ngFor="
+                  let user of serverUsers
+                    | paginate
+                      : {
+                          id: 'server-users',
+                          itemsPerPage: perPage,
+                          currentPage: currentPage,
+                          totalItems: total
+                        };
+                  let i = index
+                "
+                class="h-16"
+              >
+                <td class="w-[80px]">
+                  <div class="flex">
+                    <button
+                      class="bg-m200 ml-5 h-10 w-10 rounded-full text-base tracking-wider focus:outline-none"
+                      [ngClass]="{
+                        'cursor-default': !user.avatarSmall
+                      }"
+                      (click)="
+                        showPhoto({
+                          userId: user.userId,
+                          firstName: user.firstName,
+                          lastName: user.lastName,
+                          alias: user.alias,
+                          avatarSmall: user.avatarSmall
+                        })
+                      "
+                      [disabled]="!user.avatarSmall"
+                    >
+                      <m-avatar
+                        [avatar]="user.avatarSmall"
+                        [initials]="user.initials"
+                      ></m-avatar>
+                    </button>
+                  </div>
+                </td>
+
+                <td data-cy="serverUsersEmailData" class="w-80 text-base">
+                  {{ user.email }}
+                </td>
+
+                <td class="w-[200px] text-base">{{ user.alias }}</td>
+
+                <td class="w-[200px] text-base">{{ user.fullName }}</td>
+
+                <td class="w-[160px] text-base">
+                  <span *ngIf="user.createdTs">{{
+                    formatTs({ ts: user.createdTs })
+                  }}</span>
+                </td>
+
+                <td class="w-[220px] font-mono text-sm">{{ user.userId }}</td>
+
+                <td>
+                  <pre
+                    class="text-s1 whitespace-pre-wrap break-words py-3 font-mono text-xs"
+                    >{{ user.memberships | json }}</pre
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-scrollbar>
+    </div>
+
+    <pagination-controls
+      class="mt-3 flex justify-center"
+      (pageChange)="getUsers($event)"
+      id="server-users"
+    ></pagination-controls>
+  </div>
+</div>
+
+<div *ngIf="serverUsers$ | async"></div>
+<div *ngIf="total$ | async"></div>

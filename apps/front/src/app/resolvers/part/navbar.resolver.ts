@@ -110,27 +110,29 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
               needValidate,
               user,
               serverNowTs,
+              isMproveAdmin,
               userMember,
               struct,
               repo
             } = resp.payload;
 
             let nav: NavState = {
-              avatarSmall,
-              avatarBig,
-              orgId,
-              orgOwnerId,
-              orgName,
-              projectId,
-              projectName,
-              projectDefaultBranch,
-              repoId,
-              repoType,
-              branchId,
-              envId,
-              needValidate,
+              avatarSmall: avatarSmall,
+              avatarBig: avatarBig,
+              orgId: orgId,
+              orgOwnerId: orgOwnerId,
+              orgName: orgName,
+              projectId: projectId,
+              projectName: projectName,
+              projectDefaultBranch: projectDefaultBranch,
+              repoId: repoId,
+              repoType: repoType,
+              branchId: branchId,
+              envId: envId,
+              needValidate: needValidate,
               mproveVersion: resp.info.mproveVersion,
-              serverTimeDiff: Date.now() - serverNowTs
+              serverTimeDiff: Date.now() - serverNowTs,
+              isMproveAdmin: isMproveAdmin
             };
 
             this.navQuery.update(nav);

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
-import { PATH_PROFILE } from '#common/constants/top';
+import { PATH_PROFILE, PATH_SERVER_USERS } from '#common/constants/top';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
@@ -14,8 +14,14 @@ import { AuthService } from '#front/app/services/auth.service';
 })
 export class UserMenuComponent implements OnInit {
   pathProfile = PATH_PROFILE;
+  pathServerUsers = PATH_SERVER_USERS;
 
   lastUrl: string;
+
+  isMproveAdmin = false;
+  isMproveAdmin$ = this.navQuery.isMproveAdmin$.pipe(
+    tap(x => (this.isMproveAdmin = x))
+  );
 
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
@@ -46,6 +52,10 @@ export class UserMenuComponent implements OnInit {
 
   navigateProfile() {
     this.router.navigate([PATH_PROFILE]);
+  }
+
+  navigateServerUsers() {
+    this.router.navigate([PATH_SERVER_USERS]);
   }
 
   logout() {

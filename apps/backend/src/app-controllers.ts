@@ -138,6 +138,7 @@ import { DeleteUserController } from './controllers/users/delete-user/delete-use
 import { DeleteUserApiKeyController } from './controllers/users/delete-user-api-key/delete-user-api-key.controller';
 import { DeleteUserCodexAuthController } from './controllers/users/delete-user-codex-auth/delete-user-codex-auth.controller';
 import { GenerateUserApiKeyController } from './controllers/users/generate-user-api-key/generate-user-api-key.controller';
+import { GetServerUsersController } from './controllers/users/get-server-users/get-server-users.controller';
 import { GetUserProfileController } from './controllers/users/get-user-profile/get-user-profile.controller';
 import { LoginUserController } from './controllers/users/login-user/login-user.controller';
 import { LogoutUserController } from './controllers/users/logout-user/logout-user.controller';
@@ -272,6 +273,8 @@ export const appControllers = [
   GetQueryInfoController,
 
   RunController,
+
+  GetServerUsersController,
 
   GetStateController,
 

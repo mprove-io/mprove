@@ -42,6 +42,7 @@ import { OrgModule } from './app/modules/org/org.module';
 import { ProfileModule } from './app/modules/profile/profile.module';
 import { ProjectModule } from './app/modules/project/project.module';
 import { ReportsModule } from './app/modules/reports/reports.module';
+import { ServerUsersModule } from './app/modules/server-users/server-users.module';
 import { SharedModule } from './app/modules/shared/shared.module';
 import { SpecialModule } from './app/modules/special/special.module';
 import { ErrorHandlerService } from './app/services/error-handler.service';
@@ -85,6 +86,7 @@ bootstrapApplication(AppComponent, {
       NgSelectModule,
       DashboardsModule,
       ReportsModule,
+      ServerUsersModule,
       UiSwitchModule
     ),
     provideRouter(appRoutes),
