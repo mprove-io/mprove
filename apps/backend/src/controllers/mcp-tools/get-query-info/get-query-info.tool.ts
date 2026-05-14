@@ -13,6 +13,7 @@ import {
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoInput,
@@ -31,8 +32,10 @@ export class GetQueryInfoTool {
   @Tool({
     name: MCP_TOOL_GET_QUERY_INFO,
     description: MCP_TOOL_GET_QUERY_INFO_DESCRIPTION,
-    parameters: zMcpToolGetQueryInfoInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolGetQueryInfoOutput })
+    parameters: zodStripMcpSchemaId({ schema: zMcpToolGetQueryInfoInput }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolGetQueryInfoOutput })
+    })
   })
   async getQueryInfo(
     item: McpToolGetQueryInfoInput,

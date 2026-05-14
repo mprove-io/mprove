@@ -374,7 +374,11 @@ Guidelines:
 - Include all tables and columns
 - Write clear, business-oriented descriptions
 - For non-sensitive data set \`example\` value
-- Speficy \`cache_unique_values: true\` to recommend column unique values to be cached (good candidates are non-id string columns like \`categories\`, etc)
+- Speficy \`cache_unique_values: true\` to recommend column unique values to be cached. 
+Cache will help to translate user data questions to filters of query.
+Good candidates are string columns that are non-id. 
+Set \`cache_unique_values: true\` for columns like categories, status, company name, etc.
+
 ` },
   { name: 'mprove-project-structure', content: `---
 name: mprove-project-structure

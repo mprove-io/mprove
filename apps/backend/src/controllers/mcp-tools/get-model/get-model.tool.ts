@@ -12,6 +12,7 @@ import {
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolGetModelInput,
   zMcpToolGetModelInput,
@@ -30,8 +31,10 @@ export class GetModelTool {
   @Tool({
     name: MCP_TOOL_GET_MODEL,
     description: MCP_TOOL_GET_MODEL_DESCRIPTION,
-    parameters: zMcpToolGetModelInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolGetModelOutput })
+    parameters: zodStripMcpSchemaId({ schema: zMcpToolGetModelInput }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolGetModelOutput })
+    })
   })
   async getModel(
     item: McpToolGetModelInput,

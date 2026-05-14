@@ -9,6 +9,7 @@ import {
   MCP_TOOL_SEARCH_DOCS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolSearchDocsInput,
   zMcpToolSearchDocsInput,
@@ -23,8 +24,10 @@ export class SearchDocsTool {
   @Tool({
     name: MCP_TOOL_SEARCH_DOCS,
     description: MCP_TOOL_SEARCH_DOCS_DESCRIPTION,
-    parameters: zMcpToolSearchDocsInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolSearchDocsOutput })
+    parameters: zodStripMcpSchemaId({ schema: zMcpToolSearchDocsInput }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolSearchDocsOutput })
+    })
   })
   async searchDocs(
     item: McpToolSearchDocsInput,

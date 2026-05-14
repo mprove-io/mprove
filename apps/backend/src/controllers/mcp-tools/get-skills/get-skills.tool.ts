@@ -9,6 +9,7 @@ import {
   MCP_TOOL_GET_SKILLS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolGetSkillsInput,
   zMcpToolGetSkillsInput,
@@ -23,8 +24,10 @@ export class GetSkillsTool {
   @Tool({
     name: MCP_TOOL_GET_SKILLS,
     description: MCP_TOOL_GET_SKILLS_DESCRIPTION,
-    parameters: zMcpToolGetSkillsInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolGetSkillsOutput })
+    parameters: zodStripMcpSchemaId({ schema: zMcpToolGetSkillsInput }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolGetSkillsOutput })
+    })
   })
   async getSkills(
     item: McpToolGetSkillsInput,

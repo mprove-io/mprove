@@ -9,6 +9,7 @@ import {
   MCP_TOOL_LIST_DOCS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolListDocsInput,
   zMcpToolListDocsInput,
@@ -23,8 +24,10 @@ export class ListDocsTool {
   @Tool({
     name: MCP_TOOL_LIST_DOCS,
     description: MCP_TOOL_LIST_DOCS_DESCRIPTION,
-    parameters: zMcpToolListDocsInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolListDocsOutput })
+    parameters: zodStripMcpSchemaId({ schema: zMcpToolListDocsInput }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolListDocsOutput })
+    })
   })
   async listDocs(
     item: McpToolListDocsInput,

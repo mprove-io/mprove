@@ -9,6 +9,7 @@ import {
   MCP_TOOL_READ_DOCS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolReadDocsInput,
   zMcpToolReadDocsInput,
@@ -23,8 +24,10 @@ export class ReadDocsTool {
   @Tool({
     name: MCP_TOOL_READ_DOCS,
     description: MCP_TOOL_READ_DOCS_DESCRIPTION,
-    parameters: zMcpToolReadDocsInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolReadDocsOutput })
+    parameters: zodStripMcpSchemaId({ schema: zMcpToolReadDocsInput }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolReadDocsOutput })
+    })
   })
   async readDocs(
     item: McpToolReadDocsInput,

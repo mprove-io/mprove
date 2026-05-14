@@ -13,6 +13,7 @@ import {
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolGetStateInput,
   zMcpToolGetStateInput,
@@ -30,8 +31,10 @@ export class GetStateTool {
   @Tool({
     name: MCP_TOOL_GET_STATE,
     description: MCP_TOOL_GET_STATE_DESCRIPTION,
-    parameters: zMcpToolGetStateInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolGetStateOutput })
+    parameters: zodStripMcpSchemaId({ schema: zMcpToolGetStateInput }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolGetStateOutput })
+    })
   })
   async getState(
     item: McpToolGetStateInput,

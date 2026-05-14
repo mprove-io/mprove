@@ -206,7 +206,7 @@ Each schema must be stored as **connection_name.schema_name.schema** YAML file:
 
 \`\`\`yaml
 schema: c1_postgres.fleet
-description: 'Fleet management system tracking vehicles, drivers, trips, and maintenance records'
+description: 'Fleet management system tracking vehicles, drivers, trips, and maintenance'
 tables:
   - table: trips
     description: 'Individual vehicle trips with route, distance, and assigned driver'
@@ -236,6 +236,7 @@ tables:
       - column: status
         description: 'Trip completion status'
         example: 'completed'
+        cache_unique_values: true
 
   - table: vehicles
     description: 'Fleet vehicles with make, model, and current operational status'
@@ -256,6 +257,7 @@ tables:
       - column: name
         description: 'Full name of the driver'
         example: 'Carlos Rivera'
+        cache_unique_values: true
 
   - table: maintenance_records
     description: 'Scheduled and unscheduled vehicle maintenance events'
@@ -272,6 +274,7 @@ tables:
       - column: service_type
         description: 'Type of maintenance performed'
         example: 'oil change'
+        cache_unique_values: true
 \`\`\`
 
 ## Reference
@@ -294,12 +297,13 @@ tables:
 
 ### Column
 
-| Name          | Type                             | Required | Description                            |
-| ------------- | -------------------------------- | -------- | -------------------------------------- |
-| column        | string                           | yes      | Column name                            |
-| description   | string                           | no       | What this column represents            |
-| example       | string                           | no       | A realistic sample value               |
-| relationships | [Relationship []](#relationship) | no       | List of relationships to other columns |
+| Name                | Type                             | Required | Description                            |
+| ------------------- | -------------------------------- | -------- | -------------------------------------- |
+| column              | string                           | yes      | Column name                            |
+| description         | string                           | no       | What this column represents            |
+| example             | string                           | no       | A realistic sample value               |
+| cache_unique_values | boolean                          | no       | Cache unique values for column or not  |
+| relationships       | [Relationship []](#relationship) | no       | List of relationships to other columns |
 
 ### Relationship
 
@@ -328,6 +332,11 @@ Defining one side is sufficient (no need to define both sides).
 **Cross-schema:** Use \`to_schema\` to reference a table in a different schema on the same connection. See the \`customer_id\` column in the example above. Cross-connection relationships are not supported.
 
 **Partial coverage:** You do not need to define every table or column. You should include tables and columns that have relationships. Also include those columns where you want to add descriptions or examples. Omitted columns still appear in the combined schema with their raw metadata.
+
+## Cache Unique Values
+
+\`cache_unique_values: true\` marks the column as recommended for caching unique values. 
+If a column unique values are cached, the Explorer AI session can look up the correct model fields by value before producing the charts. 
 ` },
   { pageId: 'environments', content: `# Environments
 

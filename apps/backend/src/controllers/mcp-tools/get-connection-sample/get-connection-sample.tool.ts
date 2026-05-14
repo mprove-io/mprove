@@ -12,6 +12,7 @@ import {
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import type { ToBackendGetConnectionSampleResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
 import {
   type McpToolGetSampleInput,
@@ -30,8 +31,10 @@ export class GetConnectionSampleTool {
   @Tool({
     name: MCP_TOOL_GET_SAMPLE,
     description: MCP_TOOL_GET_SAMPLE_DESCRIPTION,
-    parameters: zMcpToolGetSampleInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolGetSampleOutput })
+    parameters: zodStripMcpSchemaId({ schema: zMcpToolGetSampleInput }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolGetSampleOutput })
+    })
   })
   async getConnectionSample(
     item: McpToolGetSampleInput,

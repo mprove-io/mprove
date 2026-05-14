@@ -13,6 +13,7 @@ import {
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolRunInput,
   zMcpToolRunInput,
@@ -31,8 +32,10 @@ export class RunTool {
   @Tool({
     name: MCP_TOOL_RUN,
     description: MCP_TOOL_RUN_DESCRIPTION,
-    parameters: zMcpToolRunInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolRunOutput })
+    parameters: zodStripMcpSchemaId({ schema: zMcpToolRunInput }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolRunOutput })
+    })
   })
   async run(item: McpToolRunInput, context: Context, request: Request) {
     let user = (request as any).user as UserTab;

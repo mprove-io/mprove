@@ -12,6 +12,7 @@ import {
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import type { ToBackendGetConnectionsListResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connections-list';
 import {
   type McpToolGetConnectionsListInput,
@@ -30,8 +31,12 @@ export class GetConnectionsListTool {
   @Tool({
     name: MCP_TOOL_GET_CONNECTIONS_LIST,
     description: MCP_TOOL_GET_CONNECTIONS_LIST_DESCRIPTION,
-    parameters: zMcpToolGetConnectionsListInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolGetConnectionsListOutput })
+    parameters: zodStripMcpSchemaId({
+      schema: zMcpToolGetConnectionsListInput
+    }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolGetConnectionsListOutput })
+    })
   })
   async getConnectionsList(
     item: McpToolGetConnectionsListInput,

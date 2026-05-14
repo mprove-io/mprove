@@ -15,6 +15,7 @@ import {
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
 import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolValidateFilesInput,
   zMcpToolValidateFilesInput,
@@ -34,8 +35,10 @@ export class ValidateFilesTool {
   @Tool({
     name: MCP_TOOL_VALIDATE,
     description: MCP_TOOL_VALIDATE_DESCRIPTION,
-    parameters: zMcpToolValidateFilesInput,
-    outputSchema: zodDeepNullish({ schema: zMcpToolValidateFilesOutput })
+    parameters: zodStripMcpSchemaId({ schema: zMcpToolValidateFilesInput }),
+    outputSchema: zodStripMcpSchemaId({
+      schema: zodDeepNullish({ schema: zMcpToolValidateFilesOutput })
+    })
   })
   async validateFiles(
     item: McpToolValidateFilesInput,
