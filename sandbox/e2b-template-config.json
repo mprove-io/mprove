@@ -1,10 +1,10 @@
 {
-  "template": "v56",
+  "template": "v57",
   "cpuCount": 4,
   "memoryMB": 8192,
   "skipCache": true,
   "opencode": "1.3.13",
-  "mprove": "12.0.12",
+  "mprove": "12.0.13",
   "repos": {
     "malloyDocs": {
       "url": "https://github.com/malloydata/malloydata.github.io.git",
