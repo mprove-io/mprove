@@ -3,11 +3,11 @@
 export const tocToContent: { pageId: string; content: string }[] = [
   { pageId: 'about', content: `# About
 
-Hey! I'm Alexander, Mprove CEO and Developer.
+Hey! I'm Alexander.
 
 [Mprove](https://mprove.io/) is an [Open Source](https://github.com/mprove-io/mprove) Business Intelligence tool focused on Metrics.
 
-With Mprove, instead of directly querying tables, you query data Models:
+With Mprove, instead of directly querying tables, you query semantic data models:
 - For SQL data sources, see [Malloy Models](/content/docs/reference/model-malloy).
 - For HTTP API data sources, see [Store Models](/content/docs/reference/model-store).
 
@@ -18,8 +18,6 @@ I started working on Mprove in 2015 inspired by Looker.
 Understanding how things should work and look comes through a lot of trial and error. This is my third big attempt to build it right.
 
 Initially, Mprove YAML had its own module for SQL transformation logic, similar to LookML. In 2025, I replaced this part with Malloy as the next-generation data modeling language.
-
-As for future plans, you can expect AI features and more cool stuff later on.
 ` },
   { pageId: 'access-roles', content: `# Access Roles
 
@@ -368,10 +366,8 @@ If you need environment variables for your use case, please let us know on [Gith
 ` },
   { pageId: 'quickstart', content: `# Quickstart
 
-Mprove Cloud is a best way to get started with Mprove.
-
 <Callout>
-To self host Open Source version use [README.md](https://github.com/mprove-io/mprove/blob/master/README.md)
+To self host Mprove use [README.md](https://github.com/mprove-io/mprove/blob/master/README.md)
 
 </Callout>
 
@@ -379,9 +375,7 @@ To self host Open Source version use [README.md](https://github.com/mprove-io/mp
 <div className="fd-step">
 ### Sign Up
 
-You can sign up for Mprove Cloud by clicking the "SignUp" button on https://mprove.io.
-
-After that, you will be able to log in at https://app.mprove.io and create organization.
+After signing up, you will be able to log in and create an organization.
 
 </div>
 
