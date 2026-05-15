@@ -86,7 +86,3 @@ Login using values from `.env` file environment variables:
 - `BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD`
 
 Continue with [Quickstart Docs](https://docs.mprove.io/docs/quickstart).
-
-## License
-
-Mprove is distributed under various [Licenses](https://github.com/mprove-io/mprove/blob/master/LICENSE).
