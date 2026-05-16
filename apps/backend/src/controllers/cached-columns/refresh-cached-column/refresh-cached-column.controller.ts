@@ -46,6 +46,8 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendRefreshCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-refresh-cached-column';
 
+const CACHED_PARTS_INSERT_CHUNK_SIZE = 400;
+
 @ApiTags('CachedColumns')
 @UseGuards(ThrottlerUserIdGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -382,12 +384,23 @@ export class RefreshCachedColumnController {
             serverTs: undefined as number
           }));
 
-          await this.db.packer.write({
-            tx: tx,
-            insert: {
-              cachedParts: cachedParts
-            }
-          });
+          for (
+            let i = 0;
+            i < cachedParts.length;
+            i += CACHED_PARTS_INSERT_CHUNK_SIZE
+          ) {
+            let cachedPartsChunk = cachedParts.slice(
+              i,
+              i + CACHED_PARTS_INSERT_CHUNK_SIZE
+            );
+
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                cachedParts: cachedPartsChunk
+              }
+            });
+          }
         }
 
         let completedTs = makeTsNumber();

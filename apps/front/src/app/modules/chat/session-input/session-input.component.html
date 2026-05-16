@@ -66,6 +66,7 @@
 <div
   *ngIf="
     showSelects &&
+    !(isRestrictedUser && sessionType === sessionTypeEnum.Explorer) &&
     projectHasAnyApiKeyOrSubscription &&
     (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer)
   "
@@ -204,14 +205,35 @@
 
 <ng-template #errorMessages>
   <div
-    *ngIf="!isEditor && sessionType === sessionTypeEnum.Editor"
+    *ngIf="isRestrictedUser"
+    class="mb-2 text-center text-[17px] text-red-500"
+    >Demo user cannot start AI sessions</div
+  >
+
+  <div
+    *ngIf="
+      !isRestrictedUser && !isEditor && sessionType === sessionTypeEnum.Editor
+    "
     class="mb-2 text-center text-[17px] text-red-500"
     >Editor session requires Files Editor role</div
   >
 
   <div
     *ngIf="
-      isEditor && !projectHasE2bApiKey && sessionType == sessionTypeEnum.Editor
+      !isRestrictedUser &&
+      !isExplorer &&
+      sessionType === sessionTypeEnum.Explorer
+    "
+    class="mb-2 text-center text-[17px] text-red-500"
+    >Explorer session requires Explorer role</div
+  >
+
+  <div
+    *ngIf="
+      !isRestrictedUser &&
+      isEditor &&
+      !projectHasE2bApiKey &&
+      sessionType == sessionTypeEnum.Editor
     "
     class="mb-2 text-center text-[17px] text-red-500"
     >Editor session requires E2B API Key (see Project Settings)</div
@@ -219,7 +241,8 @@
 
   <div
     *ngIf="
-      isEditor &&
+      !isRestrictedUser &&
+      (isEditor || sessionType === sessionTypeEnum.Explorer) &&
       (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
       !projectHasAnyApiKeyOrSubscription
     "
@@ -233,7 +256,8 @@
 
   <div
     *ngIf="
-      isEditor &&
+      !isRestrictedUser &&
+      (isEditor || sessionType === sessionTypeEnum.Explorer) &&
       (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
       projectHasAnyApiKeyOrSubscription &&
       !providerHasApiKeyOrSubscription

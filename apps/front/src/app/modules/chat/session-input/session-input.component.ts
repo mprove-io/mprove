@@ -9,7 +9,10 @@ import {
 } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { take, tap } from 'rxjs/operators';
-import { EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE } from '#common/constants/top';
+import {
+  EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE,
+  RESTRICTED_USER_ALIAS
+} from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -76,6 +79,8 @@ export class SessionInputComponent implements OnChanges {
   projectHasE2bApiKey = true;
   effectiveDisabled = false;
   isEditor = true;
+  isExplorer = false;
+  isRestrictedUser = false;
 
   projectHasAnyApiKeyOrSubscription = true;
 
@@ -94,10 +99,13 @@ export class SessionInputComponent implements OnChanges {
     private uiService: UiService,
     private sessionModelsQuery: SessionModelsQuery
   ) {
-    this.isEditor = this.memberQuery.getValue().isEditor;
+    let member = this.memberQuery.getValue();
+    this.isEditor = member.isEditor;
+    this.isExplorer = member.isExplorer;
 
     let user = this.userQuery.getValue();
     this.isCodexAuthSet = user.isCodexAuthSet === true;
+    this.isRestrictedUser = user.alias === RESTRICTED_USER_ALIAS;
 
     let state = this.sessionModelsQuery.getValue();
 
@@ -216,13 +224,18 @@ export class SessionInputComponent implements OnChanges {
     let isEditorSessionWithoutEditorRole =
       this.sessionType === SessionTypeEnum.Editor && !this.isEditor;
 
+    let isExplorerSessionWithoutExplorerRole =
+      this.sessionType === SessionTypeEnum.Explorer && !this.isExplorer;
+
     let isEditorWithoutE2b =
       this.sessionType !== SessionTypeEnum.Explorer &&
       !this.projectHasE2bApiKey;
 
     this.effectiveDisabled =
       this.disabled ||
+      this.isRestrictedUser ||
       isEditorSessionWithoutEditorRole ||
+      isExplorerSessionWithoutExplorerRole ||
       !this.projectHasAnyApiKeyOrSubscription ||
       !this.providerHasApiKeyOrSubscription ||
       isEditorWithoutE2b;
