@@ -25,7 +25,10 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { QueriesService } from '#backend/services/db/queries.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { ExplorerChartRebuildService } from '#backend/services/explorer/explorer-chart-rebuild.service';
+import {
+  ExplorerChartRebuildService,
+  type ExplorerRebuildResult
+} from '#backend/services/explorer/explorer-chart-rebuild.service';
 import { TabService } from '#backend/services/tab.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
@@ -155,18 +158,36 @@ export class GetExplorerChartTabService {
     }
 
     if (!chart || !mconfig || !query) {
-      let rebuildResult =
-        await this.explorerChartRebuildService.rebuildFromYaml({
+      let rebuildResult: ExplorerRebuildResult | undefined;
+
+      try {
+        rebuildResult = await this.explorerChartRebuildService.rebuildFromYaml({
           traceId: traceId,
           session: session,
           chartId: chartId,
           modelId: modelId,
           chartYaml: chartYaml
         });
+      } catch (e) {
+        if (
+          e instanceof ServerError &&
+          e.message === ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
+        ) {
+          rebuildErrors = [
+            {
+              title: 'Model does not exist',
+              message: ErEnum.BACKEND_MODEL_DOES_NOT_EXIST,
+              lines: []
+            }
+          ];
+        } else {
+          throw e;
+        }
+      }
 
-      if (rebuildResult.ok === false) {
+      if (rebuildResult?.ok === false) {
         rebuildErrors = rebuildResult.errors;
-      } else {
+      } else if (rebuildResult?.ok === true) {
         let rebuiltChart = rebuildResult.chart;
         let rebuiltMconfig = rebuildResult.mconfig;
         let rebuiltQuery = rebuildResult.query;

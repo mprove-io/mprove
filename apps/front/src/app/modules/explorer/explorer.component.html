@@ -96,11 +96,16 @@
                 <div
                   class="text-s500 flex flex-1 flex-col gap-2 overflow-auto p-6"
                 >
-                  <div class="font-semibold">Compile errors</div>
+                  <div class="text-r1 mb-2 text-xl font-semibold">Errors</div>
                   @for (e of content.errors; track e) {
-                    <pre class="bg-s100 whitespace-pre-wrap rounded p-3 text-xs"
-                      >{{ e.title }} — {{ e.message }}</pre
+                    <div
+                      class="bg-r100 text-r700 mb-2 w-fit max-w-full rounded px-4 py-3"
                     >
+                      <div class="text-r1 font-semibold">{{ e.title }}</div>
+                      <div class="mt-1 whitespace-pre-wrap break-words">{{
+                        e.message
+                      }}</div>
+                    </div>
                   }
                 </div>
               }
