@@ -7,6 +7,7 @@ export enum FuncEnum {
   CheckDashboardTopParameters = 'build-dashboard/check-dashboard-top-parameters',
   CheckDashboardFilterConditions = 'build-dashboard/check-dashboard-filter-conditions',
   CheckDashboardTilesExist = 'build-dashboard/check-dashboard-tiles-exist',
+  CheckDashboardSpaces = 'build-dashboard/check-dashboard-spaces',
 
   CheckFieldsExist = 'build-field/check-fields-exist',
   CheckParametersExist = 'build-field/check-parameters-exist',
@@ -44,6 +45,7 @@ export enum FuncEnum {
   BuildMalloyModel = 'build-mod-start/build-malloy-model',
   BuildMods = 'build-mod-start/build-mods',
   BuildFlatMalloyFieldItems = 'build-mod-start/build-flat-malloy-field-items',
+  CheckModSpaces = 'build-mod-start/check-mod-spaces',
   CheckTimeframes = 'build-mod-start/check-timeframes',
   CheckBuildMetricsFieldGroups = 'build-mod-start/check-build-metrics-field-groups',
 
@@ -56,11 +58,13 @@ export enum FuncEnum {
   CheckReportRow = 'build-report/check-report-row',
   CheckReportRowIds = 'build-report/check-report-row-ids',
   CheckReportRowParameters = 'build-report/check-report-row-parameters',
+  CheckReportSpaces = 'build-report/check-report-spaces',
   BuildReportRowParameterFractions = 'build-report/build-report-row-parameter-fractions',
 
   CheckStoreBuildMetrics = 'build-store-next/check-store-build-metrics',
   CheckStoreBuildMetricDetails = 'build-store-next/check-store-build-metric-details',
   CheckStoreRequiredParameters = 'build-store-next/check-store-required-parameters',
+  CheckStoreSpaces = 'build-store-next/check-store-spaces',
 
   ApplyStorePresets = 'build-store-start/apply-store-presets',
   CheckStoreFieldGroups = 'build-store-start/check-store-field-groups',
@@ -88,6 +92,8 @@ export enum FuncEnum {
   SplitFiles = 'build-yaml/split-files',
   CheckProjectConfig = 'build-yaml/check-project-config',
   CheckSchema = 'build-yaml/check-schema',
+  CheckSpaceParents = 'build-spaces/check-space-parents',
+  BuildSpaceAccessRoles = 'build-spaces/build-space-access-roles',
 
   CollectFiles = 'extra/collect-files',
   CheckAccess = 'extra/check-access',

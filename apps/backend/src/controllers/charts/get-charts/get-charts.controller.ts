@@ -119,7 +119,7 @@ export class GetChartsController {
 
       return checkModelAccess({
         member: userMember,
-        modelAccessRoles: model.accessRoles
+        modelAccessRoles: model.accessRolesCombined
       });
     });
 
@@ -131,7 +131,7 @@ export class GetChartsController {
           model: model,
           hasAccess: checkModelAccess({
             member: userMember,
-            modelAccessRoles: model.accessRoles
+            modelAccessRoles: model.accessRolesCombined
           })
         })
       )

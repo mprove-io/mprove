@@ -3,15 +3,18 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
+import type { FileSpace } from '#common/zod/blockml/internal/file-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { checkDashboardAccess } from './check-dashboard-access';
 import { checkDashboardFilterConditions } from './check-dashboard-filter-conditions';
+import { checkDashboardSpaces } from './check-dashboard-spaces';
 import { checkDashboardTilesExist } from './check-dashboard-tiles-exist';
 import { checkDashboardTopParameters } from './check-dashboard-top-parameters';
 
 export function buildDashboard(
   item: {
     dashboards: FileDashboard[];
+    spaces: FileSpace[];
     stores: FileStore[];
     errors: BmError[];
     structId: string;
@@ -57,6 +60,17 @@ export function buildDashboard(
   dashboards = checkDashboardTilesExist(
     {
       dashboards: dashboards,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
+  dashboards = checkDashboardSpaces(
+    {
+      dashboards: dashboards,
+      spaces: item.spaces,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

@@ -13,6 +13,7 @@ import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import type { FileSchema } from '#common/zod/blockml/internal/file-schema';
+import type { FileSpace } from '#common/zod/blockml/internal/file-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { checkConnections } from './check-connections';
 import { checkProjectConfig } from './check-project-config';
@@ -43,6 +44,7 @@ export function buildYaml(
   let reports: FileReport[];
   let dashboards: FileDashboard[];
   let charts: FileChart[];
+  let spaces: FileSpace[];
   let confs: FileProjectConf[];
 
   let file2s: File2[] = removeWrongExt(
@@ -75,6 +77,7 @@ export function buildYaml(
             FileExtensionEnum.Report,
             FileExtensionEnum.Dashboard,
             FileExtensionEnum.Chart,
+            FileExtensionEnum.Space,
             FileExtensionEnum.Yml
           ].indexOf(x.ext) > -1
       ),
@@ -143,6 +146,7 @@ export function buildYaml(
   dashboards = splitFilesResult.dashboards;
   reports = splitFilesResult.reports;
   charts = splitFilesResult.charts;
+  spaces = splitFilesResult.spaces;
 
   let projectConfig =
     item.isUseCache === false
@@ -177,6 +181,7 @@ export function buildYaml(
     reports: reports,
     dashboards: dashboards,
     charts: charts,
+    spaces: spaces,
     projectConfig: projectConfig
   };
 }

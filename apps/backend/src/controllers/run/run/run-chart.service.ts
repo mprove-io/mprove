@@ -79,7 +79,7 @@ export class RunChartService {
 
       return checkModelAccess({
         member: userMember,
-        modelAccessRoles: model.accessRoles
+        modelAccessRoles: model.accessRolesCombined
       });
     });
 

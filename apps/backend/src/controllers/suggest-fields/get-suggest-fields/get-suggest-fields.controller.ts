@@ -141,7 +141,7 @@ export class GetSuggestFieldsController {
           extraModelIds.indexOf(model.modelId) > -1 ||
           checkModelAccess({
             member: userMember,
-            modelAccessRoles: model.accessRoles
+            modelAccessRoles: model.accessRolesCombined
           })
       )
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));

@@ -74,10 +74,12 @@ export class ModelsService {
       connectionId: model.connectionId,
       connectionType: model.connectionType,
       filePath: model.filePath,
+      space: model.space,
       fileText: model.fileText,
       storeContent: model.storeContent,
       dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
       accessRoles: model.accessRoles,
+      accessRolesCombined: model.accessRolesCombined,
       label: model.label,
       fields: fields,
       nodes: nodes,
@@ -105,9 +107,11 @@ export class ModelsService {
       connectionId: apiModel.connectionId,
       connectionType: apiModel.connectionType,
       accessRoles: apiModel.accessRoles,
+      accessRolesCombined: apiModel.accessRolesCombined,
       source: apiModel.source,
       malloyModelDef: apiModel.malloyModelDef,
       filePath: apiModel.filePath,
+      space: apiModel.space,
       fileText: apiModel.fileText,
       storeContent: apiModel.storeContent,
       dateRangeIncludesRightSide: apiModel.dateRangeIncludesRightSide,
@@ -175,7 +179,7 @@ export class ModelsService {
 
     let isAccessGranted = checkModelAccess({
       member: userMember,
-      modelAccessRoles: model.accessRoles
+      modelAccessRoles: model.accessRolesCombined
     });
 
     if (isAccessGranted === false) {
@@ -224,7 +228,7 @@ export class ModelsService {
       let modelPartX: ModelPartX = Object.assign({}, x, {
         hasAccess: checkAccess({
           member: apiUserMember,
-          accessRoles: x.accessRoles
+          accessRoles: x.accessRolesCombined
         })
       });
       return modelPartX;
@@ -239,7 +243,8 @@ export class ModelsService {
     let modelPart: ModelPart = {
       structId: model.structId,
       modelId: model.modelId,
-      accessRoles: model.accessRoles
+      accessRoles: model.accessRoles,
+      accessRolesCombined: model.accessRolesCombined
     };
 
     return modelPart;

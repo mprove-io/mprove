@@ -71,6 +71,27 @@ export function checkTopValues(
 
           return;
         }
+
+        if (
+          ParameterEnum.Space.toString() === parameter &&
+          !file[parameter].toString().match(/^[a-z][a-z0-9_.]*$/)
+        ) {
+          item.errors.push(
+            new BmError({
+              title: ErTitleEnum.WRONG_CHARS_IN_PARAMETER_VALUE,
+              message: `parameter "${parameter}" contains wrong characters or whitespace (only "a...z0...9_." is allowed and must start with a letter)`,
+              lines: [
+                {
+                  line: file[parameter + LINE_NUM],
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+
+          return;
+        }
       });
 
     if (errorsOnStart === item.errors.length) {

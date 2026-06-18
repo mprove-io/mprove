@@ -171,7 +171,7 @@ export class GetStateService {
     let modelsWithAccess = allModels.filter(model =>
       checkModelAccess({
         member: userMember,
-        modelAccessRoles: model.accessRoles
+        modelAccessRoles: model.accessRolesCombined
       })
     );
 
@@ -187,7 +187,7 @@ export class GetStateService {
 
       return checkModelAccess({
         member: userMember,
-        modelAccessRoles: model.accessRoles
+        modelAccessRoles: model.accessRolesCombined
       });
     });
 
@@ -223,7 +223,7 @@ export class GetStateService {
     let reportsGrantedAccess = structReports.filter(x =>
       checkAccess({
         member: userMember,
-        accessRoles: x.accessRoles
+        accessRoles: x.accessRolesCombined
       })
     );
 

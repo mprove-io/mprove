@@ -83,7 +83,7 @@ export class ExplorerModelPartsService {
           model: model,
           hasAccess: checkModelAccess({
             member: userMember,
-            modelAccessRoles: model.accessRoles
+            modelAccessRoles: model.accessRolesCombined
           })
         })
       )

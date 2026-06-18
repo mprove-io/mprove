@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zMember } from '#common/zod/backend/member';
 import { zModelX } from '#common/zod/backend/model-x';
+import { zReportNode } from '#common/zod/backend/report-node';
 import { zReportX } from '#common/zod/backend/report-x';
 import { zStructX } from '#common/zod/backend/struct-x';
 import { zMyResponse } from '#common/zod/to/my-response';
@@ -37,6 +38,7 @@ export let zToBackendGetReportsResponsePayload = z
     struct: zStructX,
     userMember: zMember,
     reports: z.array(zReportX),
+    reportNodes: z.array(zReportNode),
     storeModels: z.array(zModelX)
   })
   .meta({ id: 'ToBackendGetReportsResponsePayload' });

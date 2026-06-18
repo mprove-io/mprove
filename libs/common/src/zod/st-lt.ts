@@ -30,6 +30,7 @@ import { zPreset } from '#common/zod/blockml/preset';
 import { zReportField } from '#common/zod/blockml/report-field';
 import { zRow } from '#common/zod/blockml/row';
 import { zSorting } from '#common/zod/blockml/sorting';
+import { zSpace } from '#common/zod/blockml/space';
 import { zStorePart } from '#common/zod/blockml/store-part';
 import { zTile } from '#common/zod/blockml/tile';
 import { zGv } from './backend/gv';
@@ -113,7 +114,9 @@ export let zDashboardSt = z
   .object({
     title: z.string(),
     filePath: z.string(),
+    space: z.string().nullish(),
     accessRoles: z.array(z.string()),
+    accessRolesCombined: z.array(z.string()),
     tiles: z.array(zTile),
     fields: z.array(zDashboardField)
   })
@@ -217,7 +220,10 @@ export let zMemberLt = z
 export type MemberLt = z.infer<typeof zMemberLt>;
 
 export let zModelSt = z
-  .object({ accessRoles: z.array(z.string()) })
+  .object({
+    accessRoles: z.array(z.string()),
+    accessRolesCombined: z.array(z.string())
+  })
   .meta({ id: 'ModelSt' });
 export type ModelSt = z.infer<typeof zModelSt>;
 
@@ -226,6 +232,7 @@ export let zModelLt = z
     source: z.string(),
     malloyModelDef: z.custom<MalloyModelDef>(),
     filePath: z.string(),
+    space: z.string().nullish(),
     fileText: z.string(),
     storeContent: zFileStore,
     dateRangeIncludesRightSide: z.boolean(),
@@ -306,7 +313,9 @@ export type QueryLt = z.infer<typeof zQueryLt>;
 export let zReportSt = z
   .object({
     filePath: z.string(),
+    space: z.string().nullish(),
     accessRoles: z.array(z.string()),
+    accessRolesCombined: z.array(z.string()),
     title: z.string(),
     fields: z.array(zReportField),
     chart: zMconfigChart
@@ -338,6 +347,7 @@ export let zStructLt = z
     modelFilePaths: z.array(z.string()).default([]),
     metrics: z.array(zModelMetric),
     presets: z.array(zPreset),
+    spaces: z.array(zSpace),
     extraSchemas: z.array(zExtraSchema),
     mproveConfig: zMproveConfig,
     mproveExplorer: z.string().nullish()

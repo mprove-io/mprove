@@ -599,7 +599,9 @@ export class TabToEntService {
     let dashboardSt: DashboardSt = {
       title: tab.title,
       filePath: tab.filePath,
+      space: tab.space,
       accessRoles: tab.accessRoles,
+      accessRolesCombined: tab.accessRolesCombined,
       tiles: tab.tiles,
       fields: tab.fields
     };
@@ -856,13 +858,15 @@ export class TabToEntService {
     let { tab, hashSecret } = item;
 
     let modelSt: ModelSt = {
-      accessRoles: tab.accessRoles
+      accessRoles: tab.accessRoles,
+      accessRolesCombined: tab.accessRolesCombined
     };
 
     let modelLt: ModelLt = {
       source: tab.source,
       malloyModelDef: tab.malloyModelDef,
       filePath: tab.filePath,
+      space: tab.space,
       fileText: tab.fileText,
       storeContent: tab.storeContent,
       dateRangeIncludesRightSide: tab.dateRangeIncludesRightSide,
@@ -1100,8 +1104,10 @@ export class TabToEntService {
 
     let reportSt: ReportSt = {
       filePath: tab.filePath,
+      space: tab.space,
       fields: tab.fields,
       accessRoles: tab.accessRoles,
+      accessRolesCombined: tab.accessRolesCombined,
       title: tab.title,
       chart: tab.chart
     };
@@ -1142,6 +1148,7 @@ export class TabToEntService {
       modelFilePaths: tab.modelFilePaths ?? [],
       metrics: tab.metrics,
       presets: tab.presets,
+      spaces: tab.spaces,
       extraSchemas: tab.extraSchemas,
       mproveConfig: tab.mproveConfig,
       mproveExplorer: tab.mproveExplorer

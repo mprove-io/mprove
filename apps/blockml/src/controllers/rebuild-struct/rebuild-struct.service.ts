@@ -14,6 +14,7 @@ import { buildMconfigChart } from '#blockml/functions/build-mconfig-chart/_build
 import { buildMetricsNext } from '#blockml/functions/build-metrics-next/_build-metrics-next';
 import { buildModStart } from '#blockml/functions/build-mod-start/_build-mod-start';
 import { buildReport } from '#blockml/functions/build-report/_build-report';
+import { buildSpace } from '#blockml/functions/build-spaces/_build-spaces';
 import { buildStoreNext } from '#blockml/functions/build-store-next/_build-store-next';
 import { buildStoreStart } from '#blockml/functions/build-store-start/_build-store-start';
 import { buildTile } from '#blockml/functions/build-tile/_build-tile';
@@ -75,10 +76,12 @@ import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import type { FileSchema } from '#common/zod/blockml/internal/file-schema';
+import type { FileSpace } from '#common/zod/blockml/internal/file-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { Preset } from '#common/zod/blockml/preset';
+import type { Space } from '#common/zod/blockml/space';
 import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
 import type { ToBlockmlRebuildStructResponsePayload } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
 import { zToBlockmlRebuildStructRequest } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
@@ -99,6 +102,7 @@ interface RebuildStructPrep {
   apiModels: Model[];
   reports: FileReport[];
   charts: FileChart[];
+  spaces: Space[];
   extraSchemas: ExtraSchema[];
   mproveConfig: MproveConfig;
   mproveExplorer: string;
@@ -234,6 +238,7 @@ export class RebuildStructService {
       charts: apiCharts,
       metrics: prep.metrics,
       presets: prep.presets,
+      spaces: prep.spaces,
       mproveExplorer: prep.mproveExplorer,
       mconfigs: mconfigs,
       queries: queries,
@@ -334,6 +339,7 @@ export class RebuildStructService {
     let reports: FileReport[];
     let dashboards: FileDashboard[];
     let charts: FileChart[];
+    let spaces: FileSpace[];
     let projectConfig: FileProjectConf;
 
     let yamlBuildItem = buildYaml(
@@ -359,6 +365,18 @@ export class RebuildStructService {
     dashboards = yamlBuildItem.dashboards;
     reports = yamlBuildItem.reports;
     charts = yamlBuildItem.charts;
+    spaces = yamlBuildItem.spaces;
+
+    spaces = buildSpace(
+      {
+        spaces: spaces,
+        errors: errors,
+        structId: item.structId,
+        caller: CallerEnum.BuildSpace
+      },
+      this.cs
+    );
+
     projectConfig =
       item.isUseCache === true
         ? <FileProjectConf>{
@@ -397,6 +415,7 @@ export class RebuildStructService {
         apiModels: [],
         metrics: [],
         presets: [],
+        spaces: [],
         stores: [],
         reports: [],
         dashboards: [],
@@ -509,6 +528,7 @@ export class RebuildStructService {
                 malloyConnections: malloyConnections,
                 connections: item.projectConnections,
                 mods: mods,
+                spaces: spaces,
                 tempDir: tempDir,
                 projectId: item.projectId,
                 errors: errors,
@@ -545,6 +565,7 @@ export class RebuildStructService {
       stores = buildStoreNext(
         {
           stores: stores,
+          spaces: spaces,
           structId: item.structId,
           errors: errors,
           caller: CallerEnum.BuildStoreNext
@@ -592,6 +613,7 @@ export class RebuildStructService {
     dashboards = buildDashboard(
       {
         dashboards: dashboards,
+        spaces: spaces,
         stores: stores,
         structId: item.structId,
         caseSensitiveStringFilters: toBooleanFromLowercaseString(
@@ -719,6 +741,7 @@ export class RebuildStructService {
     reports = buildReport(
       {
         reports: reports,
+        spaces: spaces,
         metrics: metrics,
         apiModels: apiModels,
         stores: stores,
@@ -794,6 +817,16 @@ export class RebuildStructService {
       dashboards: dashboards,
       reports: reports,
       charts: charts,
+      spaces: spaces.map(space => {
+        let apiSpace: Space = {
+          space: space.space,
+          title: space.title,
+          filePath: space.filePath,
+          accessRoles: space.access_roles ?? [],
+          accessRolesCombined: space.accessRolesCombined ?? []
+        };
+        return apiSpace;
+      }),
       extraSchemas: (schemas ?? []).map(sch => {
         let extraSchema: ExtraSchema = {
           schema: sch.schema,

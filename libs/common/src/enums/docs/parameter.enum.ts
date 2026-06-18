@@ -49,6 +49,7 @@ export enum ParameterEnum {
   MproveDir = 'mprove_dir',
   Percentile = 'percentile',
   Report = 'report',
+  Space = 'space',
   Tiles = 'tiles',
   Result = 'result',
   FractionTypes = 'fraction_types',

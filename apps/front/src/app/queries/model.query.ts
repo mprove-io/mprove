@@ -18,6 +18,7 @@ let modelState: ModelState = {
   malloyModelDef: undefined,
   dateRangeIncludesRightSide: undefined,
   accessRoles: [],
+  accessRolesCombined: [],
   label: undefined,
   fields: [],
   nodes: [],

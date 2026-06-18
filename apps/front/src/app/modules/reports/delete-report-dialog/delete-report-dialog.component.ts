@@ -18,6 +18,7 @@ import type {
   ToBackendDeleteReportRequestPayload,
   ToBackendDeleteReportResponse
 } from '#common/zod/to-backend/reports/to-backend-delete-report';
+import { removeReportNode } from '#front/app/functions/report-nodes';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -93,10 +94,16 @@ export class DeleteReportDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendDeleteReportResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let reports = this.reportsQuery.getValue().reports;
+            let reportsState = this.reportsQuery.getValue();
 
             this.reportsQuery.update({
-              reports: reports.filter(d => d.reportId !== report.reportId)
+              reports: reportsState.reports.filter(
+                d => d.reportId !== report.reportId
+              ),
+              reportNodes: removeReportNode({
+                reportNodes: reportsState.reportNodes,
+                reportId: report.reportId
+              })
             });
 
             let currentReport = this.reportQuery.getValue();

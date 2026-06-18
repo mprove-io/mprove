@@ -174,7 +174,7 @@ So searchFieldNames will be a list of individual words.`
       .filter(model =>
         checkModelAccess({
           member: userMember,
-          modelAccessRoles: model.accessRoles
+          modelAccessRoles: model.accessRolesCombined
         })
       )
       .filter(model => model.type === ModelTypeEnum.Malloy);

@@ -246,6 +246,7 @@ export class SaveCreateDashboardController {
         filePath: undefined,
         content: undefined,
         accessRoles: undefined,
+        accessRolesCombined: undefined,
         title: undefined,
         tiles: [],
         author: undefined,

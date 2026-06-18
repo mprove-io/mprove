@@ -128,7 +128,7 @@ export class GetModelsController {
             model: model,
             hasAccess: checkModelAccess({
               member: userMember,
-              modelAccessRoles: model.accessRoles
+              modelAccessRoles: model.accessRolesCombined
             })
           })
         )

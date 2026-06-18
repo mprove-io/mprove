@@ -170,6 +170,7 @@ export class BlockmlService {
       modelFilePaths: [...new Set(rs.models.map(x => x.filePath))],
       metrics: rs.metrics,
       presets: rs.presets,
+      spaces: rs.spaces,
       mproveExplorer: rs.mproveExplorer,
       mproveVersion:
         this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),

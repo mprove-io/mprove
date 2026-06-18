@@ -259,7 +259,7 @@ export class GetExplorerChartTabService {
           model: m,
           hasAccess: checkModelAccess({
             member: userMember,
-            modelAccessRoles: m.accessRoles
+            modelAccessRoles: m.accessRolesCombined
           })
         })
       );

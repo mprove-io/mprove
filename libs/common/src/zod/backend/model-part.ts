@@ -4,7 +4,8 @@ export let zModelPart = z
   .object({
     structId: z.string(),
     modelId: z.string(),
-    accessRoles: z.array(z.string())
+    accessRoles: z.array(z.string()),
+    accessRolesCombined: z.array(z.string())
   })
   .meta({ id: 'ModelPart' });
 

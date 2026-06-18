@@ -3,6 +3,7 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
+import type { FileSpace } from '#common/zod/blockml/internal/file-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
@@ -15,11 +16,13 @@ import { checkReportRowIds } from './check-report-row-ids';
 import { checkReportRowParameters } from './check-report-row-parameters';
 import { checkReportRowUnknownParameters } from './check-report-row-unknown-parameters';
 import { checkReportRowUnknownParams } from './check-report-row-unknown-params';
+import { checkReportSpaces } from './check-report-spaces';
 import { checkReportTopParameters } from './check-report-top-parameters';
 
 export function buildReport(
   item: {
     reports: FileReport[];
+    spaces: FileSpace[];
     metrics: ModelMetric[];
     apiModels: Model[];
     stores: FileStore[];
@@ -135,6 +138,17 @@ export function buildReport(
       metrics: item.metrics,
       structId: item.structId,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
+  reports = checkReportSpaces(
+    {
+      reports: reports,
+      spaces: item.spaces,
+      structId: item.structId,
       errors: item.errors,
       caller: item.caller
     },

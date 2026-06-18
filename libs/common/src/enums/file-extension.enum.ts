@@ -5,6 +5,7 @@ export enum FileExtensionEnum {
   Chart = '.chart',
   Report = '.report',
   Dashboard = '.dashboard',
+  Space = '.space',
   Yml = '.yml',
   Md = '.md'
 }

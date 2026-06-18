@@ -565,7 +565,7 @@ export class ReportDataService {
         model: x,
         hasAccess: checkModelAccess({
           member: userMember,
-          modelAccessRoles: x.accessRoles
+          modelAccessRoles: x.accessRolesCombined
         })
       })
     );

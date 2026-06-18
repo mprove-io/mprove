@@ -57,6 +57,7 @@ export class StructsService {
         return modelMetricX;
       }),
       presets: struct.presets,
+      spaces: struct.spaces,
       mproveConfig: struct.mproveConfig,
       mproveExplorer: struct.mproveExplorer,
       mproveVersion: struct.mproveVersion,
@@ -80,6 +81,7 @@ export class StructsService {
       modelFilePaths: [],
       metrics: [],
       presets: [],
+      spaces: [],
       extraSchemas: [],
       mproveConfig: {
         mproveDirValue: './data',

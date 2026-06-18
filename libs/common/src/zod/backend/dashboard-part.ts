@@ -9,7 +9,9 @@ export let zDashboardPart = z
     creatorId: z.string(),
     title: z.string(),
     filePath: z.string(),
+    space: z.string().nullish(),
     accessRoles: z.array(z.string()),
+    accessRolesCombined: z.array(z.string()),
     tiles: z.array(zTile),
     author: z.string(),
     canEditOrDeleteDashboard: z.boolean()

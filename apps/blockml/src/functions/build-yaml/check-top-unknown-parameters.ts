@@ -51,6 +51,7 @@ export function checkTopUnknownParameters(
                 ParameterEnum.Store.toString(),
                 ParameterEnum.Connection.toString(),
                 ParameterEnum.Label.toString(),
+                ParameterEnum.Space.toString(),
                 ParameterEnum.AccessRoles.toString(),
                 ParameterEnum.Method.toString(),
                 ParameterEnum.Preset.toString(),
@@ -89,6 +90,7 @@ export function checkTopUnknownParameters(
             if (
               [
                 ParameterEnum.Dashboard.toString(),
+                ParameterEnum.Space.toString(),
                 ParameterEnum.Title.toString(),
                 ParameterEnum.AccessRoles.toString(),
                 ParameterEnum.Parameters.toString(),
@@ -146,6 +148,7 @@ export function checkTopUnknownParameters(
             if (
               [
                 ParameterEnum.Report.toString(),
+                ParameterEnum.Space.toString(),
                 ParameterEnum.Title.toString(),
                 ParameterEnum.Parameters.toString(),
                 ParameterEnum.AccessRoles.toString(),
@@ -221,6 +224,34 @@ export function checkTopUnknownParameters(
                   message:
                     `parameter "${parameter}" cannot be used on top level of ` +
                     `${MPROVE_CONFIG_FILENAME} file`,
+                  lines: [
+                    {
+                      line: file[parameter + LINE_NUM],
+                      name: file.name,
+                      path: file.path
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+            break;
+          }
+
+          case FileExtensionEnum.Space: {
+            if (
+              [
+                ParameterEnum.Space.toString(),
+                ParameterEnum.Title.toString(),
+                ParameterEnum.AccessRoles.toString()
+              ].indexOf(parameter) < 0
+            ) {
+              item.errors.push(
+                new BmError({
+                  title: ErTitleEnum.UNKNOWN_SPACE_PARAMETER,
+                  message:
+                    `parameter "${parameter}" cannot be used on top level of ` +
+                    `${FileExtensionEnum.Space} file`,
                   lines: [
                     {
                       line: file[parameter + LINE_NUM],

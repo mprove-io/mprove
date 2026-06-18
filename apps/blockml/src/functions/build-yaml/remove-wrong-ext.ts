@@ -44,6 +44,7 @@ export function removeWrongExt(
         FileExtensionEnum.Report,
         FileExtensionEnum.Dashboard,
         FileExtensionEnum.Chart,
+        FileExtensionEnum.Space,
         FileExtensionEnum.Md,
         FileExtensionEnum.Yml
       ].indexOf(ext) > -1

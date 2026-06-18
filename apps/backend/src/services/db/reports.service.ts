@@ -84,7 +84,9 @@ export class ReportsService {
       draft: draft,
       draftCreatedTs: draftCreatedTs,
       filePath: filePath,
+      space: undefined,
       accessRoles: accessRoles,
+      accessRolesCombined: accessRoles,
       title: title,
       fields: fields,
       chart: chart,
@@ -160,7 +162,9 @@ export class ReportsService {
       draft: report.draft,
       creatorId: report.creatorId,
       filePath: report.filePath,
+      space: report.space,
       accessRoles: report.accessRoles,
+      accessRolesCombined: report.accessRolesCombined,
       title: report.title,
       timezone: timezone,
       timeSpec: timeSpec,
@@ -217,8 +221,10 @@ export class ReportsService {
       draft: apiReport.draft,
       draftCreatedTs: apiReport.draftCreatedTs,
       filePath: apiReport.filePath,
+      space: apiReport.space,
       fields: apiReport.fields,
       accessRoles: apiReport.accessRoles,
+      accessRolesCombined: apiReport.accessRolesCombined,
       title: apiReport.title,
       chart: apiReport.chart,
       rows: apiReport.rows,
@@ -327,7 +333,7 @@ export class ReportsService {
     if (report.draft === false) {
       let isAccessGranted = checkAccess({
         member: userMember,
-        accessRoles: report.accessRoles
+        accessRoles: report.accessRolesCombined
       });
 
       if (isAccessGranted === false) {

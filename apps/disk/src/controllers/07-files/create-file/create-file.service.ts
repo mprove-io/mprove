@@ -262,6 +262,9 @@ function getContentFromFileName(item: { fileName: string }) {
     case FileExtensionEnum.Report:
       content = `report: ${part}`;
       break;
+    case FileExtensionEnum.Space:
+      content = `space: ${part}`;
+      break;
     case FileExtensionEnum.Yml:
       content =
         item.fileName === MPROVE_CONFIG_FILENAME ? 'mprove_dir: ./' : '';

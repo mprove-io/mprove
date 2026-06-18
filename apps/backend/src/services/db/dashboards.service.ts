@@ -102,8 +102,10 @@ export class DashboardsService {
       author: author,
       canEditOrDeleteDashboard: canEditOrDeleteDashboard,
       filePath: dashboard.filePath,
+      space: dashboard.space,
       content: dashboard.content,
       accessRoles: dashboard.accessRoles,
+      accessRolesCombined: dashboard.accessRolesCombined,
       title: dashboard.title,
       fields: dashboard.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
@@ -160,7 +162,9 @@ export class DashboardsService {
       creatorId: dashboard.creatorId,
       title: dashboard.title,
       filePath: dashboard.filePath,
+      space: dashboard.space,
       accessRoles: dashboard.accessRoles,
+      accessRolesCombined: dashboard.accessRolesCombined,
       tiles: dashboard.tiles,
       author: author,
       canEditOrDeleteDashboard: canEditOrDeleteDashboard
@@ -186,7 +190,9 @@ export class DashboardsService {
       draft: apiDashboard.draft,
       creatorId: apiDashboard.creatorId,
       filePath: apiDashboard.filePath,
+      space: apiDashboard.space,
       accessRoles: apiDashboard.accessRoles,
+      accessRolesCombined: apiDashboard.accessRolesCombined,
       title: apiDashboard.title,
       fields: apiDashboard.fields,
       tiles: apiDashboard.tiles,
@@ -248,7 +254,7 @@ export class DashboardsService {
     if (dashboard.draft === false) {
       let isAccessGranted = checkAccess({
         member: userMember,
-        accessRoles: dashboard.accessRoles
+        accessRoles: dashboard.accessRolesCombined
       });
 
       if (isAccessGranted === false) {
@@ -330,7 +336,7 @@ export class DashboardsService {
         model: model,
         hasAccess: checkModelAccess({
           member: apiUserMember,
-          modelAccessRoles: model.accessRoles
+          modelAccessRoles: model.accessRolesCombined
         })
       })
     );
@@ -386,7 +392,7 @@ export class DashboardsService {
     let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
       checkAccess({
         member: apiUserMember,
-        accessRoles: x.accessRoles
+        accessRoles: x.accessRolesCombined
       })
     );
 
@@ -433,7 +439,7 @@ export class DashboardsService {
     let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
       checkAccess({
         member: apiUserMember,
-        accessRoles: x.accessRoles
+        accessRoles: x.accessRolesCombined
       })
     );
 

@@ -90,7 +90,7 @@ export class RunReportService {
         x.draft === true ||
         checkAccess({
           member: userMember,
-          accessRoles: x.accessRoles
+          accessRoles: x.accessRolesCombined
         })
     );
 

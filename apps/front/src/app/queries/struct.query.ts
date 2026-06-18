@@ -23,6 +23,7 @@ let structState: StructState = {
   modelFilePaths: [],
   metrics: [],
   presets: [],
+  spaces: [],
   mproveVersion: undefined,
   serverTs: undefined
 };

@@ -1,3 +1,8 @@
+import {
+  IActionMapping,
+  TreeComponent,
+  TreeNode
+} from '@ali-hm/angular-tree-component';
 import { Location } from '@angular/common';
 import {
   ChangeDetectorRef,
@@ -49,6 +54,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
+import type { ReportNode } from '#common/zod/backend/report-node';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { Query } from '#common/zod/blockml/query';
@@ -88,16 +94,29 @@ export class TimeSpecItem {
   value: TimeSpecEnum;
 }
 
+type ReportTreeNode =
+  | (Extract<ReportNode, { type: 'space' }> & {
+      children: ReportTreeNode[];
+      isMatched?: boolean;
+    })
+  | (Extract<ReportNode, { type: 'report' }> & {
+      report?: ReportX;
+      isMatched?: boolean;
+    });
+
 @Component({
   standalone: false,
   selector: 'm-reports',
-  templateUrl: './reports.component.html'
+  templateUrl: './reports.component.html',
+  styleUrls: ['reports.component.scss']
 })
 export class ReportsComponent implements OnInit, OnDestroy {
   @ViewChild('timeSpecSelect', { static: false })
   timeSpecSelectElement: NgSelectComponent;
 
   @ViewChild('leftReportsContainer') leftReportsContainer!: ElementRef;
+
+  @ViewChild('reportsTree') reportsTree: TreeComponent;
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
@@ -207,12 +226,14 @@ export class ReportsComponent implements OnInit, OnDestroy {
   reports: ReportX[];
   reportsFilteredByWord: ReportX[];
   filteredReports: ReportX[];
+  filteredReportNodes: ReportTreeNode[] = [];
 
   reports$ = this.reportsQuery.select().pipe(
     tap(x => {
       this.reports = x.reports;
 
       this.makeFilteredReports();
+      this.makeFilteredReportNodes({ reportNodes: x.reportNodes });
 
       this.cd.detectChanges();
     })
@@ -272,6 +293,15 @@ export class ReportsComponent implements OnInit, OnDestroy {
       value: TimeSpecEnum.Timestamps
     }
   ];
+
+  actionMapping: IActionMapping = {
+    mouse: {}
+  };
+
+  treeOptions = {
+    actionMapping: this.actionMapping,
+    displayField: 'title'
+  };
 
   eChartInitOpts: any;
   eChartOptions: EChartsOption;
@@ -1017,6 +1047,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.timer = setTimeout(() => {
       this.makeFilteredReports();
+      this.makeFilteredReportNodes({
+        reportNodes: this.reportsQuery.getValue().reportNodes
+      });
 
       this.cd.detectChanges();
     }, 600);
@@ -1032,6 +1065,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
   resetReportsSearch() {
     this.searchReportsWord = undefined;
     this.makeFilteredReports();
+    this.makeFilteredReportNodes({
+      reportNodes: this.reportsQuery.getValue().reportNodes
+    });
 
     this.cd.detectChanges();
   }
@@ -1081,6 +1117,87 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.filteredDraftsLength = this.filteredReports.filter(
       y => y.draft === true
     ).length;
+  }
+
+  reportTreeNodeOnClick(item: { node: TreeNode }) {
+    let { node } = item;
+
+    if (node.data.type === 'space') {
+      node.toggleActivated();
+
+      if (node.hasChildren) {
+        node.toggleExpanded();
+      }
+    } else {
+      let report = this.reports.find(x => x.reportId === node.data.reportId);
+
+      if (isDefined(report)) {
+        this.navToReport(report);
+      }
+    }
+  }
+
+  makeFilteredReportNodes(item: { reportNodes: ReportNode[] }) {
+    let { reportNodes } = item;
+
+    let copiedNodes = makeCopy(reportNodes ?? []);
+    let enrichedNodes = this.enrichReportNodes({ nodes: copiedNodes });
+
+    this.filteredReportNodes = isDefinedAndNotEmpty(this.searchReportsWord)
+      ? this.filterReportNodes({ nodes: enrichedNodes })
+      : enrichedNodes;
+  }
+
+  enrichReportNodes(item: { nodes: ReportNode[] }): ReportTreeNode[] {
+    let { nodes } = item;
+
+    return nodes.map(node => {
+      if (node.type === 'report') {
+        let report = this.reports.find(x => x.reportId === node.reportId);
+
+        return {
+          ...node,
+          report: report
+        };
+      }
+
+      return {
+        ...node,
+        children: this.enrichReportNodes({ nodes: node.children ?? [] })
+      };
+    });
+  }
+
+  filterReportNodes(item: { nodes: ReportTreeNode[] }): ReportTreeNode[] {
+    let { nodes } = item;
+    let searchWord = this.searchReportsWord.toLowerCase();
+
+    return nodes
+      .map(node => {
+        if (node.type === 'report') {
+          let title = (node.title ?? node.reportId).toLowerCase();
+
+          return {
+            ...node,
+            isMatched: title.includes(searchWord)
+          };
+        }
+
+        let title = (node.title ?? node.space).toLowerCase();
+
+        let isSpaceMatched = title.includes(searchWord);
+
+        let children = isSpaceMatched
+          ? node.children
+          : this.filterReportNodes({ nodes: node.children ?? [] });
+
+        return {
+          ...node,
+          children: children,
+          isMatched: isSpaceMatched || children.length > 0
+        };
+      })
+      .filter(node => node.isMatched === true);
   }
 
   toggleAutoRun() {

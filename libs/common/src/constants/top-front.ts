@@ -31,6 +31,7 @@ export const USERS_PER_PAGE = 10;
 export const BLOCKML_EXT_LIST: FileExtensionEnum[] = [
   FileExtensionEnum.Schema,
   FileExtensionEnum.Store,
+  FileExtensionEnum.Space,
   FileExtensionEnum.Report,
   FileExtensionEnum.Dashboard,
   FileExtensionEnum.Chart

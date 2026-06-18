@@ -18,6 +18,7 @@ import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import type { FileSchema } from '#common/zod/blockml/internal/file-schema';
+import type { FileSpace } from '#common/zod/blockml/internal/file-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { log } from '../extra/log';
 
@@ -41,6 +42,7 @@ export function splitFiles(
   let dashboards: FileDashboard[] = [];
   let reports: FileReport[] = [];
   let charts: FileChart[] = [];
+  let spaces: FileSpace[] = [];
   let confs: FileProjectConf[] = [];
 
   item.filesAny.forEach(file => {
@@ -184,6 +186,39 @@ export function splitFiles(
         break;
       }
 
+      case FileExtensionEnum.Space: {
+        if (file.name === file.space + FileExtensionEnum.Space) {
+          delete file.ext;
+          delete file.name;
+          delete file.path;
+
+          let newSpaceOptions: FileSpace = {
+            name: file.space,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt,
+            accessRolesCombined: []
+          };
+
+          spaces.push(Object.assign(file, newSpaceOptions));
+        } else {
+          item.errors.push(
+            new BmError({
+              title: ErTitleEnum.WRONG_SPACE_NAME,
+              message: `filename ${file.name} does not match "${ParameterEnum.Space}: ${file.space}"`,
+              lines: [
+                {
+                  line: file.space_line_num,
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+        }
+        break;
+      }
+
       case FileExtensionEnum.Schema: {
         if (file.name === file.schema + FileExtensionEnum.Schema) {
           delete file.ext;
@@ -244,6 +279,7 @@ export function splitFiles(
   log(cs, caller, func, structId, LogTypeEnum.Reports, reports);
   log(cs, caller, func, structId, LogTypeEnum.Ds, dashboards);
   log(cs, caller, func, structId, LogTypeEnum.Charts, charts);
+  log(cs, caller, func, structId, LogTypeEnum.FilesAny, spaces);
   log(cs, caller, func, structId, LogTypeEnum.Confs, confs);
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
 
@@ -254,6 +290,7 @@ export function splitFiles(
     reports: reports,
     dashboards: dashboards,
     charts: charts,
+    spaces: spaces,
     confs: confs
   };
 }

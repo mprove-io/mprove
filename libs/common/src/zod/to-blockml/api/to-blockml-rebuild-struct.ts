@@ -14,6 +14,7 @@ import { zModelMetric } from '#common/zod/blockml/model-metric';
 import { zPreset } from '#common/zod/blockml/preset';
 import { zQuery } from '#common/zod/blockml/query';
 import { zReport } from '#common/zod/blockml/report';
+import { zSpace } from '#common/zod/blockml/space';
 import { zMyResponse } from '#common/zod/to/my-response';
 import { zToBlockmlRequest } from '#common/zod/to-blockml/to-blockml-request';
 
@@ -52,6 +53,7 @@ export let zToBlockmlRebuildStructResponsePayload = z
     charts: z.array(zChart),
     metrics: z.array(zModelMetric),
     presets: z.array(zPreset),
+    spaces: z.array(zSpace),
     mproveExplorer: z.string().nullish(),
     mconfigs: z.array(zMconfig),
     queries: z.array(zQuery)

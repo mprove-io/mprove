@@ -35,6 +35,7 @@ import type {
   ToBackendGetRolesRequestPayload,
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
+import { upsertReportNode } from '#front/app/functions/report-nodes';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
@@ -172,14 +173,20 @@ export class EditReportInfoDialogComponent implements OnInit {
               let newReportPart = resp.payload.reportPart;
 
               if (isDefined(newReport)) {
-                let reports = this.reportsQuery.getValue().reports;
+                let reportsState = this.reportsQuery.getValue();
 
-                let newReports = [
-                  newReportPart,
-                  ...reports.filter(x => x.reportId !== newReportPart.reportId)
-                ];
-
-                this.reportsQuery.update({ reports: newReports });
+                this.reportsQuery.update({
+                  reports: [
+                    newReportPart,
+                    ...reportsState.reports.filter(
+                      x => x.reportId !== newReportPart.reportId
+                    )
+                  ],
+                  reportNodes: upsertReportNode({
+                    reportNodes: reportsState.reportNodes,
+                    report: newReportPart
+                  })
+                });
 
                 let currentReport = this.reportQuery.getValue();
 

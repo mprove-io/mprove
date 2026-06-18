@@ -23,6 +23,7 @@ export enum CallerEnum {
 
   BuildStoreNext = 'BuildStoreNext',
   BuildStoreStart = 'BuildStoreStart',
+  BuildSpace = 'BuildSpace',
 
   BuildDashboardTile = 'BuildDashboardTile',
   BuildChartTile = 'BuildChartTile',

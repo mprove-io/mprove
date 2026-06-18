@@ -51,7 +51,6 @@ export function wrapModels(item: {
     let malloySourceInfo: ModelEntryValueWithSource;
     let mproveTags = [];
     let malloyTags = [];
-    let accessRolesTag: KeyValuePair;
     let labelTag: KeyValuePair;
     let topLabelTag: KeyValuePair;
     let treeDoubleUnderscore = false;
@@ -69,10 +68,6 @@ export function wrapModels(item: {
 
         mproveTags = tagsResult.mproveTags;
         malloyTags = tagsResult.malloyTags;
-
-        accessRolesTag = mproveTags.find(
-          tag => tag.key === ParameterEnum.AccessRoles
-        );
 
         labelTag = mproveTags.find(tag => tag.key === ParameterEnum.Label);
         topLabelTag = mproveTags.find(
@@ -392,6 +387,12 @@ export function wrapModels(item: {
       connectionId: x.connectionId,
       connectionType: x.connectionType,
       filePath: x.filePath,
+      space:
+        modelType === ModelTypeEnum.Malloy
+          ? (x as FileMod).space
+          : modelType === ModelTypeEnum.Store
+            ? (x as FileStore).space
+            : undefined,
       fileText: files.find(file => file.path === x.filePath).content,
       storeContent: x.fileExt === FileExtensionEnum.Store ? x : undefined,
       dateRangeIncludesRightSide:
@@ -403,9 +404,10 @@ export function wrapModels(item: {
           ? true
           : false,
       accessRoles:
-        modelType === ModelTypeEnum.Malloy && isDefined(accessRolesTag?.value)
-          ? accessRolesTag.value.split(',').map(x => x.trim())
+        modelType === ModelTypeEnum.Malloy
+          ? ((x as FileMod).access_roles ?? [])
           : (x.access_roles ?? []),
+      accessRolesCombined: x.accessRolesCombined ?? [],
       label:
         modelType === ModelTypeEnum.Malloy && isDefined(labelTag?.value)
           ? labelTag?.value.trim()

@@ -13,6 +13,7 @@ let dashboardState: DashboardState = {
   filePath: undefined,
   content: undefined,
   accessRoles: [],
+  accessRolesCombined: [],
   title: undefined,
   extendedFilters: [],
   fields: [],
