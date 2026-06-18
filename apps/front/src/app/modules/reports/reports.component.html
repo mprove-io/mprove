@@ -673,7 +673,7 @@
                           <ng-template #treeNodeTemplate let-node="node">
                             <div
                               *ngIf="node.data.type === 'space'"
-                              class="group-bar flex h-11 w-full select-none flex-row rounded pr-5 hover:cursor-pointer"
+                              class="group/bar flex h-11 w-full select-none flex-row rounded pr-5 hover:cursor-pointer"
                               (click)="reportTreeNodeOnClick({ node: node })"
                             >
                               <div
@@ -714,10 +714,17 @@
                                 <div
                                   class="ml-3 flex min-w-[2px] flex-1 truncate"
                                 >
-                                  <span
-                                    class="text-s1 truncate text-base font-semibold"
-                                    >{{ node.data.title }}</span
-                                  >
+                                  <span class="text-s1 truncate text-base">{{
+                                    node.data.title
+                                  }}</span>
+                                </div>
+
+                                <div
+                                  class="invisible ml-2 flex pr-2 group-hover/bar:visible"
+                                >
+                                  <m-space-options
+                                    [space]="node.data"
+                                  ></m-space-options>
                                 </div>
                               </div>
                             </div>

@@ -6,6 +6,7 @@ export let zReportNode: z.ZodType<ReportNode> = z.lazy(() =>
       type: z.literal('space'),
       id: z.string(),
       space: z.string(),
+      filePath: z.string(),
       title: z.string(),
       accessRoles: z.array(z.string()),
       accessRolesCombined: z.array(z.string()),
@@ -28,6 +29,7 @@ export type ReportNode =
       type: 'space';
       id: string;
       space: string;
+      filePath: string;
       title: string;
       accessRoles: string[];
       accessRolesCombined: string[];

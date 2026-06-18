@@ -1,0 +1,24 @@
+<button
+  data-cy="spaceOptionsMenuButton"
+  class="hover:bg-m200 flex h-9 w-9 items-center justify-center rounded focus:outline-none"
+  #t1="tippy"
+  [tp]="templateSpaceOptions"
+  [tpHideOnEscape]="true"
+  tpVariation="menu"
+  className="my-menu"
+  [tpOffset]="[0, 4]"
+  (click)="clickMenu($event)"
+>
+  <m-dots-vertical-icon></m-dots-vertical-icon>
+</button>
+
+<ng-template #templateSpaceOptions>
+  <div class="border-s4 bg-m0 w-64 rounded-md border-2 shadow-xl">
+    <button
+      data-cy="spaceOptionsGoToFileButton"
+      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+      (click)="t1.hide(); goToFile($event)"
+      >Go to File</button
+    >
+  </div>
+</ng-template>
