@@ -5,7 +5,7 @@ import type { CallerEnum } from '#common/enums/special/caller.enum';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
 import { buildFlatMalloyFieldItems } from './build-flat-malloy-field-items';
 import { buildMods } from './build-mods';
@@ -19,7 +19,7 @@ export async function buildModStart(
     malloyConnections: MalloyConnection[];
     connections: ProjectConnection[];
     mods: FileMod[];
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     tempDir: string;
     projectId: string;
     errors: BmError[];

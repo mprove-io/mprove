@@ -9,7 +9,7 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { parseTags } from '#common/functions/parse-tags';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { KeyValuePair } from '#common/zod/blockml/key-value-pair';
 import { log } from '../extra/log';
 
@@ -18,7 +18,7 @@ let func = FuncEnum.CheckModSpaces;
 export function checkModSpaces(
   item: {
     mods: FileMod[];
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;
@@ -46,7 +46,7 @@ export function checkModSpaces(
       ? accessRolesTag.value.split(',').map(x => x.trim())
       : (mod.access_roles ?? []);
 
-    let space: FileSpace | undefined;
+    let space: FilePartSpace | undefined;
 
     if (isDefined(mod.space)) {
       space = item.spaces.find(x => x.space === mod.space);

@@ -2,8 +2,8 @@ import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
@@ -22,7 +22,7 @@ import { checkReportTopParameters } from './check-report-top-parameters';
 export function buildReport(
   item: {
     reports: FileReport[];
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     metrics: ModelMetric[];
     apiModels: Model[];
     stores: FileStore[];

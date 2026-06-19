@@ -105,6 +105,6 @@ export enum FuncEnum {
   CheckStoreFractionControlOptions = 'extra/check-store-fraction-control-options',
   CheckSuggestModelDimension = 'extra/check-suggest-model-dimension',
   CheckModelName = 'extra/check-model-name',
-  BuildViewModel = 'extra/build-view-model',
+  MakeFilePartSpaces = 'extra/make-file-part-spaces',
   LogStruct = 'extra/log-struct'
 }

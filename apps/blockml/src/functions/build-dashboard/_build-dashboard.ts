@@ -3,7 +3,7 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { checkDashboardAccess } from './check-dashboard-access';
 import { checkDashboardFilterConditions } from './check-dashboard-filter-conditions';
@@ -14,7 +14,7 @@ import { checkDashboardTopParameters } from './check-dashboard-top-parameters';
 export function buildDashboard(
   item: {
     dashboards: FileDashboard[];
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     stores: FileStore[];
     errors: BmError[];
     structId: string;

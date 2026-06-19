@@ -24,53 +24,6 @@ import { log } from '../extra/log';
 
 let func = FuncEnum.SplitFiles;
 
-function pushSpaceFolders(item: {
-  folders: any[];
-  parentSpace: string;
-  fileName: string;
-  filePath: string;
-  fileExt: FileExtensionEnum;
-  spaces: FileSpace[];
-}) {
-  let { folders, parentSpace, fileName, filePath, fileExt, spaces } = item;
-
-  folders.forEach(folder => {
-    if (folder?.constructor !== Object) {
-      return;
-    }
-
-    if (typeof folder.space !== 'string') {
-      return;
-    }
-
-    let folderSpace = `${parentSpace}.${folder.space}`;
-    let nestedFolders = folder.folders;
-    let space: FileSpace = Object.assign({}, folder, {
-      name: folderSpace,
-      fileName: fileName,
-      filePath: filePath,
-      fileExt: fileExt,
-      space: folderSpace,
-      accessRolesCombined: []
-    });
-
-    delete space.folders;
-
-    spaces.push(space);
-
-    if (Array.isArray(nestedFolders)) {
-      pushSpaceFolders({
-        folders: nestedFolders,
-        parentSpace: folderSpace,
-        fileName: fileName,
-        filePath: filePath,
-        fileExt: fileExt,
-        spaces: spaces
-      });
-    }
-  });
-}
-
 export function splitFiles(
   item: {
     filesAny: any[];
@@ -247,22 +200,9 @@ export function splitFiles(
             accessRolesCombined: []
           };
 
-          let folders = file.folders;
           let space = Object.assign(file, newSpaceOptions);
-          delete space.folders;
 
           spaces.push(space);
-
-          if (Array.isArray(folders)) {
-            pushSpaceFolders({
-              folders: folders,
-              parentSpace: file.space,
-              fileName: fileName,
-              filePath: filePath,
-              fileExt: fileExt,
-              spaces: spaces
-            });
-          }
         } else {
           item.errors.push(
             new BmError({

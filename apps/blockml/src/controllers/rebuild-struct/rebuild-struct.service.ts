@@ -25,6 +25,7 @@ import { collectFiles } from '#blockml/functions/extra/collect-files';
 import { getMproveConfigFile } from '#blockml/functions/extra/get-mprove-config-file';
 import { logStruct } from '#blockml/functions/extra/log-struct';
 import { logToConsoleBlockml } from '#blockml/functions/extra/log-to-console-blockml';
+import { makeFilePartSpaces } from '#blockml/functions/extra/make-file-part-spaces';
 import { wrapCharts } from '#blockml/functions/wrap/wrap-charts';
 import { wrapDashboards } from '#blockml/functions/wrap/wrap-dashboards';
 import { wrapErrors } from '#blockml/functions/wrap/wrap-errors';
@@ -73,6 +74,7 @@ import type { BmlFile } from '#common/zod/blockml/bml-file';
 import type { FileChart } from '#common/zod/blockml/internal/file-chart';
 import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import type { FileSchema } from '#common/zod/blockml/internal/file-schema';
@@ -339,7 +341,8 @@ export class RebuildStructService {
     let reports: FileReport[];
     let dashboards: FileDashboard[];
     let charts: FileChart[];
-    let spaces: FileSpace[];
+    let fileSpaces: FileSpace[];
+    let spaces: FilePartSpace[];
     let projectConfig: FileProjectConf;
 
     let yamlBuildItem = buildYaml(
@@ -365,7 +368,16 @@ export class RebuildStructService {
     dashboards = yamlBuildItem.dashboards;
     reports = yamlBuildItem.reports;
     charts = yamlBuildItem.charts;
-    spaces = yamlBuildItem.spaces;
+    fileSpaces = yamlBuildItem.spaces;
+
+    spaces = makeFilePartSpaces(
+      {
+        spaces: fileSpaces,
+        structId: item.structId,
+        caller: CallerEnum.BuildSpace
+      },
+      this.cs
+    );
 
     spaces = buildSpace(
       {

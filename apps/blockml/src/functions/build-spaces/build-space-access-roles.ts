@@ -5,14 +5,14 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import { log } from '../extra/log';
 
 let func = FuncEnum.BuildSpaceAccessRoles;
 
 export function buildSpaceAccessRoles(
   item: {
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;

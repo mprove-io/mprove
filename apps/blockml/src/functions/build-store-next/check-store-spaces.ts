@@ -7,7 +7,7 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { log } from '../extra/log';
 
@@ -16,7 +16,7 @@ let func = FuncEnum.CheckStoreSpaces;
 export function checkStoreSpaces(
   item: {
     stores: FileStore[];
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;
@@ -27,7 +27,7 @@ export function checkStoreSpaces(
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   item.stores.forEach(store => {
-    let space: FileSpace | undefined;
+    let space: FilePartSpace | undefined;
 
     if (isDefined(store.space)) {
       space = item.spaces.find(x => x.space === store.space);

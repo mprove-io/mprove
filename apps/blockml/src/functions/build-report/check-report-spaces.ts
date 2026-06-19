@@ -7,8 +7,8 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckReportSpaces;
@@ -16,7 +16,7 @@ let func = FuncEnum.CheckReportSpaces;
 export function checkReportSpaces(
   item: {
     reports: FileReport[];
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;
@@ -27,7 +27,7 @@ export function checkReportSpaces(
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   item.reports.forEach(report => {
-    let space: FileSpace | undefined;
+    let space: FilePartSpace | undefined;
 
     if (isDefined(report.space)) {
       space = item.spaces.find(x => x.space === report.space);

@@ -2,19 +2,19 @@ import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import { buildSpaceAccessRoles } from './build-space-access-roles';
 import { checkSpaceParents } from './check-space-parents';
 
 export function buildSpace(
   item: {
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;
   },
   cs: ConfigService<BlockmlConfig>
-): FileSpace[] {
+): FilePartSpace[] {
   let spaces = item.spaces;
 
   spaces = checkSpaceParents(

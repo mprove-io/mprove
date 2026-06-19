@@ -1,6 +1,6 @@
 import './tables/orders_base.malloy';
 
-#(mprove) model 
+#(mprove) model space=unk
 source: orders is orders_base extend {
   measure: orders_count is count()
 }

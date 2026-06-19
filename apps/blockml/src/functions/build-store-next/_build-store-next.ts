@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { checkStoreBuildMetrics } from './check-store-build-metrics';
 import { checkStoreRequiredParameters } from './check-store-required-parameters';
@@ -11,7 +11,7 @@ import { checkStoreSpaces } from './check-store-spaces';
 export function buildStoreNext(
   item: {
     stores: FileStore[];
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;

@@ -6,14 +6,14 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckSpaceParents;
 
 export function checkSpaceParents(
   item: {
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;
@@ -23,7 +23,7 @@ export function checkSpaceParents(
   let { caller, structId } = item;
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
-  let newSpaces: FileSpace[] = [];
+  let newSpaces: FilePartSpace[] = [];
 
   item.spaces.forEach(space => {
     let errorsOnStart = item.errors.length;

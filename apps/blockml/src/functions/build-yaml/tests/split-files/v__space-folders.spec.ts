@@ -65,6 +65,14 @@ test('1', async t => {
   t.is(errors.length, 0);
   t.deepEqual(
     spaces.map(space => space.space),
-    ['s1', 's1.s2', 's1.s2.s3']
+    ['s1']
+  );
+  t.deepEqual(
+    spaces[0].folders?.map(folder => folder.space),
+    ['s2']
+  );
+  t.deepEqual(
+    spaces[0].folders?.[0].folders?.map(folder => folder.space),
+    ['s3']
   );
 });

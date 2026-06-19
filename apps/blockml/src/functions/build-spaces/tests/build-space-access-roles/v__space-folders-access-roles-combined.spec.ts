@@ -10,7 +10,7 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 
 let caller = CallerEnum.BuildSpace;
 let func = FuncEnum.BuildSpaceAccessRoles;
@@ -18,7 +18,7 @@ let testId = 'v__space-folders-access-roles-combined';
 
 test('1', async t => {
   let errors: BmError[];
-  let spaces: FileSpace[];
+  let spaces: FilePartSpace[];
 
   let wLogger;
   let configService;

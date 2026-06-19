@@ -8,7 +8,7 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckDashboardSpaces;
@@ -16,7 +16,7 @@ let func = FuncEnum.CheckDashboardSpaces;
 export function checkDashboardSpaces(
   item: {
     dashboards: FileDashboard[];
-    spaces: FileSpace[];
+    spaces: FilePartSpace[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;
@@ -27,7 +27,7 @@ export function checkDashboardSpaces(
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   item.dashboards.forEach(dashboard => {
-    let space: FileSpace | undefined;
+    let space: FilePartSpace | undefined;
 
     if (isDefined(dashboard.space)) {
       space = item.spaces.find(x => x.space === dashboard.space);
