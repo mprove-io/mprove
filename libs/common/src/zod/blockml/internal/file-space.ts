@@ -13,19 +13,19 @@ type FileSpaceFolder = {
   accessRolesCombined?: string[] | null;
 };
 
-let zFileSpaceFolder: z.ZodType<FileSpaceFolder> = z.lazy(() =>
-  z.object({
-    space: z.string().nullish(),
-    space_line_num: z.number().nullish(),
-    title: z.string().nullish(),
-    title_line_num: z.number().nullish(),
-    access_roles: z.array(z.string()).nullish(),
-    access_roles_line_num: z.number().nullish(),
-    folders: z.array(zFileSpaceFolder).nullish(),
-    folders_line_num: z.number().nullish(),
-    accessRolesCombined: z.array(z.string()).nullish()
-  })
-);
+let zFileSpaceFolder: z.ZodType<FileSpaceFolder> = z.object({
+  space: z.string().nullish(),
+  space_line_num: z.number().nullish(),
+  title: z.string().nullish(),
+  title_line_num: z.number().nullish(),
+  access_roles: z.array(z.string()).nullish(),
+  access_roles_line_num: z.number().nullish(),
+  get folders() {
+    return z.array(zFileSpaceFolder).nullish();
+  },
+  folders_line_num: z.number().nullish(),
+  accessRolesCombined: z.array(z.string()).nullish()
+});
 
 export let zFileSpace = zFileBasic
   .extend({
