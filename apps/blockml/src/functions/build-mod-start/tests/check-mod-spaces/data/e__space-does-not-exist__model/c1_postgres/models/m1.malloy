@@ -1,0 +1,6 @@
+import './tables/orders_base.malloy';
+
+#(mprove) model 
+source: orders is orders_base extend {
+  measure: orders_count is count()
+}

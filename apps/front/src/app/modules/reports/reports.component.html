@@ -681,7 +681,7 @@
                                 [style.padding-left.px]="(node.level - 1) * 12"
                               >
                                 <div
-                                  class="flex flex-shrink-0 flex-row space-x-1"
+                                  class="ml-2 flex flex-shrink-0 flex-row space-x-1"
                                 >
                                   <div
                                     class="h-6 w-6"
@@ -714,9 +714,15 @@
                                 <div
                                   class="ml-3 flex min-w-[2px] flex-1 truncate"
                                 >
-                                  <span class="text-s1 truncate text-base">{{
-                                    node.data.title
-                                  }}</span>
+                                  <span
+                                    class="text-s1 truncate text-base"
+                                    [ngClass]="{
+                                      'font-semibold':
+                                        node.data.isSelectedReportAncestor ===
+                                        true
+                                    }"
+                                    >{{ node.data.title }}</span
+                                  >
                                 </div>
 
                                 <div

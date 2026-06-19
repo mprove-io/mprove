@@ -1,0 +1,10 @@
+space: s1
+title: s1
+access_roles:
+- r1
+folders:
+- space: s2
+  access_roles:
+  - r2
+  folders:
+  - space: s3

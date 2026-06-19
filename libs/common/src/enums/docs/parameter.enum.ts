@@ -53,6 +53,7 @@ export enum ParameterEnum {
   Tiles = 'tiles',
   Result = 'result',
   FractionTypes = 'fraction_types',
+  Folders = 'folders',
   SuggestModelDimension = 'suggest_model_dimension',
   Rows = 'rows',
   Query = 'query',

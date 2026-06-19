@@ -1,0 +1,3 @@
+source: orders_base is c1_postgres.table('ecommerce.orders') extend {
+  primary_key: order_id
+}

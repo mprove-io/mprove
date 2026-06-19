@@ -148,6 +148,11 @@ src/
 
 ## Instructions
 
+### Git operations
+
+Do not do git operations like stage / unstage / commit / switch branch / etc...
+Use read-only operations if needed (like status, diff, etc)
+
 ### Typecheck and lint
 
 Always use top `pnpm check` for typecheck or lint.

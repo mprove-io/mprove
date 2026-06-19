@@ -98,6 +98,7 @@ type ReportTreeNode =
   | (Extract<ReportNode, { type: 'space' }> & {
       children: ReportTreeNode[];
       isMatched?: boolean;
+      isSelectedReportAncestor?: boolean;
     })
   | (Extract<ReportNode, { type: 'report' }> & {
       report?: ReportX;
@@ -209,6 +210,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
       if (this.report.reportId !== EMPTY_REPORT_ID) {
         this.uiService.setProjectReportLink({ reportId: this.report.reportId });
       }
+
+      this.filteredReportNodes = this.markSelectedReportAncestors({
+        nodes: this.filteredReportNodes
+      });
     })
   );
 
@@ -1146,6 +1151,39 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.filteredReportNodes = isDefinedAndNotEmpty(this.searchReportsWord)
       ? this.filterReportNodes({ nodes: enrichedNodes })
       : enrichedNodes;
+
+    this.filteredReportNodes = this.markSelectedReportAncestors({
+      nodes: this.filteredReportNodes
+    });
+  }
+
+  markSelectedReportAncestors(item: {
+    nodes: ReportTreeNode[];
+  }): ReportTreeNode[] {
+    let { nodes } = item;
+    let selectedReportId = this.report?.reportId;
+
+    return nodes.map(node => {
+      if (node.type === 'report') {
+        return node;
+      }
+
+      let children = this.markSelectedReportAncestors({
+        nodes: node.children ?? []
+      });
+
+      let isSelectedReportAncestor = children.some(child =>
+        child.type === 'report'
+          ? child.reportId === selectedReportId
+          : child.isSelectedReportAncestor === true
+      );
+
+      return {
+        ...node,
+        children: children,
+        isSelectedReportAncestor: isSelectedReportAncestor
+      };
+    });
   }
 
   enrichReportNodes(item: { nodes: ReportNode[] }): ReportTreeNode[] {
