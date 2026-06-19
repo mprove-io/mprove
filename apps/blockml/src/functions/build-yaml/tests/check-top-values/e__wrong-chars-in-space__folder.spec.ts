@@ -13,8 +13,8 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 
 let caller = CallerEnum.BuildYaml;
-let func = FuncEnum.CheckTopUnknownParameters;
-let testId = 'e__unknown-space-folder-parameter';
+let func = FuncEnum.CheckTopValues;
+let testId = 'e__wrong-chars-in-space__folder';
 
 test('1', async t => {
   let errors: BmError[];
@@ -33,7 +33,6 @@ test('1', async t => {
       logger,
       cs
     } = await prepareTest(caller, func, testId);
-
     wLogger = logger;
     configService = cs;
 
@@ -63,6 +62,6 @@ test('1', async t => {
 
   t.is(errors.length, 1);
   t.is(filesAny.length, 1);
-  t.is(errors[0].title, ErTitleEnum.UNKNOWN_SPACE_PARAMETER);
-  t.is(errors[0].lines[0].line, 4);
+  t.is(errors[0].title, ErTitleEnum.WRONG_CHARS_IN_PARAMETER_VALUE);
+  t.is(errors[0].lines[0].line, 3);
 });

@@ -1,0 +1,5 @@
+space: s1
+folders:
+- space: s2
+  access_roles:
+    unk: true

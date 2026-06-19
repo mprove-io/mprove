@@ -1,0 +1,4 @@
+space: s1
+folders:
+- space: s2
+  folders: s3

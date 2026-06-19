@@ -25,7 +25,6 @@ import { collectFiles } from '#blockml/functions/extra/collect-files';
 import { getMproveConfigFile } from '#blockml/functions/extra/get-mprove-config-file';
 import { logStruct } from '#blockml/functions/extra/log-struct';
 import { logToConsoleBlockml } from '#blockml/functions/extra/log-to-console-blockml';
-import { makeFilePartSpaces } from '#blockml/functions/extra/make-file-part-spaces';
 import { wrapCharts } from '#blockml/functions/wrap/wrap-charts';
 import { wrapDashboards } from '#blockml/functions/wrap/wrap-dashboards';
 import { wrapErrors } from '#blockml/functions/wrap/wrap-errors';
@@ -370,18 +369,9 @@ export class RebuildStructService {
     charts = yamlBuildItem.charts;
     fileSpaces = yamlBuildItem.spaces;
 
-    spaces = makeFilePartSpaces(
-      {
-        spaces: fileSpaces,
-        structId: item.structId,
-        caller: CallerEnum.BuildSpace
-      },
-      this.cs
-    );
-
     spaces = buildSpace(
       {
-        spaces: spaces,
+        spaces: fileSpaces,
         errors: errors,
         structId: item.structId,
         caller: CallerEnum.BuildSpace

@@ -92,6 +92,7 @@ export enum FuncEnum {
   SplitFiles = 'build-yaml/split-files',
   CheckProjectConfig = 'build-yaml/check-project-config',
   CheckSchema = 'build-yaml/check-schema',
+  CheckSpaceFolders = 'build-spaces/check-space-folders',
   CheckSpaceParents = 'build-spaces/check-space-parents',
   BuildSpaceAccessRoles = 'build-spaces/build-space-access-roles',
 

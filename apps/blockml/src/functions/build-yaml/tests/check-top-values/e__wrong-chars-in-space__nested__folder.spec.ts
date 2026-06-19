@@ -14,7 +14,7 @@ import { isDefined } from '#common/functions/is-defined';
 
 let caller = CallerEnum.BuildYaml;
 let func = FuncEnum.CheckTopValues;
-let testId = 'e__wrong-chars-in-nested-space-folder';
+let testId = 'e__wrong-chars-in-space__nested__folder';
 
 test('1', async t => {
   let errors: BmError[];

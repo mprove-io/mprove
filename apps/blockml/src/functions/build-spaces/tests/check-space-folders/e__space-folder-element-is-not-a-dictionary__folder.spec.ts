@@ -12,9 +12,9 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 
-let caller = CallerEnum.BuildYaml;
-let func = FuncEnum.CheckTopUnknownParameters;
-let testId = 'e__space-folder-element-is-not-a-dictionary';
+let caller = CallerEnum.BuildSpace;
+let func = FuncEnum.CheckSpaceFolders;
+let testId = 'e__space-folder-element-is-not-a-dictionary__folder';
 
 test('1', async t => {
   let errors: BmError[];
@@ -47,7 +47,7 @@ test('1', async t => {
     });
 
     errors = await readLog(fromDir, LogTypeEnum.Errors);
-    filesAny = await readLog(fromDir, LogTypeEnum.FilesAny);
+    filesAny = await readLog(fromDir, LogTypeEnum.Spaces);
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -61,7 +61,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(filesAny.length, 1);
+  t.is(filesAny.length, 0);
   t.is(errors[0].title, ErTitleEnum.SPACE_FOLDER_ELEMENT_IS_NOT_A_DICTIONARY);
   t.is(errors[0].lines[0].line, 2);
 });

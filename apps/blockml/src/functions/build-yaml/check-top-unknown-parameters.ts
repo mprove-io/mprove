@@ -14,138 +14,6 @@ import { log } from '../extra/log';
 
 let func = FuncEnum.CheckTopUnknownParameters;
 
-function checkSpaceFolders(item: {
-  file: any;
-  folders: any[];
-  errors: BmError[];
-}) {
-  let { file, folders, errors } = item;
-
-  folders.forEach(folder => {
-    if (folder?.constructor !== Object) {
-      errors.push(
-        new BmError({
-          title: ErTitleEnum.SPACE_FOLDER_ELEMENT_IS_NOT_A_DICTIONARY,
-          message: 'space folder element must be a dictionary',
-          lines: [
-            {
-              line: file[ParameterEnum.Folders.toString() + LINE_NUM],
-              name: file.name,
-              path: file.path
-            }
-          ]
-        })
-      );
-      return;
-    }
-
-    Object.keys(folder)
-      .filter(x => !x.toString().match(MyRegex.ENDS_WITH_LINE_NUM()))
-      .forEach(parameter => {
-        if (
-          [
-            ParameterEnum.Space.toString(),
-            ParameterEnum.Title.toString(),
-            ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Folders.toString()
-          ].indexOf(parameter) < 0
-        ) {
-          errors.push(
-            new BmError({
-              title: ErTitleEnum.UNKNOWN_SPACE_PARAMETER,
-              message:
-                `parameter "${parameter}" cannot be used in ` +
-                `${ParameterEnum.Folders} element of ${FileExtensionEnum.Space} file`,
-              lines: [
-                {
-                  line: folder[parameter + LINE_NUM],
-                  name: file.name,
-                  path: file.path
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        let isUnexpectedList =
-          Array.isArray(folder[parameter]) &&
-          [
-            ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Folders.toString()
-          ].indexOf(parameter) < 0;
-
-        if (isUnexpectedList === true) {
-          errors.push(
-            new BmError({
-              title: ErTitleEnum.UNEXPECTED_LIST,
-              message: `parameter "${parameter}" must have a single value`,
-              lines: [
-                {
-                  line: folder[parameter + LINE_NUM],
-                  name: file.name,
-                  path: file.path
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        let isParameterNotAList =
-          !Array.isArray(folder[parameter]) &&
-          [
-            ParameterEnum.AccessRoles.toString(),
-            ParameterEnum.Folders.toString()
-          ].indexOf(parameter) > -1;
-
-        if (isParameterNotAList === true) {
-          errors.push(
-            new BmError({
-              title: ErTitleEnum.PARAMETER_IS_NOT_A_LIST,
-              message: `parameter "${parameter}" must be a List`,
-              lines: [
-                {
-                  line: folder[parameter + LINE_NUM],
-                  name: file.name,
-                  path: file.path
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        let isUnexpectedDictionary = folder[parameter]?.constructor === Object;
-
-        if (isUnexpectedDictionary === true) {
-          errors.push(
-            new BmError({
-              title: ErTitleEnum.UNEXPECTED_DICTIONARY,
-              message: `parameter "${parameter}" must have a single value`,
-              lines: [
-                {
-                  line: folder[parameter + LINE_NUM],
-                  name: file.name,
-                  path: file.path
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        if (parameter === ParameterEnum.Folders.toString()) {
-          checkSpaceFolders({
-            file: file,
-            folders: folder[parameter],
-            errors: errors
-          });
-        }
-      });
-  });
-}
-
 export function checkTopUnknownParameters(
   item: {
     filesAny: any[];
@@ -436,6 +304,7 @@ export function checkTopUnknownParameters(
           file[parameter]?.constructor === Object &&
           [
             ParameterEnum.Options.toString(),
+            ParameterEnum.AccessRoles.toString(),
             ParameterEnum.Folders.toString()
           ].indexOf(parameter) < 0
         ) {
@@ -507,17 +376,6 @@ export function checkTopUnknownParameters(
           return;
         }
       });
-
-    let isSpaceFile = file.ext === FileExtensionEnum.Space;
-    let isFoldersArray = Array.isArray(file[ParameterEnum.Folders.toString()]);
-
-    if (isSpaceFile === true && isFoldersArray === true) {
-      checkSpaceFolders({
-        file: file,
-        folders: file[ParameterEnum.Folders.toString()],
-        errors: item.errors
-      });
-    }
 
     if (errorsOnStart === item.errors.length) {
       newFilesAny.push(file);
