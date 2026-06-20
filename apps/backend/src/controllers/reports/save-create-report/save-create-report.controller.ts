@@ -27,6 +27,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import { getReportTargetParentNodeId } from '#backend/functions/get-report-target-parent-node-id';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeReportFileText } from '#backend/functions/make-report-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -44,12 +45,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { ReportDataService } from '#backend/services/report-data.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import {
-  EMPTY_STRUCT_ID,
-  MPROVE_CONFIG_DIR_DOT_SLASH,
-  MPROVE_USERS_FOLDER,
-  UTC
-} from '#common/constants/top';
+import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
@@ -216,7 +212,6 @@ export class SaveCreateReportController {
       reportId: newReportId,
       accessRoles: accessRoles,
       title: title,
-      space: space,
       rows: fromReport.rows,
       metrics: currentStruct.metrics,
       models: cachedModels,
@@ -228,19 +223,13 @@ export class SaveCreateReportController {
       timezone: UTC
     });
 
-    let mdir = currentStruct.mproveConfig.mproveDirValue;
-
-    if (
-      mdir.length > 2 &&
-      mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
-    ) {
-      mdir = mdir.substring(2);
-    }
-
-    let parentNodeId =
-      currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
-        : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
+    let parentNodeId = getReportTargetParentNodeId({
+      projectId: projectId,
+      mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
+      userAlias: user.alias,
+      space: space,
+      spaces: currentStruct.spaces
+    });
 
     let fileName = `${newReportId}${FileExtensionEnum.Report}`;
 

@@ -27,6 +27,8 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path';
+import { getReportTargetParentNodeId } from '#backend/functions/get-report-target-parent-node-id';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeReportFileText } from '#backend/functions/make-report-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -47,6 +49,7 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
@@ -55,6 +58,10 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { ToBackendSaveModifyReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-save-modify-report';
+import type {
+  ToDiskMoveCatalogNodeRequest,
+  ToDiskMoveCatalogNodeResponse
+} from '#common/zod/to-disk/04-catalogs/to-disk-move-catalog-node';
 import type {
   ToDiskSaveFileRequest,
   ToDiskSaveFileResponse
@@ -221,7 +228,6 @@ export class SaveModifyReportController {
     let repFileText = makeReportFileText({
       reportId: modReportId,
       title: title,
-      space: space,
       rows: fromReport.rows,
       accessRoles: accessRoles,
       metrics: currentStruct.metrics,
@@ -238,6 +244,59 @@ export class SaveModifyReportController {
       project: project
     });
 
+    let currentReportSpace = getReportSpaceFromFilePath({
+      filePath: existingModReport.filePath,
+      spaces: currentStruct.spaces
+    });
+
+    let targetParentNodeId = getReportTargetParentNodeId({
+      projectId: projectId,
+      mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
+      userAlias: user.alias,
+      space: space,
+      spaces: currentStruct.spaces
+    });
+
+    let reportFileName = `${modReportId}${FileExtensionEnum.Report}`;
+
+    let targetReportFilePath = `${targetParentNodeId}/${reportFileName}`;
+
+    let isSpaceChanged = currentReportSpace !== space;
+
+    let isReportPathChanged =
+      existingModReport.filePath !== targetReportFilePath;
+
+    let shouldMoveReport = isSpaceChanged && isReportPathChanged;
+
+    let finalReportFilePath = shouldMoveReport
+      ? targetReportFilePath
+      : existingModReport.filePath;
+
+    if (shouldMoveReport) {
+      let toDiskMoveCatalogNodeRequest: ToDiskMoveCatalogNodeRequest = {
+        info: {
+          name: ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
+          traceId: body.info.traceId
+        },
+        payload: {
+          orgId: project.orgId,
+          baseProject: baseProject,
+          repoId: repoId,
+          branch: branchId,
+          fromNodeId: existingModReport.filePath,
+          toNodeId: targetReportFilePath
+        }
+      };
+
+      await this.rpcService.sendToDisk<ToDiskMoveCatalogNodeResponse>({
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: repoId,
+        message: toDiskMoveCatalogNodeRequest,
+        checkIsOk: true
+      });
+    }
+
     let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
@@ -248,7 +307,7 @@ export class SaveModifyReportController {
         baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: existingModReport.filePath,
+        fileNodeId: finalReportFilePath,
         userAlias: user.alias,
         content: repFileText
       }
@@ -280,7 +339,7 @@ export class SaveModifyReportController {
     });
 
     let diskFiles = diskResponse.payload.files.filter(
-      file => file.fileNodeId === existingModReport.filePath
+      file => file.fileNodeId === finalReportFilePath
     );
 
     let selectedSpaceFilePath = currentStruct.spaces.find(
@@ -350,7 +409,7 @@ export class SaveModifyReportController {
         getRetryOption(this.cs, this.logger)
       );
 
-      let fileIdAr = existingModReport.filePath.split('/');
+      let fileIdAr = finalReportFilePath.split('/');
       fileIdAr.shift();
       let filePath = fileIdAr.join('/');
 

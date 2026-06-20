@@ -249,12 +249,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
         return (
           isDefined(previousReport) === true &&
-          previousReport.space !== report.space &&
-          isDefinedAndNotEmpty(report.space)
+          previousReport.space !== report.space
         );
       });
 
-      this.pendingExpandSpace = movedReport?.space;
+      this.pendingExpandSpace = isDefined(movedReport)
+        ? this.getReportDisplaySpace({ report: movedReport })
+        : undefined;
 
       this.makeFilteredReports();
       this.makeFilteredReportNodes({ reportNodes: x.reportNodes });
@@ -1168,7 +1169,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let copiedNodes = makeCopy(reportNodes ?? []);
     let nodesWithMyReports = this.addMyReportsNode({ nodes: copiedNodes });
-    let enrichedNodes = this.enrichReportNodes({ nodes: nodesWithMyReports });
+    let prunedNodes = this.pruneEmptySpaceNodes({ nodes: nodesWithMyReports });
+    let enrichedNodes = this.enrichReportNodes({ nodes: prunedNodes });
 
     this.filteredReportNodes = isDefinedAndNotEmpty(this.searchReportsWord)
       ? this.filterReportNodes({ nodes: enrichedNodes })
@@ -1177,6 +1179,29 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.filteredReportNodes = this.markSelectedReportAncestors({
       nodes: this.filteredReportNodes
     });
+  }
+
+  pruneEmptySpaceNodes(item: { nodes: ReportNode[] }): ReportNode[] {
+    let { nodes } = item;
+
+    return nodes
+      .map(node => {
+        if (node.type === 'report') {
+          return node;
+        }
+
+        return {
+          ...node,
+          children: this.pruneEmptySpaceNodes({ nodes: node.children ?? [] })
+        };
+      })
+      .filter(node => {
+        if (node.type === 'report') {
+          return true;
+        }
+
+        return node.children.length > 0;
+      });
   }
 
   addMyReportsNode(item: { nodes: ReportNode[] }): ReportNode[] {

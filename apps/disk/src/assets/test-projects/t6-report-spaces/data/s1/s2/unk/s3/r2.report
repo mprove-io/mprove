@@ -1,0 +1,5 @@
+report: r2
+title: R2
+rows:
+- row_id: A
+  type: empty

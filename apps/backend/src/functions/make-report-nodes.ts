@@ -35,28 +35,6 @@ export function makeReportNodes(item: {
       });
   };
 
-  let pruneEmptySpaceNodes = (item: { nodes: ReportNode[] }): ReportNode[] => {
-    let { nodes } = item;
-
-    return nodes
-      .map(node => {
-        if (node.type === 'report') {
-          return node;
-        }
-
-        node.children = pruneEmptySpaceNodes({ nodes: node.children });
-
-        return node;
-      })
-      .filter(node => {
-        if (node.type === 'report') {
-          return true;
-        }
-
-        return node.children.length > 0;
-      });
-  };
-
   let isShowAllSpaces = member.isAdmin === true || member.isEditor === true;
 
   let visibleSpaces = spaces.filter(space => {
@@ -149,7 +127,5 @@ export function makeReportNodes(item: {
     }
   });
 
-  let sortedNodes = sortReportNodes({ nodes: rootNodes });
-
-  return pruneEmptySpaceNodes({ nodes: sortedNodes });
+  return sortReportNodes({ nodes: rootNodes });
 }

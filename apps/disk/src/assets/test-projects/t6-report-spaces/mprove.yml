@@ -1,0 +1,5 @@
+mprove_dir: ./data
+week_start: Monday
+format_number: ',.0f'
+currency_prefix: $
+currency_suffix: ''
