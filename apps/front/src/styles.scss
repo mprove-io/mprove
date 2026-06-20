@@ -319,6 +319,20 @@ ngneat-dialog {
   caret-color: dodgerblue;
 }
 
+.ng-select.ng-select-multiple.ng-select-clearable .ng-clear-wrapper {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+}
+
+.ng-select.ng-select-multiple.ng-select-clearable .ng-clear-wrapper .ng-clear {
+  font-size: 24px;
+  line-height: 1;
+}
+
 //
 //
 //
