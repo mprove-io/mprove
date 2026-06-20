@@ -7,9 +7,9 @@ import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { checkDashboardAccess } from './check-dashboard-access';
 import { checkDashboardFilterConditions } from './check-dashboard-filter-conditions';
-import { checkDashboardSpaces } from './check-dashboard-spaces';
 import { checkDashboardTilesExist } from './check-dashboard-tiles-exist';
 import { checkDashboardTopParameters } from './check-dashboard-top-parameters';
+import { makeDashboardAccessRolesCombined } from './make-dashboard-access-roles-combined';
 
 export function buildDashboard(
   item: {
@@ -67,7 +67,7 @@ export function buildDashboard(
     cs
   );
 
-  dashboards = checkDashboardSpaces(
+  dashboards = makeDashboardAccessRolesCombined(
     {
       dashboards: dashboards,
       spaces: item.spaces,

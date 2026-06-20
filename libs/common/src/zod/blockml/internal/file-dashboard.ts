@@ -12,7 +12,6 @@ export let zFileDashboard = zFileBasic
     title: z.string().nullish(),
     title_line_num: z.number().nullish(),
     space: z.string().nullish(),
-    space_line_num: z.number().nullish(),
     group: z.string().nullish(),
     group_line_num: z.number().nullish(),
     access_roles: z.array(z.string()).nullish(),

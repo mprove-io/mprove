@@ -16,8 +16,8 @@ import { checkReportRowIds } from './check-report-row-ids';
 import { checkReportRowParameters } from './check-report-row-parameters';
 import { checkReportRowUnknownParameters } from './check-report-row-unknown-parameters';
 import { checkReportRowUnknownParams } from './check-report-row-unknown-params';
-import { checkReportSpaces } from './check-report-spaces';
 import { checkReportTopParameters } from './check-report-top-parameters';
+import { makeReportAccessRolesCombined } from './make-report-access-roles-combined';
 
 export function buildReport(
   item: {
@@ -144,7 +144,7 @@ export function buildReport(
     cs
   );
 
-  reports = checkReportSpaces(
+  reports = makeReportAccessRolesCombined(
     {
       reports: reports,
       spaces: item.spaces,

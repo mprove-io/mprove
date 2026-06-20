@@ -7,15 +7,14 @@ import { BmError } from '#blockml/models/bm-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
 
 let caller = CallerEnum.BuildReport;
-let func = FuncEnum.CheckReportSpaces;
-let testId = 'e__space-does-not-exist__report';
+let func = FuncEnum.MakeReportAccessRolesCombined;
+let testId = 'v__space-from-path__report';
 
 test('1', async t => {
   let errors: BmError[];
@@ -62,8 +61,9 @@ test('1', async t => {
     });
   }
 
-  t.is(errors.length, 1);
-  t.is(reports.length, 1);
-  t.is(errors[0].title, ErTitleEnum.SPACE_DOES_NOT_EXIST);
-  t.is(errors[0].lines[0].line, 3);
+  t.is(errors.length, 0);
+  t.deepEqual(
+    reports.map(report => report.space),
+    [undefined, 's1', 's1', 's1.s2', 's1.s2.s3']
+  );
 });

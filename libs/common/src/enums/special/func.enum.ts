@@ -7,7 +7,7 @@ export enum FuncEnum {
   CheckDashboardTopParameters = 'build-dashboard/check-dashboard-top-parameters',
   CheckDashboardFilterConditions = 'build-dashboard/check-dashboard-filter-conditions',
   CheckDashboardTilesExist = 'build-dashboard/check-dashboard-tiles-exist',
-  CheckDashboardSpaces = 'build-dashboard/check-dashboard-spaces',
+  MakeDashboardAccessRolesCombined = 'build-dashboard/make-dashboard-access-roles-combined',
 
   CheckFieldsExist = 'build-field/check-fields-exist',
   CheckParametersExist = 'build-field/check-parameters-exist',
@@ -58,7 +58,7 @@ export enum FuncEnum {
   CheckReportRow = 'build-report/check-report-row',
   CheckReportRowIds = 'build-report/check-report-row-ids',
   CheckReportRowParameters = 'build-report/check-report-row-parameters',
-  CheckReportSpaces = 'build-report/check-report-spaces',
+  MakeReportAccessRolesCombined = 'build-report/make-report-access-roles-combined',
   BuildReportRowParameterFractions = 'build-report/build-report-row-parameter-fractions',
 
   CheckStoreBuildMetrics = 'build-store-next/check-store-build-metrics',

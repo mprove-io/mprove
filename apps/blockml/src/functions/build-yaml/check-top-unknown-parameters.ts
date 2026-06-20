@@ -90,7 +90,6 @@ export function checkTopUnknownParameters(
             if (
               [
                 ParameterEnum.Dashboard.toString(),
-                ParameterEnum.Space.toString(),
                 ParameterEnum.Title.toString(),
                 ParameterEnum.AccessRoles.toString(),
                 ParameterEnum.Parameters.toString(),
@@ -148,7 +147,6 @@ export function checkTopUnknownParameters(
             if (
               [
                 ParameterEnum.Report.toString(),
-                ParameterEnum.Space.toString(),
                 ParameterEnum.Title.toString(),
                 ParameterEnum.Parameters.toString(),
                 ParameterEnum.AccessRoles.toString(),

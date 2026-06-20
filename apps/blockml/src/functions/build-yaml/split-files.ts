@@ -187,7 +187,20 @@ export function splitFiles(
       }
 
       case FileExtensionEnum.Space: {
-        if (file.name === file.space + FileExtensionEnum.Space) {
+        let pathParts = file.path
+          .split('/')
+          .filter((part: string) => part !== '');
+
+        let folderParts = pathParts.slice(0, -1);
+
+        let parentFolderName = folderParts[folderParts.length - 1];
+
+        let isFileNameMatch =
+          file.name === file.space + FileExtensionEnum.Space;
+
+        let isParentFolderNameMatch = parentFolderName === file.space;
+
+        if (isFileNameMatch && isParentFolderNameMatch) {
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -203,11 +216,25 @@ export function splitFiles(
           let space = Object.assign(file, newSpaceOptions);
 
           spaces.push(space);
-        } else {
+        } else if (isFileNameMatch === false) {
           item.errors.push(
             new BmError({
               title: ErTitleEnum.WRONG_SPACE_NAME,
               message: `filename ${file.name} does not match "${ParameterEnum.Space}: ${file.space}"`,
+              lines: [
+                {
+                  line: file.space_line_num,
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+        } else if (isParentFolderNameMatch === false) {
+          item.errors.push(
+            new BmError({
+              title: ErTitleEnum.WRONG_SPACE_PARENT_FOLDER_NAME,
+              message: `parent folder ${parentFolderName} does not match "${ParameterEnum.Space}: ${file.space}"`,
               lines: [
                 {
                   line: file.space_line_num,

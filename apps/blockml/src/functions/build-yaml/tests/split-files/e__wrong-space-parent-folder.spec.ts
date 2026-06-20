@@ -11,15 +11,15 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
+import type { FileSpace } from '#common/zod/blockml/internal/file-space';
 
-let caller = CallerEnum.BuildDashboard;
-let func = FuncEnum.CheckDashboardSpaces;
-let testId = 'e__space-does-not-exist__dashboard';
+let caller = CallerEnum.BuildYaml;
+let func = FuncEnum.SplitFiles;
+let testId = 'e__wrong-space-parent-folder';
 
 test('1', async t => {
   let errors: BmError[];
-  let dashboards: FileDashboard[];
+  let spaces: FileSpace[];
   let wLogger;
   let configService;
 
@@ -34,7 +34,6 @@ test('1', async t => {
       logger,
       cs
     } = await prepareTest(caller, func, testId);
-
     wLogger = logger;
     configService = cs;
 
@@ -49,7 +48,7 @@ test('1', async t => {
     });
 
     errors = await readLog(fromDir, LogTypeEnum.Errors);
-    dashboards = await readLog(fromDir, LogTypeEnum.Ds);
+    spaces = await readLog(fromDir, LogTypeEnum.FilesAny);
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -63,7 +62,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(dashboards.length, 1);
-  t.is(errors[0].title, ErTitleEnum.SPACE_DOES_NOT_EXIST);
-  t.is(errors[0].lines[0].line, 2);
+  t.is(spaces.length, 0);
+  t.is(errors[0].title, ErTitleEnum.WRONG_SPACE_PARENT_FOLDER_NAME);
+  t.is(errors[0].lines[0].line, 1);
 });
