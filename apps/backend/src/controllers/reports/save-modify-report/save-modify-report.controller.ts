@@ -109,6 +109,7 @@ export class SaveModifyReportController {
       fromReportId,
       accessRoles,
       title,
+      space,
       timeSpec,
       timeRangeFractionBrick,
       timezone,
@@ -220,6 +221,7 @@ export class SaveModifyReportController {
     let repFileText = makeReportFileText({
       reportId: modReportId,
       title: title,
+      space: space,
       rows: fromReport.rows,
       accessRoles: accessRoles,
       metrics: currentStruct.metrics,
@@ -277,11 +279,23 @@ export class SaveModifyReportController {
       }
     });
 
-    let diskFiles = [
-      diskResponse.payload.files.find(
-        file => file.fileNodeId === existingModReport.filePath
-      )
-    ];
+    let diskFiles = diskResponse.payload.files.filter(
+      file => file.fileNodeId === existingModReport.filePath
+    );
+
+    let selectedSpaceFilePath = currentStruct.spaces.find(
+      x => x.space === space
+    )?.filePath;
+
+    if (isDefined(selectedSpaceFilePath)) {
+      let spaceDiskFile = diskResponse.payload.files.find(
+        file => file.fileNodeId === selectedSpaceFilePath
+      );
+
+      if (isDefined(spaceDiskFile)) {
+        diskFiles.push(spaceDiskFile);
+      }
+    }
 
     let { reports: apiReports, struct: tempStruct } =
       await this.blockmlService.rebuildStruct({

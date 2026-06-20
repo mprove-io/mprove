@@ -3,6 +3,7 @@ import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import type { MconfigField } from '#common/zod/backend/mconfig-field';
+import type { Space } from '#common/zod/blockml/space';
 import type { RefreshItem } from '#common/zod/front/refresh-item';
 
 export const SPECIAL_ERROR = 'SPECIAL_ERROR';
@@ -158,6 +159,17 @@ export const EMPTY_MCONFIG_FIELD: MconfigField = {
   isTimeframeBase: undefined,
   sorting: undefined,
   sortingNumber: undefined
+};
+
+export const EMPTY_SPACE_NAME = 'EMPTY_SPACE_NAME';
+
+export const EMPTY_SPACE: Space & { label: string } = {
+  space: EMPTY_SPACE_NAME,
+  title: undefined,
+  filePath: '',
+  accessRoles: [],
+  accessRolesCombined: [],
+  label: 'Empty'
 };
 
 export const COMMON_I18N: DatePickerI18n = {

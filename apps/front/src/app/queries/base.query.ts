@@ -1,4 +1,4 @@
-import { Store, setProps } from '@ngneat/elf';
+import { Store } from '@ngneat/elf';
 
 export class BaseQuery<T> {
   store;
@@ -8,13 +8,13 @@ export class BaseQuery<T> {
   }
 
   update(state: T) {
-    this.store.update(setProps(state));
+    this.store.update(() => state);
   }
 
   updatePart(part: Partial<T>) {
     let state = this.store.getValue();
     let newState = Object.assign(<T>{}, state, part);
-    this.store.update(setProps(newState));
+    this.store.update(() => newState);
   }
 
   reset() {

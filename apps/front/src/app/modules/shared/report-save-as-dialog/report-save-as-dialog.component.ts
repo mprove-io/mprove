@@ -11,13 +11,19 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import {
+  APP_SPINNER_NAME,
+  EMPTY_SPACE,
+  EMPTY_SPACE_NAME
+} from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
+import { makeCopy } from '#common/functions/make-copy';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { Role } from '#common/zod/backend/role';
+import type { Space } from '#common/zod/blockml/space';
 import type {
   ToBackendSaveCreateReportRequestPayload,
   ToBackendSaveCreateReportResponse
@@ -52,6 +58,8 @@ export interface ReportSaveAsDialogData {
   report: ReportX;
 }
 
+type SpaceOption = typeof EMPTY_SPACE;
+
 @Component({
   standalone: false,
   selector: 'm-report-save-as-dialog',
@@ -64,13 +72,18 @@ export class ReportSaveAsDialogComponent implements OnInit {
   @ViewChild('reportSaveAsDialogRoleSelect', { static: false })
   reportSaveAsDialogRoleSelectElement: NgSelectComponent;
 
+  @ViewChild('reportSaveAsDialogSpaceSelect', { static: false })
+  reportSaveAsDialogSpaceSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.reportSaveAsDialogExistingReportSelectElement?.close();
     this.reportSaveAsDialogRoleSelectElement?.close();
+    this.reportSaveAsDialogSpaceSelectElement?.close();
   }
 
   usersFolder = MPROVE_USERS_FOLDER;
+  emptySpaceName = EMPTY_SPACE_NAME;
 
   reportSaveAsEnum = ReportSaveAsEnum;
 
@@ -103,6 +116,10 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   roles: Role[] = [];
   selectedAccessRoles: string[] = [];
+  selectedSpace: string;
+  combinedAccessRoles: string[] = [];
+  combinedAccessRolesText = '';
+  spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -116,6 +133,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
   struct$ = this.structQuery.select().pipe(
     tap(x => {
       this.struct = x;
+      this.spacesPlusEmpty = this.makeSpacesPlusEmpty({ spaces: x.spaces });
+      this.updateCombinedAccessRoles();
       this.cd.detectChanges();
     })
   );
@@ -134,6 +153,55 @@ export class ReportSaveAsDialogComponent implements OnInit {
     private cd: ChangeDetectorRef
   ) {}
 
+  makeSpacesPlusEmpty(item: { spaces: Space[] }): SpaceOption[] {
+    let { spaces } = item;
+
+    let spaceOptions = (spaces ?? []).map(space => ({
+      ...space,
+      label: this.makeSpaceLabel({ space: space, spaces: spaces ?? [] })
+    }));
+
+    return [makeCopy(EMPTY_SPACE), ...spaceOptions];
+  }
+
+  makeSpaceLabel(item: { space: Space; spaces: Space[] }) {
+    let { space, spaces } = item;
+    let parts = space.space.split('.');
+    let currentSpace = '';
+
+    return parts
+      .map((part, index) => {
+        currentSpace = index === 0 ? part : `${currentSpace}.${part}`;
+
+        let foundSpace = spaces.find(x => x.space === currentSpace);
+
+        return foundSpace?.title || part;
+      })
+      .join(' - ');
+  }
+
+  updateCombinedAccessRoles() {
+    let selectedSpace = this.struct?.spaces?.find(
+      x => x.space === this.selectedSpace
+    );
+
+    this.combinedAccessRoles = [
+      ...new Set([
+        ...(selectedSpace?.accessRolesCombined ?? []),
+        ...this.selectedAccessRoles
+      ])
+    ];
+    this.combinedAccessRolesText = this.combinedAccessRoles.join(', ');
+  }
+
+  spaceChange() {
+    this.updateCombinedAccessRoles();
+  }
+
+  accessRolesChange() {
+    this.updateCombinedAccessRoles();
+  }
+
   ngOnInit() {
     this.report = this.ref.data.report;
     this.nav = this.navQuery.getValue();
@@ -147,6 +215,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
     });
 
     this.selectedAccessRoles = [...(this.report.accessRoles || [])];
+    this.selectedSpace = this.report.space ?? EMPTY_SPACE.space;
+    this.updateCombinedAccessRoles();
 
     this.reports = this.ref.data.reports.map(x => {
       (x as any).disabled = !x.canEditOrDeleteReport;
@@ -204,6 +274,10 @@ export class ReportSaveAsDialogComponent implements OnInit {
       newReportId: this.newReportId,
       fromReportId: this.fromReportId,
       title: newTitle,
+      space:
+        this.selectedSpace === EMPTY_SPACE_NAME
+          ? undefined
+          : this.selectedSpace,
       accessRoles: roles,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
@@ -279,6 +353,10 @@ export class ReportSaveAsDialogComponent implements OnInit {
       modReportId: this.selectedReportId,
       fromReportId: this.fromReportId,
       title: newTitle,
+      space:
+        this.selectedSpace === EMPTY_SPACE_NAME
+          ? undefined
+          : this.selectedSpace,
       accessRoles: roles,
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
@@ -335,7 +413,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
       .subscribe();
   }
 
-  selectedChange() {
+  selectedReportChange() {
     this.makePath();
     if (isDefined(this.selectedReportId)) {
       let selectedReport = this.reports.find(
@@ -343,6 +421,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
       );
       this.titleForm.controls['title'].setValue(selectedReport.title);
       this.selectedAccessRoles = [...(selectedReport.accessRoles || [])];
+      this.selectedSpace = selectedReport.space ?? EMPTY_SPACE.space;
+      this.updateCombinedAccessRoles();
       this.cd.detectChanges();
     }
   }

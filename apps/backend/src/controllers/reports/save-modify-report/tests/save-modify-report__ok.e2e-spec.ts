@@ -156,6 +156,7 @@ test('1', async t => {
           fromReportId: resp1.payload.report.reportId,
           modReportId: 'r1',
           title: 'new title',
+          space: undefined,
           accessRoles: [],
           timezone: 'UTC',
           timeSpec: TimeSpecEnum.Months,

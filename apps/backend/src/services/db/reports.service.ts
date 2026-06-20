@@ -49,6 +49,7 @@ export class ReportsService {
     projectId: string;
     creatorId: string;
     filePath: string;
+    space: string;
     accessRoles: string[];
     title: string;
     fields: ReportField[];
@@ -63,6 +64,7 @@ export class ReportsService {
       projectId,
       creatorId,
       filePath,
+      space,
       accessRoles,
       title,
       fields,
@@ -84,7 +86,7 @@ export class ReportsService {
       draft: draft,
       draftCreatedTs: draftCreatedTs,
       filePath: filePath,
-      space: undefined,
+      space: space,
       accessRoles: accessRoles,
       accessRolesCombined: accessRoles,
       title: title,
@@ -293,6 +295,7 @@ export class ReportsService {
       projectId: projectId,
       creatorId: undefined,
       filePath: undefined,
+      space: undefined,
       accessRoles: [],
       title: reportId,
       fields: [],

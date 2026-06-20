@@ -335,6 +335,7 @@ export class CreateDraftReportController {
       structId: bridge.structId,
       reportId: reportId,
       draft: true,
+      space: undefined,
       accessRoles: [],
       creatorId: user.userId,
       filePath: undefined,

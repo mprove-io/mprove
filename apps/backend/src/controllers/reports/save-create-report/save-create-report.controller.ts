@@ -115,6 +115,7 @@ export class SaveCreateReportController {
       fromReportId,
       accessRoles,
       title,
+      space,
       timeSpec,
       timeRangeFractionBrick,
       timezone,
@@ -215,6 +216,7 @@ export class SaveCreateReportController {
       reportId: newReportId,
       accessRoles: accessRoles,
       title: title,
+      space: space,
       rows: fromReport.rows,
       metrics: currentStruct.metrics,
       models: cachedModels,
@@ -287,11 +289,23 @@ export class SaveCreateReportController {
       }
     });
 
-    let diskFiles = [
-      diskResponse.payload.files.find(
-        file => file.fileNodeId === `${parentNodeId}/${fileName}`
-      )
-    ];
+    let diskFiles = diskResponse.payload.files.filter(
+      file => file.fileNodeId === `${parentNodeId}/${fileName}`
+    );
+
+    let selectedSpaceFilePath = currentStruct.spaces.find(
+      x => x.space === space
+    )?.filePath;
+
+    if (isDefined(selectedSpaceFilePath)) {
+      let spaceDiskFile = diskResponse.payload.files.find(
+        file => file.fileNodeId === selectedSpaceFilePath
+      );
+
+      if (isDefined(spaceDiskFile)) {
+        diskFiles.push(spaceDiskFile);
+      }
+    }
 
     let { reports: apiReports, struct: tempStruct } =
       await this.blockmlService.rebuildStruct({

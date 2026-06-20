@@ -232,15 +232,33 @@ export class ReportsComponent implements OnInit, OnDestroy {
   reportsFilteredByWord: ReportX[];
   filteredReports: ReportX[];
   filteredReportNodes: ReportTreeNode[] = [];
+  pendingExpandSpace: string;
 
   reports$ = this.reportsQuery.select().pipe(
     tap(x => {
+      let previousReports = this.reports ?? [];
       this.reports = x.reports;
+
+      let movedReport = this.reports.find(report => {
+        let previousReport = previousReports.find(
+          previous => previous.reportId === report.reportId
+        );
+
+        return (
+          isDefined(previousReport) === true &&
+          previousReport.space !== report.space &&
+          isDefinedAndNotEmpty(report.space)
+        );
+      });
+
+      this.pendingExpandSpace = movedReport?.space;
 
       this.makeFilteredReports();
       this.makeFilteredReportNodes({ reportNodes: x.reportNodes });
 
       this.cd.detectChanges();
+
+      this.expandPendingSpace();
     })
   );
 
@@ -1157,6 +1175,38 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
+  expandPendingSpace() {
+    let space = this.pendingExpandSpace;
+
+    if (isDefinedAndNotEmpty(space) === false) {
+      return;
+    }
+
+    this.pendingExpandSpace = undefined;
+    this.cd.detectChanges();
+
+    setTimeout(() => {
+      this.expandSpacePath({ space: space });
+    }, 0);
+  }
+
+  expandSpacePath(item: { space: string }) {
+    let { space } = item;
+    let parts = space.split('.');
+    let currentSpace = '';
+
+    parts.forEach((part, index) => {
+      currentSpace = index === 0 ? part : `${currentSpace}.${part}`;
+
+      let node = this.reportsTree?.treeModel?.getNodeById(currentSpace);
+      let isNodeDefined = isDefined(node);
+
+      if (isNodeDefined) {
+        node.expand();
+      }
+    });
+  }
+
   markSelectedReportAncestors(item: {
     nodes: ReportTreeNode[];
   }): ReportTreeNode[] {
@@ -1387,6 +1437,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let { isSmooth } = item;
 
     if (this.report && this.isShowLeft === true) {
+      let isReportSpaceDefined = isDefinedAndNotEmpty(this.report.space);
+
+      if (this.report.draft === false && isReportSpaceDefined === true) {
+        this.expandSpacePath({ space: this.report.space });
+      }
+
       let selectedElement =
         this.leftReportsContainer.nativeElement.querySelector(
           `[reportId="${this.report.reportId}"]`

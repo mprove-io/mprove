@@ -153,6 +153,9 @@ test('1', async t => {
 
     assert.equal(resp.info.error, undefined);
     assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.payload.report.space, undefined);
+    assert.deepEqual(resp.payload.report.accessRoles, []);
+    assert.deepEqual(resp.payload.report.accessRolesCombined, []);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

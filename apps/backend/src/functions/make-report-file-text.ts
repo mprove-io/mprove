@@ -29,6 +29,7 @@ import type { Row } from '#common/zod/blockml/row';
 export function makeReportFileText(item: {
   reportId: string;
   title: string;
+  space: string;
   accessRoles: string[];
   rows: Row[];
   metrics: ModelMetric[];
@@ -42,6 +43,7 @@ export function makeReportFileText(item: {
   let {
     reportId,
     title,
+    space,
     rows,
     accessRoles,
     metrics,
@@ -65,6 +67,7 @@ export function makeReportFileText(item: {
     name: undefined,
     report: reportId,
     title: title,
+    space: space,
     parameters:
       isDefined(newReportFields) && newReportFields.length > 0
         ? newReportFields.map(field => ({

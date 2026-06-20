@@ -21,6 +21,7 @@ export let zToBackendSaveCreateReportRequestPayload = z
     fromReportId: z.string(),
     newReportId: z.string(),
     title: z.string(),
+    space: z.string().nullish(),
     accessRoles: z.array(z.string()),
     timezone: zTimezone,
     timeSpec: z.enum(TimeSpecEnum),

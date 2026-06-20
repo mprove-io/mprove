@@ -20,13 +20,19 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import {
+  APP_SPINNER_NAME,
+  EMPTY_SPACE,
+  EMPTY_SPACE_NAME
+} from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { makeCopy } from '#common/functions/make-copy';
 import type { Role } from '#common/zod/backend/role';
 import type { Report } from '#common/zod/blockml/report';
+import type { Space } from '#common/zod/blockml/space';
 import type {
   ToBackendSaveModifyReportRequestPayload,
   ToBackendSaveModifyReportResponse
@@ -55,6 +61,8 @@ export interface EditReportInfoDialogData {
   report: Report;
 }
 
+type SpaceOption = typeof EMPTY_SPACE;
+
 @Component({
   selector: 'm-edit-report-info-dialog',
   templateUrl: './edit-report-info-dialog.component.html',
@@ -73,13 +81,18 @@ export class EditReportInfoDialogComponent implements OnInit {
   @ViewChild('editReportInfoDialogRoleSelect', { static: false })
   editReportInfoDialogRoleSelectElement: NgSelectComponent;
 
+  @ViewChild('editReportInfoDialogSpaceSelect', { static: false })
+  editReportInfoDialogSpaceSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.editReportInfoDialogRoleSelectElement?.close();
+    this.editReportInfoDialogSpaceSelectElement?.close();
     this.ref.close();
   }
 
   usersFolder = MPROVE_USERS_FOLDER;
+  emptySpaceName = EMPTY_SPACE_NAME;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -87,6 +100,10 @@ export class EditReportInfoDialogComponent implements OnInit {
 
   roles: Role[] = [];
   selectedAccessRoles: string[] = [];
+  selectedSpace: string;
+  combinedAccessRoles: string[] = [];
+  combinedAccessRolesText = '';
+  spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -100,6 +117,8 @@ export class EditReportInfoDialogComponent implements OnInit {
   struct$ = this.structQuery.select().pipe(
     tap(x => {
       this.struct = x;
+      this.spacesPlusEmpty = this.makeSpacesPlusEmpty({ spaces: x.spaces });
+      this.updateCombinedAccessRoles();
       this.cd.detectChanges();
     })
   );
@@ -116,6 +135,55 @@ export class EditReportInfoDialogComponent implements OnInit {
     private cd: ChangeDetectorRef
   ) {}
 
+  makeSpacesPlusEmpty(item: { spaces: Space[] }): SpaceOption[] {
+    let { spaces } = item;
+
+    let spaceOptions = (spaces ?? []).map(space => ({
+      ...space,
+      label: this.makeSpaceLabel({ space: space, spaces: spaces ?? [] })
+    }));
+
+    return [makeCopy(EMPTY_SPACE), ...spaceOptions];
+  }
+
+  makeSpaceLabel(item: { space: Space; spaces: Space[] }) {
+    let { space, spaces } = item;
+    let parts = space.space.split('.');
+    let currentSpace = '';
+
+    return parts
+      .map((part, index) => {
+        currentSpace = index === 0 ? part : `${currentSpace}.${part}`;
+
+        let foundSpace = spaces.find(x => x.space === currentSpace);
+
+        return foundSpace?.title || part;
+      })
+      .join(' - ');
+  }
+
+  updateCombinedAccessRoles() {
+    let selectedSpace = this.struct?.spaces?.find(
+      x => x.space === this.selectedSpace
+    );
+
+    this.combinedAccessRoles = [
+      ...new Set([
+        ...(selectedSpace?.accessRolesCombined ?? []),
+        ...this.selectedAccessRoles
+      ])
+    ];
+    this.combinedAccessRolesText = this.combinedAccessRoles.join(', ');
+  }
+
+  spaceChange() {
+    this.updateCombinedAccessRoles();
+  }
+
+  accessRolesChange() {
+    this.updateCombinedAccessRoles();
+  }
+
   ngOnInit() {
     setValueAndMark({
       control: this.titleForm.controls['title'],
@@ -123,6 +191,8 @@ export class EditReportInfoDialogComponent implements OnInit {
     });
 
     this.selectedAccessRoles = [...(this.ref.data.report.accessRoles || [])];
+    this.selectedSpace = this.ref.data.report.space ?? EMPTY_SPACE.space;
+    this.updateCombinedAccessRoles();
 
     this.loadRoles();
 
@@ -150,6 +220,10 @@ export class EditReportInfoDialogComponent implements OnInit {
         fromReportId: this.ref.data.report.reportId,
         modReportId: this.ref.data.report.reportId,
         title: newTitle.trim(),
+        space:
+          this.selectedSpace === EMPTY_SPACE_NAME
+            ? undefined
+            : this.selectedSpace,
         accessRoles: roles,
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,
