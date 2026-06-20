@@ -77,7 +77,7 @@
         #reportSaveAsDialogExistingReportSelect
         data-cy="reportSaveAsDialogExistingReportSelect"
         *ngIf="!!reports && saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
-        class="w-[500px] flex-shrink-0 text-base"
+        class="select-h-10 w-[500px] flex-shrink-0 text-base"
         [items]="reports"
         [clearable]="false"
         [searchable]="false"
@@ -151,7 +151,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="reportSaveAsDialogTitleInput"
-        class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
+        class="form-input border-s3 focus:border-m600 h-10 w-96 rounded"
         [ngClass]="{
           'border-r600':
             titleForm.controls['title'].invalid &&
@@ -175,7 +175,7 @@
         #reportSaveAsDialogSpaceSelect
         [fixNgSelectBottom]="reportSaveAsDialogSpaceSelect"
         data-cy="reportSaveAsDialogSpaceSelect"
-        class="min-h-11 w-96 flex-shrink-0"
+        class="select-h-10 w-96 flex-shrink-0"
         [items]="spacesPlusEmpty"
         [multiple]="false"
         [searchable]="true"
@@ -207,7 +207,7 @@
     </div>
   </div>
 
-  <div class="mt-6 flex min-h-[100px] flex-row items-start">
+  <div class="mt-8 flex min-h-[100px] flex-row items-start">
     <div class="flex flex-col">
       <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Access Roles</div
@@ -224,7 +224,7 @@
           #reportSaveAsDialogRoleSelect
           [fixNgSelectBottom]="reportSaveAsDialogRoleSelect"
           data-cy="reportSaveAsDialogRoleSelect"
-          class="min-h-11 w-96 flex-shrink-0"
+          class="select-h-10 w-96 flex-shrink-0"
           [items]="roles"
           [multiple]="true"
           [searchable]="true"
