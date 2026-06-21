@@ -106,6 +106,8 @@ type ReportTreeNode =
       isMatched?: boolean;
     });
 
+type ReportSpaceNode = Extract<ReportNode, { type: 'space' }>;
+
 @Component({
   standalone: false,
   selector: 'm-reports',
@@ -114,6 +116,7 @@ type ReportTreeNode =
 })
 export class ReportsComponent implements OnInit, OnDestroy {
   myReportsSpaceId = '__my_reports__';
+  sharedReportsSpaceId = '__shared_reports__';
 
   @ViewChild('timeSpecSelect', { static: false })
   timeSpecSelectElement: NgSelectComponent;
@@ -242,19 +245,42 @@ export class ReportsComponent implements OnInit, OnDestroy {
       let previousReports = this.reports ?? [];
       this.reports = x.reports;
 
-      let movedReport = this.reports.find(report => {
+      let reportToExpand = this.reports.find(report => {
         let previousReport = previousReports.find(
           previous => previous.reportId === report.reportId
         );
+        let reportDisplaySpace = this.getReportDisplaySpace({
+          report: report
+        });
 
-        return (
+        let previousDisplaySpace = isDefined(previousReport)
+          ? this.getReportDisplaySpace({ report: previousReport })
+          : undefined;
+
+        let isInitialLoad = previousReports.length === 0;
+
+        let isNewSavedReport =
+          isDefined(previousReport) === false && report.draft === false;
+
+        let isSavedFromDraft =
           isDefined(previousReport) === true &&
-          previousReport.space !== report.space
-        );
+          previousReport.draft === true &&
+          report.draft === false;
+
+        let isDisplaySpaceChanged = previousDisplaySpace !== reportDisplaySpace;
+
+        let shouldExpand =
+          isInitialLoad === false &&
+          isDefinedAndNotEmpty(reportDisplaySpace) === true &&
+          (isNewSavedReport === true ||
+            isSavedFromDraft === true ||
+            isDisplaySpaceChanged === true);
+
+        return shouldExpand;
       });
 
-      this.pendingExpandSpace = isDefined(movedReport)
-        ? this.getReportDisplaySpace({ report: movedReport })
+      this.pendingExpandSpace = isDefined(reportToExpand)
+        ? this.getReportDisplaySpace({ report: reportToExpand })
         : undefined;
 
       this.makeFilteredReports();
@@ -1168,8 +1194,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let { reportNodes } = item;
 
     let copiedNodes = makeCopy(reportNodes ?? []);
+
     let nodesWithMyReports = this.addMyReportsNode({ nodes: copiedNodes });
-    let prunedNodes = this.pruneEmptySpaceNodes({ nodes: nodesWithMyReports });
+
+    let nodesWithSharedReports = this.addSharedReportsNode({
+      nodes: nodesWithMyReports
+    });
+
+    let prunedNodes = this.pruneEmptySpaceNodes({
+      nodes: nodesWithSharedReports
+    });
+
     let enrichedNodes = this.enrichReportNodes({ nodes: prunedNodes });
 
     this.filteredReportNodes = isDefinedAndNotEmpty(this.searchReportsWord)
@@ -1265,6 +1300,133 @@ export class ReportsComponent implements OnInit, OnDestroy {
     return [myReportsNode, ...nodesWithoutMyReports];
   }
 
+  addSharedReportsNode(item: { nodes: ReportNode[] }): ReportNode[] {
+    let { nodes } = item;
+
+    let alias = this.userQuery.getValue().alias;
+
+    let sharedReports = this.reports.filter(report => {
+      let isNotDraft = report.draft === false;
+      let hasAuthor = isDefinedAndNotEmpty(report.author);
+      let isNotMyReport = hasAuthor === true && report.author !== alias;
+      let hasNoSpace = isDefinedAndNotEmpty(report.space) === false;
+
+      return isNotDraft && hasAuthor && isNotMyReport && hasNoSpace;
+    });
+
+    if (sharedReports.length === 0) {
+      return nodes;
+    }
+
+    let sharedReportIds = sharedReports.map(report => report.reportId);
+
+    let nodesWithoutSharedReports = this.removeReportNodes({
+      nodes: nodes,
+      reportIds: sharedReportIds
+    });
+
+    let sharedReportsNode: ReportSpaceNode = this.makeSyntheticSpaceNode({
+      id: this.sharedReportsSpaceId,
+      title: 'Shared'
+    });
+
+    sharedReports
+      .sort((a, b) => {
+        let aTitle = (a.title || a.reportId).toLowerCase();
+        let bTitle = (b.title || b.reportId).toLowerCase();
+
+        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+      })
+      .forEach(report => {
+        let displaySpace = `${this.sharedReportsSpaceId}/${report.author}`;
+
+        let authorNode = sharedReportsNode.children.find(
+          child => child.type === 'space' && child.id === displaySpace
+        ) as ReportSpaceNode | undefined;
+
+        if (isDefined(authorNode) === false) {
+          authorNode = this.makeSyntheticSpaceNode({
+            id: displaySpace,
+            title: report.author
+          });
+          sharedReportsNode.children.push(authorNode);
+        }
+
+        authorNode.children.push({
+          type: 'report',
+          id: report.reportId,
+          reportId: report.reportId,
+          title: report.title || report.reportId,
+          space: displaySpace,
+          accessRoles: report.accessRoles,
+          accessRolesCombined: report.accessRolesCombined
+        });
+      });
+
+    sharedReportsNode.children = this.sortReportTreeNodes({
+      nodes: sharedReportsNode.children
+    });
+
+    let lastSpaceIndex = -1;
+
+    nodesWithoutSharedReports.forEach((node, index) => {
+      if (node.type === 'space') {
+        lastSpaceIndex = index;
+      }
+    });
+
+    if (lastSpaceIndex < 0) {
+      return [sharedReportsNode, ...nodesWithoutSharedReports];
+    }
+
+    return [
+      ...nodesWithoutSharedReports.slice(0, lastSpaceIndex + 1),
+      sharedReportsNode,
+      ...nodesWithoutSharedReports.slice(lastSpaceIndex + 1)
+    ];
+  }
+
+  makeSyntheticSpaceNode(item: { id: string; title: string }): ReportSpaceNode {
+    let { id, title } = item;
+
+    return {
+      type: 'space',
+      id: id,
+      space: id,
+      filePath: '',
+      title: title,
+      accessRoles: [],
+      accessRolesCombined: [],
+      children: []
+    };
+  }
+
+  sortReportTreeNodes(item: { nodes: ReportNode[] }): ReportNode[] {
+    let { nodes } = item;
+
+    return nodes
+      .map(node => {
+        if (node.type === 'space') {
+          return {
+            ...node,
+            children: this.sortReportTreeNodes({ nodes: node.children ?? [] })
+          };
+        }
+
+        return node;
+      })
+      .sort((a, b) => {
+        if (a.type !== b.type) {
+          return a.type === 'space' ? -1 : 1;
+        }
+
+        let aTitle = a.title.toLowerCase();
+        let bTitle = b.title.toLowerCase();
+
+        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+      });
+  }
+
   removeReportNodes(item: {
     nodes: ReportNode[];
     reportIds: string[];
@@ -1311,16 +1473,27 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   expandSpacePath(item: { space: string }) {
     let { space } = item;
-    let parts = space.split('.');
+
+    let isSharedReportsSpace = space.startsWith(
+      `${this.sharedReportsSpaceId}/`
+    );
+
+    let parts =
+      isSharedReportsSpace === true ? space.split('/') : space.split('.');
+
     let currentSpace = '';
 
     parts.forEach((part, index) => {
-      currentSpace = index === 0 ? part : `${currentSpace}.${part}`;
+      currentSpace =
+        index === 0
+          ? part
+          : isSharedReportsSpace === true
+            ? `${currentSpace}/${part}`
+            : `${currentSpace}.${part}`;
 
       let node = this.reportsTree?.treeModel?.getNodeById(currentSpace);
-      let isNodeDefined = isDefined(node);
 
-      if (isNodeDefined) {
+      if (isDefined(node)) {
         node.expand();
       }
     });
@@ -1337,6 +1510,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
       isDefinedAndNotEmpty(report.space) === false
     ) {
       return this.myReportsSpaceId;
+    }
+
+    let isSharedReport =
+      report.draft === false &&
+      isDefinedAndNotEmpty(report.author) === true &&
+      report.author !== alias &&
+      isDefinedAndNotEmpty(report.space) === false;
+
+    if (isSharedReport) {
+      return `${this.sharedReportsSpaceId}/${report.author}`;
     }
 
     return report.space;
@@ -1386,7 +1569,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       return {
         ...node,
-        isSynthetic: node.id === this.myReportsSpaceId,
+        isSynthetic:
+          node.id === this.myReportsSpaceId ||
+          node.id.startsWith(this.sharedReportsSpaceId),
         children: this.enrichReportNodes({ nodes: node.children ?? [] })
       };
     });
