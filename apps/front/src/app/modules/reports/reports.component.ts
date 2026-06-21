@@ -116,6 +116,7 @@ type ReportSpaceNode = Extract<ReportNode, { type: 'space' }>;
 })
 export class ReportsComponent implements OnInit, OnDestroy {
   myReportsSpaceId = '__my_reports__';
+  uncategorizedReportsSpaceId = '__uncategorized_reports__';
   sharedReportsSpaceId = '__shared_reports__';
 
   @ViewChild('timeSpecSelect', { static: false })
@@ -1197,8 +1198,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let nodesWithMyReports = this.addMyReportsNode({ nodes: copiedNodes });
 
-    let nodesWithSharedReports = this.addSharedReportsNode({
+    let nodesWithUncategorizedReports = this.addUncategorizedReportsNode({
       nodes: nodesWithMyReports
+    });
+
+    let nodesWithSharedReports = this.addSharedReportsNode({
+      nodes: nodesWithUncategorizedReports
     });
 
     let prunedNodes = this.pruneEmptySpaceNodes({
@@ -1298,6 +1303,77 @@ export class ReportsComponent implements OnInit, OnDestroy {
     };
 
     return [myReportsNode, ...nodesWithoutMyReports];
+  }
+
+  addUncategorizedReportsNode(item: { nodes: ReportNode[] }): ReportNode[] {
+    let { nodes } = item;
+
+    let uncategorizedReports = this.reports.filter(report => {
+      let isNotDraft = report.draft === false;
+      let hasAuthor = isDefinedAndNotEmpty(report.author);
+      let hasNoSpace = isDefinedAndNotEmpty(report.space) === false;
+
+      return isNotDraft && hasAuthor === false && hasNoSpace;
+    });
+
+    if (uncategorizedReports.length === 0) {
+      return nodes;
+    }
+
+    let uncategorizedReportIds = uncategorizedReports.map(
+      report => report.reportId
+    );
+
+    let nodesWithoutUncategorizedReports = this.removeReportNodes({
+      nodes: nodes,
+      reportIds: uncategorizedReportIds
+    });
+
+    let uncategorizedReportsNode: ReportSpaceNode = this.makeSyntheticSpaceNode(
+      {
+        id: this.uncategorizedReportsSpaceId,
+        title: 'Uncategorized'
+      }
+    );
+
+    uncategorizedReportsNode.children = uncategorizedReports
+      .map(report => {
+        let reportNode: ReportNode = {
+          type: 'report',
+          id: report.reportId,
+          reportId: report.reportId,
+          title: report.title || report.reportId,
+          space: this.uncategorizedReportsSpaceId,
+          accessRoles: report.accessRoles,
+          accessRolesCombined: report.accessRolesCombined
+        };
+
+        return reportNode;
+      })
+      .sort((a, b) => {
+        let aTitle = a.title.toLowerCase();
+        let bTitle = b.title.toLowerCase();
+
+        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+      });
+
+    let lastSpaceIndex = -1;
+
+    nodesWithoutUncategorizedReports.forEach((node, index) => {
+      if (node.type === 'space') {
+        lastSpaceIndex = index;
+      }
+    });
+
+    if (lastSpaceIndex < 0) {
+      return [uncategorizedReportsNode, ...nodesWithoutUncategorizedReports];
+    }
+
+    return [
+      ...nodesWithoutUncategorizedReports.slice(0, lastSpaceIndex + 1),
+      uncategorizedReportsNode,
+      ...nodesWithoutUncategorizedReports.slice(lastSpaceIndex + 1)
+    ];
   }
 
   addSharedReportsNode(item: { nodes: ReportNode[] }): ReportNode[] {
@@ -1522,6 +1598,14 @@ export class ReportsComponent implements OnInit, OnDestroy {
       return `${this.sharedReportsSpaceId}/${report.author}`;
     }
 
+    if (
+      report.draft === false &&
+      isDefinedAndNotEmpty(report.author) === false &&
+      isDefinedAndNotEmpty(report.space) === false
+    ) {
+      return this.uncategorizedReportsSpaceId;
+    }
+
     return report.space;
   }
 
@@ -1571,6 +1655,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         ...node,
         isSynthetic:
           node.id === this.myReportsSpaceId ||
+          node.id === this.uncategorizedReportsSpaceId ||
           node.id.startsWith(this.sharedReportsSpaceId),
         children: this.enrichReportNodes({ nodes: node.children ?? [] })
       };
