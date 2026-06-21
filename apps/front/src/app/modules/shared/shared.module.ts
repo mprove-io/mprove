@@ -99,6 +99,7 @@ import { ExclamationIconComponent } from './icons/exclamation-icon/exclamation-i
 import { ExplorerIconComponent } from './icons/explorer-icon/explorer-icon.component';
 import { FilterIconComponent } from './icons/filter-icon/filter-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
+import { FolderMinusIconComponent } from './icons/folder-minus-icon/folder-minus-icon.component';
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
 import { FormulaIconComponent } from './icons/formula-icon/formula-icon.component';
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
@@ -199,6 +200,7 @@ let sharedComponents = [
   ChevronDownIconComponent,
   FolderOpenIconComponent,
   FolderClosedIconComponent,
+  FolderMinusIconComponent,
   DocumentIconComponent,
   DotsVerticalIconComponent,
   ExclamationIconComponent,

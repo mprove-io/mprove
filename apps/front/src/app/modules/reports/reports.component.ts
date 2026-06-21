@@ -1192,6 +1192,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }
   }
 
+  collapseReportsTree() {
+    this.reportsTree?.treeModel?.collapseAll();
+  }
+
   makeFilteredReportNodes(item: { reportNodes: ReportNode[] }) {
     let { reportNodes } = item;
     let member = this.memberQuery.getValue();
