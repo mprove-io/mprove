@@ -336,7 +336,8 @@ export class ReportsService {
     if (report.draft === false) {
       let isAccessGranted = checkAccess({
         member: userMember,
-        accessRoles: report.accessRolesCombined
+        accessRoles: report.accessRolesCombined,
+        filePath: report.filePath
       });
 
       if (isAccessGranted === false) {

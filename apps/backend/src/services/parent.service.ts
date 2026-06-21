@@ -31,7 +31,7 @@ export class ParentService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async checkAccess(item: {
+  async checkParentAccess(item: {
     user: UserTab;
     userMember: MemberTab;
     structId: string;

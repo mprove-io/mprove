@@ -147,7 +147,7 @@ export class GroupMetricByDimensionController {
       structId: oldMconfig.structId
     });
 
-    await this.parentService.checkAccess({
+    await this.parentService.checkParentAccess({
       parentId: oldMconfig.parentId,
       parentType: oldMconfig.parentType,
       modelId: oldMconfig.modelId,

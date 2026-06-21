@@ -42,6 +42,12 @@ export function makeReportNodes(item: {
       return true;
     }
 
+    let hasVisibleReport = reports.some(report => report.space === space.space);
+
+    if (hasVisibleReport === true) {
+      return true;
+    }
+
     let hasAccess = checkAccess({
       member: member,
       accessRoles: space.accessRolesCombined

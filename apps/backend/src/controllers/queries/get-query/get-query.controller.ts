@@ -119,7 +119,7 @@ export class GetQueryController {
       });
     }
 
-    await this.parentService.checkAccess({
+    await this.parentService.checkParentAccess({
       parentId: mconfig.parentId,
       parentType: mconfig.parentType,
       modelId: mconfig.modelId,

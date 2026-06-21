@@ -119,7 +119,8 @@ export class GetReportsController {
     let reportsGrantedAccess = structReports.filter(x =>
       checkAccess({
         member: userMember,
-        accessRoles: x.accessRolesCombined
+        accessRoles: x.accessRolesCombined,
+        filePath: x.filePath
       })
     );
 

@@ -183,7 +183,7 @@ export class SuggestDimensionValuesController {
       modelId: modelId
     });
 
-    await this.parentService.checkAccess({
+    await this.parentService.checkParentAccess({
       parentId: parentId,
       parentType: parentType,
       modelId: modelId,

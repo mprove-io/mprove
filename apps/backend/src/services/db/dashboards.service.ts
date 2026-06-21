@@ -254,7 +254,8 @@ export class DashboardsService {
     if (dashboard.draft === false) {
       let isAccessGranted = checkAccess({
         member: userMember,
-        accessRoles: dashboard.accessRolesCombined
+        accessRoles: dashboard.accessRolesCombined,
+        filePath: dashboard.filePath
       });
 
       if (isAccessGranted === false) {
@@ -389,12 +390,17 @@ export class DashboardsService {
         xs.map(x => this.tabService.dashboardEntToTab(x as DashboardEnt))
       );
 
-    let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
-      checkAccess({
+    let dashboardPartsGrantedAccess = dashboardParts.filter(x => {
+      if (x.draft === true) {
+        return true;
+      }
+
+      return checkAccess({
         member: apiUserMember,
-        accessRoles: x.accessRolesCombined
-      })
-    );
+        accessRoles: x.accessRolesCombined,
+        filePath: x.filePath
+      });
+    });
 
     let newDashboardParts = dashboardPartsGrantedAccess.map(x =>
       this.tabToDashboardPart({
@@ -436,12 +442,17 @@ export class DashboardsService {
         xs.map(x => this.tabService.dashboardEntToTab(x as DashboardEnt))
       );
 
-    let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
-      checkAccess({
+    let dashboardPartsGrantedAccess = dashboardParts.filter(x => {
+      if (x.draft === true) {
+        return true;
+      }
+
+      return checkAccess({
         member: apiUserMember,
-        accessRoles: x.accessRolesCombined
-      })
-    );
+        accessRoles: x.accessRolesCombined,
+        filePath: x.filePath
+      });
+    });
 
     let apiDashboardParts = dashboardPartsGrantedAccess.map(x =>
       this.tabToDashboardPart({

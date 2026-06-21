@@ -142,7 +142,7 @@ export class RunQueriesService {
     await forEachSeries(uniqueParentIds, async parentId => {
       let mconfig = mconfigs.find(x => x.parentId === parentId); // any mconfig
 
-      await this.parentService.checkAccess({
+      await this.parentService.checkParentAccess({
         parentId: mconfig.parentId,
         parentType: mconfig.parentType,
         modelId: mconfig.modelId, // for chart as parent

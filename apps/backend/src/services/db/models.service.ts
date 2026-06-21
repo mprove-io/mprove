@@ -7,7 +7,6 @@ import type {
   ModelTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ModelEnt, modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -226,9 +225,9 @@ export class ModelsService {
 
     let apiModelPartXs = apiModelParts.map(x => {
       let modelPartX: ModelPartX = Object.assign({}, x, {
-        hasAccess: checkAccess({
+        hasAccess: checkModelAccess({
           member: apiUserMember,
-          accessRoles: x.accessRolesCombined
+          modelAccessRoles: x.accessRolesCombined
         })
       });
       return modelPartX;

@@ -85,14 +85,17 @@ export class RunReportService {
       })
       .then(xs => xs.map(x => this.tabService.reportEntToTab(x)));
 
-    let allReports = allDbReports.filter(
-      x =>
-        x.draft === true ||
-        checkAccess({
-          member: userMember,
-          accessRoles: x.accessRolesCombined
-        })
-    );
+    let allReports = allDbReports.filter(x => {
+      if (x.draft === true) {
+        return true;
+      }
+
+      return checkAccess({
+        member: userMember,
+        accessRoles: x.accessRolesCombined,
+        filePath: x.filePath
+      });
+    });
 
     let reportIdsList = reportIds?.split(',');
 
