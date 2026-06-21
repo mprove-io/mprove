@@ -721,7 +721,11 @@
                                         node.data.isSelectedReportAncestor ===
                                         true
                                     }"
-                                    >{{ node.data.title | capitalize }}</span
+                                    >{{
+                                      node.data.isSynthetic === true
+                                        ? node.data.title
+                                        : (node.data.title | capitalize)
+                                    }}</span
                                   >
                                 </div>
 
