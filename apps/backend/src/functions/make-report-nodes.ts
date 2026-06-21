@@ -37,7 +37,7 @@ export function makeReportNodes(item: {
 
   let isShowAllSpaces = member.isAdmin === true || member.isEditor === true;
 
-  let visibleSpaces = spaces.filter(space => {
+  let directlyVisibleSpaces = spaces.filter(space => {
     if (isShowAllSpaces === true) {
       return true;
     }
@@ -55,6 +55,32 @@ export function makeReportNodes(item: {
 
     return hasAccess;
   });
+
+  let spacesByName = new Map(spaces.map(space => [space.space, space]));
+  let visibleSpaceNames = new Set(
+    directlyVisibleSpaces.map(space => space.space)
+  );
+
+  directlyVisibleSpaces.forEach(space => {
+    let parts = space.space.split('.');
+    parts.pop();
+
+    while (parts.length > 0) {
+      let parentSpaceName = parts.join('.');
+      let parentSpace = spacesByName.get(parentSpaceName);
+      let isParentSpaceDefined = isDefined(parentSpace);
+
+      if (isParentSpaceDefined === true) {
+        visibleSpaceNames.add(parentSpace.space);
+      }
+
+      parts.pop();
+    }
+  });
+
+  let visibleSpaces = spaces.filter(space =>
+    visibleSpaceNames.has(space.space)
+  );
 
   let nodesBySpace = new Map<string, ReportNode>();
 
