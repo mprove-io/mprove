@@ -3,7 +3,8 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
 import {
   MPROVE_CONFIG_FILENAME,
-  MPROVE_CONFIG_NAME
+  MPROVE_CONFIG_NAME,
+  MPROVE_USERS_FOLDER
 } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
@@ -199,8 +200,23 @@ export function splitFiles(
           file.name === file.space + FileExtensionEnum.Space;
 
         let isParentFolderNameMatch = parentFolderName === file.space;
+        let isInsideMproveUsersFolder = pathParts.includes(MPROVE_USERS_FOLDER);
 
-        if (isFileNameMatch && isParentFolderNameMatch) {
+        if (isInsideMproveUsersFolder === true) {
+          item.errors.push(
+            new BmError({
+              title: ErTitleEnum.WRONG_SPACE_PLACEMENT,
+              message: `.space files can not exist inside "${MPROVE_USERS_FOLDER}" folder`,
+              lines: [
+                {
+                  line: file.space_line_num,
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+        } else if (isFileNameMatch && isParentFolderNameMatch) {
           delete file.ext;
           delete file.name;
           delete file.path;
