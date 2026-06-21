@@ -122,6 +122,7 @@ import { SaveIconComponent } from './icons/save-icon/save-icon.component';
 import { ScrollIconComponent } from './icons/scroll-icon/scroll-icon.component';
 import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
+import { StarIconComponent } from './icons/star-icon/star-icon.component';
 import { StopIconComponent } from './icons/stop-icon/stop-icon.component';
 import { TableCellsIconComponent } from './icons/table-cells-icon/table-cells-icon.component';
 import { TableIconComponent } from './icons/table-icon/table-icon.component';
@@ -191,6 +192,7 @@ let sharedComponents = [
   EditIconComponent,
   TrashIconComponent,
   SaveIconComponent,
+  StarIconComponent,
   CheckIconComponent,
   AddIconComponent,
   ChevronLeftIconComponent,

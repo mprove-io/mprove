@@ -104,6 +104,7 @@ type ReportTreeNode =
   | (Extract<ReportNode, { type: 'report' }> & {
       report?: ReportX;
       isMatched?: boolean;
+      isFavorite?: boolean;
     });
 
 type ReportSpaceNode = Extract<ReportNode, { type: 'space' }>;
@@ -233,6 +234,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   searchMetricsWord: string;
   searchReportsWord: string;
+  favoriteReportIds: string[] = [];
+  favoritesOnly = false;
 
   filteredDraftsLength: number;
 
@@ -1196,6 +1199,38 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.reportsTree?.treeModel?.collapseAll();
   }
 
+  setFavoritesOnly(item: { event: MouseEvent; favoritesOnly: boolean }) {
+    let { event, favoritesOnly } = item;
+
+    event.stopPropagation();
+
+    this.favoritesOnly = favoritesOnly;
+
+    this.makeFilteredReportNodes({
+      reportNodes: this.reportsQuery.getValue().reportNodes
+    });
+
+    this.cd.detectChanges();
+  }
+
+  toggleFavoriteReport(item: { event: MouseEvent; reportId: string }) {
+    let { event, reportId } = item;
+
+    let isFavorite = this.favoriteReportIds.indexOf(reportId) > -1;
+
+    event.stopPropagation();
+
+    this.favoriteReportIds = isFavorite
+      ? this.favoriteReportIds.filter(id => id !== reportId)
+      : [...this.favoriteReportIds, reportId];
+
+    this.makeFilteredReportNodes({
+      reportNodes: this.reportsQuery.getValue().reportNodes
+    });
+
+    this.cd.detectChanges();
+  }
+
   makeFilteredReportNodes(item: { reportNodes: ReportNode[] }) {
     let { reportNodes } = item;
     let member = this.memberQuery.getValue();
@@ -1224,6 +1259,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.filteredReportNodes = isDefinedAndNotEmpty(this.searchReportsWord)
       ? this.filterReportNodes({ nodes: enrichedNodes })
       : enrichedNodes;
+
+    this.filteredReportNodes =
+      this.favoritesOnly === true
+        ? this.flattenFavoriteReportNodes({ nodes: this.filteredReportNodes })
+        : this.filteredReportNodes;
 
     this.filteredReportNodes = this.markSelectedReportAncestors({
       nodes: this.filteredReportNodes
@@ -1770,7 +1810,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
         return {
           ...node,
-          report: report
+          report: report,
+          isFavorite: this.favoriteReportIds.indexOf(node.reportId) > -1
         };
       }
 
@@ -1816,6 +1857,33 @@ export class ReportsComponent implements OnInit, OnDestroy {
         };
       })
       .filter(node => node.isMatched === true);
+  }
+
+  flattenFavoriteReportNodes(item: {
+    nodes: ReportTreeNode[];
+  }): ReportTreeNode[] {
+    let { nodes } = item;
+
+    return nodes.reduce((acc: ReportTreeNode[], node) => {
+      if (node.type === 'report') {
+        if (node.isFavorite === true) {
+          acc.push({
+            ...node,
+            isMatched: true
+          });
+        }
+
+        return acc;
+      }
+
+      let children = this.flattenFavoriteReportNodes({
+        nodes: node.children ?? []
+      });
+
+      acc.push(...children);
+
+      return acc;
+    }, []);
   }
 
   toggleAutoRun() {
