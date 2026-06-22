@@ -40,12 +40,14 @@ import type {
   ToBackendGetRolesRequestPayload,
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
+import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
 import { upsertReportNode } from '#front/app/functions/report-nodes';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../shared.module';
 
@@ -104,18 +106,11 @@ export class EditReportInfoDialogComponent implements OnInit {
   spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
 
   struct: StructState;
-  struct$ = this.structQuery.select().pipe(
-    tap(x => {
-      this.struct = x;
-      this.spacesPlusEmpty = this.makeSpacesPlusEmpty({ spaces: x.spaces });
-      this.updateCombinedAccessRoles();
-      this.cd.detectChanges();
-    })
-  );
 
   constructor(
     public ref: DialogRef<EditReportInfoDialogData>,
     private fb: FormBuilder,
+    private userQuery: UserQuery,
     private reportsQuery: ReportsQuery,
     private reportQuery: ReportQuery,
     private spinner: NgxSpinnerService,
@@ -167,6 +162,7 @@ export class EditReportInfoDialogComponent implements OnInit {
 
   spaceChange() {
     this.updateCombinedAccessRoles();
+    this.updateSelectedReportPath();
   }
 
   accessRolesChange() {
@@ -174,9 +170,10 @@ export class EditReportInfoDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    let parts = this.ref.data.report.filePath.split('/');
-    parts.shift();
-    this.selectedRepPath = parts.join(' / ');
+    this.struct = this.structQuery.getValue();
+    this.spacesPlusEmpty = this.makeSpacesPlusEmpty({
+      spaces: this.struct.spaces
+    });
 
     setValueAndMark({
       control: this.titleForm.controls['title'],
@@ -186,12 +183,28 @@ export class EditReportInfoDialogComponent implements OnInit {
     this.selectedAccessRoles = [...(this.ref.data.report.accessRoles || [])];
     this.selectedSpace = this.ref.data.report.space ?? EMPTY_SPACE.space;
     this.updateCombinedAccessRoles();
+    this.updateSelectedReportPath();
 
     this.loadRoles();
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
     }, 0);
+  }
+
+  updateSelectedReportPath() {
+    let alias = this.userQuery.getValue().alias;
+
+    this.selectedRepPath = makeReportDisplayPath({
+      projectId: this.ref.data.projectId,
+      mproveDirValue: this.struct.mproveConfig.mproveDirValue,
+      userAlias: alias,
+      selectedSpace: this.selectedSpace,
+      reportId: this.ref.data.report.reportId,
+      filePath: this.ref.data.report.filePath,
+      reportSpace: this.ref.data.report.space,
+      spaces: this.struct.spaces
+    });
   }
 
   save() {

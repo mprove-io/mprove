@@ -82,6 +82,7 @@
         [clearable]="false"
         [searchable]="false"
         [(ngModel)]="selectedReportId"
+        (click)="$event.stopPropagation()"
         (change)="selectedReportChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation();
@@ -119,10 +120,9 @@
   </div>
 
   <div class="text-s400 mt-9 h-7 text-base">
-    <div *ngIf="saveAs === reportSaveAsEnum.NEW_REPORT"
-      >{{ struct?.mproveConfig.mproveDirValue | mproveDir }} /
-      {{ usersFolder }} / {{ alias }} / {{ newReportId }}.report</div
-    >
+    <div *ngIf="saveAs === reportSaveAsEnum.NEW_REPORT">{{
+      newReportPath
+    }}</div>
 
     <div
       *ngIf="
@@ -283,7 +283,3 @@
     >
   </div>
 </div>
-
-<div *ngIf="alias$ | async"></div>
-<div *ngIf="nav$ | async"></div>
-<div *ngIf="struct$ | async"></div>

@@ -203,10 +203,7 @@ export class BuilderLeftComponent implements OnDestroy {
 
     let mproveDirValue = this.struct.mproveConfig.mproveDirValue;
 
-    if (
-      isUndefined(mproveDirValue) ||
-      mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
-    ) {
+    if (mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH) {
       this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
     } else {
       let mproveDirValuePart;

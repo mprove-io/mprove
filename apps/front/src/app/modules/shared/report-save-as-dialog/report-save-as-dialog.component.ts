@@ -10,7 +10,6 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
   EMPTY_SPACE,
@@ -36,9 +35,10 @@ import type {
   ToBackendGetRolesRequestPayload,
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
+import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
 import { upsertReportNode } from '#front/app/functions/report-nodes';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
-import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
@@ -82,7 +82,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
     this.reportSaveAsDialogSpaceSelectElement?.close();
   }
 
-  usersFolder = MPROVE_USERS_FOLDER;
   emptySpaceName = EMPTY_SPACE_NAME;
 
   reportSaveAsEnum = ReportSaveAsEnum;
@@ -99,15 +98,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   newReportId: string;
 
-  alias: string;
-  alias$ = this.userQuery.alias$.pipe(
-    tap(x => {
-      this.alias = x;
-      this.cd.detectChanges();
-    })
-  );
-
   fromReportId: string;
+  newReportPath: string;
 
   selectedReportId: any; // string
   selectedRepPath: string;
@@ -121,23 +113,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
   combinedAccessRolesText = '';
   spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
 
-  nav: NavState;
-  nav$ = this.navQuery.select().pipe(
-    tap(x => {
-      this.nav = x;
-      this.cd.detectChanges();
-    })
-  );
-
   struct: StructState;
-  struct$ = this.structQuery.select().pipe(
-    tap(x => {
-      this.struct = x;
-      this.spacesPlusEmpty = this.makeSpacesPlusEmpty({ spaces: x.spaces });
-      this.updateCombinedAccessRoles();
-      this.cd.detectChanges();
-    })
-  );
 
   constructor(
     public ref: DialogRef<ReportSaveAsDialogData>,
@@ -196,6 +172,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   spaceChange() {
     this.updateCombinedAccessRoles();
+    this.updatePaths();
   }
 
   accessRolesChange() {
@@ -204,7 +181,10 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   ngOnInit() {
     this.report = this.ref.data.report;
-    this.nav = this.navQuery.getValue();
+    this.struct = this.structQuery.getValue();
+    this.spacesPlusEmpty = this.makeSpacesPlusEmpty({
+      spaces: this.struct.spaces
+    });
 
     this.fromReportId = this.ref.data.report.reportId;
     this.newReportId = this.ref.data.report.reportId;
@@ -225,7 +205,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
     this.loadRoles();
 
-    this.makePath();
+    this.updatePaths();
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
@@ -255,22 +235,33 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   newRepOnClick() {
     this.saveAs = ReportSaveAsEnum.NEW_REPORT;
+    this.selectedAccessRoles = [];
+    this.selectedSpace = EMPTY_SPACE.space;
+    this.updateCombinedAccessRoles();
+    this.updatePaths();
   }
 
   existingRepOnClick() {
     this.saveAs = ReportSaveAsEnum.REPLACE_EXISTING_REPORT;
+    this.selectedReportId = undefined;
+    this.selectedRepPath = '';
+    this.selectedAccessRoles = [];
+    this.selectedSpace = EMPTY_SPACE.space;
+    this.updateCombinedAccessRoles();
+    this.updatePaths();
   }
 
   saveAsNewRep(item: { newTitle: string; roles: string[] }) {
     let { newTitle, roles } = item;
 
+    let nav = this.navQuery.getValue();
     let uiState = this.uiQuery.getValue();
 
     let payload: ToBackendSaveCreateReportRequestPayload = {
-      projectId: this.nav.projectId,
-      repoId: this.nav.repoId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
+      projectId: nav.projectId,
+      repoId: nav.repoId,
+      branchId: nav.branchId,
+      envId: nav.envId,
       newReportId: this.newReportId,
       fromReportId: this.fromReportId,
       title: newTitle,
@@ -342,15 +333,16 @@ export class ReportSaveAsDialogComponent implements OnInit {
   saveAsExistingRep(item: { newTitle: string; roles: string[] }) {
     let { newTitle, roles } = item;
 
+    let nav = this.navQuery.getValue();
     let uiState = this.uiQuery.getValue();
 
     this.spinner.show(APP_SPINNER_NAME);
 
     let payload: ToBackendSaveModifyReportRequestPayload = {
-      projectId: this.nav.projectId,
-      repoId: this.nav.repoId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
+      projectId: nav.projectId,
+      repoId: nav.repoId,
+      branchId: nav.branchId,
+      envId: nav.envId,
       modReportId: this.selectedReportId,
       fromReportId: this.fromReportId,
       title: newTitle,
@@ -416,7 +408,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
   }
 
   selectedReportChange() {
-    this.makePath();
     if (isDefined(this.selectedReportId)) {
       let selectedReport = this.reports.find(
         x => x.reportId === this.selectedReportId
@@ -425,13 +416,16 @@ export class ReportSaveAsDialogComponent implements OnInit {
       this.selectedAccessRoles = [...(selectedReport.accessRoles || [])];
       this.selectedSpace = selectedReport.space ?? EMPTY_SPACE.space;
       this.updateCombinedAccessRoles();
+      this.updatePaths();
       this.cd.detectChanges();
     }
   }
 
   loadRoles() {
+    let nav = this.navQuery.getValue();
+
     let payload: ToBackendGetRolesRequestPayload = {
-      projectId: this.nav.projectId
+      projectId: nav.projectId
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -457,8 +451,23 @@ export class ReportSaveAsDialogComponent implements OnInit {
       .subscribe();
   }
 
-  makePath() {
+  updatePaths() {
+    let alias = this.userQuery.getValue().alias;
+    let nav = this.navQuery.getValue();
+
+    this.newReportPath = makeReportDisplayPath({
+      projectId: nav.projectId,
+      mproveDirValue: this.struct.mproveConfig.mproveDirValue,
+      userAlias: alias,
+      selectedSpace: this.selectedSpace,
+      reportId: this.newReportId,
+      filePath: undefined,
+      reportSpace: EMPTY_SPACE_NAME,
+      spaces: this.struct.spaces
+    });
+
     if (isUndefined(this.selectedReportId) || isUndefined(this.reports)) {
+      this.selectedRepPath = '';
       return;
     }
 
@@ -467,11 +476,16 @@ export class ReportSaveAsDialogComponent implements OnInit {
     );
 
     if (isDefined(selectedReport)) {
-      let parts = selectedReport.filePath.split('/');
-
-      parts.shift();
-
-      this.selectedRepPath = parts.join(' / ');
+      this.selectedRepPath = makeReportDisplayPath({
+        projectId: nav.projectId,
+        mproveDirValue: this.struct.mproveConfig.mproveDirValue,
+        userAlias: alias,
+        selectedSpace: this.selectedSpace,
+        reportId: selectedReport.reportId,
+        filePath: selectedReport.filePath,
+        reportSpace: selectedReport.space,
+        spaces: this.struct.spaces
+      });
     }
   }
 
