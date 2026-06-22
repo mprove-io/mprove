@@ -8,7 +8,10 @@ import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
-type ReportListItem = ReportX & { displaySpace: string };
+type ReportListItem = ReportX & {
+  displaySpace: string;
+  displayAccessRoles: { role: string; isDirect: boolean }[];
+};
 
 @Component({
   standalone: false,
@@ -29,10 +32,20 @@ export class ReportsListComponent {
     tap(x => {
       this.filteredReports = x.filteredReports
         .filter(d => d.draft === false)
-        .map(report => ({
-          ...report,
-          displaySpace: report.space ? report.space.split('.').join(' - ') : ''
-        }));
+        .map(report => {
+          let accessRoles = new Set(report.accessRoles);
+
+          return {
+            ...report,
+            displaySpace: report.space
+              ? report.space.split('.').join(' - ')
+              : '',
+            displayAccessRoles: report.accessRolesCombined.map(role => ({
+              role: role,
+              isDirect: accessRoles.has(role)
+            }))
+          };
+        });
       this.cd.detectChanges();
     })
   );
