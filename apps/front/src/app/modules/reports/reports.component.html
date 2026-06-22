@@ -576,57 +576,13 @@
 
                         <div
                           *ngIf="
-                            i ===
-                            (alias === restrictedUserAlias
-                              ? 0
-                              : filteredDraftsLength)
-                          "
-                          class="mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row items-center justify-start"
-                        >
-                          <button
-                            class="text-s500 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                            type="button"
-                            tp="Collapse tree"
-                            (click)="collapseReportsTree()"
-                          >
-                            <m-folder-minus-icon></m-folder-minus-icon>
-                          </button>
-                          <div class="text-s500 ml-[12px] font-semibold"
-                            >Saved Reports</div
-                          >
-
-                          <button
-                            class="ml-4 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                            type="button"
-                            (click)="
-                              setFavoritesOnly({
-                                event: $event,
-                                favoritesOnly: !favoritesOnly
-                              })
-                            "
-                            [ngClass]="{
-                              'text-m500': favoritesOnly === true,
-                              'text-s500': favoritesOnly === false
-                            }"
-                          >
-                            <m-star-icon
-                              [isFilled]="favoritesOnly === true"
-                            ></m-star-icon>
-
-                            <!-- <div class="ml-2 text-base"> Stars </div> -->
-                          </button>
-                        </div>
-
-                        <div
-                          *ngIf="
                             alias !== restrictedUserAlias && r.draft === true
                           "
                           class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                           (click)="navToReport(r)"
                           [ngClass]="{
                             'bg-m50': r.reportId === report.reportId,
-                            'mt-4': i === 0,
-                            'mb-5': i === filteredReports.length - 1
+                            'mt-4': i === 0
                           }"
                         >
                           <div class="ml-4 mr-3 flex h-2 items-center">
@@ -696,7 +652,44 @@
                         </div>
                       </div>
 
-                      <div class="ml-6">
+                      <div
+                        class="mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row items-center justify-start"
+                      >
+                        <button
+                          class="text-s500 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                          type="button"
+                          tp="Collapse tree"
+                          (click)="collapseReportsTree()"
+                        >
+                          <m-folder-minus-icon></m-folder-minus-icon>
+                        </button>
+                        <div class="text-s500 ml-[12px] font-semibold"
+                          >Saved Reports</div
+                        >
+
+                        <button
+                          class="ml-4 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                          type="button"
+                          (click)="
+                            setFavoritesOnly({
+                              event: $event,
+                              favoritesOnly: !favoritesOnly
+                            })
+                          "
+                          [ngClass]="{
+                            'text-m500': favoritesOnly === true,
+                            'text-s500': favoritesOnly === false
+                          }"
+                        >
+                          <m-star-icon
+                            [isFilled]="favoritesOnly === true"
+                          ></m-star-icon>
+
+                          <!-- <div class="ml-2 text-base"> Stars </div> -->
+                        </button>
+                      </div>
+
+                      <div *ngIf="filteredReportNodes?.length > 0" class="ml-6">
                         <tree-root
                           class="h-2 w-full select-none"
                           #reportsTree
@@ -849,6 +842,19 @@
                             </div>
                           </ng-template>
                         </tree-root>
+                      </div>
+
+                      <div
+                        *ngIf="filteredReportNodes?.length === 0"
+                        class="text-s1 flex select-none justify-center px-6 py-8 text-base"
+                      >
+                        {{
+                          !!searchReportsWord
+                            ? 'Search results are empty'
+                            : favoritesOnly === true
+                              ? 'Favorites are empty'
+                              : 'Reports are empty'
+                        }}
                       </div>
                     </ng-scrollbar>
                   </div>
