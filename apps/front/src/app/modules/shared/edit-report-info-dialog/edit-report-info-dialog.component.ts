@@ -19,7 +19,6 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
   EMPTY_SPACE,
@@ -47,7 +46,6 @@ import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
-import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../shared.module';
 
@@ -91,8 +89,8 @@ export class EditReportInfoDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  usersFolder = MPROVE_USERS_FOLDER;
   emptySpaceName = EMPTY_SPACE_NAME;
+  selectedRepPath: string;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -104,14 +102,6 @@ export class EditReportInfoDialogComponent implements OnInit {
   combinedAccessRoles: string[] = [];
   combinedAccessRolesText = '';
   spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
-
-  alias: string;
-  alias$ = this.userQuery.alias$.pipe(
-    tap(x => {
-      this.alias = x;
-      this.cd.detectChanges();
-    })
-  );
 
   struct: StructState;
   struct$ = this.structQuery.select().pipe(
@@ -126,7 +116,6 @@ export class EditReportInfoDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditReportInfoDialogData>,
     private fb: FormBuilder,
-    private userQuery: UserQuery,
     private reportsQuery: ReportsQuery,
     private reportQuery: ReportQuery,
     private spinner: NgxSpinnerService,
@@ -185,6 +174,10 @@ export class EditReportInfoDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    let parts = this.ref.data.report.filePath.split('/');
+    parts.shift();
+    this.selectedRepPath = parts.join(' / ');
+
     setValueAndMark({
       control: this.titleForm.controls['title'],
       value: this.ref.data.report.title

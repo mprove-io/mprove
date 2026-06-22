@@ -5,10 +5,7 @@
     >Edit Chart</div
   >
 
-  <div class="text-s400 text-base"
-    >{{ struct?.mproveConfig.mproveDirValue | mproveDir | capitalize }} /
-    {{ usersFolder }} / {{ alias }} / {{ ref.data.chart.chartId }}.chart</div
-  >
+  <div class="text-s400 text-base">{{ chartPath }}</div>
 
   <div class="mt-9 flex flex-row items-start">
     <div class="flex flex-col">
@@ -76,6 +73,3 @@
     >
   </div>
 </div>
-
-<div *ngIf="alias$ | async"></div>
-<div *ngIf="struct$ | async"></div>

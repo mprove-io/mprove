@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
@@ -12,11 +11,9 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -30,11 +27,8 @@ import type {
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';
-import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
-import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { NavigateService } from '#front/app/services/navigate.service';
 import { SharedModule } from '../shared.module';
 
 export interface EditChartInfoDialogData {
@@ -60,43 +54,26 @@ export class EditChartInfoDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  usersFolder = MPROVE_USERS_FOLDER;
+  chartPath: string;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
 
-  alias: string;
-  alias$ = this.userQuery.alias$.pipe(
-    tap(x => {
-      this.alias = x;
-      this.cd.detectChanges();
-    })
-  );
-
-  struct: StructState;
-  struct$ = this.structQuery.select().pipe(
-    tap(x => {
-      this.struct = x;
-      this.cd.detectChanges();
-    })
-  );
-
   constructor(
     public ref: DialogRef<EditChartInfoDialogData>,
     private fb: FormBuilder,
-    private router: Router,
-    private userQuery: UserQuery,
     private chartsQuery: ChartsQuery,
     private chartQuery: ChartQuery,
     private uiQuery: UiQuery,
-    private spinner: NgxSpinnerService,
-    private structQuery: StructQuery,
-    private cd: ChangeDetectorRef,
-    private navigateService: NavigateService
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit() {
+    let parts = this.ref.data.chart.filePath.split('/');
+    parts.shift();
+    this.chartPath = parts.join(' / ');
+
     setValueAndMark({
       control: this.titleForm.controls['title'],
       value: this.ref.data.chart.title

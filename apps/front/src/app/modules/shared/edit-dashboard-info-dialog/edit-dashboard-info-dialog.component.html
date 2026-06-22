@@ -5,11 +5,7 @@
     >Edit Dashboard</div
   >
 
-  <div class="text-s400 text-base"
-    >{{ struct?.mproveConfig.mproveDirValue | mproveDir | capitalize }} /
-    {{ usersFolder }} / {{ alias }} /
-    {{ ref.data.dashboardPart.dashboardId }}.dashboard</div
-  >
+  <div class="text-s400 text-base">{{ dashboardPath }}</div>
 
   <div class="mt-9 flex flex-row items-start">
     <div class="flex flex-col">
@@ -96,6 +92,3 @@
     >
   </div>
 </div>
-
-<div *ngIf="alias$ | async"></div>
-<div *ngIf="struct$ | async"></div>

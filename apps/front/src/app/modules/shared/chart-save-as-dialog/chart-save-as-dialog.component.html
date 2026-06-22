@@ -225,7 +225,7 @@
 
   <div class="text-s400 mt-9 h-7 text-base">
     <div *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
-      >{{ struct?.mproveConfig.mproveDirValue | mproveDir | capitalize }} /
+      >{{ struct?.mproveConfig.mproveDirValue | mproveDir }} /
       {{ usersFolder }} / {{ alias }} / {{ newChartId }}.chart</div
     >
 
@@ -234,7 +234,7 @@
         chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD &&
         !!selectedDashboardId
       "
-      >{{ selectedDashboardPath | capitalize }}</div
+      >{{ selectedDashboardPath }}</div
     >
 
     <!-- <div
