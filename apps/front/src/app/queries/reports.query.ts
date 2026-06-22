@@ -7,11 +7,13 @@ import { BaseQuery } from './base.query';
 export class ReportsState {
   reports: ReportX[];
   reportNodes: ReportNode[];
+  favoriteReportIds: string[];
 }
 
 let reportsState: ReportsState = {
   reports: [],
-  reportNodes: []
+  reportNodes: [],
+  favoriteReportIds: []
 };
 
 @Injectable({ providedIn: 'root' })

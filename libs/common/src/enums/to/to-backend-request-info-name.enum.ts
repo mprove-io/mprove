@@ -135,6 +135,8 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendGetSuggestFields = 'api/ToBackendGetSuggestFields',
   //
+  ToBackendSetFavorite = 'api/ToBackendSetFavorite',
+  //
   ToBackendGetModels = 'api/ToBackendGetModels',
   ToBackendGetModel = 'api/ToBackendGetModel',
   //

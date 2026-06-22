@@ -103,7 +103,10 @@ export class DeleteReportDialogComponent implements OnInit {
               reportNodes: removeReportNode({
                 reportNodes: reportsState.reportNodes,
                 reportId: report.reportId
-              })
+              }),
+              favoriteReportIds: reportsState.favoriteReportIds.filter(
+                reportId => reportId !== report.reportId
+              )
             });
 
             let currentReport = this.reportQuery.getValue();

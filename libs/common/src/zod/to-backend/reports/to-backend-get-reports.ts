@@ -39,6 +39,7 @@ export let zToBackendGetReportsResponsePayload = z
     userMember: zMember,
     reports: z.array(zReportX),
     reportNodes: z.array(zReportNode),
+    favoriteReportIds: z.array(z.string()),
     storeModels: z.array(zModelX)
   })
   .meta({ id: 'ToBackendGetReportsResponsePayload' });

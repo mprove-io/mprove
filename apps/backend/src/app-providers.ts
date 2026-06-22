@@ -41,6 +41,7 @@ import { ConnectionsService } from './services/db/connections.service';
 import { DashboardsService } from './services/db/dashboards.service';
 import { DconfigsService } from './services/db/dconfigs.service';
 import { EnvsService } from './services/db/envs.service';
+import { FavoritesService } from './services/db/favorites.service';
 import { GivensService } from './services/db/givens.service';
 import { KitsService } from './services/db/kits.service';
 import { MconfigsService } from './services/db/mconfigs.service';
@@ -126,6 +127,7 @@ export const appProviders = [
   DashboardsService,
   DconfigsService,
   EnvsService,
+  FavoritesService,
   GivensService,
   OcEventsService,
   KitsService,

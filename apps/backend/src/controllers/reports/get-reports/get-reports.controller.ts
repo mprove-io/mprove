@@ -18,6 +18,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
+import { FavoritesService } from '#backend/services/db/favorites.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
@@ -25,6 +26,7 @@ import { ReportsService } from '#backend/services/db/reports.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
+import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -45,6 +47,7 @@ export class GetReportsController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
+    private favoritesService: FavoritesService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -172,6 +175,15 @@ export class GetReportsController {
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
+    let reportTargetIds = reports.map(report => report.reportId);
+
+    let favoriteReportIds = await this.favoritesService.getFavoriteTargetIds({
+      projectId: projectId,
+      userId: user.userId,
+      type: FavoriteTypeEnum.Report,
+      targetIds: reportTargetIds
+    });
+
     let payload: ToBackendGetReportsResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
@@ -203,6 +215,7 @@ export class GetReportsController {
         reports: reportsGrantedAccess,
         member: apiUserMember
       }),
+      favoriteReportIds: favoriteReportIds,
       storeModels: apiModels.filter(model => model.type === ModelTypeEnum.Store)
     };
 

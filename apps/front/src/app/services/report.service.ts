@@ -159,7 +159,8 @@ export class ReportService {
               reportNodes: upsertReportNode({
                 reportNodes: reportsState.reportNodes,
                 report: report
-              })
+              }),
+              favoriteReportIds: reportsState.favoriteReportIds
             });
 
             this.navigateService.navigateToReport({
@@ -273,7 +274,10 @@ export class ReportService {
 
             this.reportsQuery.update({
               reports: newReports,
-              reportNodes: reportNodes
+              reportNodes: reportNodes,
+              favoriteReportIds: reportsState.favoriteReportIds.filter(
+                reportId => reportIds.indexOf(reportId) < 0
+              )
             });
 
             if (reportIds.indexOf(report.reportId) > -1) {

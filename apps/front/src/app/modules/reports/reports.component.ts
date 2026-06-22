@@ -40,6 +40,7 @@ import {
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
+import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTsLastCompleteOptionEnum } from '#common/enums/fraction/fraction-ts-last-complete-option.enum';
 import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
@@ -62,6 +63,10 @@ import type { DataPoint } from '#common/zod/front/data-point';
 import type { DataRow } from '#common/zod/front/data-row';
 import type { RefreshItem } from '#common/zod/front/refresh-item';
 import type { SeriesPart } from '#common/zod/front/series-part';
+import type {
+  ToBackendSetFavoriteRequestPayload,
+  ToBackendSetFavoriteResponse
+} from '#common/zod/to-backend/favorites/to-backend-set-favorite';
 import type {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
@@ -249,6 +254,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     tap(x => {
       let previousReports = this.reports ?? [];
       this.reports = x.reports;
+      this.favoriteReportIds = x.favoriteReportIds ?? [];
 
       let reportToExpand = this.reports.find(report => {
         let previousReport = previousReports.find(
@@ -1218,17 +1224,60 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let isFavorite = this.favoriteReportIds.indexOf(reportId) > -1;
 
-    event.stopPropagation();
-
-    this.favoriteReportIds = isFavorite
+    let newFavoriteReportIds = isFavorite
       ? this.favoriteReportIds.filter(id => id !== reportId)
       : [...this.favoriteReportIds, reportId];
+
+    let previousFavoriteReportIds = this.favoriteReportIds;
+
+    event.stopPropagation();
+
+    this.favoriteReportIds = newFavoriteReportIds;
+
+    this.reportsQuery.updatePart({
+      favoriteReportIds: newFavoriteReportIds
+    });
 
     this.makeFilteredReportNodes({
       reportNodes: this.reportsQuery.getValue().reportNodes
     });
 
     this.cd.detectChanges();
+
+    let nav = this.navQuery.getValue();
+
+    let payload: ToBackendSetFavoriteRequestPayload = {
+      projectId: nav.projectId,
+      type: FavoriteTypeEnum.Report,
+      targetId: reportId,
+      isFavorite: isFavorite === false
+    };
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetFavorite,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: ToBackendSetFavoriteResponse) => {
+          let isOk = resp.info?.status === ResponseInfoStatusEnum.Ok;
+
+          if (isOk === false) {
+            this.favoriteReportIds = previousFavoriteReportIds;
+            this.reportsQuery.updatePart({
+              favoriteReportIds: previousFavoriteReportIds
+            });
+
+            this.makeFilteredReportNodes({
+              reportNodes: this.reportsQuery.getValue().reportNodes
+            });
+
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   makeFilteredReportNodes(item: { reportNodes: ReportNode[] }) {

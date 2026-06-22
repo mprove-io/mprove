@@ -259,7 +259,8 @@ export class EditReportInfoDialogComponent implements OnInit {
                   reportNodes: upsertReportNode({
                     reportNodes: reportsState.reportNodes,
                     report: newReportPart
-                  })
+                  }),
+                  favoriteReportIds: reportsState.favoriteReportIds
                 });
 
                 let currentReport = this.reportQuery.getValue();

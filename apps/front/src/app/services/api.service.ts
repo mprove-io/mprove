@@ -541,7 +541,8 @@ export class ApiService {
 
           this.reportsQuery.update({
             reports: resp.payload.reports,
-            reportNodes: resp.payload.reportNodes
+            reportNodes: resp.payload.reportNodes,
+            favoriteReportIds: resp.payload.favoriteReportIds
           });
 
           this.modelsQuery.update({ models: resp.payload.storeModels });
