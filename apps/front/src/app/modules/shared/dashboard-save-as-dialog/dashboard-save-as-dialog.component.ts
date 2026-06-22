@@ -6,6 +6,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -241,6 +242,23 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     this.selectedDashboardPath = '';
     this.titleForm.controls['title'].setValue(undefined);
     this.selectedAccessRoles = [];
+  }
+
+  existingDashboardSearchFn(term: string, dashboardPart: DashboardPart) {
+    let trimmedTerm = term?.trim();
+
+    if (!trimmedTerm) {
+      return true;
+    }
+
+    let haystack = [
+      `${isDefined(dashboardPart.title) ? dashboardPart.title : dashboardPart.dashboardId} ${dashboardPart.author ?? ''}`
+    ];
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, trimmedTerm);
+
+    return idxs != null && idxs.length > 0;
   }
 
   saveAsNewDashboard(item: { newTitle: string; roles: string[] }) {
