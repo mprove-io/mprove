@@ -40,6 +40,7 @@ import type {
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
+import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -127,6 +128,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     public ref: DialogRef<DashboardSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
+    private memberQuery: MemberQuery,
     private uiQuery: UiQuery,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
@@ -138,6 +140,13 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   ngOnInit() {
     this.dashboard = this.ref.data.dashboard as DashboardX;
+
+    let member = this.memberQuery.getValue();
+
+    let canReplaceAnyDashboard =
+      member.isAdmin === true || member.isEditor === true;
+
+    let userAlias = this.userQuery.getValue().alias;
 
     this.selectedDashboardId =
       this.dashboard.draft === false &&
@@ -182,7 +191,11 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         tap((resp: ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.dashboardParts = resp.payload.dashboardParts
-              .filter(d => d.draft === false)
+              .filter(
+                d =>
+                  d.draft === false &&
+                  (canReplaceAnyDashboard === true || d.author === userAlias)
+              )
               .map(x => {
                 (x as any).disabled = x.canEditOrDeleteDashboard === false;
                 return x;
