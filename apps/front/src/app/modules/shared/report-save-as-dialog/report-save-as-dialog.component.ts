@@ -6,6 +6,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -266,6 +267,23 @@ export class ReportSaveAsDialogComponent implements OnInit {
     this.selectedSpace = EMPTY_SPACE.space;
     this.updateCombinedAccessRoles();
     this.updatePaths();
+  }
+
+  existingReportSearchFn(term: string, report: ReportX) {
+    let trimmedTerm = term?.trim();
+
+    if (!trimmedTerm) {
+      return true;
+    }
+
+    let haystack = [
+      `${isDefined(report.title) ? report.title : report.reportId} ${report.author ?? ''}`
+    ];
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, trimmedTerm);
+
+    return idxs != null && idxs.length > 0;
   }
 
   saveAsNewRep(item: { newTitle: string; roles: string[] }) {
