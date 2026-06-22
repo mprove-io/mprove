@@ -230,13 +230,17 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     this.saveAs = DashboardSaveAsEnum.NEW_DASHBOARD;
 
     this.titleForm.controls['title'].setValue(undefined);
-    this.selectedAccessRoles = [...(this.dashboard.accessRoles || [])];
+    this.selectedDashboardId = undefined;
+    this.selectedDashboardPath = '';
+    this.selectedAccessRoles = [];
   }
 
   existingDashboardOnClick() {
     this.saveAs = DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD;
-
-    this.makePathAndSetValues();
+    this.selectedDashboardId = undefined;
+    this.selectedDashboardPath = '';
+    this.titleForm.controls['title'].setValue(undefined);
+    this.selectedAccessRoles = [];
   }
 
   saveAsNewDashboard(item: { newTitle: string; roles: string[] }) {
@@ -383,6 +387,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       isUndefined(this.selectedDashboardId) ||
       isUndefined(this.dashboardParts)
     ) {
+      this.selectedDashboardPath = '';
       return;
     }
 

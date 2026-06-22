@@ -80,6 +80,7 @@
         [searchable]="false"
         [clearable]="false"
         [(ngModel)]="selectedDashboardId"
+        (click)="$event.stopPropagation()"
         (change)="selectedDashboardChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation();
@@ -197,6 +198,7 @@
           [items]="selectedDashboard?.tiles || []"
           [searchable]="false"
           [clearable]="false"
+          (click)="$event.stopPropagation()"
           (change)="selectedTileChange()"
           [(ngModel)]="selectedTileTitle"
           (keyup.esc)="

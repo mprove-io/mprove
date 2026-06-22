@@ -296,21 +296,35 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   newChartOnClick() {
     this.chartSaveAs = ChartSaveAsEnum.NEW_CHART;
+    this.selectedDashboardId = undefined;
+    this.selectedDashboardPath = '';
+    this.selectedDashboard = undefined;
+    this.selectedDashboardLoaded = false;
+    this.selectedTileTitle = undefined;
+    this.tileSaveAs = TileSaveAsEnum.NEW_TILE;
     this.titleForm.get('title').updateValueAndValidity();
   }
 
   tileOfDashboardOnClick() {
     this.chartSaveAs = ChartSaveAsEnum.TILE_OF_DASHBOARD;
+    this.selectedDashboardId = undefined;
+    this.selectedDashboardPath = '';
+    this.selectedDashboard = undefined;
+    this.selectedDashboardLoaded = false;
+    this.selectedTileTitle = undefined;
+    this.tileSaveAs = TileSaveAsEnum.NEW_TILE;
     this.titleForm.get('title').updateValueAndValidity();
   }
 
   newTileOnClick() {
     this.tileSaveAs = TileSaveAsEnum.NEW_TILE;
+    this.selectedTileTitle = undefined;
     this.titleForm.get('title').updateValueAndValidity();
   }
 
   replaceExistingTileOnClick() {
     this.tileSaveAs = TileSaveAsEnum.REPLACE_EXISTING_TILE;
+    this.selectedTileTitle = undefined;
     this.titleForm.get('title').updateValueAndValidity();
   }
 
@@ -331,6 +345,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       isUndefined(this.selectedDashboardId) ||
       isUndefined(this.dashboardParts)
     ) {
+      this.selectedDashboardPath = '';
       return;
     }
 
