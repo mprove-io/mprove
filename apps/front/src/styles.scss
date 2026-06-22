@@ -315,6 +315,11 @@ ngneat-dialog {
   cursor: pointer !important;
 }
 
+.ng-select.report-space-select-disabled,
+.ng-select.report-space-select-disabled * {
+  cursor: default !important;
+}
+
 .ng-select .ng-select-container .ng-value-container .ng-input > input {
   caret-color: dodgerblue;
 }

@@ -147,6 +147,16 @@ export class SaveCreateReportController {
       });
     }
 
+    if (
+      isDefined(space) &&
+      userMember.isAdmin === false &&
+      userMember.isEditor === false
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+      });
+    }
+
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
       repoId: repoId,

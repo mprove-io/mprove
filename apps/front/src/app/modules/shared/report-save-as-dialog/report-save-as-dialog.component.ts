@@ -38,6 +38,7 @@ import type {
 import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
 import { upsertReportNode } from '#front/app/functions/report-nodes';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
@@ -112,6 +113,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
   combinedAccessRoles: string[] = [];
   combinedAccessRolesText = '';
   spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
+  canSpecifyReportSpace = false;
 
   struct: StructState;
 
@@ -119,6 +121,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
     public ref: DialogRef<ReportSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
+    private memberQuery: MemberQuery,
     private navQuery: NavQuery,
     private reportQuery: ReportQuery,
     private reportsQuery: ReportsQuery,
@@ -181,7 +184,14 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   ngOnInit() {
     this.report = this.ref.data.report;
+
+    let member = this.memberQuery.getValue();
+
+    this.canSpecifyReportSpace =
+      member.isAdmin === true || member.isEditor === true;
+
     this.struct = this.structQuery.getValue();
+
     this.spacesPlusEmpty = this.makeSpacesPlusEmpty({
       spaces: this.struct.spaces
     });
@@ -198,7 +208,14 @@ export class ReportSaveAsDialogComponent implements OnInit {
     this.selectedSpace = this.report.space ?? EMPTY_SPACE.space;
     this.updateCombinedAccessRoles();
 
-    this.reports = this.ref.data.reports.map(x => {
+    let userAlias = this.userQuery.getValue().alias;
+
+    let availableReports =
+      this.canSpecifyReportSpace === true
+        ? this.ref.data.reports
+        : this.ref.data.reports.filter(x => x.author === userAlias);
+
+    this.reports = availableReports.map(x => {
       (x as any).disabled = !x.canEditOrDeleteReport;
       return x;
     });

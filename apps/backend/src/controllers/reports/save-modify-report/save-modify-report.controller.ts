@@ -249,6 +249,16 @@ export class SaveModifyReportController {
       spaces: currentStruct.spaces
     });
 
+    if (
+      currentReportSpace !== space &&
+      userMember.isAdmin === false &&
+      userMember.isEditor === false
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+      });
+    }
+
     let targetParentNodeId = getReportTargetParentNodeId({
       projectId: projectId,
       mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
