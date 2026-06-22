@@ -40,6 +40,16 @@ export class ReportsListComponent {
     private navigateService: NavigateService
   ) {}
 
+  getSpaceLabel(item: { space: string | null | undefined }) {
+    let { space } = item;
+
+    if (!space) {
+      return '';
+    }
+
+    return space.split('.').join(' - ');
+  }
+
   navigateToReport(reportId: string) {
     this.navigateService.navigateToReport({
       reportId: reportId,

@@ -8,6 +8,7 @@
         <div class="flex w-1/3">Report</div>
         <div class="flex flex-1 flex-row space-x-5">
           <div class="flex flex-1">Report Id</div>
+          <div class="flex flex-1">Space</div>
           <div class="flex flex-1">Access Roles</div>
           <div class="flex flex-1">Author</div>
         </div>
@@ -63,6 +64,14 @@
                   class="flex flex-1 items-start truncate pb-[9px] pt-[7px] focus:outline-none"
                 >
                   <span class="truncate"> {{ item.reportId }} </span>
+                </div>
+
+                <div
+                  class="flex flex-1 items-start truncate pb-[9px] pt-[7px] focus:outline-none"
+                >
+                  <span class="truncate">
+                    {{ getSpaceLabel({ space: item.space }) }}
+                  </span>
                 </div>
 
                 <div
