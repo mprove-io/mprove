@@ -6,6 +6,8 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { NavigateService } from '#front/app/services/navigate.service';
 
+type DashboardListItem = DashboardPart & { displaySpace: string };
+
 @Component({
   standalone: false,
   selector: 'm-dashboards-list',
@@ -20,12 +22,17 @@ export class DashboardsListComponent {
     })
   );
 
-  dashboardPartsFiltered: DashboardPart[];
+  dashboardPartsFiltered: DashboardListItem[];
   dashboardPartsFiltered$ = this.dashboardPartsFilteredQuery.select().pipe(
     tap(x => {
-      this.dashboardPartsFiltered = x.dashboardPartsFiltered.filter(
-        d => d.draft === false
-      );
+      this.dashboardPartsFiltered = x.dashboardPartsFiltered
+        .filter(d => d.draft === false)
+        .map(dashboard => ({
+          ...dashboard,
+          displaySpace: dashboard.space
+            ? dashboard.space.split('.').join(' - ')
+            : ''
+        }));
       this.cd.detectChanges();
     })
   );
@@ -42,7 +49,7 @@ export class DashboardsListComponent {
     this.navigateService.navigateToDashboard({ dashboardId: dashboardId });
   }
 
-  trackByFn(index: number, item: DashboardPart) {
+  trackByFn(index: number, item: DashboardListItem) {
     return item.dashboardId;
   }
 }

@@ -8,6 +8,8 @@ import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 
+type ReportListItem = ReportX & { displaySpace: string };
+
 @Component({
   standalone: false,
   selector: 'm-reports-list',
@@ -22,10 +24,15 @@ export class ReportsListComponent {
     })
   );
 
-  filteredReports: ReportX[];
+  filteredReports: ReportListItem[];
   filteredReports$ = this.filteredReportsQuery.select().pipe(
     tap(x => {
-      this.filteredReports = x.filteredReports.filter(d => d.draft === false);
+      this.filteredReports = x.filteredReports
+        .filter(d => d.draft === false)
+        .map(report => ({
+          ...report,
+          displaySpace: report.space ? report.space.split('.').join(' - ') : ''
+        }));
       this.cd.detectChanges();
     })
   );
@@ -40,16 +47,6 @@ export class ReportsListComponent {
     private navigateService: NavigateService
   ) {}
 
-  getSpaceLabel(item: { space: string | null | undefined }) {
-    let { space } = item;
-
-    if (!space) {
-      return '';
-    }
-
-    return space.split('.').join(' - ');
-  }
-
   navigateToReport(reportId: string) {
     this.navigateService.navigateToReport({
       reportId: reportId,
@@ -57,7 +54,7 @@ export class ReportsListComponent {
     });
   }
 
-  trackByFn(index: number, item: ReportX) {
+  trackByFn(index: number, item: ReportListItem) {
     return item.reportId;
   }
 }
