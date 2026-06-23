@@ -1136,12 +1136,56 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   updateFilteredReportsAndReportNodes(item: { reportNodes: ReportTreeNode[] }) {
     let { reportNodes } = item;
-    let searchedNodes = this.getSearchedReportNodes({
-      reportNodes: reportNodes
+    let nodes = makeCopy(reportNodes ?? []);
+    let searchNodes = this.pruneEmptySpaceNodes({
+      nodes: nodes
+    });
+    let isSearchDefined = isDefinedAndNotEmpty(this.searchReportsWord);
+    let reportMatchedIds: Set<string> | undefined;
+
+    if (isSearchDefined === true) {
+      reportMatchedIds = new Set<string>();
+
+      let searchEntries = makeReportUnitsFromReportNodes({
+        reportNodes: searchNodes
+      }).map(report => {
+        let title = isDefined(report.title) ? report.title : report.reportId;
+        let accessRolesCombined = report.accessRolesCombined.join(' ');
+
+        return {
+          report: report,
+          searchText: `${title} ${report.reportId} ${report.author ?? ''} ${report.displaySpace} ${accessRolesCombined}`
+        };
+      });
+      let haystack = searchEntries.map(entry => entry.searchText);
+      let opts = {};
+      let uf = new uFuzzy(opts);
+      let idxs = uf.filter(haystack, this.searchReportsWord);
+      let searchWord = this.searchReportsWord.toLowerCase();
+      let matchedIndexes = new Set<number>(idxs ?? []);
+
+      searchEntries.forEach((entry, index) => {
+        let searchText = entry.searchText.toLowerCase();
+        let isSubstringMatched = searchText.includes(searchWord);
+
+        if (isSubstringMatched === true) {
+          matchedIndexes.add(index);
+        }
+      });
+
+      matchedIndexes.forEach(index => {
+        let entry = searchEntries[index];
+        reportMatchedIds.add(entry.report.reportId);
+      });
+    }
+
+    let visibleNodes = this.makeVisibleReportNodes({
+      nodes: searchNodes,
+      reportMatchedIds: reportMatchedIds
     });
 
-    this.updateFilteredReports({ nodes: searchedNodes });
-    this.setFilteredReportNodes({ nodes: searchedNodes });
+    this.updateFilteredReports({ nodes: visibleNodes });
+    this.setFilteredReportNodes({ nodes: visibleNodes });
   }
 
   updateFilteredReports(item: { nodes: UiReportTreeNode[] }) {
@@ -1206,7 +1250,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.favoritesOnly = favoritesOnly;
 
-    this.makeFilteredReportNodes({
+    this.updateFilteredReportsAndReportNodes({
       reportNodes: this.reportsQuery.getValue().reportNodes
     });
 
@@ -1234,7 +1278,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       reportNodes: newReportNodes
     });
 
-    this.makeFilteredReportNodes({
+    this.updateFilteredReportsAndReportNodes({
       reportNodes: this.reportsQuery.getValue().reportNodes
     });
 
@@ -1263,7 +1307,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
               reportNodes: previousReportNodes
             });
 
-            this.makeFilteredReportNodes({
+            this.updateFilteredReportsAndReportNodes({
               reportNodes: this.reportsQuery.getValue().reportNodes
             });
 
@@ -1275,83 +1319,60 @@ export class ReportsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  makeFilteredReportNodes(item: { reportNodes: ReportTreeNode[] }) {
-    let { reportNodes } = item;
-    let searchedNodes = this.getSearchedReportNodes({
-      reportNodes: reportNodes
-    });
-
-    this.setFilteredReportNodes({ nodes: searchedNodes });
-  }
-
-  getSearchedReportNodes(item: {
-    reportNodes: ReportTreeNode[];
+  makeVisibleReportNodes(item: {
+    nodes: ReportTreeNode[];
+    reportMatchedIds?: Set<string>;
   }): UiReportTreeNode[] {
-    let { reportNodes } = item;
-    let searchNodes = this.makeReportSearchNodes({
-      reportNodes: reportNodes
+    let { nodes, reportMatchedIds } = item;
+    let visibleNodes: UiReportTreeNode[] = [];
+
+    (nodes ?? []).forEach(node => {
+      if (node.type === 'reportUnit') {
+        let isReportMatched =
+          isDefined(reportMatchedIds) === false
+            ? true
+            : reportMatchedIds.has(node.reportId);
+
+        if (isReportMatched === true) {
+          visibleNodes.push({
+            ...node,
+            isMatched: true
+          });
+        }
+
+        return;
+      }
+
+      let children = this.makeVisibleReportNodes({
+        nodes: node.children ?? [],
+        reportMatchedIds: reportMatchedIds
+      });
+
+      if (children.length > 0) {
+        visibleNodes.push({
+          ...node,
+          children: children,
+          isMatched: true
+        });
+      }
     });
 
-    let uiSearchNodes = searchNodes as UiReportTreeNode[];
-    let isSearchDefined = isDefinedAndNotEmpty(this.searchReportsWord);
-    let reportMatchedIds = new Set<string>();
-
-    if (isSearchDefined === true) {
-      let nonDraftReports = this.reports.filter(x => x.draft === false);
-      let haystack = nonDraftReports.map(report =>
-        this.getReportSearchText({ report: report })
-      );
-      let opts = {};
-      let uf = new uFuzzy(opts);
-      let idxs = uf.filter(haystack, this.searchReportsWord);
-
-      reportMatchedIds = new Set(
-        idxs != null && idxs.length > 0
-          ? idxs.map((idx: number): string => nonDraftReports[idx].reportId)
-          : []
-      );
-    }
-
-    return isSearchDefined === true
-      ? this.filterReportNodes({
-          nodes: uiSearchNodes,
-          reportMatchedIds: reportMatchedIds
-        })
-      : uiSearchNodes;
+    return visibleNodes;
   }
 
   setFilteredReportNodes(item: { nodes: UiReportTreeNode[] }) {
     let { nodes } = item;
 
-    this.filteredReportNodes = nodes;
-
-    this.filteredReportNodes =
+    let filteredReportNodes =
       this.favoritesOnly === true
-        ? this.flattenFavoriteReportNodes({ nodes: this.filteredReportNodes })
-        : this.filteredReportNodes;
+        ? this.flattenFavoriteReportNodes({ nodes: nodes })
+        : nodes;
 
-    this.filteredReportNodes = this.markSelectedReportAncestors({
-      nodes: this.filteredReportNodes
+    filteredReportNodes = this.markSelectedReportAncestors({
+      nodes: filteredReportNodes
     });
-  }
 
-  makeReportSearchNodes(item: {
-    reportNodes: ReportTreeNode[];
-  }): ReportTreeNode[] {
-    let { reportNodes } = item;
-    let nodes = makeCopy(reportNodes ?? []);
-
-    return this.pruneEmptySpaceNodes({
-      nodes: nodes
-    });
-  }
-
-  getReportSearchText(item: { report: ReportUnit }): string {
-    let { report } = item;
-    let title = isDefined(report.title) ? report.title : report.reportId;
-    let accessRolesCombined = report.accessRolesCombined.join(' ');
-
-    return `${title} ${report.reportId} ${report.author ?? ''} ${accessRolesCombined}`;
+    this.filteredReportNodes = filteredReportNodes;
   }
 
   pruneEmptySpaceNodes(item: { nodes: ReportTreeNode[] }): ReportTreeNode[] {
@@ -1450,54 +1471,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
         isSelectedReportAncestor: isSelectedReportAncestor
       };
     });
-  }
-
-  filterReportNodes(item: {
-    nodes: UiReportTreeNode[];
-    reportMatchedIds: Set<string>;
-  }): UiReportTreeNode[] {
-    let { nodes, reportMatchedIds } = item;
-    let searchWord = this.searchReportsWord.toLowerCase();
-
-    return nodes
-      .map(node => {
-        if (node.type === 'reportUnit') {
-          let searchText = this.getReportSearchText({
-            report: node
-          }).toLowerCase();
-
-          return {
-            ...node,
-            isMatched:
-              reportMatchedIds.has(node.reportId) ||
-              searchText.includes(searchWord)
-          };
-        }
-
-        let alias = this.userQuery.getValue().alias;
-        let title = (node.title ?? node.space).toLowerCase();
-        let isMyReportsAuthorMatched =
-          node.id === this.myReportsSpaceId &&
-          isDefinedAndNotEmpty(alias) === true &&
-          alias.toLowerCase().includes(searchWord);
-
-        let isSpaceMatched =
-          title.includes(searchWord) || isMyReportsAuthorMatched;
-
-        let children = isSpaceMatched
-          ? node.children
-          : this.filterReportNodes({
-              nodes: node.children ?? [],
-              reportMatchedIds: reportMatchedIds
-            });
-
-        return {
-          ...node,
-          children: children,
-          isMatched: isSpaceMatched || children.length > 0
-        };
-      })
-      .filter(node => node.isMatched === true);
   }
 
   flattenFavoriteReportNodes(item: {
