@@ -698,7 +698,7 @@
                         >
                           <ng-template #treeNodeTemplate let-node="node">
                             <div
-                              *ngIf="node.data.type === 'space'"
+                              *ngIf="node.data.type === 'reportSpace'"
                               class="group/bar flex h-11 w-full select-none flex-row rounded pr-5 hover:cursor-pointer"
                               (click)="reportTreeNodeOnClick({ node: node })"
                             >
@@ -760,14 +760,14 @@
                                   class="invisible ml-2 flex pr-2 group-hover/bar:visible"
                                 >
                                   <m-space-options
-                                    [space]="node.data"
+                                    [reportSpace]="node.data"
                                   ></m-space-options>
                                 </div>
                               </div>
                             </div>
 
                             <div
-                              *ngIf="node.data.type === 'report'"
+                              *ngIf="node.data.type === 'reportUnit'"
                               [attr.reportId]="node.data.reportId"
                               class="hover:bg-m50 group mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                               (click)="reportTreeNodeOnClick({ node: node })"
@@ -831,11 +831,10 @@
                               </button>
 
                               <div
-                                *ngIf="!!node.data.report"
                                 class="invisible ml-2 flex group-hover:visible"
                               >
                                 <m-report-options
-                                  [report]="node.data.report"
+                                  [reportUnit]="node.data"
                                   [isHoverM]="false"
                                 ></m-report-options>
                               </div>

@@ -29,8 +29,8 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeCopy } from '#common/functions/make-copy';
+import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { Role } from '#common/zod/backend/role';
-import type { Report } from '#common/zod/blockml/report';
 import type { Space } from '#common/zod/blockml/space';
 import type {
   ToBackendSaveModifyReportRequestPayload,
@@ -41,7 +41,7 @@ import type {
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
-import { upsertReportNode } from '#front/app/functions/report-nodes';
+import { upsertReportUnit } from '#front/app/functions/report-nodes';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
@@ -58,7 +58,7 @@ export interface EditReportInfoDialogData {
   repoType: RepoTypeEnum;
   branchId: string;
   envId: string;
-  report: Report;
+  report: ReportUnit;
 }
 
 type SpaceOption = typeof EMPTY_SPACE;
@@ -234,8 +234,8 @@ export class EditReportInfoDialogComponent implements OnInit {
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,
         timeRangeFractionBrick: uiState.timeRangeFraction.brick,
-        newReportFields: this.ref.data.report.fields,
-        chart: this.ref.data.report.chart
+        newReportFields: undefined,
+        chart: undefined
       };
 
       let apiService: ApiService = this.ref.data.apiService;
@@ -256,17 +256,11 @@ export class EditReportInfoDialogComponent implements OnInit {
                 let reportsState = this.reportsQuery.getValue();
 
                 this.reportsQuery.update({
-                  reports: [
-                    newReportPart,
-                    ...reportsState.reports.filter(
-                      x => x.reportId !== newReportPart.reportId
-                    )
-                  ],
-                  reportNodes: upsertReportNode({
+                  reportUnitDrafts: reportsState.reportUnitDrafts,
+                  reportNodes: upsertReportUnit({
                     reportNodes: reportsState.reportNodes,
                     report: newReportPart
-                  }),
-                  favoriteReportIds: reportsState.favoriteReportIds
+                  })
                 });
 
                 let currentReport = this.reportQuery.getValue();

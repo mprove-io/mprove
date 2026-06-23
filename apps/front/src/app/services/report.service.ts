@@ -24,8 +24,8 @@ import type {
   ToBackendEditDraftReportResponse
 } from '#common/zod/to-backend/reports/to-backend-edit-draft-report';
 import {
-  removeReportNode,
-  upsertReportNode
+  makeReportUnitFromReportX,
+  removeReportUnit
 } from '#front/app/functions/report-nodes';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -155,12 +155,11 @@ export class ReportService {
             let reportsState = this.reportsQuery.getValue();
 
             this.reportsQuery.update({
-              reports: [report, ...reportsState.reports],
-              reportNodes: upsertReportNode({
-                reportNodes: reportsState.reportNodes,
-                report: report
-              }),
-              favoriteReportIds: reportsState.favoriteReportIds
+              reportUnitDrafts: [
+                makeReportUnitFromReportX({ report: report }),
+                ...reportsState.reportUnitDrafts
+              ],
+              reportNodes: reportsState.reportNodes
             });
 
             this.navigateService.navigateToReport({
@@ -253,31 +252,30 @@ export class ReportService {
         tap((resp: ToBackendDeleteDraftReportsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let reportsState = this.reportsQuery.getValue();
-            let newReports = [...reportsState.reports];
+            let newReportUnitDrafts = [...reportsState.reportUnitDrafts];
             let reportNodes = reportsState.reportNodes;
 
             reportIds.forEach(reportId => {
-              let repIndex = newReports.findIndex(x => x.reportId === reportId);
+              let repIndex = newReportUnitDrafts.findIndex(
+                x => x.reportId === reportId
+              );
 
               if (repIndex > -1) {
-                newReports = [
-                  ...newReports.slice(0, repIndex),
-                  ...newReports.slice(repIndex + 1)
+                newReportUnitDrafts = [
+                  ...newReportUnitDrafts.slice(0, repIndex),
+                  ...newReportUnitDrafts.slice(repIndex + 1)
                 ];
               }
 
-              reportNodes = removeReportNode({
+              reportNodes = removeReportUnit({
                 reportNodes: reportNodes,
                 reportId: reportId
               });
             });
 
             this.reportsQuery.update({
-              reports: newReports,
-              reportNodes: reportNodes,
-              favoriteReportIds: reportsState.favoriteReportIds.filter(
-                reportId => reportIds.indexOf(reportId) < 0
-              )
+              reportUnitDrafts: newReportUnitDrafts,
+              reportNodes: reportNodes
             });
 
             if (reportIds.indexOf(report.reportId) > -1) {

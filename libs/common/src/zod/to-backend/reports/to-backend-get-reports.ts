@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zMember } from '#common/zod/backend/member';
 import { zModelX } from '#common/zod/backend/model-x';
-import { zReportNode } from '#common/zod/backend/report-node';
-import { zReportX } from '#common/zod/backend/report-x';
+import { zReportTreeNode } from '#common/zod/backend/report-tree-node';
+import { zReportUnit } from '#common/zod/backend/report-unit';
 import { zStructX } from '#common/zod/backend/struct-x';
 import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
@@ -15,7 +15,8 @@ export let zToBackendGetReportsRequestPayload = z
     projectId: z.string(),
     repoId: z.string(),
     branchId: z.string(),
-    envId: z.string()
+    envId: z.string(),
+    addNonDraftsList: z.boolean().nullish()
   })
   .meta({ id: 'ToBackendGetReportsRequestPayload' });
 
@@ -37,9 +38,9 @@ export let zToBackendGetReportsResponsePayload = z
     needValidate: z.boolean(),
     struct: zStructX,
     userMember: zMember,
-    reports: z.array(zReportX),
-    reportNodes: z.array(zReportNode),
-    favoriteReportIds: z.array(z.string()),
+    reportUnitDrafts: z.array(zReportUnit),
+    reportUnitNonDrafts: z.array(zReportUnit).nullish(),
+    reportNodes: z.array(zReportTreeNode),
     storeModels: z.array(zModelX)
   })
   .meta({ id: 'ToBackendGetReportsResponsePayload' });

@@ -540,9 +540,8 @@ export class ApiService {
           });
 
           this.reportsQuery.update({
-            reports: resp.payload.reports,
-            reportNodes: resp.payload.reportNodes,
-            favoriteReportIds: resp.payload.favoriteReportIds
+            reportUnitDrafts: resp.payload.reportUnitDrafts,
+            reportNodes: resp.payload.reportNodes
           });
 
           this.modelsQuery.update({ models: resp.payload.storeModels });

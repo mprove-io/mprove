@@ -13,7 +13,6 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
-import { makeReportNodes } from '#backend/functions/make-report-nodes';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -22,14 +21,15 @@ import { FavoritesService } from '#backend/services/db/favorites.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
-import { ReportsService } from '#backend/services/db/reports.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
+import { TreeService } from '#backend/services/tree.service';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { makeReportUnitsFromReportNodes } from '#common/functions/report-tree';
 import type { ToBackendGetReportsResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-reports';
 
 @ApiTags('Reports')
@@ -40,7 +40,6 @@ export class GetReportsController {
     private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private reportsService: ReportsService,
     private sessionsService: SessionsService,
     private modelsService: ModelsService,
     private branchesService: BranchesService,
@@ -48,6 +47,7 @@ export class GetReportsController {
     private structsService: StructsService,
     private envsService: EnvsService,
     private favoritesService: FavoritesService,
+    private treeService: TreeService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -63,7 +63,7 @@ export class GetReportsController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetReportsRequestDto
   ) {
-    let { projectId, repoId, branchId, envId } = body.payload;
+    let { projectId, repoId, branchId, envId, addNonDraftsList } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -127,23 +127,22 @@ export class GetReportsController {
       })
     );
 
-    let reports = [
-      ...draftReports
-        .sort((a, b) =>
-          a.draftCreatedTs > b.draftCreatedTs
-            ? 1
-            : b.draftCreatedTs > a.draftCreatedTs
-              ? -1
-              : 0
-        )
-        .reverse(),
-      ...reportsGrantedAccess.sort((a, b) => {
-        let aTitle = a.title.toLowerCase() || a.reportId.toLowerCase();
-        let bTitle = b.title.toLowerCase() || a.reportId.toLowerCase();
+    let sortedDraftReports = draftReports
+      .sort((a, b) =>
+        a.draftCreatedTs > b.draftCreatedTs
+          ? 1
+          : b.draftCreatedTs > a.draftCreatedTs
+            ? -1
+            : 0
+      )
+      .reverse();
 
-        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-      })
-    ];
+    let sortedNonDraftReports = reportsGrantedAccess.sort((a, b) => {
+      let aTitle = a.title.toLowerCase() || a.reportId.toLowerCase();
+      let bTitle = b.title.toLowerCase() || b.reportId.toLowerCase();
+
+      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+    });
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
@@ -175,13 +174,20 @@ export class GetReportsController {
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
-    let reportTargetIds = reports.map(report => report.reportId);
+    let reportTargetIds = sortedNonDraftReports.map(report => report.reportId);
 
     let favoriteReportIds = await this.favoritesService.getFavoriteTargetIds({
       projectId: projectId,
       userId: user.userId,
       type: FavoriteTypeEnum.Report,
       targetIds: reportTargetIds
+    });
+
+    let reportNodes = this.treeService.makeReportNodes({
+      spaces: struct.spaces ?? [],
+      reports: sortedNonDraftReports,
+      member: apiUserMember,
+      favoriteReportIds: favoriteReportIds
     });
 
     let payload: ToBackendGetReportsResponsePayload = {
@@ -191,33 +197,22 @@ export class GetReportsController {
         modelPartXs: apiModels
       }),
       userMember: apiUserMember,
-      reports: reports.map(x =>
-        this.reportsService.tabToApi({
+      reportUnitDrafts: sortedDraftReports.map(x =>
+        this.treeService.makeReportUnit({
           report: x,
           member: apiUserMember,
-          columns: [],
-          models: apiModels,
-          timezone: undefined,
-          timeSpec: undefined,
-          timeRangeFraction: undefined,
-          rangeStart: undefined,
-          rangeEnd: undefined,
-          metricsStartDateYYYYMMDD: undefined,
-          metricsEndDateExcludedYYYYMMDD: undefined,
-          metricsEndDateIncludedYYYYMMDD: undefined,
-          timeColumnsLimit: undefined,
-          timeColumnsLength: undefined,
-          isTimeColumnsLimitExceeded: false
+          favoriteReportIds: []
         })
       ),
-      reportNodes: makeReportNodes({
-        spaces: struct.spaces ?? [],
-        reports: reportsGrantedAccess,
-        member: apiUserMember
-      }),
-      favoriteReportIds: favoriteReportIds,
+      reportNodes: reportNodes,
       storeModels: apiModels.filter(model => model.type === ModelTypeEnum.Store)
     };
+
+    if (addNonDraftsList === true) {
+      payload.reportUnitNonDrafts = makeReportUnitsFromReportNodes({
+        reportNodes: reportNodes
+      });
+    }
 
     return payload;
   }

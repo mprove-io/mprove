@@ -233,8 +233,8 @@ export class SaveModifyReportController {
       metrics: currentStruct.metrics,
       models: cachedModels,
       struct: currentStruct,
-      newReportFields: newReportFields,
-      chart: chart,
+      newReportFields: newReportFields ?? fromReport.fields,
+      chart: chart ?? fromReport.chart,
       caseSensitiveStringFilters:
         currentStruct.mproveConfig.caseSensitiveStringFilters,
       timezone: UTC

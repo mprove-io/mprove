@@ -21,6 +21,7 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
+import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { Role } from '#common/zod/backend/role';
 import type { Space } from '#common/zod/blockml/space';
@@ -37,7 +38,7 @@ import type {
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
-import { upsertReportNode } from '#front/app/functions/report-nodes';
+import { upsertReportUnit } from '#front/app/functions/report-nodes';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -56,7 +57,7 @@ enum ReportSaveAsEnum {
 
 export interface ReportSaveAsDialogData {
   apiService: ApiService;
-  reports: ReportX[];
+  reports: ReportUnit[];
   report: ReportX;
 }
 
@@ -106,7 +107,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
   selectedReportId: any; // string
   selectedRepPath: string;
 
-  reports: ReportX[];
+  reports: ReportUnit[];
 
   roles: Role[] = [];
   selectedAccessRoles: string[] = [];
@@ -269,7 +270,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
     this.updatePaths();
   }
 
-  existingReportSearchFn(term: string, report: ReportX) {
+  existingReportSearchFn(term: string, report: ReportUnit) {
     let trimmedTerm = term?.trim();
 
     if (!trimmedTerm) {
@@ -331,19 +332,13 @@ export class ReportSaveAsDialogComponent implements OnInit {
               let reportsState = this.reportsQuery.getValue();
 
               this.reportsQuery.update({
-                reports: [
-                  newReportPart,
-                  ...reportsState.reports.filter(
-                    x =>
-                      x.reportId !== newReportPart.reportId &&
-                      (x.draft === false || x.reportId !== this.fromReportId)
-                  )
-                ],
-                reportNodes: upsertReportNode({
+                reportUnitDrafts: reportsState.reportUnitDrafts.filter(
+                  x => x.reportId !== this.fromReportId
+                ),
+                reportNodes: upsertReportUnit({
                   reportNodes: reportsState.reportNodes,
                   report: newReportPart
-                }),
-                favoriteReportIds: reportsState.favoriteReportIds
+                })
               });
 
               let currentReport = this.reportQuery.getValue();
@@ -410,19 +405,13 @@ export class ReportSaveAsDialogComponent implements OnInit {
               let reportsState = this.reportsQuery.getValue();
 
               this.reportsQuery.update({
-                reports: [
-                  newReportPart,
-                  ...reportsState.reports.filter(
-                    x =>
-                      x.reportId !== newReportPart.reportId &&
-                      (x.draft === false || x.reportId !== this.fromReportId)
-                  )
-                ],
-                reportNodes: upsertReportNode({
+                reportUnitDrafts: reportsState.reportUnitDrafts.filter(
+                  x => x.reportId !== this.fromReportId
+                ),
+                reportNodes: upsertReportUnit({
                   reportNodes: reportsState.reportNodes,
                   report: newReportPart
-                }),
-                favoriteReportIds: reportsState.favoriteReportIds
+                })
               });
 
               let currentReport = this.reportQuery.getValue();

@@ -26,8 +26,8 @@ export let zToBackendSaveModifyReportRequestPayload = z
     timezone: zTimezone,
     timeSpec: z.enum(TimeSpecEnum),
     timeRangeFractionBrick: z.string(),
-    newReportFields: z.array(zReportField),
-    chart: zMconfigChart
+    newReportFields: z.array(zReportField).nullish(),
+    chart: zMconfigChart.nullish()
   })
   .meta({ id: 'ToBackendSaveModifyReportRequestPayload' });
 

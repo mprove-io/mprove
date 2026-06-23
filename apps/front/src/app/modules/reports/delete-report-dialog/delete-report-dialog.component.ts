@@ -13,12 +13,12 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ReportX } from '#common/zod/backend/report-x';
+import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type {
   ToBackendDeleteReportRequestPayload,
   ToBackendDeleteReportResponse
 } from '#common/zod/to-backend/reports/to-backend-delete-report';
-import { removeReportNode } from '#front/app/functions/report-nodes';
+import { removeReportUnit } from '#front/app/functions/report-nodes';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -27,7 +27,7 @@ import { UiService } from '#front/app/services/ui.service';
 
 export interface DeleteReportDialogData {
   apiService: ApiService;
-  report: ReportX;
+  report: ReportUnit;
   projectId: string;
   repoId: string;
   branchId: string;
@@ -74,7 +74,7 @@ export class DeleteReportDialogComponent implements OnInit {
 
     let { projectId, branchId, repoId } = this.ref.data;
 
-    let report: ReportX = this.ref.data.report;
+    let report: ReportUnit = this.ref.data.report;
     let apiService: ApiService = this.ref.data.apiService;
 
     let payload: ToBackendDeleteReportRequestPayload = {
@@ -97,16 +97,11 @@ export class DeleteReportDialogComponent implements OnInit {
             let reportsState = this.reportsQuery.getValue();
 
             this.reportsQuery.update({
-              reports: reportsState.reports.filter(
-                d => d.reportId !== report.reportId
-              ),
-              reportNodes: removeReportNode({
+              reportUnitDrafts: reportsState.reportUnitDrafts,
+              reportNodes: removeReportUnit({
                 reportNodes: reportsState.reportNodes,
                 reportId: report.reportId
-              }),
-              favoriteReportIds: reportsState.favoriteReportIds.filter(
-                reportId => reportId !== report.reportId
-              )
+              })
             });
 
             let currentReport = this.reportQuery.getValue();

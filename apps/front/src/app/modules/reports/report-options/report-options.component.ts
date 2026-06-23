@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import type { ReportX } from '#common/zod/backend/report-x';
+import type { ReportUnit } from '#common/zod/backend/report-unit';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -16,7 +16,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 })
 export class ReportOptionsComponent {
   @Input()
-  report: ReportX;
+  reportUnit: ReportUnit;
 
   @Input()
   isHoverM: boolean;
@@ -39,7 +39,7 @@ export class ReportOptionsComponent {
 
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
-    let fileIdAr = this.report.filePath.split('/');
+    let fileIdAr = this.reportUnit.filePath.split('/');
     fileIdAr.shift();
 
     let filePath = fileIdAr.join('/');
@@ -51,7 +51,7 @@ export class ReportOptionsComponent {
     });
   }
 
-  async editReportInfo(event: MouseEvent, item: ReportX) {
+  async editReportInfo(event: MouseEvent, item: ReportUnit) {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();
@@ -73,7 +73,7 @@ export class ReportOptionsComponent {
     let nav = this.navQuery.getValue();
 
     this.myDialogService.showDeleteReport({
-      report: this.report,
+      report: this.reportUnit,
       apiService: this.apiService,
       projectId: nav.projectId,
       branchId: nav.branchId,
@@ -81,7 +81,7 @@ export class ReportOptionsComponent {
       repoId: nav.repoId,
       repoType: nav.repoType,
       isStartSpinnerUntilNavEnd:
-        this.reportQuery.getValue().reportId === this.report.reportId
+        this.reportQuery.getValue().reportId === this.reportUnit.reportId
     });
   }
 }

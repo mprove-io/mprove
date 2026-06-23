@@ -1,24 +1,22 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { ReportNode } from '#common/zod/backend/report-node';
-import type { ReportX } from '#common/zod/backend/report-x';
+import type { ReportTreeNode } from '#common/zod/backend/report-tree-node';
+import type { ReportUnit } from '#common/zod/backend/report-unit';
 import { BaseQuery } from './base.query';
 
 export class ReportsState {
-  reports: ReportX[];
-  reportNodes: ReportNode[];
-  favoriteReportIds: string[];
+  reportUnitDrafts: ReportUnit[];
+  reportNodes: ReportTreeNode[];
 }
 
 let reportsState: ReportsState = {
-  reports: [],
-  reportNodes: [],
-  favoriteReportIds: []
+  reportUnitDrafts: [],
+  reportNodes: []
 };
 
 @Injectable({ providedIn: 'root' })
 export class ReportsQuery extends BaseQuery<ReportsState> {
-  reports$ = this.store.pipe(select(state => state.reports));
+  reportUnitDrafts$ = this.store.pipe(select(state => state.reportUnitDrafts));
 
   constructor() {
     super(

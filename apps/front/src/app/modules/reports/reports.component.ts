@@ -55,7 +55,9 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
-import type { ReportNode } from '#common/zod/backend/report-node';
+import { makeReportUnitsFromReportNodes } from '#common/functions/report-tree';
+import type { ReportTreeNode } from '#common/zod/backend/report-tree-node';
+import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { Query } from '#common/zod/blockml/query';
@@ -77,6 +79,7 @@ import type {
 } from '#common/zod/to-backend/reports/to-backend-get-report';
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '#front/app/functions/make-query-params';
+import { updateReportUnitFavorite } from '#front/app/functions/report-nodes';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { FilteredReportsQuery } from '#front/app/queries/filtered-reports.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -99,20 +102,15 @@ export class TimeSpecItem {
   value: TimeSpecEnum;
 }
 
-type ReportTreeNode =
-  | (Extract<ReportNode, { type: 'space' }> & {
-      children: ReportTreeNode[];
+type UiReportTreeNode =
+  | (Extract<ReportTreeNode, { type: 'reportSpace' }> & {
+      children: UiReportTreeNode[];
       isMatched?: boolean;
-      isSynthetic?: boolean;
       isSelectedReportAncestor?: boolean;
     })
-  | (Extract<ReportNode, { type: 'report' }> & {
-      report?: ReportX;
+  | (Extract<ReportTreeNode, { type: 'reportUnit' }> & {
       isMatched?: boolean;
-      isFavorite?: boolean;
     });
-
-type ReportSpaceNode = Extract<ReportNode, { type: 'space' }>;
 
 @Component({
   standalone: false,
@@ -239,33 +237,32 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   searchMetricsWord: string;
   searchReportsWord: string;
-  favoriteReportIds: string[] = [];
   favoritesOnly = false;
 
   filteredDraftsLength: number;
 
-  reports: ReportX[];
-  reportsFilteredByWord: ReportX[];
-  filteredReports: ReportX[];
-  filteredReportNodes: ReportTreeNode[] = [];
+  reports: ReportUnit[];
+  reportsFilteredByWord: ReportUnit[];
+  filteredReports: ReportUnit[];
+  filteredReportNodes: UiReportTreeNode[] = [];
   pendingExpandSpace: string;
 
   reports$ = this.reportsQuery.select().pipe(
     tap(x => {
       let previousReports = this.reports ?? [];
-      this.reports = x.reports;
-      this.favoriteReportIds = x.favoriteReportIds ?? [];
+      this.reports = [
+        ...x.reportUnitDrafts,
+        ...makeReportUnitsFromReportNodes({ reportNodes: x.reportNodes })
+      ];
 
       let reportToExpand = this.reports.find(report => {
         let previousReport = previousReports.find(
           previous => previous.reportId === report.reportId
         );
-        let reportDisplaySpace = this.getReportDisplaySpace({
-          report: report
-        });
+        let reportDisplaySpace = report.space;
 
         let previousDisplaySpace = isDefined(previousReport)
-          ? this.getReportDisplaySpace({ report: previousReport })
+          ? previousReport.space
           : undefined;
 
         let isInitialLoad = previousReports.length === 0;
@@ -291,7 +288,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       });
 
       this.pendingExpandSpace = isDefined(reportToExpand)
-        ? this.getReportDisplaySpace({ report: reportToExpand })
+        ? reportToExpand.space
         : undefined;
 
       this.updateFilteredReportsAndReportNodes({ reportNodes: x.reportNodes });
@@ -1055,7 +1052,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  navToReport(report: ReportX) {
+  navToReport(report: { reportId: string }) {
     if (this.reportSelectedNodes.length > 0) {
       this.isShow = false;
       this.uiQuery.getValue().gridApi.deselectAll();
@@ -1074,7 +1071,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteDraftReport(event: any, report: ReportX) {
+  deleteDraftReport(event: any, report: ReportUnit) {
     event.stopPropagation();
     this.reportService.deleteDraftReports({ reportIds: [report.reportId] });
   }
@@ -1133,7 +1130,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  updateFilteredReportsAndReportNodes(item: { reportNodes: ReportNode[] }) {
+  updateFilteredReportsAndReportNodes(item: { reportNodes: ReportTreeNode[] }) {
     let { reportNodes } = item;
     let searchedNodes = this.getSearchedReportNodes({
       reportNodes: reportNodes
@@ -1143,19 +1140,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.setFilteredReportNodes({ nodes: searchedNodes });
   }
 
-  updateFilteredReports(item: { nodes: ReportTreeNode[] }) {
+  updateFilteredReports(item: { nodes: UiReportTreeNode[] }) {
     let { nodes } = item;
     let draftReports = this.reports.filter(x => x.draft === true);
-    let nonDraftReports = this.reports.filter(x => x.draft === false);
-    let isSearchDefined = isDefinedAndNotEmpty(this.searchReportsWord);
-
-    let reportIds = this.getReportIdsFromNodes({ nodes: nodes });
-    let reportIdSet = new Set(reportIds);
-
-    this.reportsFilteredByWord =
-      isSearchDefined === true
-        ? nonDraftReports.filter(report => reportIdSet.has(report.reportId))
-        : nonDraftReports;
+    this.reportsFilteredByWord = makeReportUnitsFromReportNodes({
+      reportNodes: nodes
+    });
 
     this.filteredReports = [...draftReports, ...this.reportsFilteredByWord];
 
@@ -1186,7 +1176,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   reportTreeNodeOnClick(item: { node: TreeNode }) {
     let { node } = item;
 
-    if (node.data.type === 'space') {
+    if (node.data.type === 'reportSpace') {
       node.toggleActivated();
 
       if (node.hasChildren) {
@@ -1222,20 +1212,22 @@ export class ReportsComponent implements OnInit, OnDestroy {
   toggleFavoriteReport(item: { event: MouseEvent; reportId: string }) {
     let { event, reportId } = item;
 
-    let isFavorite = this.favoriteReportIds.indexOf(reportId) > -1;
-
-    let newFavoriteReportIds = isFavorite
-      ? this.favoriteReportIds.filter(id => id !== reportId)
-      : [...this.favoriteReportIds, reportId];
-
-    let previousFavoriteReportIds = this.favoriteReportIds;
+    let reportsState = this.reportsQuery.getValue();
+    let previousReportNodes = reportsState.reportNodes;
+    let report = makeReportUnitsFromReportNodes({
+      reportNodes: reportsState.reportNodes
+    }).find(x => x.reportId === reportId) as any;
+    let isFavorite = report?.isFavorite === true;
+    let newReportNodes = updateReportUnitFavorite({
+      reportNodes: reportsState.reportNodes,
+      reportId: reportId,
+      isFavorite: isFavorite === false
+    });
 
     event.stopPropagation();
 
-    this.favoriteReportIds = newFavoriteReportIds;
-
     this.reportsQuery.updatePart({
-      favoriteReportIds: newFavoriteReportIds
+      reportNodes: newReportNodes
     });
 
     this.makeFilteredReportNodes({
@@ -1263,9 +1255,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
           let isOk = resp.info?.status === ResponseInfoStatusEnum.Ok;
 
           if (isOk === false) {
-            this.favoriteReportIds = previousFavoriteReportIds;
             this.reportsQuery.updatePart({
-              favoriteReportIds: previousFavoriteReportIds
+              reportNodes: previousReportNodes
             });
 
             this.makeFilteredReportNodes({
@@ -1280,7 +1271,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  makeFilteredReportNodes(item: { reportNodes: ReportNode[] }) {
+  makeFilteredReportNodes(item: { reportNodes: ReportTreeNode[] }) {
     let { reportNodes } = item;
     let searchedNodes = this.getSearchedReportNodes({
       reportNodes: reportNodes
@@ -1290,14 +1281,14 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   getSearchedReportNodes(item: {
-    reportNodes: ReportNode[];
-  }): ReportTreeNode[] {
+    reportNodes: ReportTreeNode[];
+  }): UiReportTreeNode[] {
     let { reportNodes } = item;
     let searchNodes = this.makeReportSearchNodes({
       reportNodes: reportNodes
     });
 
-    let enrichedNodes = this.enrichReportNodes({ nodes: searchNodes });
+    let uiSearchNodes = searchNodes as UiReportTreeNode[];
     let isSearchDefined = isDefinedAndNotEmpty(this.searchReportsWord);
     let reportMatchedIds = new Set<string>();
 
@@ -1319,13 +1310,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     return isSearchDefined === true
       ? this.filterReportNodes({
-          nodes: enrichedNodes,
+          nodes: uiSearchNodes,
           reportMatchedIds: reportMatchedIds
         })
-      : enrichedNodes;
+      : uiSearchNodes;
   }
 
-  setFilteredReportNodes(item: { nodes: ReportTreeNode[] }) {
+  setFilteredReportNodes(item: { nodes: UiReportTreeNode[] }) {
     let { nodes } = item;
 
     this.filteredReportNodes = nodes;
@@ -1340,31 +1331,18 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  makeReportSearchNodes(item: { reportNodes: ReportNode[] }): ReportNode[] {
+  makeReportSearchNodes(item: {
+    reportNodes: ReportTreeNode[];
+  }): ReportTreeNode[] {
     let { reportNodes } = item;
-    let member = this.memberQuery.getValue();
-    let isAdmin = member.isAdmin;
-    let isFileEditor = member.isEditor;
-
     let nodes = makeCopy(reportNodes ?? []);
-
-    nodes = this.addMyReportsNode({ nodes: nodes });
-
-    nodes = this.addUncategorizedReportsNode({ nodes: nodes });
-
-    nodes =
-      isAdmin === true || isFileEditor === true
-        ? this.addPersonalReportsNode({ nodes: nodes })
-        : nodes;
-
-    nodes = this.addSharedReportsNode({ nodes: nodes });
 
     return this.pruneEmptySpaceNodes({
       nodes: nodes
     });
   }
 
-  getReportSearchText(item: { report: ReportX }): string {
+  getReportSearchText(item: { report: ReportUnit }): string {
     let { report } = item;
     let title = isDefined(report.title) ? report.title : report.reportId;
     let accessRolesCombined = report.accessRolesCombined.join(' ');
@@ -1372,32 +1350,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
     return `${title} ${report.reportId} ${report.author ?? ''} ${accessRolesCombined}`;
   }
 
-  getReportIdsFromNodes(item: { nodes: ReportTreeNode[] }): string[] {
-    let { nodes } = item;
-
-    return nodes.reduce((acc: string[], node) => {
-      if (node.type === 'report') {
-        acc.push(node.reportId);
-
-        return acc;
-      }
-
-      let childrenReportIds = this.getReportIdsFromNodes({
-        nodes: node.children ?? []
-      });
-
-      acc.push(...childrenReportIds);
-
-      return acc;
-    }, []);
-  }
-
-  pruneEmptySpaceNodes(item: { nodes: ReportNode[] }): ReportNode[] {
+  pruneEmptySpaceNodes(item: { nodes: ReportTreeNode[] }): ReportTreeNode[] {
     let { nodes } = item;
 
     return nodes
       .map(node => {
-        if (node.type === 'report') {
+        if (node.type === 'reportUnit') {
           return node;
         }
 
@@ -1407,395 +1365,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
         };
       })
       .filter(node => {
-        if (node.type === 'report') {
+        if (node.type === 'reportUnit') {
           return true;
         }
 
         return node.children.length > 0;
-      });
-  }
-
-  addMyReportsNode(item: { nodes: ReportNode[] }): ReportNode[] {
-    let { nodes } = item;
-
-    let alias = this.userQuery.getValue().alias;
-
-    if (isDefinedAndNotEmpty(alias) === false) {
-      return nodes;
-    }
-
-    let myReports = this.reports.filter(
-      report =>
-        report.draft === false &&
-        report.author === alias &&
-        isDefinedAndNotEmpty(report.space) === false
-    );
-
-    if (myReports.length === 0) {
-      return nodes;
-    }
-
-    let myReportIds = myReports.map(report => report.reportId);
-    let nodesWithoutMyReports = this.removeReportNodes({
-      nodes: nodes,
-      reportIds: myReportIds
-    });
-
-    let myReportNodes = myReports
-      .map(report => {
-        let reportNode: ReportNode = {
-          type: 'report',
-          id: report.reportId,
-          reportId: report.reportId,
-          title: report.title || report.reportId,
-          space: this.myReportsSpaceId,
-          accessRoles: report.accessRoles,
-          accessRolesCombined: report.accessRolesCombined
-        };
-
-        return reportNode;
-      })
-      .sort((a, b) => {
-        let aTitle = a.title.toLowerCase();
-        let bTitle = b.title.toLowerCase();
-
-        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-      });
-
-    let myReportsNode: ReportNode = {
-      type: 'space',
-      id: this.myReportsSpaceId,
-      space: this.myReportsSpaceId,
-      filePath: '',
-      title: 'My Reports',
-      accessRoles: [],
-      accessRolesCombined: [],
-      children: myReportNodes
-    };
-
-    return [myReportsNode, ...nodesWithoutMyReports];
-  }
-
-  addUncategorizedReportsNode(item: { nodes: ReportNode[] }): ReportNode[] {
-    let { nodes } = item;
-
-    let uncategorizedReports = this.reports.filter(report => {
-      let isNotDraft = report.draft === false;
-      let hasAuthor = isDefinedAndNotEmpty(report.author);
-      let hasNoSpace = isDefinedAndNotEmpty(report.space) === false;
-
-      return isNotDraft && hasAuthor === false && hasNoSpace;
-    });
-
-    if (uncategorizedReports.length === 0) {
-      return nodes;
-    }
-
-    let uncategorizedReportIds = uncategorizedReports.map(
-      report => report.reportId
-    );
-
-    let nodesWithoutUncategorizedReports = this.removeReportNodes({
-      nodes: nodes,
-      reportIds: uncategorizedReportIds
-    });
-
-    let uncategorizedReportsNode: ReportSpaceNode = this.makeSyntheticSpaceNode(
-      {
-        id: this.uncategorizedReportsSpaceId,
-        title: 'Uncategorized'
-      }
-    );
-
-    uncategorizedReportsNode.children = uncategorizedReports
-      .map(report => {
-        let reportNode: ReportNode = {
-          type: 'report',
-          id: report.reportId,
-          reportId: report.reportId,
-          title: report.title || report.reportId,
-          space: this.uncategorizedReportsSpaceId,
-          accessRoles: report.accessRoles,
-          accessRolesCombined: report.accessRolesCombined
-        };
-
-        return reportNode;
-      })
-      .sort((a, b) => {
-        let aTitle = a.title.toLowerCase();
-        let bTitle = b.title.toLowerCase();
-
-        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-      });
-
-    let lastSpaceIndex = -1;
-
-    nodesWithoutUncategorizedReports.forEach((node, index) => {
-      if (node.type === 'space') {
-        lastSpaceIndex = index;
-      }
-    });
-
-    if (lastSpaceIndex < 0) {
-      return [uncategorizedReportsNode, ...nodesWithoutUncategorizedReports];
-    }
-
-    return [
-      ...nodesWithoutUncategorizedReports.slice(0, lastSpaceIndex + 1),
-      uncategorizedReportsNode,
-      ...nodesWithoutUncategorizedReports.slice(lastSpaceIndex + 1)
-    ];
-  }
-
-  addSharedReportsNode(item: { nodes: ReportNode[] }): ReportNode[] {
-    let { nodes } = item;
-
-    let alias = this.userQuery.getValue().alias;
-
-    let sharedReports = this.reports.filter(report => {
-      let isNotDraft = report.draft === false;
-      let hasAuthor = isDefinedAndNotEmpty(report.author);
-      let isNotMyReport = hasAuthor === true && report.author !== alias;
-      let hasNoSpace = isDefinedAndNotEmpty(report.space) === false;
-      let hasAccessRoles = report.accessRoles.length > 0;
-
-      return (
-        isNotDraft && hasAuthor && isNotMyReport && hasNoSpace && hasAccessRoles
-      );
-    });
-
-    if (sharedReports.length === 0) {
-      return nodes;
-    }
-
-    let sharedReportIds = sharedReports.map(report => report.reportId);
-
-    let nodesWithoutSharedReports = this.removeReportNodes({
-      nodes: nodes,
-      reportIds: sharedReportIds
-    });
-
-    let sharedReportsNode: ReportSpaceNode = this.makeSyntheticSpaceNode({
-      id: this.sharedReportsSpaceId,
-      title: 'Shared'
-    });
-
-    sharedReports
-      .sort((a, b) => {
-        let aTitle = (a.title || a.reportId).toLowerCase();
-        let bTitle = (b.title || b.reportId).toLowerCase();
-
-        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-      })
-      .forEach(report => {
-        let displaySpace = `${this.sharedReportsSpaceId}/${report.author}`;
-
-        let authorNode = sharedReportsNode.children.find(
-          child => child.type === 'space' && child.id === displaySpace
-        ) as ReportSpaceNode | undefined;
-
-        if (isDefined(authorNode) === false) {
-          authorNode = this.makeSyntheticSpaceNode({
-            id: displaySpace,
-            title: report.author
-          });
-          sharedReportsNode.children.push(authorNode);
-        }
-
-        authorNode.children.push({
-          type: 'report',
-          id: report.reportId,
-          reportId: report.reportId,
-          title: report.title || report.reportId,
-          space: displaySpace,
-          accessRoles: report.accessRoles,
-          accessRolesCombined: report.accessRolesCombined
-        });
-      });
-
-    sharedReportsNode.children = this.sortReportTreeNodes({
-      nodes: sharedReportsNode.children
-    });
-
-    let lastSpaceIndex = -1;
-
-    nodesWithoutSharedReports.forEach((node, index) => {
-      if (node.type === 'space') {
-        lastSpaceIndex = index;
-      }
-    });
-
-    if (lastSpaceIndex < 0) {
-      return [sharedReportsNode, ...nodesWithoutSharedReports];
-    }
-
-    return [
-      ...nodesWithoutSharedReports.slice(0, lastSpaceIndex + 1),
-      sharedReportsNode,
-      ...nodesWithoutSharedReports.slice(lastSpaceIndex + 1)
-    ];
-  }
-
-  addPersonalReportsNode(item: { nodes: ReportNode[] }): ReportNode[] {
-    let { nodes } = item;
-
-    let alias = this.userQuery.getValue().alias;
-
-    let personalReports = this.reports.filter(report => {
-      let isNotDraft = report.draft === false;
-      let hasAuthor = isDefinedAndNotEmpty(report.author);
-      let isNotMyReport = hasAuthor === true && report.author !== alias;
-      let hasNoSpace = isDefinedAndNotEmpty(report.space) === false;
-      let hasNoAccessRoles = report.accessRoles.length === 0;
-
-      return (
-        isNotDraft &&
-        hasAuthor &&
-        isNotMyReport &&
-        hasNoSpace &&
-        hasNoAccessRoles
-      );
-    });
-
-    if (personalReports.length === 0) {
-      return nodes;
-    }
-
-    let personalReportIds = personalReports.map(report => report.reportId);
-
-    let nodesWithoutPersonalReports = this.removeReportNodes({
-      nodes: nodes,
-      reportIds: personalReportIds
-    });
-
-    let personalReportsNode: ReportSpaceNode = this.makeSyntheticSpaceNode({
-      id: this.personalReportsSpaceId,
-      title: 'Personal'
-    });
-
-    personalReports
-      .sort((a, b) => {
-        let aTitle = (a.title || a.reportId).toLowerCase();
-        let bTitle = (b.title || b.reportId).toLowerCase();
-
-        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-      })
-      .forEach(report => {
-        let displaySpace = `${this.personalReportsSpaceId}/${report.author}`;
-
-        let authorNode = personalReportsNode.children.find(
-          child => child.type === 'space' && child.id === displaySpace
-        ) as ReportSpaceNode | undefined;
-
-        if (isDefined(authorNode) === false) {
-          authorNode = this.makeSyntheticSpaceNode({
-            id: displaySpace,
-            title: report.author
-          });
-          personalReportsNode.children.push(authorNode);
-        }
-
-        authorNode.children.push({
-          type: 'report',
-          id: report.reportId,
-          reportId: report.reportId,
-          title: report.title || report.reportId,
-          space: displaySpace,
-          accessRoles: report.accessRoles,
-          accessRolesCombined: report.accessRolesCombined
-        });
-      });
-
-    personalReportsNode.children = this.sortReportTreeNodes({
-      nodes: personalReportsNode.children
-    });
-
-    let lastSpaceIndex = -1;
-
-    nodesWithoutPersonalReports.forEach((node, index) => {
-      if (node.type === 'space') {
-        lastSpaceIndex = index;
-      }
-    });
-
-    if (lastSpaceIndex < 0) {
-      return [personalReportsNode, ...nodesWithoutPersonalReports];
-    }
-
-    return [
-      ...nodesWithoutPersonalReports.slice(0, lastSpaceIndex + 1),
-      personalReportsNode,
-      ...nodesWithoutPersonalReports.slice(lastSpaceIndex + 1)
-    ];
-  }
-
-  makeSyntheticSpaceNode(item: { id: string; title: string }): ReportSpaceNode {
-    let { id, title } = item;
-
-    return {
-      type: 'space',
-      id: id,
-      space: id,
-      filePath: '',
-      title: title,
-      accessRoles: [],
-      accessRolesCombined: [],
-      children: []
-    };
-  }
-
-  sortReportTreeNodes(item: { nodes: ReportNode[] }): ReportNode[] {
-    let { nodes } = item;
-
-    return nodes
-      .map(node => {
-        if (node.type === 'space') {
-          return {
-            ...node,
-            children: this.sortReportTreeNodes({ nodes: node.children ?? [] })
-          };
-        }
-
-        return node;
-      })
-      .sort((a, b) => {
-        if (a.type !== b.type) {
-          return a.type === 'space' ? -1 : 1;
-        }
-
-        let aTitle = a.title.toLowerCase();
-        let bTitle = b.title.toLowerCase();
-
-        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-      });
-  }
-
-  removeReportNodes(item: {
-    nodes: ReportNode[];
-    reportIds: string[];
-  }): ReportNode[] {
-    let { nodes, reportIds } = item;
-
-    return nodes
-      .map(node => {
-        if (node.type === 'report') {
-          return node;
-        }
-
-        return {
-          ...node,
-          children: this.removeReportNodes({
-            nodes: node.children ?? [],
-            reportIds: reportIds
-          })
-        };
-      })
-      .filter(node => {
-        if (node.type === 'space') {
-          return true;
-        }
-
-        return reportIds.includes(node.reportId) === false;
       });
   }
 
@@ -1845,63 +1419,14 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getReportDisplaySpace(item: { report: ReportX }) {
-    let { report } = item;
-    let alias = this.userQuery.getValue().alias;
-    let member = this.memberQuery.getValue();
-    let isAdmin = member.isAdmin;
-    let isFileEditor = member.isEditor;
-
-    if (
-      report.draft === false &&
-      isDefinedAndNotEmpty(alias) === true &&
-      report.author === alias &&
-      isDefinedAndNotEmpty(report.space) === false
-    ) {
-      return this.myReportsSpaceId;
-    }
-
-    let isAuthoredByOtherUser =
-      isDefinedAndNotEmpty(report.author) === true && report.author !== alias;
-
-    let isOtherUserAuthoredNoSpaceReport =
-      report.draft === false &&
-      isAuthoredByOtherUser &&
-      isDefinedAndNotEmpty(report.space) === false;
-
-    let isPersonalReport =
-      isOtherUserAuthoredNoSpaceReport && report.accessRoles.length === 0;
-
-    let isSharedReport =
-      isOtherUserAuthoredNoSpaceReport && report.accessRoles.length > 0;
-
-    if (isPersonalReport && (isAdmin === true || isFileEditor === true)) {
-      return `${this.personalReportsSpaceId}/${report.author}`;
-    }
-
-    if (isSharedReport) {
-      return `${this.sharedReportsSpaceId}/${report.author}`;
-    }
-
-    if (
-      report.draft === false &&
-      isDefinedAndNotEmpty(report.author) === false &&
-      isDefinedAndNotEmpty(report.space) === false
-    ) {
-      return this.uncategorizedReportsSpaceId;
-    }
-
-    return report.space;
-  }
-
   markSelectedReportAncestors(item: {
-    nodes: ReportTreeNode[];
-  }): ReportTreeNode[] {
+    nodes: UiReportTreeNode[];
+  }): UiReportTreeNode[] {
     let { nodes } = item;
     let selectedReportId = this.report?.reportId;
 
     return nodes.map(node => {
-      if (node.type === 'report') {
+      if (node.type === 'reportUnit') {
         return node;
       }
 
@@ -1910,7 +1435,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       });
 
       let isSelectedReportAncestor = children.some(child =>
-        child.type === 'report'
+        child.type === 'reportUnit'
           ? child.reportId === selectedReportId
           : child.isSelectedReportAncestor === true
       );
@@ -1923,45 +1448,19 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  enrichReportNodes(item: { nodes: ReportNode[] }): ReportTreeNode[] {
-    let { nodes } = item;
-
-    return nodes.map(node => {
-      if (node.type === 'report') {
-        let report = this.reports.find(x => x.reportId === node.reportId);
-
-        return {
-          ...node,
-          report: report,
-          isFavorite: this.favoriteReportIds.indexOf(node.reportId) > -1
-        };
-      }
-
-      return {
-        ...node,
-        isSynthetic:
-          node.id === this.myReportsSpaceId ||
-          node.id === this.uncategorizedReportsSpaceId ||
-          node.id.startsWith(this.personalReportsSpaceId) ||
-          node.id.startsWith(this.sharedReportsSpaceId),
-        children: this.enrichReportNodes({ nodes: node.children ?? [] })
-      };
-    });
-  }
-
   filterReportNodes(item: {
-    nodes: ReportTreeNode[];
+    nodes: UiReportTreeNode[];
     reportMatchedIds: Set<string>;
-  }): ReportTreeNode[] {
+  }): UiReportTreeNode[] {
     let { nodes, reportMatchedIds } = item;
     let searchWord = this.searchReportsWord.toLowerCase();
 
     return nodes
       .map(node => {
-        if (node.type === 'report') {
-          let searchText = isDefined(node.report)
-            ? this.getReportSearchText({ report: node.report }).toLowerCase()
-            : `${node.title ?? node.reportId} ${node.reportId} ${node.accessRolesCombined.join(' ')}`.toLowerCase();
+        if (node.type === 'reportUnit') {
+          let searchText = this.getReportSearchText({
+            report: node
+          }).toLowerCase();
 
           return {
             ...node,
@@ -1998,12 +1497,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   flattenFavoriteReportNodes(item: {
-    nodes: ReportTreeNode[];
-  }): ReportTreeNode[] {
+    nodes: UiReportTreeNode[];
+  }): UiReportTreeNode[] {
     let { nodes } = item;
 
-    return nodes.reduce((acc: ReportTreeNode[], node) => {
-      if (node.type === 'report') {
+    return nodes.reduce((acc: UiReportTreeNode[], node) => {
+      if (node.type === 'reportUnit') {
         if (node.isFavorite === true) {
           acc.push({
             ...node,
@@ -2173,13 +1672,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let { isSmooth } = item;
 
     if (this.report && this.isShowLeft === true) {
-      let reportDisplaySpace = this.getReportDisplaySpace({
-        report: this.report
-      });
-      let isReportSpaceDefined = isDefinedAndNotEmpty(reportDisplaySpace);
-
-      if (this.report.draft === false && isReportSpaceDefined === true) {
-        this.expandSpacePath({ space: reportDisplaySpace });
+      if (
+        this.report.draft === false &&
+        isDefinedAndNotEmpty(this.report.space)
+      ) {
+        this.expandSpacePath({ space: this.report.space });
       }
 
       let selectedElement =
