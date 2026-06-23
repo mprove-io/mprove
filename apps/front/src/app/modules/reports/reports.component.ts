@@ -1672,11 +1672,15 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let { isSmooth } = item;
 
     if (this.report && this.isShowLeft === true) {
+      let reportUnit = this.reports?.find(
+        x => x.reportId === this.report.reportId
+      );
+
       if (
         this.report.draft === false &&
-        isDefinedAndNotEmpty(this.report.space)
+        isDefinedAndNotEmpty(reportUnit?.space)
       ) {
-        this.expandSpacePath({ space: this.report.space });
+        this.expandSpacePath({ space: reportUnit?.space });
       }
 
       let selectedElement =
