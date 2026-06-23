@@ -83,7 +83,14 @@ import type {
 } from '#common/zod/to-backend/reports/to-backend-get-report';
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '#front/app/functions/make-query-params';
-import { updateReportUnitFavorite } from '#front/app/functions/report-nodes';
+import {
+  flattenFavoriteReportNodes,
+  makeVisibleReportNodes,
+  markSelectedReportAncestors,
+  pruneEmptySpaceNodes,
+  type UiReportTreeNode,
+  updateReportUnitFavorite
+} from '#front/app/functions/report-nodes';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { FilteredReportsQuery } from '#front/app/queries/filtered-reports.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -105,16 +112,6 @@ export class TimeSpecItem {
   label: string;
   value: TimeSpecEnum;
 }
-
-type UiReportTreeNode =
-  | (Extract<ReportTreeNode, { type: 'reportSpace' }> & {
-      children: UiReportTreeNode[];
-      isMatched?: boolean;
-      isSelectedReportAncestor?: boolean;
-    })
-  | (Extract<ReportTreeNode, { type: 'reportUnit' }> & {
-      isMatched?: boolean;
-    });
 
 @Component({
   standalone: false,
@@ -227,8 +224,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
         this.uiService.setProjectReportLink({ reportId: this.report.reportId });
       }
 
-      this.filteredReportNodes = this.markSelectedReportAncestors({
-        nodes: this.filteredReportNodes
+      this.filteredReportNodes = markSelectedReportAncestors({
+        nodes: this.filteredReportNodes,
+        selectedReportId: this.report?.reportId
       });
     })
   );
@@ -295,7 +293,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         ? reportToExpand.space
         : undefined;
 
-      this.updateFilteredReportsAndReportNodes({ reportNodes: x.reportNodes });
+      this.updateFiltered({ reportNodes: x.reportNodes });
 
       this.cd.detectChanges();
 
@@ -1110,7 +1108,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }
 
     this.timer = setTimeout(() => {
-      this.updateFilteredReportsAndReportNodes({
+      this.updateFiltered({
         reportNodes: this.reportsQuery.getValue().reportNodes
       });
 
@@ -1127,17 +1125,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   resetReportsSearch() {
     this.searchReportsWord = undefined;
-    this.updateFilteredReportsAndReportNodes({
+    this.updateFiltered({
       reportNodes: this.reportsQuery.getValue().reportNodes
     });
 
     this.cd.detectChanges();
   }
 
-  updateFilteredReportsAndReportNodes(item: { reportNodes: ReportTreeNode[] }) {
+  updateFiltered(item: { reportNodes: ReportTreeNode[] }) {
     let { reportNodes } = item;
     let nodes = makeCopy(reportNodes ?? []);
-    let searchNodes = this.pruneEmptySpaceNodes({
+    let searchNodes = pruneEmptySpaceNodes({
       nodes: nodes
     });
     let isSearchDefined = isDefinedAndNotEmpty(this.searchReportsWord);
@@ -1179,20 +1177,18 @@ export class ReportsComponent implements OnInit, OnDestroy {
       });
     }
 
-    let visibleNodes = this.makeVisibleReportNodes({
+    let visibleNodes = makeVisibleReportNodes({
       nodes: searchNodes,
       reportMatchedIds: reportMatchedIds
     });
-
-    this.updateFilteredReports({ nodes: visibleNodes });
-    this.setFilteredReportNodes({ nodes: visibleNodes });
-  }
-
-  updateFilteredReports(item: { nodes: UiReportTreeNode[] }) {
-    let { nodes } = item;
     let draftReports = this.reports.filter(x => x.draft === true);
+    let filteredReportNodes =
+      this.favoritesOnly === true
+        ? flattenFavoriteReportNodes({ nodes: visibleNodes })
+        : visibleNodes;
+
     this.reportsFilteredByWord = makeReportUnitsFromReportNodes({
-      reportNodes: nodes
+      reportNodes: visibleNodes
     });
 
     this.filteredReports = [...draftReports, ...this.reportsFilteredByWord];
@@ -1219,6 +1215,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.filteredDraftsLength = this.filteredReports.filter(
       y => y.draft === true
     ).length;
+
+    filteredReportNodes = markSelectedReportAncestors({
+      nodes: filteredReportNodes,
+      selectedReportId: this.report?.reportId
+    });
+
+    this.filteredReportNodes = filteredReportNodes;
   }
 
   reportTreeNodeOnClick(item: { node: TreeNode }) {
@@ -1250,7 +1253,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.favoritesOnly = favoritesOnly;
 
-    this.updateFilteredReportsAndReportNodes({
+    this.updateFiltered({
       reportNodes: this.reportsQuery.getValue().reportNodes
     });
 
@@ -1278,7 +1281,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       reportNodes: newReportNodes
     });
 
-    this.updateFilteredReportsAndReportNodes({
+    this.updateFiltered({
       reportNodes: this.reportsQuery.getValue().reportNodes
     });
 
@@ -1307,7 +1310,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
               reportNodes: previousReportNodes
             });
 
-            this.updateFilteredReportsAndReportNodes({
+            this.updateFiltered({
               reportNodes: this.reportsQuery.getValue().reportNodes
             });
 
@@ -1317,85 +1320,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
-  }
-
-  makeVisibleReportNodes(item: {
-    nodes: ReportTreeNode[];
-    reportMatchedIds?: Set<string>;
-  }): UiReportTreeNode[] {
-    let { nodes, reportMatchedIds } = item;
-    let visibleNodes: UiReportTreeNode[] = [];
-
-    (nodes ?? []).forEach(node => {
-      if (node.type === 'reportUnit') {
-        let isReportMatched =
-          isDefined(reportMatchedIds) === false
-            ? true
-            : reportMatchedIds.has(node.reportId);
-
-        if (isReportMatched === true) {
-          visibleNodes.push({
-            ...node,
-            isMatched: true
-          });
-        }
-
-        return;
-      }
-
-      let children = this.makeVisibleReportNodes({
-        nodes: node.children ?? [],
-        reportMatchedIds: reportMatchedIds
-      });
-
-      if (children.length > 0) {
-        visibleNodes.push({
-          ...node,
-          children: children,
-          isMatched: true
-        });
-      }
-    });
-
-    return visibleNodes;
-  }
-
-  setFilteredReportNodes(item: { nodes: UiReportTreeNode[] }) {
-    let { nodes } = item;
-
-    let filteredReportNodes =
-      this.favoritesOnly === true
-        ? this.flattenFavoriteReportNodes({ nodes: nodes })
-        : nodes;
-
-    filteredReportNodes = this.markSelectedReportAncestors({
-      nodes: filteredReportNodes
-    });
-
-    this.filteredReportNodes = filteredReportNodes;
-  }
-
-  pruneEmptySpaceNodes(item: { nodes: ReportTreeNode[] }): ReportTreeNode[] {
-    let { nodes } = item;
-
-    return nodes
-      .map(node => {
-        if (node.type === 'reportUnit') {
-          return node;
-        }
-
-        return {
-          ...node,
-          children: this.pruneEmptySpaceNodes({ nodes: node.children ?? [] })
-        };
-      })
-      .filter(node => {
-        if (node.type === 'reportUnit') {
-          return true;
-        }
-
-        return node.children.length > 0;
-      });
   }
 
   expandPendingSpace() {
@@ -1442,62 +1366,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
         node.expand();
       }
     });
-  }
-
-  markSelectedReportAncestors(item: {
-    nodes: UiReportTreeNode[];
-  }): UiReportTreeNode[] {
-    let { nodes } = item;
-    let selectedReportId = this.report?.reportId;
-
-    return nodes.map(node => {
-      if (node.type === 'reportUnit') {
-        return node;
-      }
-
-      let children = this.markSelectedReportAncestors({
-        nodes: node.children ?? []
-      });
-
-      let isSelectedReportAncestor = children.some(child =>
-        child.type === 'reportUnit'
-          ? child.reportId === selectedReportId
-          : child.isSelectedReportAncestor === true
-      );
-
-      return {
-        ...node,
-        children: children,
-        isSelectedReportAncestor: isSelectedReportAncestor
-      };
-    });
-  }
-
-  flattenFavoriteReportNodes(item: {
-    nodes: UiReportTreeNode[];
-  }): UiReportTreeNode[] {
-    let { nodes } = item;
-
-    return nodes.reduce((acc: UiReportTreeNode[], node) => {
-      if (node.type === 'reportUnit') {
-        if (node.isFavorite === true) {
-          acc.push({
-            ...node,
-            isMatched: true
-          });
-        }
-
-        return acc;
-      }
-
-      let children = this.flattenFavoriteReportNodes({
-        nodes: node.children ?? []
-      });
-
-      acc.push(...children);
-
-      return acc;
-    }, []);
   }
 
   toggleAutoRun() {

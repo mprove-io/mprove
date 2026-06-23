@@ -11,6 +11,16 @@ import type { ReportTreeNode } from '#common/zod/backend/report-tree-node';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
 
+export type UiReportTreeNode =
+  | (Extract<ReportTreeNode, { type: 'reportSpace' }> & {
+      children: UiReportTreeNode[];
+      isMatched?: boolean;
+      isSelectedReportAncestor?: boolean;
+    })
+  | (Extract<ReportTreeNode, { type: 'reportUnit' }> & {
+      isMatched?: boolean;
+    });
+
 function makeMyReportsSpace(item: {
   children: ReportTreeNode[];
 }): Extract<ReportTreeNode, { type: 'reportSpace' }> {
@@ -258,4 +268,127 @@ function hasReportUnit(item: {
 
     return hasReportUnit({ nodes: node.children, reportId: reportId });
   });
+}
+
+export function pruneEmptySpaceNodes(item: {
+  nodes: ReportTreeNode[];
+}): ReportTreeNode[] {
+  let { nodes } = item;
+
+  return nodes
+    .map(node => {
+      if (node.type === 'reportUnit') {
+        return node;
+      }
+
+      return {
+        ...node,
+        children: pruneEmptySpaceNodes({ nodes: node.children ?? [] })
+      };
+    })
+    .filter(node => {
+      if (node.type === 'reportUnit') {
+        return true;
+      }
+
+      return node.children.length > 0;
+    });
+}
+
+export function makeVisibleReportNodes(item: {
+  nodes: ReportTreeNode[];
+  reportMatchedIds?: Set<string>;
+}): UiReportTreeNode[] {
+  let { nodes, reportMatchedIds } = item;
+  let visibleNodes: UiReportTreeNode[] = [];
+
+  (nodes ?? []).forEach(node => {
+    if (node.type === 'reportUnit') {
+      let isReportMatched =
+        reportMatchedIds === undefined
+          ? true
+          : reportMatchedIds.has(node.reportId);
+
+      if (isReportMatched === true) {
+        visibleNodes.push({
+          ...node,
+          isMatched: true
+        });
+      }
+
+      return;
+    }
+
+    let children = makeVisibleReportNodes({
+      nodes: node.children ?? [],
+      reportMatchedIds: reportMatchedIds
+    });
+
+    if (children.length > 0) {
+      visibleNodes.push({
+        ...node,
+        children: children,
+        isMatched: true
+      });
+    }
+  });
+
+  return visibleNodes;
+}
+
+export function markSelectedReportAncestors(item: {
+  nodes: UiReportTreeNode[];
+  selectedReportId: string;
+}): UiReportTreeNode[] {
+  let { nodes, selectedReportId } = item;
+
+  return nodes.map(node => {
+    if (node.type === 'reportUnit') {
+      return node;
+    }
+
+    let children = markSelectedReportAncestors({
+      nodes: node.children ?? [],
+      selectedReportId: selectedReportId
+    });
+
+    let isSelectedReportAncestor = children.some(child =>
+      child.type === 'reportUnit'
+        ? child.reportId === selectedReportId
+        : child.isSelectedReportAncestor === true
+    );
+
+    return {
+      ...node,
+      children: children,
+      isSelectedReportAncestor: isSelectedReportAncestor
+    };
+  });
+}
+
+export function flattenFavoriteReportNodes(item: {
+  nodes: UiReportTreeNode[];
+}): UiReportTreeNode[] {
+  let { nodes } = item;
+
+  return nodes.reduce((acc: UiReportTreeNode[], node) => {
+    if (node.type === 'reportUnit') {
+      if (node.isFavorite === true) {
+        acc.push({
+          ...node,
+          isMatched: true
+        });
+      }
+
+      return acc;
+    }
+
+    let children = flattenFavoriteReportNodes({
+      nodes: node.children ?? []
+    });
+
+    acc.push(...children);
+
+    return acc;
+  }, []);
 }
