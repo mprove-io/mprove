@@ -336,7 +336,7 @@ export function makeVisibleReportNodes(item: {
   return visibleNodes;
 }
 
-export function markSelectedReportAncestors(item: {
+export function markSelectedAncestors(item: {
   nodes: UiReportTreeNode[];
   selectedReportId: string;
 }): UiReportTreeNode[] {
@@ -347,7 +347,7 @@ export function markSelectedReportAncestors(item: {
       return node;
     }
 
-    let children = markSelectedReportAncestors({
+    let children = markSelectedAncestors({
       nodes: node.children ?? [],
       selectedReportId: selectedReportId
     });

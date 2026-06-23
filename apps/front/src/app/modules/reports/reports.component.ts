@@ -86,7 +86,7 @@ import { makeQueryParams } from '#front/app/functions/make-query-params';
 import {
   flattenFavoriteReportNodes,
   makeVisibleReportNodes,
-  markSelectedReportAncestors,
+  markSelectedAncestors,
   pruneEmptySpaceNodes,
   type UiReportTreeNode,
   updateReportUnitFavorite
@@ -220,16 +220,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       this.checkAutoRun();
 
+      this.filteredReportNodes = markSelectedAncestors({
+        nodes: this.filteredReportNodes,
+        selectedReportId: this.report?.reportId
+      });
+
       this.cd.detectChanges();
 
       if (this.report.reportId !== EMPTY_REPORT_ID) {
         this.uiService.setProjectReportLink({ reportId: this.report.reportId });
       }
-
-      this.filteredReportNodes = markSelectedReportAncestors({
-        nodes: this.filteredReportNodes,
-        selectedReportId: this.report?.reportId
-      });
     })
   );
 
@@ -246,14 +246,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
   filteredDraftsLength: number;
 
   reports: ReportUnit[];
-  reportsFilteredByWord: ReportUnit[];
+
   filteredReports: ReportUnit[];
   filteredReportNodes: UiReportTreeNode[] = [];
+
   pendingExpandSpace: string;
 
   reports$ = this.reportsQuery.select().pipe(
     tap(x => {
       let previousReports = this.reports ?? [];
+
       this.reports = [
         ...x.reportUnitDrafts,
         ...makeReportUnitsFromReportNodes({ reportNodes: x.reportNodes })
@@ -263,6 +265,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         let previousReport = previousReports.find(
           previous => previous.reportId === report.reportId
         );
+
         let reportDisplaySpace = report.space;
 
         let previousDisplaySpace = isDefined(previousReport)
@@ -297,9 +300,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       this.updateFiltered({ reportNodes: x.reportNodes });
 
-      this.cd.detectChanges();
+      if (isDefined(this.pendingExpandSpace)) {
+        let space = this.pendingExpandSpace;
 
-      this.expandPendingSpace();
+        this.pendingExpandSpace = undefined;
+
+        setTimeout(() => {
+          this.expandSpacePath({ space: space });
+        }, 0);
+      }
+
+      this.cd.detectChanges();
     })
   );
 
@@ -1120,6 +1131,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   resetMetricsSearch() {
     this.searchMetricsWord = undefined;
+
     this.uiQuery.updatePart({
       searchMetricsWord: this.searchMetricsWord
     });
@@ -1127,6 +1139,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   resetReportsSearch() {
     this.searchReportsWord = undefined;
+
     this.updateFiltered({
       reportNodes: this.reportsQuery.getValue().reportNodes
     });
@@ -1174,11 +1187,15 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let { event, reportId } = item;
 
     let reportsState = this.reportsQuery.getValue();
+
     let previousReportNodes = reportsState.reportNodes;
+
     let report = makeReportUnitsFromReportNodes({
       reportNodes: reportsState.reportNodes
     }).find(x => x.reportId === reportId) as any;
+
     let isFavorite = report?.isFavorite === true;
+
     let newReportNodes = updateReportUnitFavorite({
       reportNodes: reportsState.reportNodes,
       reportId: reportId,
@@ -1230,21 +1247,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
-  }
-
-  expandPendingSpace() {
-    let space = this.pendingExpandSpace;
-
-    if (isDefinedAndNotEmpty(space) === false) {
-      return;
-    }
-
-    this.pendingExpandSpace = undefined;
-    this.cd.detectChanges();
-
-    setTimeout(() => {
-      this.expandSpacePath({ space: space });
-    }, 0);
   }
 
   expandSpacePath(item: { space: string }) {
@@ -1459,11 +1461,15 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   updateFiltered(item: { reportNodes: ReportTreeNode[] }) {
     let { reportNodes } = item;
+
     let nodes = makeCopy(reportNodes ?? []);
+
     let searchNodes = pruneEmptySpaceNodes({
       nodes: nodes
     });
+
     let isSearchDefined = isDefinedAndNotEmpty(this.searchReportsWord);
+
     let reportMatchedIds: Set<string> | undefined;
 
     if (isSearchDefined === true) {
@@ -1480,6 +1486,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
           searchText: `${title} ${report.reportId} ${report.author ?? ''} ${report.displaySpace} ${accessRolesCombined}`
         };
       });
+
       let haystack = searchEntries.map(entry => entry.searchText);
       let opts = {};
       let uf = new uFuzzy(opts);
@@ -1506,32 +1513,34 @@ export class ReportsComponent implements OnInit, OnDestroy {
       nodes: searchNodes,
       reportMatchedIds: reportMatchedIds
     });
+
     let draftReports = this.reports.filter(x => x.draft === true);
+
     let filteredReportNodes =
       this.favoritesOnly === true
         ? flattenFavoriteReportNodes({ nodes: visibleNodes })
         : visibleNodes;
 
-    this.reportsFilteredByWord = makeReportUnitsFromReportNodes({
+    let reportsFilteredByWord = makeReportUnitsFromReportNodes({
       reportNodes: visibleNodes
     });
 
-    this.filteredReports = [...draftReports, ...this.reportsFilteredByWord];
+    this.filteredReports = [...draftReports, ...reportsFilteredByWord].sort(
+      (a, b) => {
+        let aTitle = (a.title || a.reportId).toUpperCase();
+        let bTitle = (b.title || b.reportId).toUpperCase();
 
-    this.filteredReports = this.filteredReports.sort((a, b) => {
-      let aTitle = (a.title || a.reportId).toUpperCase();
-      let bTitle = (b.title || b.reportId).toUpperCase();
-
-      return b.draft === true && a.draft !== true
-        ? 1
-        : a.draft === true && b.draft !== true
-          ? -1
-          : aTitle > bTitle
-            ? 1
-            : bTitle > aTitle
-              ? -1
-              : 0;
-    });
+        return b.draft === true && a.draft !== true
+          ? 1
+          : a.draft === true && b.draft !== true
+            ? -1
+            : aTitle > bTitle
+              ? 1
+              : bTitle > aTitle
+                ? -1
+                : 0;
+      }
+    );
 
     this.filteredReportsQuery.update({
       filteredReports: this.filteredReports
@@ -1541,12 +1550,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
       y => y.draft === true
     ).length;
 
-    filteredReportNodes = markSelectedReportAncestors({
+    this.filteredReportNodes = markSelectedAncestors({
       nodes: filteredReportNodes,
       selectedReportId: this.report?.reportId
     });
-
-    this.filteredReportNodes = filteredReportNodes;
   }
 
   ngOnDestroy() {
