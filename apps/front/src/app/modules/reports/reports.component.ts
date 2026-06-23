@@ -37,6 +37,10 @@ import {
   MALLOY_FILTER_ANY,
   PATH_REPORTS,
   PATH_REPORTS_LIST,
+  REPORT_TREE_MY_REPORTS_SPACE_ID,
+  REPORT_TREE_PERSONAL_REPORTS_SPACE_ID,
+  REPORT_TREE_SHARED_REPORTS_SPACE_ID,
+  REPORT_TREE_UNCATEGORIZED_REPORTS_SPACE_ID,
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
@@ -119,10 +123,10 @@ type UiReportTreeNode =
   styleUrls: ['reports.component.scss']
 })
 export class ReportsComponent implements OnInit, OnDestroy {
-  myReportsSpaceId = '__my_reports__';
-  uncategorizedReportsSpaceId = '__uncategorized_reports__';
-  personalReportsSpaceId = '__personal_reports__';
-  sharedReportsSpaceId = '__shared_reports__';
+  myReportsSpaceId = REPORT_TREE_MY_REPORTS_SPACE_ID;
+  uncategorizedReportsSpaceId = REPORT_TREE_UNCATEGORIZED_REPORTS_SPACE_ID;
+  personalReportsSpaceId = REPORT_TREE_PERSONAL_REPORTS_SPACE_ID;
+  sharedReportsSpaceId = REPORT_TREE_SHARED_REPORTS_SPACE_ID;
 
   @ViewChild('timeSpecSelect', { static: false })
   timeSpecSelectElement: NgSelectComponent;

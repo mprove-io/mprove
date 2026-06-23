@@ -1,6 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import type { ReportTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { MPROVE_USERS_FOLDER } from '#common/constants/top';
+import {
+  MPROVE_USERS_FOLDER,
+  REPORT_TREE_MY_REPORTS_SPACE_ID,
+  REPORT_TREE_MY_REPORTS_TITLE,
+  REPORT_TREE_PERSONAL_REPORTS_SPACE_ID,
+  REPORT_TREE_PERSONAL_REPORTS_TITLE,
+  REPORT_TREE_SHARED_REPORTS_SPACE_ID,
+  REPORT_TREE_SHARED_REPORTS_TITLE,
+  REPORT_TREE_UNCATEGORIZED_REPORTS_SPACE_ID,
+  REPORT_TREE_UNCATEGORIZED_REPORTS_TITLE
+} from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
@@ -13,11 +23,6 @@ import type { Space } from '#common/zod/blockml/space';
 
 @Injectable()
 export class TreeService {
-  myReportsSpaceId = '__my_reports__';
-  uncategorizedReportsSpaceId = '__uncategorized_reports__';
-  personalReportsSpaceId = '__personal_reports__';
-  sharedReportsSpaceId = '__shared_reports__';
-
   makeReportUnit(item: {
     report: ReportTab;
     member: Member;
@@ -160,8 +165,8 @@ export class TreeService {
       if (report.draft === false && author === member.alias) {
         if (isUndefined(myReportsNode)) {
           myReportsNode = this.makeSyntheticReportSpace({
-            id: this.myReportsSpaceId,
-            title: 'My Reports'
+            id: REPORT_TREE_MY_REPORTS_SPACE_ID,
+            title: REPORT_TREE_MY_REPORTS_TITLE
           });
         }
 
@@ -170,8 +175,8 @@ export class TreeService {
             report: report,
             member: member,
             favoriteReportIds: favoriteReportIds,
-            space: this.myReportsSpaceId,
-            displaySpace: 'My Reports'
+            space: REPORT_TREE_MY_REPORTS_SPACE_ID,
+            displaySpace: REPORT_TREE_MY_REPORTS_TITLE
           })
         );
 
@@ -181,8 +186,8 @@ export class TreeService {
       if (report.draft === false && isUndefined(author)) {
         if (isUndefined(uncategorizedReportsNode)) {
           uncategorizedReportsNode = this.makeSyntheticReportSpace({
-            id: this.uncategorizedReportsSpaceId,
-            title: 'Uncategorized'
+            id: REPORT_TREE_UNCATEGORIZED_REPORTS_SPACE_ID,
+            title: REPORT_TREE_UNCATEGORIZED_REPORTS_TITLE
           });
         }
 
@@ -191,8 +196,8 @@ export class TreeService {
             report: report,
             member: member,
             favoriteReportIds: favoriteReportIds,
-            space: this.uncategorizedReportsSpaceId,
-            displaySpace: 'Uncategorized'
+            space: REPORT_TREE_UNCATEGORIZED_REPORTS_SPACE_ID,
+            displaySpace: REPORT_TREE_UNCATEGORIZED_REPORTS_TITLE
           })
         );
 
@@ -207,14 +212,14 @@ export class TreeService {
       ) {
         if (isUndefined(personalReportsNode)) {
           personalReportsNode = this.makeSyntheticReportSpace({
-            id: this.personalReportsSpaceId,
-            title: 'Personal'
+            id: REPORT_TREE_PERSONAL_REPORTS_SPACE_ID,
+            title: REPORT_TREE_PERSONAL_REPORTS_TITLE
           });
         }
 
         let authorTitle = author ?? '';
 
-        let authorSpace = `${this.personalReportsSpaceId}/${authorTitle}`;
+        let authorSpace = `${REPORT_TREE_PERSONAL_REPORTS_SPACE_ID}/${authorTitle}`;
 
         let authorNode = personalNodesByAuthor.get(authorTitle);
 
@@ -235,7 +240,7 @@ export class TreeService {
             member: member,
             favoriteReportIds: favoriteReportIds,
             space: authorSpace,
-            displaySpace: `Personal - ${authorTitle}`
+            displaySpace: `${REPORT_TREE_PERSONAL_REPORTS_TITLE} - ${authorTitle}`
           })
         );
 
@@ -249,14 +254,14 @@ export class TreeService {
       ) {
         if (isUndefined(sharedReportsNode)) {
           sharedReportsNode = this.makeSyntheticReportSpace({
-            id: this.sharedReportsSpaceId,
-            title: 'Shared'
+            id: REPORT_TREE_SHARED_REPORTS_SPACE_ID,
+            title: REPORT_TREE_SHARED_REPORTS_TITLE
           });
         }
 
         let authorTitle = author ?? '';
 
-        let authorSpace = `${this.sharedReportsSpaceId}/${authorTitle}`;
+        let authorSpace = `${REPORT_TREE_SHARED_REPORTS_SPACE_ID}/${authorTitle}`;
 
         let authorNode = sharedNodesByAuthor.get(authorTitle);
 
@@ -277,7 +282,7 @@ export class TreeService {
             member: member,
             favoriteReportIds: favoriteReportIds,
             space: authorSpace,
-            displaySpace: `Shared - ${authorTitle}`
+            displaySpace: `${REPORT_TREE_SHARED_REPORTS_TITLE} - ${authorTitle}`
           })
         );
 
@@ -286,8 +291,8 @@ export class TreeService {
 
       if (isUndefined(uncategorizedReportsNode)) {
         uncategorizedReportsNode = this.makeSyntheticReportSpace({
-          id: this.uncategorizedReportsSpaceId,
-          title: 'Uncategorized'
+          id: REPORT_TREE_UNCATEGORIZED_REPORTS_SPACE_ID,
+          title: REPORT_TREE_UNCATEGORIZED_REPORTS_TITLE
         });
       }
 
@@ -296,8 +301,8 @@ export class TreeService {
           report: report,
           member: member,
           favoriteReportIds: favoriteReportIds,
-          space: this.uncategorizedReportsSpaceId,
-          displaySpace: 'Uncategorized'
+          space: REPORT_TREE_UNCATEGORIZED_REPORTS_SPACE_ID,
+          displaySpace: REPORT_TREE_UNCATEGORIZED_REPORTS_TITLE
         })
       );
     });

@@ -1,3 +1,7 @@
+import {
+  REPORT_TREE_MY_REPORTS_SPACE_ID,
+  REPORT_TREE_MY_REPORTS_TITLE
+} from '#common/constants/top';
 import { makeCopy } from '#common/functions/make-copy';
 import {
   addReportUnitDisplaySpaces,
@@ -6,6 +10,24 @@ import {
 import type { ReportTreeNode } from '#common/zod/backend/report-tree-node';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
+
+function makeMyReportsSpace(item: {
+  children: ReportTreeNode[];
+}): Extract<ReportTreeNode, { type: 'reportSpace' }> {
+  let { children } = item;
+
+  return {
+    type: 'reportSpace' as const,
+    id: REPORT_TREE_MY_REPORTS_SPACE_ID,
+    space: REPORT_TREE_MY_REPORTS_SPACE_ID,
+    filePath: '',
+    title: REPORT_TREE_MY_REPORTS_TITLE,
+    accessRoles: [],
+    accessRolesCombined: [],
+    isSynthetic: true,
+    children: children
+  };
+}
 
 export function makeReportUnitFromReportX(item: {
   report: ReportX;
@@ -89,6 +111,31 @@ function getReportUnitFavorite(item: {
   });
 }
 
+function getReportUnit(item: {
+  reportNodes: ReportTreeNode[];
+  reportId: string;
+}): ReportUnit | undefined {
+  let { reportNodes, reportId } = item;
+  let foundReportUnit: ReportUnit | undefined;
+
+  (reportNodes ?? []).some(node => {
+    if (node.type === 'reportUnit') {
+      foundReportUnit = node.reportId === reportId ? node : undefined;
+
+      return foundReportUnit !== undefined;
+    }
+
+    foundReportUnit = getReportUnit({
+      reportNodes: node.children ?? [],
+      reportId: reportId
+    });
+
+    return foundReportUnit !== undefined;
+  });
+
+  return foundReportUnit;
+}
+
 export function updateReportUnitFavorite(item: {
   reportNodes: ReportTreeNode[];
   reportId: string;
@@ -127,6 +174,11 @@ export function upsertReportUnit(item: {
     reportId: report.reportId
   });
 
+  let existingReportUnit = getReportUnit({
+    reportNodes: reportNodes,
+    reportId: report.reportId
+  });
+
   let nodes = removeReportUnit({
     reportNodes: reportNodes,
     reportId: report.reportId
@@ -136,17 +188,25 @@ export function upsertReportUnit(item: {
     return nodes;
   }
 
-  let reportNode = makeReportUnitFromReportX({
-    report: report,
-    isFavorite: isFavorite
-  });
+  let targetSpace =
+    report.space ??
+    existingReportUnit?.space ??
+    REPORT_TREE_MY_REPORTS_SPACE_ID;
 
-  if (report.space) {
+  let reportNode = {
+    ...makeReportUnitFromReportX({
+      report: report,
+      isFavorite: isFavorite
+    }),
+    space: targetSpace
+  };
+
+  if (targetSpace) {
     let addToSpace = (item: { node: ReportTreeNode }): ReportTreeNode => {
       let { node } = item;
 
       if (node.type === 'reportSpace') {
-        if (node.space === report.space) {
+        if (node.space === targetSpace) {
           node.children = sortReportNodes({
             nodes: [...node.children, reportNode]
           });
@@ -164,6 +224,18 @@ export function upsertReportUnit(item: {
 
     if (hasReportUnit({ nodes: nodes, reportId: report.reportId })) {
       return addReportUnitDisplaySpaces({ reportNodes: nodes, pathParts: [] });
+    }
+
+    if (targetSpace === REPORT_TREE_MY_REPORTS_SPACE_ID) {
+      return addReportUnitDisplaySpaces({
+        reportNodes: [
+          makeMyReportsSpace({
+            children: sortReportNodes({ nodes: [reportNode] })
+          }),
+          ...nodes
+        ],
+        pathParts: []
+      });
     }
   }
 
