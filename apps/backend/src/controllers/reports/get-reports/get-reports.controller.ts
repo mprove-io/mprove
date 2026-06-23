@@ -201,7 +201,9 @@ export class GetReportsController {
         this.treeService.makeReportUnit({
           report: x,
           member: apiUserMember,
-          favoriteReportIds: []
+          favoriteReportIds: [],
+          space: x.space,
+          displaySpace: x.space ?? ''
         })
       ),
       reportNodes: reportNodes,
