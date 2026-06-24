@@ -698,7 +698,7 @@
                         >
                           <ng-template #treeNodeTemplate let-node="node">
                             <div
-                              *ngIf="node.data.type === 'reportSpace'"
+                              *ngIf="node.data.type === 'spaceFolder'"
                               class="group/bar flex h-11 w-full select-none flex-row rounded pr-5 hover:cursor-pointer"
                               (click)="reportTreeNodeOnClick({ node: node })"
                             >
@@ -744,8 +744,7 @@
                                     class="text-s1 truncate text-base"
                                     [ngClass]="{
                                       'font-semibold':
-                                        node.data.isSelectedReportAncestor ===
-                                        true
+                                        node.data.isSelectedAncestor === true
                                     }"
                                     >{{
                                       node.data.isSynthetic === true
@@ -760,35 +759,31 @@
                                   class="invisible ml-2 flex pr-2 group-hover/bar:visible"
                                 >
                                   <m-space-options
-                                    [reportSpace]="node.data"
+                                    [spaceFolder]="node.data"
                                   ></m-space-options>
                                 </div>
                               </div>
                             </div>
 
                             <div
-                              *ngIf="node.data.type === 'reportUnit'"
-                              [attr.reportId]="node.data.reportId"
+                              *ngIf="node.data.type === 'spaceUnit'"
+                              [attr.reportId]="node.data.unitId"
                               class="hover:bg-m50 group mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                               (click)="reportTreeNodeOnClick({ node: node })"
                               [style.padding-left.px]="(node.level - 1) * 12"
                               [ngClass]="{
-                                'bg-m50': node.data.reportId === report.reportId
+                                'bg-m50': node.data.unitId === report.reportId
                               }"
                             >
                               <div class="ml-4 mr-3 flex h-2 items-center">
                                 <div
-                                  *ngIf="
-                                    node.data.reportId === report?.reportId
-                                  "
+                                  *ngIf="node.data.unitId === report?.reportId"
                                   data-cy="reportsSelectedSymbol"
                                   class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
                                 ></div>
 
                                 <div
-                                  *ngIf="
-                                    node.data.reportId !== report?.reportId
-                                  "
+                                  *ngIf="node.data.unitId !== report?.reportId"
                                   class="h-9 w-[6px]"
                                 ></div>
                               </div>
@@ -797,9 +792,9 @@
                                 class="ml-1 select-none truncate"
                                 [ngClass]="{
                                   'text-m600 font-semibold':
-                                    node.data.reportId === report.reportId,
+                                    node.data.unitId === report.reportId,
                                   'text-s1':
-                                    node.data.reportId !== report.reportId
+                                    node.data.unitId !== report.reportId
                                 }"
                               >
                                 {{ node.data.title | capitalize }}
@@ -813,7 +808,7 @@
                                 (click)="
                                   toggleFavoriteReport({
                                     event: $event,
-                                    reportId: node.data.reportId
+                                    reportId: node.data.unitId
                                   })
                                 "
                                 [ngClass]="{
@@ -834,7 +829,7 @@
                                 class="invisible ml-2 flex group-hover:visible"
                               >
                                 <m-report-options
-                                  [reportUnit]="node.data"
+                                  [spaceUnit]="node.data"
                                   [isHoverM]="false"
                                 ></m-report-options>
                               </div>

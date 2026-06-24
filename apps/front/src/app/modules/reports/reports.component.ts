@@ -35,13 +35,13 @@ import { REPORTS_PAGE_TITLE } from '#common/constants/page-titles';
 import {
   EMPTY_REPORT_ID,
   MALLOY_FILTER_ANY,
+  MY_UNITS_SPACE_ID,
   PATH_REPORTS,
   PATH_REPORTS_LIST,
-  REPORT_TREE_MY_REPORTS_SPACE_ID,
-  REPORT_TREE_PERSONAL_REPORTS_SPACE_ID,
-  REPORT_TREE_SHARED_REPORTS_SPACE_ID,
-  REPORT_TREE_UNCATEGORIZED_REPORTS_SPACE_ID,
-  RESTRICTED_USER_ALIAS
+  PERSONAL_UNITS_SPACE_ID,
+  RESTRICTED_USER_ALIAS,
+  SHARED_UNITS_SPACE_ID,
+  UNCATEGORIZED_UNITS_SPACE_ID
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
@@ -59,10 +59,11 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
-import { makeReportUnitsFromReportNodes } from '#common/functions/report-tree';
-import type { ReportTreeNode } from '#common/zod/backend/report-tree-node';
+import { makeSpaceUnitsFromSpaceNodes } from '#common/functions/space-tree';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
+import type { SpaceNode } from '#common/zod/backend/space-node';
+import type { SpaceNodeX } from '#common/zod/backend/space-node-x';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { Query } from '#common/zod/blockml/query';
 import type { DataPoint } from '#common/zod/front/data-point';
@@ -83,15 +84,15 @@ import type {
 } from '#common/zod/to-backend/reports/to-backend-get-report';
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '#front/app/functions/make-query-params';
+import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import {
-  flattenFavoriteReportNodes,
-  makeVisibleReportNodes,
+  flattenFavoriteSpaceNodes,
+  makeVisibleSpaceNodes,
   markSelectedAncestors,
   pruneEmptySpaceNodes,
-  type UiReportTreeNode,
-  updateReportUnitFavorite
-} from '#front/app/functions/report-nodes';
-import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+  spaceUnitToReportUnit,
+  updateSpaceUnitFavorite
+} from '#front/app/functions/space-nodes';
 import { FilteredReportsQuery } from '#front/app/queries/filtered-reports.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -120,10 +121,10 @@ export class TimeSpecItem {
   styleUrls: ['reports.component.scss']
 })
 export class ReportsComponent implements OnInit, OnDestroy {
-  myReportsSpaceId = REPORT_TREE_MY_REPORTS_SPACE_ID;
-  uncategorizedReportsSpaceId = REPORT_TREE_UNCATEGORIZED_REPORTS_SPACE_ID;
-  personalReportsSpaceId = REPORT_TREE_PERSONAL_REPORTS_SPACE_ID;
-  sharedReportsSpaceId = REPORT_TREE_SHARED_REPORTS_SPACE_ID;
+  myUnitsSpaceId = MY_UNITS_SPACE_ID;
+  uncategorizedUnitsSpaceId = UNCATEGORIZED_UNITS_SPACE_ID;
+  personalUnitsSpaceId = PERSONAL_UNITS_SPACE_ID;
+  sharedUnitsSpaceId = SHARED_UNITS_SPACE_ID;
 
   @ViewChild('timeSpecSelect', { static: false })
   timeSpecSelectElement: NgSelectComponent;
@@ -248,7 +249,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   reports: ReportUnit[];
 
   filteredReports: ReportUnit[];
-  filteredReportNodes: UiReportTreeNode[] = [];
+  filteredReportNodes: SpaceNodeX[] = [];
 
   pendingExpandSpace: string;
 
@@ -256,10 +257,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
     tap(x => {
       let previousReports = this.reports ?? [];
 
-      this.reports = [
-        ...x.reportUnitDrafts,
-        ...makeReportUnitsFromReportNodes({ reportNodes: x.reportNodes })
-      ];
+      let reportUnitNonDrafts = makeSpaceUnitsFromSpaceNodes({
+        spaceNodes: x.reportSpaceNodes
+      }).map(spaceUnit => spaceUnitToReportUnit({ spaceUnit: spaceUnit }));
+
+      this.reports = [...x.reportUnitDrafts, ...reportUnitNonDrafts];
 
       let reportToExpand = this.reports.find(report => {
         let previousReport = previousReports.find(
@@ -298,7 +300,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         ? reportToExpand.space
         : undefined;
 
-      this.updateFiltered({ reportNodes: x.reportNodes });
+      this.updateFiltered({ reportSpaceNodes: x.reportSpaceNodes });
 
       if (isDefined(this.pendingExpandSpace)) {
         let space = this.pendingExpandSpace;
@@ -1122,7 +1124,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.timer = setTimeout(() => {
       this.updateFiltered({
-        reportNodes: this.reportsQuery.getValue().reportNodes
+        reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
       });
 
       this.cd.detectChanges();
@@ -1141,7 +1143,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.searchReportsWord = undefined;
 
     this.updateFiltered({
-      reportNodes: this.reportsQuery.getValue().reportNodes
+      reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
     });
 
     this.cd.detectChanges();
@@ -1150,14 +1152,14 @@ export class ReportsComponent implements OnInit, OnDestroy {
   reportTreeNodeOnClick(item: { node: TreeNode }) {
     let { node } = item;
 
-    if (node.data.type === 'reportSpace') {
+    if (node.data.type === 'spaceFolder') {
       node.toggleActivated();
 
       if (node.hasChildren) {
         node.toggleExpanded();
       }
     } else {
-      let report = this.reports.find(x => x.reportId === node.data.reportId);
+      let report = this.reports.find(x => x.reportId === node.data.unitId);
 
       if (isDefined(report)) {
         this.navToReport(report);
@@ -1177,7 +1179,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.favoritesOnly = favoritesOnly;
 
     this.updateFiltered({
-      reportNodes: this.reportsQuery.getValue().reportNodes
+      reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
     });
 
     this.cd.detectChanges();
@@ -1188,28 +1190,28 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let reportsState = this.reportsQuery.getValue();
 
-    let previousReportNodes = reportsState.reportNodes;
+    let previousReportSpaceNodes = reportsState.reportSpaceNodes;
 
-    let report = makeReportUnitsFromReportNodes({
-      reportNodes: reportsState.reportNodes
-    }).find(x => x.reportId === reportId) as any;
+    let report = makeSpaceUnitsFromSpaceNodes({
+      spaceNodes: reportsState.reportSpaceNodes
+    }).find(x => x.unitId === reportId) as any;
 
     let isFavorite = report?.isFavorite === true;
 
-    let newReportNodes = updateReportUnitFavorite({
-      reportNodes: reportsState.reportNodes,
-      reportId: reportId,
+    let newReportSpaceNodes = updateSpaceUnitFavorite({
+      spaceNodes: reportsState.reportSpaceNodes,
+      unitId: reportId,
       isFavorite: isFavorite === false
     });
 
     event.stopPropagation();
 
     this.reportsQuery.updatePart({
-      reportNodes: newReportNodes
+      reportSpaceNodes: newReportSpaceNodes
     });
 
     this.updateFiltered({
-      reportNodes: this.reportsQuery.getValue().reportNodes
+      reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
     });
 
     this.cd.detectChanges();
@@ -1234,11 +1236,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
           if (isOk === false) {
             this.reportsQuery.updatePart({
-              reportNodes: previousReportNodes
+              reportSpaceNodes: previousReportSpaceNodes
             });
 
             this.updateFiltered({
-              reportNodes: this.reportsQuery.getValue().reportNodes
+              reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
             });
 
             this.cd.detectChanges();
@@ -1253,8 +1255,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let { space } = item;
 
     let isSlashSeparatedSyntheticSpace = [
-      this.personalReportsSpaceId,
-      this.sharedReportsSpaceId
+      this.personalUnitsSpaceId,
+      this.sharedUnitsSpaceId
     ].some(spaceId => space.startsWith(`${spaceId}/`));
 
     let parts =
@@ -1459,10 +1461,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateFiltered(item: { reportNodes: ReportTreeNode[] }) {
-    let { reportNodes } = item;
+  updateFiltered(item: { reportSpaceNodes: SpaceNode[] }) {
+    let { reportSpaceNodes } = item;
 
-    let nodes = makeCopy(reportNodes ?? []);
+    let nodes = makeCopy(reportSpaceNodes ?? []);
 
     let searchNodes = pruneEmptySpaceNodes({
       nodes: nodes
@@ -1475,15 +1477,15 @@ export class ReportsComponent implements OnInit, OnDestroy {
     if (isSearchDefined === true) {
       reportMatchedIds = new Set<string>();
 
-      let searchEntries = makeReportUnitsFromReportNodes({
-        reportNodes: searchNodes
+      let searchEntries = makeSpaceUnitsFromSpaceNodes({
+        spaceNodes: searchNodes
       }).map(report => {
-        let title = isDefined(report.title) ? report.title : report.reportId;
+        let title = isDefined(report.title) ? report.title : report.unitId;
         let accessRolesCombined = report.accessRolesCombined.join(' ');
 
         return {
           report: report,
-          searchText: `${title} ${report.reportId} ${report.author ?? ''} ${report.displaySpace} ${accessRolesCombined}`
+          searchText: `${title} ${report.unitId} ${report.author ?? ''} ${report.displaySpace} ${accessRolesCombined}`
         };
       });
 
@@ -1505,11 +1507,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       matchedIndexes.forEach(index => {
         let entry = searchEntries[index];
-        reportMatchedIds.add(entry.report.reportId);
+        reportMatchedIds.add(entry.report.unitId);
       });
     }
 
-    let visibleNodes = makeVisibleReportNodes({
+    let visibleNodes = makeVisibleSpaceNodes({
       nodes: searchNodes,
       reportMatchedIds: reportMatchedIds
     });
@@ -1518,12 +1520,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let filteredReportNodes =
       this.favoritesOnly === true
-        ? flattenFavoriteReportNodes({ nodes: visibleNodes })
+        ? flattenFavoriteSpaceNodes({ nodes: visibleNodes })
         : visibleNodes;
 
-    let reportsFilteredByWord = makeReportUnitsFromReportNodes({
-      reportNodes: visibleNodes
-    });
+    let reportsFilteredByWord = makeSpaceUnitsFromSpaceNodes({
+      spaceNodes: visibleNodes
+    }).map(spaceUnit => spaceUnitToReportUnit({ spaceUnit: spaceUnit }));
 
     this.filteredReports = [...draftReports, ...reportsFilteredByWord].sort(
       (a, b) => {

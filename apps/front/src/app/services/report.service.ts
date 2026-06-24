@@ -25,8 +25,8 @@ import type {
 } from '#common/zod/to-backend/reports/to-backend-edit-draft-report';
 import {
   makeReportUnitFromReportX,
-  removeReportUnit
-} from '#front/app/functions/report-nodes';
+  removeSpaceUnit
+} from '#front/app/functions/space-nodes';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportQuery } from '../queries/report.query';
@@ -159,7 +159,7 @@ export class ReportService {
                 makeReportUnitFromReportX({ report: report }),
                 ...reportsState.reportUnitDrafts
               ],
-              reportNodes: reportsState.reportNodes
+              reportSpaceNodes: reportsState.reportSpaceNodes
             });
 
             this.navigateService.navigateToReport({
@@ -253,7 +253,7 @@ export class ReportService {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let reportsState = this.reportsQuery.getValue();
             let newReportUnitDrafts = [...reportsState.reportUnitDrafts];
-            let reportNodes = reportsState.reportNodes;
+            let reportSpaceNodes = reportsState.reportSpaceNodes;
 
             reportIds.forEach(reportId => {
               let repIndex = newReportUnitDrafts.findIndex(
@@ -267,15 +267,15 @@ export class ReportService {
                 ];
               }
 
-              reportNodes = removeReportUnit({
-                reportNodes: reportNodes,
-                reportId: reportId
+              reportSpaceNodes = removeSpaceUnit({
+                spaceNodes: reportSpaceNodes,
+                unitId: reportId
               });
             });
 
             this.reportsQuery.update({
               reportUnitDrafts: newReportUnitDrafts,
-              reportNodes: reportNodes
+              reportSpaceNodes: reportSpaceNodes
             });
 
             if (reportIds.indexOf(report.reportId) > -1) {

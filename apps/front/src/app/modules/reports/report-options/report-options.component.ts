@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
+import type { SpaceUnit } from '#common/zod/backend/space-unit';
+import { spaceUnitToReportUnit } from '#front/app/functions/space-nodes';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -16,10 +18,19 @@ import { NavigateService } from '#front/app/services/navigate.service';
 })
 export class ReportOptionsComponent {
   @Input()
-  reportUnit: ReportUnit;
+  set reportUnit(reportUnit: ReportUnit) {
+    this.currentReportUnit = reportUnit;
+  }
+
+  @Input()
+  set spaceUnit(spaceUnit: SpaceUnit) {
+    this.currentReportUnit = spaceUnitToReportUnit({ spaceUnit: spaceUnit });
+  }
 
   @Input()
   isHoverM: boolean;
+
+  currentReportUnit: ReportUnit;
 
   constructor(
     private navigateService: NavigateService,
@@ -39,7 +50,7 @@ export class ReportOptionsComponent {
 
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
-    let fileIdAr = this.reportUnit.filePath.split('/');
+    let fileIdAr = (this.currentReportUnit.filePath ?? '').split('/');
     fileIdAr.shift();
 
     let filePath = fileIdAr.join('/');
@@ -51,7 +62,7 @@ export class ReportOptionsComponent {
     });
   }
 
-  async editReportInfo(event: MouseEvent, item: ReportUnit) {
+  async editReportInfo(event: MouseEvent) {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();
@@ -63,7 +74,7 @@ export class ReportOptionsComponent {
       envId: nav.envId,
       repoId: nav.repoId,
       repoType: nav.repoType,
-      report: item
+      report: this.currentReportUnit
     });
   }
 
@@ -73,7 +84,7 @@ export class ReportOptionsComponent {
     let nav = this.navQuery.getValue();
 
     this.myDialogService.showDeleteReport({
-      report: this.reportUnit,
+      report: this.currentReportUnit,
       apiService: this.apiService,
       projectId: nav.projectId,
       branchId: nav.branchId,
@@ -81,7 +92,7 @@ export class ReportOptionsComponent {
       repoId: nav.repoId,
       repoType: nav.repoType,
       isStartSpinnerUntilNavEnd:
-        this.reportQuery.getValue().reportId === this.reportUnit.reportId
+        this.reportQuery.getValue().reportId === this.currentReportUnit.reportId
     });
   }
 }

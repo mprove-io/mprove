@@ -541,7 +541,7 @@ export class ApiService {
 
           this.reportsQuery.update({
             reportUnitDrafts: resp.payload.reportUnitDrafts,
-            reportNodes: resp.payload.reportNodes
+            reportSpaceNodes: resp.payload.reportSpaceNodes
           });
 
           this.modelsQuery.update({ models: resp.payload.storeModels });

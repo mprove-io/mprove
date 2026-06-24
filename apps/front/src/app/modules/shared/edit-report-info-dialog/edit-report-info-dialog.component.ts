@@ -41,8 +41,8 @@ import type {
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
-import { upsertReportUnit } from '#front/app/functions/report-nodes';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { upsertSpaceUnit } from '#front/app/functions/space-nodes';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
@@ -257,8 +257,8 @@ export class EditReportInfoDialogComponent implements OnInit {
 
                 this.reportsQuery.update({
                   reportUnitDrafts: reportsState.reportUnitDrafts,
-                  reportNodes: upsertReportUnit({
-                    reportNodes: reportsState.reportNodes,
+                  reportSpaceNodes: upsertSpaceUnit({
+                    spaceNodes: reportsState.reportSpaceNodes,
                     report: newReportPart
                   })
                 });

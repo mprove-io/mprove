@@ -140,16 +140,15 @@ export const DEFAULT_LIMIT = '500';
 
 export const MPROVE_USERS_FOLDER = 'mprove-users';
 
-export const REPORT_TREE_MY_REPORTS_SPACE_ID = '__my_reports__';
-export const REPORT_TREE_UNCATEGORIZED_REPORTS_SPACE_ID =
-  '__uncategorized_reports__';
-export const REPORT_TREE_PERSONAL_REPORTS_SPACE_ID = '__personal_reports__';
-export const REPORT_TREE_SHARED_REPORTS_SPACE_ID = '__shared_reports__';
+export const MY_UNITS_SPACE_ID = '__my_units__';
+export const UNCATEGORIZED_UNITS_SPACE_ID = '__uncategorized_units__';
+export const PERSONAL_UNITS_SPACE_ID = '__personal_units__';
+export const SHARED_UNITS_SPACE_ID = '__shared_units__';
 
-export const REPORT_TREE_MY_REPORTS_TITLE = 'My Reports';
-export const REPORT_TREE_UNCATEGORIZED_REPORTS_TITLE = 'Uncategorized';
-export const REPORT_TREE_PERSONAL_REPORTS_TITLE = 'Personal';
-export const REPORT_TREE_SHARED_REPORTS_TITLE = 'Shared';
+export const MY_UNITS_TITLE = 'My Reports';
+export const UNCATEGORIZED_UNITS_TITLE = 'Uncategorized';
+export const PERSONAL_UNITS_TITLE = 'Personal';
+export const SHARED_UNITS_TITLE = 'Shared';
 
 export const PATH_REGISTER = 'register';
 export const PATH_VERIFY_EMAIL = 'verify-email';

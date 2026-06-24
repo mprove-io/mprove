@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import type { ReportSpace } from '#common/zod/backend/report-space';
+import type { SpaceFolder } from '#common/zod/backend/space-folder';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { NavigateService } from '#front/app/services/navigate.service';
 
@@ -12,7 +12,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 })
 export class SpaceOptionsComponent {
   @Input()
-  reportSpace: ReportSpace;
+  spaceFolder: SpaceFolder;
 
   constructor(
     private navigateService: NavigateService,
@@ -28,7 +28,7 @@ export class SpaceOptionsComponent {
 
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
-    let fileIdAr = this.reportSpace.filePath.split('/');
+    let fileIdAr = this.spaceFolder.filePath.split('/');
     fileIdAr.shift();
 
     let filePath = fileIdAr.join('/');

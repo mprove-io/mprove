@@ -18,7 +18,7 @@ import type {
   ToBackendDeleteReportRequestPayload,
   ToBackendDeleteReportResponse
 } from '#common/zod/to-backend/reports/to-backend-delete-report';
-import { removeReportUnit } from '#front/app/functions/report-nodes';
+import { removeSpaceUnit } from '#front/app/functions/space-nodes';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -98,9 +98,9 @@ export class DeleteReportDialogComponent implements OnInit {
 
             this.reportsQuery.update({
               reportUnitDrafts: reportsState.reportUnitDrafts,
-              reportNodes: removeReportUnit({
-                reportNodes: reportsState.reportNodes,
-                reportId: report.reportId
+              reportSpaceNodes: removeSpaceUnit({
+                spaceNodes: reportsState.reportSpaceNodes,
+                unitId: report.reportId
               })
             });
 

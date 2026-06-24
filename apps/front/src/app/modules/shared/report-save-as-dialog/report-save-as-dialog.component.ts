@@ -38,8 +38,8 @@ import type {
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
-import { upsertReportUnit } from '#front/app/functions/report-nodes';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { upsertSpaceUnit } from '#front/app/functions/space-nodes';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -335,8 +335,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
                 reportUnitDrafts: reportsState.reportUnitDrafts.filter(
                   x => x.reportId !== this.fromReportId
                 ),
-                reportNodes: upsertReportUnit({
-                  reportNodes: reportsState.reportNodes,
+                reportSpaceNodes: upsertSpaceUnit({
+                  spaceNodes: reportsState.reportSpaceNodes,
                   report: newReportPart
                 })
               });
@@ -408,8 +408,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
                 reportUnitDrafts: reportsState.reportUnitDrafts.filter(
                   x => x.reportId !== this.fromReportId
                 ),
-                reportNodes: upsertReportUnit({
-                  reportNodes: reportsState.reportNodes,
+                reportSpaceNodes: upsertSpaceUnit({
+                  spaceNodes: reportsState.reportSpaceNodes,
                   report: newReportPart
                 })
               });

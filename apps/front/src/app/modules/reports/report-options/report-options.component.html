@@ -28,16 +28,17 @@
     <div
       tp="Report can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save report as new to become an author."
       placement="left"
-      [tpIsEnabled]="reportUnit.canEditOrDeleteReport === false"
+      [tpIsEnabled]="currentReportUnit.canEditOrDeleteReport === false"
     >
       <button
         data-cy="reportOptionsEditInfo"
         class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
-          'text-s400 cursor-default': reportUnit.canEditOrDeleteReport === false
+          'text-s400 cursor-default':
+            currentReportUnit.canEditOrDeleteReport === false
         }"
-        (click)="t1.hide(); editReportInfo($event, reportUnit)"
-        [disabled]="reportUnit.canEditOrDeleteReport === false"
+        (click)="t1.hide(); editReportInfo($event)"
+        [disabled]="currentReportUnit.canEditOrDeleteReport === false"
         >Edit Info</button
       >
     </div>
@@ -46,10 +47,11 @@
       data-cy="reportOptionsDelete"
       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
-        'text-s400 cursor-default': reportUnit.canEditOrDeleteReport === false
+        'text-s400 cursor-default':
+          currentReportUnit.canEditOrDeleteReport === false
       }"
       (click)="t1.hide(); deleteReport($event)"
-      [disabled]="reportUnit.canEditOrDeleteReport === false"
+      [disabled]="currentReportUnit.canEditOrDeleteReport === false"
       >Delete</button
     >
   </div>

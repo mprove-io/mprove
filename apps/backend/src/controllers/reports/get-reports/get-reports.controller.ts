@@ -13,6 +13,8 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
+import { makeReportSpaceUnit } from '#backend/functions/make-report-space-unit';
+import { makeReportUnit } from '#backend/functions/make-report-unit';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -23,13 +25,14 @@ import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
+import { SpaceService } from '#backend/services/space.service';
 import { TabService } from '#backend/services/tab.service';
-import { TreeService } from '#backend/services/tree.service';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { makeReportUnitsFromReportNodes } from '#common/functions/report-tree';
+import { makeSpaceUnitsFromSpaceNodes } from '#common/functions/space-tree';
+import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ToBackendGetReportsResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-reports';
 
 @ApiTags('Reports')
@@ -47,7 +50,7 @@ export class GetReportsController {
     private structsService: StructsService,
     private envsService: EnvsService,
     private favoritesService: FavoritesService,
-    private treeService: TreeService,
+    private spaceService: SpaceService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -183,11 +186,18 @@ export class GetReportsController {
       targetIds: reportTargetIds
     });
 
-    let reportNodes = this.treeService.makeReportNodes({
+    let reportSpaceUnits = sortedNonDraftReports.map(report =>
+      makeReportSpaceUnit({
+        report: report,
+        member: apiUserMember,
+        favoriteReportIds: favoriteReportIds
+      })
+    );
+
+    let reportSpaceNodes = this.spaceService.makeSpaceNodes({
       spaces: struct.spaces ?? [],
-      reports: sortedNonDraftReports,
-      member: apiUserMember,
-      favoriteReportIds: favoriteReportIds
+      units: reportSpaceUnits,
+      member: apiUserMember
     });
 
     let payload: ToBackendGetReportsResponsePayload = {
@@ -198,7 +208,7 @@ export class GetReportsController {
       }),
       userMember: apiUserMember,
       reportUnitDrafts: sortedDraftReports.map(x =>
-        this.treeService.makeReportUnit({
+        makeReportUnit({
           report: x,
           member: apiUserMember,
           favoriteReportIds: [],
@@ -206,13 +216,32 @@ export class GetReportsController {
           displaySpace: x.space ?? ''
         })
       ),
-      reportNodes: reportNodes,
+      reportSpaceNodes: reportSpaceNodes,
       storeModels: apiModels.filter(model => model.type === ModelTypeEnum.Store)
     };
 
     if (addNonDraftsList === true) {
-      payload.reportUnitNonDrafts = makeReportUnitsFromReportNodes({
-        reportNodes: reportNodes
+      payload.reportUnitNonDrafts = makeSpaceUnitsFromSpaceNodes({
+        spaceNodes: reportSpaceNodes
+      }).map(spaceUnit => {
+        let reportUnit: ReportUnit = {
+          type: 'reportUnit',
+          id: spaceUnit.id,
+          reportId: spaceUnit.unitId,
+          title: spaceUnit.title,
+          filePath: spaceUnit.filePath,
+          space: spaceUnit.space,
+          accessRoles: spaceUnit.accessRoles,
+          accessRolesCombined: spaceUnit.accessRolesCombined,
+          author: spaceUnit.author,
+          canEditOrDeleteReport: spaceUnit.canEditOrDeleteUnit,
+          isFavorite: spaceUnit.isFavorite,
+          draft: false,
+          displaySpace: spaceUnit.displaySpace,
+          displayAccessRoles: spaceUnit.displayAccessRoles
+        };
+
+        return reportUnit;
       });
     }
 

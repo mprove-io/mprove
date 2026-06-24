@@ -106,13 +106,13 @@ import { SessionArchiveService } from './services/session/session-archive.servic
 import { SessionDrainService } from './services/session/session-drain.service';
 import { SessionDrainTimerService } from './services/session/session-drain-timer.service';
 import { SessionSseService } from './services/session/session-sse.service';
+import { SpaceService } from './services/space.service';
 import { StoreService } from './services/store.service';
 import { TabService } from './services/tab.service';
 import { TabCheckerService } from './services/tab-checker.service';
 import { TabToEntService } from './services/tab-to-ent.service';
 import { TasksService } from './services/tasks.service';
 import { ToolService } from './services/tool.service';
-import { TreeService } from './services/tree.service';
 import { UserCodeService } from './services/user-code.service';
 
 export const appProviders = [
@@ -203,7 +203,7 @@ export const appProviders = [
   GetExplorerChartTabService,
   //
   ToolService,
-  TreeService,
+  SpaceService,
   GetConnectionSampleService,
   GetConnectionsListService,
   GetConnectionSchemasService,

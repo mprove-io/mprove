@@ -1,11 +1,8 @@
 import { z } from 'zod';
-import {
-  type ReportTreeNode,
-  zReportTreeNode
-} from '#common/zod/backend/report-tree-node';
+import { type SpaceNode, zSpaceNode } from '#common/zod/backend/space-node';
 
-export let zReportSpace = z.object({
-  type: z.literal('reportSpace'),
+export let zSpaceFolder = z.object({
+  type: z.literal('spaceFolder'),
   id: z.string(),
   space: z.string(),
   filePath: z.string(),
@@ -14,12 +11,12 @@ export let zReportSpace = z.object({
   accessRolesCombined: z.array(z.string()),
   isSynthetic: z.boolean(),
   get children() {
-    return z.array(zReportTreeNode);
+    return z.array(zSpaceNode);
   }
 });
 
-export type ReportSpace = {
-  type: 'reportSpace';
+export type SpaceFolder = {
+  type: 'spaceFolder';
   id: string;
   space: string;
   filePath: string;
@@ -27,5 +24,5 @@ export type ReportSpace = {
   accessRoles: string[];
   accessRolesCombined: string[];
   isSynthetic: boolean;
-  children: ReportTreeNode[];
+  children: SpaceNode[];
 };
