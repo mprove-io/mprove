@@ -122,17 +122,14 @@ export class DeleteReportController {
       envId: envId
     });
 
-    let existingReport = await this.reportsService.getReportCheckExists({
-      structId: bridge.structId,
-      reportId: reportId
-    });
-
-    if (userMember.isAdmin === false && userMember.isEditor === false) {
-      this.reportsService.checkReportPath({
-        userAlias: user.alias,
-        filePath: existingReport.filePath
+    let existingReport =
+      await this.reportsService.getReportCheckExistsAndAccess({
+        projectId: projectId,
+        reportId: reportId,
+        structId: bridge.structId,
+        user: user,
+        userMember: userMember
       });
-    }
 
     let baseProject = this.tabService.projectTabToBaseProject({
       project: project

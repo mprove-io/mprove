@@ -143,12 +143,6 @@ export class DeleteChartController {
       user: user
     });
 
-    await this.modelsService.getModelCheckExistsAndAccess({
-      structId: bridge.structId,
-      modelId: existingChart.modelId,
-      userMember: userMember
-    });
-
     if (userMember.isAdmin === false && userMember.isEditor === false) {
       this.chartsService.checkChartPath({
         userAlias: user.alias,

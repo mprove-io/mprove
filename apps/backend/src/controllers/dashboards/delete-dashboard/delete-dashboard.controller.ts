@@ -134,13 +134,6 @@ export class DeleteDashboardController {
         user: user
       });
 
-    if (userMember.isAdmin === false && userMember.isEditor === false) {
-      this.dashboardsService.checkDashboardPath({
-        userAlias: user.alias,
-        filePath: existingDashboard.filePath
-      });
-    }
-
     let baseProject = this.tabService.projectTabToBaseProject({
       project: project
     });

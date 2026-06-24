@@ -184,17 +184,14 @@ export class SaveModifyReportController {
       projectId: projectId
     });
 
-    let existingModReport = await this.reportsService.getReportCheckExists({
-      structId: bridge.structId,
-      reportId: modReportId
-    });
-
-    if (userMember.isAdmin === false && userMember.isEditor === false) {
-      this.reportsService.checkReportPath({
-        userAlias: user.alias,
-        filePath: existingModReport.filePath
+    let existingModReport =
+      await this.reportsService.getReportCheckExistsAndAccess({
+        projectId: projectId,
+        reportId: modReportId,
+        structId: bridge.structId,
+        user: user,
+        userMember: userMember
       });
-    }
 
     let metricIds = [
       ...new Set(

@@ -190,13 +190,6 @@ export class SaveModifyDashboardController {
         user: user
       });
 
-    if (userMember.isAdmin === false && userMember.isEditor === false) {
-      this.dashboardsService.checkDashboardPath({
-        userAlias: user.alias,
-        filePath: toDashboard.filePath
-      });
-    }
-
     let pathParts = toDashboard.filePath.split('.');
     pathParts[pathParts.length - 1] = FileExtensionEnum.Malloy.slice(1);
 

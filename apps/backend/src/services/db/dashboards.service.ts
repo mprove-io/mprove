@@ -204,24 +204,6 @@ export class DashboardsService {
     return dashboard;
   }
 
-  checkDashboardPath(item: { filePath: string; userAlias: string }) {
-    let filePathArray = item.filePath.split('/');
-
-    let usersFolderIndex = filePathArray.findIndex(
-      x => x === MPROVE_USERS_FOLDER
-    );
-
-    if (
-      usersFolderIndex < 0 ||
-      filePathArray.length === usersFolderIndex + 1 ||
-      filePathArray[usersFolderIndex + 1] !== item.userAlias
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_DASHBOARD_PATH
-      });
-    }
-  }
-
   async getDashboardCheckExistsAndAccess(item: {
     dashboardId: string;
     structId: string;

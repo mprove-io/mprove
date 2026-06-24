@@ -22,7 +22,7 @@ import type {
   ToBackendDeleteDashboardResponse
 } from '#common/zod/to-backend/dashboards/to-backend-delete-dashboard';
 
-let testId = 'backend-delete-dashboard__forbidden-dashboard-path';
+let testId = 'backend-delete-dashboard__forbidden-dashboard';
 
 let traceId = testId;
 
@@ -140,10 +140,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(
-      resp.info.error.message,
-      ErEnum.BACKEND_FORBIDDEN_DASHBOARD_PATH
-    );
+    assert.equal(resp.info.error.message, ErEnum.BACKEND_FORBIDDEN_DASHBOARD);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
