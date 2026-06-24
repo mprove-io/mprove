@@ -90,7 +90,8 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
             this.modelsQuery.update({ models: resp.payload.models });
 
             this.dashboardPartsQuery.update({
-              dashboardParts: resp.payload.dashboardParts
+              dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.payload.dashboardSpaceNodes
             });
 
             return true;

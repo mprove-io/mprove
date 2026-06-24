@@ -19,13 +19,19 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import {
+  APP_SPINNER_NAME,
+  EMPTY_SPACE,
+  EMPTY_SPACE_NAME
+} from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { makeCopy } from '#common/functions/make-copy';
 import type { DashboardPart } from '#common/zod/backend/dashboard-part';
 import type { Role } from '#common/zod/backend/role';
+import type { Space } from '#common/zod/blockml/space';
 import type {
   ToBackendSaveModifyDashboardRequestPayload,
   ToBackendSaveModifyDashboardResponse
@@ -37,8 +43,11 @@ import type {
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { UnitsUiService } from '#front/app/services/units-ui.service';
 import { SharedModule } from '../shared.module';
 
 export interface EditDashboardInfoDialogData {
@@ -50,6 +59,8 @@ export interface EditDashboardInfoDialogData {
   envId: string;
   dashboardPart: DashboardPart;
 }
+
+type SpaceOption = typeof EMPTY_SPACE;
 
 @Component({
   selector: 'm-edit-dashboard-info-dialog',
@@ -69,11 +80,17 @@ export class EditDashboardInfoDialogComponent implements OnInit {
   @ViewChild('editDashboardInfoDialogRoleSelect', { static: false })
   editDashboardInfoDialogRoleSelectElement: NgSelectComponent;
 
+  @ViewChild('editDashboardInfoDialogSpaceSelect', { static: false })
+  editDashboardInfoDialogSpaceSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.editDashboardInfoDialogRoleSelectElement?.close();
+    this.editDashboardInfoDialogSpaceSelectElement?.close();
     this.ref.close();
   }
+
+  emptySpaceName = EMPTY_SPACE_NAME;
 
   dashboardPath: string;
 
@@ -83,18 +100,80 @@ export class EditDashboardInfoDialogComponent implements OnInit {
 
   roles: Role[] = [];
   selectedAccessRoles: string[] = [];
+  selectedSpace: string;
+  combinedAccessRoles: string[] = [];
+  combinedAccessRolesText = '';
+  spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
 
   constructor(
     public ref: DialogRef<EditDashboardInfoDialogData>,
     private fb: FormBuilder,
     private dashboardPartsQuery: DashboardPartsQuery,
+    private memberQuery: MemberQuery,
     private dashboardQuery: DashboardQuery,
     private spinner: NgxSpinnerService,
+    private structQuery: StructQuery,
     private uiQuery: UiQuery,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private unitsUiService: UnitsUiService
   ) {}
 
+  makeSpacesPlusEmpty(item: { spaces: Space[] }): SpaceOption[] {
+    let { spaces } = item;
+
+    let spaceOptions = (spaces ?? []).map(space => ({
+      ...space,
+      label: this.makeSpaceLabel({ space: space, spaces: spaces ?? [] })
+    }));
+
+    return [makeCopy(EMPTY_SPACE), ...spaceOptions];
+  }
+
+  makeSpaceLabel(item: { space: Space; spaces: Space[] }) {
+    let { space, spaces } = item;
+    let parts = space.space.split('.');
+    let currentSpace = '';
+
+    return parts
+      .map((part, index) => {
+        currentSpace = index === 0 ? part : `${currentSpace}.${part}`;
+
+        let foundSpace = spaces.find(x => x.space === currentSpace);
+
+        return foundSpace?.title || part;
+      })
+      .join(' - ');
+  }
+
+  updateCombinedAccessRoles() {
+    let struct = this.structQuery.getValue();
+    let selectedSpace = struct?.spaces?.find(
+      x => x.space === this.selectedSpace
+    );
+
+    this.combinedAccessRoles = [
+      ...new Set([
+        ...(selectedSpace?.accessRolesCombined ?? []),
+        ...this.selectedAccessRoles
+      ])
+    ];
+    this.combinedAccessRolesText = this.combinedAccessRoles.join(', ');
+  }
+
+  spaceChange() {
+    this.updateCombinedAccessRoles();
+  }
+
+  accessRolesChange() {
+    this.updateCombinedAccessRoles();
+  }
+
   ngOnInit() {
+    let struct = this.structQuery.getValue();
+    this.spacesPlusEmpty = this.makeSpacesPlusEmpty({
+      spaces: struct.spaces
+    });
+
     let parts = this.ref.data.dashboardPart.filePath.split('/');
     parts.shift();
     this.dashboardPath = parts.join(' / ');
@@ -107,6 +186,8 @@ export class EditDashboardInfoDialogComponent implements OnInit {
     this.selectedAccessRoles = [
       ...(this.ref.data.dashboardPart.accessRoles || [])
     ];
+    this.selectedSpace = this.ref.data.dashboardPart.space ?? EMPTY_SPACE.space;
+    this.updateCombinedAccessRoles();
 
     this.loadRoles();
 
@@ -132,6 +213,10 @@ export class EditDashboardInfoDialogComponent implements OnInit {
         fromDashboardId: this.ref.data.dashboardPart.dashboardId,
         toDashboardId: this.ref.data.dashboardPart.dashboardId,
         dashboardTitle: newTitle.trim(),
+        space:
+          this.selectedSpace === EMPTY_SPACE_NAME
+            ? undefined
+            : this.selectedSpace,
         accessRoles: roles,
         tilesGrid: undefined,
         timezone: this.uiQuery.getValue().timezone
@@ -153,18 +238,16 @@ export class EditDashboardInfoDialogComponent implements OnInit {
               let newDashboard = resp.payload.dashboard;
 
               if (isDefined(newDashboard)) {
-                let dashboardParts =
-                  this.dashboardPartsQuery.getValue().dashboardParts;
-
-                let newDashboardParts = [
-                  newDashboardPart,
-                  ...dashboardParts.filter(
-                    x => x.dashboardId !== newDashboardPart.dashboardId
-                  )
-                ];
+                let dashboardParts = this.dashboardPartsQuery.getValue();
 
                 this.dashboardPartsQuery.update({
-                  dashboardParts: newDashboardParts
+                  dashboardUnitDrafts: dashboardParts.dashboardUnitDrafts,
+                  dashboardSpaceNodes:
+                    this.unitsUiService.upsertDashboardSpaceUnit({
+                      spaceNodes: dashboardParts.dashboardSpaceNodes,
+                      dashboard: newDashboardPart,
+                      member: this.memberQuery.getValue()
+                    })
                 });
 
                 let currentDashboard = this.dashboardQuery.getValue();

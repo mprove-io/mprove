@@ -29,7 +29,6 @@ import { ReportsComponent } from './reports.component';
 import { ReportsListComponent } from './reports-list/reports-list.component';
 import { RowComponent } from './row/row.component';
 import { RowFiltersComponent } from './row-filters/row-filters.component';
-import { SpaceOptionsComponent } from './space-options/space-options.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -42,7 +41,6 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     ReportFiltersComponent,
     RowComponent,
     ReportOptionsComponent,
-    SpaceOptionsComponent,
     MetricRendererComponent,
     StatusRendererComponent,
     DataRendererComponent,

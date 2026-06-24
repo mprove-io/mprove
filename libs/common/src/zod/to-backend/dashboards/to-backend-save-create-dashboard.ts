@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { zDashboardPart } from '#common/zod/backend/dashboard-part';
+import { zDashboardUnit } from '#common/zod/backend/dashboard-unit';
 import { zTileX } from '#common/zod/backend/tile-x';
 import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
@@ -16,6 +16,7 @@ export let zToBackendSaveCreateDashboardRequestPayload = z
     fromDashboardId: z.string().nullish(),
     newDashboardId: z.string(),
     dashboardTitle: z.string().nullish(),
+    space: z.string().nullish(),
     accessRoles: z.array(z.string()).nullish(),
     tilesGrid: z.array(zTileX).nullish(),
     timezone: z.string()
@@ -37,7 +38,7 @@ export let zToBackendSaveCreateDashboardRequest = zToBackendRequest
 
 export let zToBackendSaveCreateDashboardResponsePayload = z
   .object({
-    newDashboardPart: zDashboardPart
+    newDashboardPart: zDashboardUnit
   })
   .meta({ id: 'ToBackendSaveCreateDashboardResponsePayload' });
 

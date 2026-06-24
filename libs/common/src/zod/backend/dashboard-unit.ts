@@ -1,23 +1,24 @@
 import { z } from 'zod';
 import { zTile } from '#common/zod/blockml/tile';
 
-export let zSpaceUnit = z
+export let zDashboardUnit = z
   .object({
-    type: z.literal('spaceUnit'),
+    type: z.literal('dashboardUnit'),
     id: z.string(),
-    unitId: z.string(),
+    structId: z.string(),
+    dashboardId: z.string(),
+    draft: z.boolean(),
+    creatorId: z.string(),
     title: z.string(),
     filePath: z.string().nullish(),
     space: z.string().nullish(),
     accessRoles: z.array(z.string()),
     accessRolesCombined: z.array(z.string()),
+    tiles: z.array(zTile),
     author: z.string().nullish(),
-    canEditOrDeleteUnit: z.boolean(),
+    canEditOrDeleteDashboard: z.boolean(),
     isFavorite: z.boolean(),
     displaySpace: z.string(),
-    structId: z.string().nullish(),
-    creatorId: z.string().nullish(),
-    tiles: z.array(zTile).nullish(),
     displayAccessRoles: z.array(
       z.object({
         role: z.string(),
@@ -25,6 +26,6 @@ export let zSpaceUnit = z
       })
     )
   })
-  .meta({ id: 'SpaceUnit' });
+  .meta({ id: 'DashboardUnit' });
 
-export type SpaceUnit = z.infer<typeof zSpaceUnit>;
+export type DashboardUnit = z.infer<typeof zDashboardUnit>;

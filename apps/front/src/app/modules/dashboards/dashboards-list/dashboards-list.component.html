@@ -82,10 +82,13 @@
                   class="flex flex-1 flex-wrap truncate pb-[9px] pt-[7px] text-base"
                 >
                   <span
-                    *ngFor="let role of item.accessRoles"
+                    *ngFor="let accessRole of item.displayAccessRoles"
                     class="mr-2 truncate"
+                    [ngClass]="{
+                      'bg-green-200 text-green-700': accessRole.isDirect
+                    }"
                   >
-                    {{ role }}
+                    {{ accessRole.role }}
                   </span>
                 </div>
 

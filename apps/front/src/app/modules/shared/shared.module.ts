@@ -16,6 +16,7 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { FieldOptionsComponent } from '../models/model-tree/field-options/field-options.component';
 import { MiniChartRendererComponent } from '../reports/report/mini-chart-renderer/mini-chart-renderer.component';
 import { ReportAddRowDialogComponent } from '../reports/report-add-row-dialog/report-add-row-dialog.component';
+import { SpaceOptionsComponent } from '../reports/space-options/space-options.component';
 import { AvatarComponent } from './avatar/avatar.component';
 import { BricksComponent } from './bricks/bricks.component';
 import { ChartBoxComponent } from './chart-box/chart-box.component';
@@ -305,6 +306,7 @@ let sharedComponents = [
   ReportAddRowDialogComponent,
   DashboardEditListenersDialogComponent,
   ReportEditListenersDialogComponent,
+  SpaceOptionsComponent,
   ChartEditorComponent,
   ChartEditorSeriesElementComponent,
   ChartEditorYAxisElementComponent,

@@ -29,6 +29,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
+import { makeSpaceUnits } from '#common/functions/space/make-space-units';
+import { spaceUnitToDashboardUnit } from '#common/functions/space/space-unit-to-dashboard-unit';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { DashboardPart } from '#common/zod/backend/dashboard-part';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
@@ -204,7 +206,14 @@ export class ChartSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.dashboardParts = resp.payload.dashboardParts.map(x => {
+            this.dashboardParts = [
+              ...resp.payload.dashboardUnitDrafts,
+              ...makeSpaceUnits({
+                spaceNodes: resp.payload.dashboardSpaceNodes
+              }).map(spaceUnit =>
+                spaceUnitToDashboardUnit({ spaceUnit: spaceUnit })
+              )
+            ].map(x => {
               (x as any).disabled = !x.canEditOrDeleteDashboard;
               return x;
             });

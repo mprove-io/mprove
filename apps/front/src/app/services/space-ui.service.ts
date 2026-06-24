@@ -50,19 +50,17 @@ export class SpaceUiService {
 
   makeVisibleSpaceNodes(item: {
     nodes: SpaceNode[];
-    reportMatchedIds?: Set<string>;
+    unitMatchedIds?: Set<string>;
   }): SpaceNodeX[] {
-    let { nodes, reportMatchedIds } = item;
+    let { nodes, unitMatchedIds } = item;
     let visibleNodes: SpaceNodeX[] = [];
 
     (nodes ?? []).forEach(node => {
       if (node.type === 'spaceUnit') {
-        let isReportMatched =
-          reportMatchedIds === undefined
-            ? true
-            : reportMatchedIds.has(node.unitId);
+        let isUnitMatched =
+          unitMatchedIds === undefined ? true : unitMatchedIds.has(node.unitId);
 
-        if (isReportMatched === true) {
+        if (isUnitMatched === true) {
           visibleNodes.push(
             this.unitsUiService.spaceUnitToSpaceUnitX({
               spaceUnit: node,
@@ -76,7 +74,7 @@ export class SpaceUiService {
 
       let children = this.makeVisibleSpaceNodes({
         nodes: node.children ?? [],
-        reportMatchedIds: reportMatchedIds
+        unitMatchedIds: unitMatchedIds
       });
 
       if (children.length > 0) {
@@ -95,9 +93,9 @@ export class SpaceUiService {
 
   markSelectedAncestors(item: {
     nodes: SpaceNodeX[];
-    selectedReportId: string;
+    selectedUnitId: string;
   }): SpaceNodeX[] {
-    let { nodes, selectedReportId } = item;
+    let { nodes, selectedUnitId } = item;
 
     return nodes.map(node => {
       if (node.type === 'spaceUnit') {
@@ -106,12 +104,12 @@ export class SpaceUiService {
 
       let children = this.markSelectedAncestors({
         nodes: node.children ?? [],
-        selectedReportId: selectedReportId
+        selectedUnitId: selectedUnitId
       });
 
       let isSelectedAncestor = children.some(child =>
         child.type === 'spaceUnit'
-          ? child.unitId === selectedReportId
+          ? child.unitId === selectedUnitId
           : child.isSelectedAncestor === true
       );
 

@@ -1,3 +1,4 @@
+import { TreeComponent, TreeNode } from '@ali-hm/angular-tree-component';
 import { Location } from '@angular/common';
 import {
   ChangeDetectorRef,
@@ -16,11 +17,16 @@ import { from, interval, of, Subscription } from 'rxjs';
 import { concatMap, delay, filter, startWith, take, tap } from 'rxjs/operators';
 import { DASHBOARDS_PAGE_TITLE } from '#common/constants/page-titles';
 import {
+  MY_UNITS_SPACE_ID,
   PATH_DASHBOARDS,
   PATH_DASHBOARDS_LIST,
-  RESTRICTED_USER_ALIAS
+  PERSONAL_UNITS_SPACE_ID,
+  RESTRICTED_USER_ALIAS,
+  SHARED_UNITS_SPACE_ID,
+  UNCATEGORIZED_UNITS_SPACE_ID
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
+import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -28,12 +34,21 @@ import { getTimezones } from '#common/functions/get-timezones';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
+import { makeCopy } from '#common/functions/make-copy';
 import { makeTrackChangeId } from '#common/functions/make-track-change-id';
-import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import { makeSpaceUnits } from '#common/functions/space/make-space-units';
+import { spaceUnitToDashboardUnit } from '#common/functions/space/space-unit-to-dashboard-unit';
+import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Member } from '#common/zod/backend/member';
+import type { SpaceNode } from '#common/zod/backend/space-node';
+import type { SpaceNodeX } from '#common/zod/backend/space-node-x';
 import type { Query } from '#common/zod/blockml/query';
 import type { RefreshItem } from '#common/zod/front/refresh-item';
+import type {
+  ToBackendSetFavoriteRequestPayload,
+  ToBackendSetFavoriteResponse
+} from '#common/zod/to-backend/favorites/to-backend-set-favorite';
 import type {
   ToBackendGetQueriesRequestPayload,
   ToBackendGetQueriesResponse
@@ -56,7 +71,9 @@ import { ApiService } from '#front/app/services/api.service';
 import { DashboardService } from '#front/app/services/dashboard.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpaceUiService } from '#front/app/services/space-ui.service';
 import { UiService } from '#front/app/services/ui.service';
+import { UnitsUiService } from '#front/app/services/units-ui.service';
 
 @Component({
   standalone: false,
@@ -65,6 +82,13 @@ import { UiService } from '#front/app/services/ui.service';
 })
 export class DashboardsComponent implements OnInit, OnDestroy {
   @ViewChild('leftDashboardsContainer') leftDashboardsContainer!: ElementRef;
+
+  @ViewChild('dashboardsTree') dashboardsTree: TreeComponent;
+
+  myUnitsSpaceId = MY_UNITS_SPACE_ID;
+  uncategorizedUnitsSpaceId = UNCATEGORIZED_UNITS_SPACE_ID;
+  personalUnitsSpaceId = PERSONAL_UNITS_SPACE_ID;
+  sharedUnitsSpaceId = SHARED_UNITS_SPACE_ID;
 
   isInitialScrollCompleted = false;
 
@@ -133,15 +157,28 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   filteredDraftsLength: number;
 
-  dashboardParts: DashboardPart[];
-  dashboardPartsFilteredByWord: DashboardPart[];
-  dashboardPartsFiltered: DashboardPart[];
+  dashboardParts: DashboardUnit[];
+  dashboardPartsFilteredByWord: DashboardUnit[];
+  dashboardPartsFiltered: DashboardUnit[];
+  filteredDashboardNodes: SpaceNodeX[] = [];
+  favoritesOnly = false;
+
+  treeOptions = {
+    displayField: 'title'
+  };
 
   dashboardParts$ = this.dashboardPartsQuery.select().pipe(
     tap(x => {
-      this.dashboardParts = x.dashboardParts;
+      let nonDraftDashboardUnits = makeSpaceUnits({
+        spaceNodes: x.dashboardSpaceNodes
+      }).map(spaceUnit => spaceUnitToDashboardUnit({ spaceUnit: spaceUnit }));
 
-      this.makeFilteredDashboards();
+      this.dashboardParts = [
+        ...x.dashboardUnitDrafts,
+        ...nonDraftDashboardUnits
+      ];
+
+      this.updateFiltered({ dashboardSpaceNodes: x.dashboardSpaceNodes });
       this.cd.detectChanges();
     })
   );
@@ -179,6 +216,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   dashboard$ = this.dashboardQuery.select().pipe(
     tap(x => {
       this.dashboard = x;
+
+      this.filteredDashboardNodes = this.spaceUiService.markSelectedAncestors({
+        nodes: this.filteredDashboardNodes,
+        selectedUnitId: this.dashboard?.dashboardId
+      });
 
       this.checkQueries();
 
@@ -245,7 +287,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
     private location: Location,
-    private title: Title
+    private title: Title,
+    private spaceUiService: SpaceUiService,
+    private unitsUiService: UnitsUiService
   ) {}
 
   ngOnInit() {
@@ -295,6 +339,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.myDialogService.showDashboardSaveAs({
       apiService: this.apiService,
+      dashboards: this.dashboardParts.filter(
+        x => x.draft === false && isDefined(x.dashboardId)
+      ),
       dashboard: this.dashboard
     });
   }
@@ -305,7 +352,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     }
 
     this.timer = setTimeout(() => {
-      this.makeFilteredDashboards();
+      this.updateFiltered({
+        dashboardSpaceNodes:
+          this.dashboardPartsQuery.getValue().dashboardSpaceNodes
+      });
 
       this.cd.detectChanges();
     }, 600);
@@ -313,38 +363,85 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   resetSearch() {
     this.word = undefined;
-    this.makeFilteredDashboards();
+    this.updateFiltered({
+      dashboardSpaceNodes:
+        this.dashboardPartsQuery.getValue().dashboardSpaceNodes
+    });
 
     this.cd.detectChanges();
   }
 
-  makeFilteredDashboards() {
-    let idxs;
+  updateFiltered(item: { dashboardSpaceNodes: SpaceNode[] }) {
+    let { dashboardSpaceNodes } = item;
 
-    let draftDashboards = this.dashboardParts.filter(x => x.draft === true);
-    let nonDraftDashboards = this.dashboardParts.filter(x => x.draft === false);
+    let nodes = makeCopy(dashboardSpaceNodes ?? []);
 
-    if (isDefinedAndNotEmpty(this.word)) {
-      let haystack = nonDraftDashboards.map(x =>
-        isDefined(x.title) ? `${x.title}` : `${x.dashboardId}`
-      );
+    let searchNodes = this.spaceUiService.pruneEmptySpaceNodes({
+      nodes: nodes
+    });
+
+    let isSearchDefined = isDefinedAndNotEmpty(this.word);
+    let dashboardMatchedIds: Set<string> | undefined;
+
+    if (isSearchDefined === true) {
+      dashboardMatchedIds = new Set<string>();
+
+      let searchEntries = makeSpaceUnits({
+        spaceNodes: searchNodes
+      }).map(dashboard => {
+        let title = isDefined(dashboard.title)
+          ? dashboard.title
+          : dashboard.unitId;
+        let accessRolesCombined = dashboard.accessRolesCombined.join(' ');
+
+        return {
+          dashboard: dashboard,
+          searchText: `${title} ${dashboard.unitId} ${dashboard.author ?? ''} ${dashboard.displaySpace} ${accessRolesCombined}`
+        };
+      });
+
+      let haystack = searchEntries.map(entry => entry.searchText);
       let opts = {};
       let uf = new uFuzzy(opts);
-      idxs = uf.filter(haystack, this.word);
+      let idxs = uf.filter(haystack, this.word);
+      let searchWord = this.word.toLowerCase();
+      let matchedIndexes = new Set<number>(idxs ?? []);
+
+      searchEntries.forEach((entry, index) => {
+        let searchText = entry.searchText.toLowerCase();
+        let isSubstringMatched = searchText.includes(searchWord);
+
+        if (isSubstringMatched === true) {
+          matchedIndexes.add(index);
+        }
+      });
+
+      matchedIndexes.forEach(index => {
+        let entry = searchEntries[index];
+        dashboardMatchedIds.add(entry.dashboard.unitId);
+      });
     }
 
-    this.dashboardPartsFilteredByWord = isDefinedAndNotEmpty(this.word)
-      ? idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): DashboardPart => nonDraftDashboards[idx])
-        : []
-      : nonDraftDashboards;
+    let visibleNodes = this.spaceUiService.makeVisibleSpaceNodes({
+      nodes: searchNodes,
+      unitMatchedIds: dashboardMatchedIds
+    });
+
+    let draftDashboards = this.dashboardParts.filter(x => x.draft === true);
+
+    let filteredDashboardNodes =
+      this.favoritesOnly === true
+        ? this.spaceUiService.flattenFavoriteSpaceNodes({ nodes: visibleNodes })
+        : visibleNodes;
+
+    let dashboardsFilteredByWord = makeSpaceUnits({
+      spaceNodes: visibleNodes
+    }).map(spaceUnit => spaceUnitToDashboardUnit({ spaceUnit: spaceUnit }));
 
     this.dashboardPartsFiltered = [
       ...draftDashboards,
-      ...this.dashboardPartsFilteredByWord
-    ];
-
-    this.dashboardPartsFiltered = this.dashboardPartsFiltered.sort((a, b) => {
+      ...dashboardsFilteredByWord
+    ].sort((a, b) => {
       let aTitle = (a.title || a.dashboardId).toUpperCase();
       let bTitle = (b.title || b.dashboardId).toUpperCase();
 
@@ -366,6 +463,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.filteredDraftsLength = this.dashboardPartsFiltered.filter(
       y => y.draft === true
     ).length;
+
+    this.filteredDashboardNodes = this.spaceUiService.markSelectedAncestors({
+      nodes: filteredDashboardNodes,
+      selectedUnitId: this.dashboard?.dashboardId
+    });
   }
 
   newDashboard() {
@@ -396,12 +498,112 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteDraftDashboard(event: any, dashboardPart: DashboardPart) {
+  deleteDraftDashboard(event: any, dashboardPart: DashboardUnit) {
     event.stopPropagation();
 
     this.dashboardService.deleteDraftDashboards({
       dashboardIds: [dashboardPart.dashboardId]
     });
+  }
+
+  dashboardTreeNodeOnClick(item: { node: TreeNode }) {
+    let { node } = item;
+
+    if (node.data.type === 'spaceFolder') {
+      node.toggleActivated();
+
+      if (node.hasChildren) {
+        node.toggleExpanded();
+      }
+    } else {
+      this.navToDashboard(node.data.unitId);
+    }
+  }
+
+  collapseDashboardsTree() {
+    this.dashboardsTree?.treeModel?.collapseAll();
+  }
+
+  setFavoritesOnly(item: { event: MouseEvent; favoritesOnly: boolean }) {
+    let { event, favoritesOnly } = item;
+
+    event.stopPropagation();
+
+    this.favoritesOnly = favoritesOnly;
+
+    this.updateFiltered({
+      dashboardSpaceNodes:
+        this.dashboardPartsQuery.getValue().dashboardSpaceNodes
+    });
+
+    this.cd.detectChanges();
+  }
+
+  toggleFavoriteDashboard(item: { event: MouseEvent; dashboardId: string }) {
+    let { event, dashboardId } = item;
+
+    let dashboardsState = this.dashboardPartsQuery.getValue();
+    let previousDashboardSpaceNodes = dashboardsState.dashboardSpaceNodes;
+
+    let dashboard = makeSpaceUnits({
+      spaceNodes: dashboardsState.dashboardSpaceNodes
+    }).find(x => x.unitId === dashboardId) as any;
+
+    let isFavorite = dashboard?.isFavorite === true;
+
+    let newDashboardSpaceNodes = this.unitsUiService.updateSpaceUnitFavorite({
+      spaceNodes: dashboardsState.dashboardSpaceNodes,
+      unitId: dashboardId,
+      isFavorite: isFavorite === false
+    });
+
+    event.stopPropagation();
+
+    this.dashboardPartsQuery.updatePart({
+      dashboardSpaceNodes: newDashboardSpaceNodes
+    });
+
+    this.updateFiltered({
+      dashboardSpaceNodes:
+        this.dashboardPartsQuery.getValue().dashboardSpaceNodes
+    });
+
+    this.cd.detectChanges();
+
+    let nav = this.navQuery.getValue();
+
+    let payload: ToBackendSetFavoriteRequestPayload = {
+      projectId: nav.projectId,
+      type: FavoriteTypeEnum.Dashboard,
+      targetId: dashboardId,
+      isFavorite: isFavorite === false
+    };
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetFavorite,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: ToBackendSetFavoriteResponse) => {
+          let isOk = resp.info?.status === ResponseInfoStatusEnum.Ok;
+
+          if (isOk === false) {
+            this.dashboardPartsQuery.updatePart({
+              dashboardSpaceNodes: previousDashboardSpaceNodes
+            });
+
+            this.updateFiltered({
+              dashboardSpaceNodes:
+                this.dashboardPartsQuery.getValue().dashboardSpaceNodes
+            });
+
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   timezoneChange() {
@@ -458,6 +660,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let { isSmooth } = item;
 
     if (this.dashboard && this.showDashboardsLeftPanel === true) {
+      let dashboardUnit = this.dashboardParts?.find(
+        x => x.dashboardId === this.dashboard.dashboardId
+      );
+
+      if (
+        this.dashboard.draft === false &&
+        isDefinedAndNotEmpty(dashboardUnit?.space)
+      ) {
+        this.expandSpacePath({ space: dashboardUnit?.space });
+      }
+
       let selectedElement =
         this.leftDashboardsContainer.nativeElement.querySelector(
           `[dashboardId="${this.dashboard.dashboardId}"]`
@@ -475,6 +688,37 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       this.isInitialScrollCompleted = true;
       this.cd.detectChanges();
     }
+  }
+
+  expandSpacePath(item: { space: string }) {
+    let { space } = item;
+
+    let isSlashSeparatedSyntheticSpace = [
+      this.personalUnitsSpaceId,
+      this.sharedUnitsSpaceId
+    ].some(spaceId => space.startsWith(`${spaceId}/`));
+
+    let parts =
+      isSlashSeparatedSyntheticSpace === true
+        ? space.split('/')
+        : space.split('.');
+
+    let currentSpace = '';
+
+    parts.forEach((part, index) => {
+      currentSpace =
+        index === 0
+          ? part
+          : isSlashSeparatedSyntheticSpace === true
+            ? `${currentSpace}/${part}`
+            : `${currentSpace}.${part}`;
+
+      let node = this.dashboardsTree?.treeModel?.getNodeById(currentSpace);
+
+      if (isDefined(node)) {
+        node.expand();
+      }
+    });
   }
 
   addTile() {

@@ -37,12 +37,14 @@ import type {
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
+import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UnitsUiService } from '#front/app/services/units-ui.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CreateDashboardDialogData {
@@ -117,12 +119,14 @@ export class CreateDashboardDialogComponent implements OnInit {
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private uiQuery: UiQuery,
+    private memberQuery: MemberQuery,
     private navigateService: NavigateService,
     private dashboardPartsQuery: DashboardPartsQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private unitsUiService: UnitsUiService
   ) {}
 
   ngOnInit() {
@@ -182,23 +186,18 @@ export class CreateDashboardDialogComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let dashboardPart = resp.payload.newDashboardPart;
             if (isDefined(dashboardPart)) {
-              let dashboardParts =
-                this.dashboardPartsQuery.getValue().dashboardParts;
-
-              let newDashboardParts = [
-                dashboardPart,
-                ...dashboardParts.filter(
-                  d =>
-                    d.dashboardId !== dashboardPart.dashboardId &&
-                    !(
-                      d.draft === true &&
-                      d.dashboardId === this.dashboard.dashboardId
-                    )
-                )
-              ];
+              let dashboardParts = this.dashboardPartsQuery.getValue();
 
               this.dashboardPartsQuery.update({
-                dashboardParts: newDashboardParts
+                dashboardUnitDrafts: dashboardParts.dashboardUnitDrafts.filter(
+                  d => d.dashboardId !== dashboardPart.dashboardId
+                ),
+                dashboardSpaceNodes:
+                  this.unitsUiService.upsertDashboardSpaceUnit({
+                    spaceNodes: dashboardParts.dashboardSpaceNodes,
+                    dashboard: dashboardPart,
+                    member: this.memberQuery.getValue()
+                  })
               });
 
               this.navigateService.navigateToDashboard({

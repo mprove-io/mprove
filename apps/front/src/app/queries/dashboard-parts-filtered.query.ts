@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import { BaseQuery } from './base.query';
 
 export class DashboardPartsFilteredState {
-  dashboardPartsFiltered: DashboardPart[];
+  dashboardPartsFiltered: DashboardUnit[];
 }
 
 let dashboardPartsFiltered: DashboardPartsFilteredState = {

@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import type { ReportTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  DashboardTab,
+  ReportTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined';
 import { makeDisplayAccessRoles } from '#common/functions/space/make-display-access-roles';
+import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { Member } from '#common/zod/backend/member';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
@@ -16,6 +20,27 @@ export class UnitsService {
 
     if (isDefined(report.filePath)) {
       let filePathArray = report.filePath.split('/');
+
+      let usersFolderIndex = filePathArray.findIndex(
+        x => x === MPROVE_USERS_FOLDER
+      );
+
+      author =
+        usersFolderIndex > -1 && filePathArray.length > usersFolderIndex + 1
+          ? filePathArray[usersFolderIndex + 1]
+          : undefined;
+    }
+
+    return author;
+  }
+
+  getDashboardAuthor(item: { dashboard: DashboardTab }): string | undefined {
+    let { dashboard } = item;
+
+    let author: string;
+
+    if (isDefined(dashboard.filePath)) {
+      let filePathArray = dashboard.filePath.split('/');
 
       let usersFolderIndex = filePathArray.findIndex(
         x => x === MPROVE_USERS_FOLDER
@@ -94,6 +119,77 @@ export class UnitsService {
         accessRoles: report.accessRoles,
         accessRolesCombined: report.accessRolesCombined
       })
+    };
+  }
+
+  makeDashboardUnit(item: {
+    dashboard: DashboardTab;
+    member: Member;
+    favoriteDashboardIds: string[];
+    space: string | undefined;
+    displaySpace: string;
+  }): DashboardUnit {
+    let { dashboard, member, favoriteDashboardIds, space, displaySpace } = item;
+    let author = this.getDashboardAuthor({ dashboard: dashboard });
+
+    return {
+      type: 'dashboardUnit',
+      id: dashboard.dashboardId,
+      structId: dashboard.structId,
+      dashboardId: dashboard.dashboardId,
+      draft: dashboard.draft,
+      creatorId: dashboard.creatorId,
+      title: dashboard.title || dashboard.dashboardId,
+      filePath: dashboard.filePath,
+      space: space,
+      accessRoles: dashboard.accessRoles,
+      accessRolesCombined: dashboard.accessRolesCombined,
+      tiles: dashboard.tiles,
+      author: author,
+      canEditOrDeleteDashboard:
+        member.isEditor === true ||
+        member.isAdmin === true ||
+        author === member.alias,
+      isFavorite: favoriteDashboardIds.indexOf(dashboard.dashboardId) > -1,
+      displaySpace: displaySpace,
+      displayAccessRoles: makeDisplayAccessRoles({
+        accessRoles: dashboard.accessRoles,
+        accessRolesCombined: dashboard.accessRolesCombined
+      })
+    };
+  }
+
+  makeDashboardSpaceUnit(item: {
+    dashboard: DashboardTab;
+    member: Member;
+    favoriteDashboardIds: string[];
+  }): SpaceUnit {
+    let { dashboard, member, favoriteDashboardIds } = item;
+    let author = this.getDashboardAuthor({ dashboard: dashboard });
+
+    return {
+      type: 'spaceUnit',
+      id: dashboard.dashboardId,
+      unitId: dashboard.dashboardId,
+      title: dashboard.title || dashboard.dashboardId,
+      filePath: dashboard.filePath,
+      space: dashboard.space,
+      accessRoles: dashboard.accessRoles,
+      accessRolesCombined: dashboard.accessRolesCombined,
+      author: author,
+      canEditOrDeleteUnit:
+        member.isEditor === true ||
+        member.isAdmin === true ||
+        author === member.alias,
+      isFavorite: favoriteDashboardIds.indexOf(dashboard.dashboardId) > -1,
+      displaySpace: dashboard.space ?? '',
+      displayAccessRoles: makeDisplayAccessRoles({
+        accessRoles: dashboard.accessRoles,
+        accessRolesCombined: dashboard.accessRolesCombined
+      }),
+      structId: dashboard.structId,
+      creatorId: dashboard.creatorId,
+      tiles: dashboard.tiles
     };
   }
 }

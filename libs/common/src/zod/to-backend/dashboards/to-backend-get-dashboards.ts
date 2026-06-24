@@ -1,8 +1,9 @@
 import { z } from 'zod';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { zDashboardPart } from '#common/zod/backend/dashboard-part';
+import { zDashboardUnit } from '#common/zod/backend/dashboard-unit';
 import { zMember } from '#common/zod/backend/member';
 import { zModelX } from '#common/zod/backend/model-x';
+import { zSpaceNode } from '#common/zod/backend/space-node';
 import { zStructX } from '#common/zod/backend/struct-x';
 import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
@@ -37,7 +38,8 @@ export let zToBackendGetDashboardsResponsePayload = z
     struct: zStructX,
     userMember: zMember,
     models: z.array(zModelX),
-    dashboardParts: z.array(zDashboardPart)
+    dashboardUnitDrafts: z.array(zDashboardUnit),
+    dashboardSpaceNodes: z.array(zSpaceNode)
   })
   .meta({ id: 'ToBackendGetDashboardsResponsePayload' });
 

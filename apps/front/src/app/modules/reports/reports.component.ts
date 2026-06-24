@@ -218,7 +218,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       this.filteredReportNodes = this.spaceUiService.markSelectedAncestors({
         nodes: this.filteredReportNodes,
-        selectedReportId: this.report?.reportId
+        selectedUnitId: this.report?.reportId
       });
 
       this.cd.detectChanges();
@@ -1510,7 +1510,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let visibleNodes = this.spaceUiService.makeVisibleSpaceNodes({
       nodes: searchNodes,
-      reportMatchedIds: reportMatchedIds
+      unitMatchedIds: reportMatchedIds
     });
 
     let draftReports = this.reports.filter(x => x.draft === true);
@@ -1551,7 +1551,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.filteredReportNodes = this.spaceUiService.markSelectedAncestors({
       nodes: filteredReportNodes,
-      selectedReportId: this.report?.reportId
+      selectedUnitId: this.report?.reportId
     });
   }
 

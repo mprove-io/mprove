@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { zDashboardPart } from '#common/zod/backend/dashboard-part';
+import { zDashboardUnit } from '#common/zod/backend/dashboard-unit';
 import { zDashboardX } from '#common/zod/backend/dashboard-x';
 import { zTileX } from '#common/zod/backend/tile-x';
 import { zMyResponse } from '#common/zod/to/my-response';
@@ -20,6 +20,7 @@ export let zToBackendSaveModifyDashboardRequestPayload = z
     isReplaceTile: z.boolean().nullish(),
     selectedTileTitle: z.string().nullish(),
     dashboardTitle: z.string().nullish(),
+    space: z.string().nullish(),
     accessRoles: z.array(z.string()).nullish(),
     tilesGrid: z.array(zTileX).nullish(),
     timezone: z.string()
@@ -42,7 +43,7 @@ export let zToBackendSaveModifyDashboardRequest = zToBackendRequest
 export let zToBackendSaveModifyDashboardResponsePayload = z
   .object({
     dashboard: zDashboardX,
-    newDashboardPart: zDashboardPart
+    newDashboardPart: zDashboardUnit
   })
   .meta({ id: 'ToBackendSaveModifyDashboardResponsePayload' });
 

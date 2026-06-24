@@ -23,6 +23,7 @@ import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
+import { UnitsUiService } from '#front/app/services/units-ui.service';
 
 export interface DeleteDashboardDialogData {
   apiService: ApiService;
@@ -55,7 +56,8 @@ export class DeleteDashboardDialogComponent implements OnInit {
     private dashboardPartsQuery: DashboardPartsQuery,
     private dashboardQuery: DashboardQuery,
     private navigateService: NavigateService,
-    private uiService: UiService
+    private uiService: UiService,
+    private unitsUiService: UnitsUiService
   ) {}
 
   ngOnInit(): void {
@@ -93,13 +95,14 @@ export class DeleteDashboardDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendDeleteDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardParts =
-              this.dashboardPartsQuery.getValue().dashboardParts;
+            let dashboardParts = this.dashboardPartsQuery.getValue();
 
             this.dashboardPartsQuery.update({
-              dashboardParts: dashboardParts.filter(
-                d => d.dashboardId !== dashboardPart.dashboardId
-              )
+              dashboardUnitDrafts: dashboardParts.dashboardUnitDrafts,
+              dashboardSpaceNodes: this.unitsUiService.removeSpaceUnit({
+                spaceNodes: dashboardParts.dashboardSpaceNodes,
+                unitId: dashboardPart.dashboardId
+              })
             });
 
             let currentDashboard = this.dashboardQuery.getValue();

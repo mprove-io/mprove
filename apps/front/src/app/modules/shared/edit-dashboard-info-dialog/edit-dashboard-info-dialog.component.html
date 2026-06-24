@@ -31,6 +31,50 @@
     </div>
   </div>
 
+  <div class="mt-2 flex flex-row items-start">
+    <div class="flex flex-col">
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+        >Space</div
+      >
+    </div>
+
+    <div class="ml-5 flex flex-col items-start">
+      <ng-select
+        #editDashboardInfoDialogSpaceSelect
+        [fixNgSelectBottom]="editDashboardInfoDialogSpaceSelect"
+        data-cy="editDashboardInfoDialogSpaceSelect"
+        class="select-h-10 w-96 flex-shrink-0"
+        [items]="spacesPlusEmpty"
+        [multiple]="false"
+        [searchable]="true"
+        [clearable]="false"
+        [(ngModel)]="selectedSpace"
+        (change)="spaceChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation();
+          editDashboardInfoDialogSpaceSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation();
+          editDashboardInfoDialogSpaceSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="space"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate text-base">{{
+            item.space === emptySpaceName ? '' : item.label
+          }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate text-base">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+
   <div class="flex min-h-[100px] flex-row items-start">
     <div class="flex flex-col">
       <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
@@ -54,6 +98,7 @@
           [searchable]="true"
           [clearable]="true"
           [(ngModel)]="selectedAccessRoles"
+          (change)="accessRolesChange()"
           (keyup.esc)="
             $event.stopImmediatePropagation();
             editDashboardInfoDialogRoleSelect.blur()
@@ -70,6 +115,10 @@
             <div class="ml-1 truncate text-base">{{ item.roleId }}</div>
           </ng-template>
         </ng-select>
+
+        <div class="text-s400 ml-[14px] mt-2 w-96 text-base">
+          {{ combinedAccessRolesText }}
+        </div>
       </div>
     </div>
   </div>

@@ -34,6 +34,7 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
+import { makeDisplayAccessRoles } from '#common/functions/space/make-display-access-roles';
 import { ServerError } from '#common/models/server-error';
 import type { DashboardPart } from '#common/zod/backend/dashboard-part';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
@@ -156,6 +157,8 @@ export class DashboardsService {
       member.isEditor || member.isAdmin || author === member.alias;
 
     let dashboardPart: DashboardPart = {
+      type: 'dashboardUnit',
+      id: dashboard.dashboardId,
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
       draft: dashboard.draft,
@@ -167,7 +170,13 @@ export class DashboardsService {
       accessRolesCombined: dashboard.accessRolesCombined,
       tiles: dashboard.tiles,
       author: author,
-      canEditOrDeleteDashboard: canEditOrDeleteDashboard
+      canEditOrDeleteDashboard: canEditOrDeleteDashboard,
+      isFavorite: false,
+      displaySpace: dashboard.space ?? '',
+      displayAccessRoles: makeDisplayAccessRoles({
+        accessRoles: dashboard.accessRoles,
+        accessRolesCombined: dashboard.accessRolesCombined
+      })
     };
 
     return dashboardPart;

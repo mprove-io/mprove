@@ -1,7 +1,9 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
+import { spaceUnitToDashboardUnit } from '#common/functions/space/space-unit-to-dashboard-unit';
 import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { SpaceUnit } from '#common/zod/backend/space-unit';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -16,10 +18,21 @@ import { NavigateService } from '#front/app/services/navigate.service';
 })
 export class DashboardOptionsComponent {
   @Input()
-  dashboardPart: DashboardPart;
+  set dashboardPart(dashboardPart: DashboardPart) {
+    this.currentDashboardPart = dashboardPart;
+  }
+
+  @Input()
+  set spaceUnit(spaceUnit: SpaceUnit) {
+    this.currentDashboardPart = spaceUnitToDashboardUnit({
+      spaceUnit: spaceUnit
+    });
+  }
 
   @Input()
   isHoverM: boolean;
+
+  currentDashboardPart: DashboardPart;
 
   constructor(
     private myDialogService: MyDialogService,
@@ -40,7 +53,7 @@ export class DashboardOptionsComponent {
 
     event.stopPropagation();
 
-    let fileIdAr = this.dashboardPart.filePath.split('/');
+    let fileIdAr = this.currentDashboardPart.filePath.split('/');
     fileIdAr.shift();
 
     let filePath = fileIdAr.join('/');
@@ -73,7 +86,7 @@ export class DashboardOptionsComponent {
     let nav = this.navQuery.getValue();
 
     this.myDialogService.showDeleteDashboard({
-      dashboardPart: this.dashboardPart,
+      dashboardPart: this.currentDashboardPart,
       apiService: this.apiService,
       projectId: nav.projectId,
       branchId: nav.branchId,
@@ -82,7 +95,7 @@ export class DashboardOptionsComponent {
       repoType: nav.repoType,
       isStartSpinnerUntilNavEnd:
         this.dashboardQuery.getValue().dashboardId ===
-        this.dashboardPart.dashboardId
+        this.currentDashboardPart.dashboardId
     });
   }
 }

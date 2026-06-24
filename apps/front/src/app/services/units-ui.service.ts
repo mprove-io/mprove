@@ -7,6 +7,7 @@ import { getSpaceUnit } from '#common/functions/space/get-space-unit';
 import { makeDisplayAccessRoles } from '#common/functions/space/make-display-access-roles';
 import { makeSpaceUnitTarget } from '#common/functions/space/make-space-unit-target';
 import { sortSpaceNodes } from '#common/functions/space/sort-space-nodes';
+import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { Member } from '#common/zod/backend/member';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
@@ -78,6 +79,32 @@ export class UnitsUiService {
         accessRoles: report.accessRoles,
         accessRolesCombined: report.accessRolesCombined
       })
+    };
+  }
+
+  makeSpaceUnitFromDashboardUnit(item: {
+    dashboard: DashboardUnit;
+    isFavorite?: boolean;
+  }): SpaceUnit {
+    let { dashboard, isFavorite } = item;
+
+    return {
+      type: 'spaceUnit',
+      id: dashboard.dashboardId,
+      unitId: dashboard.dashboardId,
+      title: dashboard.title || dashboard.dashboardId,
+      filePath: dashboard.filePath,
+      space: dashboard.space,
+      accessRoles: dashboard.accessRoles,
+      accessRolesCombined: dashboard.accessRolesCombined,
+      author: dashboard.author,
+      canEditOrDeleteUnit: dashboard.canEditOrDeleteDashboard === true,
+      isFavorite: isFavorite === true,
+      displaySpace: dashboard.displaySpace,
+      displayAccessRoles: dashboard.displayAccessRoles,
+      structId: dashboard.structId,
+      creatorId: dashboard.creatorId,
+      tiles: dashboard.tiles
     };
   }
 
@@ -194,6 +221,73 @@ export class UnitsUiService {
 
     return addDisplaySpace({
       spaceNodes: sortSpaceNodes({ nodes: [...nodes, reportNode] }),
+      pathParts: []
+    });
+  }
+
+  upsertDashboardSpaceUnit(item: {
+    spaceNodes: SpaceNode[];
+    dashboard: DashboardUnit;
+    member: Member;
+  }): SpaceNode[] {
+    let { spaceNodes, dashboard, member } = item;
+    let isFavorite = this.getSpaceUnitFavorite({
+      spaceNodes: spaceNodes,
+      unitId: dashboard.dashboardId
+    });
+
+    let nodes = this.removeSpaceUnit({
+      spaceNodes: spaceNodes,
+      unitId: dashboard.dashboardId
+    });
+
+    if (dashboard.draft === true) {
+      return nodes;
+    }
+
+    let target = makeSpaceUnitTarget({
+      space: dashboard.space,
+      author: dashboard.author,
+      accessRoles: dashboard.accessRoles,
+      member: member
+    });
+    let targetSpace = target.space;
+
+    let dashboardNode = {
+      ...this.makeSpaceUnitFromDashboardUnit({
+        dashboard: dashboard,
+        isFavorite: isFavorite
+      }),
+      space: targetSpace
+    };
+
+    if (targetSpace) {
+      nodes = addSpaceUnitToExistingSpace({
+        nodes: nodes,
+        space: targetSpace,
+        spaceUnit: dashboardNode
+      });
+
+      if (this.hasSpaceUnit({ nodes: nodes, unitId: dashboard.dashboardId })) {
+        return addDisplaySpace({ spaceNodes: nodes, pathParts: [] });
+      }
+
+      if (target.isSynthetic === true) {
+        let withSyntheticTarget = addMissingSyntheticSpaceUnitTarget({
+          nodes: nodes,
+          target: target,
+          spaceUnit: dashboardNode
+        });
+
+        return addDisplaySpace({
+          spaceNodes: withSyntheticTarget,
+          pathParts: []
+        });
+      }
+    }
+
+    return addDisplaySpace({
+      spaceNodes: sortSpaceNodes({ nodes: [...nodes, dashboardNode] }),
       pathParts: []
     });
   }

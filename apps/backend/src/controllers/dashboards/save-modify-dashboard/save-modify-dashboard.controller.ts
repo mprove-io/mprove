@@ -27,6 +27,8 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path';
+import { getReportTargetParentNodeId } from '#backend/functions/get-report-target-parent-node-id';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -57,6 +59,10 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { ToBackendSaveModifyDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
+import type {
+  ToDiskMoveCatalogNodeRequest,
+  ToDiskMoveCatalogNodeResponse
+} from '#common/zod/to-disk/04-catalogs/to-disk-move-catalog-node';
 import type {
   ToDiskSaveFileRequest,
   ToDiskSaveFileResponse
@@ -115,6 +121,7 @@ export class SaveModifyDashboardController {
       isReplaceTile,
       accessRoles,
       dashboardTitle,
+      space,
       tilesGrid,
       timezone
     } = body.payload;
@@ -190,8 +197,8 @@ export class SaveModifyDashboardController {
         user: user
       });
 
-    let pathParts = toDashboard.filePath.split('.');
-    pathParts[pathParts.length - 1] = FileExtensionEnum.Malloy.slice(1);
+    // let pathParts = toDashboard.filePath.split('.');
+    // pathParts[pathParts.length - 1] = FileExtensionEnum.Malloy.slice(1);
 
     let dashFileText: string;
 
@@ -284,6 +291,69 @@ export class SaveModifyDashboardController {
       project: project
     });
 
+    let currentDashboardSpace = getReportSpaceFromFilePath({
+      filePath: toDashboard.filePath,
+      spaces: currentStruct.spaces
+    });
+
+    if (
+      currentDashboardSpace !== space &&
+      userMember.isAdmin === false &&
+      userMember.isEditor === false
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+      });
+    }
+
+    let targetParentNodeId = getReportTargetParentNodeId({
+      projectId: projectId,
+      mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
+      userAlias: user.alias,
+      space: space,
+      spaces: currentStruct.spaces
+    });
+
+    let dashboardFileName = `${toDashboardId}${FileExtensionEnum.Dashboard}`;
+
+    let targetDashboardFilePath = `${targetParentNodeId}/${dashboardFileName}`;
+
+    let isSpaceChanged = currentDashboardSpace !== space;
+
+    let isDashboardPathChanged =
+      toDashboard.filePath !== targetDashboardFilePath;
+
+    let shouldMoveDashboard = isSpaceChanged && isDashboardPathChanged;
+
+    let finalDashboardFilePath = shouldMoveDashboard
+      ? targetDashboardFilePath
+      : toDashboard.filePath;
+
+    if (shouldMoveDashboard) {
+      let toDiskMoveCatalogNodeRequest: ToDiskMoveCatalogNodeRequest = {
+        info: {
+          name: ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
+          traceId: body.info.traceId
+        },
+        payload: {
+          orgId: project.orgId,
+          baseProject: baseProject,
+          repoId: repoId,
+          branch: branchId,
+          fromNodeId: toDashboard.filePath,
+          toNodeId: targetDashboardFilePath
+        }
+      };
+
+      await this.rpcService.sendToDisk<ToDiskMoveCatalogNodeResponse>({
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: repoId,
+        message: toDiskMoveCatalogNodeRequest,
+        checkIsOk: true
+      });
+    }
+
     let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
@@ -294,7 +364,7 @@ export class SaveModifyDashboardController {
         baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: toDashboard.filePath,
+        fileNodeId: finalDashboardFilePath,
         userAlias: user.alias,
         content: dashFileText
       }
@@ -327,9 +397,23 @@ export class SaveModifyDashboardController {
 
     let diskFiles = [
       diskResponse.payload.files.find(
-        file => file.fileNodeId === toDashboard.filePath
+        file => file.fileNodeId === finalDashboardFilePath
       )
     ];
+
+    let selectedSpaceFilePath = currentStruct.spaces.find(
+      x => x.space === space
+    )?.filePath;
+
+    if (isDefined(selectedSpaceFilePath)) {
+      let spaceDiskFile = diskResponse.payload.files.find(
+        file => file.fileNodeId === selectedSpaceFilePath
+      );
+
+      if (isDefined(spaceDiskFile)) {
+        diskFiles.push(spaceDiskFile);
+      }
+    }
 
     let modelIds = [
       ...(fromDashboardX?.tiles ?? []).map(tile => tile.modelId),

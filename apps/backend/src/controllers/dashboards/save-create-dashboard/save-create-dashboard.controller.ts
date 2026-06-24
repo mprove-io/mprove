@@ -27,6 +27,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { getReportTargetParentNodeId } from '#backend/functions/get-report-target-parent-node-id';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -44,12 +45,7 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import {
-  EMPTY_STRUCT_ID,
-  MPROVE_CONFIG_DIR_DOT_SLASH,
-  MPROVE_USERS_FOLDER,
-  UTC
-} from '#common/constants/top';
+import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
@@ -115,6 +111,7 @@ export class SaveCreateDashboardController {
       newDashboardId,
       fromDashboardId,
       dashboardTitle,
+      space,
       accessRoles,
       tilesGrid,
       timezone
@@ -174,19 +171,13 @@ export class SaveCreateDashboardController {
       projectId: projectId
     });
 
-    let mdir = currentStruct.mproveConfig.mproveDirValue;
-
-    if (
-      mdir.length > 2 &&
-      mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
-    ) {
-      mdir = mdir.substring(2);
-    }
-
-    let parentNodeId =
-      currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
-        : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
+    let parentNodeId = getReportTargetParentNodeId({
+      projectId: projectId,
+      mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
+      userAlias: user.alias,
+      space: space,
+      spaces: currentStruct.spaces
+    });
 
     let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;
 
@@ -320,6 +311,20 @@ export class SaveCreateDashboardController {
         file => file.fileNodeId === `${parentNodeId}/${fileName}`
       )
     ];
+
+    let selectedSpaceFilePath = currentStruct.spaces.find(
+      x => x.space === space
+    )?.filePath;
+
+    if (isDefined(selectedSpaceFilePath)) {
+      let spaceDiskFile = diskResponse.payload.files.find(
+        file => file.fileNodeId === selectedSpaceFilePath
+      );
+
+      if (isDefined(spaceDiskFile)) {
+        diskFiles.push(spaceDiskFile);
+      }
+    }
 
     let modelIds = [
       ...(

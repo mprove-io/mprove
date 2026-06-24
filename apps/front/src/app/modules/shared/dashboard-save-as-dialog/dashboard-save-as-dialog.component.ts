@@ -12,21 +12,22 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import {
+  APP_SPINNER_NAME,
+  EMPTY_SPACE,
+  EMPTY_SPACE_NAME
+} from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Role } from '#common/zod/backend/role';
 import type { Dashboard } from '#common/zod/blockml/dashboard';
-import type {
-  ToBackendGetDashboardsRequestPayload,
-  ToBackendGetDashboardsResponse
-} from '#common/zod/to-backend/dashboards/to-backend-get-dashboards';
+import type { Space } from '#common/zod/blockml/space';
 import type {
   ToBackendSaveCreateDashboardRequestPayload,
   ToBackendSaveCreateDashboardResponse
@@ -47,6 +48,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UnitsUiService } from '#front/app/services/units-ui.service';
 
 enum DashboardSaveAsEnum {
   NEW_DASHBOARD = 'NEW_DASHBOARD',
@@ -55,8 +57,11 @@ enum DashboardSaveAsEnum {
 
 export interface DashboardSaveAsDialogData {
   apiService: ApiService;
+  dashboards: DashboardUnit[];
   dashboard: Dashboard;
 }
+
+type SpaceOption = typeof EMPTY_SPACE;
 
 @Component({
   standalone: false,
@@ -70,11 +75,17 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   @ViewChild('dashboardSaveAsDialogRoleSelect', { static: false })
   dashboardSaveAsDialogRoleSelectElement: NgSelectComponent;
 
+  @ViewChild('dashboardSaveAsDialogSpaceSelect', { static: false })
+  dashboardSaveAsDialogSpaceSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.dashboardSaveAsDialogExistingDashboardSelectElement?.close();
     this.dashboardSaveAsDialogRoleSelectElement?.close();
+    this.dashboardSaveAsDialogSpaceSelectElement?.close();
   }
+
+  emptySpaceName = EMPTY_SPACE_NAME;
 
   usersFolder = MPROVE_USERS_FOLDER;
 
@@ -94,6 +105,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   roles: Role[] = [];
   selectedAccessRoles: string[] = [];
+  selectedSpace: string;
+  combinedAccessRoles: string[] = [];
+  combinedAccessRolesText = '';
+  spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -106,7 +121,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   selectedDashboardId: any; // string
   selectedDashboardPath: string;
 
-  dashboardParts: DashboardPart[];
+  dashboardParts: DashboardUnit[];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -135,11 +150,67 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private dashboardPartsQuery: DashboardPartsQuery,
     private spinner: NgxSpinnerService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private unitsUiService: UnitsUiService
   ) {}
+
+  makeSpacesPlusEmpty(item: { spaces: Space[] }): SpaceOption[] {
+    let { spaces } = item;
+
+    let spaceOptions = (spaces ?? []).map(space => ({
+      ...space,
+      label: this.makeSpaceLabel({ space: space, spaces: spaces ?? [] })
+    }));
+
+    return [makeCopy(EMPTY_SPACE), ...spaceOptions];
+  }
+
+  makeSpaceLabel(item: { space: Space; spaces: Space[] }) {
+    let { space, spaces } = item;
+    let parts = space.space.split('.');
+    let currentSpace = '';
+
+    return parts
+      .map((part, index) => {
+        currentSpace = index === 0 ? part : `${currentSpace}.${part}`;
+
+        let foundSpace = spaces.find(x => x.space === currentSpace);
+
+        return foundSpace?.title || part;
+      })
+      .join(' - ');
+  }
+
+  updateCombinedAccessRoles() {
+    let selectedSpace = this.struct?.spaces?.find(
+      x => x.space === this.selectedSpace
+    );
+
+    this.combinedAccessRoles = [
+      ...new Set([
+        ...(selectedSpace?.accessRolesCombined ?? []),
+        ...this.selectedAccessRoles
+      ])
+    ];
+    this.combinedAccessRolesText = this.combinedAccessRoles.join(', ');
+  }
+
+  spaceChange() {
+    this.updateCombinedAccessRoles();
+  }
+
+  accessRolesChange() {
+    this.updateCombinedAccessRoles();
+  }
 
   ngOnInit() {
     this.dashboard = this.ref.data.dashboard as DashboardX;
+
+    this.struct = this.structQuery.getValue();
+
+    this.spacesPlusEmpty = this.makeSpacesPlusEmpty({
+      spaces: this.struct.spaces
+    });
 
     let member = this.memberQuery.getValue();
 
@@ -155,6 +226,8 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         : undefined;
 
     this.selectedAccessRoles = [...(this.dashboard.accessRoles || [])];
+    this.selectedSpace = this.dashboard.space ?? EMPTY_SPACE.space;
+    this.updateCombinedAccessRoles();
 
     let nav: NavState;
     this.navQuery
@@ -171,44 +244,14 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
     this.loadRoles();
 
-    let payload: ToBackendGetDashboardsRequestPayload = {
-      projectId: nav.projectId,
-      branchId: nav.branchId,
-      repoId: nav.repoId,
-      envId: nav.envId
-    };
+    this.dashboardParts = this.ref.data.dashboards
+      .filter(d => canReplaceAnyDashboard === true || d.author === userAlias)
+      .map(x => {
+        (x as any).disabled = x.canEditOrDeleteDashboard === false;
+        return x;
+      });
 
-    let apiService: ApiService = this.ref.data.apiService;
-
-    this.spinner.show(this.spinnerName);
-
-    apiService
-      .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: ToBackendGetDashboardsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.dashboardParts = resp.payload.dashboardParts
-              .filter(
-                d =>
-                  d.draft === false &&
-                  (canReplaceAnyDashboard === true || d.author === userAlias)
-              )
-              .map(x => {
-                (x as any).disabled = x.canEditOrDeleteDashboard === false;
-                return x;
-              });
-
-            this.makePathAndSetValues();
-
-            this.spinner.hide(this.spinnerName);
-            this.cd.detectChanges();
-          }
-        })
-      )
-      .toPromise();
+    this.makePathAndSetValues();
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
@@ -247,6 +290,8 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     this.selectedDashboardId = undefined;
     this.selectedDashboardPath = '';
     this.selectedAccessRoles = [];
+    this.selectedSpace = EMPTY_SPACE.space;
+    this.updateCombinedAccessRoles();
   }
 
   existingDashboardOnClick() {
@@ -255,9 +300,11 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     this.selectedDashboardPath = '';
     this.titleForm.controls['title'].setValue(undefined);
     this.selectedAccessRoles = [];
+    this.selectedSpace = EMPTY_SPACE.space;
+    this.updateCombinedAccessRoles();
   }
 
-  existingDashboardSearchFn(term: string, dashboardPart: DashboardPart) {
+  existingDashboardSearchFn(term: string, dashboardPart: DashboardUnit) {
     let trimmedTerm = term?.trim();
 
     if (!trimmedTerm) {
@@ -287,6 +334,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       newDashboardId: this.newDashboardId,
       fromDashboardId: this.dashboard.dashboardId,
       accessRoles: roles,
+      space:
+        this.selectedSpace === EMPTY_SPACE_NAME
+          ? undefined
+          : this.selectedSpace,
       dashboardTitle: newTitle,
       tilesGrid: this.dashboard.tiles.map(x => {
         let y = makeCopy(x);
@@ -309,23 +360,18 @@ export class DashboardSaveAsDialogComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let dashboardPart = resp.payload.newDashboardPart;
             if (isDefined(dashboardPart)) {
-              let dashboardParts =
-                this.dashboardPartsQuery.getValue().dashboardParts;
-
-              let newDashboardParts = [
-                dashboardPart,
-                ...dashboardParts.filter(
-                  d =>
-                    d.dashboardId !== dashboardPart.dashboardId &&
-                    !(
-                      d.draft === true &&
-                      d.dashboardId === this.dashboard.dashboardId
-                    )
-                )
-              ];
+              let dashboardParts = this.dashboardPartsQuery.getValue();
 
               this.dashboardPartsQuery.update({
-                dashboardParts: newDashboardParts
+                dashboardUnitDrafts: dashboardParts.dashboardUnitDrafts.filter(
+                  d => d.dashboardId !== this.dashboard.dashboardId
+                ),
+                dashboardSpaceNodes:
+                  this.unitsUiService.upsertDashboardSpaceUnit({
+                    spaceNodes: dashboardParts.dashboardSpaceNodes,
+                    dashboard: dashboardPart,
+                    member: this.memberQuery.getValue()
+                  })
               });
 
               this.navigateService.navigateToDashboard({
@@ -354,6 +400,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       toDashboardId: this.selectedDashboardId,
       fromDashboardId: this.dashboard.dashboardId,
       accessRoles: roles,
+      space:
+        this.selectedSpace === EMPTY_SPACE_NAME
+          ? undefined
+          : this.selectedSpace,
       dashboardTitle: newTitle,
       tilesGrid: this.dashboard.tiles.map(x => {
         let y = makeCopy(x);
@@ -377,23 +427,18 @@ export class DashboardSaveAsDialogComponent implements OnInit {
             let dashboardPart = resp.payload.newDashboardPart;
 
             if (isDefined(dashboardPart)) {
-              let dashboardParts =
-                this.dashboardPartsQuery.getValue().dashboardParts;
-
-              let newDashboardParts = [
-                dashboardPart,
-                ...dashboardParts.filter(
-                  d =>
-                    d.dashboardId !== dashboardPart.dashboardId &&
-                    !(
-                      d.draft === true &&
-                      d.dashboardId === this.dashboard.dashboardId
-                    )
-                )
-              ];
+              let dashboardParts = this.dashboardPartsQuery.getValue();
 
               this.dashboardPartsQuery.update({
-                dashboardParts: newDashboardParts
+                dashboardUnitDrafts: dashboardParts.dashboardUnitDrafts.filter(
+                  d => d.dashboardId !== this.dashboard.dashboardId
+                ),
+                dashboardSpaceNodes:
+                  this.unitsUiService.upsertDashboardSpaceUnit({
+                    spaceNodes: dashboardParts.dashboardSpaceNodes,
+                    dashboard: dashboardPart,
+                    member: this.memberQuery.getValue()
+                  })
               });
 
               this.navigateService.navigateToDashboard({
@@ -435,6 +480,8 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
       this.titleForm.controls['title'].setValue(selectedDashboard.title);
       this.selectedAccessRoles = [...(selectedDashboard.accessRoles || [])];
+      this.selectedSpace = selectedDashboard.space ?? EMPTY_SPACE.space;
+      this.updateCombinedAccessRoles();
       this.cd.detectChanges();
     }
   }

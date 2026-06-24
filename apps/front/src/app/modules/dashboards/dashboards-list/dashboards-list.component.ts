@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import { DashboardPartsFilteredQuery } from '#front/app/queries/dashboard-parts-filtered.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { NavigateService } from '#front/app/services/navigate.service';
 
-type DashboardListItem = DashboardPart & { displaySpace: string };
+type DashboardListItem = DashboardUnit;
 
 @Component({
   standalone: false,
@@ -25,14 +25,9 @@ export class DashboardsListComponent {
   dashboardPartsFiltered: DashboardListItem[];
   dashboardPartsFiltered$ = this.dashboardPartsFilteredQuery.select().pipe(
     tap(x => {
-      this.dashboardPartsFiltered = x.dashboardPartsFiltered
-        .filter(d => d.draft === false)
-        .map(dashboard => ({
-          ...dashboard,
-          displaySpace: dashboard.space
-            ? dashboard.space.split('.').join(' - ')
-            : ''
-        }));
+      this.dashboardPartsFiltered = x.dashboardPartsFiltered.filter(
+        d => d.draft === false
+      );
       this.cd.detectChanges();
     })
   );

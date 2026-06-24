@@ -28,17 +28,17 @@
     <div
       tp="Dashboard can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save dashboard as new to become an author."
       placement="left"
-      [tpIsEnabled]="dashboardPart.canEditOrDeleteDashboard === false"
+      [tpIsEnabled]="currentDashboardPart.canEditOrDeleteDashboard === false"
     >
       <button
         data-cy="dashboardOptionsEditInfo"
         class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'text-s400 cursor-default':
-            dashboardPart.canEditOrDeleteDashboard === false
+            currentDashboardPart.canEditOrDeleteDashboard === false
         }"
-        (click)="t1.hide(); editDashboardInfo($event, dashboardPart)"
-        [disabled]="dashboardPart.canEditOrDeleteDashboard === false"
+        (click)="t1.hide(); editDashboardInfo($event, currentDashboardPart)"
+        [disabled]="currentDashboardPart.canEditOrDeleteDashboard === false"
         >Edit Info</button
       >
     </div>
@@ -48,10 +48,10 @@
       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
         'text-s400 cursor-default':
-          dashboardPart.canEditOrDeleteDashboard === false
+          currentDashboardPart.canEditOrDeleteDashboard === false
       }"
       (click)="t1.hide(); deleteDashboard($event)"
-      [disabled]="dashboardPart.canEditOrDeleteDashboard === false"
+      [disabled]="currentDashboardPart.canEditOrDeleteDashboard === false"
       >Delete</button
     >
   </div>
