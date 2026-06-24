@@ -59,7 +59,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
-import { makeSpaceUnitsFromSpaceNodes } from '#common/functions/space-tree';
+import { makeSpaceUnits } from '#common/functions/space/make-space-units';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { SpaceNode } from '#common/zod/backend/space-node';
@@ -250,7 +250,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     tap(x => {
       let previousReports = this.reports ?? [];
 
-      let reportUnitNonDrafts = makeSpaceUnitsFromSpaceNodes({
+      let reportUnitNonDrafts = makeSpaceUnits({
         spaceNodes: x.reportSpaceNodes
       }).map(spaceUnit =>
         this.spaceUiService.spaceUnitToReportUnit({ spaceUnit: spaceUnit })
@@ -1188,7 +1188,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let previousReportSpaceNodes = reportsState.reportSpaceNodes;
 
-    let report = makeSpaceUnitsFromSpaceNodes({
+    let report = makeSpaceUnits({
       spaceNodes: reportsState.reportSpaceNodes
     }).find(x => x.unitId === reportId) as any;
 
@@ -1473,7 +1473,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     if (isSearchDefined === true) {
       reportMatchedIds = new Set<string>();
 
-      let searchEntries = makeSpaceUnitsFromSpaceNodes({
+      let searchEntries = makeSpaceUnits({
         spaceNodes: searchNodes
       }).map(report => {
         let title = isDefined(report.title) ? report.title : report.unitId;
@@ -1519,7 +1519,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         ? this.spaceUiService.flattenFavoriteSpaceNodes({ nodes: visibleNodes })
         : visibleNodes;
 
-    let reportsFilteredByWord = makeSpaceUnitsFromSpaceNodes({
+    let reportsFilteredByWord = makeSpaceUnits({
       spaceNodes: visibleNodes
     }).map(spaceUnit =>
       this.spaceUiService.spaceUnitToReportUnit({ spaceUnit: spaceUnit })

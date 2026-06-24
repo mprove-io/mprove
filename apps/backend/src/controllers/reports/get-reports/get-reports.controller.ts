@@ -30,7 +30,7 @@ import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { makeSpaceUnitsFromSpaceNodes } from '#common/functions/space-tree';
+import { makeSpaceUnits } from '#common/functions/space/make-space-units';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ToBackendGetReportsResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-reports';
 
@@ -221,7 +221,7 @@ export class GetReportsController {
     };
 
     if (addNonDraftsList === true) {
-      payload.reportUnitNonDrafts = makeSpaceUnitsFromSpaceNodes({
+      payload.reportUnitNonDrafts = makeSpaceUnits({
         spaceNodes: reportSpaceNodes
       }).map(spaceUnit => {
         let reportUnit: ReportUnit = {

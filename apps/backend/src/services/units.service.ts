@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import type { ReportTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined';
-import { makeSpaceUnitDisplayAccessRoles } from '#common/functions/space-tree';
+import { makeDisplayAccessRoles } from '#common/functions/space/make-display-access-roles';
 import type { Member } from '#common/zod/backend/member';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
@@ -58,7 +58,7 @@ export class UnitsService {
       isFavorite: favoriteReportIds.indexOf(report.reportId) > -1,
       draft: report.draft,
       displaySpace: displaySpace,
-      displayAccessRoles: makeSpaceUnitDisplayAccessRoles({
+      displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: report.accessRoles,
         accessRolesCombined: report.accessRolesCombined
       })
@@ -90,7 +90,7 @@ export class UnitsService {
         author === member.alias,
       isFavorite: favoriteReportIds.indexOf(report.reportId) > -1,
       displaySpace: report.space ?? '',
-      displayAccessRoles: makeSpaceUnitDisplayAccessRoles({
+      displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: report.accessRoles,
         accessRolesCombined: report.accessRolesCombined
       })

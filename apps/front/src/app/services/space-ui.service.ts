@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MY_UNITS_SPACE_ID, MY_UNITS_TITLE } from '#common/constants/top';
 import { makeCopy } from '#common/functions/make-copy';
-import {
-  addSpaceUnitDisplaySpaces,
-  makeSpaceUnitDisplayAccessRoles
-} from '#common/functions/space-tree';
+import { addDisplaySpace } from '#common/functions/space/add-display-space';
+import { makeDisplayAccessRoles } from '#common/functions/space/make-display-access-roles';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { SpaceFolder } from '#common/zod/backend/space-folder';
@@ -53,7 +51,7 @@ export class SpaceUiService {
       canEditOrDeleteUnit: report.canEditOrDeleteReport === true,
       isFavorite: isFavorite === true,
       displaySpace: report.space ?? '',
-      displayAccessRoles: makeSpaceUnitDisplayAccessRoles({
+      displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: report.accessRoles,
         accessRolesCombined: report.accessRolesCombined
       })
@@ -80,7 +78,7 @@ export class SpaceUiService {
       isFavorite: isFavorite === true,
       draft: report.draft,
       displaySpace: report.space ?? '',
-      displayAccessRoles: makeSpaceUnitDisplayAccessRoles({
+      displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: report.accessRoles,
         accessRolesCombined: report.accessRolesCombined
       })
@@ -301,11 +299,11 @@ export class SpaceUiService {
       nodes = nodes.map(node => addToSpace({ node: node }));
 
       if (this.hasSpaceUnit({ nodes: nodes, unitId: report.reportId })) {
-        return addSpaceUnitDisplaySpaces({ spaceNodes: nodes, pathParts: [] });
+        return addDisplaySpace({ spaceNodes: nodes, pathParts: [] });
       }
 
       if (targetSpace === MY_UNITS_SPACE_ID) {
-        return addSpaceUnitDisplaySpaces({
+        return addDisplaySpace({
           spaceNodes: [
             this.makeMyUnitsSpace({
               children: this.sortSpaceNodes({ nodes: [reportNode] })
@@ -317,7 +315,7 @@ export class SpaceUiService {
       }
     }
 
-    return addSpaceUnitDisplaySpaces({
+    return addDisplaySpace({
       spaceNodes: this.sortSpaceNodes({ nodes: [...nodes, reportNode] }),
       pathParts: []
     });
