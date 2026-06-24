@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import {
   MY_UNITS_SPACE_ID,
-  MY_UNITS_TITLE,
   PERSONAL_UNITS_SPACE_ID,
-  PERSONAL_UNITS_TITLE,
   SHARED_UNITS_SPACE_ID,
-  SHARED_UNITS_TITLE,
-  UNCATEGORIZED_UNITS_SPACE_ID,
-  UNCATEGORIZED_UNITS_TITLE
+  UNCATEGORIZED_UNITS_SPACE_ID
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
+import { makeSpaceFolder } from '#common/functions/space/make-space-folder';
+import { makeSpaceUnitTarget } from '#common/functions/space/make-space-unit-target';
+import { makeSpaceUnitWithSpace } from '#common/functions/space/make-space-unit-with-space';
+import { makeSyntheticSpaceFolder } from '#common/functions/space/make-synthetic-space-folder';
+import { sortSpaceNodes } from '#common/functions/space/sort-space-nodes';
 import type { Member } from '#common/zod/backend/member';
 import type { SpaceFolder } from '#common/zod/backend/space-folder';
 import type { SpaceNode } from '#common/zod/backend/space-node';
@@ -33,21 +34,11 @@ export class SpaceService {
 
     let displaySpacesBySpace = new Map<string, string>();
 
-    let myUnitsNode: SpaceFolder;
-
     let rootNodes: SpaceNode[] = [];
 
-    let uncategorizedUnitsNode: SpaceFolder;
+    let syntheticRootsBySpace = new Map<string, SpaceFolder>();
 
-    let personalUnitsNode: SpaceFolder;
-
-    let sharedUnitsNode: SpaceFolder;
-
-    let personalNodesByAuthor = new Map<string, SpaceFolder>();
-
-    let sharedNodesByAuthor = new Map<string, SpaceFolder>();
-
-    let isAdminOrEditor = member.isAdmin === true || member.isEditor === true;
+    let syntheticChildrenBySpace = new Map<string, SpaceFolder>();
 
     let sortedUnits = [...units].sort((a, b) => {
       let aTitle = (a.title || a.unitId).toLowerCase();
@@ -57,8 +48,6 @@ export class SpaceService {
     });
 
     sortedUnits.forEach(unit => {
-      let author = unit.author;
-
       let spaceName = unit.space ?? '';
 
       if (isDefinedAndNotEmpty(spaceName)) {
@@ -72,7 +61,7 @@ export class SpaceService {
           let existingNode = nodesBySpace.get(partSpaceName);
 
           if (isDefined(space) && isUndefined(existingNode)) {
-            let spaceNode = this.makeSpaceFolder({
+            let spaceNode = makeSpaceFolder({
               space: space,
               title: space.title || parts[index]
             });
@@ -110,7 +99,7 @@ export class SpaceService {
           let displaySpace = displaySpacesBySpace.get(spaceName) ?? '';
 
           spaceNode.children.push(
-            this.makeSpaceUnitWithSpace({
+            makeSpaceUnitWithSpace({
               unit: unit,
               space: spaceName,
               displaySpace: displaySpace
@@ -121,137 +110,53 @@ export class SpaceService {
         return;
       }
 
-      if (author === member.alias) {
-        if (isUndefined(myUnitsNode)) {
-          myUnitsNode = this.makeSyntheticSpaceFolder({
-            id: MY_UNITS_SPACE_ID,
-            title: MY_UNITS_TITLE
-          });
-        }
+      let target = makeSpaceUnitTarget({
+        space: unit.space,
+        author: unit.author,
+        accessRoles: unit.accessRoles,
+        member: member
+      });
 
-        myUnitsNode.children.push(
-          this.makeSpaceUnitWithSpace({
-            unit: unit,
-            space: MY_UNITS_SPACE_ID,
-            displaySpace: MY_UNITS_TITLE
-          })
-        );
+      let rootNode = syntheticRootsBySpace.get(target.rootSpace);
 
-        return;
-      }
-
-      if (isUndefined(author)) {
-        if (isUndefined(uncategorizedUnitsNode)) {
-          uncategorizedUnitsNode = this.makeSyntheticSpaceFolder({
-            id: UNCATEGORIZED_UNITS_SPACE_ID,
-            title: UNCATEGORIZED_UNITS_TITLE
-          });
-        }
-
-        uncategorizedUnitsNode.children.push(
-          this.makeSpaceUnitWithSpace({
-            unit: unit,
-            space: UNCATEGORIZED_UNITS_SPACE_ID,
-            displaySpace: UNCATEGORIZED_UNITS_TITLE
-          })
-        );
-
-        return;
-      }
-
-      if (
-        isAdminOrEditor === true &&
-        author !== member.alias &&
-        unit.accessRoles.length === 0
-      ) {
-        if (isUndefined(personalUnitsNode)) {
-          personalUnitsNode = this.makeSyntheticSpaceFolder({
-            id: PERSONAL_UNITS_SPACE_ID,
-            title: PERSONAL_UNITS_TITLE
-          });
-        }
-
-        let authorTitle = author ?? '';
-
-        let authorSpace = `${PERSONAL_UNITS_SPACE_ID}/${authorTitle}`;
-
-        let authorNode = personalNodesByAuthor.get(authorTitle);
-
-        if (isUndefined(authorNode)) {
-          authorNode = this.makeSyntheticSpaceFolder({
-            id: authorSpace,
-            title: authorTitle
-          });
-
-          personalNodesByAuthor.set(authorTitle, authorNode);
-
-          personalUnitsNode.children.push(authorNode);
-        }
-
-        authorNode.children.push(
-          this.makeSpaceUnitWithSpace({
-            unit: unit,
-            space: authorSpace,
-            displaySpace: `${PERSONAL_UNITS_TITLE} - ${authorTitle}`
-          })
-        );
-
-        return;
-      }
-
-      if (author !== member.alias && unit.accessRoles.length > 0) {
-        if (isUndefined(sharedUnitsNode)) {
-          sharedUnitsNode = this.makeSyntheticSpaceFolder({
-            id: SHARED_UNITS_SPACE_ID,
-            title: SHARED_UNITS_TITLE
-          });
-        }
-
-        let authorTitle = author ?? '';
-
-        let authorSpace = `${SHARED_UNITS_SPACE_ID}/${authorTitle}`;
-
-        let authorNode = sharedNodesByAuthor.get(authorTitle);
-
-        if (isUndefined(authorNode)) {
-          authorNode = this.makeSyntheticSpaceFolder({
-            id: authorSpace,
-            title: authorTitle
-          });
-
-          sharedNodesByAuthor.set(authorTitle, authorNode);
-
-          sharedUnitsNode.children.push(authorNode);
-        }
-
-        authorNode.children.push(
-          this.makeSpaceUnitWithSpace({
-            unit: unit,
-            space: authorSpace,
-            displaySpace: `${SHARED_UNITS_TITLE} - ${authorTitle}`
-          })
-        );
-
-        return;
-      }
-
-      if (isUndefined(uncategorizedUnitsNode)) {
-        uncategorizedUnitsNode = this.makeSyntheticSpaceFolder({
-          id: UNCATEGORIZED_UNITS_SPACE_ID,
-          title: UNCATEGORIZED_UNITS_TITLE
+      if (isUndefined(rootNode)) {
+        rootNode = makeSyntheticSpaceFolder({
+          id: target.rootSpace,
+          title: target.rootTitle
         });
+
+        syntheticRootsBySpace.set(target.rootSpace, rootNode);
       }
 
-      uncategorizedUnitsNode.children.push(
-        this.makeSpaceUnitWithSpace({
-          unit: unit,
-          space: UNCATEGORIZED_UNITS_SPACE_ID,
-          displaySpace: UNCATEGORIZED_UNITS_TITLE
-        })
-      );
+      let unitWithSpace = makeSpaceUnitWithSpace({
+        unit: unit,
+        space: target.space,
+        displaySpace: target.displaySpace
+      });
+
+      if (target.space === target.rootSpace) {
+        rootNode.children.push(unitWithSpace);
+
+        return;
+      }
+
+      let childNode = syntheticChildrenBySpace.get(target.space);
+
+      if (isUndefined(childNode)) {
+        childNode = makeSyntheticSpaceFolder({
+          id: target.space,
+          title: target.childTitle ?? ''
+        });
+
+        syntheticChildrenBySpace.set(target.space, childNode);
+
+        rootNode.children.push(childNode);
+      }
+
+      childNode.children.push(unitWithSpace);
     });
 
-    let sortedRootNodes = this.sortSpaceNodes({ nodes: rootNodes });
+    let sortedRootNodes = sortSpaceNodes({ nodes: rootNodes });
 
     let rootFolderNodes = sortedRootNodes.filter(
       node => node.type === 'spaceFolder'
@@ -259,8 +164,10 @@ export class SpaceService {
 
     let nodes: SpaceNode[] = [];
 
+    let myUnitsNode = syntheticRootsBySpace.get(MY_UNITS_SPACE_ID);
+
     if (isDefined(myUnitsNode)) {
-      myUnitsNode.children = this.sortSpaceNodes({
+      myUnitsNode.children = sortSpaceNodes({
         nodes: myUnitsNode.children
       });
       nodes.push(myUnitsNode);
@@ -268,99 +175,35 @@ export class SpaceService {
 
     nodes.push(...rootFolderNodes);
 
+    let uncategorizedUnitsNode = syntheticRootsBySpace.get(
+      UNCATEGORIZED_UNITS_SPACE_ID
+    );
+
     if (isDefined(uncategorizedUnitsNode)) {
-      uncategorizedUnitsNode.children = this.sortSpaceNodes({
+      uncategorizedUnitsNode.children = sortSpaceNodes({
         nodes: uncategorizedUnitsNode.children
       });
       nodes.push(uncategorizedUnitsNode);
     }
 
+    let personalUnitsNode = syntheticRootsBySpace.get(PERSONAL_UNITS_SPACE_ID);
+
     if (isDefined(personalUnitsNode)) {
-      personalUnitsNode.children = this.sortSpaceNodes({
+      personalUnitsNode.children = sortSpaceNodes({
         nodes: personalUnitsNode.children
       });
       nodes.push(personalUnitsNode);
     }
 
+    let sharedUnitsNode = syntheticRootsBySpace.get(SHARED_UNITS_SPACE_ID);
+
     if (isDefined(sharedUnitsNode)) {
-      sharedUnitsNode.children = this.sortSpaceNodes({
+      sharedUnitsNode.children = sortSpaceNodes({
         nodes: sharedUnitsNode.children
       });
       nodes.push(sharedUnitsNode);
     }
 
     return nodes;
-  }
-
-  makeSpaceUnitWithSpace(item: {
-    unit: SpaceUnit;
-    space: string | undefined;
-    displaySpace: string;
-  }): SpaceUnit {
-    let { unit, space, displaySpace } = item;
-
-    return {
-      ...unit,
-      space: space,
-      displaySpace: displaySpace
-    };
-  }
-
-  makeSpaceFolder(item: { space: Space; title: string }): SpaceFolder {
-    let { space, title } = item;
-
-    return {
-      type: 'spaceFolder',
-      id: space.space,
-      space: space.space,
-      filePath: space.filePath,
-      title: title,
-      accessRoles: space.accessRoles,
-      accessRolesCombined: space.accessRolesCombined,
-      isSynthetic: false,
-      children: []
-    };
-  }
-
-  makeSyntheticSpaceFolder(item: { id: string; title: string }): SpaceFolder {
-    let { id, title } = item;
-
-    return {
-      type: 'spaceFolder',
-      id: id,
-      space: id,
-      filePath: '',
-      title: title,
-      accessRoles: [],
-      accessRolesCombined: [],
-      isSynthetic: true,
-      children: []
-    };
-  }
-
-  sortSpaceNodes(item: { nodes: SpaceNode[] }): SpaceNode[] {
-    let { nodes } = item;
-
-    return nodes
-      .map(node => {
-        if (node.type === 'spaceFolder') {
-          return {
-            ...node,
-            children: this.sortSpaceNodes({ nodes: node.children ?? [] })
-          };
-        }
-
-        return node;
-      })
-      .sort((a, b) => {
-        if (a.type !== b.type) {
-          return a.type === 'spaceFolder' ? -1 : 1;
-        }
-
-        let aTitle = a.title.toLowerCase();
-        let bTitle = b.title.toLowerCase();
-
-        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-      });
   }
 }

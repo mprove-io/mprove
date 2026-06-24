@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
+import { spaceUnitToReportUnit } from '#common/functions/space/space-unit-to-report-unit';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -9,7 +10,6 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { SpaceUiService } from '#front/app/services/space-ui.service';
 
 @Component({
   standalone: false,
@@ -24,7 +24,7 @@ export class ReportOptionsComponent {
 
   @Input()
   set spaceUnit(spaceUnit: SpaceUnit) {
-    this.currentReportUnit = this.spaceUiService.spaceUnitToReportUnit({
+    this.currentReportUnit = spaceUnitToReportUnit({
       spaceUnit: spaceUnit
     });
   }
@@ -40,8 +40,7 @@ export class ReportOptionsComponent {
     private reportQuery: ReportQuery,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
-    private myDialogService: MyDialogService,
-    private spaceUiService: SpaceUiService
+    private myDialogService: MyDialogService
   ) {}
 
   clickMenu(event: MouseEvent) {

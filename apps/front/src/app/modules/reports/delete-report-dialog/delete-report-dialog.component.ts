@@ -22,8 +22,8 @@ import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { SpaceUiService } from '#front/app/services/space-ui.service';
 import { UiService } from '#front/app/services/ui.service';
+import { UnitsUiService } from '#front/app/services/units-ui.service';
 
 export interface DeleteReportDialogData {
   apiService: ApiService;
@@ -57,7 +57,7 @@ export class DeleteReportDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private router: Router,
     private uiService: UiService,
-    private spaceUiService: SpaceUiService
+    private unitsUiService: UnitsUiService
   ) {}
 
   ngOnInit(): void {
@@ -99,7 +99,7 @@ export class DeleteReportDialogComponent implements OnInit {
 
             this.reportsQuery.update({
               reportUnitDrafts: reportsState.reportUnitDrafts,
-              reportSpaceNodes: this.spaceUiService.removeSpaceUnit({
+              reportSpaceNodes: this.unitsUiService.removeSpaceUnit({
                 spaceNodes: reportsState.reportSpaceNodes,
                 unitId: report.reportId
               })

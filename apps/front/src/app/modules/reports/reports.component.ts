@@ -60,6 +60,7 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeSpaceUnits } from '#common/functions/space/make-space-units';
+import { spaceUnitToReportUnit } from '#common/functions/space/space-unit-to-report-unit';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { SpaceNode } from '#common/zod/backend/space-node';
@@ -101,6 +102,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 import { ReportService } from '#front/app/services/report.service';
 import { SpaceUiService } from '#front/app/services/space-ui.service';
 import { UiService } from '#front/app/services/ui.service';
+import { UnitsUiService } from '#front/app/services/units-ui.service';
 
 export class TimeSpecItem {
   label: string;
@@ -250,13 +252,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
     tap(x => {
       let previousReports = this.reports ?? [];
 
-      let reportUnitNonDrafts = makeSpaceUnits({
+      let nonDraftReportUnits = makeSpaceUnits({
         spaceNodes: x.reportSpaceNodes
-      }).map(spaceUnit =>
-        this.spaceUiService.spaceUnitToReportUnit({ spaceUnit: spaceUnit })
-      );
+      }).map(spaceUnit => spaceUnitToReportUnit({ spaceUnit: spaceUnit }));
 
-      this.reports = [...x.reportUnitDrafts, ...reportUnitNonDrafts];
+      this.reports = [...x.reportUnitDrafts, ...nonDraftReportUnits];
 
       let reportToExpand = this.reports.find(report => {
         let previousReport = previousReports.find(
@@ -743,6 +743,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     private reportService: ReportService,
     private dataService: DataService,
     private spaceUiService: SpaceUiService,
+    private unitsUiService: UnitsUiService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
     private apiService: ApiService,
@@ -1194,7 +1195,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let isFavorite = report?.isFavorite === true;
 
-    let newReportSpaceNodes = this.spaceUiService.updateSpaceUnitFavorite({
+    let newReportSpaceNodes = this.unitsUiService.updateSpaceUnitFavorite({
       spaceNodes: reportsState.reportSpaceNodes,
       unitId: reportId,
       isFavorite: isFavorite === false
@@ -1521,9 +1522,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let reportsFilteredByWord = makeSpaceUnits({
       spaceNodes: visibleNodes
-    }).map(spaceUnit =>
-      this.spaceUiService.spaceUnitToReportUnit({ spaceUnit: spaceUnit })
-    );
+    }).map(spaceUnit => spaceUnitToReportUnit({ spaceUnit: spaceUnit }));
 
     this.filteredReports = [...draftReports, ...reportsFilteredByWord].sort(
       (a, b) => {

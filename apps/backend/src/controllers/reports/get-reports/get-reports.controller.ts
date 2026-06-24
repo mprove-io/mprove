@@ -30,8 +30,6 @@ import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { makeSpaceUnits } from '#common/functions/space/make-space-units';
-import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ToBackendGetReportsResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-reports';
 
 @ApiTags('Reports')
@@ -66,7 +64,7 @@ export class GetReportsController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetReportsRequestDto
   ) {
-    let { projectId, repoId, branchId, envId, addNonDraftsList } = body.payload;
+    let { projectId, repoId, branchId, envId } = body.payload;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -219,31 +217,6 @@ export class GetReportsController {
       reportSpaceNodes: reportSpaceNodes,
       storeModels: apiModels.filter(model => model.type === ModelTypeEnum.Store)
     };
-
-    if (addNonDraftsList === true) {
-      payload.reportUnitNonDrafts = makeSpaceUnits({
-        spaceNodes: reportSpaceNodes
-      }).map(spaceUnit => {
-        let reportUnit: ReportUnit = {
-          type: 'reportUnit',
-          id: spaceUnit.id,
-          reportId: spaceUnit.unitId,
-          title: spaceUnit.title,
-          filePath: spaceUnit.filePath,
-          space: spaceUnit.space,
-          accessRoles: spaceUnit.accessRoles,
-          accessRolesCombined: spaceUnit.accessRolesCombined,
-          author: spaceUnit.author,
-          canEditOrDeleteReport: spaceUnit.canEditOrDeleteUnit,
-          isFavorite: spaceUnit.isFavorite,
-          draft: false,
-          displaySpace: spaceUnit.displaySpace,
-          displayAccessRoles: spaceUnit.displayAccessRoles
-        };
-
-        return reportUnit;
-      });
-    }
 
     return payload;
   }

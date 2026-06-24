@@ -15,8 +15,7 @@ export let zToBackendGetReportsRequestPayload = z
     projectId: z.string(),
     repoId: z.string(),
     branchId: z.string(),
-    envId: z.string(),
-    addNonDraftsList: z.boolean().nullish()
+    envId: z.string()
   })
   .meta({ id: 'ToBackendGetReportsRequestPayload' });
 
@@ -39,7 +38,6 @@ export let zToBackendGetReportsResponsePayload = z
     struct: zStructX,
     userMember: zMember,
     reportUnitDrafts: z.array(zReportUnit),
-    reportUnitNonDrafts: z.array(zReportUnit).nullish(),
     reportSpaceNodes: z.array(zSpaceNode),
     storeModels: z.array(zModelX)
   })

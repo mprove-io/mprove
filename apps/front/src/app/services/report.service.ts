@@ -31,7 +31,7 @@ import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
-import { SpaceUiService } from './space-ui.service';
+import { UnitsUiService } from './units-ui.service';
 
 @Injectable({ providedIn: 'root' })
 export class ReportService {
@@ -52,7 +52,7 @@ export class ReportService {
     private structQuery: StructQuery,
     private reportQuery: ReportQuery,
     private reportsQuery: ReportsQuery,
-    private spaceUiService: SpaceUiService
+    private unitsUiService: UnitsUiService
   ) {
     this.nav$.subscribe();
   }
@@ -154,7 +154,7 @@ export class ReportService {
 
             this.reportsQuery.update({
               reportUnitDrafts: [
-                this.spaceUiService.makeReportUnitFromReportX({
+                this.unitsUiService.makeReportUnitFromReportX({
                   report: report
                 }),
                 ...reportsState.reportUnitDrafts
@@ -267,7 +267,7 @@ export class ReportService {
                 ];
               }
 
-              reportSpaceNodes = this.spaceUiService.removeSpaceUnit({
+              reportSpaceNodes = this.unitsUiService.removeSpaceUnit({
                 spaceNodes: reportSpaceNodes,
                 unitId: reportId
               });

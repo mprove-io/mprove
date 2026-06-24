@@ -42,13 +42,14 @@ import type {
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { MemberQuery } from '#front/app/queries/member.query';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
-import { SpaceUiService } from '#front/app/services/space-ui.service';
+import { UnitsUiService } from '#front/app/services/units-ui.service';
 import { SharedModule } from '../shared.module';
 
 export interface EditReportInfoDialogData {
@@ -111,12 +112,13 @@ export class EditReportInfoDialogComponent implements OnInit {
     public ref: DialogRef<EditReportInfoDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
+    private memberQuery: MemberQuery,
     private reportsQuery: ReportsQuery,
     private reportQuery: ReportQuery,
     private spinner: NgxSpinnerService,
     private structQuery: StructQuery,
     private uiQuery: UiQuery,
-    private spaceUiService: SpaceUiService,
+    private unitsUiService: UnitsUiService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -258,9 +260,10 @@ export class EditReportInfoDialogComponent implements OnInit {
 
                 this.reportsQuery.update({
                   reportUnitDrafts: reportsState.reportUnitDrafts,
-                  reportSpaceNodes: this.spaceUiService.upsertSpaceUnit({
+                  reportSpaceNodes: this.unitsUiService.upsertSpaceUnit({
                     spaceNodes: reportsState.reportSpaceNodes,
-                    report: newReportPart
+                    report: newReportPart,
+                    member: this.memberQuery.getValue()
                   })
                 });
 
