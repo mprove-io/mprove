@@ -85,14 +85,6 @@ import type {
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '#front/app/functions/make-query-params';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
-import {
-  flattenFavoriteSpaceNodes,
-  makeVisibleSpaceNodes,
-  markSelectedAncestors,
-  pruneEmptySpaceNodes,
-  spaceUnitToReportUnit,
-  updateSpaceUnitFavorite
-} from '#front/app/functions/space-nodes';
 import { FilteredReportsQuery } from '#front/app/queries/filtered-reports.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -107,6 +99,7 @@ import { DataService } from '#front/app/services/data.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { ReportService } from '#front/app/services/report.service';
+import { SpaceUiService } from '#front/app/services/space-ui.service';
 import { UiService } from '#front/app/services/ui.service';
 
 export class TimeSpecItem {
@@ -221,7 +214,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       this.checkAutoRun();
 
-      this.filteredReportNodes = markSelectedAncestors({
+      this.filteredReportNodes = this.spaceUiService.markSelectedAncestors({
         nodes: this.filteredReportNodes,
         selectedReportId: this.report?.reportId
       });
@@ -259,7 +252,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       let reportUnitNonDrafts = makeSpaceUnitsFromSpaceNodes({
         spaceNodes: x.reportSpaceNodes
-      }).map(spaceUnit => spaceUnitToReportUnit({ spaceUnit: spaceUnit }));
+      }).map(spaceUnit =>
+        this.spaceUiService.spaceUnitToReportUnit({ spaceUnit: spaceUnit })
+      );
 
       this.reports = [...x.reportUnitDrafts, ...reportUnitNonDrafts];
 
@@ -747,6 +742,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     private uiService: UiService,
     private reportService: ReportService,
     private dataService: DataService,
+    private spaceUiService: SpaceUiService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
     private apiService: ApiService,
@@ -1198,7 +1194,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let isFavorite = report?.isFavorite === true;
 
-    let newReportSpaceNodes = updateSpaceUnitFavorite({
+    let newReportSpaceNodes = this.spaceUiService.updateSpaceUnitFavorite({
       spaceNodes: reportsState.reportSpaceNodes,
       unitId: reportId,
       isFavorite: isFavorite === false
@@ -1466,7 +1462,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let nodes = makeCopy(reportSpaceNodes ?? []);
 
-    let searchNodes = pruneEmptySpaceNodes({
+    let searchNodes = this.spaceUiService.pruneEmptySpaceNodes({
       nodes: nodes
     });
 
@@ -1511,7 +1507,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       });
     }
 
-    let visibleNodes = makeVisibleSpaceNodes({
+    let visibleNodes = this.spaceUiService.makeVisibleSpaceNodes({
       nodes: searchNodes,
       reportMatchedIds: reportMatchedIds
     });
@@ -1520,12 +1516,14 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let filteredReportNodes =
       this.favoritesOnly === true
-        ? flattenFavoriteSpaceNodes({ nodes: visibleNodes })
+        ? this.spaceUiService.flattenFavoriteSpaceNodes({ nodes: visibleNodes })
         : visibleNodes;
 
     let reportsFilteredByWord = makeSpaceUnitsFromSpaceNodes({
       spaceNodes: visibleNodes
-    }).map(spaceUnit => spaceUnitToReportUnit({ spaceUnit: spaceUnit }));
+    }).map(spaceUnit =>
+      this.spaceUiService.spaceUnitToReportUnit({ spaceUnit: spaceUnit })
+    );
 
     this.filteredReports = [...draftReports, ...reportsFilteredByWord].sort(
       (a, b) => {
@@ -1552,7 +1550,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       y => y.draft === true
     ).length;
 
-    this.filteredReportNodes = markSelectedAncestors({
+    this.filteredReportNodes = this.spaceUiService.markSelectedAncestors({
       nodes: filteredReportNodes,
       selectedReportId: this.report?.reportId
     });

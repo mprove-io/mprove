@@ -42,13 +42,13 @@ import type {
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
-import { upsertSpaceUnit } from '#front/app/functions/space-nodes';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
+import { SpaceUiService } from '#front/app/services/space-ui.service';
 import { SharedModule } from '../shared.module';
 
 export interface EditReportInfoDialogData {
@@ -116,6 +116,7 @@ export class EditReportInfoDialogComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private structQuery: StructQuery,
     private uiQuery: UiQuery,
+    private spaceUiService: SpaceUiService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -257,7 +258,7 @@ export class EditReportInfoDialogComponent implements OnInit {
 
                 this.reportsQuery.update({
                   reportUnitDrafts: reportsState.reportUnitDrafts,
-                  reportSpaceNodes: upsertSpaceUnit({
+                  reportSpaceNodes: this.spaceUiService.upsertSpaceUnit({
                     spaceNodes: reportsState.reportSpaceNodes,
                     report: newReportPart
                   })

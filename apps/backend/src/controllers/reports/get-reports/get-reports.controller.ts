@@ -13,8 +13,6 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
-import { makeReportSpaceUnit } from '#backend/functions/make-report-space-unit';
-import { makeReportUnit } from '#backend/functions/make-report-unit';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -27,6 +25,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { SpaceService } from '#backend/services/space.service';
 import { TabService } from '#backend/services/tab.service';
+import { UnitsService } from '#backend/services/units.service';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -51,6 +50,7 @@ export class GetReportsController {
     private envsService: EnvsService,
     private favoritesService: FavoritesService,
     private spaceService: SpaceService,
+    private unitsService: UnitsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -187,7 +187,7 @@ export class GetReportsController {
     });
 
     let reportSpaceUnits = sortedNonDraftReports.map(report =>
-      makeReportSpaceUnit({
+      this.unitsService.makeReportSpaceUnit({
         report: report,
         member: apiUserMember,
         favoriteReportIds: favoriteReportIds
@@ -208,7 +208,7 @@ export class GetReportsController {
       }),
       userMember: apiUserMember,
       reportUnitDrafts: sortedDraftReports.map(x =>
-        makeReportUnit({
+        this.unitsService.makeReportUnit({
           report: x,
           member: apiUserMember,
           favoriteReportIds: [],

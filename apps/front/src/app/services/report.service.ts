@@ -23,10 +23,6 @@ import type {
   ToBackendEditDraftReportRequestPayload,
   ToBackendEditDraftReportResponse
 } from '#common/zod/to-backend/reports/to-backend-edit-draft-report';
-import {
-  makeReportUnitFromReportX,
-  removeSpaceUnit
-} from '#front/app/functions/space-nodes';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportQuery } from '../queries/report.query';
@@ -35,6 +31,7 @@ import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
+import { SpaceUiService } from './space-ui.service';
 
 @Injectable({ providedIn: 'root' })
 export class ReportService {
@@ -54,7 +51,8 @@ export class ReportService {
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
     private reportQuery: ReportQuery,
-    private reportsQuery: ReportsQuery
+    private reportsQuery: ReportsQuery,
+    private spaceUiService: SpaceUiService
   ) {
     this.nav$.subscribe();
   }
@@ -156,7 +154,9 @@ export class ReportService {
 
             this.reportsQuery.update({
               reportUnitDrafts: [
-                makeReportUnitFromReportX({ report: report }),
+                this.spaceUiService.makeReportUnitFromReportX({
+                  report: report
+                }),
                 ...reportsState.reportUnitDrafts
               ],
               reportSpaceNodes: reportsState.reportSpaceNodes
@@ -267,7 +267,7 @@ export class ReportService {
                 ];
               }
 
-              reportSpaceNodes = removeSpaceUnit({
+              reportSpaceNodes = this.spaceUiService.removeSpaceUnit({
                 spaceNodes: reportSpaceNodes,
                 unitId: reportId
               });

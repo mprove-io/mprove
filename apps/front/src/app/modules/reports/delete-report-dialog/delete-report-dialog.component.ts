@@ -18,11 +18,11 @@ import type {
   ToBackendDeleteReportRequestPayload,
   ToBackendDeleteReportResponse
 } from '#common/zod/to-backend/reports/to-backend-delete-report';
-import { removeSpaceUnit } from '#front/app/functions/space-nodes';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpaceUiService } from '#front/app/services/space-ui.service';
 import { UiService } from '#front/app/services/ui.service';
 
 export interface DeleteReportDialogData {
@@ -56,7 +56,8 @@ export class DeleteReportDialogComponent implements OnInit {
     private reportQuery: ReportQuery,
     private navigateService: NavigateService,
     private router: Router,
-    private uiService: UiService
+    private uiService: UiService,
+    private spaceUiService: SpaceUiService
   ) {}
 
   ngOnInit(): void {
@@ -98,7 +99,7 @@ export class DeleteReportDialogComponent implements OnInit {
 
             this.reportsQuery.update({
               reportUnitDrafts: reportsState.reportUnitDrafts,
-              reportSpaceNodes: removeSpaceUnit({
+              reportSpaceNodes: this.spaceUiService.removeSpaceUnit({
                 spaceNodes: reportsState.reportSpaceNodes,
                 unitId: report.reportId
               })

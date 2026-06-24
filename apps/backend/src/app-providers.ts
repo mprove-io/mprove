@@ -113,6 +113,7 @@ import { TabCheckerService } from './services/tab-checker.service';
 import { TabToEntService } from './services/tab-to-ent.service';
 import { TasksService } from './services/tasks.service';
 import { ToolService } from './services/tool.service';
+import { UnitsService } from './services/units.service';
 import { UserCodeService } from './services/user-code.service';
 
 export const appProviders = [
@@ -172,6 +173,7 @@ export const appProviders = [
   StoreService,
   TabToEntService,
   TabService,
+  UnitsService,
   //
   SessionsService,
   EditorOpencodeService,

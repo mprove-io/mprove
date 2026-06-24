@@ -39,7 +39,6 @@ import type {
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
-import { upsertSpaceUnit } from '#front/app/functions/space-nodes';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -49,6 +48,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpaceUiService } from '#front/app/services/space-ui.service';
 
 enum ReportSaveAsEnum {
   NEW_REPORT = 'NEW_REPORT',
@@ -131,6 +131,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
     private structQuery: StructQuery,
     private navigateService: NavigateService,
     private spinner: NgxSpinnerService,
+    private spaceUiService: SpaceUiService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -335,7 +336,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
                 reportUnitDrafts: reportsState.reportUnitDrafts.filter(
                   x => x.reportId !== this.fromReportId
                 ),
-                reportSpaceNodes: upsertSpaceUnit({
+                reportSpaceNodes: this.spaceUiService.upsertSpaceUnit({
                   spaceNodes: reportsState.reportSpaceNodes,
                   report: newReportPart
                 })
@@ -408,7 +409,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
                 reportUnitDrafts: reportsState.reportUnitDrafts.filter(
                   x => x.reportId !== this.fromReportId
                 ),
-                reportSpaceNodes: upsertSpaceUnit({
+                reportSpaceNodes: this.spaceUiService.upsertSpaceUnit({
                   spaceNodes: reportsState.reportSpaceNodes,
                   report: newReportPart
                 })
