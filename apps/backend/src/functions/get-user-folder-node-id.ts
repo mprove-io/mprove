@@ -4,7 +4,7 @@ import {
 } from '#common/constants/top';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 
-export function getUserReportsParentNodeId(item: {
+export function getUserFolderNodeId(item: {
   projectId: string;
   mproveDirValue: string;
   userAlias: string;
@@ -37,6 +37,6 @@ export function getUserReportsParentNodeId(item: {
     return `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${userAlias}`;
   }
 
-  // Example: empty mprove_dir falls back to root user reports folder.
+  // Example: empty mprove_dir falls back to root user folder.
   return `${projectId}/${MPROVE_USERS_FOLDER}/${userAlias}`;
 }

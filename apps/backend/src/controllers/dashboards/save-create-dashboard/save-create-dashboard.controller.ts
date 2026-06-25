@@ -27,8 +27,8 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { getReportTargetParentNodeId } from '#backend/functions/get-report-target-parent-node-id';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id';
 import { makeDashboardFileText } from '#backend/functions/make-dashboard-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
@@ -171,7 +171,7 @@ export class SaveCreateDashboardController {
       projectId: projectId
     });
 
-    let parentNodeId = getReportTargetParentNodeId({
+    let parentNodeId = getTargetParentNodeId({
       projectId: projectId,
       mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
       userAlias: user.alias,

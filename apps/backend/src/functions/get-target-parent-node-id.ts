@@ -1,9 +1,9 @@
-import { getUserReportsParentNodeId } from '#backend/functions/get-user-reports-parent-node-id';
+import { getUserFolderNodeId } from '#backend/functions/get-user-folder-node-id';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { Space } from '#common/zod/blockml/space';
 
-export function getReportTargetParentNodeId(item: {
+export function getTargetParentNodeId(item: {
   projectId: string;
   mproveDirValue: string;
   userAlias: string;
@@ -13,10 +13,10 @@ export function getReportTargetParentNodeId(item: {
   // Example: requested space "s1" targets "p1/data/s1"; undefined targets the user folder.
   let { projectId, mproveDirValue, userAlias, space, spaces } = item;
 
-  // Example: when a report is changed to no space, move it to "mprove-users/<alias>".
+  // Example: when a unit is changed to no space, move it to "mprove-users/<alias>".
   if (isUndefined(space)) {
     // Example: returns "p1/data/mprove-users/alice" when mprove_dir is "./data".
-    return getUserReportsParentNodeId({
+    return getUserFolderNodeId({
       projectId: projectId,
       mproveDirValue: mproveDirValue,
       userAlias: userAlias
@@ -29,7 +29,7 @@ export function getReportTargetParentNodeId(item: {
   // Example: if the selected space no longer exists, fall back to the user folder.
   if (isUndefined(selectedSpace)) {
     // Example: avoids guessing a folder for a stale UI-selected space.
-    return getUserReportsParentNodeId({
+    return getUserFolderNodeId({
       projectId: projectId,
       mproveDirValue: mproveDirValue,
       userAlias: userAlias
