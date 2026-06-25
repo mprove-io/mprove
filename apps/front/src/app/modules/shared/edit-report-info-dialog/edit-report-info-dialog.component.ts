@@ -260,7 +260,7 @@ export class EditReportInfoDialogComponent implements OnInit {
 
                 this.reportsQuery.update({
                   reportUnitDrafts: reportsState.reportUnitDrafts,
-                  reportSpaceNodes: this.unitsUiService.upsertSpaceUnit({
+                  reportSpaceNodes: this.unitsUiService.upsertReportSpaceUnit({
                     spaceNodes: reportsState.reportSpaceNodes,
                     report: newReportPart,
                     member: this.memberQuery.getValue()

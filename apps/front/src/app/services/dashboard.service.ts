@@ -23,7 +23,7 @@ import type {
   ToBackendEditDraftDashboardResponse
 } from '#common/zod/to-backend/dashboards/to-backend-edit-draft-dashboard';
 import { DashboardQuery } from '../queries/dashboard.query';
-import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
+import { DashboardUnitsQuery } from '../queries/dashboard-parts.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
@@ -45,7 +45,7 @@ export class DashboardService {
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
-    private dashboardPartsQuery: DashboardPartsQuery,
+    private dashboardUnitsQuery: DashboardUnitsQuery,
     private dashboardQuery: DashboardQuery
   ) {
     this.nav$.subscribe();
@@ -146,9 +146,9 @@ export class DashboardService {
       .pipe(
         tap((resp: ToBackendCreateDraftDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardPart = resp.payload.newDashboardPart;
+            let dashboardUnit = resp.payload.newDashboardUnit;
 
-            let dashboardsState = this.dashboardPartsQuery.getValue();
+            let dashboardsState = this.dashboardUnitsQuery.getValue();
 
             resp.payload.dashboard.tiles.forEach(tile => {
               tile.trackChangeId = makeTrackChangeId({
@@ -157,9 +157,9 @@ export class DashboardService {
               });
             });
 
-            this.dashboardPartsQuery.update({
+            this.dashboardUnitsQuery.update({
               dashboardUnitDrafts: [
-                dashboardPart,
+                dashboardUnit,
                 ...dashboardsState.dashboardUnitDrafts
               ],
               dashboardSpaceNodes: dashboardsState.dashboardSpaceNodes
@@ -274,9 +274,9 @@ export class DashboardService {
       .pipe(
         tap((resp: ToBackendDeleteDraftDashboardsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardsState = this.dashboardPartsQuery.getValue();
+            let dashboardsState = this.dashboardUnitsQuery.getValue();
 
-            this.dashboardPartsQuery.update({
+            this.dashboardUnitsQuery.update({
               dashboardUnitDrafts: dashboardsState.dashboardUnitDrafts.filter(
                 d => dashboardIds.indexOf(d.dashboardId) < 0
               ),

@@ -58,8 +58,8 @@ import type {
   ToBackendRunQueriesResponse
 } from '#common/zod/to-backend/queries/to-backend-run-queries';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
-import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
-import { DashboardPartsFilteredQuery } from '#front/app/queries/dashboard-parts-filtered.query';
+import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
+import { DashboardUnitsFilteredQuery } from '#front/app/queries/dashboard-parts-filtered.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ModelsQuery } from '#front/app/queries/models.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -157,9 +157,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   filteredDraftsLength: number;
 
-  dashboardParts: DashboardUnit[];
-  dashboardPartsFilteredByWord: DashboardUnit[];
-  dashboardPartsFiltered: DashboardUnit[];
+  dashboardUnits: DashboardUnit[];
+  dashboardUnitsFilteredByWord: DashboardUnit[];
+  dashboardUnitsFiltered: DashboardUnit[];
   filteredDashboardNodes: SpaceNodeX[] = [];
   favoritesOnly = false;
 
@@ -167,13 +167,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     displayField: 'title'
   };
 
-  dashboardParts$ = this.dashboardPartsQuery.select().pipe(
+  dashboardUnits$ = this.dashboardUnitsQuery.select().pipe(
     tap(x => {
       let nonDraftDashboardUnits = makeSpaceUnits({
         spaceNodes: x.dashboardSpaceNodes
       }).map(spaceUnit => spaceUnitToDashboardUnit({ spaceUnit: spaceUnit }));
 
-      this.dashboardParts = [
+      this.dashboardUnits = [
         ...x.dashboardUnitDrafts,
         ...nonDraftDashboardUnits
       ];
@@ -279,8 +279,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private dashboardPartsQuery: DashboardPartsQuery,
-    private dashboardPartsFilteredQuery: DashboardPartsFilteredQuery,
+    private dashboardUnitsQuery: DashboardUnitsQuery,
+    private dashboardUnitsFilteredQuery: DashboardUnitsFilteredQuery,
     private dashboardQuery: DashboardQuery,
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
@@ -339,7 +339,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.myDialogService.showDashboardSaveAs({
       apiService: this.apiService,
-      dashboards: this.dashboardParts.filter(
+      dashboards: this.dashboardUnits.filter(
         x => x.draft === false && isDefined(x.dashboardId)
       ),
       dashboard: this.dashboard
@@ -354,7 +354,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.timer = setTimeout(() => {
       this.updateFiltered({
         dashboardSpaceNodes:
-          this.dashboardPartsQuery.getValue().dashboardSpaceNodes
+          this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
       });
 
       this.cd.detectChanges();
@@ -365,7 +365,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.word = undefined;
     this.updateFiltered({
       dashboardSpaceNodes:
-        this.dashboardPartsQuery.getValue().dashboardSpaceNodes
+        this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
     });
 
     this.cd.detectChanges();
@@ -427,7 +427,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       unitMatchedIds: dashboardMatchedIds
     });
 
-    let draftDashboards = this.dashboardParts.filter(x => x.draft === true);
+    let draftDashboards = this.dashboardUnits.filter(x => x.draft === true);
 
     let filteredDashboardNodes =
       this.favoritesOnly === true
@@ -438,7 +438,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       spaceNodes: visibleNodes
     }).map(spaceUnit => spaceUnitToDashboardUnit({ spaceUnit: spaceUnit }));
 
-    this.dashboardPartsFiltered = [
+    this.dashboardUnitsFiltered = [
       ...draftDashboards,
       ...dashboardsFilteredByWord
     ].sort((a, b) => {
@@ -456,11 +456,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
               : 0;
     });
 
-    this.dashboardPartsFilteredQuery.update({
-      dashboardPartsFiltered: this.dashboardPartsFiltered
+    this.dashboardUnitsFilteredQuery.update({
+      dashboardUnitsFiltered: this.dashboardUnitsFiltered
     });
 
-    this.filteredDraftsLength = this.dashboardPartsFiltered.filter(
+    this.filteredDraftsLength = this.dashboardUnitsFiltered.filter(
       y => y.draft === true
     ).length;
 
@@ -492,17 +492,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   deleteDrafts() {
     this.dashboardService.deleteDraftDashboards({
-      dashboardIds: this.dashboardPartsFiltered
+      dashboardIds: this.dashboardUnitsFiltered
         .filter(x => x.draft === true)
         .map(x => x.dashboardId)
     });
   }
 
-  deleteDraftDashboard(event: any, dashboardPart: DashboardUnit) {
+  deleteDraftDashboard(event: any, dashboardUnit: DashboardUnit) {
     event.stopPropagation();
 
     this.dashboardService.deleteDraftDashboards({
-      dashboardIds: [dashboardPart.dashboardId]
+      dashboardIds: [dashboardUnit.dashboardId]
     });
   }
 
@@ -533,7 +533,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.updateFiltered({
       dashboardSpaceNodes:
-        this.dashboardPartsQuery.getValue().dashboardSpaceNodes
+        this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
     });
 
     this.cd.detectChanges();
@@ -542,7 +542,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   toggleFavoriteDashboard(item: { event: MouseEvent; dashboardId: string }) {
     let { event, dashboardId } = item;
 
-    let dashboardsState = this.dashboardPartsQuery.getValue();
+    let dashboardsState = this.dashboardUnitsQuery.getValue();
     let previousDashboardSpaceNodes = dashboardsState.dashboardSpaceNodes;
 
     let dashboard = makeSpaceUnits({
@@ -559,13 +559,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     event.stopPropagation();
 
-    this.dashboardPartsQuery.updatePart({
+    this.dashboardUnitsQuery.updatePart({
       dashboardSpaceNodes: newDashboardSpaceNodes
     });
 
     this.updateFiltered({
       dashboardSpaceNodes:
-        this.dashboardPartsQuery.getValue().dashboardSpaceNodes
+        this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
     });
 
     this.cd.detectChanges();
@@ -589,13 +589,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
           let isOk = resp.info?.status === ResponseInfoStatusEnum.Ok;
 
           if (isOk === false) {
-            this.dashboardPartsQuery.updatePart({
+            this.dashboardUnitsQuery.updatePart({
               dashboardSpaceNodes: previousDashboardSpaceNodes
             });
 
             this.updateFiltered({
               dashboardSpaceNodes:
-                this.dashboardPartsQuery.getValue().dashboardSpaceNodes
+                this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
             });
 
             this.cd.detectChanges();
@@ -660,7 +660,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let { isSmooth } = item;
 
     if (this.dashboard && this.showDashboardsLeftPanel === true) {
-      let dashboardUnit = this.dashboardParts?.find(
+      let dashboardUnit = this.dashboardUnits?.find(
         x => x.dashboardId === this.dashboard.dashboardId
       );
 

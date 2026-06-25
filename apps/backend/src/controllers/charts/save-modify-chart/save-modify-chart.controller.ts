@@ -54,7 +54,6 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -196,9 +195,6 @@ export class SaveModifyChartController {
       modelId: mconfig.modelId,
       userMember: userMember
     });
-
-    let pathParts = existingChart.filePath.split('.');
-    pathParts[pathParts.length - 1] = FileExtensionEnum.Malloy.slice(1);
 
     let { chartFileText } = makeChartFileText({
       mconfig: this.mconfigsService.tabToApi({

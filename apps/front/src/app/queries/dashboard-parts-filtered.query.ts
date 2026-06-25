@@ -3,25 +3,25 @@ import { createStore, select, withProps } from '@ngneat/elf';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import { BaseQuery } from './base.query';
 
-export class DashboardPartsFilteredState {
-  dashboardPartsFiltered: DashboardUnit[];
+export class DashboardUnitsFilteredState {
+  dashboardUnitsFiltered: DashboardUnit[];
 }
 
-let dashboardPartsFiltered: DashboardPartsFilteredState = {
-  dashboardPartsFiltered: []
+let dashboardUnitsFiltered: DashboardUnitsFilteredState = {
+  dashboardUnitsFiltered: []
 };
 
 @Injectable({ providedIn: 'root' })
-export class DashboardPartsFilteredQuery extends BaseQuery<DashboardPartsFilteredState> {
-  dashboardParts$ = this.store.pipe(
-    select(state => state.dashboardPartsFiltered)
+export class DashboardUnitsFilteredQuery extends BaseQuery<DashboardUnitsFilteredState> {
+  dashboardUnits$ = this.store.pipe(
+    select(state => state.dashboardUnitsFiltered)
   );
 
   constructor() {
     super(
       createStore(
-        { name: 'dashboardPartsFiltered' },
-        withProps<DashboardPartsFilteredState>(dashboardPartsFiltered)
+        { name: 'dashboardUnitsFiltered' },
+        withProps<DashboardUnitsFilteredState>(dashboardUnitsFiltered)
       )
     );
   }

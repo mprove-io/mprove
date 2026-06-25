@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { zTile } from '#common/zod/blockml/tile';
 
 export let zSpaceUnit = z
   .object({
@@ -15,9 +14,6 @@ export let zSpaceUnit = z
     canEditOrDeleteUnit: z.boolean(),
     isFavorite: z.boolean(),
     displaySpace: z.string(),
-    structId: z.string().nullish(),
-    creatorId: z.string().nullish(),
-    tiles: z.array(zTile).nullish(),
     displayAccessRoles: z.array(
       z.object({
         role: z.string(),

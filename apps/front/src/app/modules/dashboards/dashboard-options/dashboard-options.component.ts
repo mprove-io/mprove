@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { spaceUnitToDashboardUnit } from '#common/functions/space/space-unit-to-dashboard-unit';
-import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -18,13 +18,13 @@ import { NavigateService } from '#front/app/services/navigate.service';
 })
 export class DashboardOptionsComponent {
   @Input()
-  set dashboardPart(dashboardPart: DashboardPart) {
-    this.currentDashboardPart = dashboardPart;
+  set dashboardUnit(dashboardUnit: DashboardUnit) {
+    this.currentDashboardUnit = dashboardUnit;
   }
 
   @Input()
   set spaceUnit(spaceUnit: SpaceUnit) {
-    this.currentDashboardPart = spaceUnitToDashboardUnit({
+    this.currentDashboardUnit = spaceUnitToDashboardUnit({
       spaceUnit: spaceUnit
     });
   }
@@ -32,7 +32,7 @@ export class DashboardOptionsComponent {
   @Input()
   isHoverM: boolean;
 
-  currentDashboardPart: DashboardPart;
+  currentDashboardUnit: DashboardUnit;
 
   constructor(
     private myDialogService: MyDialogService,
@@ -53,7 +53,7 @@ export class DashboardOptionsComponent {
 
     event.stopPropagation();
 
-    let fileIdAr = this.currentDashboardPart.filePath.split('/');
+    let fileIdAr = this.currentDashboardUnit.filePath.split('/');
     fileIdAr.shift();
 
     let filePath = fileIdAr.join('/');
@@ -64,7 +64,7 @@ export class DashboardOptionsComponent {
     });
   }
 
-  async editDashboardInfo(event: MouseEvent, item: DashboardPart) {
+  async editDashboardInfo(event: MouseEvent, item: DashboardUnit) {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();
@@ -76,7 +76,7 @@ export class DashboardOptionsComponent {
       envId: nav.envId,
       repoId: nav.repoId,
       repoType: nav.repoType,
-      dashboardPart: item
+      dashboardUnit: item
     });
   }
 
@@ -86,7 +86,7 @@ export class DashboardOptionsComponent {
     let nav = this.navQuery.getValue();
 
     this.myDialogService.showDeleteDashboard({
-      dashboardPart: this.currentDashboardPart,
+      dashboardUnit: this.currentDashboardUnit,
       apiService: this.apiService,
       projectId: nav.projectId,
       branchId: nav.branchId,
@@ -95,7 +95,7 @@ export class DashboardOptionsComponent {
       repoType: nav.repoType,
       isStartSpinnerUntilNavEnd:
         this.dashboardQuery.getValue().dashboardId ===
-        this.currentDashboardPart.dashboardId
+        this.currentDashboardUnit.dashboardId
     });
   }
 }

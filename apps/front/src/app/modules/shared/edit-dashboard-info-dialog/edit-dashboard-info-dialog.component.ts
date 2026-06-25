@@ -29,7 +29,7 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeCopy } from '#common/functions/make-copy';
-import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { Role } from '#common/zod/backend/role';
 import type { Space } from '#common/zod/blockml/space';
 import type {
@@ -42,7 +42,7 @@ import type {
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
-import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
+import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -57,7 +57,7 @@ export interface EditDashboardInfoDialogData {
   repoType: RepoTypeEnum;
   branchId: string;
   envId: string;
-  dashboardPart: DashboardPart;
+  dashboardUnit: DashboardUnit;
 }
 
 type SpaceOption = typeof EMPTY_SPACE;
@@ -108,7 +108,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditDashboardInfoDialogData>,
     private fb: FormBuilder,
-    private dashboardPartsQuery: DashboardPartsQuery,
+    private dashboardUnitsQuery: DashboardUnitsQuery,
     private memberQuery: MemberQuery,
     private dashboardQuery: DashboardQuery,
     private spinner: NgxSpinnerService,
@@ -174,19 +174,19 @@ export class EditDashboardInfoDialogComponent implements OnInit {
       spaces: struct.spaces
     });
 
-    let parts = this.ref.data.dashboardPart.filePath.split('/');
+    let parts = this.ref.data.dashboardUnit.filePath.split('/');
     parts.shift();
     this.dashboardPath = parts.join(' / ');
 
     setValueAndMark({
       control: this.titleForm.controls['title'],
-      value: this.ref.data.dashboardPart.title
+      value: this.ref.data.dashboardUnit.title
     });
 
     this.selectedAccessRoles = [
-      ...(this.ref.data.dashboardPart.accessRoles || [])
+      ...(this.ref.data.dashboardUnit.accessRoles || [])
     ];
-    this.selectedSpace = this.ref.data.dashboardPart.space ?? EMPTY_SPACE.space;
+    this.selectedSpace = this.ref.data.dashboardUnit.space ?? EMPTY_SPACE.space;
     this.updateCombinedAccessRoles();
 
     this.loadRoles();
@@ -210,8 +210,8 @@ export class EditDashboardInfoDialogComponent implements OnInit {
         repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
         envId: this.ref.data.envId,
-        fromDashboardId: this.ref.data.dashboardPart.dashboardId,
-        toDashboardId: this.ref.data.dashboardPart.dashboardId,
+        fromDashboardId: this.ref.data.dashboardUnit.dashboardId,
+        toDashboardId: this.ref.data.dashboardUnit.dashboardId,
         dashboardTitle: newTitle.trim(),
         space:
           this.selectedSpace === EMPTY_SPACE_NAME
@@ -234,18 +234,18 @@ export class EditDashboardInfoDialogComponent implements OnInit {
         .pipe(
           tap(async (resp: ToBackendSaveModifyDashboardResponse) => {
             if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              let newDashboardPart = resp.payload.newDashboardPart;
+              let newDashboardUnit = resp.payload.newDashboardUnit;
               let newDashboard = resp.payload.dashboard;
 
               if (isDefined(newDashboard)) {
-                let dashboardParts = this.dashboardPartsQuery.getValue();
+                let dashboardUnits = this.dashboardUnitsQuery.getValue();
 
-                this.dashboardPartsQuery.update({
-                  dashboardUnitDrafts: dashboardParts.dashboardUnitDrafts,
+                this.dashboardUnitsQuery.update({
+                  dashboardUnitDrafts: dashboardUnits.dashboardUnitDrafts,
                   dashboardSpaceNodes:
                     this.unitsUiService.upsertDashboardSpaceUnit({
-                      spaceNodes: dashboardParts.dashboardSpaceNodes,
-                      dashboard: newDashboardPart,
+                      spaceNodes: dashboardUnits.dashboardSpaceNodes,
+                      dashboard: newDashboardUnit,
                       member: this.memberQuery.getValue()
                     })
                 });

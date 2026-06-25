@@ -135,16 +135,13 @@ export class UnitsService {
     return {
       type: 'dashboardUnit',
       id: dashboard.dashboardId,
-      structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
       draft: dashboard.draft,
-      creatorId: dashboard.creatorId,
       title: dashboard.title || dashboard.dashboardId,
       filePath: dashboard.filePath,
       space: space,
       accessRoles: dashboard.accessRoles,
       accessRolesCombined: dashboard.accessRolesCombined,
-      tiles: dashboard.tiles,
       author: author,
       canEditOrDeleteDashboard:
         member.isEditor === true ||
@@ -186,10 +183,7 @@ export class UnitsService {
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: dashboard.accessRoles,
         accessRolesCombined: dashboard.accessRolesCombined
-      }),
-      structId: dashboard.structId,
-      creatorId: dashboard.creatorId,
-      tiles: dashboard.tiles
+      })
     };
   }
 }

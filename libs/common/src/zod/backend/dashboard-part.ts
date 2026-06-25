@@ -1,6 +1,21 @@
 import { z } from 'zod';
-import { zDashboardUnit } from '#common/zod/backend/dashboard-unit';
+import { zTile } from '#common/zod/blockml/tile';
 
-export let zDashboardPart = zDashboardUnit.meta({ id: 'DashboardPart' });
+export let zDashboardPart = z
+  .object({
+    structId: z.string(),
+    dashboardId: z.string(),
+    draft: z.boolean(),
+    creatorId: z.string(),
+    title: z.string(),
+    filePath: z.string(),
+    space: z.string().nullish(),
+    accessRoles: z.array(z.string()),
+    accessRolesCombined: z.array(z.string()),
+    tiles: z.array(zTile),
+    author: z.string().nullish(),
+    canEditOrDeleteDashboard: z.boolean()
+  })
+  .meta({ id: 'DashboardPart' });
 
 export type DashboardPart = z.infer<typeof zDashboardPart>;

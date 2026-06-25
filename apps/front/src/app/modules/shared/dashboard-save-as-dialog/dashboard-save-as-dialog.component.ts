@@ -40,7 +40,7 @@ import type {
   ToBackendGetRolesRequestPayload,
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
-import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
+import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
@@ -121,7 +121,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   selectedDashboardId: any; // string
   selectedDashboardPath: string;
 
-  dashboardParts: DashboardUnit[];
+  dashboardUnits: DashboardUnit[];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -148,7 +148,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     private navQuery: NavQuery,
     private structQuery: StructQuery,
     private navigateService: NavigateService,
-    private dashboardPartsQuery: DashboardPartsQuery,
+    private dashboardUnitsQuery: DashboardUnitsQuery,
     private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef,
     private unitsUiService: UnitsUiService
@@ -244,7 +244,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
     this.loadRoles();
 
-    this.dashboardParts = this.ref.data.dashboards
+    this.dashboardUnits = this.ref.data.dashboards
       .filter(d => canReplaceAnyDashboard === true || d.author === userAlias)
       .map(x => {
         (x as any).disabled = x.canEditOrDeleteDashboard === false;
@@ -304,7 +304,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     this.updateCombinedAccessRoles();
   }
 
-  existingDashboardSearchFn(term: string, dashboardPart: DashboardUnit) {
+  existingDashboardSearchFn(term: string, dashboardUnit: DashboardUnit) {
     let trimmedTerm = term?.trim();
 
     if (!trimmedTerm) {
@@ -312,7 +312,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     }
 
     let haystack = [
-      `${isDefined(dashboardPart.title) ? dashboardPart.title : dashboardPart.dashboardId} ${dashboardPart.author ?? ''}`
+      `${isDefined(dashboardUnit.title) ? dashboardUnit.title : dashboardUnit.dashboardId} ${dashboardUnit.author ?? ''}`
     ];
     let opts = {};
     let uf = new uFuzzy(opts);
@@ -358,18 +358,18 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendSaveCreateDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardPart = resp.payload.newDashboardPart;
-            if (isDefined(dashboardPart)) {
-              let dashboardParts = this.dashboardPartsQuery.getValue();
+            let dashboardUnit = resp.payload.newDashboardUnit;
+            if (isDefined(dashboardUnit)) {
+              let dashboardUnits = this.dashboardUnitsQuery.getValue();
 
-              this.dashboardPartsQuery.update({
-                dashboardUnitDrafts: dashboardParts.dashboardUnitDrafts.filter(
+              this.dashboardUnitsQuery.update({
+                dashboardUnitDrafts: dashboardUnits.dashboardUnitDrafts.filter(
                   d => d.dashboardId !== this.dashboard.dashboardId
                 ),
                 dashboardSpaceNodes:
                   this.unitsUiService.upsertDashboardSpaceUnit({
-                    spaceNodes: dashboardParts.dashboardSpaceNodes,
-                    dashboard: dashboardPart,
+                    spaceNodes: dashboardUnits.dashboardSpaceNodes,
+                    dashboard: dashboardUnit,
                     member: this.memberQuery.getValue()
                   })
               });
@@ -424,19 +424,19 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendSaveModifyDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardPart = resp.payload.newDashboardPart;
+            let dashboardUnit = resp.payload.newDashboardUnit;
 
-            if (isDefined(dashboardPart)) {
-              let dashboardParts = this.dashboardPartsQuery.getValue();
+            if (isDefined(dashboardUnit)) {
+              let dashboardUnits = this.dashboardUnitsQuery.getValue();
 
-              this.dashboardPartsQuery.update({
-                dashboardUnitDrafts: dashboardParts.dashboardUnitDrafts.filter(
+              this.dashboardUnitsQuery.update({
+                dashboardUnitDrafts: dashboardUnits.dashboardUnitDrafts.filter(
                   d => d.dashboardId !== this.dashboard.dashboardId
                 ),
                 dashboardSpaceNodes:
                   this.unitsUiService.upsertDashboardSpaceUnit({
-                    spaceNodes: dashboardParts.dashboardSpaceNodes,
-                    dashboard: dashboardPart,
+                    spaceNodes: dashboardUnits.dashboardSpaceNodes,
+                    dashboard: dashboardUnit,
                     member: this.memberQuery.getValue()
                   })
               });
@@ -461,13 +461,13 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   makePathAndSetValues() {
     if (
       isUndefined(this.selectedDashboardId) ||
-      isUndefined(this.dashboardParts)
+      isUndefined(this.dashboardUnits)
     ) {
       this.selectedDashboardPath = '';
       return;
     }
 
-    let selectedDashboard = this.dashboardParts.find(
+    let selectedDashboard = this.dashboardUnits.find(
       x => x.dashboardId === this.selectedDashboardId
     );
 

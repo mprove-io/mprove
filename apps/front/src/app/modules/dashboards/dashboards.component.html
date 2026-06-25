@@ -489,7 +489,7 @@
 
                       <div
                         *ngFor="
-                          let dPart of dashboardPartsFiltered;
+                          let dPart of dashboardUnitsFiltered;
                           let i = index
                         "
                         [attr.dashboardId]="dPart.dashboardId"
@@ -887,7 +887,7 @@
       <div *ngIf="routerEvents$ | async"></div>
       <div *ngIf="showDashboardsLeftPanel$ | async"></div>
       <div *ngIf="showTileParameters$ | async"></div>
-      <div *ngIf="dashboardParts$ | async"></div>
+      <div *ngIf="dashboardUnits$ | async"></div>
       <div *ngIf="dashboard$ | async"></div>
       <div *ngIf="nav$ | async"></div>
       <div *ngIf="member$ | async"></div>

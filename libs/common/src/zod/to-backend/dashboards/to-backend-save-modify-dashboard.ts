@@ -43,7 +43,7 @@ export let zToBackendSaveModifyDashboardRequest = zToBackendRequest
 export let zToBackendSaveModifyDashboardResponsePayload = z
   .object({
     dashboard: zDashboardX,
-    newDashboardPart: zDashboardUnit
+    newDashboardUnit: zDashboardUnit
   })
   .meta({ id: 'ToBackendSaveModifyDashboardResponsePayload' });
 

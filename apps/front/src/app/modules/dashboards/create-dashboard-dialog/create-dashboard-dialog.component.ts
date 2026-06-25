@@ -36,7 +36,7 @@ import type {
   ToBackendGetRolesRequestPayload,
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
-import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
+import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
@@ -121,7 +121,7 @@ export class CreateDashboardDialogComponent implements OnInit {
     private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
     private navigateService: NavigateService,
-    private dashboardPartsQuery: DashboardPartsQuery,
+    private dashboardUnitsQuery: DashboardUnitsQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
@@ -184,18 +184,18 @@ export class CreateDashboardDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendSaveCreateDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardPart = resp.payload.newDashboardPart;
-            if (isDefined(dashboardPart)) {
-              let dashboardParts = this.dashboardPartsQuery.getValue();
+            let dashboardUnit = resp.payload.newDashboardUnit;
+            if (isDefined(dashboardUnit)) {
+              let dashboardUnits = this.dashboardUnitsQuery.getValue();
 
-              this.dashboardPartsQuery.update({
-                dashboardUnitDrafts: dashboardParts.dashboardUnitDrafts.filter(
-                  d => d.dashboardId !== dashboardPart.dashboardId
+              this.dashboardUnitsQuery.update({
+                dashboardUnitDrafts: dashboardUnits.dashboardUnitDrafts.filter(
+                  d => d.dashboardId !== dashboardUnit.dashboardId
                 ),
                 dashboardSpaceNodes:
                   this.unitsUiService.upsertDashboardSpaceUnit({
-                    spaceNodes: dashboardParts.dashboardSpaceNodes,
-                    dashboard: dashboardPart,
+                    spaceNodes: dashboardUnits.dashboardSpaceNodes,
+                    dashboard: dashboardUnit,
                     member: this.memberQuery.getValue()
                   })
               });

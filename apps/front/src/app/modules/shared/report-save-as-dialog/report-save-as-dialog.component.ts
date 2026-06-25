@@ -336,7 +336,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
                 reportUnitDrafts: reportsState.reportUnitDrafts.filter(
                   x => x.reportId !== this.fromReportId
                 ),
-                reportSpaceNodes: this.unitsUiService.upsertSpaceUnit({
+                reportSpaceNodes: this.unitsUiService.upsertReportSpaceUnit({
                   spaceNodes: reportsState.reportSpaceNodes,
                   report: newReportPart,
                   member: this.memberQuery.getValue()
@@ -410,7 +410,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
                 reportUnitDrafts: reportsState.reportUnitDrafts.filter(
                   x => x.reportId !== this.fromReportId
                 ),
-                reportSpaceNodes: this.unitsUiService.upsertSpaceUnit({
+                reportSpaceNodes: this.unitsUiService.upsertReportSpaceUnit({
                   spaceNodes: reportsState.reportSpaceNodes,
                   report: newReportPart,
                   member: this.memberQuery.getValue()

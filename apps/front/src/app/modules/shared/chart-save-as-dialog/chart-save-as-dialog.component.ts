@@ -32,7 +32,7 @@ import { makeId } from '#common/functions/make-id';
 import { makeSpaceUnits } from '#common/functions/space/make-space-units';
 import { spaceUnitToDashboardUnit } from '#common/functions/space/space-unit-to-dashboard-unit';
 import type { ChartX } from '#common/zod/backend/chart-x';
-import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { Chart } from '#common/zod/blockml/chart';
@@ -137,7 +137,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   selectedTileTitle: any; // string
 
-  dashboardParts: DashboardPart[];
+  dashboardUnits: DashboardUnit[];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -206,7 +206,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.dashboardParts = [
+            this.dashboardUnits = [
               ...resp.payload.dashboardUnitDrafts,
               ...makeSpaceUnits({
                 spaceNodes: resp.payload.dashboardSpaceNodes
@@ -352,7 +352,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   setSelectedDashboard() {
     if (
       isUndefined(this.selectedDashboardId) ||
-      isUndefined(this.dashboardParts)
+      isUndefined(this.dashboardUnits)
     ) {
       this.selectedDashboardPath = '';
       return;
@@ -409,12 +409,12 @@ export class ChartSaveAsDialogComponent implements OnInit {
   makePath() {
     if (
       isUndefined(this.selectedDashboardId) ||
-      isUndefined(this.dashboardParts)
+      isUndefined(this.dashboardUnits)
     ) {
       return;
     }
 
-    let selectedDashboard = this.dashboardParts.find(
+    let selectedDashboard = this.dashboardUnits.find(
       x => x.dashboardId === this.selectedDashboardId
     );
 

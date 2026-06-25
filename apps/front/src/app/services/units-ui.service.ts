@@ -101,10 +101,7 @@ export class UnitsUiService {
       canEditOrDeleteUnit: dashboard.canEditOrDeleteDashboard === true,
       isFavorite: isFavorite === true,
       displaySpace: dashboard.displaySpace,
-      displayAccessRoles: dashboard.displayAccessRoles,
-      structId: dashboard.structId,
-      creatorId: dashboard.creatorId,
-      tiles: dashboard.tiles
+      displayAccessRoles: dashboard.displayAccessRoles
     };
   }
 
@@ -158,7 +155,7 @@ export class UnitsUiService {
     });
   }
 
-  upsertSpaceUnit(item: {
+  upsertReportSpaceUnit(item: {
     spaceNodes: SpaceNode[];
     report: ReportX;
     member: Member;
@@ -169,59 +166,14 @@ export class UnitsUiService {
       unitId: report.reportId
     });
 
-    let nodes = this.removeSpaceUnit({
+    return this.upsertUnitSpaceUnit({
       spaceNodes: spaceNodes,
-      unitId: report.reportId
-    });
-
-    if (report.draft === true) {
-      return nodes;
-    }
-
-    let target = makeSpaceUnitTarget({
-      space: report.space,
-      author: report.author,
-      accessRoles: report.accessRoles,
-      member: member
-    });
-    let targetSpace = target.space;
-
-    let reportNode = {
-      ...this.makeSpaceUnitFromReportX({
+      spaceUnit: this.makeSpaceUnitFromReportX({
         report: report,
         isFavorite: isFavorite
       }),
-      space: targetSpace
-    };
-
-    if (targetSpace) {
-      nodes = addSpaceUnitToExistingSpace({
-        nodes: nodes,
-        space: targetSpace,
-        spaceUnit: reportNode
-      });
-
-      if (this.hasSpaceUnit({ nodes: nodes, unitId: report.reportId })) {
-        return addDisplaySpace({ spaceNodes: nodes, pathParts: [] });
-      }
-
-      if (target.isSynthetic === true) {
-        let withSyntheticTarget = addMissingSyntheticSpaceUnitTarget({
-          nodes: nodes,
-          target: target,
-          spaceUnit: reportNode
-        });
-
-        return addDisplaySpace({
-          spaceNodes: withSyntheticTarget,
-          pathParts: []
-        });
-      }
-    }
-
-    return addDisplaySpace({
-      spaceNodes: sortSpaceNodes({ nodes: [...nodes, reportNode] }),
-      pathParts: []
+      draft: report.draft,
+      member: member
     });
   }
 
@@ -236,28 +188,44 @@ export class UnitsUiService {
       unitId: dashboard.dashboardId
     });
 
+    return this.upsertUnitSpaceUnit({
+      spaceNodes: spaceNodes,
+      spaceUnit: this.makeSpaceUnitFromDashboardUnit({
+        dashboard: dashboard,
+        isFavorite: isFavorite
+      }),
+      draft: dashboard.draft,
+      member: member
+    });
+  }
+
+  private upsertUnitSpaceUnit(item: {
+    spaceNodes: SpaceNode[];
+    spaceUnit: SpaceUnit;
+    draft: boolean;
+    member: Member;
+  }): SpaceNode[] {
+    let { spaceNodes, spaceUnit, draft, member } = item;
+
     let nodes = this.removeSpaceUnit({
       spaceNodes: spaceNodes,
-      unitId: dashboard.dashboardId
+      unitId: spaceUnit.unitId
     });
 
-    if (dashboard.draft === true) {
+    if (draft === true) {
       return nodes;
     }
 
     let target = makeSpaceUnitTarget({
-      space: dashboard.space,
-      author: dashboard.author,
-      accessRoles: dashboard.accessRoles,
+      space: spaceUnit.space,
+      author: spaceUnit.author,
+      accessRoles: spaceUnit.accessRoles,
       member: member
     });
     let targetSpace = target.space;
 
-    let dashboardNode = {
-      ...this.makeSpaceUnitFromDashboardUnit({
-        dashboard: dashboard,
-        isFavorite: isFavorite
-      }),
+    let unitNode = {
+      ...spaceUnit,
       space: targetSpace
     };
 
@@ -265,10 +233,10 @@ export class UnitsUiService {
       nodes = addSpaceUnitToExistingSpace({
         nodes: nodes,
         space: targetSpace,
-        spaceUnit: dashboardNode
+        spaceUnit: unitNode
       });
 
-      if (this.hasSpaceUnit({ nodes: nodes, unitId: dashboard.dashboardId })) {
+      if (this.hasSpaceUnit({ nodes: nodes, unitId: spaceUnit.unitId })) {
         return addDisplaySpace({ spaceNodes: nodes, pathParts: [] });
       }
 
@@ -276,7 +244,7 @@ export class UnitsUiService {
         let withSyntheticTarget = addMissingSyntheticSpaceUnitTarget({
           nodes: nodes,
           target: target,
-          spaceUnit: dashboardNode
+          spaceUnit: unitNode
         });
 
         return addDisplaySpace({
@@ -287,7 +255,7 @@ export class UnitsUiService {
     }
 
     return addDisplaySpace({
-      spaceNodes: sortSpaceNodes({ nodes: [...nodes, dashboardNode] }),
+      spaceNodes: sortSpaceNodes({ nodes: [...nodes, unitNode] }),
       pathParts: []
     });
   }

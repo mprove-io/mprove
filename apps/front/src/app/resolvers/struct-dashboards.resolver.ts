@@ -16,7 +16,7 @@ import type {
   ToBackendGetDashboardsResponse
 } from '#common/zod/to-backend/dashboards/to-backend-get-dashboards';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
-import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
+import { DashboardUnitsQuery } from '../queries/dashboard-parts.query';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -31,7 +31,7 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
-    private dashboardPartsQuery: DashboardPartsQuery,
+    private dashboardUnitsQuery: DashboardUnitsQuery,
     private modelsQuery: ModelsQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
@@ -89,7 +89,7 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
             });
             this.modelsQuery.update({ models: resp.payload.models });
 
-            this.dashboardPartsQuery.update({
+            this.dashboardUnitsQuery.update({
               dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
               dashboardSpaceNodes: resp.payload.dashboardSpaceNodes
             });

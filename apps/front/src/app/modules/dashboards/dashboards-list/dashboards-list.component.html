@@ -15,29 +15,29 @@
       </div>
 
       <div
-        *ngIf="dashboardPartsFiltered?.length > 0"
+        *ngIf="dashboardUnitsFiltered?.length > 0"
         class="h-2 flex-1 overflow-y-auto"
       >
         <div
           *ngFor="
-            let item of dashboardPartsFiltered;
+            let item of dashboardUnitsFiltered;
             let i = index;
             trackBy: trackByFn
           "
           class="hover:bg-m50 bg-m0 flex flex-row hover:cursor-pointer"
           [ngStyle]="
             item.dashboardId !==
-              dashboardPartsFiltered[dashboardPartsFiltered.length - 1]
+              dashboardUnitsFiltered[dashboardUnitsFiltered.length - 1]
                 .dashboardId && {
               'border-bottom-width': '1px'
             }
           "
           [ngClass]="{
             'mt-2': i === 0,
-            'mb-5': i === dashboardPartsFiltered.length - 1,
+            'mb-5': i === dashboardUnitsFiltered.length - 1,
             'border-s300':
               item.dashboardId !==
-              dashboardPartsFiltered[dashboardPartsFiltered.length - 1]
+              dashboardUnitsFiltered[dashboardUnitsFiltered.length - 1]
                 .dashboardId
           }"
         >
@@ -49,7 +49,7 @@
               <div class="flex w-12 pl-3">
                 <div class="invisible flex group-hover:visible">
                   <m-dashboard-options
-                    [dashboardPart]="item"
+                    [dashboardUnit]="item"
                     [isHoverM]="false"
                   ></m-dashboard-options>
                 </div>
@@ -109,7 +109,7 @@
 
       <div
         class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
-        *ngIf="dashboardPartsFiltered?.length === 0"
+        *ngIf="dashboardUnitsFiltered?.length === 0"
         >No Dashboards</div
       >
     </div>
@@ -118,4 +118,4 @@
 
 <div *ngIf="nav$ | async"></div>
 <!-- <div *ngIf="isExplorer$ | async"></div> -->
-<div *ngIf="dashboardPartsFiltered$ | async"></div>
+<div *ngIf="dashboardUnitsFiltered$ | async"></div>
