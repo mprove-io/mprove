@@ -410,7 +410,7 @@ export class ApiService {
         ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `The changes were saved to the file, but it failed the validation. It's probably a bug.`;
-        errorData.leftButtonText = 'Go to file';
+        errorData.leftButtonText = 'Go to File';
         errorData.leftOnClickFnBindThis = (() => {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
