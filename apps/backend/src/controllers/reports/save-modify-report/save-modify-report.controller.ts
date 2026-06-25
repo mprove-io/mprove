@@ -479,6 +479,15 @@ export class SaveModifyReportController {
       apiUserMember: apiUserMember
     });
 
+    let reportsCatalog = await this.reportsService.getReportsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      userMember: userMember,
+      apiUserMember: apiUserMember,
+      spaces: currentStruct.spaces ?? []
+    });
+
     let payload: ToBackendSaveModifyReportResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
@@ -487,7 +496,8 @@ export class SaveModifyReportController {
       }),
       userMember: apiUserMember,
       report: apiFinalReport,
-      reportPart: apiFinalReport
+      reportUnitDrafts: reportsCatalog.reportUnitDrafts,
+      reportSpaceNodes: reportsCatalog.reportSpaceNodes
     };
 
     return payload;

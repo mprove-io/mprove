@@ -2,7 +2,9 @@ import { z } from 'zod';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zMember } from '#common/zod/backend/member';
+import { zReportUnit } from '#common/zod/backend/report-unit';
 import { zReportX } from '#common/zod/backend/report-x';
+import { zSpaceNode } from '#common/zod/backend/space-node';
 import { zStructX } from '#common/zod/backend/struct-x';
 import { zMconfigChart } from '#common/zod/blockml/mconfig-chart';
 import { zReportField } from '#common/zod/blockml/report-field';
@@ -50,7 +52,8 @@ export let zToBackendSaveModifyReportResponsePayload = z
     struct: zStructX,
     userMember: zMember,
     report: zReportX,
-    reportPart: zReportX
+    reportUnitDrafts: z.array(zReportUnit),
+    reportSpaceNodes: z.array(zSpaceNode)
   })
   .meta({ id: 'ToBackendSaveModifyReportResponsePayload' });
 

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zDashboardUnit } from '#common/zod/backend/dashboard-unit';
+import { zSpaceNode } from '#common/zod/backend/space-node';
 import { zTileX } from '#common/zod/backend/tile-x';
 import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
@@ -38,7 +39,8 @@ export let zToBackendSaveCreateDashboardRequest = zToBackendRequest
 
 export let zToBackendSaveCreateDashboardResponsePayload = z
   .object({
-    newDashboardUnit: zDashboardUnit
+    dashboardUnitDrafts: z.array(zDashboardUnit),
+    dashboardSpaceNodes: z.array(zSpaceNode)
   })
   .meta({ id: 'ToBackendSaveCreateDashboardResponsePayload' });
 

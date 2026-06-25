@@ -24,7 +24,7 @@ import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Role } from '#common/zod/backend/role';
@@ -37,14 +37,12 @@ import type {
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
-import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UnitsUiService } from '#front/app/services/units-ui.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CreateDashboardDialogData {
@@ -119,14 +117,12 @@ export class CreateDashboardDialogComponent implements OnInit {
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private uiQuery: UiQuery,
-    private memberQuery: MemberQuery,
     private navigateService: NavigateService,
     private dashboardUnitsQuery: DashboardUnitsQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
-    private cd: ChangeDetectorRef,
-    private unitsUiService: UnitsUiService
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -184,28 +180,19 @@ export class CreateDashboardDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendSaveCreateDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardUnit = resp.payload.newDashboardUnit;
-            if (isDefined(dashboardUnit)) {
-              let dashboardUnits = this.dashboardUnitsQuery.getValue();
-
-              this.dashboardUnitsQuery.update({
-                dashboardUnitDrafts: dashboardUnits.dashboardUnitDrafts.filter(
-                  d => d.dashboardId !== dashboardUnit.dashboardId
-                ),
-                dashboardSpaceNodes:
-                  this.unitsUiService.upsertDashboardSpaceUnit({
-                    spaceNodes: dashboardUnits.dashboardSpaceNodes,
-                    dashboard: dashboardUnit,
-                    member: this.memberQuery.getValue()
-                  })
-              });
-
-              this.navigateService.navigateToDashboard({
-                dashboardId: this.newDashboardId
-              });
-            } else {
+            if (isUndefined(resp.payload.dashboardSpaceNodes)) {
               this.spinner.hide(APP_SPINNER_NAME);
+              return;
             }
+
+            this.dashboardUnitsQuery.update({
+              dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.payload.dashboardSpaceNodes
+            });
+
+            this.navigateService.navigateToDashboard({
+              dashboardId: this.newDashboardId
+            });
           }
         }),
         take(1)

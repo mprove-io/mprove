@@ -48,7 +48,6 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UnitsUiService } from '#front/app/services/units-ui.service';
 
 enum ReportSaveAsEnum {
   NEW_REPORT = 'NEW_REPORT',
@@ -131,7 +130,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
     private structQuery: StructQuery,
     private navigateService: NavigateService,
     private spinner: NgxSpinnerService,
-    private unitsUiService: UnitsUiService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -326,6 +324,11 @@ export class ReportSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendSaveCreateReportResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            if (isUndefined(resp.payload.reportSpaceNodes)) {
+              this.spinner.hide(APP_SPINNER_NAME);
+              return;
+            }
+
             let newReport = resp.payload.report;
 
             if (isDefined(newReport)) {
@@ -391,21 +394,17 @@ export class ReportSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendSaveModifyReportResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            if (isUndefined(resp.payload.reportSpaceNodes)) {
+              this.spinner.hide(APP_SPINNER_NAME);
+              return;
+            }
+
             let newReport = resp.payload.report;
-            let newReportPart = resp.payload.reportPart;
 
             if (isDefined(newReport)) {
-              let reportsState = this.reportsQuery.getValue();
-
               this.reportsQuery.update({
-                reportUnitDrafts: reportsState.reportUnitDrafts.filter(
-                  x => x.reportId !== this.fromReportId
-                ),
-                reportSpaceNodes: this.unitsUiService.upsertReportSpaceUnit({
-                  spaceNodes: reportsState.reportSpaceNodes,
-                  report: newReportPart,
-                  member: this.memberQuery.getValue()
-                })
+                reportUnitDrafts: resp.payload.reportUnitDrafts,
+                reportSpaceNodes: resp.payload.reportSpaceNodes
               });
 
               let currentReport = this.reportQuery.getValue();

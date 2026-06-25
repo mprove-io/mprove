@@ -47,7 +47,6 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
-import { UnitsUiService } from '#front/app/services/units-ui.service';
 import { SharedModule } from '../shared.module';
 
 export interface EditDashboardInfoDialogData {
@@ -114,8 +113,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private structQuery: StructQuery,
     private uiQuery: UiQuery,
-    private cd: ChangeDetectorRef,
-    private unitsUiService: UnitsUiService
+    private cd: ChangeDetectorRef
   ) {}
 
   makeSpacesPlusEmpty(item: { spaces: Space[] }): SpaceOption[] {
@@ -234,20 +232,12 @@ export class EditDashboardInfoDialogComponent implements OnInit {
         .pipe(
           tap(async (resp: ToBackendSaveModifyDashboardResponse) => {
             if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              let newDashboardUnit = resp.payload.newDashboardUnit;
               let newDashboard = resp.payload.dashboard;
 
               if (isDefined(newDashboard)) {
-                let dashboardUnits = this.dashboardUnitsQuery.getValue();
-
                 this.dashboardUnitsQuery.update({
-                  dashboardUnitDrafts: dashboardUnits.dashboardUnitDrafts,
-                  dashboardSpaceNodes:
-                    this.unitsUiService.upsertDashboardSpaceUnit({
-                      spaceNodes: dashboardUnits.dashboardSpaceNodes,
-                      dashboard: newDashboardUnit,
-                      member: this.memberQuery.getValue()
-                    })
+                  dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
+                  dashboardSpaceNodes: resp.payload.dashboardSpaceNodes
                 });
 
                 let currentDashboard = this.dashboardQuery.getValue();

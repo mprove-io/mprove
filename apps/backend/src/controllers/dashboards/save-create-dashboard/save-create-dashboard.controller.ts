@@ -45,7 +45,6 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { UnitsService } from '#backend/services/units.service';
 import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -84,7 +83,6 @@ export class SaveCreateDashboardController {
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private unitsService: UnitsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -459,16 +457,17 @@ export class SaveCreateDashboardController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let newDashboardUnit = this.unitsService.makeDashboardUnit({
-      dashboard: newDashboard,
-      member: apiUserMember,
-      favoriteDashboardIds: [],
-      space: newDashboard.space,
-      displaySpace: newDashboard.space ?? ''
+    let dashboardsCatalog = await this.dashboardsService.getDashboardsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember,
+      spaces: currentStruct.spaces ?? []
     });
 
     let payload: ToBackendSaveCreateDashboardResponsePayload = {
-      newDashboardUnit: newDashboardUnit
+      dashboardUnitDrafts: dashboardsCatalog.dashboardUnitDrafts,
+      dashboardSpaceNodes: dashboardsCatalog.dashboardSpaceNodes
     };
 
     return payload;

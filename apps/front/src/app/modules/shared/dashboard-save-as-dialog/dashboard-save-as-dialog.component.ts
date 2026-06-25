@@ -48,7 +48,6 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UnitsUiService } from '#front/app/services/units-ui.service';
 
 enum DashboardSaveAsEnum {
   NEW_DASHBOARD = 'NEW_DASHBOARD',
@@ -150,8 +149,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private dashboardUnitsQuery: DashboardUnitsQuery,
     private spinner: NgxSpinnerService,
-    private cd: ChangeDetectorRef,
-    private unitsUiService: UnitsUiService
+    private cd: ChangeDetectorRef
   ) {}
 
   makeSpacesPlusEmpty(item: { spaces: Space[] }): SpaceOption[] {
@@ -358,28 +356,19 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendSaveCreateDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardUnit = resp.payload.newDashboardUnit;
-            if (isDefined(dashboardUnit)) {
-              let dashboardUnits = this.dashboardUnitsQuery.getValue();
-
-              this.dashboardUnitsQuery.update({
-                dashboardUnitDrafts: dashboardUnits.dashboardUnitDrafts.filter(
-                  d => d.dashboardId !== this.dashboard.dashboardId
-                ),
-                dashboardSpaceNodes:
-                  this.unitsUiService.upsertDashboardSpaceUnit({
-                    spaceNodes: dashboardUnits.dashboardSpaceNodes,
-                    dashboard: dashboardUnit,
-                    member: this.memberQuery.getValue()
-                  })
-              });
-
-              this.navigateService.navigateToDashboard({
-                dashboardId: this.newDashboardId
-              });
-            } else {
-              this.spinner.hide(this.spinnerName);
+            if (isUndefined(resp.payload.dashboardSpaceNodes)) {
+              this.spinner.hide(APP_SPINNER_NAME);
+              return;
             }
+
+            this.dashboardUnitsQuery.update({
+              dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.payload.dashboardSpaceNodes
+            });
+
+            this.navigateService.navigateToDashboard({
+              dashboardId: this.newDashboardId
+            });
           }
         }),
         take(1)
@@ -424,29 +413,19 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendSaveModifyDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardUnit = resp.payload.newDashboardUnit;
-
-            if (isDefined(dashboardUnit)) {
-              let dashboardUnits = this.dashboardUnitsQuery.getValue();
-
-              this.dashboardUnitsQuery.update({
-                dashboardUnitDrafts: dashboardUnits.dashboardUnitDrafts.filter(
-                  d => d.dashboardId !== this.dashboard.dashboardId
-                ),
-                dashboardSpaceNodes:
-                  this.unitsUiService.upsertDashboardSpaceUnit({
-                    spaceNodes: dashboardUnits.dashboardSpaceNodes,
-                    dashboard: dashboardUnit,
-                    member: this.memberQuery.getValue()
-                  })
-              });
-
-              this.navigateService.navigateToDashboard({
-                dashboardId: this.selectedDashboardId
-              });
-            } else {
-              this.spinner.hide(this.spinnerName);
+            if (isUndefined(resp.payload.dashboardSpaceNodes)) {
+              this.spinner.hide(APP_SPINNER_NAME);
+              return;
             }
+
+            this.dashboardUnitsQuery.update({
+              dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.payload.dashboardSpaceNodes
+            });
+
+            this.navigateService.navigateToDashboard({
+              dashboardId: this.selectedDashboardId
+            });
           }
         }),
         take(1)

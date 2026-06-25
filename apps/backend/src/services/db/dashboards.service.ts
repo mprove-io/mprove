@@ -28,6 +28,7 @@ import { makeDashboardFiltersX } from '#backend/functions/make-dashboard-filters
 import { makeTilesX } from '#backend/functions/make-tiles-x';
 import { EMPTY_QUERY_ID, MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
+import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
@@ -36,16 +37,22 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { DashboardPart } from '#common/zod/backend/dashboard-part';
+import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelX } from '#common/zod/backend/model-x';
+import type { SpaceNode } from '#common/zod/backend/space-node';
 import type { Dashboard } from '#common/zod/blockml/dashboard';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { Model } from '#common/zod/blockml/model';
 import type { Query } from '#common/zod/blockml/query';
+import type { Space } from '#common/zod/blockml/space';
 import { HashService } from '../hash.service';
+import { SpaceService } from '../space.service';
 import { TabService } from '../tab.service';
+import { UnitsService } from '../units.service';
+import { FavoritesService } from './favorites.service';
 import { MconfigsService } from './mconfigs.service';
 import { ModelsService } from './models.service';
 import { QueriesService } from './queries.service';
@@ -58,8 +65,97 @@ export class DashboardsService {
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
     private hashService: HashService,
+    private favoritesService: FavoritesService,
+    private spaceService: SpaceService,
+    private unitsService: UnitsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  async getDashboardsCatalog(item: {
+    projectId: string;
+    structId: string;
+    user: UserTab;
+    apiUserMember: Member;
+    spaces: Space[];
+  }): Promise<{
+    dashboardUnitDrafts: DashboardUnit[];
+    dashboardSpaceNodes: SpaceNode[];
+  }> {
+    let { projectId, structId, user, apiUserMember, spaces } = item;
+
+    let dashboards = await this.db.drizzle.query.dashboardsTable
+      .findMany({
+        where: and(
+          eq(dashboardsTable.structId, structId),
+          or(
+            eq(dashboardsTable.draft, false),
+            and(
+              eq(dashboardsTable.draft, true),
+              eq(dashboardsTable.creatorId, user.userId)
+            )
+          )
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.dashboardEntToTab(x)));
+
+    let dashboardTabsGrantedAccess = dashboards.filter(dashboard => {
+      if (dashboard.draft === true) {
+        return true;
+      }
+
+      return checkAccess({
+        member: apiUserMember,
+        accessRoles: dashboard.accessRolesCombined,
+        filePath: dashboard.filePath
+      });
+    });
+
+    let draftDashboards = dashboardTabsGrantedAccess.filter(
+      dashboard => dashboard.draft === true
+    );
+
+    let savedDashboards = dashboardTabsGrantedAccess.filter(
+      dashboard => dashboard.draft === false
+    );
+
+    let dashboardTargetIds = savedDashboards.map(
+      dashboard => dashboard.dashboardId
+    );
+
+    let favoriteDashboardIds = await this.favoritesService.getFavoriteTargetIds(
+      {
+        projectId: projectId,
+        userId: user.userId,
+        type: FavoriteTypeEnum.Dashboard,
+        targetIds: dashboardTargetIds
+      }
+    );
+
+    let dashboardSpaceUnits = savedDashboards.map(dashboard =>
+      this.unitsService.makeDashboardSpaceUnit({
+        dashboard: dashboard,
+        member: apiUserMember,
+        favoriteDashboardIds: favoriteDashboardIds
+      })
+    );
+
+    return {
+      dashboardUnitDrafts: draftDashboards.map(dashboard =>
+        this.unitsService.makeDashboardUnit({
+          dashboard: dashboard,
+          member: apiUserMember,
+          favoriteDashboardIds: [],
+          space: dashboard.space,
+          displaySpace: dashboard.space ?? ''
+        })
+      ),
+      dashboardSpaceNodes: this.spaceService.makeSpaceNodes({
+        spaces: spaces ?? [],
+        units: dashboardSpaceUnits,
+        member: apiUserMember
+      })
+    };
+  }
 
   tabToApi(item: {
     dashboard: DashboardTab;
