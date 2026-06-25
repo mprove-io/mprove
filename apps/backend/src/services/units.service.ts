@@ -13,34 +13,13 @@ import type { SpaceUnit } from '#common/zod/backend/space-unit';
 
 @Injectable()
 export class UnitsService {
-  getReportAuthor(item: { report: ReportTab }): string | undefined {
-    let { report } = item;
+  getUnitAuthor(item: { filePath: string | undefined }): string | undefined {
+    let { filePath } = item;
 
-    let author: string;
+    let author: string | undefined;
 
-    if (isDefined(report.filePath)) {
-      let filePathArray = report.filePath.split('/');
-
-      let usersFolderIndex = filePathArray.findIndex(
-        x => x === MPROVE_USERS_FOLDER
-      );
-
-      author =
-        usersFolderIndex > -1 && filePathArray.length > usersFolderIndex + 1
-          ? filePathArray[usersFolderIndex + 1]
-          : undefined;
-    }
-
-    return author;
-  }
-
-  getDashboardAuthor(item: { dashboard: DashboardTab }): string | undefined {
-    let { dashboard } = item;
-
-    let author: string;
-
-    if (isDefined(dashboard.filePath)) {
-      let filePathArray = dashboard.filePath.split('/');
+    if (isDefined(filePath)) {
+      let filePathArray = filePath.split('/');
 
       let usersFolderIndex = filePathArray.findIndex(
         x => x === MPROVE_USERS_FOLDER
@@ -64,7 +43,7 @@ export class UnitsService {
   }): ReportUnit {
     let { report, member, favoriteReportIds, space, displaySpace } = item;
 
-    let author = this.getReportAuthor({ report: report });
+    let author = this.getUnitAuthor({ filePath: report.filePath });
 
     return {
       type: 'reportUnit',
@@ -97,7 +76,7 @@ export class UnitsService {
   }): SpaceUnit {
     let { report, member, favoriteReportIds } = item;
 
-    let author = this.getReportAuthor({ report: report });
+    let author = this.getUnitAuthor({ filePath: report.filePath });
 
     return {
       type: 'spaceUnit',
@@ -130,7 +109,7 @@ export class UnitsService {
     displaySpace: string;
   }): DashboardUnit {
     let { dashboard, member, favoriteDashboardIds, space, displaySpace } = item;
-    let author = this.getDashboardAuthor({ dashboard: dashboard });
+    let author = this.getUnitAuthor({ filePath: dashboard.filePath });
 
     return {
       type: 'dashboardUnit',
@@ -162,7 +141,7 @@ export class UnitsService {
     favoriteDashboardIds: string[];
   }): SpaceUnit {
     let { dashboard, member, favoriteDashboardIds } = item;
-    let author = this.getDashboardAuthor({ dashboard: dashboard });
+    let author = this.getUnitAuthor({ filePath: dashboard.filePath });
 
     return {
       type: 'spaceUnit',
