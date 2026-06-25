@@ -17,13 +17,11 @@ import { from, interval, of, Subscription } from 'rxjs';
 import { concatMap, delay, filter, startWith, take, tap } from 'rxjs/operators';
 import { DASHBOARDS_PAGE_TITLE } from '#common/constants/page-titles';
 import {
-  MY_UNITS_SPACE_ID,
   PATH_DASHBOARDS,
   PATH_DASHBOARDS_LIST,
-  PERSONAL_UNITS_SPACE_ID,
+  PERSONAL_SPACE_ID,
   RESTRICTED_USER_ALIAS,
-  SHARED_UNITS_SPACE_ID,
-  UNCATEGORIZED_UNITS_SPACE_ID
+  SHARED_SPACE_ID
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
@@ -85,10 +83,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   @ViewChild('dashboardsTree') dashboardsTree: TreeComponent;
 
-  myUnitsSpaceId = MY_UNITS_SPACE_ID;
-  uncategorizedUnitsSpaceId = UNCATEGORIZED_UNITS_SPACE_ID;
-  personalUnitsSpaceId = PERSONAL_UNITS_SPACE_ID;
-  sharedUnitsSpaceId = SHARED_UNITS_SPACE_ID;
+  personalSpaceId = PERSONAL_SPACE_ID;
+  sharedSpaceId = SHARED_SPACE_ID;
 
   isInitialScrollCompleted = false;
 
@@ -694,8 +690,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let { space } = item;
 
     let isSlashSeparatedSyntheticSpace = [
-      this.personalUnitsSpaceId,
-      this.sharedUnitsSpaceId
+      this.personalSpaceId,
+      this.sharedSpaceId
     ].some(spaceId => space.startsWith(`${spaceId}/`));
 
     let parts =

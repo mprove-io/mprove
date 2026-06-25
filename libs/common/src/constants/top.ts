@@ -140,15 +140,17 @@ export const DEFAULT_LIMIT = '500';
 
 export const MPROVE_USERS_FOLDER = 'mprove-users';
 
-export const MY_UNITS_SPACE_ID = '__my_units__';
-export const UNCATEGORIZED_UNITS_SPACE_ID = '__uncategorized_units__';
-export const PERSONAL_UNITS_SPACE_ID = '__personal_units__';
-export const SHARED_UNITS_SPACE_ID = '__shared_units__';
+export const MY_SPACE_ID = '__my__';
+export const UNCATEGORIZED_SPACE_ID = '__uncategorized__';
+export const PERSONAL_SPACE_ID = '__personal__';
+export const SHARED_SPACE_ID = '__shared__';
 
-export const MY_UNITS_TITLE = 'My Reports';
-export const UNCATEGORIZED_UNITS_TITLE = 'Uncategorized';
-export const PERSONAL_UNITS_TITLE = 'Personal';
-export const SHARED_UNITS_TITLE = 'Shared';
+export const MY_SPACE_TITLE = 'My';
+export const MY_REPORTS_SPACE_TITLE = 'My Reports';
+export const MY_DASHBOARDS_SPACE_TITLE = 'My Dashboards';
+export const UNCATEGORIZED_SPACE_TITLE = 'Uncategorized';
+export const PERSONAL_SPACE_TITLE = 'Personal';
+export const SHARED_SPACE_TITLE = 'Shared';
 
 export const PATH_REGISTER = 'register';
 export const PATH_VERIFY_EMAIL = 'verify-email';

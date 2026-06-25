@@ -35,13 +35,11 @@ import { REPORTS_PAGE_TITLE } from '#common/constants/page-titles';
 import {
   EMPTY_REPORT_ID,
   MALLOY_FILTER_ANY,
-  MY_UNITS_SPACE_ID,
   PATH_REPORTS,
   PATH_REPORTS_LIST,
-  PERSONAL_UNITS_SPACE_ID,
+  PERSONAL_SPACE_ID,
   RESTRICTED_USER_ALIAS,
-  SHARED_UNITS_SPACE_ID,
-  UNCATEGORIZED_UNITS_SPACE_ID
+  SHARED_SPACE_ID
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
@@ -116,10 +114,8 @@ export class TimeSpecItem {
   styleUrls: ['reports.component.scss']
 })
 export class ReportsComponent implements OnInit, OnDestroy {
-  myUnitsSpaceId = MY_UNITS_SPACE_ID;
-  uncategorizedUnitsSpaceId = UNCATEGORIZED_UNITS_SPACE_ID;
-  personalUnitsSpaceId = PERSONAL_UNITS_SPACE_ID;
-  sharedUnitsSpaceId = SHARED_UNITS_SPACE_ID;
+  personalSpaceId = PERSONAL_SPACE_ID;
+  sharedSpaceId = SHARED_SPACE_ID;
 
   @ViewChild('timeSpecSelect', { static: false })
   timeSpecSelectElement: NgSelectComponent;
@@ -1252,8 +1248,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let { space } = item;
 
     let isSlashSeparatedSyntheticSpace = [
-      this.personalUnitsSpaceId,
-      this.sharedUnitsSpaceId
+      this.personalSpaceId,
+      this.sharedSpaceId
     ].some(spaceId => space.startsWith(`${spaceId}/`));
 
     let parts =

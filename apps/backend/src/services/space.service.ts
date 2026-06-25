@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import {
-  MY_UNITS_SPACE_ID,
-  PERSONAL_UNITS_SPACE_ID,
-  SHARED_UNITS_SPACE_ID,
-  UNCATEGORIZED_UNITS_SPACE_ID
+  MY_SPACE_ID,
+  PERSONAL_SPACE_ID,
+  SHARED_SPACE_ID,
+  UNCATEGORIZED_SPACE_ID
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
@@ -25,8 +25,9 @@ export class SpaceService {
     spaces: Space[];
     units: SpaceUnit[];
     member: Member;
+    mySpaceTitle: string;
   }): SpaceNode[] {
-    let { spaces, units, member } = item;
+    let { spaces, units, member, mySpaceTitle } = item;
 
     let spacesByName = new Map(spaces.map(space => [space.space, space]));
 
@@ -114,7 +115,8 @@ export class SpaceService {
         space: unit.space,
         author: unit.author,
         accessRoles: unit.accessRoles,
-        member: member
+        member: member,
+        mySpaceTitle: mySpaceTitle
       });
 
       let rootNode = syntheticRootsBySpace.get(target.rootSpace);
@@ -164,44 +166,42 @@ export class SpaceService {
 
     let nodes: SpaceNode[] = [];
 
-    let myUnitsNode = syntheticRootsBySpace.get(MY_UNITS_SPACE_ID);
+    let myNode = syntheticRootsBySpace.get(MY_SPACE_ID);
 
-    if (isDefined(myUnitsNode)) {
-      myUnitsNode.children = sortSpaceNodes({
-        nodes: myUnitsNode.children
+    if (isDefined(myNode)) {
+      myNode.children = sortSpaceNodes({
+        nodes: myNode.children
       });
-      nodes.push(myUnitsNode);
+      nodes.push(myNode);
     }
 
     nodes.push(...rootFolderNodes);
 
-    let uncategorizedUnitsNode = syntheticRootsBySpace.get(
-      UNCATEGORIZED_UNITS_SPACE_ID
-    );
+    let uncategorizedNode = syntheticRootsBySpace.get(UNCATEGORIZED_SPACE_ID);
 
-    if (isDefined(uncategorizedUnitsNode)) {
-      uncategorizedUnitsNode.children = sortSpaceNodes({
-        nodes: uncategorizedUnitsNode.children
+    if (isDefined(uncategorizedNode)) {
+      uncategorizedNode.children = sortSpaceNodes({
+        nodes: uncategorizedNode.children
       });
-      nodes.push(uncategorizedUnitsNode);
+      nodes.push(uncategorizedNode);
     }
 
-    let personalUnitsNode = syntheticRootsBySpace.get(PERSONAL_UNITS_SPACE_ID);
+    let personalNode = syntheticRootsBySpace.get(PERSONAL_SPACE_ID);
 
-    if (isDefined(personalUnitsNode)) {
-      personalUnitsNode.children = sortSpaceNodes({
-        nodes: personalUnitsNode.children
+    if (isDefined(personalNode)) {
+      personalNode.children = sortSpaceNodes({
+        nodes: personalNode.children
       });
-      nodes.push(personalUnitsNode);
+      nodes.push(personalNode);
     }
 
-    let sharedUnitsNode = syntheticRootsBySpace.get(SHARED_UNITS_SPACE_ID);
+    let sharedNode = syntheticRootsBySpace.get(SHARED_SPACE_ID);
 
-    if (isDefined(sharedUnitsNode)) {
-      sharedUnitsNode.children = sortSpaceNodes({
-        nodes: sharedUnitsNode.children
+    if (isDefined(sharedNode)) {
+      sharedNode.children = sortSpaceNodes({
+        nodes: sharedNode.children
       });
-      nodes.push(sharedUnitsNode);
+      nodes.push(sharedNode);
     }
 
     return nodes;

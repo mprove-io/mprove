@@ -1,12 +1,11 @@
 import {
-  MY_UNITS_SPACE_ID,
-  MY_UNITS_TITLE,
-  PERSONAL_UNITS_SPACE_ID,
-  PERSONAL_UNITS_TITLE,
-  SHARED_UNITS_SPACE_ID,
-  SHARED_UNITS_TITLE,
-  UNCATEGORIZED_UNITS_SPACE_ID,
-  UNCATEGORIZED_UNITS_TITLE
+  MY_SPACE_ID,
+  PERSONAL_SPACE_ID,
+  PERSONAL_SPACE_TITLE,
+  SHARED_SPACE_ID,
+  SHARED_SPACE_TITLE,
+  UNCATEGORIZED_SPACE_ID,
+  UNCATEGORIZED_SPACE_TITLE
 } from '#common/constants/top';
 import type { Member } from '#common/zod/backend/member';
 import { isDefinedAndNotEmpty } from '../is-defined-and-not-empty';
@@ -26,8 +25,9 @@ export function makeSpaceUnitTarget(item: {
   author: string | undefined;
   accessRoles: string[];
   member: Member;
+  mySpaceTitle: string;
 }): SpaceUnitTarget {
-  let { space, author, accessRoles, member } = item;
+  let { space, author, accessRoles, member, mySpaceTitle } = item;
 
   if (isDefinedAndNotEmpty(space)) {
     return {
@@ -43,20 +43,20 @@ export function makeSpaceUnitTarget(item: {
 
   if (author === member.alias) {
     return {
-      space: MY_UNITS_SPACE_ID,
-      rootSpace: MY_UNITS_SPACE_ID,
-      rootTitle: MY_UNITS_TITLE,
-      displaySpace: MY_UNITS_TITLE,
+      space: MY_SPACE_ID,
+      rootSpace: MY_SPACE_ID,
+      rootTitle: mySpaceTitle,
+      displaySpace: mySpaceTitle,
       isSynthetic: true
     };
   }
 
   if (isUndefined(author)) {
     return {
-      space: UNCATEGORIZED_UNITS_SPACE_ID,
-      rootSpace: UNCATEGORIZED_UNITS_SPACE_ID,
-      rootTitle: UNCATEGORIZED_UNITS_TITLE,
-      displaySpace: UNCATEGORIZED_UNITS_TITLE,
+      space: UNCATEGORIZED_SPACE_ID,
+      rootSpace: UNCATEGORIZED_SPACE_ID,
+      rootTitle: UNCATEGORIZED_SPACE_TITLE,
+      displaySpace: UNCATEGORIZED_SPACE_TITLE,
       isSynthetic: true
     };
   }
@@ -67,10 +67,10 @@ export function makeSpaceUnitTarget(item: {
     accessRoles.length === 0
   ) {
     return {
-      space: `${PERSONAL_UNITS_SPACE_ID}/${author}`,
-      rootSpace: PERSONAL_UNITS_SPACE_ID,
-      rootTitle: PERSONAL_UNITS_TITLE,
-      displaySpace: `${PERSONAL_UNITS_TITLE} - ${author}`,
+      space: `${PERSONAL_SPACE_ID}/${author}`,
+      rootSpace: PERSONAL_SPACE_ID,
+      rootTitle: PERSONAL_SPACE_TITLE,
+      displaySpace: `${PERSONAL_SPACE_TITLE} - ${author}`,
       childTitle: author,
       isSynthetic: true
     };
@@ -78,20 +78,20 @@ export function makeSpaceUnitTarget(item: {
 
   if (author !== member.alias && accessRoles.length > 0) {
     return {
-      space: `${SHARED_UNITS_SPACE_ID}/${author}`,
-      rootSpace: SHARED_UNITS_SPACE_ID,
-      rootTitle: SHARED_UNITS_TITLE,
-      displaySpace: `${SHARED_UNITS_TITLE} - ${author}`,
+      space: `${SHARED_SPACE_ID}/${author}`,
+      rootSpace: SHARED_SPACE_ID,
+      rootTitle: SHARED_SPACE_TITLE,
+      displaySpace: `${SHARED_SPACE_TITLE} - ${author}`,
       childTitle: author,
       isSynthetic: true
     };
   }
 
   return {
-    space: UNCATEGORIZED_UNITS_SPACE_ID,
-    rootSpace: UNCATEGORIZED_UNITS_SPACE_ID,
-    rootTitle: UNCATEGORIZED_UNITS_TITLE,
-    displaySpace: UNCATEGORIZED_UNITS_TITLE,
+    space: UNCATEGORIZED_SPACE_ID,
+    rootSpace: UNCATEGORIZED_SPACE_ID,
+    rootTitle: UNCATEGORIZED_SPACE_TITLE,
+    displaySpace: UNCATEGORIZED_SPACE_TITLE,
     isSynthetic: true
   };
 }

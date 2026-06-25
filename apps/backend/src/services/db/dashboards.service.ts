@@ -26,7 +26,11 @@ import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { makeDashboardFiltersX } from '#backend/functions/make-dashboard-filters-x';
 import { makeTilesX } from '#backend/functions/make-tiles-x';
-import { EMPTY_QUERY_ID, MPROVE_USERS_FOLDER } from '#common/constants/top';
+import {
+  EMPTY_QUERY_ID,
+  MPROVE_USERS_FOLDER,
+  MY_DASHBOARDS_SPACE_TITLE
+} from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
@@ -152,7 +156,8 @@ export class DashboardsService {
       dashboardSpaceNodes: this.spaceService.makeSpaceNodes({
         spaces: spaces ?? [],
         units: dashboardSpaceUnits,
-        member: apiUserMember
+        member: apiUserMember,
+        mySpaceTitle: MY_DASHBOARDS_SPACE_TITLE
       })
     };
   }

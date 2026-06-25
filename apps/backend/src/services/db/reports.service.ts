@@ -13,7 +13,11 @@ import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access';
 import { makeReportFiltersX } from '#backend/functions/make-report-filters-x';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
-import { EMPTY_REPORT_ID, MPROVE_USERS_FOLDER } from '#common/constants/top';
+import {
+  EMPTY_REPORT_ID,
+  MPROVE_USERS_FOLDER,
+  MY_REPORTS_SPACE_TITLE
+} from '#common/constants/top';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
@@ -130,7 +134,8 @@ export class ReportsService {
     let reportSpaceNodes = this.spaceService.makeSpaceNodes({
       spaces: spaces ?? [],
       units: reportSpaceUnits,
-      member: apiUserMember
+      member: apiUserMember,
+      mySpaceTitle: MY_REPORTS_SPACE_TITLE
     });
 
     return {
