@@ -13,44 +13,52 @@
 
   <div
     data-cy="reportSaveAsDialogNewRepCheckbox"
-    class="flex h-9 cursor-pointer flex-row items-center"
-    (click)="newRepOnClick()"
+    class="flex h-9 flex-row items-center"
   >
     <div
-      class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
-      [ngClass]="{
-        'bg-m600': saveAs === reportSaveAsEnum.NEW_REPORT
-      }"
+      class="flex cursor-pointer flex-row items-center"
+      (click)="newRepOnClick()"
     >
-      <m-check-icon
-        *ngIf="saveAs === reportSaveAsEnum.NEW_REPORT"
-      ></m-check-icon>
-    </div>
+      <div
+        class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
+        [ngClass]="{
+          'bg-m600': saveAs === reportSaveAsEnum.NEW_REPORT
+        }"
+      >
+        <m-check-icon
+          *ngIf="saveAs === reportSaveAsEnum.NEW_REPORT"
+        ></m-check-icon>
+      </div>
 
-    <div class="ml-5 text-base">New Report</div>
+      <div class="ml-5 text-base">New Report</div>
+    </div>
   </div>
 
   <div
     data-cy="reportSaveAsDialogExistingRepCheckbox"
-    class="mt-5 flex h-9 cursor-pointer flex-row items-center"
-    (click)="existingRepOnClick()"
+    class="mt-5 flex h-9 flex-row items-center"
   >
-    <button
-      class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
-      [ngClass]="{
-        'bg-m600': saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT
-      }"
+    <div
+      class="flex cursor-pointer flex-row items-center"
+      (click)="existingRepOnClick()"
     >
-      <m-check-icon
-        *ngIf="saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
-      ></m-check-icon>
-    </button>
+      <div
+        class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
+        [ngClass]="{
+          'bg-m600': saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT
+        }"
+      >
+        <m-check-icon
+          *ngIf="saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
+        ></m-check-icon>
+      </div>
 
-    <div class="flex flex-row items-center">
-      <div class="ml-5 mr-5 flex flex-shrink-0 text-base"
+      <div class="ml-5 flex flex-shrink-0 text-base"
         >Replace Existing Report</div
       >
+    </div>
 
+    <div class="ml-5 flex flex-row items-center">
       <div
         class="relative mx-5 flex h-2 w-9 flex-shrink-0"
         *ngIf="!reports && saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"
@@ -83,7 +91,6 @@
         [searchable]="true"
         [searchFn]="existingReportSearchFn"
         [(ngModel)]="selectedReportId"
-        (click)="$event.stopPropagation()"
         (change)="selectedReportChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation();
