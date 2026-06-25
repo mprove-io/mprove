@@ -20,14 +20,20 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { MPROVE_USERS_FOLDER } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import {
+  APP_SPINNER_NAME,
+  EMPTY_SPACE,
+  EMPTY_SPACE_NAME
+} from '#common/constants/top-front';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
+import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Role } from '#common/zod/backend/role';
+import type { Space } from '#common/zod/blockml/space';
 import type {
   ToBackendSaveCreateDashboardRequestPayload,
   ToBackendSaveCreateDashboardResponse
@@ -36,7 +42,9 @@ import type {
   ToBackendGetRolesRequestPayload,
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
+import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
+import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -48,6 +56,8 @@ import { SharedModule } from '../../shared/shared.module';
 export interface CreateDashboardDialogData {
   apiService: ApiService;
 }
+
+type SpaceOption = typeof EMPTY_SPACE;
 
 @Component({
   selector: 'm-create-dashboard-dialog',
@@ -67,17 +77,22 @@ export class CreateDashboardDialogComponent implements OnInit {
   @ViewChild('dashboardsCreateDialogRoleSelect', { static: false })
   dashboardsCreateDialogRoleSelectElement: NgSelectComponent;
 
+  @ViewChild('dashboardsCreateDialogSpaceSelect', { static: false })
+  dashboardsCreateDialogSpaceSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.dashboardsCreateDialogRoleSelectElement?.close();
+    this.dashboardsCreateDialogSpaceSelectElement?.close();
     this.ref.close();
   }
 
   @ViewChild('dashboardTitle') dashboardTitleElement: ElementRef;
 
-  usersFolder = MPROVE_USERS_FOLDER;
+  emptySpaceName = EMPTY_SPACE_NAME;
 
   dashboard: DashboardX;
+  newDashboardPath: string;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.maxLength(255)]]
@@ -85,6 +100,11 @@ export class CreateDashboardDialogComponent implements OnInit {
 
   roles: Role[] = [];
   selectedAccessRoles: string[] = [];
+  selectedSpace: string;
+  combinedAccessRoles: string[] = [];
+  combinedAccessRolesText = '';
+  spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
+  canSpecifyDashboardSpace = false;
 
   newDashboardId = makeId();
 
@@ -92,6 +112,9 @@ export class CreateDashboardDialogComponent implements OnInit {
   alias$ = this.userQuery.alias$.pipe(
     tap(x => {
       this.alias = x;
+      if (this.selectedSpace !== undefined) {
+        this.updatePath();
+      }
       this.cd.detectChanges();
     })
   );
@@ -100,6 +123,9 @@ export class CreateDashboardDialogComponent implements OnInit {
   nav$ = this.navQuery.select().pipe(
     tap(x => {
       this.nav = x;
+      if (this.selectedSpace !== undefined) {
+        this.updatePath();
+      }
       this.cd.detectChanges();
     })
   );
@@ -108,6 +134,10 @@ export class CreateDashboardDialogComponent implements OnInit {
   struct$ = this.structQuery.select().pipe(
     tap(x => {
       this.struct = x;
+      if (this.selectedSpace !== undefined) {
+        this.updateCombinedAccessRoles();
+        this.updatePath();
+      }
       this.cd.detectChanges();
     })
   );
@@ -122,11 +152,95 @@ export class CreateDashboardDialogComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
+    private memberQuery: MemberQuery,
     private cd: ChangeDetectorRef
   ) {}
 
+  makeSpacesPlusEmpty(item: { spaces: Space[] }): SpaceOption[] {
+    let { spaces } = item;
+
+    let spaceOptions = (spaces ?? []).map(space => ({
+      ...space,
+      label: this.makeSpaceLabel({ space: space, spaces: spaces ?? [] })
+    }));
+
+    return [makeCopy(EMPTY_SPACE), ...spaceOptions];
+  }
+
+  makeSpaceLabel(item: { space: Space; spaces: Space[] }) {
+    let { space, spaces } = item;
+    let parts = space.space.split('.');
+    let currentSpace = '';
+
+    return parts
+      .map((part, index) => {
+        currentSpace = index === 0 ? part : `${currentSpace}.${part}`;
+
+        let foundSpace = spaces.find(x => x.space === currentSpace);
+
+        return foundSpace?.title || part;
+      })
+      .join(' - ');
+  }
+
+  updateCombinedAccessRoles() {
+    let selectedSpace = this.struct?.spaces?.find(
+      x => x.space === this.selectedSpace
+    );
+
+    this.combinedAccessRoles = [
+      ...new Set([
+        ...(selectedSpace?.accessRolesCombined ?? []),
+        ...this.selectedAccessRoles
+      ])
+    ];
+    this.combinedAccessRolesText = this.combinedAccessRoles.join(', ');
+  }
+
+  updatePath() {
+    let alias = this.userQuery.getValue().alias;
+    let nav = this.navQuery.getValue();
+    let struct = this.structQuery.getValue();
+
+    this.newDashboardPath = makeUnitDisplayPath({
+      projectId: nav.projectId,
+      mproveDirValue: struct.mproveConfig.mproveDirValue,
+      userAlias: alias,
+      selectedSpace: this.selectedSpace,
+      unitId: this.newDashboardId,
+      filePath: undefined,
+      unitSpace: EMPTY_SPACE_NAME,
+      extension: FileExtensionEnum.Dashboard,
+      spaces: struct.spaces
+    });
+  }
+
+  spaceChange() {
+    this.updateCombinedAccessRoles();
+    this.updatePath();
+  }
+
+  accessRolesChange() {
+    this.updateCombinedAccessRoles();
+  }
+
   ngOnInit() {
     this.nav = this.navQuery.getValue();
+    this.struct = this.structQuery.getValue();
+
+    this.spacesPlusEmpty = this.makeSpacesPlusEmpty({
+      spaces: this.struct.spaces
+    });
+
+    let member = this.memberQuery.getValue();
+
+    this.canSpecifyDashboardSpace =
+      member.isAdmin === true || member.isEditor === true;
+
+    this.selectedSpace = EMPTY_SPACE.space;
+    this.updateCombinedAccessRoles();
+    this.updatePath();
+
     this.loadRoles();
 
     setTimeout(() => {
@@ -166,6 +280,10 @@ export class CreateDashboardDialogComponent implements OnInit {
       envId: this.nav.envId,
       newDashboardId: this.newDashboardId,
       dashboardTitle: newTitle,
+      space:
+        this.selectedSpace === EMPTY_SPACE_NAME
+          ? undefined
+          : this.selectedSpace,
       accessRoles: roles,
       timezone: this.uiQuery.getValue().timezone
     };
