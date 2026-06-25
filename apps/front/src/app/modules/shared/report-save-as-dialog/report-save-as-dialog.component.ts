@@ -16,6 +16,7 @@ import {
   EMPTY_SPACE,
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -37,7 +38,7 @@ import type {
   ToBackendGetRolesRequestPayload,
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
-import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
+import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -472,14 +473,15 @@ export class ReportSaveAsDialogComponent implements OnInit {
     let alias = this.userQuery.getValue().alias;
     let nav = this.navQuery.getValue();
 
-    this.newReportPath = makeReportDisplayPath({
+    this.newReportPath = makeUnitDisplayPath({
       projectId: nav.projectId,
       mproveDirValue: this.struct.mproveConfig.mproveDirValue,
       userAlias: alias,
       selectedSpace: this.selectedSpace,
-      reportId: this.newReportId,
+      unitId: this.newReportId,
       filePath: undefined,
-      reportSpace: EMPTY_SPACE_NAME,
+      unitSpace: EMPTY_SPACE_NAME,
+      extension: FileExtensionEnum.Report,
       spaces: this.struct.spaces
     });
 
@@ -493,14 +495,15 @@ export class ReportSaveAsDialogComponent implements OnInit {
     );
 
     if (isDefined(selectedReport)) {
-      this.selectedRepPath = makeReportDisplayPath({
+      this.selectedRepPath = makeUnitDisplayPath({
         projectId: nav.projectId,
         mproveDirValue: this.struct.mproveConfig.mproveDirValue,
         userAlias: alias,
         selectedSpace: this.selectedSpace,
-        reportId: selectedReport.reportId,
+        unitId: selectedReport.reportId,
         filePath: selectedReport.filePath,
-        reportSpace: selectedReport.space,
+        unitSpace: selectedReport.space,
+        extension: FileExtensionEnum.Report,
         spaces: this.struct.spaces
       });
     }

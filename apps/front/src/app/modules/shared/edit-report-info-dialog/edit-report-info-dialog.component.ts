@@ -24,6 +24,7 @@ import {
   EMPTY_SPACE,
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -41,7 +42,7 @@ import type {
   ToBackendGetRolesRequestPayload,
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
-import { makeReportDisplayPath } from '#front/app/functions/make-report-display-path';
+import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
@@ -195,14 +196,15 @@ export class EditReportInfoDialogComponent implements OnInit {
   updateSelectedReportPath() {
     let alias = this.userQuery.getValue().alias;
 
-    this.selectedRepPath = makeReportDisplayPath({
+    this.selectedRepPath = makeUnitDisplayPath({
       projectId: this.ref.data.projectId,
       mproveDirValue: this.struct.mproveConfig.mproveDirValue,
       userAlias: alias,
       selectedSpace: this.selectedSpace,
-      reportId: this.ref.data.report.reportId,
+      unitId: this.ref.data.report.reportId,
       filePath: this.ref.data.report.filePath,
-      reportSpace: this.ref.data.report.space,
+      unitSpace: this.ref.data.report.space,
+      extension: FileExtensionEnum.Report,
       spaces: this.struct.spaces
     });
   }

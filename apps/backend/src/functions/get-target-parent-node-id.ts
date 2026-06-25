@@ -8,7 +8,7 @@ export function getTargetParentNodeId(item: {
   mproveDirValue: string;
   userAlias: string;
   space: string | null | undefined;
-  spaces: Pick<Space, 'space' | 'filePath'>[];
+  spaces: Space[];
 }) {
   // Example: requested space "s1" targets "p1/data/s1"; undefined targets the user folder.
   let { projectId, mproveDirValue, userAlias, space, spaces } = item;

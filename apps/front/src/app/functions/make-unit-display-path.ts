@@ -9,24 +9,26 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined';
 import type { Space } from '#common/zod/blockml/space';
 
-export function makeReportDisplayPath(item: {
+export function makeUnitDisplayPath(item: {
   projectId: string;
   mproveDirValue: string;
   userAlias: string;
   selectedSpace: string;
-  reportId: string;
+  unitId: string;
   filePath: string;
-  reportSpace: string;
-  spaces: Pick<Space, 'space' | 'filePath'>[];
+  unitSpace: string;
+  extension: FileExtensionEnum;
+  spaces: Space[];
 }) {
   let {
     projectId,
     mproveDirValue,
     userAlias,
     selectedSpace,
-    reportId,
+    unitId,
     filePath,
-    reportSpace,
+    unitSpace,
+    extension,
     spaces
   } = item;
 
@@ -34,18 +36,18 @@ export function makeReportDisplayPath(item: {
     ? EMPTY_SPACE_NAME
     : selectedSpace;
 
-  let normalizedReportSpace = isUndefined(reportSpace)
+  let normalizedUnitSpace = isUndefined(unitSpace)
     ? EMPTY_SPACE_NAME
-    : reportSpace;
+    : unitSpace;
 
   if (
     isDefinedAndNotEmpty(filePath) &&
-    normalizedSelectedSpace === normalizedReportSpace
+    normalizedSelectedSpace === normalizedUnitSpace
   ) {
     return makeDisplayPath({ filePath: filePath });
   }
 
-  let parentNodeId = makeUserReportsParentNodeId({
+  let parentNodeId = makeUserUnitsParentNodeId({
     projectId: projectId,
     mproveDirValue: mproveDirValue,
     userAlias: userAlias
@@ -81,11 +83,11 @@ export function makeReportDisplayPath(item: {
   }
 
   return makeDisplayPath({
-    filePath: `${parentNodeId}/${reportId}${FileExtensionEnum.Report}`
+    filePath: `${parentNodeId}/${unitId}${extension}`
   });
 }
 
-function makeUserReportsParentNodeId(item: {
+function makeUserUnitsParentNodeId(item: {
   projectId: string;
   mproveDirValue: string;
   userAlias: string;

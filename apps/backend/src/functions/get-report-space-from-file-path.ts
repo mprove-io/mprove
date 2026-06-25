@@ -2,7 +2,7 @@ import type { Space } from '#common/zod/blockml/space';
 
 export function getReportSpaceFromFilePath(item: {
   filePath: string;
-  spaces: Pick<Space, 'space'>[];
+  spaces: Space[];
 }) {
   // Example: input filePath "p1/data/s1/s2/unk/s3/r2.report" and spaces ["s1", "s1.s2"] should resolve to "s1.s2".
   let { filePath, spaces } = item;

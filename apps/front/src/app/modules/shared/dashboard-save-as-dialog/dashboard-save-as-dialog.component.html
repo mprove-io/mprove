@@ -1,6 +1,12 @@
 <div class="bg-m0 flex select-none flex-col p-9">
   <div
     data-cy="dashboardSaveAsDialogTitle"
+    class="text-s2 mt-5 flex-grow text-left text-base font-semibold"
+    >Draft {{ dashboard.dashboardId }}</div
+  >
+
+  <div
+    data-cy="dashboardSaveAsDialogTitle"
     class="text-s2 mb-9 mt-5 flex-grow select-none text-left text-2xl font-semibold"
     >Save As</div
   >
@@ -126,10 +132,9 @@
   </div>
 
   <div class="text-s400 mt-9 h-7 text-base">
-    <div *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD"
-      >{{ struct?.mproveConfig.mproveDirValue | mproveDir }} /
-      {{ usersFolder }} / {{ alias }} / {{ newDashboardId }}.dashboard</div
-    >
+    <div *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD">{{
+      newDashboardPath
+    }}</div>
 
     <div
       *ngIf="
@@ -159,7 +164,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="dashboardSaveAsDialogTitleInput"
-        class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
+        class="form-input border-s3 focus:border-m600 h-10 w-96 rounded"
         [ngClass]="{
           'border-r600':
             titleForm.controls['title'].invalid &&
@@ -178,16 +183,26 @@
       >
     </div>
 
-    <div class="ml-5 flex flex-col items-start">
+    <div
+      class="ml-5 flex flex-col items-start"
+      [tp]="templateSpecifyDashboardSpace"
+      [tpIsEnabled]="canSpecifyReportSpace === false"
+    >
+      <ng-template #templateSpecifyDashboardSpace>
+        <div>Only Admins and Editors can change space</div>
+      </ng-template>
+
       <ng-select
         #dashboardSaveAsDialogSpaceSelect
         [fixNgSelectBottom]="dashboardSaveAsDialogSpaceSelect"
         data-cy="dashboardSaveAsDialogSpaceSelect"
         class="select-h-10 w-96 flex-shrink-0"
+        [class.report-space-select-disabled]="canSpecifyReportSpace === false"
         [items]="spacesPlusEmpty"
         [multiple]="false"
         [searchable]="true"
         [clearable]="false"
+        [disabled]="canSpecifyReportSpace === false"
         [(ngModel)]="selectedSpace"
         (change)="spaceChange()"
         (keyup.esc)="
@@ -215,7 +230,7 @@
     </div>
   </div>
 
-  <div class="flex min-h-[100px] flex-row items-start">
+  <div class="mt-8 flex min-h-[100px] flex-row items-start">
     <div class="flex flex-col">
       <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Access Roles</div
@@ -232,7 +247,7 @@
           #dashboardSaveAsDialogRoleSelect
           [fixNgSelectBottom]="dashboardSaveAsDialogRoleSelect"
           data-cy="dashboardSaveAsDialogRoleSelect"
-          class="min-h-11 w-96 flex-shrink-0"
+          class="select-h-10 w-96 flex-shrink-0"
           [items]="roles"
           [multiple]="true"
           [searchable]="true"
