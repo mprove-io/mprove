@@ -159,12 +159,16 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   filteredDashboardNodes: SpaceNodeX[] = [];
   favoritesOnly = false;
 
+  pendingExpandSpace: string;
+
   treeOptions = {
     displayField: 'title'
   };
 
   dashboardUnits$ = this.dashboardUnitsQuery.select().pipe(
     tap(x => {
+      let previousDashboardUnits = this.dashboardUnits ?? [];
+
       let nonDraftDashboardUnits = makeSpaceUnits({
         spaceNodes: x.dashboardSpaceNodes
       }).map(spaceUnit => spaceUnitToDashboardUnit({ spaceUnit: spaceUnit }));
@@ -174,7 +178,56 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         ...nonDraftDashboardUnits
       ];
 
+      let dashboardToExpand = this.dashboardUnits.find(dashboard => {
+        let previousDashboard = previousDashboardUnits.find(
+          previous => previous.dashboardId === dashboard.dashboardId
+        );
+
+        let dashboardDisplaySpace = dashboard.space;
+
+        let previousDisplaySpace = isDefined(previousDashboard)
+          ? previousDashboard.space
+          : undefined;
+
+        let isInitialLoad = previousDashboardUnits.length === 0;
+
+        let isNewSavedDashboard =
+          isDefined(previousDashboard) === false && dashboard.draft === false;
+
+        let isSavedFromDraft =
+          isDefined(previousDashboard) === true &&
+          previousDashboard.draft === true &&
+          dashboard.draft === false;
+
+        let isDisplaySpaceChanged =
+          previousDisplaySpace !== dashboardDisplaySpace;
+
+        let shouldExpand =
+          isInitialLoad === false &&
+          isDefinedAndNotEmpty(dashboardDisplaySpace) === true &&
+          (isNewSavedDashboard === true ||
+            isSavedFromDraft === true ||
+            isDisplaySpaceChanged === true);
+
+        return shouldExpand;
+      });
+
+      this.pendingExpandSpace = isDefined(dashboardToExpand)
+        ? dashboardToExpand.space
+        : undefined;
+
       this.updateFiltered({ dashboardSpaceNodes: x.dashboardSpaceNodes });
+
+      if (isDefined(this.pendingExpandSpace)) {
+        let space = this.pendingExpandSpace;
+
+        this.pendingExpandSpace = undefined;
+
+        setTimeout(() => {
+          this.expandSpacePath({ space: space });
+        }, 0);
+      }
+
       this.cd.detectChanges();
     })
   );
