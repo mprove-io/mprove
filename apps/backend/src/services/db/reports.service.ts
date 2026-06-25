@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -16,6 +16,7 @@ import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID, MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
+import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
@@ -23,25 +24,128 @@ import { makeCopy } from '#common/functions/make-copy';
 import { ServerError } from '#common/models/server-error';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelX } from '#common/zod/backend/model-x';
+import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
+import type { SpaceNode } from '#common/zod/backend/space-node';
 import type { Column } from '#common/zod/blockml/column';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
 import type { Report } from '#common/zod/blockml/report';
 import type { ReportField } from '#common/zod/blockml/report-field';
 import type { Row } from '#common/zod/blockml/row';
+import type { Space } from '#common/zod/blockml/space';
 import { HashService } from '../hash.service';
+import { SpaceService } from '../space.service';
 import { TabService } from '../tab.service';
+import { UnitsService } from '../units.service';
+import { FavoritesService } from './favorites.service';
 
 @Injectable()
 export class ReportsService {
   constructor(
     private tabService: TabService,
     private hashService: HashService,
+    private favoritesService: FavoritesService,
+    private spaceService: SpaceService,
+    private unitsService: UnitsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  async getReportsCatalog(item: {
+    projectId: string;
+    structId: string;
+    user: UserTab;
+    userMember: MemberTab;
+    apiUserMember: Member;
+    spaces: Space[];
+  }): Promise<{
+    reportUnitDrafts: ReportUnit[];
+    reportSpaceNodes: SpaceNode[];
+  }> {
+    let { projectId, structId, user, userMember, apiUserMember, spaces } = item;
+
+    let reports = await this.db.drizzle.query.reportsTable
+      .findMany({
+        where: and(
+          eq(reportsTable.structId, structId),
+          or(
+            eq(reportsTable.draft, false),
+            and(
+              eq(reportsTable.draft, true),
+              eq(reportsTable.creatorId, user.userId)
+            )
+          )
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.reportEntToTab(x)));
+
+    let draftReports = reports.filter(x => x.draft === true);
+
+    let savedReports = reports.filter(x => x.draft === false);
+
+    let reportsGrantedAccess = savedReports.filter(x =>
+      checkAccess({
+        member: userMember,
+        accessRoles: x.accessRolesCombined,
+        filePath: x.filePath
+      })
+    );
+
+    let sortedDraftReports = draftReports
+      .sort((a, b) =>
+        a.draftCreatedTs > b.draftCreatedTs
+          ? 1
+          : b.draftCreatedTs > a.draftCreatedTs
+            ? -1
+            : 0
+      )
+      .reverse();
+
+    let sortedNonDraftReports = reportsGrantedAccess.sort((a, b) => {
+      let aTitle = a.title.toLowerCase() || a.reportId.toLowerCase();
+      let bTitle = b.title.toLowerCase() || b.reportId.toLowerCase();
+
+      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+    });
+
+    let reportTargetIds = sortedNonDraftReports.map(report => report.reportId);
+
+    let favoriteReportIds = await this.favoritesService.getFavoriteTargetIds({
+      projectId: projectId,
+      userId: user.userId,
+      type: FavoriteTypeEnum.Report,
+      targetIds: reportTargetIds
+    });
+
+    let reportSpaceUnits = sortedNonDraftReports.map(report =>
+      this.unitsService.makeReportSpaceUnit({
+        report: report,
+        member: apiUserMember,
+        favoriteReportIds: favoriteReportIds
+      })
+    );
+
+    let reportSpaceNodes = this.spaceService.makeSpaceNodes({
+      spaces: spaces ?? [],
+      units: reportSpaceUnits,
+      member: apiUserMember
+    });
+
+    return {
+      reportUnitDrafts: sortedDraftReports.map(x =>
+        this.unitsService.makeReportUnit({
+          report: x,
+          member: apiUserMember,
+          favoriteReportIds: [],
+          space: x.space,
+          displaySpace: x.space ?? ''
+        })
+      ),
+      reportSpaceNodes: reportSpaceNodes
+    };
+  }
 
   makeReport(item: {
     structId: string;

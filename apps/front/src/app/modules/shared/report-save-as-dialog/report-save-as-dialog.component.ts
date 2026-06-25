@@ -327,20 +327,11 @@ export class ReportSaveAsDialogComponent implements OnInit {
         tap((resp: ToBackendSaveCreateReportResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let newReport = resp.payload.report;
-            let newReportPart = resp.payload.reportPart;
 
             if (isDefined(newReport)) {
-              let reportsState = this.reportsQuery.getValue();
-
               this.reportsQuery.update({
-                reportUnitDrafts: reportsState.reportUnitDrafts.filter(
-                  x => x.reportId !== this.fromReportId
-                ),
-                reportSpaceNodes: this.unitsUiService.upsertReportSpaceUnit({
-                  spaceNodes: reportsState.reportSpaceNodes,
-                  report: newReportPart,
-                  member: this.memberQuery.getValue()
-                })
+                reportUnitDrafts: resp.payload.reportUnitDrafts,
+                reportSpaceNodes: resp.payload.reportSpaceNodes
               });
 
               let currentReport = this.reportQuery.getValue();

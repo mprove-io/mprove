@@ -10,23 +10,18 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
-import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
-import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
-import { FavoritesService } from '#backend/services/db/favorites.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { ReportsService } from '#backend/services/db/reports.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
-import { SpaceService } from '#backend/services/space.service';
 import { TabService } from '#backend/services/tab.service';
-import { UnitsService } from '#backend/services/units.service';
-import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -46,9 +41,7 @@ export class GetReportsController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private favoritesService: FavoritesService,
-    private spaceService: SpaceService,
-    private unitsService: UnitsService,
+    private reportsService: ReportsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -101,50 +94,6 @@ export class GetReportsController {
       envId: envId
     });
 
-    let draftReports = await this.db.drizzle.query.reportsTable
-      .findMany({
-        where: and(
-          eq(reportsTable.draft, true),
-          eq(reportsTable.creatorId, user.userId),
-          eq(reportsTable.structId, bridge.structId)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.reportEntToTab(x)));
-
-    let structReports = await this.db.drizzle.query.reportsTable
-      .findMany({
-        where: and(
-          eq(reportsTable.draft, false),
-          eq(reportsTable.structId, bridge.structId)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.reportEntToTab(x)));
-
-    let reportsGrantedAccess = structReports.filter(x =>
-      checkAccess({
-        member: userMember,
-        accessRoles: x.accessRolesCombined,
-        filePath: x.filePath
-      })
-    );
-
-    let sortedDraftReports = draftReports
-      .sort((a, b) =>
-        a.draftCreatedTs > b.draftCreatedTs
-          ? 1
-          : b.draftCreatedTs > a.draftCreatedTs
-            ? -1
-            : 0
-      )
-      .reverse();
-
-    let sortedNonDraftReports = reportsGrantedAccess.sort((a, b) => {
-      let aTitle = a.title.toLowerCase() || a.reportId.toLowerCase();
-      let bTitle = b.title.toLowerCase() || b.reportId.toLowerCase();
-
-      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
-    });
-
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
@@ -175,27 +124,13 @@ export class GetReportsController {
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
-    let reportTargetIds = sortedNonDraftReports.map(report => report.reportId);
-
-    let favoriteReportIds = await this.favoritesService.getFavoriteTargetIds({
+    let reportsCatalog = await this.reportsService.getReportsCatalog({
       projectId: projectId,
-      userId: user.userId,
-      type: FavoriteTypeEnum.Report,
-      targetIds: reportTargetIds
-    });
-
-    let reportSpaceUnits = sortedNonDraftReports.map(report =>
-      this.unitsService.makeReportSpaceUnit({
-        report: report,
-        member: apiUserMember,
-        favoriteReportIds: favoriteReportIds
-      })
-    );
-
-    let reportSpaceNodes = this.spaceService.makeSpaceNodes({
-      spaces: struct.spaces ?? [],
-      units: reportSpaceUnits,
-      member: apiUserMember
+      structId: bridge.structId,
+      user: user,
+      userMember: userMember,
+      apiUserMember: apiUserMember,
+      spaces: struct.spaces ?? []
     });
 
     let payload: ToBackendGetReportsResponsePayload = {
@@ -205,16 +140,8 @@ export class GetReportsController {
         modelPartXs: apiModels
       }),
       userMember: apiUserMember,
-      reportUnitDrafts: sortedDraftReports.map(x =>
-        this.unitsService.makeReportUnit({
-          report: x,
-          member: apiUserMember,
-          favoriteReportIds: [],
-          space: x.space,
-          displaySpace: x.space ?? ''
-        })
-      ),
-      reportSpaceNodes: reportSpaceNodes,
+      reportUnitDrafts: reportsCatalog.reportUnitDrafts,
+      reportSpaceNodes: reportsCatalog.reportSpaceNodes,
       storeModels: apiModels.filter(model => model.type === ModelTypeEnum.Store)
     };
 

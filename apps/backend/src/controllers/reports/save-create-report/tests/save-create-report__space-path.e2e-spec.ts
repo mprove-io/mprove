@@ -17,6 +17,7 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
+import { makeSpaceUnits } from '#common/functions/space/make-space-units';
 import type {
   ToBackendCreateDraftReportRequest,
   ToBackendCreateDraftReportResponse
@@ -47,6 +48,7 @@ test('1', async t => {
 
   await retry(async () => {
     let resp: ToBackendSaveCreateReportResponse;
+    let draftReportId: string;
 
     try {
       prep = await prepareTestAndSeed({
@@ -126,6 +128,8 @@ test('1', async t => {
         req: req1
       });
 
+      draftReportId = resp1.payload.report.reportId;
+
       let req2: ToBackendSaveCreateReportRequest = {
         info: {
           name: ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport,
@@ -175,6 +179,19 @@ test('1', async t => {
       resp.payload.report.filePath,
       `${projectId}/data/s1/created_space.report`
     );
+
+    let draftReportIds = resp.payload.reportUnitDrafts.map(x => x.reportId);
+    assert.equal(draftReportIds.indexOf(draftReportId), -1);
+
+    let reportSpaceUnits = makeSpaceUnits({
+      spaceNodes: resp.payload.reportSpaceNodes
+    });
+    let createdSpaceUnit = reportSpaceUnits.find(
+      x => x.unitId === 'created_space'
+    );
+
+    assert.equal(createdSpaceUnit?.space, 's1');
+    assert.equal(createdSpaceUnit?.title, 'Created Space');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
