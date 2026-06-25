@@ -28,7 +28,9 @@ import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { ReportsService } from '#backend/services/db/reports.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -42,10 +44,12 @@ export class DeleteDraftReportsController {
     private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
+    private reportsService: ReportsService,
     private sessionsService: SessionsService,
     private branchesService: BranchesService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
+    private structsService: StructsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -101,6 +105,11 @@ export class DeleteDraftReportsController {
       envId: envId
     });
 
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
+    });
+
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
@@ -119,7 +128,20 @@ export class DeleteDraftReportsController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload = {};
+    let apiUserMember = this.membersService.tabToApi({ member: member });
+
+    let reportsCatalog = await this.reportsService.getReportsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      userMember: member,
+      apiUserMember: apiUserMember,
+      spaces: struct.spaces ?? []
+    });
+
+    let payload = {
+      reportUnitDrafts: reportsCatalog.reportUnitDrafts
+    };
 
     return payload;
   }

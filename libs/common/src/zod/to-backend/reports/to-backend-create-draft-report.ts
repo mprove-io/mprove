@@ -3,6 +3,7 @@ import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zMember } from '#common/zod/backend/member';
+import { zReportUnit } from '#common/zod/backend/report-unit';
 import { zReportX } from '#common/zod/backend/report-x';
 import { zStructX } from '#common/zod/backend/struct-x';
 import { zListener } from '#common/zod/blockml/listener';
@@ -52,7 +53,8 @@ export let zToBackendCreateDraftReportResponsePayload = z
     needValidate: z.boolean(),
     struct: zStructX,
     userMember: zMember,
-    report: zReportX
+    report: zReportX,
+    reportUnitDrafts: z.array(zReportUnit)
   })
   .meta({ id: 'ToBackendCreateDraftReportResponsePayload' });
 

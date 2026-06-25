@@ -35,6 +35,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ReportsService } from '#backend/services/db/reports.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
@@ -57,6 +58,7 @@ export class DeleteReportController {
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
     private sessionsService: SessionsService,
+    private structsService: StructsService,
     private branchesService: BranchesService,
     private rpcService: RpcService,
     private envsService: EnvsService,
@@ -120,6 +122,11 @@ export class DeleteReportController {
       repoId: branch.repoId,
       branchId: branch.branchId,
       envId: envId
+    });
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
     });
 
     let existingReport =
@@ -195,7 +202,21 @@ export class DeleteReportController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload = {};
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let reportsCatalog = await this.reportsService.getReportsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      userMember: userMember,
+      apiUserMember: apiUserMember,
+      spaces: struct.spaces ?? []
+    });
+
+    let payload = {
+      reportUnitDrafts: reportsCatalog.reportUnitDrafts,
+      reportSpaceNodes: reportsCatalog.reportSpaceNodes
+    };
 
     return payload;
   }

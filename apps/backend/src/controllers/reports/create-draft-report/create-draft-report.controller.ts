@@ -369,6 +369,15 @@ export class CreateDraftReportController {
       apiUserMember: apiUserMember
     });
 
+    let reportsCatalog = await this.reportsService.getReportsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      userMember: userMember,
+      apiUserMember: apiUserMember,
+      spaces: struct.spaces ?? []
+    });
+
     let payload: ToBackendCreateDraftReportResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
@@ -376,7 +385,8 @@ export class CreateDraftReportController {
         modelPartXs: modelPartXs
       }),
       userMember: apiUserMember,
-      report: apiReport
+      report: apiReport,
+      reportUnitDrafts: reportsCatalog.reportUnitDrafts
     };
 
     return payload;

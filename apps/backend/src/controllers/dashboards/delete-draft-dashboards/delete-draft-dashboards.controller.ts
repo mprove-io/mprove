@@ -25,10 +25,12 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
+import { DashboardsService } from '#backend/services/db/dashboards.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -43,11 +45,13 @@ export class DeleteDraftDashboardsController {
     private tabService: TabService,
     private usersService: UsersService,
     private branchesService: BranchesService,
+    private dashboardsService: DashboardsService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
+    private structsService: StructsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -105,6 +109,11 @@ export class DeleteDraftDashboardsController {
       envId: envId
     });
 
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
+    });
+
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
@@ -122,7 +131,19 @@ export class DeleteDraftDashboardsController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload = {};
+    let apiUserMember = this.membersService.tabToApi({ member: member });
+
+    let dashboardsCatalog = await this.dashboardsService.getDashboardsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember,
+      spaces: struct.spaces ?? []
+    });
+
+    let payload = {
+      dashboardUnitDrafts: dashboardsCatalog.dashboardUnitDrafts
+    };
 
     return payload;
   }

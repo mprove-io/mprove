@@ -146,10 +146,6 @@ export class DashboardService {
       .pipe(
         tap((resp: ToBackendCreateDraftDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardUnit = resp.payload.newDashboardUnit;
-
-            let dashboardsState = this.dashboardUnitsQuery.getValue();
-
             resp.payload.dashboard.tiles.forEach(tile => {
               tile.trackChangeId = makeTrackChangeId({
                 mconfig: tile.mconfig,
@@ -158,11 +154,9 @@ export class DashboardService {
             });
 
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: [
-                dashboardUnit,
-                ...dashboardsState.dashboardUnitDrafts
-              ],
-              dashboardSpaceNodes: dashboardsState.dashboardSpaceNodes
+              dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
+              dashboardSpaceNodes:
+                this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
             });
             this.dashboardQuery.update(resp.payload.dashboard);
 
@@ -274,13 +268,10 @@ export class DashboardService {
       .pipe(
         tap((resp: ToBackendDeleteDraftDashboardsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardsState = this.dashboardUnitsQuery.getValue();
-
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: dashboardsState.dashboardUnitDrafts.filter(
-                d => dashboardIds.indexOf(d.dashboardId) < 0
-              ),
-              dashboardSpaceNodes: dashboardsState.dashboardSpaceNodes
+              dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
+              dashboardSpaceNodes:
+                this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
             });
 
             let dashboard = this.dashboardQuery.getValue();

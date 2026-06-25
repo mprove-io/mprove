@@ -35,6 +35,7 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
@@ -61,6 +62,7 @@ export class DeleteDashboardController {
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
     private dashboardsService: DashboardsService,
+    private structsService: StructsService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
@@ -124,6 +126,11 @@ export class DeleteDashboardController {
       repoId: branch.repoId,
       branchId: branch.branchId,
       envId: envId
+    });
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
     });
 
     let existingDashboard =
@@ -198,7 +205,20 @@ export class DeleteDashboardController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload = {};
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let dashboardsCatalog = await this.dashboardsService.getDashboardsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember,
+      spaces: struct.spaces ?? []
+    });
+
+    let payload = {
+      dashboardUnitDrafts: dashboardsCatalog.dashboardUnitDrafts,
+      dashboardSpaceNodes: dashboardsCatalog.dashboardSpaceNodes
+    };
 
     return payload;
   }

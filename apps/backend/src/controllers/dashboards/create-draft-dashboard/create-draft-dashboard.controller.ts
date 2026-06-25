@@ -41,7 +41,6 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
-import { UnitsService } from '#backend/services/units.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
@@ -80,7 +79,6 @@ export class CreateDraftDashboardController {
     private sessionsService: SessionsService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private unitsService: UnitsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -373,17 +371,17 @@ export class CreateDraftDashboardController {
         user: user
       });
 
-    let newDashboardUnit = this.unitsService.makeDashboardUnit({
-      dashboard: newDashboard,
-      member: apiUserMember,
-      favoriteDashboardIds: [],
-      space: newDashboard.space,
-      displaySpace: newDashboard.space ?? ''
+    let dashboardsCatalog = await this.dashboardsService.getDashboardsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember,
+      spaces: currentStruct.spaces ?? []
     });
 
     let payload: ToBackendCreateDraftDashboardResponsePayload = {
       dashboard: newDashboardX,
-      newDashboardUnit: newDashboardUnit
+      dashboardUnitDrafts: dashboardsCatalog.dashboardUnitDrafts
     };
 
     return payload;

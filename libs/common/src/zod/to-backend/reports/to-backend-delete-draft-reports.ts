@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { zReportUnit } from '#common/zod/backend/report-unit';
 import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
 import { zToBackendRequest } from '#common/zod/to-backend/to-backend-request';
@@ -29,7 +30,9 @@ export let zToBackendDeleteDraftReportsRequest = zToBackendRequest
   .meta({ id: 'ToBackendDeleteDraftReportsRequest' });
 
 export let zToBackendDeleteDraftReportsResponsePayload = z
-  .object({})
+  .object({
+    reportUnitDrafts: z.array(zReportUnit)
+  })
   .meta({ id: 'ToBackendDeleteDraftReportsResponsePayload' });
 
 export let zToBackendDeleteDraftReportsResponseInfo = zResponseInfo

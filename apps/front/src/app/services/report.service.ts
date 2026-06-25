@@ -31,7 +31,6 @@ import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
-import { UnitsUiService } from './units-ui.service';
 
 @Injectable({ providedIn: 'root' })
 export class ReportService {
@@ -51,8 +50,7 @@ export class ReportService {
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
     private reportQuery: ReportQuery,
-    private reportsQuery: ReportsQuery,
-    private unitsUiService: UnitsUiService
+    private reportsQuery: ReportsQuery
   ) {
     this.nav$.subscribe();
   }
@@ -150,16 +148,10 @@ export class ReportService {
         tap((resp: ToBackendCreateDraftReportResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let report = resp.payload.report;
-            let reportsState = this.reportsQuery.getValue();
 
             this.reportsQuery.update({
-              reportUnitDrafts: [
-                this.unitsUiService.makeReportUnitFromReportX({
-                  report: report
-                }),
-                ...reportsState.reportUnitDrafts
-              ],
-              reportSpaceNodes: reportsState.reportSpaceNodes
+              reportUnitDrafts: resp.payload.reportUnitDrafts,
+              reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
             });
 
             this.navigateService.navigateToReport({
@@ -251,31 +243,9 @@ export class ReportService {
       .pipe(
         tap((resp: ToBackendDeleteDraftReportsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let reportsState = this.reportsQuery.getValue();
-            let newReportUnitDrafts = [...reportsState.reportUnitDrafts];
-            let reportSpaceNodes = reportsState.reportSpaceNodes;
-
-            reportIds.forEach(reportId => {
-              let repIndex = newReportUnitDrafts.findIndex(
-                x => x.reportId === reportId
-              );
-
-              if (repIndex > -1) {
-                newReportUnitDrafts = [
-                  ...newReportUnitDrafts.slice(0, repIndex),
-                  ...newReportUnitDrafts.slice(repIndex + 1)
-                ];
-              }
-
-              reportSpaceNodes = this.unitsUiService.removeSpaceUnit({
-                spaceNodes: reportSpaceNodes,
-                unitId: reportId
-              });
-            });
-
             this.reportsQuery.update({
-              reportUnitDrafts: newReportUnitDrafts,
-              reportSpaceNodes: reportSpaceNodes
+              reportUnitDrafts: resp.payload.reportUnitDrafts,
+              reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
             });
 
             if (reportIds.indexOf(report.reportId) > -1) {

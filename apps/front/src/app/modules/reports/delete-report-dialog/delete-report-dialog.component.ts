@@ -5,7 +5,6 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -23,7 +22,6 @@ import { ReportsQuery } from '#front/app/queries/reports.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
-import { UnitsUiService } from '#front/app/services/units-ui.service';
 
 export interface DeleteReportDialogData {
   apiService: ApiService;
@@ -55,9 +53,7 @@ export class DeleteReportDialogComponent implements OnInit {
     private reportsQuery: ReportsQuery,
     private reportQuery: ReportQuery,
     private navigateService: NavigateService,
-    private router: Router,
-    private uiService: UiService,
-    private unitsUiService: UnitsUiService
+    private uiService: UiService
   ) {}
 
   ngOnInit(): void {
@@ -95,14 +91,9 @@ export class DeleteReportDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendDeleteReportResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let reportsState = this.reportsQuery.getValue();
-
             this.reportsQuery.update({
-              reportUnitDrafts: reportsState.reportUnitDrafts,
-              reportSpaceNodes: this.unitsUiService.removeSpaceUnit({
-                spaceNodes: reportsState.reportSpaceNodes,
-                unitId: report.reportId
-              })
+              reportUnitDrafts: resp.payload.reportUnitDrafts,
+              reportSpaceNodes: resp.payload.reportSpaceNodes
             });
 
             let currentReport = this.reportQuery.getValue();

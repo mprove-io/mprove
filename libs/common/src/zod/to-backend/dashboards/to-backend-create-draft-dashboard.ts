@@ -40,8 +40,8 @@ export let zToBackendCreateDraftDashboardRequest = zToBackendRequest
 
 export let zToBackendCreateDraftDashboardResponsePayload = z
   .object({
-    newDashboardUnit: zDashboardUnit,
-    dashboard: zDashboardX
+    dashboard: zDashboardX,
+    dashboardUnitDrafts: z.array(zDashboardUnit)
   })
   .meta({ id: 'ToBackendCreateDraftDashboardResponsePayload' });
 

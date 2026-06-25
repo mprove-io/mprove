@@ -43,7 +43,6 @@ import type {
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
-import { MemberQuery } from '#front/app/queries/member.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -108,7 +107,6 @@ export class EditDashboardInfoDialogComponent implements OnInit {
     public ref: DialogRef<EditDashboardInfoDialogData>,
     private fb: FormBuilder,
     private dashboardUnitsQuery: DashboardUnitsQuery,
-    private memberQuery: MemberQuery,
     private dashboardQuery: DashboardQuery,
     private spinner: NgxSpinnerService,
     private structQuery: StructQuery,

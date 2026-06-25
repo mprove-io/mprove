@@ -5,7 +5,6 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
@@ -23,7 +22,6 @@ import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
-import { UnitsUiService } from '#front/app/services/units-ui.service';
 
 export interface DeleteDashboardDialogData {
   apiService: ApiService;
@@ -52,12 +50,10 @@ export class DeleteDashboardDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<DeleteDashboardDialogData>,
     private spinner: NgxSpinnerService,
-    private router: Router,
     private dashboardUnitsQuery: DashboardUnitsQuery,
     private dashboardQuery: DashboardQuery,
     private navigateService: NavigateService,
-    private uiService: UiService,
-    private unitsUiService: UnitsUiService
+    private uiService: UiService
   ) {}
 
   ngOnInit(): void {
@@ -95,14 +91,9 @@ export class DeleteDashboardDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendDeleteDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboardUnits = this.dashboardUnitsQuery.getValue();
-
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: dashboardUnits.dashboardUnitDrafts,
-              dashboardSpaceNodes: this.unitsUiService.removeSpaceUnit({
-                spaceNodes: dashboardUnits.dashboardSpaceNodes,
-                unitId: dashboardUnit.dashboardId
-              })
+              dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.payload.dashboardSpaceNodes
             });
 
             let currentDashboard = this.dashboardQuery.getValue();
