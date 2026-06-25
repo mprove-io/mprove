@@ -211,7 +211,7 @@ export class CreateDraftDashboardController {
       dashboard: fromDashboardX,
       newDashboardId: newDashboardId,
       newTitle: newDashboardId,
-      roles: fromDashboardX.accessRoles,
+      roles: [],
       caseSensitiveStringFilters:
         currentStruct.mproveConfig.caseSensitiveStringFilters,
       timezone: UTC
