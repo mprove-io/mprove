@@ -302,92 +302,76 @@ export class ApiService {
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
         [
-          ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
-          ErEnum.BACKEND_MODEL_DOES_NOT_EXIST,
-          ErEnum.BACKEND_CHART_DOES_NOT_EXIST,
-          ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST,
-          ErEnum.BACKEND_STRUCT_ID_CHANGED,
-          ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST,
-          ErEnum.BACKEND_QUERY_DOES_NOT_EXIST,
           ErEnum.BACKEND_REPORT_DOES_NOT_EXIST,
           ErEnum.BACKEND_REPORT_NOT_FOUND
         ].indexOf(infoErrorMessage) > -1
       ) {
-        errorData.description = `This usually happens if a user with the editor role has recently made new changes to files in the current branch.`;
-        errorData.leftButtonText = 'Get changes';
+        let uiState = this.uiQuery.getValue();
+
+        if (isDefined(uiState.gridApi)) {
+          uiState.gridApi.deselectAll();
+        }
+        // console.log(infoErrorMessage);
+        this.router
+          .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+          .then(() => {
+            this.navigateService.navigateToReports();
+          });
+      } else if (
+        [ErEnum.BACKEND_MODEL_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
+      ) {
+        // console.log(infoErrorMessage);
+        this.router
+          .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+          .then(() => {
+            this.navigateService.navigateToModels();
+          });
+      } else if (
+        [ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
+      ) {
+        // console.log(infoErrorMessage);
+        this.router
+          .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+          .then(() => {
+            this.navigateService.navigateToDashboards();
+          });
+      } else if (
+        [ErEnum.BACKEND_CHART_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
+      ) {
+        // console.log(infoErrorMessage);
+        this.router
+          .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+          .then(() => {
+            this.navigateService.navigateToModels();
+          });
+      } else if (
+        [
+          ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
+          ErEnum.BACKEND_QUERY_DOES_NOT_EXIST,
+          ErEnum.BACKEND_STRUCT_ID_CHANGED,
+          ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
+        ].indexOf(infoErrorMessage) > -1
+      ) {
+        errorData.description = `Reload to get changes`;
+        errorData.leftButtonText = 'Reload';
         errorData.leftOnClickFnBindThis = (() => {
-          if (
-            [
-              ErEnum.BACKEND_REPORT_DOES_NOT_EXIST,
-              ErEnum.BACKEND_REPORT_NOT_FOUND
-            ].indexOf(infoErrorMessage) > -1
-          ) {
-            let uiState = this.uiQuery.getValue();
-
-            if (isDefined(uiState.gridApi)) {
-              uiState.gridApi.deselectAll();
-            }
-
-            this.router
-              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
-              .then(() => {
-                this.navigateService.navigateToReports();
-              });
-          } else if (
-            [ErEnum.BACKEND_MODEL_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
-          ) {
-            this.router
-              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
-              .then(() => {
-                this.navigateToLastModelChart(nav);
-              });
-          } else if (
-            [ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST].indexOf(
-              infoErrorMessage
-            ) > -1
-          ) {
-            this.router
-              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
-              .then(() => {
-                this.navigateService.navigateToDashboards();
-              });
-          } else if (
-            [ErEnum.BACKEND_CHART_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
-          ) {
-            this.router
-              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
-              .then(() => {
-                this.navigateToLastModelChart(nav);
-              });
-          } else if (
-            [
-              ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
-              ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
-            ].indexOf(infoErrorMessage) > -1
-          ) {
-            this.router
-              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
-              .then(() => {
-                this.navigateToLastModelChart(nav);
-              });
-          } else {
-            this.router
-              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
-              .then(() => {
-                this.navigateToLastModelChart(nav);
-              });
-          }
-        }).bind(this);
-        errorData.rightButtonText = 'Get changes, go to builder';
-        errorData.rightOnClickFnBindThis = (() => {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
-              this.navigateService.navigateToBuilder({
-                branchId: nav.branchId
-              });
+              this.navigateService.navigateToModels();
             });
         }).bind(this);
+
+        // errorData.rightButtonText = 'Get changes, go to builder';
+        // errorData.rightOnClickFnBindThis = (() => {
+        //   this.router
+        //     .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+        //     .then(() => {
+        //       this.navigateService.navigateToBuilder({
+        //         branchId: nav.branchId
+        //       });
+        //     });
+        // }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
