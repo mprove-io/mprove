@@ -42,7 +42,7 @@ import type {
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
-import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
+import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';

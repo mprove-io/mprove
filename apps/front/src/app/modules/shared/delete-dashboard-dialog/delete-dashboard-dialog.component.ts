@@ -18,7 +18,7 @@ import type {
   ToBackendDeleteDashboardResponse
 } from '#common/zod/to-backend/dashboards/to-backend-delete-dashboard';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
-import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
+import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';

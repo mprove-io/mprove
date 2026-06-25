@@ -16,7 +16,7 @@ import type {
   ToBackendGetDashboardsResponse
 } from '#common/zod/to-backend/dashboards/to-backend-get-dashboards';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
-import { DashboardUnitsQuery } from '../queries/dashboard-parts.query';
+import { DashboardUnitsQuery } from '../queries/dashboard-units.query';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';
 import { NavQuery, NavState } from '../queries/nav.query';

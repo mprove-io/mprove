@@ -23,7 +23,7 @@ import type {
   ToBackendEditDraftDashboardResponse
 } from '#common/zod/to-backend/dashboards/to-backend-edit-draft-dashboard';
 import { DashboardQuery } from '../queries/dashboard.query';
-import { DashboardUnitsQuery } from '../queries/dashboard-parts.query';
+import { DashboardUnitsQuery } from '../queries/dashboard-units.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';

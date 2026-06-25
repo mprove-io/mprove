@@ -40,7 +40,7 @@ import type {
   ToBackendGetRolesRequestPayload,
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
-import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
+import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';

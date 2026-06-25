@@ -56,8 +56,8 @@ import type {
   ToBackendRunQueriesResponse
 } from '#common/zod/to-backend/queries/to-backend-run-queries';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
-import { DashboardUnitsQuery } from '#front/app/queries/dashboard-parts.query';
-import { DashboardUnitsFilteredQuery } from '#front/app/queries/dashboard-parts-filtered.query';
+import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
+import { DashboardUnitsFilteredQuery } from '#front/app/queries/dashboard-units-filtered.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ModelsQuery } from '#front/app/queries/models.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
