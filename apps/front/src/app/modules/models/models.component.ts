@@ -1810,6 +1810,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
+  collapseChartsTree() {
+    this.chartsTree?.treeModel?.collapseAll();
+  }
+
   setFavoritesOnly(item: { event: MouseEvent; favoritesOnly: boolean }) {
     let { event, favoritesOnly } = item;
 

@@ -590,9 +590,21 @@
                 >
 
                 <div
-                  class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row items-center font-semibold"
+                  class="mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row items-center justify-start"
                 >
-                  <div>Saved Charts</div>
+                  <button
+                    class="text-s500 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                    type="button"
+                    tp="Collapse tree"
+                    (click)="collapseChartsTree()"
+                  >
+                    <m-folder-minus-icon></m-folder-minus-icon>
+                  </button>
+
+                  <div class="text-s500 ml-[12px] font-semibold"
+                    >Saved Charts</div
+                  >
+
                   <button
                     class="ml-4 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                     type="button"
@@ -624,69 +636,68 @@
                   >
                 </div>
 
-                <tree-root
-                  *ngIf="filteredChartNodes?.length > 0"
-                  class="h-2 w-full select-none"
-                  #chartsTree
-                  [nodes]="filteredChartNodes"
-                  [options]="treeOptions"
-                  (initialized)="treeOnInitialized()"
-                  (updateData)="treeOnUpdateData()"
-                >
-                  <ng-template #treeNodeTemplate let-node="node">
-                    <div
-                      *ngIf="node.data.type === 'spaceFolder'"
-                      data-cy="chartsTreeItem"
-                      class="group-bar flex h-11 w-full select-none flex-row rounded pl-3 pr-5"
-                      [ngClass]="{
-                        'cursor-pointer': node.hasChildren === true
-                      }"
-                      (click)="chartsTreeNodeOnClick({ node: node })"
-                    >
+                <div *ngIf="filteredChartNodes?.length > 0" class="ml-6">
+                  <tree-root
+                    class="h-2 w-full select-none"
+                    #chartsTree
+                    [nodes]="filteredChartNodes"
+                    [options]="treeOptions"
+                    (initialized)="treeOnInitialized()"
+                    (updateData)="treeOnUpdateData()"
+                  >
+                    <ng-template #treeNodeTemplate let-node="node">
                       <div
-                        class="hover:bg-m50 relative flex w-full flex-row items-center rounded pl-2"
+                        *ngIf="node.data.type === 'spaceFolder'"
+                        data-cy="chartsTreeItem"
+                        class="group/bar flex h-11 w-full select-none flex-row rounded pr-5 hover:cursor-pointer"
+                        (click)="chartsTreeNodeOnClick({ node: node })"
                       >
                         <div
-                          class="flex min-w-[2px] flex-1 flex-row items-center"
+                          class="hover:bg-m50 relative flex w-full flex-row items-center rounded pl-2"
+                          [style.padding-left.px]="(node.level - 1) * 12"
                         >
-                          <div class="flex flex-row items-center space-x-1">
-                            <div class="flex items-center">
-                              <div
-                                class="w-6"
-                                *ngIf="node.hasChildren === false"
-                              ></div>
-
-                              <m-chevron-right-icon
-                                *ngIf="!node.isExpanded && node.hasChildren"
-                              ></m-chevron-right-icon>
-
-                              <m-chevron-down-icon
-                                *ngIf="node.isExpanded && node.hasChildren"
-                              ></m-chevron-down-icon>
-                            </div>
-                          </div>
-
                           <div
-                            class="ml-0 flex-grow truncate"
-                            [ngClass]="{
-                              'text-s1': node.data.isSelectedAncestor !== true,
-                              'text-m600': node.data.isSelectedAncestor === true
-                            }"
+                            class="ml-2 flex flex-shrink-0 flex-row space-x-1"
                           >
-                            <div class="flex flex-col">
-                              <div class="truncate">
-                                <span
-                                  class="ml-3 truncate text-base font-semibold"
-                                  >{{ node.data.title }}</span
-                                >
-                              </div>
-                            </div>
+                            <div
+                              class="h-6 w-6"
+                              *ngIf="node.hasChildren === false"
+                            ></div>
+
+                            <m-chevron-right-icon
+                              class="text-s500"
+                              *ngIf="!node.isExpanded && node.hasChildren"
+                            ></m-chevron-right-icon>
+
+                            <m-chevron-down-icon
+                              class="text-s500"
+                              *ngIf="node.isExpanded && node.hasChildren"
+                            ></m-chevron-down-icon>
+
+                            <m-folder-closed-icon
+                              class="text-m500"
+                              *ngIf="!node.isExpanded || !node.hasChildren"
+                            ></m-folder-closed-icon>
+
+                            <m-folder-open-icon
+                              class="text-m600"
+                              *ngIf="node.isExpanded && node.hasChildren"
+                            ></m-folder-open-icon>
                           </div>
 
-                          <div class="flex flex-1"></div>
+                          <div class="ml-3 flex min-w-[2px] flex-1 truncate">
+                            <span
+                              class="text-s1 truncate text-base"
+                              [ngClass]="{
+                                'font-semibold':
+                                  node.data.isSelectedAncestor === true
+                              }"
+                              >{{ node.data.title }}</span
+                            >
+                          </div>
 
                           <div
-                            class="invisible ml-2 mr-2 flex [.group-bar:hover_&]:visible"
+                            class="invisible ml-2 mr-2 flex group-hover/bar:visible"
                           >
                             <m-model-options
                               *ngIf="node.data.modelId === model?.modelId"
@@ -698,30 +709,31 @@
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div
-                      *ngIf="node.data.type === 'spaceUnit'"
-                      (click)="chartsTreeNodeOnClick({ node: node })"
-                    >
-                      <ng-container
-                        *ngTemplateOutlet="
-                          chartsItem;
-                          context: {
-                            itemI: null,
-                            itemChartId: node.data.unitId,
-                            itemModelId: node.data.modelId,
-                            itemTitle: node.data.title,
-                            itemChartType: node.data.chartType,
-                            itemSpaceUnit: node.data,
-                            itemIsFavorite: node.data.isFavorite,
-                            itemIsDraft: false
-                          }
-                        "
-                      ></ng-container>
-                    </div>
-                  </ng-template>
-                </tree-root>
+                      <div
+                        *ngIf="node.data.type === 'spaceUnit'"
+                        (click)="chartsTreeNodeOnClick({ node: node })"
+                      >
+                        <ng-container
+                          *ngTemplateOutlet="
+                            chartsItem;
+                            context: {
+                              itemI: null,
+                              itemChartId: node.data.unitId,
+                              itemModelId: node.data.modelId,
+                              itemTitle: node.data.title,
+                              itemChartType: node.data.chartType,
+                              itemSpaceUnit: node.data,
+                              itemIsFavorite: node.data.isFavorite,
+                              itemLevel: node.level,
+                              itemIsDraft: false
+                            }
+                          "
+                        ></ng-container>
+                      </div>
+                    </ng-template>
+                  </tree-root>
+                </div>
 
                 <div
                   *ngIf="filteredChartNodes?.length === 0"
@@ -748,11 +760,15 @@
                   let-itemChartUnit="itemChartUnit"
                   let-itemSpaceUnit="itemSpaceUnit"
                   let-itemIsFavorite="itemIsFavorite"
+                  let-itemLevel="itemLevel"
                   let-itemIsDraft="itemIsDraft"
                 >
                   <div
                     [attr.chartId]="itemChartId"
-                    class="hover:bg-m50 group ml-5 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
+                    class="hover:bg-m50 group mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
+                    [style.padding-left.px]="
+                      itemLevel == null ? null : (itemLevel - 1) * 12
+                    "
                     (click)="
                       navToChart({
                         chartId: itemChartId,
@@ -761,6 +777,7 @@
                     "
                     [ngClass]="{
                       'bg-m50': !!chart && itemChartId === chart?.chartId,
+                      'ml-5': itemIsDraft === true,
                       'mt-4': itemIsDraft === true && itemI === 0,
                       'mb-5':
                         itemI != null &&
