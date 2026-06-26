@@ -594,6 +594,25 @@
                 >
                   <div>Saved Charts</div>
                   <button
+                    class="ml-4 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                    type="button"
+                    (click)="
+                      setFavoritesOnly({
+                        event: $event,
+                        favoritesOnly: !favoritesOnly
+                      })
+                    "
+                    [ngClass]="{
+                      'text-m500': favoritesOnly === true,
+                      'text-s500': favoritesOnly === false
+                    }"
+                  >
+                    <m-star-icon
+                      [isFilled]="favoritesOnly === true"
+                    ></m-star-icon>
+                  </button>
+
+                  <button
                     type="button"
                     class="ml-5 cursor-pointer select-none text-base focus:outline-none"
                     [ngClass]="{
@@ -606,6 +625,7 @@
                 </div>
 
                 <tree-root
+                  *ngIf="filteredChartNodes?.length > 0"
                   class="h-2 w-full select-none"
                   #chartsTree
                   [nodes]="filteredChartNodes"
@@ -694,6 +714,7 @@
                             itemTitle: node.data.title,
                             itemChartType: node.data.chartType,
                             itemSpaceUnit: node.data,
+                            itemIsFavorite: node.data.isFavorite,
                             itemIsDraft: false
                           }
                         "
@@ -701,6 +722,19 @@
                     </div>
                   </ng-template>
                 </tree-root>
+
+                <div
+                  *ngIf="filteredChartNodes?.length === 0"
+                  class="text-s1 flex select-none justify-center px-6 py-8 text-base"
+                >
+                  {{
+                    !!searchChartsWord
+                      ? 'Search results are empty'
+                      : favoritesOnly === true
+                        ? 'Favorites are empty'
+                        : 'Charts are empty'
+                  }}
+                </div>
 
                 <div class="mb-5"></div>
 
@@ -713,6 +747,7 @@
                   let-itemChartType="itemChartType"
                   let-itemChartUnit="itemChartUnit"
                   let-itemSpaceUnit="itemSpaceUnit"
+                  let-itemIsFavorite="itemIsFavorite"
                   let-itemIsDraft="itemIsDraft"
                 >
                   <div
@@ -802,6 +837,31 @@
                     </div>
 
                     <div class="flex flex-grow"></div>
+
+                    <button
+                      *ngIf="
+                        itemIsDraft === false && itemChartId !== emptyChartId
+                      "
+                      class="ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+                      type="button"
+                      (click)="
+                        toggleFavoriteChart({
+                          event: $event,
+                          chartId: itemChartId
+                        })
+                      "
+                      [ngClass]="{
+                        'text-s300': itemIsFavorite === true,
+                        'text-s400': itemIsFavorite !== true
+                      }"
+                      [class.invisible]="
+                        favoritesOnly === true || itemIsFavorite !== true
+                      "
+                    >
+                      <m-star-icon
+                        [isFilled]="itemIsFavorite === true"
+                      ></m-star-icon>
+                    </button>
 
                     <button
                       *ngIf="

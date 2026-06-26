@@ -45,6 +45,7 @@ import { REFRESH_LIST } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
@@ -77,6 +78,10 @@ import type { ModelField } from '#common/zod/blockml/model-field';
 import type { ModelFieldY } from '#common/zod/blockml/model-field-y';
 import type { Query } from '#common/zod/blockml/query';
 import type { RefreshItem } from '#common/zod/front/refresh-item';
+import type {
+  ToBackendSetFavoriteRequestPayload,
+  ToBackendSetFavoriteResponse
+} from '#common/zod/to-backend/favorites/to-backend-set-favorite';
 import type {
   ToBackendCancelQueriesRequestPayload,
   ToBackendCancelQueriesResponse
@@ -115,6 +120,7 @@ import { SpaceUiService } from '#front/app/services/space-ui.service';
 import { StructService } from '#front/app/services/struct.service';
 import { TimeService } from '#front/app/services/time.service';
 import { UiService } from '#front/app/services/ui.service';
+import { UnitsUiService } from '#front/app/services/units-ui.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export class QueryPartItem {
@@ -214,6 +220,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   searchSchemaWord: string;
 
   filteredDraftsLength = 0;
+  favoritesOnly = false;
 
   charts: ChartUnit[] = [];
   filteredCharts: ChartUnit[] = [];
@@ -693,6 +700,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     private myDialogService: MyDialogService,
     private memberQuery: MemberQuery,
     private spaceUiService: SpaceUiService,
+    private unitsUiService: UnitsUiService,
     private title: Title
   ) {}
 
@@ -1679,6 +1687,11 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let draftCharts = this.charts.filter(x => x.draft === true);
 
+    let filteredChartNodes =
+      this.favoritesOnly === true
+        ? this.spaceUiService.flattenFavoriteSpaceNodes({ nodes: visibleNodes })
+        : visibleNodes;
+
     let chartsFilteredByWord = makeSpaceUnits({
       spaceNodes: visibleNodes
     }).map(spaceUnit => spaceUnitToChartUnit({ spaceUnit: spaceUnit }));
@@ -1714,13 +1727,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
       y => y.draft === true
     ).length;
 
-    let filteredChartNodes =
+    let filteredChartNodesByMode =
       this.chartsByModel === true
-        ? this.addModelLevelToChartNodes({ nodes: visibleNodes })
-        : visibleNodes;
+        ? this.addModelLevelToChartNodes({ nodes: filteredChartNodes })
+        : filteredChartNodes;
 
     this.filteredChartNodes = this.spaceUiService.markSelectedAncestors({
-      nodes: filteredChartNodes,
+      nodes: filteredChartNodesByMode,
       selectedUnitId: this.chart?.chartId
     });
   }
@@ -1795,6 +1808,85 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.updateFiltered({
       chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
     });
+  }
+
+  setFavoritesOnly(item: { event: MouseEvent; favoritesOnly: boolean }) {
+    let { event, favoritesOnly } = item;
+
+    event.stopPropagation();
+
+    this.favoritesOnly = favoritesOnly;
+
+    this.updateFiltered({
+      chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+    });
+
+    this.cd.detectChanges();
+  }
+
+  toggleFavoriteChart(item: { event: MouseEvent; chartId: string }) {
+    let { event, chartId } = item;
+
+    let chartsState = this.chartsQuery.getValue();
+    let previousChartSpaceNodes = chartsState.chartSpaceNodes;
+
+    let chart = makeSpaceUnits({
+      spaceNodes: chartsState.chartSpaceNodes
+    }).find(x => x.unitId === chartId) as any;
+
+    let isFavorite = chart?.isFavorite === true;
+
+    let newChartSpaceNodes = this.unitsUiService.updateSpaceUnitFavorite({
+      spaceNodes: chartsState.chartSpaceNodes,
+      unitId: chartId,
+      isFavorite: isFavorite === false
+    });
+
+    event.stopPropagation();
+
+    this.chartsQuery.updatePart({
+      chartSpaceNodes: newChartSpaceNodes
+    });
+
+    this.updateFiltered({
+      chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+    });
+
+    this.cd.detectChanges();
+
+    let nav = this.navQuery.getValue();
+
+    let payload: ToBackendSetFavoriteRequestPayload = {
+      projectId: nav.projectId,
+      type: FavoriteTypeEnum.Chart,
+      targetId: chartId,
+      isFavorite: isFavorite === false
+    };
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetFavorite,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: ToBackendSetFavoriteResponse) => {
+          let isOk = resp.info?.status === ResponseInfoStatusEnum.Ok;
+
+          if (isOk === false) {
+            this.chartsQuery.updatePart({
+              chartSpaceNodes: previousChartSpaceNodes
+            });
+
+            this.updateFiltered({
+              chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+            });
+
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   chartsTreeNodeOnClick(item: { node: TreeNode }) {
