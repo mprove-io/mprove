@@ -1,18 +1,23 @@
 import { z } from 'zod';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 
-export let zSpaceUnit = z
+export let zChartUnit = z
   .object({
-    type: z.literal('spaceUnit'),
+    type: z.literal('chartUnit'),
     id: z.string(),
-    unitId: z.string(),
+    chartId: z.string(),
+    modelId: z.string(),
+    modelLabel: z.string(),
+    chartType: z.enum(ChartTypeEnum),
+    iconPath: z.string().nullish(),
+    draft: z.boolean(),
     title: z.string(),
     filePath: z.string().nullish(),
     space: z.string().nullish(),
     accessRoles: z.array(z.string()),
     accessRolesCombined: z.array(z.string()),
     author: z.string().nullish(),
-    canEditOrDeleteUnit: z.boolean(),
+    canEditOrDeleteChart: z.boolean(),
     isFavorite: z.boolean(),
     displaySpace: z.string(),
     displayAccessRoles: z.array(
@@ -20,12 +25,8 @@ export let zSpaceUnit = z
         role: z.string(),
         isDirect: z.boolean()
       })
-    ),
-    modelId: z.string().nullish(),
-    modelLabel: z.string().nullish(),
-    chartType: z.enum(ChartTypeEnum).nullish(),
-    iconPath: z.string().nullish()
+    )
   })
-  .meta({ id: 'SpaceUnit' });
+  .meta({ id: 'ChartUnit' });
 
-export type SpaceUnit = z.infer<typeof zSpaceUnit>;
+export type ChartUnit = z.infer<typeof zChartUnit>;

@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { zChartUnit } from '#common/zod/backend/chart-unit';
 import { zChartX } from '#common/zod/backend/chart-x';
 import { zMconfigX } from '#common/zod/backend/mconfig-x';
+import { zSpaceNode } from '#common/zod/backend/space-node';
 import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
 import { zToBackendRequest } from '#common/zod/to-backend/to-backend-request';
@@ -35,7 +37,9 @@ export let zToBackendSaveCreateChartRequest = zToBackendRequest
 
 export let zToBackendSaveCreateChartResponsePayload = z
   .object({
-    chart: zChartX
+    chart: zChartX,
+    chartUnitDrafts: z.array(zChartUnit),
+    chartSpaceNodes: z.array(zSpaceNode)
   })
   .meta({ id: 'ToBackendSaveCreateChartResponsePayload' });
 

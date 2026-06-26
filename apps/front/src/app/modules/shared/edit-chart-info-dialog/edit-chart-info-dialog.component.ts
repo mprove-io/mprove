@@ -19,7 +19,7 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import type { Chart } from '#common/zod/blockml/chart';
+import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type {
   ToBackendSaveModifyChartRequestPayload,
   ToBackendSaveModifyChartResponse
@@ -38,7 +38,7 @@ export interface EditChartInfoDialogData {
   repoType: RepoTypeEnum;
   branchId: string;
   envId: string;
-  chart: Chart;
+  chart: ChartUnit;
 }
 
 @Component({
@@ -117,17 +117,12 @@ export class EditChartInfoDialogComponent implements OnInit {
           tap(async (resp: ToBackendSaveModifyChartResponse) => {
             if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               let newChart = resp.payload.chart;
-              let newChartPart = resp.payload.chartPart;
 
               if (isDefined(newChart)) {
-                let charts = this.chartsQuery.getValue().charts;
-
-                let newCharts = [
-                  newChartPart,
-                  ...charts.filter(x => x.chartId !== newChartPart.chartId)
-                ];
-
-                this.chartsQuery.update({ charts: newCharts });
+                this.chartsQuery.update({
+                  chartUnitDrafts: resp.payload.chartUnitDrafts,
+                  chartSpaceNodes: resp.payload.chartSpaceNodes
+                });
 
                 let currentChart = this.chartQuery.getValue();
 

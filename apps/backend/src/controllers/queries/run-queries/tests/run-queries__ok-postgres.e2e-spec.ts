@@ -6,7 +6,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareSeed, prepareTest } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { PrepTest } from '#backend/interfaces/prep-test';
-import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
+import { BRANCH_MAIN, PROJECT_ENV_PROD, UTC } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -15,6 +15,12 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import { makeSpaceUnits } from '#common/functions/space/make-space-units';
+import { spaceUnitToChartUnit } from '#common/functions/space/space-unit-to-chart-unit';
+import type {
+  ToBackendGetChartRequest,
+  ToBackendGetChartResponse
+} from '#common/zod/to-backend/charts/to-backend-get-chart';
 import type {
   ToBackendGetChartsRequest,
   ToBackendGetChartsResponse
@@ -149,7 +155,37 @@ test('1', async t => {
         req: req1
       });
 
-      let chart = resp1.payload.charts.find(x => x.chartId === chartId);
+      let chartUnit = makeSpaceUnits({
+        spaceNodes: resp1.payload.chartSpaceNodes
+      })
+        .map(spaceUnit => spaceUnitToChartUnit({ spaceUnit: spaceUnit }))
+        .find(x => x.chartId === chartId);
+
+      assert.ok(chartUnit);
+
+      let reqGetChart: ToBackendGetChartRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendGetChart,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          repoId: userId,
+          branchId: BRANCH_MAIN,
+          envId: PROJECT_ENV_PROD,
+          chartId: chartUnit.chartId,
+          timezone: UTC
+        }
+      };
+
+      let respGetChart = await sendToBackend<ToBackendGetChartResponse>({
+        httpServer: prepTest.httpServer,
+        loginToken: prepareSeedResult.loginToken,
+        req: reqGetChart
+      });
+
+      let chart = respGetChart.payload.chart;
 
       let req2: ToBackendRunQueriesRequest = {
         info: {

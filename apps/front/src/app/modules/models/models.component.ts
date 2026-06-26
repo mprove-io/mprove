@@ -56,12 +56,20 @@ import { getTimezones } from '#common/functions/get-timezones';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
+import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
 import { setChartFields } from '#common/functions/set-chart-fields';
+import { makeSpaceUnits } from '#common/functions/space/make-space-units';
+import { spaceUnitToChartUnit } from '#common/functions/space/space-unit-to-chart-unit';
+import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { ModelX } from '#common/zod/backend/model-x';
 import type { QueryEstimate } from '#common/zod/backend/query-estimate';
+import type { SpaceFolderX } from '#common/zod/backend/space-folder-x';
+import type { SpaceNode } from '#common/zod/backend/space-node';
+import type { SpaceNodeX } from '#common/zod/backend/space-node-x';
+import type { SpaceUnitX } from '#common/zod/backend/space-unit-x';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
 import type { ModelField } from '#common/zod/blockml/model-field';
 import type { ModelFieldY } from '#common/zod/blockml/model-field-y';
@@ -101,6 +109,7 @@ import { DataService, QDataRow } from '#front/app/services/data.service';
 import { DataSizeService } from '#front/app/services/data-size.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { SpaceUiService } from '#front/app/services/space-ui.service';
 import { StructService } from '#front/app/services/struct.service';
 import { TimeService } from '#front/app/services/time.service';
 import { UiService } from '#front/app/services/ui.service';
@@ -212,17 +221,34 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   filteredDraftsLength = 0;
 
-  charts: ChartX[];
-  chartsFilteredByWord: ChartX[];
-  filteredCharts: ChartX[];
+  charts: ChartUnit[] = [];
+  chartsFilteredByWord: ChartUnit[] = [];
+  filteredCharts: ChartUnit[] = [];
 
-  filteredChartNodes: ChartsItemNode[] = [];
+  filteredChartNodes: SpaceNodeX[] = [];
+
+  chartsByModel = false;
+  chartsByModel$ = this.uiQuery.chartsByModel$.pipe(
+    tap(x => {
+      this.chartsByModel = x === true;
+
+      this.updateFilteredCharts({
+        chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+      });
+
+      this.cd.detectChanges();
+    })
+  );
 
   charts$ = this.chartsQuery.select().pipe(
     tap(x => {
-      this.charts = x.charts;
+      let nonDraftChartUnits = makeSpaceUnits({
+        spaceNodes: x.chartSpaceNodes
+      }).map(spaceUnit => spaceUnitToChartUnit({ spaceUnit: spaceUnit }));
 
-      this.makeFilteredCharts();
+      this.charts = [...x.chartUnitDrafts, ...nonDraftChartUnits];
+
+      this.updateFilteredCharts({ chartSpaceNodes: x.chartSpaceNodes });
 
       this.cd.detectChanges();
     })
@@ -589,7 +615,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   treeOptions = {
     actionMapping: this.actionMapping,
-    displayField: 'label'
+    displayField: 'title'
   };
 
   @ViewChild('chartsTree') chartsTree: TreeComponent;
@@ -621,6 +647,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     private dataService: DataService,
     private myDialogService: MyDialogService,
     private memberQuery: MemberQuery,
+    private spaceUiService: SpaceUiService,
     private title: Title
   ) {}
 
@@ -1507,7 +1534,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  navToChart(chart: ChartX) {
+  navToChart(chart: ChartUnit | ChartX) {
     if (this.chart.chartId !== chart.chartId) {
       this.manualNavToChart = true;
 
@@ -1526,7 +1553,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteDraftChart(event: any, chart: ChartX) {
+  deleteDraftChart(event: any, chart: ChartUnit) {
     event.stopPropagation();
 
     this.chartService.deleteDraftCharts({
@@ -1545,43 +1572,87 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   makeFilteredCharts() {
-    let idxs;
+    this.updateFilteredCharts({
+      chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+    });
+  }
 
-    let draftCharts: ChartX[] = this.charts.filter(x => x.draft === true);
+  updateFilteredCharts(item: { chartSpaceNodes: SpaceNode[] }) {
+    let { chartSpaceNodes } = item;
 
-    let nonDraftCharts = this.charts.filter(x => x.draft === false);
+    let nodes = makeCopy(chartSpaceNodes ?? []);
 
-    if (isDefinedAndNotEmpty(this.searchChartsWord)) {
-      let haystack = nonDraftCharts.map(x =>
-        isDefined(x.title) ? `${x.title}` : `${x.chartId}`
-      );
+    let searchNodes = this.spaceUiService.pruneEmptySpaceNodes({
+      nodes: nodes
+    });
+
+    let isSearchDefined = isDefinedAndNotEmpty(this.searchChartsWord);
+    let chartMatchedIds: Set<string> | undefined;
+
+    if (isSearchDefined === true) {
+      chartMatchedIds = new Set<string>();
+
+      let searchEntries = makeSpaceUnits({
+        spaceNodes: searchNodes
+      }).map(chart => {
+        let title = isDefined(chart.title) ? chart.title : chart.unitId;
+        let accessRolesCombined = chart.accessRolesCombined.join(' ');
+
+        return {
+          chart: chart,
+          searchText: `${title} ${chart.unitId} ${chart.author ?? ''} ${chart.displaySpace} ${chart.modelLabel ?? ''} ${accessRolesCombined}`
+        };
+      });
+
+      let haystack = searchEntries.map(entry => entry.searchText);
       let opts = {};
       let uf = new uFuzzy(opts);
-      idxs = uf.filter(haystack, this.searchChartsWord);
+      let idxs = uf.filter(haystack, this.searchChartsWord);
+      let searchWord = this.searchChartsWord.toLowerCase();
+      let matchedIndexes = new Set<number>(idxs ?? []);
+
+      searchEntries.forEach((entry, index) => {
+        let searchText = entry.searchText.toLowerCase();
+        let isSubstringMatched = searchText.includes(searchWord);
+
+        if (isSubstringMatched === true) {
+          matchedIndexes.add(index);
+        }
+      });
+
+      matchedIndexes.forEach(index => {
+        let entry = searchEntries[index];
+        chartMatchedIds.add(entry.chart.unitId);
+      });
     }
 
-    this.chartsFilteredByWord = isDefinedAndNotEmpty(this.searchChartsWord)
-      ? idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): ChartX => nonDraftCharts[idx])
-        : []
-      : nonDraftCharts;
-
-    this.filteredCharts = [...draftCharts, ...this.chartsFilteredByWord];
-
-    this.filteredCharts = this.filteredCharts.sort((a, b) => {
-      let aTitle = (a.title || a.chartId).toUpperCase();
-      let bTitle = (b.title || b.chartId).toUpperCase();
-
-      return b.draft === true && a.draft !== true
-        ? 1
-        : a.draft === true && b.draft !== true
-          ? -1
-          : aTitle > bTitle
-            ? 1
-            : bTitle > aTitle
-              ? -1
-              : 0;
+    let visibleNodes = this.spaceUiService.makeVisibleSpaceNodes({
+      nodes: searchNodes,
+      unitMatchedIds: chartMatchedIds
     });
+
+    let draftCharts = this.charts.filter(x => x.draft === true);
+
+    this.chartsFilteredByWord = makeSpaceUnits({
+      spaceNodes: visibleNodes
+    }).map(spaceUnit => spaceUnitToChartUnit({ spaceUnit: spaceUnit }));
+
+    this.filteredCharts = [...draftCharts, ...this.chartsFilteredByWord].sort(
+      (a, b) => {
+        let aTitle = (a.title || a.chartId).toUpperCase();
+        let bTitle = (b.title || b.chartId).toUpperCase();
+
+        return b.draft === true && a.draft !== true
+          ? 1
+          : a.draft === true && b.draft !== true
+            ? -1
+            : aTitle > bTitle
+              ? 1
+              : bTitle > aTitle
+                ? -1
+                : 0;
+      }
+    );
 
     this.filteredCharts.forEach(chart => {
       chart.iconPath = this.chartTypesList.find(
@@ -1597,125 +1668,131 @@ export class ModelsComponent implements OnInit, OnDestroy {
       y => y.draft === true
     ).length;
 
-    this.makeChartsItemNodes();
-  }
-
-  makeChartsItemNodes() {
-    let chartsItemNodes: ChartsItemNode[] = [];
-
-    let models = this.modelsQuery.getValue().models;
-
-    models
-      .filter(model => model.hasAccess === true)
-      .forEach(model => {
-        let topNode: ChartsItemNode = {
-          id: model.modelId,
-          isEmpty: false,
-          isTop: true,
-          topLabel: model.label,
-          connectionType: model.connectionType,
-          chart: undefined,
-          children: []
-        };
-
-        chartsItemNodes.push(topNode);
-      });
-
-    let idxs;
-
-    let nonDraftCharts = this.charts.filter(x => x.draft === false);
-
-    if (isDefinedAndNotEmpty(this.searchChartsWord)) {
-      let haystack = nonDraftCharts.map(x =>
-        isDefined(x.title)
-          ? `${x.modelLabel} ${x.title}`
-          : `${x.modelLabel} ${x.chartId}`
-      );
-      let opts = {};
-      let uf = new uFuzzy(opts);
-      idxs = uf.filter(haystack, this.searchChartsWord);
-    }
-
-    let chartsFilteredByWord = isDefinedAndNotEmpty(this.searchChartsWord)
-      ? idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): ChartX => nonDraftCharts[idx])
-        : []
-      : nonDraftCharts;
-
-    chartsFilteredByWord
-      .sort((a, b) => {
-        let aTitle = a.title || a.chartId;
-        let bTitle = b.title || b.chartId;
-
-        return b.draft === true && a.draft !== true
-          ? 1
-          : a.draft === true && b.draft !== true
-            ? -1
-            : aTitle > bTitle
-              ? 1
-              : bTitle > aTitle
-                ? -1
-                : 0;
-      })
-      .forEach(chart => {
-        let chartsItemNode: ChartsItemNode = {
-          id: chart.chartId,
-          isEmpty: false,
-          isTop: false,
-          topLabel: chart.modelLabel,
-          connectionType: undefined,
-          chart: chart,
-          children: []
-        };
-
-        let topNode: ChartsItemNode = chartsItemNodes.find(
-          (node: any) => node.id === chart.modelId
-        );
-
-        if (isDefined(topNode)) {
-          topNode.children.push(chartsItemNode);
-        } else {
-          let model = models.find(x => x.modelId === chart.modelId);
-
-          if (model.hasAccess === true) {
-            topNode = {
-              id: chart.modelId,
-              isEmpty: false,
-              isTop: true,
-              topLabel: chart.modelLabel,
-              connectionType: undefined,
-              chart: undefined,
-              children: [chartsItemNode]
-            };
-
-            chartsItemNodes.push(topNode);
-          }
-        }
-      });
-
-    chartsItemNodes.forEach(topNode => {
-      if (topNode.children.length === 0) {
-        let emptyNode: ChartsItemNode = {
-          id: 'emptyChartId',
-          isEmpty: true,
-          isTop: false,
-          topLabel: 'No charts',
-          connectionType: undefined,
-          chart: undefined,
-          children: []
-        };
-
-        topNode.children.push(emptyNode);
-      }
+    let chartVisibleNodes = this.addChartUnitFieldsToNodes({
+      nodes: visibleNodes
     });
 
-    this.filteredChartNodes = chartsItemNodes;
+    let filteredChartNodes =
+      this.chartsByModel === true
+        ? this.addModelLevelToChartNodes({ nodes: chartVisibleNodes })
+        : chartVisibleNodes;
+
+    this.filteredChartNodes = this.spaceUiService.markSelectedAncestors({
+      nodes: filteredChartNodes,
+      selectedUnitId: this.chart?.chartId
+    });
   }
 
-  chartsItemModelNodeOnClick(node: TreeNode) {
+  addChartUnitFieldsToNodes(item: { nodes: SpaceNodeX[] }): SpaceNodeX[] {
+    let { nodes } = item;
+
+    return nodes.map(node => {
+      if (node.type === 'spaceUnit') {
+        let chartUnit = spaceUnitToChartUnit({ spaceUnit: node });
+
+        return {
+          ...node,
+          ...chartUnit,
+          type: 'spaceUnit',
+          unitId: node.unitId,
+          canEditOrDeleteUnit: node.canEditOrDeleteUnit
+        };
+      }
+
+      return {
+        ...node,
+        children: this.addChartUnitFieldsToNodes({
+          nodes: node.children ?? []
+        })
+      };
+    });
+  }
+
+  addModelLevelToChartNodes(item: { nodes: SpaceNodeX[] }): SpaceNodeX[] {
+    let { nodes } = item;
+
+    return nodes.map(node => {
+      if (node.type === 'spaceUnit') {
+        return node;
+      }
+
+      let children = this.addModelLevelToChartNodes({
+        nodes: node.children ?? []
+      });
+
+      let folderChildren = children.filter(
+        child => child.type === 'spaceFolder'
+      );
+
+      let unitChildren = children.filter(
+        child => child.type === 'spaceUnit'
+      ) as SpaceUnitX[];
+
+      let modelFolders: (SpaceFolderX & { modelId?: string })[] = [];
+
+      unitChildren.forEach(chartUnit => {
+        let modelId = chartUnit.modelId ?? '';
+        let modelLabel = chartUnit.modelLabel ?? modelId;
+        let modelFolderId = `${node.id}/model/${modelId}`;
+        let modelFolder = modelFolders.find(
+          folder => folder.id === modelFolderId
+        );
+
+        if (isUndefined(modelFolder)) {
+          modelFolder = {
+            type: 'spaceFolder',
+            id: modelFolderId,
+            space: `${node.space}/model/${modelId}`,
+            filePath: '',
+            title: modelLabel,
+            accessRoles: [],
+            accessRolesCombined: [],
+            isSynthetic: true,
+            children: [],
+            isMatched: true,
+            isSelectedAncestor: false,
+            modelId: modelId
+          };
+
+          modelFolders.push(modelFolder);
+        }
+
+        modelFolder.children.push(chartUnit);
+      });
+
+      return {
+        ...node,
+        children: [...folderChildren, ...modelFolders]
+      };
+    });
+  }
+
+  toggleChartsByModel() {
+    let newValue = this.chartsByModel !== true;
+
+    this.chartsByModel = newValue;
+
+    this.uiQuery.updatePart({ chartsByModel: newValue });
+    this.uiService.setUserUi({ chartsByModel: newValue });
+
+    this.updateFilteredCharts({
+      chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+    });
+  }
+
+  chartsTreeNodeOnClick(node: TreeNode) {
     node.toggleActivated();
-    if (node.hasChildren) {
+
+    if (node.data.type === 'spaceFolder' && node.hasChildren) {
       node.toggleExpanded();
+    } else if (node.data.type === 'spaceUnit') {
+      let chartUnit = this.filteredCharts.find(
+        chart => chart.chartId === node.data.unitId
+      );
+
+      if (isDefined(chartUnit)) {
+        this.navToChart(chartUnit);
+      }
     }
   }
 
@@ -1740,7 +1817,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     if (this.chart) {
       if (this.chart.draft === false && isDefined(this.chart.modelId)) {
-        this.chartsTree?.treeModel?.getNodeById(this.chart.modelId)?.expand();
+        this.chartsTree?.treeModel?.expandAll();
       }
 
       let selectedElement =

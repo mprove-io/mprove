@@ -456,18 +456,10 @@ export class ChartSaveAsDialogComponent implements OnInit {
             let newChart = resp.payload.chart;
 
             if (isDefined(newChart)) {
-              let charts = this.chartsQuery.getValue().charts;
-
-              let newCharts = [
-                newChart,
-                ...charts.filter(
-                  x =>
-                    x.chartId !== newChart.chartId &&
-                    !(x.draft === true && x.chartId === this.chart.chartId)
-                )
-              ];
-
-              this.chartsQuery.update({ charts: newCharts });
+              this.chartsQuery.update({
+                chartUnitDrafts: resp.payload.chartUnitDrafts,
+                chartSpaceNodes: resp.payload.chartSpaceNodes
+              });
 
               this.navigateService.navigateToChart({
                 modelId: newChart.modelId,

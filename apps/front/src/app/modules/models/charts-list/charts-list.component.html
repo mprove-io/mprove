@@ -86,19 +86,10 @@
                 <div
                   *ngIf="showModelId === true"
                   class="flex flex-1 items-start truncate pb-[9px] pt-[7px] focus:outline-none"
-                  [tp]="templateChartsModel"
-                  [tpIsEnabled]="item.tiles[0].hasAccessToModel === false"
                 >
-                  <ng-template #templateChartsModel>
-                    <div *ngIf="isExplorer === false"
-                      >Explorer role required</div
-                    >
-                    <div *ngIf="isExplorer === true">No access to model</div>
-                  </ng-template>
-
                   <div class="flex items-start truncate focus:outline-none">
                     <span class="truncate">
-                      {{ item.tiles[0].modelLabel | capitalize }}
+                      {{ item.modelLabel | capitalize }}
                     </span>
                   </div>
                 </div>

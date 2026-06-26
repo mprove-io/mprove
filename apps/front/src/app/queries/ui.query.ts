@@ -73,6 +73,7 @@ export class UiState {
   projectExplorerSessionLinks: ProjectExplorerSessionLink[];
   projectReportLinks: ProjectReportLink[];
   projectSelectedGivenLinks: ProjectSelectedGivenLink[];
+  chartsByModel: boolean;
   permissionsAutoAcceptSessionIds: string[];
   isOptimisticLoading: boolean;
   newSessionPermissionsAutoAccept: boolean;
@@ -136,6 +137,7 @@ let uiState: UiState = {
   projectExplorerSessionLinks: [],
   projectReportLinks: [],
   projectSelectedGivenLinks: [],
+  chartsByModel: false,
   permissionsAutoAcceptSessionIds: [],
   newSessionPermissionsAutoAccept: false,
   newSessionExplorerProviderModel: undefined,
@@ -198,6 +200,8 @@ export class UiQuery extends BaseQuery<UiState> {
   projectSelectedGivenLinks$ = this.store.pipe(
     select(state => state.projectSelectedGivenLinks)
   );
+
+  chartsByModel$ = this.store.pipe(select(state => state.chartsByModel));
 
   showMetricsModelName$ = this.store.pipe(
     select(state => state.showMetricsModelName)

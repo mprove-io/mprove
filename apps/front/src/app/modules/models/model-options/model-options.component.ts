@@ -41,14 +41,18 @@ export class ModelOptionsComponent {
     event.stopPropagation();
   }
 
+  getModelId() {
+    return this.treeNode.data.modelId ?? this.treeNode.data.id;
+  }
+
   goToFile(event: MouseEvent) {
     event.stopPropagation();
 
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
-    let model = this.models.find(
-      model => model.modelId === this.treeNode.data.id
-    );
+    let modelId = this.getModelId();
+
+    let model = this.models.find(model => model.modelId === modelId);
 
     let fileIdAr = model.filePath.split('/');
     fileIdAr.shift();
@@ -64,9 +68,11 @@ export class ModelOptionsComponent {
   async showSchema(event: MouseEvent) {
     event.stopPropagation();
 
-    if (this.chart?.modelId !== this.treeNode.data.id) {
+    let modelId = this.getModelId();
+
+    if (this.chart?.modelId !== modelId) {
       await this.navigateService.navigateToChart({
-        modelId: this.treeNode.data.id,
+        modelId: modelId,
         chartId: EMPTY_CHART_ID
       });
     }

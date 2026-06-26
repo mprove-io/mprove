@@ -1,6 +1,6 @@
 import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { and, eq, isNull, or } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import {
   ToBackendGetChartsRequestDto,
   ToBackendGetChartsResponseDto
@@ -9,7 +9,6 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -101,27 +100,9 @@ export class GetChartsController {
       envId: envId
     });
 
-    let charts = await this.db.drizzle.query.chartsTable
-      .findMany({
-        where: and(
-          eq(chartsTable.structId, bridge.structId),
-          or(isNull(chartsTable.isExplorer), eq(chartsTable.isExplorer, false))
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.chartEntToTab(x)));
-
     let models = await this.db.drizzle.query.modelsTable
       .findMany({ where: eq(modelsTable.structId, bridge.structId) })
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
-
-    let chartsGrantedAccess = charts.filter(x => {
-      let model = models.find(y => y.modelId === x.modelId);
-
-      return checkModelAccess({
-        member: userMember,
-        modelAccessRoles: model.accessRolesCombined
-      });
-    });
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
@@ -142,6 +123,15 @@ export class GetChartsController {
       projectId: projectId
     });
 
+    let chartsCatalog = await this.chartsService.getChartsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember,
+      models: models,
+      spaces: struct.spaces ?? []
+    });
+
     let payload: ToBackendGetChartsResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
@@ -150,16 +140,8 @@ export class GetChartsController {
       }),
       userMember: apiUserMember,
       models: apiModels,
-      charts: chartsGrantedAccess.map(x =>
-        this.chartsService.tabToApi({
-          chart: x,
-          mconfigs: [],
-          queries: [],
-          member: apiUserMember,
-          models: apiModels,
-          isAddMconfigAndQuery: false
-        })
-      )
+      chartUnitDrafts: chartsCatalog.chartUnitDrafts,
+      chartSpaceNodes: chartsCatalog.chartSpaceNodes
     };
 
     return payload;

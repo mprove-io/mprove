@@ -123,10 +123,12 @@ export class ChartService {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let chart = resp.payload.chart;
 
-            let charts = this.chartsQuery.getValue().charts;
-            let newCharts = [chart, ...charts];
+            let chartsState = this.chartsQuery.getValue();
 
-            this.chartsQuery.update({ charts: newCharts });
+            this.chartsQuery.update({
+              chartUnitDrafts: resp.payload.chartUnitDrafts,
+              chartSpaceNodes: chartsState.chartSpaceNodes
+            });
 
             this.navigateService.navigateToChart({
               modelId: chart.modelId,
@@ -170,19 +172,14 @@ export class ChartService {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let chart = resp.payload.chart;
 
-            let charts = this.chartsQuery.getValue().charts;
-
-            let chartIndex = charts.findIndex(x => x.chartId === chart.chartId);
-
-            let newCharts = [
-              ...charts.slice(0, chartIndex),
-              chart,
-              ...charts.slice(chartIndex + 1)
-            ];
+            let chartsState = this.chartsQuery.getValue();
 
             this.chartQuery.update(chart);
 
-            this.chartsQuery.update({ charts: newCharts });
+            this.chartsQuery.update({
+              chartUnitDrafts: resp.payload.chartUnitDrafts,
+              chartSpaceNodes: chartsState.chartSpaceNodes
+            });
           }
         }),
         take(1)
@@ -210,10 +207,11 @@ export class ChartService {
       .pipe(
         tap((resp: ToBackendDeleteDraftChartsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let charts = this.chartsQuery.getValue().charts;
+            let chartsState = this.chartsQuery.getValue();
 
             this.chartsQuery.update({
-              charts: charts.filter(x => chartIds.indexOf(x.chartId) < 0)
+              chartUnitDrafts: resp.payload.chartUnitDrafts,
+              chartSpaceNodes: chartsState.chartSpaceNodes
             });
 
             let chart = this.chartQuery.getValue();

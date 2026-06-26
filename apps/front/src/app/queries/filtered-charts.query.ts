@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { ChartX } from '#common/zod/backend/chart-x';
+import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import { BaseQuery } from './base.query';
 
 export class FilteredChartsState {
-  filteredCharts: ChartX[];
+  filteredCharts: ChartUnit[];
 }
 
 let filteredCharts: FilteredChartsState = {

@@ -37,6 +37,7 @@ export class UiService {
     projectExplorerSessionLinks?: ProjectExplorerSessionLink[];
     projectReportLinks?: ProjectReportLink[];
     projectSelectedGivenLinks?: ProjectSelectedGivenLink[];
+    chartsByModel?: boolean;
     permissionsAutoAcceptSessionIds?: string[];
     newSessionPermissionsAutoAccept?: boolean;
     newSessionExplorerProviderModel?: string;
@@ -53,6 +54,7 @@ export class UiService {
       projectExplorerSessionLinks,
       projectReportLinks,
       projectSelectedGivenLinks,
+      chartsByModel,
       permissionsAutoAcceptSessionIds,
       newSessionPermissionsAutoAccept,
       newSessionExplorerProviderModel,
@@ -88,6 +90,9 @@ export class UiService {
       projectSelectedGivenLinks: isDefined(projectSelectedGivenLinks)
         ? projectSelectedGivenLinks
         : uiState.projectSelectedGivenLinks,
+      chartsByModel: isDefined(chartsByModel)
+        ? chartsByModel
+        : uiState.chartsByModel,
       permissionsAutoAcceptSessionIds: isDefined(
         permissionsAutoAcceptSessionIds
       )

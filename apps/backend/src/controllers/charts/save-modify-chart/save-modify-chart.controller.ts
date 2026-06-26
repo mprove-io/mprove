@@ -432,6 +432,19 @@ export class SaveModifyChartController {
       })
     });
 
+    let models = await this.db.drizzle.query.modelsTable
+      .findMany({ where: eq(modelsTable.structId, bridge.structId) })
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
+
+    let chartsCatalog = await this.chartsService.getChartsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember,
+      models: models,
+      spaces: currentStruct.spaces ?? []
+    });
+
     let payload: ToBackendSaveModifyChartResponsePayload = {
       chart: this.chartsService.tabToApi({
         chart: chart,
@@ -446,14 +459,8 @@ export class SaveModifyChartController {
         models: [modelApi],
         isAddMconfigAndQuery: true
       }),
-      chartPart: this.chartsService.tabToApi({
-        chart: chart,
-        mconfigs: [],
-        queries: [],
-        member: apiUserMember,
-        models: [modelApi],
-        isAddMconfigAndQuery: false
-      })
+      chartUnitDrafts: chartsCatalog.chartUnitDrafts,
+      chartSpaceNodes: chartsCatalog.chartSpaceNodes
     };
 
     return payload;

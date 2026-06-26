@@ -83,6 +83,10 @@ export class UsersService {
           ? user.ui?.projectSelectedGivenLinks
           : defaultSrvUi.projectSelectedGivenLinks,
         //
+        chartsByModel: isDefined(user.ui?.chartsByModel)
+          ? user.ui?.chartsByModel
+          : defaultSrvUi.chartsByModel,
+        //
         modelTreeLevels: isDefined(user.ui?.modelTreeLevels)
           ? user.ui?.modelTreeLevels
           : defaultSrvUi.modelTreeLevels,

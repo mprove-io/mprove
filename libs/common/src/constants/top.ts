@@ -148,6 +148,7 @@ export const SHARED_SPACE_ID = '__shared__';
 export const MY_SPACE_TITLE = 'My';
 export const MY_REPORTS_SPACE_TITLE = 'My Reports';
 export const MY_DASHBOARDS_SPACE_TITLE = 'My Dashboards';
+export const MY_CHARTS_SPACE_TITLE = 'My Charts';
 export const UNCATEGORIZED_SPACE_TITLE = 'Uncategorized';
 export const PERSONAL_SPACE_TITLE = 'Personal';
 export const SHARED_SPACE_TITLE = 'Shared';

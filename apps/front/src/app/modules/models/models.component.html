@@ -582,9 +582,19 @@
                 >
 
                 <div
-                  class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
+                  class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row items-center font-semibold"
                 >
-                  Saved Charts by Model
+                  <div>Saved Charts</div>
+                  <button
+                    type="button"
+                    class="ml-5 cursor-pointer select-none text-base focus:outline-none"
+                    [ngClass]="{
+                      'text-m600 font-semibold': chartsByModel === true,
+                      'text-s400 font-normal': chartsByModel === false
+                    }"
+                    (click)="toggleChartsByModel()"
+                    >by model</button
+                  >
                 </div>
 
                 <tree-root
@@ -597,14 +607,13 @@
                 >
                   <ng-template #treeNodeTemplate let-node="node">
                     <div
-                      *ngIf="node.data.isTop === true"
+                      *ngIf="node.data.type === 'spaceFolder'"
                       data-cy="chartsTreeItem"
                       class="group-bar flex h-11 w-full select-none flex-row rounded pl-3 pr-5"
                       [ngClass]="{
-                        'cursor-pointer':
-                          node.data.isTop === false || node.hasChildren === true
+                        'cursor-pointer': node.hasChildren === true
                       }"
-                      (click)="chartsItemModelNodeOnClick(node)"
+                      (click)="chartsTreeNodeOnClick(node)"
                     >
                       <div
                         class="hover:bg-m50 relative flex w-full flex-row items-center rounded pl-2"
@@ -616,10 +625,7 @@
                             <div class="flex items-center">
                               <div
                                 class="w-6"
-                                *ngIf="
-                                  node.data.isTop === true &&
-                                  node.hasChildren === false
-                                "
+                                *ngIf="node.hasChildren === false"
                               ></div>
 
                               <m-chevron-right-icon
@@ -635,20 +641,15 @@
                           <div
                             class="ml-0 flex-grow truncate"
                             [ngClass]="{
-                              'text-s1': node.data.id !== model?.modelId,
-                              'text-m600': node.data.id === model?.modelId
+                              'text-s1': node.data.isSelectedAncestor !== true,
+                              'text-m600': node.data.isSelectedAncestor === true
                             }"
                           >
                             <div class="flex flex-col">
                               <div class="truncate">
                                 <span
                                   class="ml-3 truncate text-base font-semibold"
-                                  >{{ node.data.topLabel }}</span
-                                >
-
-                                <span
-                                  class="text-s400 ml-3 truncate text-base"
-                                  >{{ node.data.connectionType }}</span
+                                  >{{ node.data.title }}</span
                                 >
                               </div>
                             </div>
@@ -660,6 +661,7 @@
                             class="invisible ml-2 mr-2 flex [.group-bar:hover_&]:visible"
                           >
                             <m-model-options
+                              *ngIf="node.data.modelId === model?.modelId"
                               [models]="models"
                               [chart]="chart"
                               [treeNode]="node"
@@ -671,29 +673,15 @@
                     </div>
 
                     <div
-                      *ngIf="
-                        node.data.isTop === false && node.data.isEmpty === true
-                      "
-                      class="ml-[56px] mr-5 flex h-11 flex-row items-center rounded pr-2"
-                    >
-                      {{
-                        searchChartsWord?.length > 0
-                          ? 'No charts match the search filter'
-                          : 'No charts'
-                      }}
-                    </div>
-
-                    <div
-                      *ngIf="
-                        node.data.isTop === false && node.data.isEmpty === false
-                      "
+                      *ngIf="node.data.type === 'spaceUnit'"
+                      (click)="chartsTreeNodeOnClick(node)"
                     >
                       <ng-container
                         *ngTemplateOutlet="
                           chartsItem;
                           context: {
                             i: null,
-                            c: node.data.chart,
+                            c: node.data,
                             isDraft: false
                           }
                         "
@@ -1799,6 +1787,7 @@
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="modelTreeLevels$ | async"></div>
+<div *ngIf="chartsByModel$ | async"></div>
 <div *ngIf="showSchema$ | async"></div>
 <div *ngIf="isAutoRun$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>

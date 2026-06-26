@@ -377,12 +377,23 @@ export class SaveCreateChartController {
       .where(eq(modelsTable.structId, bridge.structId))
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x as ModelEnt)));
 
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let chartsCatalog = await this.chartsService.getChartsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember,
+      models: models,
+      spaces: currentStruct.spaces ?? []
+    });
+
     let payload: ToBackendSaveCreateChartResponsePayload = {
       chart: this.chartsService.tabToApi({
         chart: chart,
         mconfigs: [],
         queries: [],
-        member: this.membersService.tabToApi({ member: userMember }),
+        member: apiUserMember,
         models: models.map(model =>
           this.modelsService.tabToApi({
             model: model,
@@ -393,7 +404,9 @@ export class SaveCreateChartController {
           })
         ),
         isAddMconfigAndQuery: false
-      })
+      }),
+      chartUnitDrafts: chartsCatalog.chartUnitDrafts,
+      chartSpaceNodes: chartsCatalog.chartSpaceNodes
     };
 
     return payload;

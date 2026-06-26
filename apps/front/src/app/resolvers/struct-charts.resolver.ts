@@ -87,7 +87,10 @@ export class StructChartsResolver implements Resolve<Observable<boolean>> {
             });
             this.modelsQuery.update({ models: resp.payload.models });
 
-            this.chartsQuery.update({ charts: resp.payload.charts });
+            this.chartsQuery.update({
+              chartUnitDrafts: resp.payload.chartUnitDrafts,
+              chartSpaceNodes: resp.payload.chartSpaceNodes
+            });
 
             return true;
           } else if (

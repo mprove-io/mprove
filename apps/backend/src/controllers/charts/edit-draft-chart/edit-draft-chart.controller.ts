@@ -25,6 +25,7 @@ import type {
   QueryTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -277,6 +278,19 @@ export class EditDraftChartController {
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
+    let models = await this.db.drizzle.query.modelsTable
+      .findMany({ where: eq(modelsTable.structId, bridge.structId) })
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
+
+    let chartsCatalog = await this.chartsService.getChartsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember,
+      models: models,
+      spaces: struct.spaces ?? []
+    });
+
     let payload: ToBackendEditDraftChartResponsePayload = {
       chart: this.chartsService.tabToApi({
         chart: newChart,
@@ -302,7 +316,8 @@ export class EditDraftChartController {
           })
         ],
         isAddMconfigAndQuery: true
-      })
+      }),
+      chartUnitDrafts: chartsCatalog.chartUnitDrafts
     };
 
     return payload;

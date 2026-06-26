@@ -22,6 +22,7 @@ export let zUi = z
     projectExplorerSessionLinks: z.array(zProjectExplorerSessionLink).nullish(),
     projectReportLinks: z.array(zProjectReportLink),
     projectSelectedGivenLinks: z.array(zProjectSelectedGivenLink).nullish(),
+    chartsByModel: z.boolean().nullish(),
     permissionsAutoAcceptSessionIds: z.array(z.string()).nullish(),
     newSessionPermissionsAutoAccept: z.boolean().nullish(),
     newSessionExplorerProviderModel: z.string().nullish(),

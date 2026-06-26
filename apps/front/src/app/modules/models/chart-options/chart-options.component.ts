@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import type { ChartX } from '#common/zod/backend/chart-x';
+import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -15,7 +15,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
 })
 export class ChartOptionsComponent {
   @Input()
-  chart: ChartX;
+  chart: ChartUnit;
 
   @Input()
   isHoverM: boolean;
@@ -48,7 +48,7 @@ export class ChartOptionsComponent {
     });
   }
 
-  async editChartInfo(event: MouseEvent, item: ChartX) {
+  async editChartInfo(event: MouseEvent, item: ChartUnit) {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();
@@ -64,7 +64,7 @@ export class ChartOptionsComponent {
     });
   }
 
-  deleteChart(event: MouseEvent, item: ChartX) {
+  deleteChart(event: MouseEvent, item: ChartUnit) {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();

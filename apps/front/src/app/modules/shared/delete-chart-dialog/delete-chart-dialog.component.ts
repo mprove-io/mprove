@@ -5,14 +5,13 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { Chart } from '#common/zod/blockml/chart';
+import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type {
   ToBackendDeleteChartRequestPayload,
   ToBackendDeleteChartResponse
@@ -25,7 +24,7 @@ import { UiService } from '#front/app/services/ui.service';
 
 export interface DeleteChartDialogData {
   apiService: ApiService;
-  chart: Chart;
+  chart: ChartUnit;
   projectId: string;
   repoId: string;
   branchId: string;
@@ -51,8 +50,7 @@ export class DeleteChartDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private chartsQuery: ChartsQuery,
     private chartQuery: ChartQuery,
-    private uiService: UiService,
-    private router: Router
+    private uiService: UiService
   ) {}
 
   ngOnInit(): void {
@@ -66,7 +64,7 @@ export class DeleteChartDialogComponent implements OnInit {
 
     let { projectId, branchId, repoId } = this.ref.data;
 
-    let chart: Chart = this.ref.data.chart;
+    let chart = this.ref.data.chart;
     let apiService: ApiService = this.ref.data.apiService;
 
     let payload: ToBackendDeleteChartRequestPayload = {
@@ -86,10 +84,9 @@ export class DeleteChartDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendDeleteChartResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let charts = this.chartsQuery.getValue().charts;
-
             this.chartsQuery.update({
-              charts: charts.filter(d => d.chartId !== chart.chartId)
+              chartUnitDrafts: resp.payload.chartUnitDrafts,
+              chartSpaceNodes: resp.payload.chartSpaceNodes
             });
 
             let currentChart = this.chartQuery.getValue();

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { CHARTS_LIST_PAGE_TITLE } from '#common/constants/page-titles';
-import type { ChartX } from '#common/zod/backend/chart-x';
+import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import { FilteredChartsQuery } from '#front/app/queries/filtered-charts.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -33,7 +33,7 @@ export class ChartsListComponent {
     })
   );
 
-  filteredCharts: ChartX[];
+  filteredCharts: ChartUnit[];
   filteredCharts$ = this.filteredChartsQuery.select().pipe(
     tap(x => {
       this.filteredCharts = x.filteredCharts.filter(d => d.draft === false);
@@ -61,14 +61,14 @@ export class ChartsListComponent {
     this.showModelId = false;
   }
 
-  navigateToChart(chartItem: ChartX) {
+  navigateToChart(chartItem: ChartUnit) {
     this.navigateService.navigateToChart({
       modelId: chartItem.modelId,
       chartId: chartItem.chartId
     });
   }
 
-  trackByFn(index: number, item: ChartX) {
+  trackByFn(index: number, item: ChartUnit) {
     return item.chartId;
   }
 }

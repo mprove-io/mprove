@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { zChartUnit } from '#common/zod/backend/chart-unit';
+import { zSpaceNode } from '#common/zod/backend/space-node';
 import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
 import { zToBackendRequest } from '#common/zod/to-backend/to-backend-request';
@@ -29,7 +31,10 @@ export let zToBackendDeleteChartRequest = zToBackendRequest
   .meta({ id: 'ToBackendDeleteChartRequest' });
 
 export let zToBackendDeleteChartResponsePayload = z
-  .object({})
+  .object({
+    chartUnitDrafts: z.array(zChartUnit),
+    chartSpaceNodes: z.array(zSpaceNode)
+  })
   .meta({ id: 'ToBackendDeleteChartResponsePayload' });
 
 export let zToBackendDeleteChartResponseInfo = zResponseInfo

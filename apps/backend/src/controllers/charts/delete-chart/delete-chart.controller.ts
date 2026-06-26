@@ -26,6 +26,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
@@ -33,9 +34,9 @@ import { BridgesService } from '#backend/services/db/bridges.service';
 import { ChartsService } from '#backend/services/db/charts.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
-import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
@@ -58,7 +59,6 @@ export class DeleteChartController {
   constructor(
     private tabService: TabService,
     private usersService: UsersService,
-    private modelsService: ModelsService,
     private branchesService: BranchesService,
     private rpcService: RpcService,
     private membersService: MembersService,
@@ -67,6 +67,7 @@ export class DeleteChartController {
     private chartsService: ChartsService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
+    private structsService: StructsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -134,6 +135,11 @@ export class DeleteChartController {
       repoId: branch.repoId,
       branchId: branch.branchId,
       envId: envId
+    });
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
     });
 
     let existingChart = await this.chartsService.getChartCheckExists({
@@ -214,7 +220,25 @@ export class DeleteChartController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload = {};
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let models = await this.db.drizzle.query.modelsTable
+      .findMany({ where: eq(modelsTable.structId, bridge.structId) })
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
+
+    let chartsCatalog = await this.chartsService.getChartsCatalog({
+      projectId: projectId,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember,
+      models: models,
+      spaces: struct.spaces ?? []
+    });
+
+    let payload = {
+      chartUnitDrafts: chartsCatalog.chartUnitDrafts,
+      chartSpaceNodes: chartsCatalog.chartSpaceNodes
+    };
 
     return payload;
   }

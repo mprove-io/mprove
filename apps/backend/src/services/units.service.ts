@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import type {
+  ChartTab,
   DashboardTab,
+  ModelTab,
   ReportTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined';
 import { makeDisplayAccessRoles } from '#common/functions/space/make-display-access-roles';
+import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { Member } from '#common/zod/backend/member';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
@@ -163,6 +166,83 @@ export class UnitsService {
         accessRoles: dashboard.accessRoles,
         accessRolesCombined: dashboard.accessRolesCombined
       })
+    };
+  }
+
+  makeChartUnit(item: {
+    chart: ChartTab;
+    model: ModelTab;
+    member: Member;
+    favoriteChartIds: string[];
+    space: string | undefined;
+    displaySpace: string;
+  }): ChartUnit {
+    let { chart, model, member, favoriteChartIds, space, displaySpace } = item;
+
+    let author = this.getUnitAuthor({ filePath: chart.filePath });
+
+    return {
+      type: 'chartUnit',
+      id: chart.chartId,
+      chartId: chart.chartId,
+      modelId: chart.modelId,
+      modelLabel: chart.modelLabel,
+      chartType: chart.chartType,
+      iconPath: undefined,
+      draft: chart.draft,
+      title: chart.title || chart.chartId,
+      filePath: chart.filePath,
+      space: space,
+      accessRoles: model.accessRoles,
+      accessRolesCombined: model.accessRolesCombined,
+      author: author,
+      canEditOrDeleteChart:
+        member.isEditor === true ||
+        member.isAdmin === true ||
+        author === member.alias,
+      isFavorite: favoriteChartIds.indexOf(chart.chartId) > -1,
+      displaySpace: displaySpace,
+      displayAccessRoles: makeDisplayAccessRoles({
+        accessRoles: model.accessRoles,
+        accessRolesCombined: model.accessRolesCombined
+      })
+    };
+  }
+
+  makeChartSpaceUnit(item: {
+    chart: ChartTab;
+    model: ModelTab;
+    member: Member;
+    favoriteChartIds: string[];
+  }): SpaceUnit {
+    let { chart, model, member, favoriteChartIds } = item;
+
+    let author = this.getUnitAuthor({ filePath: chart.filePath });
+
+    return {
+      type: 'spaceUnit',
+      id: chart.chartId,
+      unitId: chart.chartId,
+      title: chart.title || chart.chartId,
+      filePath: chart.filePath,
+      space: model.space,
+      accessRoles: model.accessRoles,
+      accessRolesCombined: model.accessRolesCombined,
+      author: author,
+      canEditOrDeleteUnit:
+        member.isEditor === true ||
+        member.isAdmin === true ||
+        author === member.alias,
+      isFavorite: favoriteChartIds.indexOf(chart.chartId) > -1,
+      displaySpace: model.space ?? '',
+      displayAccessRoles: makeDisplayAccessRoles({
+        accessRoles: model.accessRoles,
+        accessRolesCombined: model.accessRolesCombined
+      }),
+      modelId: chart.modelId,
+      modelLabel: chart.modelLabel,
+      chartType: chart.chartType,
+      iconPath: undefined
     };
   }
 }

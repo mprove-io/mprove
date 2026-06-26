@@ -1,36 +1,160 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull, or } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ChartTab,
   MemberTab,
+  ModelTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
+import { checkModelAccess } from '#backend/functions/check-model-access';
 import { makeTilesX } from '#backend/functions/make-tiles-x';
-import { MPROVE_USERS_FOLDER } from '#common/constants/top';
+import {
+  MPROVE_USERS_FOLDER,
+  MY_CHARTS_SPACE_TITLE
+} from '#common/constants/top';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
+import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
+import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelX } from '#common/zod/backend/model-x';
+import type { SpaceNode } from '#common/zod/backend/space-node';
+import type { SpaceUnit } from '#common/zod/backend/space-unit';
 import type { Chart } from '#common/zod/blockml/chart';
 import type { Query } from '#common/zod/blockml/query';
+import type { Space } from '#common/zod/blockml/space';
 import { HashService } from '../hash.service';
+import { SpaceService } from '../space.service';
 import { TabService } from '../tab.service';
+import { UnitsService } from '../units.service';
+import { FavoritesService } from './favorites.service';
 
 @Injectable()
 export class ChartsService {
   constructor(
     private hashService: HashService,
+    private favoritesService: FavoritesService,
+    private spaceService: SpaceService,
     private tabService: TabService,
+    private unitsService: UnitsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  async getChartsCatalog(item: {
+    projectId: string;
+    structId: string;
+    user: UserTab;
+    apiUserMember: Member;
+    models: ModelTab[];
+    spaces: Space[];
+  }): Promise<{
+    chartUnitDrafts: ChartUnit[];
+    chartSpaceNodes: SpaceNode[];
+  }> {
+    let { projectId, structId, user, apiUserMember, models, spaces } = item;
+
+    let charts = await this.db.drizzle.query.chartsTable
+      .findMany({
+        where: and(
+          eq(chartsTable.structId, structId),
+          or(isNull(chartsTable.isExplorer), eq(chartsTable.isExplorer, false)),
+          or(
+            eq(chartsTable.draft, false),
+            and(
+              eq(chartsTable.draft, true),
+              eq(chartsTable.creatorId, user.userId)
+            )
+          )
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.chartEntToTab(x)));
+
+    let chartsGrantedAccess = charts.filter(chart => {
+      let model = models.find(x => x.modelId === chart.modelId);
+
+      return checkModelAccess({
+        member: apiUserMember,
+        modelAccessRoles: model.accessRolesCombined
+      });
+    });
+
+    let draftCharts = chartsGrantedAccess.filter(chart => chart.draft === true);
+
+    let savedCharts = chartsGrantedAccess.filter(
+      chart => chart.draft === false
+    );
+
+    let favoriteChartIds = await this.favoritesService.getFavoriteTargetIds({
+      projectId: projectId,
+      userId: user.userId,
+      type: FavoriteTypeEnum.Chart,
+      targetIds: savedCharts.map(chart => chart.chartId)
+    });
+
+    let sortedDraftCharts = draftCharts.sort((a, b) => {
+      let aTitle = (a.title || a.chartId).toLowerCase();
+      let bTitle = (b.title || b.chartId).toLowerCase();
+
+      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+    });
+
+    let sortedSavedCharts = savedCharts.sort((a, b) => {
+      let aTitle = (a.title || a.chartId).toLowerCase();
+      let bTitle = (b.title || b.chartId).toLowerCase();
+
+      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+    });
+
+    let chartSpaceUnits: SpaceUnit[] = [];
+
+    sortedSavedCharts.forEach(chart => {
+      let model = models.find(x => x.modelId === chart.modelId);
+
+      chartSpaceUnits.push(
+        this.unitsService.makeChartSpaceUnit({
+          chart: chart,
+          model: model,
+          member: apiUserMember,
+          favoriteChartIds: favoriteChartIds
+        })
+      );
+    });
+
+    let chartUnitDrafts: ChartUnit[] = [];
+
+    sortedDraftCharts.forEach(chart => {
+      let model = models.find(x => x.modelId === chart.modelId);
+
+      chartUnitDrafts.push(
+        this.unitsService.makeChartUnit({
+          chart: chart,
+          model: model,
+          member: apiUserMember,
+          favoriteChartIds: [],
+          space: model.space,
+          displaySpace: model.space ?? ''
+        })
+      );
+    });
+
+    return {
+      chartUnitDrafts: chartUnitDrafts,
+      chartSpaceNodes: this.spaceService.makeSpaceNodes({
+        spaces: spaces ?? [],
+        units: chartSpaceUnits,
+        member: apiUserMember,
+        mySpaceTitle: MY_CHARTS_SPACE_TITLE
+      })
+    };
+  }
 
   tabToApi(item: {
     chart: ChartTab;
