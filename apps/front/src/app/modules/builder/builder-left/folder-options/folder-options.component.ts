@@ -24,7 +24,12 @@ export class FolderOptionsComponent {
   );
 
   needSave = false;
-  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+  needSave$ = this.uiQuery.needSave$.pipe(
+    tap(x => {
+      this.needSave = x;
+      this.cd.detectChanges();
+    })
+  );
 
   constructor(
     private navQuery: NavQuery,

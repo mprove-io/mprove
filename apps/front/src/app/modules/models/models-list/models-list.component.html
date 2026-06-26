@@ -40,8 +40,8 @@
           <div class="flex flex-1 flex-row space-x-5">
             <div class="flex flex-1"> Model Id</div>
             <div class="flex flex-1">Space</div>
-            <div class="flex flex-1">Connection</div>
             <div class="flex flex-1">Access Roles</div>
+            <div class="flex flex-1">Connection</div>
           </div>
         </div>
         <div class="flex w-full flex-row"></div>
@@ -138,12 +138,6 @@
                   </span>
                 </div>
 
-                <div class="flex flex-1 items-start truncate pb-[9px] pt-[7px]">
-                  <span class="truncate">
-                    {{ item.connectionId }}
-                  </span>
-                </div>
-
                 <div
                   class="flex flex-1 flex-wrap truncate pb-[9px] pt-[7px] text-base"
                 >
@@ -155,6 +149,12 @@
                     }"
                   >
                     {{ accessRole.role }}
+                  </span>
+                </div>
+
+                <div class="flex flex-1 items-start truncate pb-[9px] pt-[7px]">
+                  <span class="truncate">
+                    {{ item.connectionId }}
                   </span>
                 </div>
               </div>
