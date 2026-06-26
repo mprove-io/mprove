@@ -28,16 +28,17 @@
     <div
       tp="Chart can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save chart as new to become an author."
       placement="left"
-      [tpIsEnabled]="chart.canEditOrDeleteChart === false"
+      [tpIsEnabled]="currentChartUnit.canEditOrDeleteChart === false"
     >
       <button
         data-cy="chartOptionsEditInfo"
         class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
-          'text-s400 cursor-default': chart.canEditOrDeleteChart === false
+          'text-s400 cursor-default':
+            currentChartUnit.canEditOrDeleteChart === false
         }"
-        (click)="t1.hide(); editChartInfo($event, chart)"
-        [disabled]="chart.canEditOrDeleteChart === false"
+        (click)="t1.hide(); editChartInfo($event, currentChartUnit)"
+        [disabled]="currentChartUnit.canEditOrDeleteChart === false"
         >Edit Info</button
       >
     </div>
@@ -45,16 +46,17 @@
     <div
       tp="Chart can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save chart as new to become an author."
       placement="left"
-      [tpIsEnabled]="chart.canEditOrDeleteChart === false"
+      [tpIsEnabled]="currentChartUnit.canEditOrDeleteChart === false"
     >
       <button
         data-cy="chartOptionsDelete"
         class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
-          'text-s400 cursor-default': chart.canEditOrDeleteChart === false
+          'text-s400 cursor-default':
+            currentChartUnit.canEditOrDeleteChart === false
         }"
-        (click)="t1.hide(); deleteChart($event, chart)"
-        [disabled]="chart.canEditOrDeleteChart === false"
+        (click)="t1.hide(); deleteChart($event, currentChartUnit)"
+        [disabled]="currentChartUnit.canEditOrDeleteChart === false"
         >Delete</button
       >
     </div>

@@ -37,7 +37,9 @@ import {
   PATH_CHARTS_LIST,
   PATH_MODELS,
   PATH_MODELS_LIST,
-  RESTRICTED_USER_ALIAS
+  PERSONAL_SPACE_ID,
+  RESTRICTED_USER_ALIAS,
+  SHARED_SPACE_ID
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
@@ -115,16 +117,6 @@ import { TimeService } from '#front/app/services/time.service';
 import { UiService } from '#front/app/services/ui.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
-export class ChartsItemNode {
-  id: string;
-  isTop: boolean;
-  isEmpty: boolean;
-  topLabel: string;
-  connectionType: ConnectionTypeEnum;
-  chart: ChartX;
-  children: ChartsItemNode[];
-}
-
 export class QueryPartItem {
   label: string;
   value: QueryPartEnum;
@@ -168,6 +160,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
   pathModels = PATH_MODELS;
   pathChartsList = PATH_CHARTS_LIST;
   pathModelsList = PATH_MODELS_LIST;
+  personalSpaceId = PERSONAL_SPACE_ID;
+  sharedSpaceId = SHARED_SPACE_ID;
 
   restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
@@ -222,17 +216,17 @@ export class ModelsComponent implements OnInit, OnDestroy {
   filteredDraftsLength = 0;
 
   charts: ChartUnit[] = [];
-  chartsFilteredByWord: ChartUnit[] = [];
   filteredCharts: ChartUnit[] = [];
 
   filteredChartNodes: SpaceNodeX[] = [];
+  pendingExpandSpace: string;
 
   chartsByModel = false;
   chartsByModel$ = this.uiQuery.chartsByModel$.pipe(
     tap(x => {
       this.chartsByModel = x === true;
 
-      this.updateFilteredCharts({
+      this.updateFiltered({
         chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
       });
 
@@ -242,13 +236,62 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   charts$ = this.chartsQuery.select().pipe(
     tap(x => {
+      let previousCharts = this.charts ?? [];
+
       let nonDraftChartUnits = makeSpaceUnits({
         spaceNodes: x.chartSpaceNodes
       }).map(spaceUnit => spaceUnitToChartUnit({ spaceUnit: spaceUnit }));
 
       this.charts = [...x.chartUnitDrafts, ...nonDraftChartUnits];
 
-      this.updateFilteredCharts({ chartSpaceNodes: x.chartSpaceNodes });
+      let chartToExpand = this.charts.find(chart => {
+        let previousChart = previousCharts.find(
+          previous => previous.chartId === chart.chartId
+        );
+
+        let chartDisplaySpace = chart.space;
+
+        let previousDisplaySpace = isDefined(previousChart)
+          ? previousChart.space
+          : undefined;
+
+        let isInitialLoad = previousCharts.length === 0;
+
+        let isNewSavedChart =
+          isDefined(previousChart) === false && chart.draft === false;
+
+        let isSavedFromDraft =
+          isDefined(previousChart) === true &&
+          previousChart.draft === true &&
+          chart.draft === false;
+
+        let isDisplaySpaceChanged = previousDisplaySpace !== chartDisplaySpace;
+
+        let shouldExpand =
+          isInitialLoad === false &&
+          isDefinedAndNotEmpty(chartDisplaySpace) === true &&
+          (isNewSavedChart === true ||
+            isSavedFromDraft === true ||
+            isDisplaySpaceChanged === true);
+
+        return shouldExpand;
+      });
+
+      this.pendingExpandSpace = isDefined(chartToExpand)
+        ? chartToExpand.space
+        : undefined;
+
+      this.updateFiltered({ chartSpaceNodes: x.chartSpaceNodes });
+
+      if (isDefined(this.pendingExpandSpace)) {
+        let space = this.pendingExpandSpace;
+
+        this.pendingExpandSpace = undefined;
+
+        setTimeout(() => {
+          this.expandSpacePath({ space: space });
+        }, 0);
+      }
 
       this.cd.detectChanges();
     })
@@ -338,7 +381,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
       this.modelForm.controls['model'].setValue(this.model.modelId);
 
-      this.makeFilteredCharts();
+      this.updateFiltered({
+        chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+      });
 
       this.cd.detectChanges();
 
@@ -848,7 +893,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   setShowCharts() {
-    this.makeFilteredCharts();
+    this.updateFiltered({
+      chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+    });
 
     if (this.showSchema === true) {
       this.showSchema = false;
@@ -1514,7 +1561,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
 
     this.searchChartsTimer = setTimeout(() => {
-      this.makeFilteredCharts();
+      this.updateFiltered({
+        chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+      });
 
       this.cd.detectChanges();
     }, 600);
@@ -1529,12 +1578,15 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   resetChartsSearch() {
     this.searchChartsWord = undefined;
-    this.makeFilteredCharts();
+
+    this.updateFiltered({
+      chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+    });
 
     this.cd.detectChanges();
   }
 
-  navToChart(chart: ChartUnit | ChartX) {
+  navToChart(chart: { chartId: string; modelId: string }) {
     if (this.chart.chartId !== chart.chartId) {
       this.manualNavToChart = true;
 
@@ -1571,13 +1623,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  makeFilteredCharts() {
-    this.updateFilteredCharts({
-      chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
-    });
-  }
-
-  updateFilteredCharts(item: { chartSpaceNodes: SpaceNode[] }) {
+  updateFiltered(item: { chartSpaceNodes: SpaceNode[] }) {
     let { chartSpaceNodes } = item;
 
     let nodes = makeCopy(chartSpaceNodes ?? []);
@@ -1633,11 +1679,11 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let draftCharts = this.charts.filter(x => x.draft === true);
 
-    this.chartsFilteredByWord = makeSpaceUnits({
+    let chartsFilteredByWord = makeSpaceUnits({
       spaceNodes: visibleNodes
     }).map(spaceUnit => spaceUnitToChartUnit({ spaceUnit: spaceUnit }));
 
-    this.filteredCharts = [...draftCharts, ...this.chartsFilteredByWord].sort(
+    this.filteredCharts = [...draftCharts, ...chartsFilteredByWord].sort(
       (a, b) => {
         let aTitle = (a.title || a.chartId).toUpperCase();
         let bTitle = (b.title || b.chartId).toUpperCase();
@@ -1668,43 +1714,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
       y => y.draft === true
     ).length;
 
-    let chartVisibleNodes = this.addChartUnitFieldsToNodes({
-      nodes: visibleNodes
-    });
-
     let filteredChartNodes =
       this.chartsByModel === true
-        ? this.addModelLevelToChartNodes({ nodes: chartVisibleNodes })
-        : chartVisibleNodes;
+        ? this.addModelLevelToChartNodes({ nodes: visibleNodes })
+        : visibleNodes;
 
     this.filteredChartNodes = this.spaceUiService.markSelectedAncestors({
       nodes: filteredChartNodes,
       selectedUnitId: this.chart?.chartId
-    });
-  }
-
-  addChartUnitFieldsToNodes(item: { nodes: SpaceNodeX[] }): SpaceNodeX[] {
-    let { nodes } = item;
-
-    return nodes.map(node => {
-      if (node.type === 'spaceUnit') {
-        let chartUnit = spaceUnitToChartUnit({ spaceUnit: node });
-
-        return {
-          ...node,
-          ...chartUnit,
-          type: 'spaceUnit',
-          unitId: node.unitId,
-          canEditOrDeleteUnit: node.canEditOrDeleteUnit
-        };
-      }
-
-      return {
-        ...node,
-        children: this.addChartUnitFieldsToNodes({
-          nodes: node.children ?? []
-        })
-      };
     });
   }
 
@@ -1775,17 +1792,21 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.uiQuery.updatePart({ chartsByModel: newValue });
     this.uiService.setUserUi({ chartsByModel: newValue });
 
-    this.updateFilteredCharts({
+    this.updateFiltered({
       chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
     });
   }
 
-  chartsTreeNodeOnClick(node: TreeNode) {
-    node.toggleActivated();
+  chartsTreeNodeOnClick(item: { node: TreeNode }) {
+    let { node } = item;
 
-    if (node.data.type === 'spaceFolder' && node.hasChildren) {
-      node.toggleExpanded();
-    } else if (node.data.type === 'spaceUnit') {
+    if (node.data.type === 'spaceFolder') {
+      node.toggleActivated();
+
+      if (node.hasChildren) {
+        node.toggleExpanded();
+      }
+    } else {
       let chartUnit = this.filteredCharts.find(
         chart => chart.chartId === node.data.unitId
       );
@@ -1812,12 +1833,48 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
   }
 
+  expandSpacePath(item: { space: string }) {
+    let { space } = item;
+
+    let isSlashSeparatedSyntheticSpace = [
+      this.personalSpaceId,
+      this.sharedSpaceId
+    ].some(spaceId => space.startsWith(`${spaceId}/`));
+
+    let parts =
+      isSlashSeparatedSyntheticSpace === true
+        ? space.split('/')
+        : space.split('.');
+
+    let currentSpace = '';
+
+    parts.forEach((part, index) => {
+      currentSpace =
+        index === 0
+          ? part
+          : isSlashSeparatedSyntheticSpace === true
+            ? `${currentSpace}/${part}`
+            : `${currentSpace}.${part}`;
+
+      let node = this.chartsTree?.treeModel?.getNodeById(currentSpace);
+
+      if (isDefined(node)) {
+        node.expand();
+      }
+    });
+  }
+
   scrollToSelectedChart(item: { isSmooth: boolean }) {
     let { isSmooth } = item;
 
     if (this.chart) {
-      if (this.chart.draft === false && isDefined(this.chart.modelId)) {
-        this.chartsTree?.treeModel?.expandAll();
+      let chartUnit = this.charts?.find(x => x.chartId === this.chart.chartId);
+
+      if (
+        this.chart.draft === false &&
+        isDefinedAndNotEmpty(chartUnit?.space)
+      ) {
+        this.expandSpacePath({ space: chartUnit?.space });
       }
 
       let selectedElement =

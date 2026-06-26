@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
+import { spaceUnitToChartUnit } from '#common/functions/space/space-unit-to-chart-unit';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
+import type { SpaceUnit } from '#common/zod/backend/space-unit';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -15,10 +17,19 @@ import { NavigateService } from '#front/app/services/navigate.service';
 })
 export class ChartOptionsComponent {
   @Input()
-  chart: ChartUnit;
+  set chart(chart: ChartUnit) {
+    this.currentChartUnit = chart;
+  }
+
+  @Input()
+  set spaceUnit(spaceUnit: SpaceUnit) {
+    this.currentChartUnit = spaceUnitToChartUnit({ spaceUnit: spaceUnit });
+  }
 
   @Input()
   isHoverM: boolean;
+
+  currentChartUnit: ChartUnit;
 
   constructor(
     private myDialogService: MyDialogService,
@@ -35,7 +46,7 @@ export class ChartOptionsComponent {
   goToFile(event: MouseEvent) {
     event.stopPropagation();
 
-    let fileIdAr = this.chart.filePath.split('/');
+    let fileIdAr = this.currentChartUnit.filePath.split('/');
     fileIdAr.shift();
 
     let filePath = fileIdAr.join('/');

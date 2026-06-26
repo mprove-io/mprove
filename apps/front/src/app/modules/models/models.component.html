@@ -566,7 +566,15 @@
                     <ng-container
                       *ngTemplateOutlet="
                         chartsItem;
-                        context: { i: i, c: c, isDraft: true }
+                        context: {
+                          itemI: i,
+                          itemChartId: c.chartId,
+                          itemModelId: c.modelId,
+                          itemTitle: c.title,
+                          itemChartType: c.chartType,
+                          itemChartUnit: c,
+                          itemIsDraft: true
+                        }
                       "
                     ></ng-container>
                   </div>
@@ -613,7 +621,7 @@
                       [ngClass]="{
                         'cursor-pointer': node.hasChildren === true
                       }"
-                      (click)="chartsTreeNodeOnClick(node)"
+                      (click)="chartsTreeNodeOnClick({ node: node })"
                     >
                       <div
                         class="hover:bg-m50 relative flex w-full flex-row items-center rounded pl-2"
@@ -674,15 +682,19 @@
 
                     <div
                       *ngIf="node.data.type === 'spaceUnit'"
-                      (click)="chartsTreeNodeOnClick(node)"
+                      (click)="chartsTreeNodeOnClick({ node: node })"
                     >
                       <ng-container
                         *ngTemplateOutlet="
                           chartsItem;
                           context: {
-                            i: null,
-                            c: node.data,
-                            isDraft: false
+                            itemI: null,
+                            itemChartId: node.data.unitId,
+                            itemModelId: node.data.modelId,
+                            itemTitle: node.data.title,
+                            itemChartType: node.data.chartType,
+                            itemSpaceUnit: node.data,
+                            itemIsDraft: false
                           }
                         "
                       ></ng-container>
@@ -694,38 +706,48 @@
 
                 <ng-template
                   #chartsItem
-                  let-i="i"
-                  let-c="c"
-                  let-isDraft="isDraft"
+                  let-itemI="itemI"
+                  let-itemChartId="itemChartId"
+                  let-itemModelId="itemModelId"
+                  let-itemTitle="itemTitle"
+                  let-itemChartType="itemChartType"
+                  let-itemChartUnit="itemChartUnit"
+                  let-itemSpaceUnit="itemSpaceUnit"
+                  let-itemIsDraft="itemIsDraft"
                 >
                   <div
-                    [attr.chartId]="c.chartId"
+                    [attr.chartId]="itemChartId"
                     class="hover:bg-m50 group ml-5 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
-                    (click)="navToChart(c)"
+                    (click)="
+                      navToChart({
+                        chartId: itemChartId,
+                        modelId: itemModelId
+                      })
+                    "
                     [ngClass]="{
-                      'bg-m50': !!chart && c.chartId === chart?.chartId,
-                      'mt-4': isDraft === true && i === 0,
+                      'bg-m50': !!chart && itemChartId === chart?.chartId,
+                      'mt-4': itemIsDraft === true && itemI === 0,
                       'mb-5':
-                        i != null &&
-                        ((isDraft === false &&
-                          i ===
+                        itemI != null &&
+                        ((itemIsDraft === false &&
+                          itemI ===
                             (filteredCharts | slice: filteredDraftsLength)
                               .length -
                               1) ||
-                          (isDraft === true &&
+                          (itemIsDraft === true &&
                             filteredDraftsLength === filteredCharts.length &&
-                            i === filteredCharts.length - 1))
+                            itemI === filteredCharts.length - 1))
                     }"
                   >
                     <div class="ml-4 mr-3 flex h-2 items-center">
                       <div
-                        *ngIf="c.chartId === chart?.chartId"
+                        *ngIf="itemChartId === chart?.chartId"
                         data-cy="chartsSelectedSymbol"
                         class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
                       ></div>
 
                       <div
-                        *ngIf="c.chartId !== chart?.chartId"
+                        *ngIf="itemChartId !== chart?.chartId"
                         class="h-9 w-[6px]"
                       ></div>
                     </div>
@@ -733,49 +755,50 @@
                     <div
                       class="ml-1 h-6 w-6 flex-shrink-0"
                       [ngClass]="{
-                        'text-m600': !!chart && c.chartId === chart?.chartId,
-                        'text-s500': !chart || c.chartId !== chart?.chartId
+                        'text-m600': !!chart && itemChartId === chart?.chartId,
+                        'text-s500': !chart || itemChartId !== chart?.chartId
                       }"
                     >
                       <!-- <img [src]="c.iconPath" /> -->
 
                       <m-chart-table-icon
-                        *ngIf="c.chartType === chartTypeEnumTable"
+                        *ngIf="itemChartType === chartTypeEnumTable"
                       ></m-chart-table-icon>
 
                       <m-chart-pivot-table-icon
-                        *ngIf="c.chartType === chartTypeEnumPivotTable"
+                        *ngIf="itemChartType === chartTypeEnumPivotTable"
                       ></m-chart-pivot-table-icon>
 
                       <m-chart-line-icon
-                        *ngIf="c.chartType === chartTypeEnumLine"
+                        *ngIf="itemChartType === chartTypeEnumLine"
                       ></m-chart-line-icon>
 
                       <m-chart-bar-icon
-                        *ngIf="c.chartType === chartTypeEnumBar"
+                        *ngIf="itemChartType === chartTypeEnumBar"
                       ></m-chart-bar-icon>
 
                       <m-chart-scatter-icon
-                        *ngIf="c.chartType === chartTypeEnumScatter"
+                        *ngIf="itemChartType === chartTypeEnumScatter"
                       ></m-chart-scatter-icon>
 
                       <m-chart-single-icon
-                        *ngIf="c.chartType === chartTypeEnumSingle"
+                        *ngIf="itemChartType === chartTypeEnumSingle"
                       ></m-chart-single-icon>
 
                       <m-chart-pie-icon
-                        *ngIf="c.chartType === chartTypeEnumPie"
+                        *ngIf="itemChartType === chartTypeEnumPie"
                       ></m-chart-pie-icon>
                     </div>
 
                     <div
                       class="ml-3 mt-[2px] select-none truncate"
                       [ngClass]="{
-                        'text-m600 font-semibold': c.chartId === chart?.chartId,
-                        'text-s1': c.chartId !== chart?.chartId
+                        'text-m600 font-semibold':
+                          itemChartId === chart?.chartId,
+                        'text-s1': itemChartId !== chart?.chartId
                       }"
                     >
-                      {{ c.title | capitalize }}
+                      {{ itemTitle | capitalize }}
                     </div>
 
                     <div class="flex flex-grow"></div>
@@ -783,7 +806,7 @@
                     <button
                       *ngIf="
                         chart.draft === true &&
-                        c.chartId === chart.chartId &&
+                        itemChartId === chart.chartId &&
                         mconfig?.select.length > 0
                       "
                       data-cy="chartsSaveDraftButton"
@@ -799,21 +822,30 @@
 
                     <button
                       *ngIf="
-                        chart.draft === true && c.chartId === chart.chartId
+                        chart.draft === true && itemChartId === chart.chartId
                       "
                       data-cy="chartsDeleteDraftButton"
                       class="hover:bg-m200 text-s500 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 focus:outline-none"
-                      (click)="deleteDraftChart($event, c)"
+                      (click)="deleteDraftChart($event, itemChartUnit)"
                     >
                       <m-trash-icon></m-trash-icon>
                     </button>
 
                     <div
-                      *ngIf="c.draft === false && c.chartId !== emptyChartId"
+                      *ngIf="
+                        itemIsDraft === false && itemChartId !== emptyChartId
+                      "
                       class="invisible ml-2 flex group-hover:visible"
                     >
                       <m-chart-options
-                        [chart]="c"
+                        *ngIf="itemSpaceUnit"
+                        [spaceUnit]="itemSpaceUnit"
+                        [isHoverM]="false"
+                      ></m-chart-options>
+
+                      <m-chart-options
+                        *ngIf="itemChartUnit"
+                        [chart]="itemChartUnit"
                         [isHoverM]="false"
                       ></m-chart-options>
                     </div>
