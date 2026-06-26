@@ -69,10 +69,8 @@ import type { ChartX } from '#common/zod/backend/chart-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { ModelX } from '#common/zod/backend/model-x';
 import type { QueryEstimate } from '#common/zod/backend/query-estimate';
-import type { SpaceFolderX } from '#common/zod/backend/space-folder-x';
 import type { SpaceNode } from '#common/zod/backend/space-node';
 import type { SpaceNodeX } from '#common/zod/backend/space-node-x';
-import type { SpaceUnitX } from '#common/zod/backend/space-unit-x';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
 import type { ModelField } from '#common/zod/blockml/model-field';
 import type { ModelFieldY } from '#common/zod/blockml/model-field-y';
@@ -1729,8 +1727,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let filteredChartNodesByMode =
       this.chartsByModel === true
-        ? this.addModelLevelToChartNodes({ nodes: filteredChartNodes })
-        : filteredChartNodes;
+        ? filteredChartNodes
+        : this.removeModelLevelFromChartNodes({ nodes: filteredChartNodes });
 
     this.filteredChartNodes = this.spaceUiService.markSelectedAncestors({
       nodes: filteredChartNodesByMode,
@@ -1738,63 +1736,35 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  addModelLevelToChartNodes(item: { nodes: SpaceNodeX[] }): SpaceNodeX[] {
+  removeModelLevelFromChartNodes(item: { nodes: SpaceNodeX[] }): SpaceNodeX[] {
     let { nodes } = item;
 
-    return nodes.map(node => {
+    return nodes.reduce((acc: SpaceNodeX[], node) => {
       if (node.type === 'spaceUnit') {
-        return node;
+        acc.push(node);
+
+        return acc;
       }
 
-      let children = this.addModelLevelToChartNodes({
+      let children = this.removeModelLevelFromChartNodes({
         nodes: node.children ?? []
       });
 
-      let folderChildren = children.filter(
-        child => child.type === 'spaceFolder'
-      );
+      let isModelFolder = isDefined(node.modelId);
 
-      let unitChildren = children.filter(
-        child => child.type === 'spaceUnit'
-      ) as SpaceUnitX[];
+      if (isModelFolder === true) {
+        acc.push(...children);
 
-      let modelFolders: (SpaceFolderX & { modelId?: string })[] = [];
+        return acc;
+      }
 
-      unitChildren.forEach(chartUnit => {
-        let modelId = chartUnit.modelId ?? '';
-        let modelLabel = chartUnit.modelLabel ?? modelId;
-        let modelFolderId = `${node.id}/model/${modelId}`;
-        let modelFolder = modelFolders.find(
-          folder => folder.id === modelFolderId
-        );
-
-        if (isUndefined(modelFolder)) {
-          modelFolder = {
-            type: 'spaceFolder',
-            id: modelFolderId,
-            space: `${node.space}/model/${modelId}`,
-            filePath: '',
-            title: modelLabel,
-            accessRoles: [],
-            accessRolesCombined: [],
-            isSynthetic: true,
-            children: [],
-            isMatched: true,
-            isSelectedAncestor: false,
-            modelId: modelId
-          };
-
-          modelFolders.push(modelFolder);
-        }
-
-        modelFolder.children.push(chartUnit);
+      acc.push({
+        ...node,
+        children: children
       });
 
-      return {
-        ...node,
-        children: [...folderChildren, ...modelFolders]
-      };
-    });
+      return acc;
+    }, []);
   }
 
   toggleChartsByModel() {

@@ -10,6 +10,8 @@ export let zSpaceFolder = z.object({
   accessRoles: z.array(z.string()),
   accessRolesCombined: z.array(z.string()),
   isSynthetic: z.boolean(),
+  modelId: z.string().nullish(),
+  modelLabel: z.string().nullish(),
   get children() {
     return z.array(zSpaceNode);
   }
@@ -24,5 +26,7 @@ export type SpaceFolder = {
   accessRoles: string[];
   accessRolesCombined: string[];
   isSynthetic: boolean;
+  modelId?: string;
+  modelLabel?: string;
   children: SpaceNode[];
 };

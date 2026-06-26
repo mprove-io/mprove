@@ -20,12 +20,14 @@ import { ErEnum } from '#common/enums/er.enum';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
+import { sortSpaceNodes } from '#common/functions/space/sort-space-nodes';
 import { ServerError } from '#common/models/server-error';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelX } from '#common/zod/backend/model-x';
+import type { SpaceFolder } from '#common/zod/backend/space-folder';
 import type { SpaceNode } from '#common/zod/backend/space-node';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
 import type { Chart } from '#common/zod/blockml/chart';
@@ -145,15 +147,79 @@ export class ChartsService {
       );
     });
 
+    let chartSpaceNodes = this.spaceService.makeSpaceNodes({
+      spaces: spaces ?? [],
+      units: chartSpaceUnits,
+      member: apiUserMember,
+      mySpaceTitle: MY_CHARTS_SPACE_TITLE
+    });
+
     return {
       chartUnitDrafts: chartUnitDrafts,
-      chartSpaceNodes: this.spaceService.makeSpaceNodes({
-        spaces: spaces ?? [],
-        units: chartSpaceUnits,
-        member: apiUserMember,
-        mySpaceTitle: MY_CHARTS_SPACE_TITLE
+      chartSpaceNodes: this.addModelLevelToChartSpaceNodes({
+        nodes: chartSpaceNodes
       })
     };
+  }
+
+  addModelLevelToChartSpaceNodes(item: { nodes: SpaceNode[] }): SpaceNode[] {
+    let { nodes } = item;
+
+    return nodes.map(node => {
+      if (node.type === 'spaceUnit') {
+        return node;
+      }
+
+      let children = this.addModelLevelToChartSpaceNodes({
+        nodes: node.children ?? []
+      });
+
+      let folderChildren = children.filter(
+        child => child.type === 'spaceFolder'
+      );
+
+      let unitChildren = children.filter(
+        child => child.type === 'spaceUnit'
+      ) as SpaceUnit[];
+
+      let modelFolders: SpaceFolder[] = [];
+
+      unitChildren.forEach(chartUnit => {
+        let modelId = chartUnit.modelId ?? '';
+        let modelLabel = chartUnit.modelLabel ?? modelId;
+        let modelFolderId = `${node.id}/model/${modelId}`;
+        let modelFolder = modelFolders.find(
+          folder => folder.id === modelFolderId
+        );
+
+        if (isUndefined(modelFolder)) {
+          modelFolder = {
+            type: 'spaceFolder',
+            id: modelFolderId,
+            space: `${node.space}/model/${modelId}`,
+            filePath: '',
+            title: modelLabel,
+            accessRoles: [],
+            accessRolesCombined: [],
+            isSynthetic: true,
+            modelId: modelId,
+            modelLabel: modelLabel,
+            children: []
+          };
+
+          modelFolders.push(modelFolder);
+        }
+
+        modelFolder.children.push(chartUnit);
+      });
+
+      return {
+        ...node,
+        children: sortSpaceNodes({
+          nodes: [...folderChildren, ...modelFolders]
+        })
+      };
+    });
   }
 
   tabToApi(item: {
