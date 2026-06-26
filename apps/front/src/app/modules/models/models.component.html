@@ -776,7 +776,7 @@
                       })
                     "
                     [ngClass]="{
-                      'bg-m50': !!chart && itemChartId === chart?.chartId,
+                      'bg-m50': itemChartId === selectedChartId,
                       'ml-5': itemIsDraft === true,
                       'mt-4': itemIsDraft === true && itemI === 0,
                       'mb-5':
@@ -793,13 +793,13 @@
                   >
                     <div class="ml-4 mr-3 flex h-2 items-center">
                       <div
-                        *ngIf="itemChartId === chart?.chartId"
+                        *ngIf="itemChartId === selectedChartId"
                         data-cy="chartsSelectedSymbol"
                         class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
                       ></div>
 
                       <div
-                        *ngIf="itemChartId !== chart?.chartId"
+                        *ngIf="itemChartId !== selectedChartId"
                         class="h-9 w-[6px]"
                       ></div>
                     </div>
@@ -807,8 +807,8 @@
                     <div
                       class="ml-1 h-6 w-6 flex-shrink-0"
                       [ngClass]="{
-                        'text-m600': !!chart && itemChartId === chart?.chartId,
-                        'text-s500': !chart || itemChartId !== chart?.chartId
+                        'text-m600': itemChartId === selectedChartId,
+                        'text-s500': itemChartId !== selectedChartId
                       }"
                     >
                       <!-- <img [src]="c.iconPath" /> -->
@@ -846,8 +846,8 @@
                       class="ml-3 mt-[2px] select-none truncate"
                       [ngClass]="{
                         'text-m600 font-semibold':
-                          itemChartId === chart?.chartId,
-                        'text-s1': itemChartId !== chart?.chartId
+                          itemChartId === selectedChartId,
+                        'text-s1': itemChartId !== selectedChartId
                       }"
                     >
                       {{ itemTitle | capitalize }}

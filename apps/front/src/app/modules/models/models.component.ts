@@ -34,6 +34,7 @@ import {
   EMPTY_CHART_ID,
   EMPTY_MCONFIG_ID,
   EMPTY_QUERY_ID,
+  PATH_CHART,
   PATH_CHARTS_LIST,
   PATH_MODELS,
   PATH_MODELS_LIST,
@@ -197,6 +198,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   chartTypeEnumPivotTable = ChartTypeEnum.PivotTable;
 
   lastUrl: string;
+  selectedChartId: string | undefined;
 
   modelTreeLevels = ModelTreeLevelsEnum.FlatTime;
   modelTreeLevels$ = this.uiQuery.modelTreeLevels$.pipe(
@@ -409,6 +411,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     tap((x: any) => {
       let ar = x.url.split('?')[0].split('/');
       this.lastUrl = ar[ar.length - 1];
+      this.updateSelectedChartIdFromUrl({ url: x.url });
+      this.updateFiltered({
+        chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
+      });
       this.cd.detectChanges();
     })
   );
@@ -707,6 +713,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let ar = this.router.url.split('?')[0].split('/');
     this.lastUrl = ar[ar.length - 1];
+    this.updateSelectedChartIdFromUrl({ url: this.router.url });
 
     let uiState = this.uiQuery.getValue();
 
@@ -1732,8 +1739,19 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.filteredChartNodes = this.spaceUiService.markSelectedAncestors({
       nodes: filteredChartNodesByMode,
-      selectedUnitId: this.chart?.chartId
+      selectedUnitId: this.selectedChartId
     });
+  }
+
+  updateSelectedChartIdFromUrl(item: { url: string }) {
+    let { url } = item;
+
+    let parts = url.split('?')[0].split('/');
+    let chartPathIndex = parts.indexOf(PATH_CHART);
+    let chartId = parts[chartPathIndex + 1];
+
+    this.selectedChartId =
+      chartPathIndex > -1 && isDefined(chartId) ? chartId : undefined;
   }
 
   removeModelLevelFromChartNodes(item: { nodes: SpaceNodeX[] }): SpaceNodeX[] {
