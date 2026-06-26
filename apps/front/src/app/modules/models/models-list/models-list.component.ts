@@ -83,7 +83,11 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     let modelsA = this.models;
 
     if (isDefinedAndNotEmpty(this.word)) {
-      let haystack = modelsA.map(x => `${x.label} ${x.modelId}`);
+      let haystack = modelsA.map(x => {
+        let accessRolesCombined = x.accessRolesCombined.join(' ');
+
+        return `${x.label} ${x.modelId} ${x.displaySpace} ${accessRolesCombined}`;
+      });
       let opts = {};
       let uf = new uFuzzy(opts);
       idxs = uf.filter(haystack, this.word);

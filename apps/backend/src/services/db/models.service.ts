@@ -11,6 +11,7 @@ import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
+import { makeDisplayAccessRoles } from '#common/functions/space/make-display-access-roles';
 import { ServerError } from '#common/models/server-error';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelPart } from '#common/zod/backend/model-part';
@@ -28,8 +29,12 @@ export class ModelsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  tabToApi(item: { model: ModelTab; hasAccess: boolean }): ModelX {
-    let { model, hasAccess } = item;
+  tabToApi(item: {
+    model: ModelTab;
+    hasAccess: boolean;
+    displaySpace?: string;
+  }): ModelX {
+    let { model, hasAccess, displaySpace } = item;
 
     let timeframeBaseFieldIds: string[];
     let fields;
@@ -79,6 +84,11 @@ export class ModelsService {
       dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
       accessRoles: model.accessRoles,
       accessRolesCombined: model.accessRolesCombined,
+      displaySpace: displaySpace ?? model.space ?? '',
+      displayAccessRoles: makeDisplayAccessRoles({
+        accessRoles: model.accessRoles,
+        accessRolesCombined: model.accessRolesCombined
+      }),
       label: model.label,
       fields: fields,
       nodes: nodes,

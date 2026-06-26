@@ -21,8 +21,12 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
+import { UNCATEGORIZED_SPACE_TITLE } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import type { ModelX } from '#common/zod/backend/model-x';
+import type { Space } from '#common/zod/blockml/space';
 import type { ToBackendGetModelsResponsePayload } from '#common/zod/to-backend/models/to-backend-get-models';
 
 @ApiTags('Models')
@@ -41,6 +45,51 @@ export class GetModelsController {
     private envsService: EnvsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  makeDisplaySpacesBySpace(item: { spaces: Space[] }): Map<string, string> {
+    let { spaces } = item;
+
+    let sortedSpaces = [...(spaces ?? [])].sort((a, b) => {
+      let aDepth = a.space.split('.').length;
+      let bDepth = b.space.split('.').length;
+
+      return aDepth > bDepth ? 1 : bDepth > aDepth ? -1 : 0;
+    });
+
+    let displaySpacesBySpace = new Map<string, string>();
+
+    sortedSpaces.forEach(space => {
+      let parts = space.space.split('.');
+      let title = space.title || parts[parts.length - 1];
+      let parentSpaceName =
+        parts.length > 1
+          ? parts.slice(0, parts.length - 1).join('.')
+          : undefined;
+      let parentDisplaySpace = isDefined(parentSpaceName)
+        ? displaySpacesBySpace.get(parentSpaceName)
+        : undefined;
+      let displaySpace = isDefinedAndNotEmpty(parentDisplaySpace)
+        ? `${parentDisplaySpace} - ${title}`
+        : title;
+
+      displaySpacesBySpace.set(space.space, displaySpace);
+    });
+
+    return displaySpacesBySpace;
+  }
+
+  makeModelDisplaySpace(item: {
+    modelSpace: string | undefined;
+    displaySpacesBySpace: Map<string, string>;
+  }): string {
+    let { modelSpace, displaySpacesBySpace } = item;
+
+    if (isDefinedAndNotEmpty(modelSpace) === false) {
+      return UNCATEGORIZED_SPACE_TITLE;
+    }
+
+    return displaySpacesBySpace.get(modelSpace) ?? '';
+  }
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetModels)
   @ApiOperation({
@@ -115,6 +164,24 @@ export class GetModelsController {
       apiUserMember: apiUserMember
     });
 
+    let displaySpacesBySpace = this.makeDisplaySpacesBySpace({
+      spaces: struct.spaces ?? []
+    });
+
+    let apiModels: ModelX[] = models.map(model =>
+      this.modelsService.tabToApi({
+        model: model,
+        hasAccess: checkModelAccess({
+          member: userMember,
+          modelAccessRoles: model.accessRolesCombined
+        }),
+        displaySpace: this.makeModelDisplaySpace({
+          modelSpace: model.space,
+          displaySpacesBySpace: displaySpacesBySpace
+        })
+      })
+    );
+
     let payload: ToBackendGetModelsResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
@@ -122,17 +189,9 @@ export class GetModelsController {
         modelPartXs: modelPartXs
       }),
       userMember: apiUserMember,
-      models: models
-        .map(model =>
-          this.modelsService.tabToApi({
-            model: model,
-            hasAccess: checkModelAccess({
-              member: userMember,
-              modelAccessRoles: model.accessRolesCombined
-            })
-          })
-        )
-        .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0))
+      models: apiModels.sort((a, b) =>
+        a.label > b.label ? 1 : b.label > a.label ? -1 : 0
+      )
     };
 
     return payload;
