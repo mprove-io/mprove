@@ -595,7 +595,7 @@
                   <button
                     class="text-s500 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                     type="button"
-                    tp="Collapse tree"
+                    tp="Fold"
                     (click)="collapseChartsTree()"
                   >
                     <m-folder-minus-icon></m-folder-minus-icon>
@@ -704,7 +704,7 @@
                             class="invisible ml-2 mr-2 flex group-hover/bar:visible"
                           >
                             <m-model-options
-                              *ngIf="node.data.modelId === model?.modelId"
+                              *ngIf="!!node.data.modelId"
                               [models]="models"
                               [chart]="chart"
                               [treeNode]="node"
