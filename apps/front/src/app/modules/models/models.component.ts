@@ -1796,6 +1796,16 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.updateFiltered({
       chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
     });
+
+    setTimeout(() => {
+      let chartUnit = this.charts?.find(
+        x => x.chartId === this.selectedChartId
+      );
+
+      if (isDefined(chartUnit)) {
+        this.expandChartPath({ chartUnit: chartUnit });
+      }
+    }, 0);
   }
 
   collapseChartsTree() {
@@ -1948,17 +1958,38 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
+  expandChartPath(item: { chartUnit: ChartUnit }) {
+    let { chartUnit } = item;
+
+    if (isDefinedAndNotEmpty(chartUnit.space) === false) {
+      return;
+    }
+
+    this.expandSpacePath({ space: chartUnit.space });
+
+    if (this.chartsByModel === true && isDefined(chartUnit.modelId)) {
+      let modelNodeId = `${chartUnit.space}/model/${chartUnit.modelId}`;
+      let node = this.chartsTree?.treeModel?.getNodeById(modelNodeId);
+
+      if (isDefined(node)) {
+        node.expand();
+      }
+    }
+  }
+
   scrollToSelectedChart(item: { isSmooth: boolean }) {
     let { isSmooth } = item;
 
     if (this.chart) {
       let chartUnit = this.charts?.find(x => x.chartId === this.chart.chartId);
 
-      if (
-        this.chart.draft === false &&
-        isDefinedAndNotEmpty(chartUnit?.space)
-      ) {
-        this.expandSpacePath({ space: chartUnit?.space });
+      if (isDefined(chartUnit)) {
+        let shouldExpandChartPath =
+          this.chart.draft === false && isDefinedAndNotEmpty(chartUnit.space);
+
+        if (shouldExpandChartPath === true) {
+          this.expandChartPath({ chartUnit: chartUnit });
+        }
       }
 
       let selectedElement =
