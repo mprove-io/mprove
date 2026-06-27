@@ -41,8 +41,6 @@ export class ChartsListComponent {
     })
   );
 
-  showModelId = true;
-
   constructor(
     private cd: ChangeDetectorRef,
     private filteredChartsQuery: FilteredChartsQuery,
@@ -52,14 +50,6 @@ export class ChartsListComponent {
     private myDialogService: MyDialogService,
     private navigateService: NavigateService
   ) {}
-
-  setShowModelIdTrue() {
-    this.showModelId = true;
-  }
-
-  setShowModelIdFalse() {
-    this.showModelId = false;
-  }
 
   navigateToChart(chartItem: ChartUnit) {
     this.navigateService.navigateToChart({
