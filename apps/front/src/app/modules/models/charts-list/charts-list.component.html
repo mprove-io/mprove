@@ -27,6 +27,7 @@
               Chart Id
             </button>
           </div>
+          <div class="flex flex-1">Space</div>
           <div class="flex flex-1">Author</div>
         </div>
       </div>
@@ -92,6 +93,14 @@
                       {{ item.modelLabel | capitalize }}
                     </span>
                   </div>
+                </div>
+
+                <div
+                  class="flex flex-1 items-start truncate pb-[9px] pt-[7px] focus:outline-none"
+                >
+                  <span class="truncate">
+                    {{ item.displaySpace }}
+                  </span>
                 </div>
 
                 <div
