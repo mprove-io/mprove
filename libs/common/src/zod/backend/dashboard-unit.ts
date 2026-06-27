@@ -13,7 +13,7 @@ export let zDashboardUnit = z
     author: z.string().nullish(),
     canEditOrDeleteDashboard: z.boolean(),
     isFavorite: z.boolean(),
-    displaySpace: z.string(),
+    spaceFullTitle: z.string(),
     displayAccessRoles: z.array(
       z.object({
         role: z.string(),

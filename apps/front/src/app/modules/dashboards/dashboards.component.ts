@@ -445,7 +445,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
         return {
           dashboard: dashboard,
-          searchText: `${title} ${dashboard.unitId} ${dashboard.author ?? ''} ${dashboard.displaySpace} ${accessRolesCombined}`
+          searchText: `${title} ${dashboard.unitId} ${dashboard.author ?? ''} ${dashboard.spaceFullTitle} ${accessRolesCombined}`
         };
       });
 

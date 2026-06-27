@@ -135,7 +135,7 @@ export class ChartsService {
     sortedDraftCharts.forEach(chart => {
       let model = models.find(x => x.modelId === chart.modelId);
 
-      let displaySpace = model.space
+      let spaceFullTitle = model.space
         ? spaces.find(space => space.space === model.space)?.fullTitle
         : '';
 
@@ -146,7 +146,7 @@ export class ChartsService {
           member: apiUserMember,
           favoriteChartIds: [],
           space: model.space,
-          displaySpace: displaySpace
+          spaceFullTitle: spaceFullTitle
         })
       );
     });

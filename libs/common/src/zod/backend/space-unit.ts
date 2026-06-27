@@ -14,7 +14,7 @@ export let zSpaceUnit = z
     author: z.string().nullish(),
     canEditOrDeleteUnit: z.boolean(),
     isFavorite: z.boolean(),
-    displaySpace: z.string(),
+    spaceFullTitle: z.string(),
     displayAccessRoles: z.array(
       z.object({
         role: z.string(),

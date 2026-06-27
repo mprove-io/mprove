@@ -19,7 +19,7 @@ export let zChartUnit = z
     author: z.string().nullish(),
     canEditOrDeleteChart: z.boolean(),
     isFavorite: z.boolean(),
-    displaySpace: z.string(),
+    spaceFullTitle: z.string(),
     displayAccessRoles: z.array(
       z.object({
         role: z.string(),

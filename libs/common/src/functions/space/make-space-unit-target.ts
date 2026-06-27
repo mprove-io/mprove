@@ -15,7 +15,7 @@ export type SpaceUnitTarget = {
   space: string;
   rootSpace: string;
   rootTitle: string;
-  displaySpace: string;
+  spaceFullTitle: string;
   childTitle?: string;
   isSynthetic: boolean;
 };
@@ -34,7 +34,7 @@ export function makeSpaceUnitTarget(item: {
       space: space,
       rootSpace: space,
       rootTitle: space,
-      displaySpace: space,
+      spaceFullTitle: space,
       isSynthetic: false
     };
   }
@@ -46,7 +46,7 @@ export function makeSpaceUnitTarget(item: {
       space: MY_SPACE_ID,
       rootSpace: MY_SPACE_ID,
       rootTitle: mySpaceTitle,
-      displaySpace: mySpaceTitle,
+      spaceFullTitle: mySpaceTitle,
       isSynthetic: true
     };
   }
@@ -56,7 +56,7 @@ export function makeSpaceUnitTarget(item: {
       space: UNCATEGORIZED_SPACE_ID,
       rootSpace: UNCATEGORIZED_SPACE_ID,
       rootTitle: UNCATEGORIZED_SPACE_TITLE,
-      displaySpace: UNCATEGORIZED_SPACE_TITLE,
+      spaceFullTitle: UNCATEGORIZED_SPACE_TITLE,
       isSynthetic: true
     };
   }
@@ -70,7 +70,7 @@ export function makeSpaceUnitTarget(item: {
       space: `${PERSONAL_SPACE_ID}/${author}`,
       rootSpace: PERSONAL_SPACE_ID,
       rootTitle: PERSONAL_SPACE_TITLE,
-      displaySpace: `${PERSONAL_SPACE_TITLE} - ${author}`,
+      spaceFullTitle: `${PERSONAL_SPACE_TITLE} - ${author}`,
       childTitle: author,
       isSynthetic: true
     };
@@ -81,7 +81,7 @@ export function makeSpaceUnitTarget(item: {
       space: `${SHARED_SPACE_ID}/${author}`,
       rootSpace: SHARED_SPACE_ID,
       rootTitle: SHARED_SPACE_TITLE,
-      displaySpace: `${SHARED_SPACE_TITLE} - ${author}`,
+      spaceFullTitle: `${SHARED_SPACE_TITLE} - ${author}`,
       childTitle: author,
       isSynthetic: true
     };
@@ -91,7 +91,7 @@ export function makeSpaceUnitTarget(item: {
     space: UNCATEGORIZED_SPACE_ID,
     rootSpace: UNCATEGORIZED_SPACE_ID,
     rootTitle: UNCATEGORIZED_SPACE_TITLE,
-    displaySpace: UNCATEGORIZED_SPACE_TITLE,
+    spaceFullTitle: UNCATEGORIZED_SPACE_TITLE,
     isSynthetic: true
   };
 }

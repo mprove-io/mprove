@@ -86,7 +86,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
       let haystack = modelsA.map(x => {
         let accessRolesCombined = x.accessRolesCombined.join(' ');
 
-        return `${x.label} ${x.modelId} ${x.displaySpace} ${accessRolesCombined}`;
+        return `${x.label} ${x.modelId} ${x.spaceFullTitle} ${accessRolesCombined}`;
       });
       let opts = {};
       let uf = new uFuzzy(opts);

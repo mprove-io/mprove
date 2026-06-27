@@ -1478,7 +1478,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
         return {
           report: report,
-          searchText: `${title} ${report.unitId} ${report.author ?? ''} ${report.displaySpace} ${accessRolesCombined}`
+          searchText: `${title} ${report.unitId} ${report.author ?? ''} ${report.spaceFullTitle} ${accessRolesCombined}`
         };
       });
 

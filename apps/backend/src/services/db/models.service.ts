@@ -32,9 +32,9 @@ export class ModelsService {
   tabToApi(item: {
     model: ModelTab;
     hasAccess: boolean;
-    displaySpace?: string;
+    spaceFullTitle?: string;
   }): ModelX {
-    let { model, hasAccess, displaySpace } = item;
+    let { model, hasAccess, spaceFullTitle } = item;
 
     let timeframeBaseFieldIds: string[];
     let fields;
@@ -84,7 +84,7 @@ export class ModelsService {
       dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
       accessRoles: model.accessRoles,
       accessRolesCombined: model.accessRolesCombined,
-      displaySpace: displaySpace ?? '',
+      spaceFullTitle: spaceFullTitle ?? '',
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: model.accessRoles,
         accessRolesCombined: model.accessRolesCombined

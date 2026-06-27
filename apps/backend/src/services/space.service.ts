@@ -93,7 +93,7 @@ export class SpaceService {
             makeSpaceUnitWithSpace({
               unit: unit,
               space: spaceName,
-              displaySpace: space.fullTitle
+              spaceFullTitle: space.fullTitle
             })
           );
         }
@@ -123,7 +123,7 @@ export class SpaceService {
       let unitWithSpace = makeSpaceUnitWithSpace({
         unit: unit,
         space: target.space,
-        displaySpace: target.displaySpace
+        spaceFullTitle: target.spaceFullTitle
       });
 
       if (target.space === target.rootSpace) {

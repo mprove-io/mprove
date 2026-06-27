@@ -19,7 +19,7 @@ export function spaceUnitToDashboardUnit(item: {
     author: spaceUnit.author,
     canEditOrDeleteDashboard: spaceUnit.canEditOrDeleteUnit,
     isFavorite: spaceUnit.isFavorite,
-    displaySpace: spaceUnit.displaySpace,
+    spaceFullTitle: spaceUnit.spaceFullTitle,
     displayAccessRoles: spaceUnit.displayAccessRoles
   };
 }

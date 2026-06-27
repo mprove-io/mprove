@@ -124,7 +124,7 @@ export class GetModelsController {
           member: userMember,
           modelAccessRoles: model.accessRolesCombined
         }),
-        displaySpace: model.space
+        spaceFullTitle: model.space
           ? struct.spaces.find(space => space.space === model.space)?.fullTitle
           : UNCATEGORIZED_SPACE_TITLE
       })

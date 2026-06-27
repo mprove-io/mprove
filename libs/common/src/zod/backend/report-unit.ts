@@ -14,7 +14,7 @@ export let zReportUnit = z
     canEditOrDeleteReport: z.boolean(),
     isFavorite: z.boolean(),
     draft: z.boolean(),
-    displaySpace: z.string(),
+    spaceFullTitle: z.string(),
     displayAccessRoles: z.array(
       z.object({
         role: z.string(),

@@ -150,7 +150,7 @@ export class DashboardsService {
           member: apiUserMember,
           favoriteDashboardIds: [],
           space: dashboard.space,
-          displaySpace: dashboard.space
+          spaceFullTitle: dashboard.space
             ? spaces.find(space => space.space === dashboard.space)?.fullTitle
             : ''
         })

@@ -4,7 +4,7 @@ import { zModel } from '#common/zod/blockml/model';
 export let zModelX = zModel
   .extend({
     hasAccess: z.boolean(),
-    displaySpace: z.string(),
+    spaceFullTitle: z.string(),
     displayAccessRoles: z.array(
       z.object({
         role: z.string(),

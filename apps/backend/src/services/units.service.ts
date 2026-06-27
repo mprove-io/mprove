@@ -42,9 +42,9 @@ export class UnitsService {
     member: Member;
     favoriteReportIds: string[];
     space: string | undefined;
-    displaySpace: string;
+    spaceFullTitle: string;
   }): ReportUnit {
-    let { report, member, favoriteReportIds, space, displaySpace } = item;
+    let { report, member, favoriteReportIds, space, spaceFullTitle } = item;
 
     let author = this.getUnitAuthor({ filePath: report.filePath });
 
@@ -64,7 +64,7 @@ export class UnitsService {
         author === member.alias,
       isFavorite: favoriteReportIds.indexOf(report.reportId) > -1,
       draft: report.draft,
-      displaySpace: displaySpace,
+      spaceFullTitle: spaceFullTitle,
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: report.accessRoles,
         accessRolesCombined: report.accessRolesCombined
@@ -96,7 +96,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteReportIds.indexOf(report.reportId) > -1,
-      displaySpace: '',
+      spaceFullTitle: '',
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: report.accessRoles,
         accessRolesCombined: report.accessRolesCombined
@@ -109,9 +109,10 @@ export class UnitsService {
     member: Member;
     favoriteDashboardIds: string[];
     space: string | undefined;
-    displaySpace: string;
+    spaceFullTitle: string;
   }): DashboardUnit {
-    let { dashboard, member, favoriteDashboardIds, space, displaySpace } = item;
+    let { dashboard, member, favoriteDashboardIds, space, spaceFullTitle } =
+      item;
     let author = this.getUnitAuthor({ filePath: dashboard.filePath });
 
     return {
@@ -130,7 +131,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteDashboardIds.indexOf(dashboard.dashboardId) > -1,
-      displaySpace: displaySpace,
+      spaceFullTitle: spaceFullTitle,
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: dashboard.accessRoles,
         accessRolesCombined: dashboard.accessRolesCombined
@@ -161,7 +162,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteDashboardIds.indexOf(dashboard.dashboardId) > -1,
-      displaySpace: '',
+      spaceFullTitle: '',
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: dashboard.accessRoles,
         accessRolesCombined: dashboard.accessRolesCombined
@@ -175,9 +176,10 @@ export class UnitsService {
     member: Member;
     favoriteChartIds: string[];
     space: string | undefined;
-    displaySpace: string;
+    spaceFullTitle: string;
   }): ChartUnit {
-    let { chart, model, member, favoriteChartIds, space, displaySpace } = item;
+    let { chart, model, member, favoriteChartIds, space, spaceFullTitle } =
+      item;
 
     let author = this.getUnitAuthor({ filePath: chart.filePath });
 
@@ -201,7 +203,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteChartIds.indexOf(chart.chartId) > -1,
-      displaySpace: displaySpace,
+      spaceFullTitle: spaceFullTitle,
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: model.accessRoles,
         accessRolesCombined: model.accessRolesCombined
@@ -234,7 +236,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteChartIds.indexOf(chart.chartId) > -1,
-      displaySpace: '',
+      spaceFullTitle: '',
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: model.accessRoles,
         accessRolesCombined: model.accessRolesCombined

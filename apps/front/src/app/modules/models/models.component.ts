@@ -1659,7 +1659,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
         return {
           chart: chart,
-          searchText: `${title} ${chart.unitId} ${chart.author ?? ''} ${chart.displaySpace} ${chart.modelLabel ?? ''} ${accessRolesCombined}`
+          searchText: `${title} ${chart.unitId} ${chart.author ?? ''} ${chart.spaceFullTitle} ${chart.modelLabel ?? ''} ${accessRolesCombined}`
         };
       });
 
