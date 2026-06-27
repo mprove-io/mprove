@@ -41,16 +41,12 @@ export class ModelOptionsComponent {
     event.stopPropagation();
   }
 
-  getModelId() {
-    return this.treeNode.data.modelId ?? this.treeNode.data.id;
-  }
-
   goToFile(event: MouseEvent) {
     event.stopPropagation();
 
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
-    let modelId = this.getModelId();
+    let modelId = this.treeNode.data.modelId;
 
     let model = this.models.find(model => model.modelId === modelId);
 
@@ -68,7 +64,7 @@ export class ModelOptionsComponent {
   async showSchema(event: MouseEvent) {
     event.stopPropagation();
 
-    let modelId = this.getModelId();
+    let modelId = this.treeNode.data.modelId;
 
     if (this.chart?.modelId !== modelId) {
       await this.navigateService.navigateToChart({
