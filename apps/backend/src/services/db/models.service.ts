@@ -39,7 +39,6 @@ export class ModelsService {
     let fields;
     let nodes;
 
-    // TODO: save-create-chart to not use tabToApi on partial data
     if (isDefined(model.fields)) {
       timeframeBaseFieldIds = model.fields
         .filter(field => field.isTimeframeBase === true)
