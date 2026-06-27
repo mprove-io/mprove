@@ -1,4 +1,3 @@
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
 
@@ -11,9 +10,9 @@ export function spaceUnitToChartUnit(item: {
     type: 'chartUnit',
     id: spaceUnit.id,
     chartId: spaceUnit.unitId,
-    modelId: spaceUnit.modelId ?? '',
-    modelLabel: spaceUnit.modelLabel ?? '',
-    chartType: spaceUnit.chartType ?? ChartTypeEnum.Table,
+    modelId: spaceUnit.modelId,
+    modelLabel: spaceUnit.modelLabel,
+    chartType: spaceUnit.chartType,
     iconPath: spaceUnit.iconPath,
     draft: false,
     title: spaceUnit.title,
