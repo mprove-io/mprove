@@ -34,7 +34,7 @@
               ></m-left-panel-icon>
 
               <div
-                class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                class="ml-5 flex w-[120px] flex-shrink-0 cursor-pointer flex-row items-center justify-center"
                 (click)="navToReportsList()"
               >
                 <!-- <m-view-list-icon
@@ -45,13 +45,13 @@
                 ></m-view-list-icon> -->
 
                 <div
-                  class="w-[34px] select-none items-center text-lg"
+                  class="select-none items-center text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold': lastUrl === pathReportsList,
                     'text-s500': lastUrl !== pathReportsList
                   }"
                 >
-                  List
+                  Reports List
                 </div>
               </div>
 
