@@ -442,7 +442,7 @@ export class SaveModifyChartController {
       user: user,
       apiUserMember: apiUserMember,
       models: models,
-      spaces: currentStruct.spaces ?? []
+      spaces: currentStruct.spaces
     });
 
     let payload: ToBackendSaveModifyChartResponsePayload = {

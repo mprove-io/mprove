@@ -414,7 +414,7 @@ export class SaveCreateReportController {
       user: user,
       userMember: userMember,
       apiUserMember: apiUserMember,
-      spaces: currentStruct.spaces ?? []
+      spaces: currentStruct.spaces
     });
 
     let payload: ToBackendSaveCreateReportResponsePayload = {

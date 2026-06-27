@@ -485,7 +485,7 @@ export class SaveModifyReportController {
       user: user,
       userMember: userMember,
       apiUserMember: apiUserMember,
-      spaces: currentStruct.spaces ?? []
+      spaces: currentStruct.spaces
     });
 
     let payload: ToBackendSaveModifyReportResponsePayload = {

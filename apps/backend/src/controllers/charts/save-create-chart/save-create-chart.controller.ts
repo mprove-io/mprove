@@ -385,7 +385,7 @@ export class SaveCreateChartController {
       user: user,
       apiUserMember: apiUserMember,
       models: models,
-      spaces: currentStruct.spaces ?? []
+      spaces: currentStruct.spaces
     });
 
     let payload: ToBackendSaveCreateChartResponsePayload = {

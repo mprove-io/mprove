@@ -136,7 +136,7 @@ export class DeleteDraftReportsController {
       user: user,
       userMember: member,
       apiUserMember: apiUserMember,
-      spaces: struct.spaces ?? []
+      spaces: struct.spaces
     });
 
     let payload = {

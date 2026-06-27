@@ -288,7 +288,7 @@ export class EditDraftChartController {
       user: user,
       apiUserMember: apiUserMember,
       models: models,
-      spaces: struct.spaces ?? []
+      spaces: struct.spaces
     });
 
     let payload: ToBackendEditDraftChartResponsePayload = {

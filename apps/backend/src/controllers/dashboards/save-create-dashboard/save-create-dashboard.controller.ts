@@ -462,7 +462,7 @@ export class SaveCreateDashboardController {
       structId: bridge.structId,
       user: user,
       apiUserMember: apiUserMember,
-      spaces: currentStruct.spaces ?? []
+      spaces: currentStruct.spaces
     });
 
     let payload: ToBackendSaveCreateDashboardResponsePayload = {

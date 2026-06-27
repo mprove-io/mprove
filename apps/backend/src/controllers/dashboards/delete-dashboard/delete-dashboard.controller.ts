@@ -212,7 +212,7 @@ export class DeleteDashboardController {
       structId: bridge.structId,
       user: user,
       apiUserMember: apiUserMember,
-      spaces: struct.spaces ?? []
+      spaces: struct.spaces
     });
 
     let payload = {

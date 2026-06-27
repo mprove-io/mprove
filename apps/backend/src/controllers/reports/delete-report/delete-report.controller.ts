@@ -210,7 +210,7 @@ export class DeleteReportController {
       user: user,
       userMember: userMember,
       apiUserMember: apiUserMember,
-      spaces: struct.spaces ?? []
+      spaces: struct.spaces
     });
 
     let payload = {

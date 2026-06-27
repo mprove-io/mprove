@@ -565,7 +565,7 @@ export class SaveModifyDashboardController {
       structId: bridge.structId,
       user: user,
       apiUserMember: apiUserMember,
-      spaces: currentStruct.spaces ?? []
+      spaces: currentStruct.spaces
     });
 
     let payload: ToBackendSaveModifyDashboardResponsePayload = {

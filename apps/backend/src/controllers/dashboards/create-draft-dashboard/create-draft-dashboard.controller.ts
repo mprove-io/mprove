@@ -376,7 +376,7 @@ export class CreateDraftDashboardController {
       structId: bridge.structId,
       user: user,
       apiUserMember: apiUserMember,
-      spaces: currentStruct.spaces ?? []
+      spaces: currentStruct.spaces
     });
 
     let payload: ToBackendCreateDraftDashboardResponsePayload = {

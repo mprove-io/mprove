@@ -375,7 +375,7 @@ export class CreateDraftReportController {
       user: user,
       userMember: userMember,
       apiUserMember: apiUserMember,
-      spaces: struct.spaces ?? []
+      spaces: struct.spaces
     });
 
     let payload: ToBackendCreateDraftReportResponsePayload = {

@@ -156,7 +156,7 @@ export class DeleteDraftChartsController {
       user: user,
       apiUserMember: apiUserMember,
       models: models,
-      spaces: struct.spaces ?? []
+      spaces: struct.spaces
     });
 
     let payload = {
