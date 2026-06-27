@@ -318,7 +318,14 @@
             </div> -->
 
             <div class="ml-6 flex w-2 flex-1 items-center">
-              <form class="w-full" [formGroup]="modelForm">
+              <div class="flex flex-col">
+                <div
+                  class="text-s500 flex h-9 select-none items-center text-lg font-semibold"
+                  >Model</div
+                >
+              </div>
+
+              <form class="ml-5 w-full flex-1" [formGroup]="modelForm">
                 <ng-select
                   #modelsModelSelect
                   [fixNgSelectBottom]="modelsModelSelect"
@@ -342,13 +349,13 @@
                 >
                   <ng-template ng-label-tmp let-item="item">
                     <div class="ml-1 truncate">
-                      <span class="font-semibold">{{ item.label }}</span>
+                      <span>{{ item.label }}</span>
                     </div>
                   </ng-template>
 
                   <ng-template ng-option-tmp let-item="item">
                     <div class="ml-1 truncate">
-                      <span class="font-semibold">{{ item.label }}</span>
+                      <span>{{ item.label }}</span>
                     </div>
                   </ng-template>
                 </ng-select>
