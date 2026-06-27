@@ -692,7 +692,11 @@
                                 'font-semibold':
                                   node.data.isSelectedAncestor === true
                               }"
-                              >{{ node.data.title }}</span
+                              >{{
+                                node.data.isSynthetic === true
+                                  ? node.data.title
+                                  : (node.data.title | capitalize)
+                              }}</span
                             >
                           </div>
 
