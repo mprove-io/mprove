@@ -29,11 +29,7 @@ export class SpaceService {
   }): SpaceNode[] {
     let { spaces, units, member, mySpaceTitle } = item;
 
-    let spacesByName = new Map(spaces.map(space => [space.space, space]));
-
     let nodesBySpace = new Map<string, SpaceFolder>();
-
-    let displaySpacesBySpace = new Map<string, string>();
 
     let rootNodes: SpaceNode[] = [];
 
@@ -57,7 +53,7 @@ export class SpaceService {
         for (let index = 0; index < parts.length; index++) {
           let partSpaceName = parts.slice(0, index + 1).join('.');
 
-          let space = spacesByName.get(partSpaceName);
+          let space = spaces.find(x => x.space === partSpaceName);
 
           let existingNode = nodesBySpace.get(partSpaceName);
 
@@ -81,29 +77,23 @@ export class SpaceService {
             } else {
               rootNodes.push(spaceNode);
             }
-
-            let parentDisplaySpace = isDefined(parentSpaceName)
-              ? displaySpacesBySpace.get(parentSpaceName)
-              : undefined;
-
-            let displaySpace = isDefinedAndNotEmpty(parentDisplaySpace)
-              ? `${parentDisplaySpace} - ${spaceNode.title}`
-              : spaceNode.title;
-
-            displaySpacesBySpace.set(partSpaceName, displaySpace);
           }
         }
 
         let spaceNode = nodesBySpace.get(spaceName);
 
         if (isDefined(spaceNode)) {
-          let displaySpace = displaySpacesBySpace.get(spaceName) ?? '';
+          let space = spaces.find(x => x.space === spaceName);
+
+          if (isUndefined(space)) {
+            return;
+          }
 
           spaceNode.children.push(
             makeSpaceUnitWithSpace({
               unit: unit,
               space: spaceName,
-              displaySpace: displaySpace
+              displaySpace: space.fullTitle
             })
           );
         }

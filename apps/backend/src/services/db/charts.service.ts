@@ -135,6 +135,10 @@ export class ChartsService {
     sortedDraftCharts.forEach(chart => {
       let model = models.find(x => x.modelId === chart.modelId);
 
+      let displaySpace = model.space
+        ? spaces.find(space => space.space === model.space)?.fullTitle
+        : '';
+
       chartUnitDrafts.push(
         this.unitsService.makeChartUnit({
           chart: chart,
@@ -142,7 +146,7 @@ export class ChartsService {
           member: apiUserMember,
           favoriteChartIds: [],
           space: model.space,
-          displaySpace: model.space ?? ''
+          displaySpace: displaySpace
         })
       );
     });

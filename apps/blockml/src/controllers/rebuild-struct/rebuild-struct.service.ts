@@ -823,6 +823,7 @@ export class RebuildStructService {
         let apiSpace: Space = {
           space: space.space,
           title: space.title,
+          fullTitle: space.fullTitle,
           filePath: space.filePath,
           accessRoles: space.access_roles ?? [],
           accessRolesCombined: space.accessRolesCombined ?? []

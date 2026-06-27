@@ -145,7 +145,9 @@ export class ReportsService {
           member: apiUserMember,
           favoriteReportIds: [],
           space: x.space,
-          displaySpace: x.space ?? ''
+          displaySpace: x.space
+            ? spaces.find(space => space.space === x.space)?.fullTitle
+            : ''
         })
       ),
       reportSpaceNodes: reportSpaceNodes

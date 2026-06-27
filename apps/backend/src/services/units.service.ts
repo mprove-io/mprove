@@ -96,7 +96,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteReportIds.indexOf(report.reportId) > -1,
-      displaySpace: report.space ?? '',
+      displaySpace: '',
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: report.accessRoles,
         accessRolesCombined: report.accessRolesCombined
@@ -161,7 +161,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteDashboardIds.indexOf(dashboard.dashboardId) > -1,
-      displaySpace: dashboard.space ?? '',
+      displaySpace: '',
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: dashboard.accessRoles,
         accessRolesCombined: dashboard.accessRolesCombined
@@ -234,7 +234,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteChartIds.indexOf(chart.chartId) > -1,
-      displaySpace: model.space ?? '',
+      displaySpace: '',
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: model.accessRoles,
         accessRolesCombined: model.accessRolesCombined

@@ -22,6 +22,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
+import { UNCATEGORIZED_SPACE_TITLE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
@@ -104,6 +105,11 @@ export class GetChartsController {
       .findMany({ where: eq(modelsTable.structId, bridge.structId) })
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
+    });
+
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let apiModels = models
@@ -113,15 +119,14 @@ export class GetChartsController {
           hasAccess: checkModelAccess({
             member: userMember,
             modelAccessRoles: model.accessRolesCombined
-          })
+          }),
+          displaySpace: model.space
+            ? struct.spaces.find(space => space.space === model.space)
+                ?.fullTitle
+            : UNCATEGORIZED_SPACE_TITLE
         })
       )
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
-
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
 
     let chartsCatalog = await this.chartsService.getChartsCatalog({
       projectId: projectId,

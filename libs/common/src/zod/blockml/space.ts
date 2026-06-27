@@ -4,6 +4,7 @@ export let zSpace = z
   .object({
     space: z.string(),
     title: z.string().nullish(),
+    fullTitle: z.string(),
     filePath: z.string(),
     accessRoles: z.array(z.string()),
     accessRolesCombined: z.array(z.string())

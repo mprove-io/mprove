@@ -22,6 +22,7 @@ import { ReportsService } from '#backend/services/db/reports.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
+import { UNCATEGORIZED_SPACE_TITLE } from '#common/constants/top';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -118,7 +119,10 @@ export class GetReportsController {
         hasAccess: checkModelAccess({
           member: userMember,
           modelAccessRoles: model.accessRolesCombined
-        })
+        }),
+        displaySpace: model.space
+          ? struct.spaces.find(space => space.space === model.space)?.fullTitle
+          : UNCATEGORIZED_SPACE_TITLE
       })
     );
 

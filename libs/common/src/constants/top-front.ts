@@ -166,6 +166,7 @@ export const EMPTY_SPACE_NAME = 'EMPTY_SPACE_NAME';
 export const EMPTY_SPACE: Space & { label: string } = {
   space: EMPTY_SPACE_NAME,
   title: undefined,
+  fullTitle: 'Empty',
   filePath: '',
   accessRoles: [],
   accessRolesCombined: [],

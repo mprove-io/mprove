@@ -94,6 +94,7 @@ export enum FuncEnum {
   CheckSchema = 'build-yaml/check-schema',
   CheckSpaceFolders = 'build-spaces/check-space-folders',
   CheckSpaceParents = 'build-spaces/check-space-parents',
+  BuildSpaceFullTitles = 'build-spaces/build-space-full-titles',
   BuildSpaceAccessRoles = 'build-spaces/build-space-access-roles',
 
   CollectFiles = 'extra/collect-files',

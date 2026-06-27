@@ -84,7 +84,7 @@ export class ModelsService {
       dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
       accessRoles: model.accessRoles,
       accessRolesCombined: model.accessRolesCombined,
-      displaySpace: displaySpace ?? model.space ?? '',
+      displaySpace: displaySpace ?? '',
       displayAccessRoles: makeDisplayAccessRoles({
         accessRoles: model.accessRoles,
         accessRolesCombined: model.accessRolesCombined
