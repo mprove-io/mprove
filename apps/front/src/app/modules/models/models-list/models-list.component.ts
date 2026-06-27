@@ -88,7 +88,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
           .map(role => role.role)
           .join(' ');
 
-        return `${x.label} ${x.modelId} ${x.spaceFullTitle} ${accessRolesCombined}`;
+        return `${x.label} ${x.modelId} ${x.connectionId} ${x.spaceFullTitle} ${accessRolesCombined}`;
       });
       let opts = {};
       let uf = new uFuzzy(opts);
