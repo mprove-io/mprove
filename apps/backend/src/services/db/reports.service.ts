@@ -25,6 +25,7 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
+import { makeAccessRolesCombined } from '#common/functions/space/make-access-roles-combined';
 import { ServerError } from '#common/models/server-error';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelX } from '#common/zod/backend/model-x';
@@ -199,7 +200,10 @@ export class ReportsService {
       filePath: filePath,
       space: space,
       accessRoles: accessRoles,
-      accessRolesCombined: accessRoles,
+      accessRolesCombined: makeAccessRolesCombined({
+        accessRoles: accessRoles,
+        accessRolesInherited: []
+      }),
       title: title,
       fields: fields,
       chart: chart,

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { zAccessRoleCombined } from '#common/zod/access-role-combined';
 import { zFieldAny } from '#common/zod/blockml/internal/field-any';
 import { zFileBasic } from '#common/zod/blockml/internal/file-basic';
 import { zFileStoreBuildMetric } from '#common/zod/blockml/internal/file-store-build-metric';
@@ -19,7 +20,7 @@ export let zFileStore = zFileBasic
     space_line_num: z.number().nullish(),
     access_roles: z.array(z.string()).nullish(),
     access_roles_line_num: z.number().nullish(),
-    accessRolesCombined: z.array(z.string()).nullish(),
+    accessRolesCombined: z.array(zAccessRoleCombined).nullish(),
     method: z.string().nullish(),
     method_line_num: z.number().nullish(),
     request: z.string().nullish(),

@@ -1,10 +1,11 @@
 import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
+import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { Member } from '#common/zod/backend/member';
 
 export function checkAccess(item: {
   member: MemberTab | Member;
-  accessRoles: string[];
+  accessRoles: AccessRoleCombined[];
   filePath?: string;
 }): boolean {
   let { member, accessRoles, filePath } = item;
@@ -30,5 +31,7 @@ export function checkAccess(item: {
     }
   }
 
-  return accessRoles.some(x => member.roles.includes(x));
+  let roles = accessRoles.map(x => x.role);
+
+  return roles.some(x => member.roles.includes(x));
 }

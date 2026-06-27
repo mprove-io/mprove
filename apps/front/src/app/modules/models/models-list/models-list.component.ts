@@ -84,7 +84,9 @@ export class ModelsListComponent implements OnInit, OnDestroy {
 
     if (isDefinedAndNotEmpty(this.word)) {
       let haystack = modelsA.map(x => {
-        let accessRolesCombined = x.accessRolesCombined.join(' ');
+        let accessRolesCombined = x.accessRolesCombined
+          .map(role => role.role)
+          .join(' ');
 
         return `${x.label} ${x.modelId} ${x.spaceFullTitle} ${accessRolesCombined}`;
       });

@@ -2,6 +2,7 @@ import type { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { zAccessRoleCombined } from '#common/zod/access-role-combined';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { zModelField } from '#common/zod/blockml/model-field';
 import { zModelNode } from '#common/zod/blockml/model-node';
@@ -20,7 +21,7 @@ export let zModel = z
     storeContent: z.custom<FileStore>(),
     dateRangeIncludesRightSide: z.boolean(),
     accessRoles: z.array(z.string()),
-    accessRolesCombined: z.array(z.string()),
+    accessRolesCombined: z.array(zAccessRoleCombined),
     label: z.string(),
     fields: z.array(zModelField),
     nodes: z.array(zModelNode),

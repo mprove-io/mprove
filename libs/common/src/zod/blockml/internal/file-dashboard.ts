@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zAccessRoleCombined } from '#common/zod/access-role-combined';
 import { zFieldAny } from '#common/zod/blockml/internal/field-any';
 import { zFileBasic } from '#common/zod/blockml/internal/file-basic';
 import { zFilePartTile } from '#common/zod/blockml/internal/file-part-tile';
@@ -16,7 +17,7 @@ export let zFileDashboard = zFileBasic
     group_line_num: z.number().nullish(),
     access_roles: z.array(z.string()).nullish(),
     access_roles_line_num: z.number().nullish(),
-    accessRolesCombined: z.array(z.string()).nullish(),
+    accessRolesCombined: z.array(zAccessRoleCombined).nullish(),
     parameters: z.array(zFieldAny).nullish(),
     parameters_line_num: z.number().nullish(),
     fields: z.array(zFieldAny).nullish(),

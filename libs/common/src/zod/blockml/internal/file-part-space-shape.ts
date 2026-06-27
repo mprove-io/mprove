@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zAccessRoleCombined } from '#common/zod/access-role-combined';
 
 export let zFilePartSpaceShape = {
   space: z.string().nullish(),
@@ -8,5 +9,5 @@ export let zFilePartSpaceShape = {
   title_line_num: z.number().nullish(),
   access_roles: z.array(z.string()).nullish(),
   access_roles_line_num: z.number().nullish(),
-  accessRolesCombined: z.array(z.string()).nullish()
+  accessRolesCombined: z.array(zAccessRoleCombined).nullish()
 };

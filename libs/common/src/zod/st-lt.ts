@@ -10,6 +10,7 @@ import type {
   Todo
 } from '@opencode-ai/sdk/v2';
 import { z } from 'zod';
+import { zAccessRoleCombined } from '#common/zod/access-role-combined';
 import { zCodexAuth } from '#common/zod/backend/codex-auth';
 import { zConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
 import { zExtraSchema } from '#common/zod/backend/connection-schemas/extra-schema';
@@ -116,7 +117,7 @@ export let zDashboardSt = z
     filePath: z.string(),
     space: z.string().nullish(),
     accessRoles: z.array(z.string()),
-    accessRolesCombined: z.array(z.string()),
+    accessRolesCombined: z.array(zAccessRoleCombined),
     tiles: z.array(zTile),
     fields: z.array(zDashboardField)
   })
@@ -222,7 +223,7 @@ export type MemberLt = z.infer<typeof zMemberLt>;
 export let zModelSt = z
   .object({
     accessRoles: z.array(z.string()),
-    accessRolesCombined: z.array(z.string())
+    accessRolesCombined: z.array(zAccessRoleCombined)
   })
   .meta({ id: 'ModelSt' });
 export type ModelSt = z.infer<typeof zModelSt>;
@@ -315,7 +316,7 @@ export let zReportSt = z
     filePath: z.string(),
     space: z.string().nullish(),
     accessRoles: z.array(z.string()),
-    accessRolesCombined: z.array(z.string()),
+    accessRolesCombined: z.array(zAccessRoleCombined),
     title: z.string(),
     fields: z.array(zReportField),
     chart: zMconfigChart

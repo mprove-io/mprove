@@ -63,7 +63,13 @@ test('1', async t => {
   }
 
   t.is(errors.length, 0);
-  t.deepEqual(spaces[0].accessRolesCombined, ['r1']);
-  t.deepEqual(spaces[1].accessRolesCombined, ['r2', 'r1']);
-  t.deepEqual(spaces[2].accessRolesCombined, ['r2', 'r1']);
+  t.deepEqual(spaces[0].accessRolesCombined, [{ role: 'r1', isDirect: true }]);
+  t.deepEqual(spaces[1].accessRolesCombined, [
+    { role: 'r2', isDirect: true },
+    { role: 'r1', isDirect: false }
+  ]);
+  t.deepEqual(spaces[2].accessRolesCombined, [
+    { role: 'r2', isDirect: false },
+    { role: 'r1', isDirect: false }
+  ]);
 });

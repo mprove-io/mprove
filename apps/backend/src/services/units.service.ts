@@ -7,7 +7,6 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined';
-import { makeDisplayAccessRoles } from '#common/functions/space/make-display-access-roles';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { Member } from '#common/zod/backend/member';
@@ -64,11 +63,7 @@ export class UnitsService {
         author === member.alias,
       isFavorite: favoriteReportIds.indexOf(report.reportId) > -1,
       draft: report.draft,
-      spaceFullTitle: spaceFullTitle,
-      displayAccessRoles: makeDisplayAccessRoles({
-        accessRoles: report.accessRoles,
-        accessRolesCombined: report.accessRolesCombined
-      })
+      spaceFullTitle: spaceFullTitle
     };
   }
 
@@ -96,11 +91,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteReportIds.indexOf(report.reportId) > -1,
-      spaceFullTitle: '',
-      displayAccessRoles: makeDisplayAccessRoles({
-        accessRoles: report.accessRoles,
-        accessRolesCombined: report.accessRolesCombined
-      })
+      spaceFullTitle: ''
     };
   }
 
@@ -131,11 +122,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteDashboardIds.indexOf(dashboard.dashboardId) > -1,
-      spaceFullTitle: spaceFullTitle,
-      displayAccessRoles: makeDisplayAccessRoles({
-        accessRoles: dashboard.accessRoles,
-        accessRolesCombined: dashboard.accessRolesCombined
-      })
+      spaceFullTitle: spaceFullTitle
     };
   }
 
@@ -162,11 +149,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteDashboardIds.indexOf(dashboard.dashboardId) > -1,
-      spaceFullTitle: '',
-      displayAccessRoles: makeDisplayAccessRoles({
-        accessRoles: dashboard.accessRoles,
-        accessRolesCombined: dashboard.accessRolesCombined
-      })
+      spaceFullTitle: ''
     };
   }
 
@@ -203,11 +186,7 @@ export class UnitsService {
         member.isAdmin === true ||
         author === member.alias,
       isFavorite: favoriteChartIds.indexOf(chart.chartId) > -1,
-      spaceFullTitle: spaceFullTitle,
-      displayAccessRoles: makeDisplayAccessRoles({
-        accessRoles: model.accessRoles,
-        accessRolesCombined: model.accessRolesCombined
-      })
+      spaceFullTitle: spaceFullTitle
     };
   }
 
@@ -237,10 +216,6 @@ export class UnitsService {
         author === member.alias,
       isFavorite: favoriteChartIds.indexOf(chart.chartId) > -1,
       spaceFullTitle: '',
-      displayAccessRoles: makeDisplayAccessRoles({
-        accessRoles: model.accessRoles,
-        accessRolesCombined: model.accessRolesCombined
-      }),
       modelId: chart.modelId,
       modelLabel: chart.modelLabel,
       chartType: chart.chartType,

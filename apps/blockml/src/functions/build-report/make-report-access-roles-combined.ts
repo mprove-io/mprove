@@ -4,6 +4,7 @@ import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import { makeAccessRolesCombined } from '#common/functions/space/make-access-roles-combined';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import { getSpaceFromFilePath } from '../extra/get-space-from-file-path';
@@ -34,12 +35,10 @@ export function makeReportAccessRolesCombined(
 
     space = item.spaces.find(x => x.space === report.space);
 
-    report.accessRolesCombined = [
-      ...new Set([
-        ...(space?.accessRolesCombined ?? []),
-        ...(report.access_roles ?? [])
-      ])
-    ];
+    report.accessRolesCombined = makeAccessRolesCombined({
+      accessRoles: report.access_roles ?? [],
+      accessRolesInherited: space?.accessRolesCombined ?? []
+    });
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);

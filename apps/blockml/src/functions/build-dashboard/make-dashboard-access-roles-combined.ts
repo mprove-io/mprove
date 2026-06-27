@@ -4,6 +4,7 @@ import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import { makeAccessRolesCombined } from '#common/functions/space/make-access-roles-combined';
 import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import { getSpaceFromFilePath } from '../extra/get-space-from-file-path';
@@ -34,12 +35,10 @@ export function makeDashboardAccessRolesCombined(
 
     space = item.spaces.find(x => x.space === dashboard.space);
 
-    dashboard.accessRolesCombined = [
-      ...new Set([
-        ...(space?.accessRolesCombined ?? []),
-        ...(dashboard.access_roles ?? [])
-      ])
-    ];
+    dashboard.accessRolesCombined = makeAccessRolesCombined({
+      accessRoles: dashboard.access_roles ?? [],
+      accessRolesInherited: space?.accessRolesCombined ?? []
+    });
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);

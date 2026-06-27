@@ -154,7 +154,7 @@ export class EditReportInfoDialogComponent implements OnInit {
 
     this.combinedAccessRoles = [
       ...new Set([
-        ...(selectedSpace?.accessRolesCombined ?? []),
+        ...(selectedSpace?.accessRolesCombined.map(x => x.role) ?? []),
         ...this.selectedAccessRoles
       ])
     ];

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zAccessRoleCombined } from '#common/zod/access-role-combined';
 import { zTile } from '#common/zod/blockml/tile';
 
 export let zDashboardPart = z
@@ -11,7 +12,7 @@ export let zDashboardPart = z
     filePath: z.string(),
     space: z.string().nullish(),
     accessRoles: z.array(z.string()),
-    accessRolesCombined: z.array(z.string()),
+    accessRolesCombined: z.array(zAccessRoleCombined),
     tiles: z.array(zTile),
     author: z.string().nullish(),
     canEditOrDeleteDashboard: z.boolean()

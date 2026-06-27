@@ -1,16 +1,12 @@
 import { z } from 'zod';
+import { zAccessRoleCombined } from '#common/zod/access-role-combined';
 import { zModel } from '#common/zod/blockml/model';
 
 export let zModelX = zModel
   .extend({
     hasAccess: z.boolean(),
     spaceFullTitle: z.string(),
-    displayAccessRoles: z.array(
-      z.object({
-        role: z.string(),
-        isDirect: z.boolean()
-      })
-    )
+    accessRolesCombined: z.array(zAccessRoleCombined)
   })
   .meta({ id: 'ModelX' });
 

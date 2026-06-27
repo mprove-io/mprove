@@ -1474,7 +1474,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
         spaceNodes: searchNodes
       }).map(report => {
         let title = isDefined(report.title) ? report.title : report.unitId;
-        let accessRolesCombined = report.accessRolesCombined.join(' ');
+        let accessRolesCombined = report.accessRolesCombined
+          .map(x => x.role)
+          .join(' ');
 
         return {
           report: report,

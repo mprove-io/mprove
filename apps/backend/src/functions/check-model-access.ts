@@ -1,9 +1,10 @@
 import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { Member } from '#common/zod/backend/member';
 
 export function checkModelAccess(item: {
   member: MemberTab | Member;
-  modelAccessRoles: string[];
+  modelAccessRoles: AccessRoleCombined[];
 }): boolean {
   let { member, modelAccessRoles } = item;
 
@@ -11,5 +12,7 @@ export function checkModelAccess(item: {
     return true;
   }
 
-  return modelAccessRoles.some(x => member.roles.includes(x));
+  let accessRoles = modelAccessRoles.map(x => x.role);
+
+  return accessRoles.some(x => member.roles.includes(x));
 }

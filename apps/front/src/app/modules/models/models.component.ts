@@ -1655,7 +1655,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
         spaceNodes: searchNodes
       }).map(chart => {
         let title = isDefined(chart.title) ? chart.title : chart.unitId;
-        let accessRolesCombined = chart.accessRolesCombined.join(' ');
+        let accessRolesCombined = chart.accessRolesCombined
+          .map(x => x.role)
+          .join(' ');
 
         return {
           chart: chart,

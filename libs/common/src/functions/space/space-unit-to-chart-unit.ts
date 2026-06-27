@@ -24,7 +24,6 @@ export function spaceUnitToChartUnit(item: {
     author: spaceUnit.author,
     canEditOrDeleteChart: spaceUnit.canEditOrDeleteUnit,
     isFavorite: spaceUnit.isFavorite,
-    spaceFullTitle: spaceUnit.spaceFullTitle,
-    displayAccessRoles: spaceUnit.displayAccessRoles
+    spaceFullTitle: spaceUnit.spaceFullTitle
   };
 }

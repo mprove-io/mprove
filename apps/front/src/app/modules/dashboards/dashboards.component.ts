@@ -441,7 +441,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         let title = isDefined(dashboard.title)
           ? dashboard.title
           : dashboard.unitId;
-        let accessRolesCombined = dashboard.accessRolesCombined.join(' ');
+        let accessRolesCombined = dashboard.accessRolesCombined
+          .map(x => x.role)
+          .join(' ');
 
         return {
           dashboard: dashboard,

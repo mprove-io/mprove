@@ -5,6 +5,8 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { makeAccessRolesCombined } from '#common/functions/space/make-access-roles-combined';
+import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import { log } from '../extra/log';
 
@@ -24,7 +26,7 @@ export function buildSpaceAccessRoles(
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   item.spaces.forEach(space => {
-    let accessRoles = [...(space.access_roles ?? [])];
+    let accessRolesInherited: AccessRoleCombined[] = [];
 
     let parts = space.space.split('.');
     parts.pop();
@@ -37,7 +39,13 @@ export function buildSpaceAccessRoles(
       let parentSpace = item.spaces.find(x => x.space === parentSpaceName);
 
       if (isDefined(parentSpace)) {
-        accessRoles = [...accessRoles, ...(parentSpace.access_roles ?? [])];
+        accessRolesInherited = [
+          ...accessRolesInherited,
+          ...(parentSpace.access_roles ?? []).map(role => ({
+            role: role,
+            isDirect: false
+          }))
+        ];
       }
 
       parts = parentSpaceName.split('.');
@@ -48,7 +56,10 @@ export function buildSpaceAccessRoles(
       isParentSpaceNameDefined = isDefined(parentSpaceName);
     }
 
-    space.accessRolesCombined = [...new Set(accessRoles)];
+    space.accessRolesCombined = makeAccessRolesCombined({
+      accessRoles: space.access_roles ?? [],
+      accessRolesInherited: accessRolesInherited
+    });
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zAccessRoleCombined } from '#common/zod/access-role-combined';
 export let zDashboardUnit = z
   .object({
     type: z.literal('dashboardUnit'),
@@ -9,17 +10,11 @@ export let zDashboardUnit = z
     filePath: z.string().nullish(),
     space: z.string().nullish(),
     accessRoles: z.array(z.string()),
-    accessRolesCombined: z.array(z.string()),
+    accessRolesCombined: z.array(zAccessRoleCombined),
     author: z.string().nullish(),
     canEditOrDeleteDashboard: z.boolean(),
     isFavorite: z.boolean(),
-    spaceFullTitle: z.string(),
-    displayAccessRoles: z.array(
-      z.object({
-        role: z.string(),
-        isDirect: z.boolean()
-      })
-    )
+    spaceFullTitle: z.string()
   })
   .meta({ id: 'DashboardUnit' });
 

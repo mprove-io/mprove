@@ -11,7 +11,6 @@ import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { makeDisplayAccessRoles } from '#common/functions/space/make-display-access-roles';
 import { ServerError } from '#common/models/server-error';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelPart } from '#common/zod/backend/model-part';
@@ -85,10 +84,6 @@ export class ModelsService {
       accessRoles: model.accessRoles,
       accessRolesCombined: model.accessRolesCombined,
       spaceFullTitle: spaceFullTitle ?? '',
-      displayAccessRoles: makeDisplayAccessRoles({
-        accessRoles: model.accessRoles,
-        accessRolesCombined: model.accessRolesCombined
-      }),
       label: model.label,
       fields: fields,
       nodes: nodes,

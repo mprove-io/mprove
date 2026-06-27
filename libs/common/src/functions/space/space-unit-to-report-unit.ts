@@ -19,7 +19,6 @@ export function spaceUnitToReportUnit(item: {
     canEditOrDeleteReport: spaceUnit.canEditOrDeleteUnit,
     isFavorite: spaceUnit.isFavorite,
     draft: false,
-    spaceFullTitle: spaceUnit.spaceFullTitle,
-    displayAccessRoles: spaceUnit.displayAccessRoles
+    spaceFullTitle: spaceUnit.spaceFullTitle
   };
 }

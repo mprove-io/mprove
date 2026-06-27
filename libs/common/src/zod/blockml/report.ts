@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { zAccessRoleCombined } from '#common/zod/access-role-combined';
 import { zColumn } from '#common/zod/blockml/column';
 import { zFraction } from '#common/zod/blockml/fraction';
 import { zMconfigChart } from '#common/zod/blockml/mconfig-chart';
@@ -18,7 +19,7 @@ export let zReport = z
     space: z.string().nullish(),
     fields: z.array(zReportField),
     accessRoles: z.array(z.string()),
-    accessRolesCombined: z.array(z.string()),
+    accessRolesCombined: z.array(zAccessRoleCombined),
     title: z.string(),
     timezone: zTimezone,
     timeSpec: z.enum(TimeSpecEnum),

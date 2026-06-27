@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zAccessRoleCombined } from '#common/zod/access-role-combined';
 import { zFieldAny } from '#common/zod/blockml/internal/field-any';
 import { zFileBasic } from '#common/zod/blockml/internal/file-basic';
 import { zFileChartOptions } from '#common/zod/blockml/internal/file-chart-options';
@@ -13,7 +14,7 @@ export let zFileReport = zFileBasic
     space: z.string().nullish(),
     access_roles: z.array(z.string()).nullish(),
     access_roles_line_num: z.number().nullish(),
-    accessRolesCombined: z.array(z.string()).nullish(),
+    accessRolesCombined: z.array(zAccessRoleCombined).nullish(),
     rows: z.array(zFileReportRow).nullish(),
     rows_line_num: z.number().nullish(),
     options: zFileChartOptions.nullish(),
