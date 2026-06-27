@@ -223,21 +223,22 @@ export type MemberLt = z.infer<typeof zMemberLt>;
 export let zModelSt = z
   .object({
     accessRoles: z.array(z.string()),
-    accessRolesCombined: z.array(zAccessRoleCombined)
+    accessRolesCombined: z.array(zAccessRoleCombined),
+    source: z.string(),
+    filePath: z.string(),
+    space: z.string().nullish(),
+    spaceFullTitle: z.string(),
+    label: z.string()
   })
   .meta({ id: 'ModelSt' });
 export type ModelSt = z.infer<typeof zModelSt>;
 
 export let zModelLt = z
   .object({
-    source: z.string(),
     malloyModelDef: z.custom<MalloyModelDef>(),
-    filePath: z.string(),
-    space: z.string().nullish(),
     fileText: z.string(),
     storeContent: zFileStore,
     dateRangeIncludesRightSide: z.boolean(),
-    label: z.string(),
     fields: z.array(zModelField),
     nodes: z.array(zModelNode)
   })

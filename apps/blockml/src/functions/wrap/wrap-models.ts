@@ -1,6 +1,6 @@
 import type { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import type { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
-import { MF } from '#common/constants/top';
+import { MF, UNCATEGORIZED_SPACE_TITLE } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
@@ -15,6 +15,7 @@ import { parseTags } from '#common/functions/parse-tags';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { KeyValuePair } from '#common/zod/blockml/key-value-pair';
 import type { Model } from '#common/zod/blockml/model';
@@ -30,9 +31,10 @@ export function wrapModels(item: {
   structId: string;
   stores: FileStore[];
   mods: FileMod[];
+  spaces: FilePartSpace[];
   files: BmlFile[];
 }): Model[] {
-  let { projectId, structId, stores, mods, files } = item;
+  let { projectId, structId, stores, mods, spaces, files } = item;
 
   let apiModels: Model[] = [];
 
@@ -378,6 +380,13 @@ export function wrapModels(item: {
       // fse.writeFile(`${x.name}-no-refs.json`, strB);
     }
 
+    let space =
+      modelType === ModelTypeEnum.Malloy
+        ? (x as FileMod).space
+        : modelType === ModelTypeEnum.Store
+          ? (x as FileStore).space
+          : undefined;
+
     let apiModel: Model = {
       structId: structId,
       modelId: x.name,
@@ -387,12 +396,10 @@ export function wrapModels(item: {
       connectionId: x.connectionId,
       connectionType: x.connectionType,
       filePath: x.filePath,
-      space:
-        modelType === ModelTypeEnum.Malloy
-          ? (x as FileMod).space
-          : modelType === ModelTypeEnum.Store
-            ? (x as FileStore).space
-            : undefined,
+      space: space,
+      spaceFullTitle: space
+        ? (spaces.find(x => x.space === space)?.fullTitle ?? '')
+        : UNCATEGORIZED_SPACE_TITLE,
       fileText: files.find(file => file.path === x.filePath).content,
       storeContent: x.fileExt === FileExtensionEnum.Store ? x : undefined,
       dateRangeIncludesRightSide:

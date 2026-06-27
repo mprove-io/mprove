@@ -17,6 +17,7 @@ export let zModel = z
     connectionType: z.enum(ConnectionTypeEnum),
     filePath: z.string(),
     space: z.string().nullish(),
+    spaceFullTitle: z.string(),
     fileText: z.string(),
     storeContent: z.custom<FileStore>(),
     dateRangeIncludesRightSide: z.boolean(),

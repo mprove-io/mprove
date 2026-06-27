@@ -584,6 +584,7 @@ export class RebuildStructService {
             structId: item.structId,
             stores: stores,
             mods: mods,
+            spaces: spaces,
             files: item.files
           });
 

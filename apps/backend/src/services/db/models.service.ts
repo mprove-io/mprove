@@ -28,12 +28,8 @@ export class ModelsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  tabToApi(item: {
-    model: ModelTab;
-    hasAccess: boolean;
-    spaceFullTitle?: string;
-  }): ModelX {
-    let { model, hasAccess, spaceFullTitle } = item;
+  tabToApi(item: { model: ModelTab; hasAccess: boolean }): ModelX {
+    let { model, hasAccess } = item;
 
     let timeframeBaseFieldIds: string[];
     let fields;
@@ -82,7 +78,7 @@ export class ModelsService {
       dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
       accessRoles: model.accessRoles,
       accessRolesCombined: model.accessRolesCombined,
-      spaceFullTitle: spaceFullTitle ?? '',
+      spaceFullTitle: model.spaceFullTitle,
       label: model.label,
       fields: fields,
       nodes: nodes,
@@ -115,6 +111,7 @@ export class ModelsService {
       malloyModelDef: apiModel.malloyModelDef,
       filePath: apiModel.filePath,
       space: apiModel.space,
+      spaceFullTitle: apiModel.spaceFullTitle,
       fileText: apiModel.fileText,
       storeContent: apiModel.storeContent,
       dateRangeIncludesRightSide: apiModel.dateRangeIncludesRightSide,

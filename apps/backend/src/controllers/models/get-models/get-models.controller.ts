@@ -21,7 +21,6 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
-import { UNCATEGORIZED_SPACE_TITLE } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { ModelX } from '#common/zod/backend/model-x';
@@ -123,10 +122,7 @@ export class GetModelsController {
         hasAccess: checkModelAccess({
           member: userMember,
           modelAccessRoles: model.accessRolesCombined
-        }),
-        spaceFullTitle: model.space
-          ? struct.spaces.find(space => space.space === model.space)?.fullTitle
-          : UNCATEGORIZED_SPACE_TITLE
+        })
       })
     );
 

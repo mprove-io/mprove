@@ -859,18 +859,19 @@ export class TabToEntService {
 
     let modelSt: ModelSt = {
       accessRoles: tab.accessRoles,
-      accessRolesCombined: tab.accessRolesCombined
+      accessRolesCombined: tab.accessRolesCombined,
+      source: tab.source,
+      filePath: tab.filePath,
+      space: tab.space,
+      spaceFullTitle: tab.spaceFullTitle,
+      label: tab.label
     };
 
     let modelLt: ModelLt = {
-      source: tab.source,
       malloyModelDef: tab.malloyModelDef,
-      filePath: tab.filePath,
-      space: tab.space,
       fileText: tab.fileText,
       storeContent: tab.storeContent,
       dateRangeIncludesRightSide: tab.dateRangeIncludesRightSide,
-      label: tab.label,
       fields: tab.fields,
       nodes: tab.nodes
     };

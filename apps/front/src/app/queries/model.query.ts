@@ -13,6 +13,8 @@ let modelState: ModelState = {
   connectionId: undefined,
   connectionType: undefined,
   filePath: undefined,
+  space: undefined,
+  spaceFullTitle: undefined,
   fileText: undefined,
   storeContent: undefined,
   malloyModelDef: undefined,
