@@ -1,0 +1,7 @@
+space: s1
+access_roles:
+- rootSpaceRole
+folders:
+- space: s2
+  access_roles:
+  - spaceRole

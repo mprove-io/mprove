@@ -8,6 +8,7 @@ const { forEachSeries } = pIteration;
 
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { buildChart } from '#blockml/functions/build-chart/_build-chart';
+import { makeChartAccessRolesCombined } from '#blockml/functions/build-chart/make-chart-access-roles-combined';
 import { buildDashboard } from '#blockml/functions/build-dashboard/_build-dashboard';
 import { buildField } from '#blockml/functions/build-field/_build-field';
 import { buildMconfigChart } from '#blockml/functions/build-mconfig-chart/_build-mconfig-chart';
@@ -682,6 +683,18 @@ export class RebuildStructService {
         structId: item.structId,
         errors: errors,
         caller: CallerEnum.BuildChartTile
+      },
+      this.cs
+    );
+
+    charts = makeChartAccessRolesCombined(
+      {
+        charts: charts,
+        spaces: spaces,
+        apiModels: apiModels,
+        structId: item.structId,
+        errors: errors,
+        caller: CallerEnum.BuildChart
       },
       this.cs
     );

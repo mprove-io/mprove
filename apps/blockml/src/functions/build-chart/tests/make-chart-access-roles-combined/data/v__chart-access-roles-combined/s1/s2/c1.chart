@@ -1,0 +1,9 @@
+chart: c1
+access_roles:
+- chartRole
+tiles:
+- title: Chart 1
+  model: m1
+  select:
+  - dim1
+  type: table

@@ -241,6 +241,9 @@ export class EditDraftChartController {
       modelId: tile.modelId,
       modelLabel: tile.modelLabel,
       filePath: undefined,
+      space: undefined,
+      accessRoles: [],
+      accessRolesCombined: model.accessRolesCombined,
       tiles: [tile],
       keyTag: undefined,
       serverTs: undefined

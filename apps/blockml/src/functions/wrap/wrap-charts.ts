@@ -53,6 +53,9 @@ export function wrapCharts(item: {
       modelId: x.tiles[0].model,
       modelLabel: apiModel.label,
       filePath: x.filePath,
+      space: x.space,
+      accessRoles: x.access_roles || [],
+      accessRolesCombined: x.accessRolesCombined || [],
       tiles: apiTiles,
       serverTs: 1
     });

@@ -91,6 +91,9 @@ export let zChartSt = z
     title: z.string(),
     modelLabel: z.string(),
     filePath: z.string(),
+    space: z.string().nullish(),
+    accessRoles: z.array(z.string()),
+    accessRolesCombined: z.array(zAccessRoleCombined),
     tiles: z.array(zTile)
   })
   .meta({ id: 'ChartSt' });

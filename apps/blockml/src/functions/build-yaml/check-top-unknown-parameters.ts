@@ -120,6 +120,7 @@ export function checkTopUnknownParameters(
             if (
               [
                 ParameterEnum.Chart.toString(),
+                ParameterEnum.AccessRoles.toString(),
                 ParameterEnum.Tiles.toString()
               ].indexOf(parameter) < 0
             ) {

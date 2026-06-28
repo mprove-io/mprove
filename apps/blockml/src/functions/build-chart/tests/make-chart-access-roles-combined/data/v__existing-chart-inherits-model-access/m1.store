@@ -1,0 +1,17 @@
+store: m1
+connection: c1
+access_roles:
+- modelRole
+request: return {}
+method: POST
+response: return {}
+results:
+- result: string
+  fraction_types:
+  - type: equal
+    controls:
+    - input: value_input
+field_groups: []
+fields:
+- dimension: dim1
+  result: string
