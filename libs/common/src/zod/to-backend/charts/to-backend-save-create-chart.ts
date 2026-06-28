@@ -18,6 +18,7 @@ export let zToBackendSaveCreateChartRequestPayload = z
     fromChartId: z.string(),
     newChartId: z.string(),
     tileTitle: z.string(),
+    isSaveToModelCharts: z.boolean(),
     mconfig: zMconfigX
   })
   .meta({ id: 'ToBackendSaveCreateChartRequestPayload' });

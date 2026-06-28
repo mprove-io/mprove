@@ -17,6 +17,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import {
+  MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
   TILE_DEFAULT_PLATE_HEIGHT,
   TILE_DEFAULT_PLATE_WIDTH,
@@ -24,6 +25,7 @@ import {
   TILE_DEFAULT_PLATE_Y
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -55,8 +57,8 @@ import type {
 } from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ChartsQuery } from '#front/app/queries/charts.query';
-import { NavQuery, NavState } from '#front/app/queries/nav.query';
-import { StructQuery, StructState } from '#front/app/queries/struct.query';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -70,6 +72,11 @@ enum ChartSaveAsEnum {
 enum TileSaveAsEnum {
   NEW_TILE = 'NEW_TILE',
   REPLACE_EXISTING_TILE = 'REPLACE_EXISTING_TILE'
+}
+
+enum ChartShareEnum {
+  MY_CHARTS = 'MY_CHARTS',
+  MODEL_SPACE = 'MODEL_SPACE'
 }
 
 export interface ChartSaveAsDialogData {
@@ -100,10 +107,9 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   selectedDashboardLoaded = false;
 
-  usersFolder = MPROVE_USERS_FOLDER;
-
   chartSaveAsEnum = ChartSaveAsEnum;
   tileSaveAsEnum = TileSaveAsEnum;
+  chartShareEnum = ChartShareEnum;
 
   spinnerName = 'chartSaveAs';
 
@@ -122,38 +128,17 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_CHART;
   tileSaveAs: TileSaveAsEnum = TileSaveAsEnum.NEW_TILE;
-
-  alias: string;
-  alias$ = this.userQuery.alias$.pipe(
-    tap(x => {
-      this.alias = x;
-      this.cd.detectChanges();
-    })
-  );
+  chartShareAs: ChartShareEnum = ChartShareEnum.MY_CHARTS;
 
   selectedDashboardId: any; // string
   selectedDashboardPath: string;
   selectedDashboard: DashboardX;
 
+  newChartPath = '';
+
   selectedTileTitle: any; // string
 
   dashboardUnits: DashboardUnit[];
-
-  nav: NavState;
-  nav$ = this.navQuery.select().pipe(
-    tap(x => {
-      this.nav = x;
-      this.cd.detectChanges();
-    })
-  );
-
-  struct: StructState;
-  struct$ = this.structQuery.select().pipe(
-    tap(x => {
-      this.struct = x;
-      this.cd.detectChanges();
-    })
-  );
 
   constructor(
     public ref: DialogRef<ChartSaveAsDialogData>,
@@ -176,16 +161,9 @@ export class ChartSaveAsDialogComponent implements OnInit {
       value: this.chart.tiles[0].mconfig.chart.title
     });
 
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
+    let nav = this.navQuery.getValue();
+
+    this.updateNewChartPath();
 
     let payload: ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
@@ -311,7 +289,18 @@ export class ChartSaveAsDialogComponent implements OnInit {
     this.selectedDashboardLoaded = false;
     this.selectedTileTitle = undefined;
     this.tileSaveAs = TileSaveAsEnum.NEW_TILE;
+    this.updateNewChartPath();
     this.titleForm.get('title').updateValueAndValidity();
+  }
+
+  myChartsOnClick() {
+    this.chartShareAs = ChartShareEnum.MY_CHARTS;
+    this.updateNewChartPath();
+  }
+
+  modelSpaceOnClick() {
+    this.chartShareAs = ChartShareEnum.MODEL_SPACE;
+    this.updateNewChartPath();
   }
 
   tileOfDashboardOnClick() {
@@ -360,7 +349,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     this.selectedDashboardLoaded = false;
 
-    let nav: NavState = this.navQuery.getValue();
+    let nav = this.navQuery.getValue();
 
     let apiService: ApiService = this.ref.data.apiService;
 
@@ -431,15 +420,17 @@ export class ChartSaveAsDialogComponent implements OnInit {
     this.spinner.show(APP_SPINNER_NAME);
 
     let { newTitle } = item;
+    let nav = this.navQuery.getValue();
 
     let payload: ToBackendSaveCreateChartRequestPayload = {
-      projectId: this.nav.projectId,
-      repoId: this.nav.repoId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
+      projectId: nav.projectId,
+      repoId: nav.repoId,
+      branchId: nav.branchId,
+      envId: nav.envId,
       fromChartId: this.chart.chartId,
       newChartId: this.newChartId,
       tileTitle: newTitle.trim(),
+      isSaveToModelCharts: this.chartShareAs === ChartShareEnum.MODEL_SPACE,
       mconfig: this.chart.tiles[0].mconfig
     };
 
@@ -481,6 +472,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     let { newTitle } = item;
 
     let apiService: ApiService = this.ref.data.apiService;
+    let nav = this.navQuery.getValue();
 
     let newTile: TileX = {
       mconfig: this.chart.tiles[0].mconfig,
@@ -501,10 +493,10 @@ export class ChartSaveAsDialogComponent implements OnInit {
     };
 
     let payloadModifyDashboard: ToBackendSaveModifyDashboardRequestPayload = {
-      projectId: this.nav.projectId,
-      repoId: this.nav.repoId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
+      projectId: nav.projectId,
+      repoId: nav.repoId,
+      branchId: nav.branchId,
+      envId: nav.envId,
       toDashboardId: this.selectedDashboardId,
       fromDashboardId: this.selectedDashboardId,
       selectedTileTitle: this.selectedTileTitle,
@@ -533,5 +525,59 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   cancel() {
     this.ref.close();
+  }
+
+  updateNewChartPath() {
+    let parentNodeId =
+      this.chartShareAs === ChartShareEnum.MODEL_SPACE
+        ? this.makeModelChartsParentNodeId()
+        : this.makeUserChartsParentNodeId();
+
+    this.newChartPath = this.makeDisplayPath({
+      filePath: `${parentNodeId}/${this.newChartId}${FileExtensionEnum.Chart}`
+    });
+  }
+
+  makeUserChartsParentNodeId() {
+    let struct = this.structQuery.getValue();
+    let nav = this.navQuery.getValue();
+    let alias = this.userQuery.getValue().alias;
+
+    let mdir = struct.mproveConfig.mproveDirValue;
+
+    let hasDotSlashPrefix =
+      mdir.length > 2 && mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH;
+
+    if (hasDotSlashPrefix) {
+      mdir = mdir.substring(2);
+    }
+
+    if (struct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH) {
+      return `${nav.projectId}/${MPROVE_USERS_FOLDER}/${alias}`;
+    }
+
+    if (mdir !== '') {
+      return `${nav.projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${alias}`;
+    }
+
+    return `${nav.projectId}/${MPROVE_USERS_FOLDER}/${alias}`;
+  }
+
+  makeModelChartsParentNodeId() {
+    let model = this.ref.data.model;
+    let modelFilePathParts = model.filePath.split('/');
+    let modelFolderParts = modelFilePathParts.slice(0, -1);
+    let parentNodeId = modelFolderParts.join('/');
+
+    return `${parentNodeId}/charts`;
+  }
+
+  makeDisplayPath(item: { filePath: string }) {
+    let { filePath } = item;
+    let parts = filePath.split('/');
+
+    parts.shift();
+
+    return parts.join(' / ');
   }
 }

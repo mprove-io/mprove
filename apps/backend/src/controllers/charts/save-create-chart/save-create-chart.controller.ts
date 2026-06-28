@@ -23,7 +23,7 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { ModelTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { ModelEnt, modelsTable } from '#backend/drizzle/postgres/schema/models';
@@ -113,6 +113,7 @@ export class SaveCreateChartController {
       fromChartId,
       newChartId,
       tileTitle,
+      isSaveToModelCharts,
       mconfig,
       envId
     } = body.payload;
@@ -175,19 +176,28 @@ export class SaveCreateChartController {
       userMember: userMember
     });
 
-    let mdir = currentStruct.mproveConfig.mproveDirValue;
+    let parentNodeId: string;
 
-    if (
-      mdir.length > 2 &&
-      mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
-    ) {
-      mdir = mdir.substring(2);
+    if (isSaveToModelCharts === true) {
+      parentNodeId = this.makeModelChartsParentNodeId({
+        model: model
+      });
+    } else {
+      let mdir = currentStruct.mproveConfig.mproveDirValue;
+
+      if (
+        mdir.length > 2 &&
+        mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
+      ) {
+        mdir = mdir.substring(2);
+      }
+
+      parentNodeId =
+        currentStruct.mproveConfig.mproveDirValue ===
+        MPROVE_CONFIG_DIR_DOT_SLASH
+          ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
+          : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
     }
-
-    let parentNodeId =
-      currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
-        : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
 
     let fileName = `${newChartId}${FileExtensionEnum.Chart}`;
 
@@ -410,5 +420,14 @@ export class SaveCreateChartController {
     };
 
     return payload;
+  }
+
+  makeModelChartsParentNodeId(item: { model: ModelTab }) {
+    let { model } = item;
+    let modelFilePathParts = model.filePath.split('/');
+    let modelFolderParts = modelFilePathParts.slice(0, -1);
+    let parentNodeId = modelFolderParts.join('/');
+
+    return `${parentNodeId}/charts`;
   }
 }

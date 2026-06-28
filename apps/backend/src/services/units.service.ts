@@ -199,6 +199,7 @@ export class UnitsService {
     let { chart, model, member, favoriteChartIds } = item;
 
     let author = this.getUnitAuthor({ filePath: chart.filePath });
+    let space = author === member.alias ? undefined : model.space;
 
     return {
       type: 'spaceUnit',
@@ -206,7 +207,7 @@ export class UnitsService {
       unitId: chart.chartId,
       title: chart.title || chart.chartId,
       filePath: chart.filePath,
-      space: model.space,
+      space: space,
       accessRoles: model.accessRoles,
       accessRolesCombined: model.accessRolesCombined,
       author: author,
