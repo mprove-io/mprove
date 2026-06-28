@@ -102,6 +102,7 @@ import { FilterIconComponent } from './icons/filter-icon/filter-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
 import { FolderMinusIconComponent } from './icons/folder-minus-icon/folder-minus-icon.component';
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
+import { FolderTreeIconComponent } from './icons/folder-tree-icon/folder-tree-icon.component';
 import { FormulaIconComponent } from './icons/formula-icon/formula-icon.component';
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
 import { LeftPanelIconComponent } from './icons/left-panel-icon/left-panel-icon.component';
@@ -204,6 +205,7 @@ let sharedComponents = [
   FolderOpenIconComponent,
   FolderClosedIconComponent,
   FolderMinusIconComponent,
+  FolderTreeIconComponent,
   DocumentIconComponent,
   DotsVerticalIconComponent,
   ExclamationIconComponent,
