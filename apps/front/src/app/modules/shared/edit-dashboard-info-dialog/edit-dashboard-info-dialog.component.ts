@@ -24,6 +24,7 @@ import {
   EMPTY_SPACE,
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -40,11 +41,14 @@ import type {
   ToBackendGetRolesRequestPayload,
   ToBackendGetRolesResponse
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
+import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
-import { StructQuery } from '#front/app/queries/struct.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../shared.module';
 
@@ -101,11 +105,15 @@ export class EditDashboardInfoDialogComponent implements OnInit {
   selectedSpace: string;
   combinedAccessRoles: string[] = [];
   combinedAccessRolesText = '';
+  canChangeSpace = false;
   spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
+  struct: StructState;
 
   constructor(
     public ref: DialogRef<EditDashboardInfoDialogData>,
     private fb: FormBuilder,
+    private userQuery: UserQuery,
+    private memberQuery: MemberQuery,
     private dashboardUnitsQuery: DashboardUnitsQuery,
     private dashboardQuery: DashboardQuery,
     private spinner: NgxSpinnerService,
@@ -142,8 +150,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
   }
 
   updateCombinedAccessRoles() {
-    let struct = this.structQuery.getValue();
-    let selectedSpace = struct?.spaces?.find(
+    let selectedSpace = this.struct?.spaces?.find(
       x => x.space === this.selectedSpace
     );
 
@@ -158,6 +165,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
 
   spaceChange() {
     this.updateCombinedAccessRoles();
+    this.updateDashboardPath();
   }
 
   accessRolesChange() {
@@ -165,14 +173,13 @@ export class EditDashboardInfoDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    let struct = this.structQuery.getValue();
-    this.spacesPlusEmpty = this.makeSpacesPlusEmpty({
-      spaces: struct.spaces
-    });
+    let member = this.memberQuery.getValue();
 
-    let parts = this.ref.data.dashboardUnit.filePath.split('/');
-    parts.shift();
-    this.dashboardPath = parts.join(' / ');
+    this.canChangeSpace = member.isAdmin === true || member.isEditor === true;
+    this.struct = this.structQuery.getValue();
+    this.spacesPlusEmpty = this.makeSpacesPlusEmpty({
+      spaces: this.struct.spaces
+    });
 
     setValueAndMark({
       control: this.titleForm.controls['title'],
@@ -184,12 +191,29 @@ export class EditDashboardInfoDialogComponent implements OnInit {
     ];
     this.selectedSpace = this.ref.data.dashboardUnit.space ?? EMPTY_SPACE.space;
     this.updateCombinedAccessRoles();
+    this.updateDashboardPath();
 
     this.loadRoles();
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
     }, 0);
+  }
+
+  updateDashboardPath() {
+    let alias = this.userQuery.getValue().alias;
+
+    this.dashboardPath = makeUnitDisplayPath({
+      projectId: this.ref.data.projectId,
+      mproveDirValue: this.struct.mproveConfig.mproveDirValue,
+      userAlias: alias,
+      selectedSpace: this.selectedSpace,
+      unitId: this.ref.data.dashboardUnit.dashboardId,
+      filePath: this.ref.data.dashboardUnit.filePath,
+      unitSpace: this.ref.data.dashboardUnit.space,
+      extension: FileExtensionEnum.Dashboard,
+      spaces: this.struct.spaces
+    });
   }
 
   save() {

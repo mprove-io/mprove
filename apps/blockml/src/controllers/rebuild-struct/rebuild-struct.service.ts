@@ -691,7 +691,6 @@ export class RebuildStructService {
       {
         charts: charts,
         spaces: spaces,
-        apiModels: apiModels,
         structId: item.structId,
         errors: errors,
         caller: CallerEnum.BuildChart

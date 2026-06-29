@@ -465,9 +465,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
   prevChartId: string;
 
   chart: ChartX;
+  canAccessChartModel = true;
+
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
       this.chart = x;
+
+      this.canAccessChartModel =
+        this.chart?.tiles?.[0]?.hasAccessToModel !== false;
 
       if (
         this.prevChartId !== this.chart.chartId &&
@@ -1043,6 +1048,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   toggleFiltersPanel() {
+    if (this.canAccessChartModel === false) {
+      return;
+    }
+
     if (this.mconfig.extendedFilters.length > 0) {
       this.filtersIsExpanded = !this.filtersIsExpanded;
     }
@@ -1071,6 +1080,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   limitBlur() {
+    if (this.canAccessChartModel === false) {
+      return;
+    }
+
     let limit = this.limitForm.controls['limit'];
 
     let newMconfig = this.structService.makeMconfig();
@@ -1128,6 +1141,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   timezoneChange() {
+    if (this.canAccessChartModel === false) {
+      return;
+    }
+
     (document.activeElement as HTMLElement).blur();
 
     let timezone = this.timezoneForm.controls['timezone'].value;
@@ -1313,6 +1330,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   chartTypeChange(newChartTypeValue?: ChartTypeEnum) {
+    if (this.canAccessChartModel === false) {
+      return;
+    }
+
     (document.activeElement as HTMLElement).blur();
 
     if (this.mconfig.chart.type === newChartTypeValue) {
@@ -1382,6 +1403,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   chartTitleBlur() {
+    if (this.canAccessChartModel === false) {
+      return;
+    }
+
     let chartTitle = this.chartTitleForm.controls['chartTitle'].value;
 
     let newMconfig = this.structService.makeMconfig();
@@ -1495,6 +1520,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   addParameter() {
+    if (this.canAccessChartModel === false) {
+      return;
+    }
+
     this.myDialogService.showChartAddFilter({
       apiService: this.apiService,
       chart: this.chart,
@@ -1628,6 +1657,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   chartSaveAs(event: any) {
     event.stopPropagation();
+
+    if (this.canAccessChartModel === false) {
+      return;
+    }
 
     this.myDialogService.showChartSaveAs({
       apiService: this.apiService,

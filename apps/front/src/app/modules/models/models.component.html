@@ -1031,6 +1031,7 @@
                   class="ml-5"
                   [tp]="templateChartSaveAs"
                   [tpIsEnabled]="
+                    canAccessChartModel === false ||
                     isSelectValid === false ||
                     mconfig?.chart?.isValid === false ||
                     chartTitleForm?.valid === false ||
@@ -1043,18 +1044,21 @@
                     class="w-28 flex-shrink-0 select-none rounded border py-2 text-base font-medium focus:outline-none"
                     [ngClass]="{
                       'border-s300 text-s400 cursor-default':
+                        canAccessChartModel === false ||
                         isSelectValid === false ||
                         mconfig.chart.isValid === false ||
                         chartTitleForm.valid === false ||
                         alias === restrictedUserAlias,
                       'border-s400 text-s500 hover:bg-s100':
                         isSelectValid === true &&
+                        canAccessChartModel !== false &&
                         mconfig.chart.isValid === true &&
                         chartTitleForm.valid === true &&
                         alias !== restrictedUserAlias &&
                         chart.draft === false,
                       'border-m600 text-m600':
                         isSelectValid === true &&
+                        canAccessChartModel !== false &&
                         mconfig.chart.isValid === true &&
                         chartTitleForm.valid === true &&
                         alias !== restrictedUserAlias &&
@@ -1062,6 +1066,7 @@
                     }"
                     (click)="chartSaveAs($event)"
                     [disabled]="
+                      canAccessChartModel === false ||
                       isSelectValid === false ||
                       mconfig.chart.isValid === false ||
                       chartTitleForm.valid === false ||
@@ -1103,6 +1108,7 @@
                         chartTitleForm.controls['chartTitle'].touched
                     }"
                     formControlName="chartTitle"
+                    [disabled]="canAccessChartModel === false"
                     placeholder="Title"
                     (blur)="chartTitleBlur()"
                   />
@@ -1114,6 +1120,7 @@
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   class="flex w-1/3 flex-shrink-0 flex-row items-center justify-end space-x-5 pr-4"
+                  [ngClass]="{ hidden: canAccessChartModel === false }"
                 >
                   <m-chart-table-icon
                     class="h-6 w-6 cursor-pointer"
@@ -1298,6 +1305,7 @@
                       <m-chart-editor
                         [chart]="mconfig.chart"
                         [isReport]="false"
+                        [canAccessModel]="canAccessChartModel"
                         [mconfigFields]="mconfig.fields"
                         [queryId]="mconfig?.queryId"
                       ></m-chart-editor>
@@ -1318,14 +1326,19 @@
                     (click)="toggleFiltersPanel()"
                     class="text-s1 mt-1 flex h-11 select-none flex-row items-start space-x-2 px-5 py-3 text-xl font-semibold"
                     [ngClass]="{
-                      'cursor-pointer': mconfig?.extendedFilters.length > 0,
-                      'cursor-default': mconfig?.extendedFilters.length === 0
+                      'cursor-pointer':
+                        canAccessChartModel !== false &&
+                        mconfig?.extendedFilters.length > 0,
+                      'cursor-default':
+                        canAccessChartModel === false ||
+                        mconfig?.extendedFilters.length === 0
                     }"
                   >
                     <div class="flex flex-row items-center space-x-2">
                       <m-chevron-right-icon
                         *ngIf="
                           !filtersIsExpanded &&
+                          canAccessChartModel !== false &&
                           mconfig?.extendedFilters.length > 0
                         "
                       ></m-chevron-right-icon>
@@ -1333,6 +1346,7 @@
                       <m-chevron-down-icon
                         *ngIf="
                           filtersIsExpanded &&
+                          canAccessChartModel !== false &&
                           mconfig?.extendedFilters.length > 0
                         "
                       ></m-chevron-down-icon>
@@ -1351,6 +1365,7 @@
                       <button
                         *ngIf="
                           mconfig?.select.length > 0 &&
+                          canAccessChartModel !== false &&
                           (filtersIsExpanded === true ||
                             mconfig?.extendedFilters.length === 0)
                         "
@@ -1374,6 +1389,7 @@
                           class="flex flex-row items-start"
                           *ngIf="
                             !filtersIsExpanded &&
+                            canAccessChartModel !== false &&
                             mconfig?.extendedFilters.length > 0
                           "
                         >
@@ -1387,7 +1403,9 @@
 
                         <div
                           class="max-h-[260px] w-full overflow-auto"
-                          *ngIf="filtersIsExpanded"
+                          *ngIf="
+                            filtersIsExpanded && canAccessChartModel !== false
+                          "
                         >
                           <m-model-filters
                             [storeContent]="model.storeContent"
@@ -1439,13 +1457,19 @@
 
                   <div
                     class="text-s1 ml-10 select-none text-base"
-                    *ngIf="mconfig?.select.length > 0"
+                    *ngIf="
+                      mconfig?.select.length > 0 &&
+                      canAccessChartModel !== false
+                    "
                     >Limit</div
                   >
 
                   <div
                     [formGroup]="limitForm"
-                    *ngIf="mconfig?.select.length > 0"
+                    *ngIf="
+                      mconfig?.select.length > 0 &&
+                      canAccessChartModel !== false
+                    "
                     class="ml-5 flex flex-col items-start"
                   >
                     <div class="h-6"></div>
@@ -1469,13 +1493,19 @@
 
                   <div
                     class="text-s1 ml-5 select-none text-base"
-                    *ngIf="mconfig?.select.length > 0"
+                    *ngIf="
+                      mconfig?.select.length > 0 &&
+                      canAccessChartModel !== false
+                    "
                     >Timezone</div
                   >
 
                   <div
                     class="ml-5 mr-9 flex w-2 flex-1"
-                    *ngIf="mconfig?.select.length > 0"
+                    *ngIf="
+                      mconfig?.select.length > 0 &&
+                      canAccessChartModel !== false
+                    "
                   >
                     <form
                       class="w-full"

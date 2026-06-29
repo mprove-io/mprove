@@ -197,6 +197,15 @@ export class SaveModifyDashboardController {
         user: user
       });
 
+    let currentDashboardSpace = getReportSpaceFromFilePath({
+      filePath: toDashboard.filePath,
+      spaces: currentStruct.spaces
+    });
+
+    let targetDashboardSpace = isDefined(newTile)
+      ? currentDashboardSpace
+      : space;
+
     let dashFileText: string;
 
     if (isDefined(newTile)) {
@@ -288,13 +297,8 @@ export class SaveModifyDashboardController {
       project: project
     });
 
-    let currentDashboardSpace = getReportSpaceFromFilePath({
-      filePath: toDashboard.filePath,
-      spaces: currentStruct.spaces
-    });
-
     if (
-      currentDashboardSpace !== space &&
+      currentDashboardSpace !== targetDashboardSpace &&
       userMember.isAdmin === false &&
       userMember.isEditor === false
     ) {
@@ -307,7 +311,7 @@ export class SaveModifyDashboardController {
       projectId: projectId,
       mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
       userAlias: user.alias,
-      space: space,
+      space: targetDashboardSpace,
       spaces: currentStruct.spaces
     });
 
@@ -315,7 +319,7 @@ export class SaveModifyDashboardController {
 
     let targetDashboardFilePath = `${targetParentNodeId}/${dashboardFileName}`;
 
-    let isSpaceChanged = currentDashboardSpace !== space;
+    let isSpaceChanged = currentDashboardSpace !== targetDashboardSpace;
 
     let isDashboardPathChanged =
       toDashboard.filePath !== targetDashboardFilePath;
@@ -399,7 +403,7 @@ export class SaveModifyDashboardController {
     ];
 
     let selectedSpaceFilePath = currentStruct.spaces.find(
-      x => x.space === space
+      x => x.space === targetDashboardSpace
     )?.filePath;
 
     if (isDefined(selectedSpaceFilePath)) {

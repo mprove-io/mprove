@@ -126,6 +126,24 @@ export class ParentService {
           }
         }
       }
+    } else if (parentType === MconfigParentTypeEnum.Chart) {
+      let chart = await this.chartsService.getChartCheckExists({
+        structId: structId,
+        chartId: parentId,
+        userMember: userMember,
+        user: user
+      });
+
+      let model = await this.modelsService.getModelCheckExists({
+        structId: structId,
+        modelId: chart.modelId
+      });
+
+      this.chartsService.checkChartOrModelAccess({
+        chart: chart,
+        model: model,
+        userMember: userMember
+      });
     } else {
       await this.modelsService.getModelCheckExistsAndAccess({
         structId: structId,

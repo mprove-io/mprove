@@ -18,6 +18,8 @@ export let zToBackendSaveModifyChartRequestPayload = z
     fromChartId: z.string(),
     chartId: z.string(),
     tileTitle: z.string(),
+    space: z.string().nullish(),
+    accessRoles: z.array(z.string()),
     timezone: zTimezone
   })
   .meta({ id: 'ToBackendSaveModifyChartRequestPayload' });

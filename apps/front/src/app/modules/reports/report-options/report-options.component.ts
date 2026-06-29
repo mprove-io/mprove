@@ -67,6 +67,10 @@ export class ReportOptionsComponent {
   async editReportInfo(event: MouseEvent) {
     event.stopPropagation();
 
+    if (this.currentReportUnit.canEditOrDeleteReport === false) {
+      return;
+    }
+
     let nav = this.navQuery.getValue();
 
     this.myDialogService.showEditReportInfo({

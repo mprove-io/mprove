@@ -17,28 +17,33 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import {
-  MPROVE_CONFIG_DIR_DOT_SLASH,
-  MPROVE_USERS_FOLDER,
   TILE_DEFAULT_PLATE_HEIGHT,
   TILE_DEFAULT_PLATE_WIDTH,
   TILE_DEFAULT_PLATE_X,
   TILE_DEFAULT_PLATE_Y
 } from '#common/constants/top';
-import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import {
+  APP_SPINNER_NAME,
+  EMPTY_SPACE,
+  EMPTY_SPACE_NAME
+} from '#common/constants/top-front';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
+import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
 import { makeSpaceUnits } from '#common/functions/space/make-space-units';
 import { spaceUnitToDashboardUnit } from '#common/functions/space/space-unit-to-dashboard-unit';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { Role } from '#common/zod/backend/role';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { Chart } from '#common/zod/blockml/chart';
 import type { Model } from '#common/zod/blockml/model';
+import type { Space } from '#common/zod/blockml/space';
 import type {
   ToBackendSaveCreateChartRequestPayload,
   ToBackendSaveCreateChartResponse
@@ -55,10 +60,16 @@ import type {
   ToBackendSaveModifyDashboardRequestPayload,
   ToBackendSaveModifyDashboardResponse
 } from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
+import type {
+  ToBackendGetRolesRequestPayload,
+  ToBackendGetRolesResponse
+} from '#common/zod/to-backend/roles/to-backend-get-roles';
+import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ChartsQuery } from '#front/app/queries/charts.query';
+import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
-import { StructQuery } from '#front/app/queries/struct.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -74,16 +85,13 @@ enum TileSaveAsEnum {
   REPLACE_EXISTING_TILE = 'REPLACE_EXISTING_TILE'
 }
 
-enum ChartShareEnum {
-  MY_CHARTS = 'MY_CHARTS',
-  MODEL_SPACE = 'MODEL_SPACE'
-}
-
 export interface ChartSaveAsDialogData {
   apiService: ApiService;
   chart: Chart;
   model: Model;
 }
+
+type SpaceOption = typeof EMPTY_SPACE;
 
 @Component({
   standalone: false,
@@ -97,11 +105,21 @@ export class ChartSaveAsDialogComponent implements OnInit {
   @ViewChild('chartSaveAsDialogTileSelect', { static: false })
   chartSaveAsDialogTileSelectElement: NgSelectComponent;
 
+  @ViewChild('chartSaveAsDialogRoleSelect', { static: false })
+  chartSaveAsDialogRoleSelectElement: NgSelectComponent;
+
+  @ViewChild('chartSaveAsDialogSpaceSelect', { static: false })
+  chartSaveAsDialogSpaceSelectElement: NgSelectComponent;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.chartSaveAsDialogDashboardSelectElement?.close();
     this.chartSaveAsDialogTileSelectElement?.close();
+    this.chartSaveAsDialogRoleSelectElement?.close();
+    this.chartSaveAsDialogSpaceSelectElement?.close();
   }
+
+  emptySpaceName = EMPTY_SPACE_NAME;
 
   selectedDashboardSpinnerName = 'chartSaveAsDashboardSpinnerName';
 
@@ -109,7 +127,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   chartSaveAsEnum = ChartSaveAsEnum;
   tileSaveAsEnum = TileSaveAsEnum;
-  chartShareEnum = ChartShareEnum;
 
   spinnerName = 'chartSaveAs';
 
@@ -128,7 +145,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_CHART;
   tileSaveAs: TileSaveAsEnum = TileSaveAsEnum.NEW_TILE;
-  chartShareAs: ChartShareEnum = ChartShareEnum.MY_CHARTS;
 
   selectedDashboardId: any; // string
   selectedDashboardPath: string;
@@ -140,10 +156,20 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   dashboardUnits: DashboardUnit[];
 
+  roles: Role[] = [];
+  selectedAccessRoles: string[] = [];
+  selectedSpace: string;
+  combinedAccessRoles: string[] = [];
+  combinedAccessRolesText = '';
+  spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
+  canSpecifyChartSpace = false;
+  struct: StructState;
+
   constructor(
     public ref: DialogRef<ChartSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
+    private memberQuery: MemberQuery,
     private uiQuery: UiQuery,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
@@ -153,8 +179,73 @@ export class ChartSaveAsDialogComponent implements OnInit {
     private cd: ChangeDetectorRef
   ) {}
 
+  makeSpacesPlusEmpty(item: { spaces: Space[] }): SpaceOption[] {
+    let { spaces } = item;
+
+    let spaceOptions = (spaces ?? []).map(space => ({
+      ...space,
+      label: this.makeSpaceLabel({ space: space, spaces: spaces ?? [] })
+    }));
+
+    return [makeCopy(EMPTY_SPACE), ...spaceOptions];
+  }
+
+  makeSpaceLabel(item: { space: Space; spaces: Space[] }) {
+    let { space, spaces } = item;
+    let parts = space.space.split('.');
+    let currentSpace = '';
+
+    return parts
+      .map((part, index) => {
+        currentSpace = index === 0 ? part : `${currentSpace}.${part}`;
+
+        let foundSpace = spaces.find(x => x.space === currentSpace);
+
+        return foundSpace?.title || part;
+      })
+      .join(' - ');
+  }
+
+  updateCombinedAccessRoles() {
+    let selectedSpace = this.struct?.spaces?.find(
+      x => x.space === this.selectedSpace
+    );
+
+    this.combinedAccessRoles = [
+      ...new Set([
+        ...(selectedSpace?.accessRolesCombined.map(x => x.role) ?? []),
+        ...this.selectedAccessRoles
+      ])
+    ];
+    this.combinedAccessRolesText = this.combinedAccessRoles.join(', ');
+  }
+
+  spaceChange() {
+    this.updateCombinedAccessRoles();
+    this.updateNewChartPath();
+  }
+
+  accessRolesChange() {
+    this.updateCombinedAccessRoles();
+  }
+
   ngOnInit() {
     this.chart = this.ref.data.chart as ChartX;
+
+    let member = this.memberQuery.getValue();
+
+    this.canSpecifyChartSpace =
+      member.isAdmin === true || member.isEditor === true;
+
+    this.struct = this.structQuery.getValue();
+
+    this.spacesPlusEmpty = this.makeSpacesPlusEmpty({
+      spaces: this.struct.spaces
+    });
+
+    this.selectedAccessRoles = [...(this.chart.accessRoles || [])];
+    this.selectedSpace = this.chart.space ?? EMPTY_SPACE.space;
+    this.updateCombinedAccessRoles();
 
     setValueAndMark({
       control: this.titleForm.controls['title'],
@@ -164,6 +255,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     let nav = this.navQuery.getValue();
 
     this.updateNewChartPath();
+    this.loadRoles();
 
     let payload: ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
@@ -293,16 +385,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
     this.titleForm.get('title').updateValueAndValidity();
   }
 
-  myChartsOnClick() {
-    this.chartShareAs = ChartShareEnum.MY_CHARTS;
-    this.updateNewChartPath();
-  }
-
-  modelSpaceOnClick() {
-    this.chartShareAs = ChartShareEnum.MODEL_SPACE;
-    this.updateNewChartPath();
-  }
-
   tileOfDashboardOnClick() {
     this.chartSaveAs = ChartSaveAsEnum.TILE_OF_DASHBOARD;
     this.selectedDashboardId = undefined;
@@ -430,7 +512,11 @@ export class ChartSaveAsDialogComponent implements OnInit {
       fromChartId: this.chart.chartId,
       newChartId: this.newChartId,
       tileTitle: newTitle.trim(),
-      isSaveToModelCharts: this.chartShareAs === ChartShareEnum.MODEL_SPACE,
+      space:
+        this.selectedSpace === EMPTY_SPACE_NAME
+          ? undefined
+          : this.selectedSpace,
+      accessRoles: [...this.selectedAccessRoles],
       mconfig: this.chart.tiles[0].mconfig
     };
 
@@ -528,56 +614,49 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   updateNewChartPath() {
-    let parentNodeId =
-      this.chartShareAs === ChartShareEnum.MODEL_SPACE
-        ? this.makeModelChartsParentNodeId()
-        : this.makeUserChartsParentNodeId();
+    let alias = this.userQuery.getValue().alias;
+    let nav = this.navQuery.getValue();
 
-    this.newChartPath = this.makeDisplayPath({
-      filePath: `${parentNodeId}/${this.newChartId}${FileExtensionEnum.Chart}`
+    this.newChartPath = makeUnitDisplayPath({
+      projectId: nav.projectId,
+      mproveDirValue: this.struct.mproveConfig.mproveDirValue,
+      userAlias: alias,
+      selectedSpace: this.selectedSpace,
+      unitId: this.newChartId,
+      filePath: undefined,
+      unitSpace: EMPTY_SPACE_NAME,
+      extension: FileExtensionEnum.Chart,
+      spaces: this.struct.spaces
     });
   }
 
-  makeUserChartsParentNodeId() {
-    let struct = this.structQuery.getValue();
+  loadRoles() {
     let nav = this.navQuery.getValue();
-    let alias = this.userQuery.getValue().alias;
 
-    let mdir = struct.mproveConfig.mproveDirValue;
+    let payload: ToBackendGetRolesRequestPayload = {
+      projectId: nav.projectId
+    };
 
-    let hasDotSlashPrefix =
-      mdir.length > 2 && mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH;
+    let apiService: ApiService = this.ref.data.apiService;
 
-    if (hasDotSlashPrefix) {
-      mdir = mdir.substring(2);
-    }
+    apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRoles,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: ToBackendGetRolesResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            let newSortedRoles = resp.payload.roles.sort((a, b) =>
+              a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
+            );
 
-    if (struct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH) {
-      return `${nav.projectId}/${MPROVE_USERS_FOLDER}/${alias}`;
-    }
-
-    if (mdir !== '') {
-      return `${nav.projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${alias}`;
-    }
-
-    return `${nav.projectId}/${MPROVE_USERS_FOLDER}/${alias}`;
-  }
-
-  makeModelChartsParentNodeId() {
-    let model = this.ref.data.model;
-    let modelFilePathParts = model.filePath.split('/');
-    let modelFolderParts = modelFilePathParts.slice(0, -1);
-    let parentNodeId = modelFolderParts.join('/');
-
-    return `${parentNodeId}/charts`;
-  }
-
-  makeDisplayPath(item: { filePath: string }) {
-    let { filePath } = item;
-    let parts = filePath.split('/');
-
-    parts.shift();
-
-    return parts.join(' / ');
+            this.roles = newSortedRoles;
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 }

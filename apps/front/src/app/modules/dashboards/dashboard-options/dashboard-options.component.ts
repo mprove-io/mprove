@@ -67,6 +67,10 @@ export class DashboardOptionsComponent {
   async editDashboardInfo(event: MouseEvent, item: DashboardUnit) {
     event.stopPropagation();
 
+    if (item.canEditOrDeleteDashboard === false) {
+      return;
+    }
+
     let nav = this.navQuery.getValue();
 
     this.myDialogService.showEditDashboardInfo({

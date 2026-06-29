@@ -122,12 +122,6 @@
     }"
   >
     <div
-      class="text-s1 flex h-9 items-center text-lg font-semibold"
-      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
-      >Space</div
-    >
-
-    <div
       data-cy="chartSaveAsDialogNewChartCheckbox"
       class="flex h-9 cursor-pointer flex-row items-center"
       *ngIf="
@@ -157,49 +151,6 @@
       'ml-12': chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
     }"
   >
-    <div
-      class="flex h-9 flex-row items-center"
-      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
-    >
-      <div
-        data-cy="chartSaveAsDialogMyChartsCheckbox"
-        class="flex cursor-pointer flex-row items-center"
-        (click)="myChartsOnClick()"
-      >
-        <div
-          class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
-          [ngClass]="{
-            'bg-m600': chartShareAs === chartShareEnum.MY_CHARTS
-          }"
-        >
-          <m-check-icon
-            *ngIf="chartShareAs === chartShareEnum.MY_CHARTS"
-          ></m-check-icon>
-        </div>
-
-        <div class="ml-5 text-base">My Charts</div>
-      </div>
-
-      <div
-        data-cy="chartSaveAsDialogModelSpaceCheckbox"
-        class="ml-9 flex cursor-pointer flex-row items-center"
-        (click)="modelSpaceOnClick()"
-      >
-        <div
-          class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
-          [ngClass]="{
-            'bg-m600': chartShareAs === chartShareEnum.MODEL_SPACE
-          }"
-        >
-          <m-check-icon
-            *ngIf="chartShareAs === chartShareEnum.MODEL_SPACE"
-          ></m-check-icon>
-        </div>
-
-        <div class="ml-5 text-base">Model Space</div>
-      </div>
-    </div>
-
     <div
       data-cy="chartSaveAsDialogNewTileOfDashboardCheckbox"
       class="flex h-9 cursor-pointer flex-row items-center"
@@ -325,6 +276,112 @@
         formControlName="title"
       ></textarea>
       <m-validation [control]="titleForm.controls['title']"></m-validation>
+    </div>
+  </div>
+
+  <div
+    class="mt-2 flex flex-row items-start"
+    *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
+  >
+    <div class="flex flex-col">
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+        >Space</div
+      >
+    </div>
+
+    <div
+      class="ml-5 flex flex-col items-start"
+      [tp]="templateSpecifyChartSpace"
+      [tpIsEnabled]="canSpecifyChartSpace === false"
+    >
+      <ng-template #templateSpecifyChartSpace>
+        <div>Only Admins and Editors can change space</div>
+      </ng-template>
+
+      <ng-select
+        #chartSaveAsDialogSpaceSelect
+        [fixNgSelectBottom]="chartSaveAsDialogSpaceSelect"
+        data-cy="chartSaveAsDialogSpaceSelect"
+        class="select-h-10 w-96 flex-shrink-0"
+        [class.report-space-select-disabled]="canSpecifyChartSpace === false"
+        [items]="spacesPlusEmpty"
+        [multiple]="false"
+        [searchable]="true"
+        [clearable]="false"
+        [disabled]="canSpecifyChartSpace === false"
+        [(ngModel)]="selectedSpace"
+        (change)="spaceChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); chartSaveAsDialogSpaceSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); chartSaveAsDialogSpaceSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="space"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate text-base">{{
+            item.space === emptySpaceName ? '' : item.label
+          }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate text-base">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+
+  <div
+    class="mt-8 flex min-h-[100px] flex-row items-start"
+    *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
+  >
+    <div class="flex flex-col">
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+        >Access Roles</div
+      >
+    </div>
+
+    <div class="ml-5 flex flex-col items-start">
+      <div [tp]="templateAddAccessRole" [tpIsEnabled]="roles.length === 0">
+        <ng-template #templateAddAccessRole>
+          <div>Project has no roles</div>
+        </ng-template>
+
+        <ng-select
+          #chartSaveAsDialogRoleSelect
+          [fixNgSelectBottom]="chartSaveAsDialogRoleSelect"
+          data-cy="chartSaveAsDialogRoleSelect"
+          class="select-h-10 w-96 flex-shrink-0"
+          [items]="roles"
+          [multiple]="true"
+          [searchable]="true"
+          [clearable]="true"
+          [(ngModel)]="selectedAccessRoles"
+          (change)="accessRolesChange()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation();
+            chartSaveAsDialogRoleSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation();
+            chartSaveAsDialogRoleSelect.blur()
+          "
+          appendTo="body"
+          bindLabel="roleId"
+          bindValue="roleId"
+        >
+          <ng-template ng-label-tmp ng-option-tmp let-item="item">
+            <div class="ml-1 truncate text-base">{{ item.roleId }}</div>
+          </ng-template>
+        </ng-select>
+
+        <div class="text-s400 ml-[14px] mt-2 w-96 text-base">
+          {{ combinedAccessRolesText }}
+        </div>
+      </div>
     </div>
   </div>
 

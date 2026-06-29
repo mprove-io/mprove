@@ -62,6 +62,10 @@ export class ChartOptionsComponent {
   async editChartInfo(event: MouseEvent, item: ChartUnit) {
     event.stopPropagation();
 
+    if (item.canEditOrDeleteChart === false) {
+      return;
+    }
+
     let nav = this.navQuery.getValue();
 
     this.myDialogService.showEditChartInfo({

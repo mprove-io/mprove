@@ -15,58 +15,42 @@
   </div> -->
 
   <div
-    *ngIf="
-      isReport === false && uiChartTypes.pivotRows.indexOf(chart.type) > -1
-    "
-    class="mb-7 ml-2 flex flex-col items-stretch"
+    *ngIf="canAccessModel === false && isReport === false"
+    class="text-s500 ml-2 mt-3 select-none text-base"
+    >No access to model</div
   >
-    <div class="mt-1 flex flex-col items-stretch gap-3">
-      <div class="flex w-max min-w-[220px] flex-col items-stretch">
-        <div
-          class="text-s500 flex h-7 select-none items-center text-base font-semibold"
-          >Rows</div
-        >
 
-        <div
-          #pivotRowDimensionsList
-          id="pivotRowDimensions"
-          cdkDropList
-          [cdkDropListData]="pivotRowColumns"
-          [cdkDropListConnectedTo]="['pivotColumnDimensions']"
-          [style.height]="pivotRowDimensionsListHeight"
-          (cdkDropListDropped)="pivotDimensionsDrop({ event: $event })"
-          class="border-s300 mt-1 flex min-h-[50px] w-max min-w-[220px] flex-col items-stretch space-y-1 rounded border p-2"
-        >
+  <ng-container *ngIf="canAccessModel !== false || isReport === true">
+    <div
+      *ngIf="
+        isReport === false && uiChartTypes.pivotRows.indexOf(chart.type) > -1
+      "
+      class="mb-7 ml-2 flex flex-col items-stretch"
+    >
+      <div class="mt-1 flex flex-col items-stretch gap-3">
+        <div class="flex w-max min-w-[220px] flex-col items-stretch">
           <div
-            *ngFor="let column of pivotRowColumns"
-            cdkDrag
-            class="drag-handle flex w-full cursor-grab flex-row items-center rounded px-2 py-1"
-            [ngClass]="{ 'hover:bg-s100': isPivotDrag === false }"
-            (cdkDragStarted)="pivotDragStart({ section: 'rows' })"
-            (cdkDragEnded)="pivotDragEnd({})"
+            class="text-s500 flex h-7 select-none items-center text-base font-semibold"
+            >Rows</div
           >
-            <m-pivot-drag-icon
-              class="text-s500 -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
-            ></m-pivot-drag-icon>
 
-            <m-field-result
-              class="mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
-              [ngClass]="{
-                '-mt-[2px]': column.result === fieldResultEnum.String
-              }"
-              [size]="2"
-              [fieldClass]="column.fieldClass"
-              [result]="column.result"
-            ></m-field-result>
-
-            <m-field-label
-              [column]="column"
-              class="flex min-w-0 flex-1 text-[15px]"
-            ></m-field-label>
-
+          <div
+            #pivotRowDimensionsList
+            id="pivotRowDimensions"
+            cdkDropList
+            [cdkDropListData]="pivotRowColumns"
+            [cdkDropListConnectedTo]="['pivotColumnDimensions']"
+            [style.height]="pivotRowDimensionsListHeight"
+            (cdkDropListDropped)="pivotDimensionsDrop({ event: $event })"
+            class="border-s300 mt-1 flex min-h-[50px] w-max min-w-[220px] flex-col items-stretch space-y-1 rounded border p-2"
+          >
             <div
-              *cdkDragPreview
-              class="border-s300 bg-m0 flex cursor-grabbing flex-row items-center rounded border px-3 py-2 shadow-lg"
+              *ngFor="let column of pivotRowColumns"
+              cdkDrag
+              class="drag-handle flex w-full cursor-grab flex-row items-center rounded px-2 py-1"
+              [ngClass]="{ 'hover:bg-s100': isPivotDrag === false }"
+              (cdkDragStarted)="pivotDragStart({ section: 'rows' })"
+              (cdkDragEnded)="pivotDragEnd({})"
             >
               <m-pivot-drag-icon
                 class="text-s500 -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
@@ -84,83 +68,83 @@
 
               <m-field-label
                 [column]="column"
-                class="flex min-w-[220px] text-[15px]"
+                class="flex min-w-0 flex-1 text-[15px]"
               ></m-field-label>
-            </div>
 
-            <div
-              *cdkDragPlaceholder
-              class="outline-s300 flex w-full flex-row items-center rounded px-2 py-1 outline outline-dashed outline-1 -outline-offset-1"
-            >
-              <m-pivot-drag-icon
-                class="text-s500 invisible -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
-              ></m-pivot-drag-icon>
+              <div
+                *cdkDragPreview
+                class="border-s300 bg-m0 flex cursor-grabbing flex-row items-center rounded border px-3 py-2 shadow-lg"
+              >
+                <m-pivot-drag-icon
+                  class="text-s500 -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
+                ></m-pivot-drag-icon>
 
-              <m-field-result
-                class="invisible mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
-                [ngClass]="{
-                  '-mt-[2px]': column.result === fieldResultEnum.String
-                }"
-                [size]="2"
-                [fieldClass]="column.fieldClass"
-                [result]="column.result"
-              ></m-field-result>
+                <m-field-result
+                  class="mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
+                  [ngClass]="{
+                    '-mt-[2px]': column.result === fieldResultEnum.String
+                  }"
+                  [size]="2"
+                  [fieldClass]="column.fieldClass"
+                  [result]="column.result"
+                ></m-field-result>
 
-              <m-field-label
-                [column]="column"
-                class="invisible flex min-w-0 flex-1 text-[15px]"
-              ></m-field-label>
+                <m-field-label
+                  [column]="column"
+                  class="flex min-w-[220px] text-[15px]"
+                ></m-field-label>
+              </div>
+
+              <div
+                *cdkDragPlaceholder
+                class="outline-s300 flex w-full flex-row items-center rounded px-2 py-1 outline outline-dashed outline-1 -outline-offset-1"
+              >
+                <m-pivot-drag-icon
+                  class="text-s500 invisible -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
+                ></m-pivot-drag-icon>
+
+                <m-field-result
+                  class="invisible mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
+                  [ngClass]="{
+                    '-mt-[2px]': column.result === fieldResultEnum.String
+                  }"
+                  [size]="2"
+                  [fieldClass]="column.fieldClass"
+                  [result]="column.result"
+                ></m-field-result>
+
+                <m-field-label
+                  [column]="column"
+                  class="invisible flex min-w-0 flex-1 text-[15px]"
+                ></m-field-label>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="flex w-max min-w-[220px] flex-col items-stretch">
-        <div
-          class="text-s500 flex h-7 select-none items-center text-base font-semibold"
-          >Columns</div
-        >
-
-        <div
-          #pivotColumnDimensionsList
-          id="pivotColumnDimensions"
-          cdkDropList
-          [cdkDropListData]="pivotColumnColumns"
-          [cdkDropListConnectedTo]="['pivotRowDimensions']"
-          [style.height]="pivotColumnDimensionsListHeight"
-          (cdkDropListDropped)="pivotDimensionsDrop({ event: $event })"
-          class="border-s300 mt-1 flex min-h-[50px] w-max min-w-[220px] flex-col items-stretch space-y-1 rounded border p-2"
-        >
+        <div class="flex w-max min-w-[220px] flex-col items-stretch">
           <div
-            *ngFor="let column of pivotColumnColumns"
-            cdkDrag
-            class="drag-handle flex w-full cursor-grab flex-row items-center rounded px-2 py-1"
-            [ngClass]="{ 'hover:bg-s100': isPivotDrag === false }"
-            (cdkDragStarted)="pivotDragStart({ section: 'columns' })"
-            (cdkDragEnded)="pivotDragEnd({})"
+            class="text-s500 flex h-7 select-none items-center text-base font-semibold"
+            >Columns</div
           >
-            <m-pivot-drag-icon
-              class="text-s500 -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
-            ></m-pivot-drag-icon>
 
-            <m-field-result
-              class="mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
-              [ngClass]="{
-                '-mt-[2px]': column.result === fieldResultEnum.String
-              }"
-              [size]="2"
-              [fieldClass]="column.fieldClass"
-              [result]="column.result"
-            ></m-field-result>
-
-            <m-field-label
-              [column]="column"
-              class="flex min-w-0 flex-1 text-[15px]"
-            ></m-field-label>
-
+          <div
+            #pivotColumnDimensionsList
+            id="pivotColumnDimensions"
+            cdkDropList
+            [cdkDropListData]="pivotColumnColumns"
+            [cdkDropListConnectedTo]="['pivotRowDimensions']"
+            [style.height]="pivotColumnDimensionsListHeight"
+            (cdkDropListDropped)="pivotDimensionsDrop({ event: $event })"
+            class="border-s300 mt-1 flex min-h-[50px] w-max min-w-[220px] flex-col items-stretch space-y-1 rounded border p-2"
+          >
             <div
-              *cdkDragPreview
-              class="border-s300 bg-m0 flex cursor-grabbing flex-row items-center rounded border px-3 py-2 shadow-lg"
+              *ngFor="let column of pivotColumnColumns"
+              cdkDrag
+              class="drag-handle flex w-full cursor-grab flex-row items-center rounded px-2 py-1"
+              [ngClass]="{ 'hover:bg-s100': isPivotDrag === false }"
+              (cdkDragStarted)="pivotDragStart({ section: 'columns' })"
+              (cdkDragEnded)="pivotDragEnd({})"
             >
               <m-pivot-drag-icon
                 class="text-s500 -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
@@ -178,84 +162,84 @@
 
               <m-field-label
                 [column]="column"
-                class="flex min-w-[220px] text-[15px]"
+                class="flex min-w-0 flex-1 text-[15px]"
               ></m-field-label>
-            </div>
 
-            <div
-              *cdkDragPlaceholder
-              class="outline-s300 flex w-full flex-row items-center rounded px-2 py-1 outline outline-dashed outline-1 -outline-offset-1"
-            >
-              <m-pivot-drag-icon
-                class="text-s500 invisible -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
-              ></m-pivot-drag-icon>
+              <div
+                *cdkDragPreview
+                class="border-s300 bg-m0 flex cursor-grabbing flex-row items-center rounded border px-3 py-2 shadow-lg"
+              >
+                <m-pivot-drag-icon
+                  class="text-s500 -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
+                ></m-pivot-drag-icon>
 
-              <m-field-result
-                class="invisible mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
-                [ngClass]="{
-                  '-mt-[2px]': column.result === fieldResultEnum.String
-                }"
-                [size]="2"
-                [fieldClass]="column.fieldClass"
-                [result]="column.result"
-              ></m-field-result>
+                <m-field-result
+                  class="mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
+                  [ngClass]="{
+                    '-mt-[2px]': column.result === fieldResultEnum.String
+                  }"
+                  [size]="2"
+                  [fieldClass]="column.fieldClass"
+                  [result]="column.result"
+                ></m-field-result>
 
-              <m-field-label
-                [column]="column"
-                class="invisible flex min-w-0 flex-1 text-[15px]"
-              ></m-field-label>
+                <m-field-label
+                  [column]="column"
+                  class="flex min-w-[220px] text-[15px]"
+                ></m-field-label>
+              </div>
+
+              <div
+                *cdkDragPlaceholder
+                class="outline-s300 flex w-full flex-row items-center rounded px-2 py-1 outline outline-dashed outline-1 -outline-offset-1"
+              >
+                <m-pivot-drag-icon
+                  class="text-s500 invisible -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
+                ></m-pivot-drag-icon>
+
+                <m-field-result
+                  class="invisible mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
+                  [ngClass]="{
+                    '-mt-[2px]': column.result === fieldResultEnum.String
+                  }"
+                  [size]="2"
+                  [fieldClass]="column.fieldClass"
+                  [result]="column.result"
+                ></m-field-result>
+
+                <m-field-label
+                  [column]="column"
+                  class="invisible flex min-w-0 flex-1 text-[15px]"
+                ></m-field-label>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div
-        *ngIf="uiChartTypes.pivotValues.indexOf(chart.type) > -1"
-        class="flex w-max min-w-[220px] flex-col items-stretch"
-      >
-        <div
-          class="text-s500 flex h-7 select-none items-center text-base font-semibold"
-          >Values</div
-        >
 
         <div
-          #pivotValuesList
-          cdkDropList
-          [cdkDropListData]="pivotValueColumns"
-          [style.height]="pivotValuesListHeight"
-          (cdkDropListDropped)="pivotValuesDrop({ event: $event })"
-          class="border-s300 mt-1 flex min-h-[50px] w-max min-w-[220px] flex-col items-stretch space-y-1 rounded border p-2"
+          *ngIf="uiChartTypes.pivotValues.indexOf(chart.type) > -1"
+          class="flex w-max min-w-[220px] flex-col items-stretch"
         >
           <div
-            *ngFor="let column of pivotValueColumns"
-            cdkDrag
-            class="drag-handle flex w-full cursor-grab flex-row items-center rounded px-2 py-1"
-            [ngClass]="{ 'hover:bg-s100': isPivotDrag === false }"
-            (cdkDragStarted)="pivotDragStart({ section: 'values' })"
-            (cdkDragEnded)="pivotDragEnd({})"
+            class="text-s500 flex h-7 select-none items-center text-base font-semibold"
+            >Values</div
           >
-            <m-pivot-drag-icon
-              class="text-s500 -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
-            ></m-pivot-drag-icon>
 
-            <m-field-result
-              class="mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
-              [ngClass]="{
-                '-mt-[2px]': column.result === fieldResultEnum.String
-              }"
-              [size]="2"
-              [fieldClass]="column.fieldClass"
-              [result]="column.result"
-            ></m-field-result>
-
-            <m-field-label
-              [column]="column"
-              class="flex min-w-0 flex-1 text-[15px]"
-            ></m-field-label>
-
+          <div
+            #pivotValuesList
+            cdkDropList
+            [cdkDropListData]="pivotValueColumns"
+            [style.height]="pivotValuesListHeight"
+            (cdkDropListDropped)="pivotValuesDrop({ event: $event })"
+            class="border-s300 mt-1 flex min-h-[50px] w-max min-w-[220px] flex-col items-stretch space-y-1 rounded border p-2"
+          >
             <div
-              *cdkDragPreview
-              class="border-s300 bg-m0 flex cursor-grabbing flex-row items-center rounded border px-3 py-2 shadow-lg"
+              *ngFor="let column of pivotValueColumns"
+              cdkDrag
+              class="drag-handle flex w-full cursor-grab flex-row items-center rounded px-2 py-1"
+              [ngClass]="{ 'hover:bg-s100': isPivotDrag === false }"
+              (cdkDragStarted)="pivotDragStart({ section: 'values' })"
+              (cdkDragEnded)="pivotDragEnd({})"
             >
               <m-pivot-drag-icon
                 class="text-s500 -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
@@ -273,57 +257,80 @@
 
               <m-field-label
                 [column]="column"
-                class="flex min-w-[220px] text-[15px]"
+                class="flex min-w-0 flex-1 text-[15px]"
               ></m-field-label>
-            </div>
 
-            <div
-              *cdkDragPlaceholder
-              class="outline-s300 flex w-full flex-row items-center rounded px-2 py-1 outline outline-dashed outline-1 -outline-offset-1"
-            >
-              <m-pivot-drag-icon
-                class="text-s500 invisible -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
-              ></m-pivot-drag-icon>
+              <div
+                *cdkDragPreview
+                class="border-s300 bg-m0 flex cursor-grabbing flex-row items-center rounded border px-3 py-2 shadow-lg"
+              >
+                <m-pivot-drag-icon
+                  class="text-s500 -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
+                ></m-pivot-drag-icon>
 
-              <m-field-result
-                class="invisible mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
-                [ngClass]="{
-                  '-mt-[2px]': column.result === fieldResultEnum.String
-                }"
-                [size]="2"
-                [fieldClass]="column.fieldClass"
-                [result]="column.result"
-              ></m-field-result>
+                <m-field-result
+                  class="mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
+                  [ngClass]="{
+                    '-mt-[2px]': column.result === fieldResultEnum.String
+                  }"
+                  [size]="2"
+                  [fieldClass]="column.fieldClass"
+                  [result]="column.result"
+                ></m-field-result>
 
-              <m-field-label
-                [column]="column"
-                class="invisible flex min-w-0 flex-1 text-[15px]"
-              ></m-field-label>
+                <m-field-label
+                  [column]="column"
+                  class="flex min-w-[220px] text-[15px]"
+                ></m-field-label>
+              </div>
+
+              <div
+                *cdkDragPlaceholder
+                class="outline-s300 flex w-full flex-row items-center rounded px-2 py-1 outline outline-dashed outline-1 -outline-offset-1"
+              >
+                <m-pivot-drag-icon
+                  class="text-s500 invisible -mt-[2px] mr-2 flex h-5 w-5 flex-shrink-0"
+                ></m-pivot-drag-icon>
+
+                <m-field-result
+                  class="invisible mr-3 flex h-4 w-4 flex-shrink-0 items-center justify-center"
+                  [ngClass]="{
+                    '-mt-[2px]': column.result === fieldResultEnum.String
+                  }"
+                  [size]="2"
+                  [fieldClass]="column.fieldClass"
+                  [result]="column.result"
+                ></m-field-result>
+
+                <m-field-label
+                  [column]="column"
+                  class="invisible flex min-w-0 flex-1 text-[15px]"
+                ></m-field-label>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div
-    *ngIf="isReport === false && uiChartTypes.format.indexOf(chart.type) > -1"
-    class="mb-5 ml-2 flex max-w-min cursor-pointer flex-row items-center"
-    (click)="toggleFormat()"
-  >
     <div
-      class="text-s1 flex h-9 flex-shrink-0 select-none items-center text-base"
-      >Format</div
+      *ngIf="isReport === false && uiChartTypes.format.indexOf(chart.type) > -1"
+      class="mb-5 ml-2 flex max-w-min cursor-pointer flex-row items-center"
+      (click)="toggleFormat()"
     >
+      <div
+        class="text-s1 flex h-9 flex-shrink-0 select-none items-center text-base"
+        >Format</div
+      >
 
-    <ui-switch
-      class="ml-5 mt-1"
-      [checked]="chart.format"
-      color="#64BD63"
-    ></ui-switch>
-  </div>
+      <ui-switch
+        class="ml-5 mt-1"
+        [checked]="chart.format"
+        color="#64BD63"
+      ></ui-switch>
+    </div>
 
-  <!-- <div
+    <!-- <div
     *ngIf="
       isReport === false && uiChartTypes.hideColumns.indexOf(chart.type) > -1
     "
@@ -354,512 +361,518 @@
     </div>
   </div> -->
 
-  <div
-    *ngIf="isReport === false && uiChartTypes.xField.indexOf(chart.type) > -1"
-    class="mb-5 ml-2 flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div
-        class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
-        >X Field</div
-      >
-    </div>
-
-    <form [formGroup]="xFieldForm" class="ml-5 min-w-[2px] flex-grow">
-      <ng-select
-        #xFieldSelect
-        [fixNgSelectBottom]="xFieldSelect"
-        data-cy="xFieldSelect"
-        class="select-none text-base"
-        [items]="
-          chart.type === chartTypeEnum.Scatter
-            ? dimensionsMeasuresCalculations
-            : dimensions
-        "
-        [clearable]="false"
-        [searchable]="false"
-        (change)="xFieldChange()"
-        (keyup.esc)="$event.stopImmediatePropagation(); xFieldSelect.blur()"
-        (keyup.enter)="$event.stopImmediatePropagation(); xFieldSelect.blur()"
-        appendTo="body"
-        bindLabel="label"
-        bindValue="id"
-        formControlName="xField"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 flex flex-row items-center">
-            <m-field-result
-              class="h-5 w-5"
-              [size]="2"
-              [fieldClass]="item.fieldClass"
-              [result]="item.result"
-            ></m-field-result>
-
-            <m-field-label
-              [column]="item"
-              class="ml-3 flex text-sm"
-            ></m-field-label>
-          </div>
-        </ng-template>
-
-        <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 flex flex-row items-center">
-            <m-field-result
-              class="h-5 w-5"
-              [size]="2"
-              [fieldClass]="item.fieldClass"
-              [result]="item.result"
-            ></m-field-result>
-
-            <m-field-label
-              [column]="item"
-              class="ml-3 flex text-sm"
-            ></m-field-label>
-          </div>
-        </ng-template>
-      </ng-select>
-    </form>
-  </div>
-
-  <div
-    *ngIf="
-      isReport === false && uiChartTypes.sizeField.indexOf(chart.type) > -1
-    "
-    class="mb-5 ml-2 flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div
-        class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
-        >Size Field</div
-      >
-    </div>
-
-    <form [formGroup]="sizeFieldForm" class="ml-5 min-w-[2px] flex-grow">
-      <ng-select
-        #sizeFieldSelect
-        [fixNgSelectBottom]="sizeFieldSelect"
-        data-cy="sizeFieldSelect"
-        class="select-none text-base"
-        [items]="numbersDimensionsMeasuresCalculationsPlusEmpty"
-        [clearable]="false"
-        [searchable]="false"
-        (change)="sizeFieldChange()"
-        (keyup.esc)="$event.stopImmediatePropagation(); sizeFieldSelect.blur()"
-        (keyup.enter)="
-          $event.stopImmediatePropagation(); sizeFieldSelect.blur()
-        "
-        appendTo="body"
-        bindLabel="label"
-        bindValue="id"
-        formControlName="sizeField"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 flex flex-row items-center">
-            <m-field-result
-              class="h-5 w-5"
-              [size]="2"
-              [fieldClass]="item.fieldClass"
-              [result]="item.result"
-              [isEmpty]="!item.id"
-            ></m-field-result>
-
-            <m-field-label
-              *ngIf="!!item.id"
-              [column]="item"
-              class="ml-3 flex text-sm"
-            ></m-field-label>
-          </div>
-        </ng-template>
-        <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 flex flex-row items-center">
-            <m-field-result
-              class="h-5 w-5"
-              [size]="2"
-              [fieldClass]="item.fieldClass"
-              [result]="item.result"
-              [isEmpty]="!item.id"
-            ></m-field-result>
-
-            <m-field-label
-              [column]="item"
-              class="ml-3 flex text-sm"
-            ></m-field-label>
-          </div>
-        </ng-template>
-      </ng-select>
-    </form>
-  </div>
-
-  <div
-    *ngIf="
-      isReport === false && uiChartTypes.multiField.indexOf(chart.type) > -1
-    "
-    class="mb-5 ml-2 flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div
-        class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
-        >Multi Field</div
-      >
-    </div>
-
-    <form
-      [formGroup]="multiFieldForm"
-      class="ml-5 min-w-[2px] flex-grow"
-      *ngIf="
-        (chart.type !== chartTypeEnum.Scatter && dimensions.length > 1) ||
-        (chart.type === chartTypeEnum.Scatter && dimensions.length > 0)
-      "
+    <div
+      *ngIf="isReport === false && uiChartTypes.xField.indexOf(chart.type) > -1"
+      class="mb-5 ml-2 flex flex-row items-start"
     >
-      <ng-select
-        #multiFieldSelect
-        [fixNgSelectBottom]="multiFieldSelect"
-        data-cy="multiFieldSelect"
-        class="select-none text-base"
-        [items]="
-          uiChartTypes.nullableMultiField.indexOf(chart.type) > -1
-            ? dimensionsPlusEmpty
-            : dimensions
-        "
-        [clearable]="false"
-        [searchable]="false"
-        (change)="multiFieldChange()"
-        (keyup.esc)="$event.stopImmediatePropagation(); multiFieldSelect.blur()"
-        (keyup.enter)="
-          $event.stopImmediatePropagation(); multiFieldSelect.blur()
-        "
-        appendTo="body"
-        bindLabel="label"
-        bindValue="id"
-        formControlName="multiField"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 flex flex-row items-center">
-            <m-field-result
-              class="h-5 w-5"
-              [size]="2"
-              [fieldClass]="item.fieldClass"
-              [result]="item.result"
-              [isEmpty]="!item.id"
-            ></m-field-result>
+      <div class="flex flex-col">
+        <div
+          class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
+          >X Field</div
+        >
+      </div>
 
-            <m-field-label
-              *ngIf="!!item.id"
-              [column]="item"
-              class="ml-3 flex text-sm"
-            ></m-field-label>
-          </div>
-        </ng-template>
-        <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 flex flex-row items-center">
-            <m-field-result
-              class="h-5 w-5"
-              [size]="2"
-              [fieldClass]="item.fieldClass"
-              [result]="item.result"
-              [isEmpty]="!item.id"
-            ></m-field-result>
+      <form [formGroup]="xFieldForm" class="ml-5 min-w-[2px] flex-grow">
+        <ng-select
+          #xFieldSelect
+          [fixNgSelectBottom]="xFieldSelect"
+          data-cy="xFieldSelect"
+          class="select-none text-base"
+          [items]="
+            chart.type === chartTypeEnum.Scatter
+              ? dimensionsMeasuresCalculations
+              : dimensions
+          "
+          [clearable]="false"
+          [searchable]="false"
+          (change)="xFieldChange()"
+          (keyup.esc)="$event.stopImmediatePropagation(); xFieldSelect.blur()"
+          (keyup.enter)="$event.stopImmediatePropagation(); xFieldSelect.blur()"
+          appendTo="body"
+          bindLabel="label"
+          bindValue="id"
+          formControlName="xField"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="ml-1 flex flex-row items-center">
+              <m-field-result
+                class="h-5 w-5"
+                [size]="2"
+                [fieldClass]="item.fieldClass"
+                [result]="item.result"
+              ></m-field-result>
 
-            <m-field-label
-              [column]="item"
-              class="ml-3 flex text-sm"
-            ></m-field-label>
-          </div>
-        </ng-template>
-      </ng-select>
-    </form>
+              <m-field-label
+                [column]="item"
+                class="ml-3 flex text-sm"
+              ></m-field-label>
+            </div>
+          </ng-template>
+
+          <ng-template ng-option-tmp let-item="item">
+            <div class="ml-1 flex flex-row items-center">
+              <m-field-result
+                class="h-5 w-5"
+                [size]="2"
+                [fieldClass]="item.fieldClass"
+                [result]="item.result"
+              ></m-field-result>
+
+              <m-field-label
+                [column]="item"
+                class="ml-3 flex text-sm"
+              ></m-field-label>
+            </div>
+          </ng-template>
+        </ng-select>
+      </form>
+    </div>
 
     <div
       *ngIf="
-        (chart.type !== chartTypeEnum.Scatter && dimensions.length < 2) ||
-        (chart.type === chartTypeEnum.Scatter && dimensions.length < 1)
+        isReport === false && uiChartTypes.sizeField.indexOf(chart.type) > -1
       "
-      class="text-s1 ml-8 flex h-9 select-none items-center text-base"
-      ><m-minus-sm-icon></m-minus-sm-icon
-    ></div>
-  </div>
+      class="mb-5 ml-2 flex flex-row items-start"
+    >
+      <div class="flex flex-col">
+        <div
+          class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
+          >Size Field</div
+        >
+      </div>
 
-  <div
-    *ngIf="isReport === false && uiChartTypes.yField.indexOf(chart.type) > -1"
-    class="mb-5 ml-2 flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div
-        class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
-        >Y Field</div
-      >
+      <form [formGroup]="sizeFieldForm" class="ml-5 min-w-[2px] flex-grow">
+        <ng-select
+          #sizeFieldSelect
+          [fixNgSelectBottom]="sizeFieldSelect"
+          data-cy="sizeFieldSelect"
+          class="select-none text-base"
+          [items]="numbersDimensionsMeasuresCalculationsPlusEmpty"
+          [clearable]="false"
+          [searchable]="false"
+          (change)="sizeFieldChange()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation(); sizeFieldSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation(); sizeFieldSelect.blur()
+          "
+          appendTo="body"
+          bindLabel="label"
+          bindValue="id"
+          formControlName="sizeField"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="ml-1 flex flex-row items-center">
+              <m-field-result
+                class="h-5 w-5"
+                [size]="2"
+                [fieldClass]="item.fieldClass"
+                [result]="item.result"
+                [isEmpty]="!item.id"
+              ></m-field-result>
+
+              <m-field-label
+                *ngIf="!!item.id"
+                [column]="item"
+                class="ml-3 flex text-sm"
+              ></m-field-label>
+            </div>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item">
+            <div class="ml-1 flex flex-row items-center">
+              <m-field-result
+                class="h-5 w-5"
+                [size]="2"
+                [fieldClass]="item.fieldClass"
+                [result]="item.result"
+                [isEmpty]="!item.id"
+              ></m-field-result>
+
+              <m-field-label
+                [column]="item"
+                class="ml-3 flex text-sm"
+              ></m-field-label>
+            </div>
+          </ng-template>
+        </ng-select>
+      </form>
     </div>
 
-    <form [formGroup]="yFieldForm" class="ml-5 min-w-[2px] flex-grow">
-      <ng-select
-        #yFieldSelect
-        [fixNgSelectBottom]="yFieldSelect"
-        data-cy="yFieldSelect"
-        class="select-none text-base"
-        [items]="numbersMeasuresAndCalculations"
-        [clearable]="false"
-        [searchable]="false"
-        (change)="yFieldChange()"
-        (keyup.esc)="$event.stopImmediatePropagation(); yFieldSelect.blur()"
-        (keyup.enter)="$event.stopImmediatePropagation(); yFieldSelect.blur()"
-        appendTo="body"
-        bindLabel="label"
-        bindValue="id"
-        formControlName="yField"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 flex flex-row items-center">
-            <m-field-result
-              class="h-5 w-5"
-              [size]="2"
-              [fieldClass]="item.fieldClass"
-              [result]="item.result"
-            ></m-field-result>
-
-            <m-field-label
-              [column]="item"
-              class="ml-3 flex text-sm"
-            ></m-field-label>
-          </div>
-        </ng-template>
-        <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 flex flex-row items-center">
-            <m-field-result
-              class="h-5 w-5"
-              [size]="2"
-              [fieldClass]="item.fieldClass"
-              [result]="item.result"
-            ></m-field-result>
-
-            <m-field-label
-              [column]="item"
-              class="ml-3 flex text-sm"
-            ></m-field-label>
-          </div>
-        </ng-template>
-      </ng-select>
-    </form>
-  </div>
-
-  <div
-    *ngIf="isReport === false && uiChartTypes.yFields.indexOf(chart.type) > -1"
-    class="mb-5 ml-2 flex flex-row items-start"
-  >
     <div
-      class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
-      >Y Fields</div
+      *ngIf="
+        isReport === false && uiChartTypes.multiField.indexOf(chart.type) > -1
+      "
+      class="mb-5 ml-2 flex flex-row items-start"
     >
+      <div class="flex flex-col">
+        <div
+          class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
+          >Multi Field</div
+        >
+      </div>
 
-    <div class="ml-5 mt-2 flex flex-col items-start space-y-4">
-      <div
-        *ngFor="let column of numbersYFields"
-        class="flex flex-row items-center"
+      <form
+        [formGroup]="multiFieldForm"
+        class="ml-5 min-w-[2px] flex-grow"
+        *ngIf="
+          (chart.type !== chartTypeEnum.Scatter && dimensions.length > 1) ||
+          (chart.type === chartTypeEnum.Scatter && dimensions.length > 0)
+        "
       >
-        <div class="ml-3 flex flex-row items-center">
-          <button
-            data-cy="chartEditorYFieldsCheckbox"
-            class="border-m600 text-m0 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 focus:outline-none"
-            [ngClass]="{
-              'bg-m600': yFieldsIsChecked(column.id)
-            }"
-            (click)="yFieldsOnClick(column.id)"
-          >
-            <m-check-icon *ngIf="yFieldsIsChecked(column.id)"></m-check-icon>
-          </button>
+        <ng-select
+          #multiFieldSelect
+          [fixNgSelectBottom]="multiFieldSelect"
+          data-cy="multiFieldSelect"
+          class="select-none text-base"
+          [items]="
+            uiChartTypes.nullableMultiField.indexOf(chart.type) > -1
+              ? dimensionsPlusEmpty
+              : dimensions
+          "
+          [clearable]="false"
+          [searchable]="false"
+          (change)="multiFieldChange()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation(); multiFieldSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation(); multiFieldSelect.blur()
+          "
+          appendTo="body"
+          bindLabel="label"
+          bindValue="id"
+          formControlName="multiField"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="ml-1 flex flex-row items-center">
+              <m-field-result
+                class="h-5 w-5"
+                [size]="2"
+                [fieldClass]="item.fieldClass"
+                [result]="item.result"
+                [isEmpty]="!item.id"
+              ></m-field-result>
 
-          <!-- <m-field-result
+              <m-field-label
+                *ngIf="!!item.id"
+                [column]="item"
+                class="ml-3 flex text-sm"
+              ></m-field-label>
+            </div>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item">
+            <div class="ml-1 flex flex-row items-center">
+              <m-field-result
+                class="h-5 w-5"
+                [size]="2"
+                [fieldClass]="item.fieldClass"
+                [result]="item.result"
+                [isEmpty]="!item.id"
+              ></m-field-result>
+
+              <m-field-label
+                [column]="item"
+                class="ml-3 flex text-sm"
+              ></m-field-label>
+            </div>
+          </ng-template>
+        </ng-select>
+      </form>
+
+      <div
+        *ngIf="
+          (chart.type !== chartTypeEnum.Scatter && dimensions.length < 2) ||
+          (chart.type === chartTypeEnum.Scatter && dimensions.length < 1)
+        "
+        class="text-s1 ml-8 flex h-9 select-none items-center text-base"
+        ><m-minus-sm-icon></m-minus-sm-icon
+      ></div>
+    </div>
+
+    <div
+      *ngIf="isReport === false && uiChartTypes.yField.indexOf(chart.type) > -1"
+      class="mb-5 ml-2 flex flex-row items-start"
+    >
+      <div class="flex flex-col">
+        <div
+          class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
+          >Y Field</div
+        >
+      </div>
+
+      <form [formGroup]="yFieldForm" class="ml-5 min-w-[2px] flex-grow">
+        <ng-select
+          #yFieldSelect
+          [fixNgSelectBottom]="yFieldSelect"
+          data-cy="yFieldSelect"
+          class="select-none text-base"
+          [items]="numbersMeasuresAndCalculations"
+          [clearable]="false"
+          [searchable]="false"
+          (change)="yFieldChange()"
+          (keyup.esc)="$event.stopImmediatePropagation(); yFieldSelect.blur()"
+          (keyup.enter)="$event.stopImmediatePropagation(); yFieldSelect.blur()"
+          appendTo="body"
+          bindLabel="label"
+          bindValue="id"
+          formControlName="yField"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="ml-1 flex flex-row items-center">
+              <m-field-result
+                class="h-5 w-5"
+                [size]="2"
+                [fieldClass]="item.fieldClass"
+                [result]="item.result"
+              ></m-field-result>
+
+              <m-field-label
+                [column]="item"
+                class="ml-3 flex text-sm"
+              ></m-field-label>
+            </div>
+          </ng-template>
+          <ng-template ng-option-tmp let-item="item">
+            <div class="ml-1 flex flex-row items-center">
+              <m-field-result
+                class="h-5 w-5"
+                [size]="2"
+                [fieldClass]="item.fieldClass"
+                [result]="item.result"
+              ></m-field-result>
+
+              <m-field-label
+                [column]="item"
+                class="ml-3 flex text-sm"
+              ></m-field-label>
+            </div>
+          </ng-template>
+        </ng-select>
+      </form>
+    </div>
+
+    <div
+      *ngIf="
+        isReport === false && uiChartTypes.yFields.indexOf(chart.type) > -1
+      "
+      class="mb-5 ml-2 flex flex-row items-start"
+    >
+      <div
+        class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
+        >Y Fields</div
+      >
+
+      <div class="ml-5 mt-2 flex flex-col items-start space-y-4">
+        <div
+          *ngFor="let column of numbersYFields"
+          class="flex flex-row items-center"
+        >
+          <div class="ml-3 flex flex-row items-center">
+            <button
+              data-cy="chartEditorYFieldsCheckbox"
+              class="border-m600 text-m0 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 focus:outline-none"
+              [ngClass]="{
+                'bg-m600': yFieldsIsChecked(column.id)
+              }"
+              (click)="yFieldsOnClick(column.id)"
+            >
+              <m-check-icon *ngIf="yFieldsIsChecked(column.id)"></m-check-icon>
+            </button>
+
+            <!-- <m-field-result
             class="ml-3 mt-1 h-5 w-5"
             [size]="2"
             [fieldClass]="column.fieldClass"
             [result]="column.result"
           ></m-field-result> -->
 
-          <m-field-label
-            [column]="column"
-            class="ml-3 flex text-sm"
-          ></m-field-label>
+            <m-field-label
+              [column]="column"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div
-    *ngIf="
-      isReport === false &&
-      [chartTypeEnumTable, chartTypeEnumSingle].indexOf(chart?.type) < 0
-    "
-    class="text-s500 mt-7 flex h-12 w-fit cursor-pointer select-none flex-row items-start justify-start pr-5 font-semibold"
-    (click)="toggleChartOptions()"
-  >
-    <m-chevron-right-icon
-      *ngIf="chartOptionsIsExpanded === false"
-    ></m-chevron-right-icon>
-    <m-chevron-down-icon
-      *ngIf="chartOptionsIsExpanded === true"
-    ></m-chevron-down-icon>
-
-    <div class="ml-2"> CHART OPTIONS </div>
-  </div>
-
-  <div
-    *ngIf="isReport === true"
-    class="text-s500 mt-5 flex h-12 select-none flex-row items-start justify-start pl-2 pr-5 font-semibold"
-  >
-    <div> CHART OPTIONS </div>
-  </div>
-
-  <div
-    *ngIf="
-      chartOptionsIsExpanded === true &&
-      uiChartTypes.pivot.indexOf(chart.type) > -1
-    "
-    class="flex flex-col pl-5"
-  >
     <div
-      *ngIf="isDebugPivot === true"
-      class="mb-5 ml-[32px] flex flex-row items-center"
+      *ngIf="
+        isReport === false &&
+        [chartTypeEnumTable, chartTypeEnumSingle].indexOf(chart?.type) < 0
+      "
+      class="text-s500 mt-7 flex h-12 w-fit cursor-pointer select-none flex-row items-start justify-start pr-5 font-semibold"
+      (click)="toggleChartOptions()"
+    >
+      <m-chevron-right-icon
+        *ngIf="chartOptionsIsExpanded === false"
+      ></m-chevron-right-icon>
+      <m-chevron-down-icon
+        *ngIf="chartOptionsIsExpanded === true"
+      ></m-chevron-down-icon>
+
+      <div class="ml-2"> CHART OPTIONS </div>
+    </div>
+
+    <div
+      *ngIf="isReport === true"
+      class="text-s500 mt-5 flex h-12 select-none flex-row items-start justify-start pl-2 pr-5 font-semibold"
+    >
+      <div> CHART OPTIONS </div>
+    </div>
+
+    <div
+      *ngIf="
+        chartOptionsIsExpanded === true &&
+        uiChartTypes.pivot.indexOf(chart.type) > -1
+      "
+      class="flex flex-col pl-5"
     >
       <div
-        class="text-s1 flex h-9 w-[160px] flex-shrink-0 select-none items-center text-base"
-        >Theme</div
-      >
-
-      <select
-        class="form-select border-s300 ml-5 h-9 rounded text-sm"
-        [value]="chart.pivotTheme || 'standard'"
-        (change)="pivotThemeChange($event)"
-      >
-        <option *ngFor="let theme of pivotThemeList" [value]="theme.value">
-          {{ theme.label }}
-        </option>
-      </select>
-    </div>
-
-    <div class="mb-5 ml-[32px] flex flex-row items-center">
-      <div
-        class="text-s1 flex h-9 w-[160px] flex-shrink-0 select-none items-center text-base"
-        >First column width</div
-      >
-
-      <input
-        class="border-s300 ml-5 h-9 w-24 rounded border px-2 text-sm"
-        type="text"
-        inputmode="numeric"
-        pattern="[0-9]*"
-        [value]="chart.firstColumnWidth || defaultPivotFirstColumnWidth"
-        (change)="
-          pivotWidthChange({
-            event: $event,
-            field: 'firstColumnWidth'
-          })
-        "
-      />
-    </div>
-
-    <div class="mb-5 ml-[32px] flex flex-row items-center">
-      <div
-        class="text-s1 flex h-9 w-[160px] flex-shrink-0 select-none items-center text-base"
-        >Value columns width</div
-      >
-
-      <input
-        class="border-s300 ml-5 h-9 w-24 rounded border px-2 text-sm"
-        type="text"
-        inputmode="numeric"
-        pattern="[0-9]*"
-        [value]="chart.valueColumnsWidth || defaultPivotColumnsWidth"
-        (change)="
-          pivotWidthChange({
-            event: $event,
-            field: 'valueColumnsWidth'
-          })
-        "
-      />
-    </div>
-  </div>
-
-  <div
-    *ngIf="
-      (chartOptionsIsExpanded === true || isReport === true) &&
-      uiChartTypes.seriesGroup.indexOf(chart.type) > -1
-    "
-    class="flex flex-col"
-    [ngClass]="{
-      'pl-5': isReport === false
-    }"
-  >
-    <div
-      *ngFor="let seriesElement of chartSeriesWithField; let i = index"
-      class="flex flex-col"
-    >
-      <m-chart-editor-series-element
-        [seriesElement]="seriesElement"
-        [yAxisIndexList]="yAxisIndexList"
-        [isReport]="isReport"
-        [isExpanded]="
-          isReport === true
-            ? seriesToggleExpandList.indexOf(seriesElement.dataRowId) > -1
-            : seriesToggleExpandList.indexOf(seriesElement.dataField) < 0
-        "
-        (chartToggleSeries)="chartToggleSeries($event)"
-        (chartSeriesElementUpdate)="chartSeriesElementUpdate($event)"
-      ></m-chart-editor-series-element>
-    </div>
-  </div>
-
-  <div
-    *ngIf="
-      (chartOptionsIsExpanded === true || isReport === true) &&
-      uiChartTypes.xAxisGroup.indexOf(chart.type) > -1
-    "
-    class="flex flex-col"
-    [ngClass]="{
-      'pl-5': isReport === false
-    }"
-  >
-    <div
-      (click)="toggleXAxis()"
-      class="text-s1 mb-5 flex w-[100px] cursor-pointer select-none flex-row items-start text-lg font-semibold"
-    >
-      <div class="flex flex-row items-center">
-        <m-chevron-right-icon *ngIf="!xAxisIsExpanded"></m-chevron-right-icon>
-        <m-chevron-down-icon *ngIf="xAxisIsExpanded"></m-chevron-down-icon>
-
-        <div class="ml-2"> X Axis </div>
-      </div>
-    </div>
-
-    <div *ngIf="xAxisIsExpanded" class="flex flex-col">
-      <div
-        *ngIf="
-          uiChartTypes.xAxis.scale.indexOf(chart.type) > -1 &&
-          isReport === false &&
-          xFieldResult === fieldResultEnum.Number
-        "
-        class="mb-5 ml-[32px] flex max-w-min cursor-pointer flex-row items-center"
-        (click)="toggleXAxisScale()"
+        *ngIf="isDebugPivot === true"
+        class="mb-5 ml-[32px] flex flex-row items-center"
       >
         <div
-          class="text-s1 flex h-9 w-[50px] flex-shrink-0 select-none items-center text-base"
-          >Scale</div
+          class="text-s1 flex h-9 w-[160px] flex-shrink-0 select-none items-center text-base"
+          >Theme</div
         >
 
-        <ui-switch class="ml-5" [checked]="chart.xAxis.scale"></ui-switch>
+        <select
+          class="form-select border-s300 ml-5 h-9 rounded text-sm"
+          [value]="chart.pivotTheme || 'standard'"
+          (change)="pivotThemeChange($event)"
+        >
+          <option *ngFor="let theme of pivotThemeList" [value]="theme.value">
+            {{ theme.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="mb-5 ml-[32px] flex flex-row items-center">
+        <div
+          class="text-s1 flex h-9 w-[160px] flex-shrink-0 select-none items-center text-base"
+          >First column width</div
+        >
+
+        <input
+          class="border-s300 ml-5 h-9 w-24 rounded border px-2 text-sm"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          [value]="chart.firstColumnWidth || defaultPivotFirstColumnWidth"
+          (change)="
+            pivotWidthChange({
+              event: $event,
+              field: 'firstColumnWidth'
+            })
+          "
+        />
+      </div>
+
+      <div class="mb-5 ml-[32px] flex flex-row items-center">
+        <div
+          class="text-s1 flex h-9 w-[160px] flex-shrink-0 select-none items-center text-base"
+          >Value columns width</div
+        >
+
+        <input
+          class="border-s300 ml-5 h-9 w-24 rounded border px-2 text-sm"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          [value]="chart.valueColumnsWidth || defaultPivotColumnsWidth"
+          (change)="
+            pivotWidthChange({
+              event: $event,
+              field: 'valueColumnsWidth'
+            })
+          "
+        />
       </div>
     </div>
-  </div>
 
-  <div
-    *ngIf="
-      (chartOptionsIsExpanded === true || isReport === true) &&
-      uiChartTypes.yAxisGroup.indexOf(chart.type) > -1
-    "
-    class="flex flex-col"
-    [ngClass]="{
-      'pl-5': isReport === false
-    }"
-  >
-    <!-- <div class="flex flex-row">
+    <div
+      *ngIf="
+        (chartOptionsIsExpanded === true || isReport === true) &&
+        uiChartTypes.seriesGroup.indexOf(chart.type) > -1
+      "
+      class="flex flex-col"
+      [ngClass]="{
+        'pl-5': isReport === false
+      }"
+    >
+      <div
+        *ngFor="let seriesElement of chartSeriesWithField; let i = index"
+        class="flex flex-col"
+      >
+        <m-chart-editor-series-element
+          [seriesElement]="seriesElement"
+          [yAxisIndexList]="yAxisIndexList"
+          [isReport]="isReport"
+          [isExpanded]="
+            isReport === true
+              ? seriesToggleExpandList.indexOf(seriesElement.dataRowId) > -1
+              : seriesToggleExpandList.indexOf(seriesElement.dataField) < 0
+          "
+          (chartToggleSeries)="chartToggleSeries($event)"
+          (chartSeriesElementUpdate)="chartSeriesElementUpdate($event)"
+        ></m-chart-editor-series-element>
+      </div>
+    </div>
+
+    <div
+      *ngIf="
+        (chartOptionsIsExpanded === true || isReport === true) &&
+        uiChartTypes.xAxisGroup.indexOf(chart.type) > -1
+      "
+      class="flex flex-col"
+      [ngClass]="{
+        'pl-5': isReport === false
+      }"
+    >
+      <div
+        (click)="toggleXAxis()"
+        class="text-s1 mb-5 flex w-[100px] cursor-pointer select-none flex-row items-start text-lg font-semibold"
+      >
+        <div class="flex flex-row items-center">
+          <m-chevron-right-icon *ngIf="!xAxisIsExpanded"></m-chevron-right-icon>
+          <m-chevron-down-icon *ngIf="xAxisIsExpanded"></m-chevron-down-icon>
+
+          <div class="ml-2"> X Axis </div>
+        </div>
+      </div>
+
+      <div *ngIf="xAxisIsExpanded" class="flex flex-col">
+        <div
+          *ngIf="
+            uiChartTypes.xAxis.scale.indexOf(chart.type) > -1 &&
+            isReport === false &&
+            xFieldResult === fieldResultEnum.Number
+          "
+          class="mb-5 ml-[32px] flex max-w-min cursor-pointer flex-row items-center"
+          (click)="toggleXAxisScale()"
+        >
+          <div
+            class="text-s1 flex h-9 w-[50px] flex-shrink-0 select-none items-center text-base"
+            >Scale</div
+          >
+
+          <ui-switch class="ml-5" [checked]="chart.xAxis.scale"></ui-switch>
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="
+        (chartOptionsIsExpanded === true || isReport === true) &&
+        uiChartTypes.yAxisGroup.indexOf(chart.type) > -1
+      "
+      class="flex flex-col"
+      [ngClass]="{
+        'pl-5': isReport === false
+      }"
+    >
+      <!-- <div class="flex flex-row">
       <div
         (click)="toggleYAxis()"
         class="text-s1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
@@ -882,30 +895,30 @@
       ></button>
     </div> -->
 
-    <div *ngIf="yAxisIsExpanded" class="flex flex-col">
-      <div
-        *ngFor="let yAxisElement of chart.yAxis; let i = index"
-        class="flex flex-col"
-      >
-        <m-chart-editor-y-axis-element
-          class="flex"
-          [yAxisIndex]="i"
-          [yAxisElement]="yAxisElement"
-          [isExpanded]="
-            isReport === true
-              ? yAxisToggleExpandList.indexOf(i) > -1
-              : yAxisToggleExpandList.indexOf(i) < 0
-          "
-          [chartType]="chart.type"
-          (chartDeleteYAxisElement)="chartDeleteYAxisElement($event)"
-          (chartToggleYAxisElement)="chartToggleYAxisElement($event)"
-          (chartYAxisElementUpdate)="chartYAxisElementUpdate($event)"
-        ></m-chart-editor-y-axis-element>
+      <div *ngIf="yAxisIsExpanded" class="flex flex-col">
+        <div
+          *ngFor="let yAxisElement of chart.yAxis; let i = index"
+          class="flex flex-col"
+        >
+          <m-chart-editor-y-axis-element
+            class="flex"
+            [yAxisIndex]="i"
+            [yAxisElement]="yAxisElement"
+            [isExpanded]="
+              isReport === true
+                ? yAxisToggleExpandList.indexOf(i) > -1
+                : yAxisToggleExpandList.indexOf(i) < 0
+            "
+            [chartType]="chart.type"
+            (chartDeleteYAxisElement)="chartDeleteYAxisElement($event)"
+            (chartToggleYAxisElement)="chartToggleYAxisElement($event)"
+            (chartYAxisElementUpdate)="chartYAxisElementUpdate($event)"
+          ></m-chart-editor-y-axis-element>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- <div
+    <!-- <div
     *ngIf="colorSchemeChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
@@ -947,7 +960,7 @@
     </form>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="schemeTypeChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
@@ -987,7 +1000,7 @@
     </form>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="interpolationChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
@@ -1029,7 +1042,7 @@
     </form>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="cardColorChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1046,7 +1059,7 @@
     ></m-color-menu>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="emptyColorChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1063,7 +1076,7 @@
     ></m-color-menu>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="bandColorChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1080,7 +1093,7 @@
     ></m-color-menu>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="textColorChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1097,7 +1110,7 @@
     ></m-color-menu>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="unitsChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1125,7 +1138,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="legendTitleChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1170,7 +1183,7 @@
     ></div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="xAxisLabelChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1210,7 +1223,7 @@
     ></div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="yAxisLabelChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1250,7 +1263,7 @@
     ></div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="labelsChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1266,7 +1279,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="showDataLabelChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1282,7 +1295,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="legendChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1305,7 +1318,7 @@
     ></div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="doughnutChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1321,7 +1334,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="explodeSlicesChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1344,7 +1357,7 @@
     ></div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="xAxisChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1360,7 +1373,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="yAxisChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1376,7 +1389,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="showXAxisLabelChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1399,7 +1412,7 @@
     ></div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="showYAxisLabelChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1422,7 +1435,7 @@
     ></div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="showAxisChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1438,7 +1451,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="roundDomainsChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1454,7 +1467,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="showGridLinesChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1470,7 +1483,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
   *ngIf="timelineChartTypes.indexOf(chart.type) > -1"
   class="flex flex-row items-center mb-5"
 >
@@ -1486,7 +1499,7 @@
     ></ui-switch>
 </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="roundEdgesChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1502,7 +1515,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="tooltipDisabledChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1518,7 +1531,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="gradientChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1534,7 +1547,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="animationsChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1550,7 +1563,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="autoScaleChartTypes.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-center"
   >
@@ -1566,7 +1579,7 @@
       ></ui-switch>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="angleSpanChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1596,7 +1609,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="startAngleChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1626,7 +1639,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="arcWidthChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1666,7 +1679,7 @@
     ></div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="minChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1693,7 +1706,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="maxChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1720,7 +1733,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="xScaleMaxChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1750,7 +1763,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="yScaleMinChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1790,7 +1803,7 @@
     ></div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="yScaleMaxChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1830,7 +1843,7 @@
     ></div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="barPaddingChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1860,7 +1873,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="bigSegmentsChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1890,7 +1903,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="smallSegmentsChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1920,7 +1933,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="groupPaddingChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1950,7 +1963,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="innerPaddingChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -1980,7 +1993,7 @@
     </div>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="formatNumberDataLabelChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -2051,7 +2064,7 @@
     </form>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="formatNumberValueChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -2121,7 +2134,7 @@
     </form>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="formatNumberAxisTickChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -2193,7 +2206,7 @@
     </form>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="formatNumberXAxisTickChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -2264,7 +2277,7 @@
     </form>
   </div> -->
 
-  <!-- <div
+    <!-- <div
     *ngIf="formatNumberYAxisTickChartTypes.indexOf(chart.type) > -1"
     class="flex flex-row items-start"
   >
@@ -2334,4 +2347,5 @@
       ></m-validation>
     </form>
   </div> -->
+  </ng-container>
 </div>

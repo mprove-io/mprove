@@ -76,7 +76,6 @@ test('1', async t => {
   t.deepEqual(charts[0].accessRolesCombined, [
     { role: 'chartRole', isDirect: true },
     { role: 'spaceRole', isDirect: false },
-    { role: 'rootSpaceRole', isDirect: false },
-    { role: 'modelRole', isDirect: false }
+    { role: 'rootSpaceRole', isDirect: false }
   ]);
 });

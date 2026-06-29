@@ -44,6 +44,7 @@ import type {
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { MemberQuery } from '#front/app/queries/member.query';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
@@ -104,6 +105,7 @@ export class EditReportInfoDialogComponent implements OnInit {
   selectedSpace: string;
   combinedAccessRoles: string[] = [];
   combinedAccessRolesText = '';
+  canChangeSpace = false;
   spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
 
   struct: StructState;
@@ -112,6 +114,7 @@ export class EditReportInfoDialogComponent implements OnInit {
     public ref: DialogRef<EditReportInfoDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
+    private memberQuery: MemberQuery,
     private reportsQuery: ReportsQuery,
     private reportQuery: ReportQuery,
     private spinner: NgxSpinnerService,
@@ -171,6 +174,9 @@ export class EditReportInfoDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    let member = this.memberQuery.getValue();
+
+    this.canChangeSpace = member.isAdmin === true || member.isEditor === true;
     this.struct = this.structQuery.getValue();
     this.spacesPlusEmpty = this.makeSpacesPlusEmpty({
       spaces: this.struct.spaces

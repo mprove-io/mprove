@@ -48,6 +48,7 @@
         [multiple]="false"
         [searchable]="true"
         [clearable]="false"
+        [disabled]="canChangeSpace === false"
         [(ngModel)]="selectedSpace"
         (change)="spaceChange()"
         (keyup.esc)="

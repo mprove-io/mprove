@@ -161,8 +161,7 @@ export class UnitsService {
     space: string | undefined;
     spaceFullTitle: string;
   }): ChartUnit {
-    let { chart, model, member, favoriteChartIds, space, spaceFullTitle } =
-      item;
+    let { chart, member, favoriteChartIds, space, spaceFullTitle } = item;
 
     let author = this.getUnitAuthor({ filePath: chart.filePath });
 
@@ -178,8 +177,8 @@ export class UnitsService {
       title: chart.title || chart.chartId,
       filePath: chart.filePath,
       space: space,
-      accessRoles: model.accessRoles,
-      accessRolesCombined: model.accessRolesCombined,
+      accessRoles: chart.accessRoles,
+      accessRolesCombined: chart.accessRolesCombined,
       author: author,
       canEditOrDeleteChart:
         member.isEditor === true ||
@@ -196,10 +195,9 @@ export class UnitsService {
     member: Member;
     favoriteChartIds: string[];
   }): SpaceUnit {
-    let { chart, model, member, favoriteChartIds } = item;
+    let { chart, member, favoriteChartIds } = item;
 
     let author = this.getUnitAuthor({ filePath: chart.filePath });
-    let space = author === member.alias ? undefined : model.space;
 
     return {
       type: 'spaceUnit',
@@ -207,9 +205,9 @@ export class UnitsService {
       unitId: chart.chartId,
       title: chart.title || chart.chartId,
       filePath: chart.filePath,
-      space: space,
-      accessRoles: model.accessRoles,
-      accessRolesCombined: model.accessRolesCombined,
+      space: chart.space,
+      accessRoles: chart.accessRoles,
+      accessRolesCombined: chart.accessRolesCombined,
       author: author,
       canEditOrDeleteUnit:
         member.isEditor === true ||

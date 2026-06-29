@@ -7,7 +7,6 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { makeAccessRolesCombined } from '#common/functions/space/make-access-roles-combined';
 import type { FileChart } from '#common/zod/blockml/internal/file-chart';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
-import type { Model } from '#common/zod/blockml/model';
 import { getSpaceFromFilePath } from '../extra/get-space-from-file-path';
 import { log } from '../extra/log';
 
@@ -17,7 +16,6 @@ export function makeChartAccessRolesCombined(
   item: {
     charts: FileChart[];
     spaces: FilePartSpace[];
-    apiModels: Model[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;
@@ -29,7 +27,6 @@ export function makeChartAccessRolesCombined(
 
   item.charts.forEach(chart => {
     let chartSpace: FilePartSpace | undefined;
-    let model = item.apiModels.find(x => x.modelId === chart.tiles[0].model);
 
     chart.space = getSpaceFromFilePath({
       filePath: chart.filePath,
@@ -40,10 +37,7 @@ export function makeChartAccessRolesCombined(
 
     chart.accessRolesCombined = makeAccessRolesCombined({
       accessRoles: chart.access_roles ?? [],
-      accessRolesInherited: [
-        ...(chartSpace?.accessRolesCombined ?? []),
-        ...(model?.accessRolesCombined ?? [])
-      ]
+      accessRolesInherited: chartSpace?.accessRolesCombined ?? []
     });
   });
 

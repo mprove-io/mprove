@@ -13,7 +13,6 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
-import { checkModelAccess } from '#backend/functions/check-model-access';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ChartsService } from '#backend/services/db/charts.service';
 import { MconfigsService } from '#backend/services/db/mconfigs.service';
@@ -96,9 +95,14 @@ export class QueryInfoChartService {
       mconfigId: chart.tiles[0].mconfigId
     });
 
-    let model = await this.modelsService.getModelCheckExistsAndAccess({
+    let model = await this.modelsService.getModelCheckExists({
       structId: structId,
-      modelId: chartMconfig.modelId,
+      modelId: chartMconfig.modelId
+    });
+
+    let chartOrModelAccess = this.chartsService.checkChartOrModelAccess({
+      chart: chart,
+      model: model,
       userMember: userMember
     });
 
@@ -215,10 +219,7 @@ export class QueryInfoChartService {
         models: [
           this.modelsService.tabToApi({
             model: model,
-            hasAccess: checkModelAccess({
-              member: userMember,
-              modelAccessRoles: model.accessRolesCombined
-            })
+            hasAccess: chartOrModelAccess.hasModelAccess
           })
         ],
         isAddMconfigAndQuery: true

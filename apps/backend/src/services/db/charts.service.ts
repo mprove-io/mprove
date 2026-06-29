@@ -9,6 +9,7 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
+import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { makeTilesX } from '#backend/functions/make-tiles-x';
 import {
@@ -80,12 +81,17 @@ export class ChartsService {
       .then(xs => xs.map(x => this.tabService.chartEntToTab(x)));
 
     let chartsGrantedAccess = charts.filter(chart => {
-      let model = models.find(x => x.modelId === chart.modelId);
+      if (chart.draft === true) {
+        return true;
+      }
 
-      return checkModelAccess({
+      let hasChartAccess = checkAccess({
         member: apiUserMember,
-        modelAccessRoles: model.accessRolesCombined
+        accessRoles: chart.accessRolesCombined,
+        filePath: chart.filePath
       });
+
+      return hasChartAccess === true;
     });
 
     let draftCharts = chartsGrantedAccess.filter(chart => chart.draft === true);
@@ -135,8 +141,8 @@ export class ChartsService {
     sortedDraftCharts.forEach(chart => {
       let model = models.find(x => x.modelId === chart.modelId);
 
-      let spaceFullTitle = model.space
-        ? spaces.find(space => space.space === model.space)?.fullTitle
+      let spaceFullTitle = chart.space
+        ? spaces.find(space => space.space === chart.space)?.fullTitle
         : '';
 
       chartUnitDrafts.push(
@@ -145,7 +151,7 @@ export class ChartsService {
           model: model,
           member: apiUserMember,
           favoriteChartIds: [],
-          space: model.space,
+          space: chart.space,
           spaceFullTitle: spaceFullTitle
         })
       );
@@ -347,6 +353,36 @@ export class ChartsService {
     }
 
     return chart;
+  }
+
+  checkChartOrModelAccess(item: {
+    chart: ChartTab;
+    model: ModelTab;
+    userMember: MemberTab | Member;
+  }): { hasChartAccess: boolean; hasModelAccess: boolean } {
+    let { chart, model, userMember } = item;
+
+    let hasChartAccess = checkAccess({
+      member: userMember,
+      accessRoles: chart.accessRolesCombined,
+      filePath: chart.filePath
+    });
+
+    let hasModelAccess = checkModelAccess({
+      member: userMember,
+      modelAccessRoles: model.accessRolesCombined
+    });
+
+    if (hasChartAccess === false && hasModelAccess === false) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_MODEL
+      });
+    }
+
+    return {
+      hasChartAccess: hasChartAccess,
+      hasModelAccess: hasModelAccess
+    };
   }
 
   checkChartPath(item: { filePath: string; userAlias: string }) {

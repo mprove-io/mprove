@@ -23,12 +23,13 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { ModelTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { ModelEnt, modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id';
 import { makeChartFileText } from '#backend/functions/make-chart-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
@@ -46,17 +47,14 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import {
-  EMPTY_STRUCT_ID,
-  MPROVE_CONFIG_DIR_DOT_SLASH,
-  MPROVE_USERS_FOLDER
-} from '#common/constants/top';
+import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
+import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendSaveCreateChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-save-create-chart';
@@ -113,7 +111,8 @@ export class SaveCreateChartController {
       fromChartId,
       newChartId,
       tileTitle,
-      isSaveToModelCharts,
+      space,
+      accessRoles,
       mconfig,
       envId
     } = body.payload;
@@ -143,6 +142,16 @@ export class SaveCreateChartController {
     if (userMember.isExplorer === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      });
+    }
+
+    if (
+      isDefined(space) &&
+      userMember.isAdmin === false &&
+      userMember.isEditor === false
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
       });
     }
 
@@ -176,28 +185,13 @@ export class SaveCreateChartController {
       userMember: userMember
     });
 
-    let parentNodeId: string;
-
-    if (isSaveToModelCharts === true) {
-      parentNodeId = this.makeModelChartsParentNodeId({
-        model: model
-      });
-    } else {
-      let mdir = currentStruct.mproveConfig.mproveDirValue;
-
-      if (
-        mdir.length > 2 &&
-        mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
-      ) {
-        mdir = mdir.substring(2);
-      }
-
-      parentNodeId =
-        currentStruct.mproveConfig.mproveDirValue ===
-        MPROVE_CONFIG_DIR_DOT_SLASH
-          ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
-          : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
-    }
+    let parentNodeId = getTargetParentNodeId({
+      projectId: projectId,
+      mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
+      userAlias: user.alias,
+      space: space,
+      spaces: currentStruct.spaces
+    });
 
     let fileName = `${newChartId}${FileExtensionEnum.Chart}`;
 
@@ -205,8 +199,7 @@ export class SaveCreateChartController {
       mconfig: mconfig,
       tileTitle: tileTitle,
       chartId: newChartId,
-      modelId: model.modelId,
-      modelFilePath: model.filePath
+      accessRoles: accessRoles
     });
 
     let baseProject = this.tabService.projectTabToBaseProject({
@@ -259,6 +252,20 @@ export class SaveCreateChartController {
         file => file.fileNodeId === `${parentNodeId}/${fileName}`
       )
     ];
+
+    let selectedSpaceFilePath = currentStruct.spaces.find(
+      x => x.space === space
+    )?.filePath;
+
+    if (isDefined(selectedSpaceFilePath)) {
+      let spaceDiskFile = diskResponse.payload.files.find(
+        file => file.fileNodeId === selectedSpaceFilePath
+      );
+
+      if (isDefined(spaceDiskFile)) {
+        diskFiles.push(spaceDiskFile);
+      }
+    }
 
     let modelIds = [mconfig.modelId];
 
@@ -420,14 +427,5 @@ export class SaveCreateChartController {
     };
 
     return payload;
-  }
-
-  makeModelChartsParentNodeId(item: { model: ModelTab }) {
-    let { model } = item;
-    let modelFilePathParts = model.filePath.split('/');
-    let modelFolderParts = modelFilePathParts.slice(0, -1);
-    let parentNodeId = modelFolderParts.join('/');
-
-    return `${parentNodeId}/charts`;
   }
 }

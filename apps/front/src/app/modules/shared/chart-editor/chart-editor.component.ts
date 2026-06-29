@@ -139,6 +139,9 @@ export class ChartEditorComponent implements OnChanges {
   isReport: boolean;
 
   @Input()
+  canAccessModel = true;
+
+  @Input()
   report: ReportX;
 
   dimensionsMeasuresCalculations: MconfigField[];

@@ -33,7 +33,9 @@ import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { checkModelAccess } from '#backend/functions/check-model-access';
+import { getReportSpaceFromFilePath } from '#backend/functions/get-report-space-from-file-path';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { getTargetParentNodeId } from '#backend/functions/get-target-parent-node-id';
 import { makeChartFileText } from '#backend/functions/make-chart-file-text';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BlockmlService } from '#backend/services/blockml.service';
@@ -54,14 +56,20 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
+import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendSaveModifyChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-save-modify-chart';
+import type {
+  ToDiskMoveCatalogNodeRequest,
+  ToDiskMoveCatalogNodeResponse
+} from '#common/zod/to-disk/04-catalogs/to-disk-move-catalog-node';
 import type {
   ToDiskSaveFileRequest,
   ToDiskSaveFileResponse
@@ -116,6 +124,8 @@ export class SaveModifyChartController {
       fromChartId,
       chartId,
       tileTitle,
+      space,
+      accessRoles,
       timezone
     } = body.payload;
 
@@ -203,13 +213,74 @@ export class SaveModifyChartController {
       }),
       tileTitle: tileTitle,
       chartId: chartId,
-      modelId: model.modelId,
-      modelFilePath: model.filePath
+      accessRoles: accessRoles
     });
 
     let baseProject = this.tabService.projectTabToBaseProject({
       project: project
     });
+
+    let currentChartSpace = getReportSpaceFromFilePath({
+      filePath: existingChart.filePath,
+      spaces: currentStruct.spaces
+    });
+
+    if (
+      currentChartSpace !== space &&
+      userMember.isAdmin === false &&
+      userMember.isEditor === false
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+      });
+    }
+
+    let targetParentNodeId = getTargetParentNodeId({
+      projectId: projectId,
+      mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
+      userAlias: user.alias,
+      space: space,
+      spaces: currentStruct.spaces
+    });
+
+    let chartFileName = `${chartId}${FileExtensionEnum.Chart}`;
+
+    let targetChartFilePath = `${targetParentNodeId}/${chartFileName}`;
+
+    let isSpaceChanged = currentChartSpace !== space;
+
+    let isChartPathChanged = existingChart.filePath !== targetChartFilePath;
+
+    let shouldMoveChart = isSpaceChanged && isChartPathChanged;
+
+    let finalChartFilePath = shouldMoveChart
+      ? targetChartFilePath
+      : existingChart.filePath;
+
+    if (shouldMoveChart) {
+      let toDiskMoveCatalogNodeRequest: ToDiskMoveCatalogNodeRequest = {
+        info: {
+          name: ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
+          traceId: body.info.traceId
+        },
+        payload: {
+          orgId: project.orgId,
+          baseProject: baseProject,
+          repoId: repoId,
+          branch: branchId,
+          fromNodeId: existingChart.filePath,
+          toNodeId: targetChartFilePath
+        }
+      };
+
+      await this.rpcService.sendToDisk<ToDiskMoveCatalogNodeResponse>({
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: repoId,
+        message: toDiskMoveCatalogNodeRequest,
+        checkIsOk: true
+      });
+    }
 
     let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
       info: {
@@ -221,7 +292,7 @@ export class SaveModifyChartController {
         baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
-        fileNodeId: existingChart.filePath,
+        fileNodeId: finalChartFilePath,
         userAlias: user.alias,
         content: chartFileText
       }
@@ -252,11 +323,23 @@ export class SaveModifyChartController {
       }
     });
 
-    let diskFiles = [
-      diskResponse.payload.files.find(
-        file => file.fileNodeId === existingChart.filePath
-      )
-    ];
+    let diskFiles = diskResponse.payload.files.filter(
+      file => file.fileNodeId === finalChartFilePath
+    );
+
+    let selectedSpaceFilePath = currentStruct.spaces.find(
+      x => x.space === space
+    )?.filePath;
+
+    if (isDefined(selectedSpaceFilePath)) {
+      let spaceDiskFile = diskResponse.payload.files.find(
+        file => file.fileNodeId === selectedSpaceFilePath
+      );
+
+      if (isDefined(spaceDiskFile)) {
+        diskFiles.push(spaceDiskFile);
+      }
+    }
 
     let modelIds = [mconfig.modelId];
 
@@ -326,7 +409,7 @@ export class SaveModifyChartController {
         getRetryOption(this.cs, this.logger)
       );
 
-      let fileIdAr = existingChart.filePath.split('/');
+      let fileIdAr = finalChartFilePath.split('/');
       fileIdAr.shift();
       let filePath = fileIdAr.join('/');
 

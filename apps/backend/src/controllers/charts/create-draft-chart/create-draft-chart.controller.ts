@@ -260,7 +260,7 @@ export class CreateDraftChartController {
       filePath: undefined,
       space: undefined,
       accessRoles: [],
-      accessRolesCombined: model.accessRolesCombined,
+      accessRolesCombined: [],
       tiles: [tile],
       keyTag: undefined,
       serverTs: undefined
