@@ -43,16 +43,22 @@
       >
     </div>
 
-    <button
-      data-cy="dashboardOptionsDelete"
-      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
-      [ngClass]="{
-        'text-s400 cursor-default':
-          currentDashboardUnit.canEditOrDeleteDashboard === false
-      }"
-      (click)="t1.hide(); deleteDashboard($event)"
-      [disabled]="currentDashboardUnit.canEditOrDeleteDashboard === false"
-      >Delete</button
+    <div
+      tp="Admin or Editor role required"
+      placement="left"
+      [tpIsEnabled]="currentDashboardUnit.canEditOrDeleteDashboard === false"
     >
+      <button
+        data-cy="dashboardOptionsDelete"
+        class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+        [ngClass]="{
+          'text-s400 cursor-default':
+            currentDashboardUnit.canEditOrDeleteDashboard === false
+        }"
+        (click)="t1.hide(); deleteDashboard($event)"
+        [disabled]="currentDashboardUnit.canEditOrDeleteDashboard === false"
+        >Delete</button
+      >
+    </div>
   </div>
 </ng-template>

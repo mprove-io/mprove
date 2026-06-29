@@ -43,16 +43,22 @@
       >
     </div>
 
-    <button
-      data-cy="reportOptionsDelete"
-      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
-      [ngClass]="{
-        'text-s400 cursor-default':
-          currentReportUnit.canEditOrDeleteReport === false
-      }"
-      (click)="t1.hide(); deleteReport($event)"
-      [disabled]="currentReportUnit.canEditOrDeleteReport === false"
-      >Delete</button
+    <div
+      tp="Admin or Editor role required"
+      placement="left"
+      [tpIsEnabled]="currentReportUnit.canEditOrDeleteReport === false"
     >
+      <button
+        data-cy="reportOptionsDelete"
+        class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+        [ngClass]="{
+          'text-s400 cursor-default':
+            currentReportUnit.canEditOrDeleteReport === false
+        }"
+        (click)="t1.hide(); deleteReport($event)"
+        [disabled]="currentReportUnit.canEditOrDeleteReport === false"
+        >Delete</button
+      >
+    </div>
   </div>
 </ng-template>
