@@ -173,7 +173,7 @@ test('1', async t => {
     assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
     assert.equal(
       resp.payload.report.filePath,
-      `${projectId}/data/s1/r2.report`
+      `${projectId}/data/s1/reports/r2.report`
     );
 
     isPass = true;

@@ -174,7 +174,8 @@ test('1', async t => {
     assert.equal(resp.payload.report.space, undefined);
     assert.equal(resp.payload.report.filePath.endsWith('/r2.report'), true);
     assert.equal(
-      resp.payload.report.filePath.includes('/data/mprove-users/'),
+      resp.payload.report.filePath.includes('/data/mprove-users/') &&
+        resp.payload.report.filePath.includes('/reports/'),
       true
     );
 

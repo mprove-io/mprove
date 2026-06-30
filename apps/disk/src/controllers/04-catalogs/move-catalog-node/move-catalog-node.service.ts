@@ -1,3 +1,4 @@
+import { dirname } from 'node:path';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '#common/enums/er.enum';
@@ -8,6 +9,7 @@ import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskMoveCatalogNodeResponsePayload } from '#common/zod/to-disk/04-catalogs/to-disk-move-catalog-node';
 import { zToDiskMoveCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/to-disk-move-catalog-node';
 import { DiskConfig } from '#disk/config/disk-config';
+import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { movePath } from '#disk/functions/disk/move-path';
@@ -148,7 +150,11 @@ export class MoveCatalogNodeService {
       });
     }
 
-    //
+    let toParentPath = dirname(toPath);
+
+    validatePathUnderDir({ fullPath: toParentPath, allowedDir: repoDir });
+
+    await ensureDir(toParentPath);
 
     await movePath({
       sourcePath: fromPath,

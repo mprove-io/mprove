@@ -256,19 +256,24 @@ export class SaveModifyReportController {
       });
     }
 
-    let targetParentNodeId = getTargetParentNodeId({
-      projectId: projectId,
-      mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
-      userAlias: user.alias,
-      space: space,
-      spaces: currentStruct.spaces
-    });
-
     let reportFileName = `${modReportId}${FileExtensionEnum.Report}`;
 
-    let targetReportFilePath = `${targetParentNodeId}/${reportFileName}`;
-
     let isSpaceChanged = currentReportSpace !== space;
+
+    let targetReportFilePath = existingModReport.filePath;
+
+    if (isSpaceChanged) {
+      let targetParentNodeId = getTargetParentNodeId({
+        projectId: projectId,
+        mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
+        userAlias: user.alias,
+        space: space,
+        spaces: currentStruct.spaces,
+        targetFolder: 'reports'
+      });
+
+      targetReportFilePath = `${targetParentNodeId}/${reportFileName}`;
+    }
 
     let isReportPathChanged =
       existingModReport.filePath !== targetReportFilePath;

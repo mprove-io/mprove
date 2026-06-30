@@ -9,18 +9,26 @@ export function getTargetParentNodeId(item: {
   userAlias: string;
   space: string | null | undefined;
   spaces: Space[];
+  targetFolder: string;
 }) {
   // Example: requested space "s1" targets "p1/data/s1"; undefined targets the user folder.
-  let { projectId, mproveDirValue, userAlias, space, spaces } = item;
+  let { projectId, mproveDirValue, userAlias, space, spaces, targetFolder } =
+    item;
+
+  let parentNodeId: string;
 
   // Example: when a unit is changed to no space, move it to "mprove-users/<alias>".
   if (isUndefined(space)) {
     // Example: returns "p1/data/mprove-users/alice" when mprove_dir is "./data".
-    return getUserFolderNodeId({
+    parentNodeId = getUserFolderNodeId({
       projectId: projectId,
       mproveDirValue: mproveDirValue,
       userAlias: userAlias
     });
+
+    return isUndefined(targetFolder)
+      ? parentNodeId
+      : `${parentNodeId}/${targetFolder}`;
   }
 
   // Example: find metadata for selected space "s1.s2" in currentStruct.spaces.
@@ -29,11 +37,15 @@ export function getTargetParentNodeId(item: {
   // Example: if the selected space no longer exists, fall back to the user folder.
   if (isUndefined(selectedSpace)) {
     // Example: avoids guessing a folder for a stale UI-selected space.
-    return getUserFolderNodeId({
+    parentNodeId = getUserFolderNodeId({
       projectId: projectId,
       mproveDirValue: mproveDirValue,
       userAlias: userAlias
     });
+
+    return isUndefined(targetFolder)
+      ? parentNodeId
+      : `${parentNodeId}/${targetFolder}`;
   }
 
   // Example: split normalized file node id "p1/data/s1/s1.space" into path parts.
@@ -58,5 +70,9 @@ export function getTargetParentNodeId(item: {
   let targetFolderParts = [...selectedSpaceFolderParts, ...childSpaceParts];
 
   // Example: changing to "s1" returns "p1/data/s1" and drops non-space path like "unk/s3".
-  return targetFolderParts.join('/');
+  parentNodeId = targetFolderParts.join('/');
+
+  return isUndefined(targetFolder)
+    ? parentNodeId
+    : `${parentNodeId}/${targetFolder}`;
 }

@@ -238,7 +238,8 @@ export class SaveCreateReportController {
       mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
       userAlias: user.alias,
       space: space,
-      spaces: currentStruct.spaces
+      spaces: currentStruct.spaces,
+      targetFolder: 'reports'
     });
 
     let fileName = `${newReportId}${FileExtensionEnum.Report}`;

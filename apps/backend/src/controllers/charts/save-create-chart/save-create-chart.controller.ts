@@ -190,7 +190,8 @@ export class SaveCreateChartController {
       mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
       userAlias: user.alias,
       space: space,
-      spaces: currentStruct.spaces
+      spaces: currentStruct.spaces,
+      targetFolder: 'charts'
     });
 
     let fileName = `${newChartId}${FileExtensionEnum.Chart}`;

@@ -235,19 +235,24 @@ export class SaveModifyChartController {
       });
     }
 
-    let targetParentNodeId = getTargetParentNodeId({
-      projectId: projectId,
-      mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
-      userAlias: user.alias,
-      space: space,
-      spaces: currentStruct.spaces
-    });
-
     let chartFileName = `${chartId}${FileExtensionEnum.Chart}`;
 
-    let targetChartFilePath = `${targetParentNodeId}/${chartFileName}`;
-
     let isSpaceChanged = currentChartSpace !== space;
+
+    let targetChartFilePath = existingChart.filePath;
+
+    if (isSpaceChanged) {
+      let targetParentNodeId = getTargetParentNodeId({
+        projectId: projectId,
+        mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
+        userAlias: user.alias,
+        space: space,
+        spaces: currentStruct.spaces,
+        targetFolder: 'charts'
+      });
+
+      targetChartFilePath = `${targetParentNodeId}/${chartFileName}`;
+    }
 
     let isChartPathChanged = existingChart.filePath !== targetChartFilePath;
 

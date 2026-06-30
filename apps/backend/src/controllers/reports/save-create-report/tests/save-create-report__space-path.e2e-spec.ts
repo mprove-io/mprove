@@ -177,7 +177,7 @@ test('1', async t => {
     assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
     assert.equal(
       resp.payload.report.filePath,
-      `${projectId}/data/s1/created_space.report`
+      `${projectId}/data/s1/reports/created_space.report`
     );
 
     let draftReportIds = resp.payload.reportUnitDrafts.map(x => x.reportId);

@@ -82,8 +82,26 @@ export function makeUnitDisplayPath(item: {
     return '';
   }
 
+  let unitFolder: string;
+
+  if (extension === FileExtensionEnum.Chart) {
+    unitFolder = 'charts';
+  }
+
+  if (extension === FileExtensionEnum.Report) {
+    unitFolder = 'reports';
+  }
+
+  if (extension === FileExtensionEnum.Dashboard) {
+    unitFolder = 'dashboards';
+  }
+
+  let unitPathParts = isUndefined(unitFolder)
+    ? [parentNodeId, `${unitId}${extension}`]
+    : [parentNodeId, unitFolder, `${unitId}${extension}`];
+
   return makeDisplayPath({
-    filePath: `${parentNodeId}/${unitId}${extension}`
+    filePath: unitPathParts.join('/')
   });
 }
 

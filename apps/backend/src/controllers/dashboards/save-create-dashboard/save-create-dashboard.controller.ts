@@ -186,7 +186,8 @@ export class SaveCreateDashboardController {
       mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
       userAlias: user.alias,
       space: space,
-      spaces: currentStruct.spaces
+      spaces: currentStruct.spaces,
+      targetFolder: 'dashboards'
     });
 
     let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;

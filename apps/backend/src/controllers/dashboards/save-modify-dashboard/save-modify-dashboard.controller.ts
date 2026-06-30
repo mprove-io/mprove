@@ -307,19 +307,24 @@ export class SaveModifyDashboardController {
       });
     }
 
-    let targetParentNodeId = getTargetParentNodeId({
-      projectId: projectId,
-      mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
-      userAlias: user.alias,
-      space: targetDashboardSpace,
-      spaces: currentStruct.spaces
-    });
-
     let dashboardFileName = `${toDashboardId}${FileExtensionEnum.Dashboard}`;
 
-    let targetDashboardFilePath = `${targetParentNodeId}/${dashboardFileName}`;
-
     let isSpaceChanged = currentDashboardSpace !== targetDashboardSpace;
+
+    let targetDashboardFilePath = toDashboard.filePath;
+
+    if (isSpaceChanged) {
+      let targetParentNodeId = getTargetParentNodeId({
+        projectId: projectId,
+        mproveDirValue: currentStruct.mproveConfig.mproveDirValue,
+        userAlias: user.alias,
+        space: targetDashboardSpace,
+        spaces: currentStruct.spaces,
+        targetFolder: 'dashboards'
+      });
+
+      targetDashboardFilePath = `${targetParentNodeId}/${dashboardFileName}`;
+    }
 
     let isDashboardPathChanged =
       toDashboard.filePath !== targetDashboardFilePath;
