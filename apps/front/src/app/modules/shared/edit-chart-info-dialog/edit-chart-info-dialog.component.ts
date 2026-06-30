@@ -30,6 +30,7 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeCopy } from '#common/functions/make-copy';
+import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { Role } from '#common/zod/backend/role';
 import type { Space } from '#common/zod/blockml/space';
@@ -102,8 +103,7 @@ export class EditChartInfoDialogComponent implements OnInit {
   roles: Role[] = [];
   selectedAccessRoles: string[] = [];
   selectedSpace: string;
-  combinedAccessRoles: string[] = [];
-  combinedAccessRolesText = '';
+  combinedAccessRoles: AccessRoleCombined[] = [];
   canChangeSpace = false;
   spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
   struct: StructState;
@@ -153,13 +153,24 @@ export class EditChartInfoDialogComponent implements OnInit {
       x => x.space === this.selectedSpace
     );
 
-    this.combinedAccessRoles = [
-      ...new Set([
-        ...(selectedSpace?.accessRolesCombined.map(x => x.role) ?? []),
-        ...this.selectedAccessRoles
-      ])
-    ];
-    this.combinedAccessRolesText = this.combinedAccessRoles.join(', ');
+    let combinedAccessRoles = (selectedSpace?.accessRolesCombined ?? []).map(
+      x => ({
+        role: x.role,
+        isDirect: false
+      })
+    );
+
+    this.selectedAccessRoles.forEach(role => {
+      let existingRole = combinedAccessRoles.find(x => x.role === role);
+
+      if (existingRole) {
+        existingRole.isDirect = true;
+      } else {
+        combinedAccessRoles.push({ role: role, isDirect: true });
+      }
+    });
+
+    this.combinedAccessRoles = combinedAccessRoles;
   }
 
   spaceChange() {

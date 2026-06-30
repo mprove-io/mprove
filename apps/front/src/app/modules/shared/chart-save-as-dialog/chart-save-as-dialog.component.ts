@@ -36,6 +36,7 @@ import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
 import { makeSpaceUnits } from '#common/functions/space/make-space-units';
 import { spaceUnitToDashboardUnit } from '#common/functions/space/space-unit-to-dashboard-unit';
+import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
@@ -159,8 +160,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   roles: Role[] = [];
   selectedAccessRoles: string[] = [];
   selectedSpace: string;
-  combinedAccessRoles: string[] = [];
-  combinedAccessRolesText = '';
+  combinedAccessRoles: AccessRoleCombined[] = [];
   spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
   canSpecifyChartSpace = false;
   struct: StructState;
@@ -211,13 +211,24 @@ export class ChartSaveAsDialogComponent implements OnInit {
       x => x.space === this.selectedSpace
     );
 
-    this.combinedAccessRoles = [
-      ...new Set([
-        ...(selectedSpace?.accessRolesCombined.map(x => x.role) ?? []),
-        ...this.selectedAccessRoles
-      ])
-    ];
-    this.combinedAccessRolesText = this.combinedAccessRoles.join(', ');
+    let combinedAccessRoles = (selectedSpace?.accessRolesCombined ?? []).map(
+      x => ({
+        role: x.role,
+        isDirect: false
+      })
+    );
+
+    this.selectedAccessRoles.forEach(role => {
+      let existingRole = combinedAccessRoles.find(x => x.role === role);
+
+      if (existingRole) {
+        existingRole.isDirect = true;
+      } else {
+        combinedAccessRoles.push({ role: role, isDirect: true });
+      }
+    });
+
+    this.combinedAccessRoles = combinedAccessRoles;
   }
 
   spaceChange() {

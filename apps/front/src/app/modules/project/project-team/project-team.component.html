@@ -291,7 +291,10 @@
                     <div class="my-3 ml-5 flex flex-col">
                       <div *ngFor="let role of member.roles; let n = index">
                         <div class="flex flex-row items-center text-base">
-                          <div>{{ role }} </div>
+                          <div
+                            class="truncate rounded bg-blue-100 px-2 text-blue-800"
+                            >{{ role }}</div
+                          >
                           <div
                             tp="Admin role required"
                             [tpIsEnabled]="isAdmin === false"

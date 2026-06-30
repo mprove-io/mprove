@@ -83,9 +83,10 @@
                 >
                   <span
                     *ngFor="let accessRole of item.accessRolesCombined"
-                    class="mr-2 truncate rounded px-1"
+                    class="mr-2 truncate rounded px-2"
                     [ngClass]="{
-                      'bg-green-200 text-green-700': accessRole.isDirect
+                      'bg-green-200 text-green-700': accessRole.isDirect,
+                      'bg-slate-200 text-slate-700': !accessRole.isDirect
                     }"
                   >
                     {{ accessRole.role }}

@@ -23,6 +23,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
+import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Role } from '#common/zod/backend/role';
@@ -104,8 +105,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   roles: Role[] = [];
   selectedAccessRoles: string[] = [];
   selectedSpace: string;
-  combinedAccessRoles: string[] = [];
-  combinedAccessRolesText = '';
+  combinedAccessRoles: AccessRoleCombined[] = [];
   spacesPlusEmpty: SpaceOption[] = [makeCopy(EMPTY_SPACE)];
   canSpecifyReportSpace = false;
 
@@ -185,13 +185,24 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       x => x.space === this.selectedSpace
     );
 
-    this.combinedAccessRoles = [
-      ...new Set([
-        ...(selectedSpace?.accessRolesCombined.map(x => x.role) ?? []),
-        ...this.selectedAccessRoles
-      ])
-    ];
-    this.combinedAccessRolesText = this.combinedAccessRoles.join(', ');
+    let combinedAccessRoles = (selectedSpace?.accessRolesCombined ?? []).map(
+      x => ({
+        role: x.role,
+        isDirect: false
+      })
+    );
+
+    this.selectedAccessRoles.forEach(role => {
+      let existingRole = combinedAccessRoles.find(x => x.role === role);
+
+      if (existingRole) {
+        existingRole.isDirect = true;
+      } else {
+        combinedAccessRoles.push({ role: role, isDirect: true });
+      }
+    });
+
+    this.combinedAccessRoles = combinedAccessRoles;
   }
 
   spaceChange() {
