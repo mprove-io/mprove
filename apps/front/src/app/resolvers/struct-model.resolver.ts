@@ -9,6 +9,7 @@ import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import {
   PARAMETER_MODEL_ID,
+  PATH_CHART,
   PATH_INFO,
   PATH_ORG,
   PATH_PROJECT
@@ -69,6 +70,11 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
+    let isChartRoute = routerStateSnapshot.url
+      .split('?')[0]
+      .split('/')
+      .includes(PATH_CHART);
+
     let parametersModelId = route.params[PARAMETER_MODEL_ID];
 
     let modelState = this.modelQuery.getValue();
@@ -77,6 +83,12 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
       parametersModelId === modelState.modelId &&
       modelState.structId === this.structQuery.getValue().structId
     ) {
+      if (modelState.hasAccess === false && isChartRoute === false) {
+        this.navigateService.navigateToModels();
+
+        return of(false);
+      }
+
       return of(true);
     }
 
@@ -104,8 +116,12 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
               needValidate: resp.payload.needValidate
             });
 
-            if (resp.payload.model.hasAccess === true) {
-              this.modelQuery.update(resp.payload.model);
+            this.modelQuery.update(resp.payload.model);
+
+            if (
+              resp.payload.model.hasAccess === true ||
+              isChartRoute === true
+            ) {
               return true;
             } else {
               this.navigateService.navigateToModels();

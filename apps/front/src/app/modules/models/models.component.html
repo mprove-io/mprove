@@ -331,7 +331,7 @@
                   [fixNgSelectBottom]="modelsModelSelect"
                   data-cy="modelsModelSelect"
                   class="model-select w-full select-none text-base"
-                  [items]="filteredModels"
+                  [items]="modelSelectItems"
                   [clearable]="false"
                   [searchable]="true"
                   (change)="modelChange()"
@@ -397,7 +397,13 @@
 
           <div class="flex flex-1 flex-col" *ngIf="showSchema === true">
             <div
-              *ngIf="!!model?.modelId"
+              *ngIf="model?.hasAccess === false"
+              class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
+              >No access to model</div
+            >
+
+            <div
+              *ngIf="!!model?.modelId && model?.hasAccess !== false"
               class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
             >
               <div class="flex flex-row"></div>
@@ -405,7 +411,7 @@
             </div>
 
             <div
-              *ngIf="!!model?.modelId"
+              *ngIf="!!model?.modelId && model?.hasAccess !== false"
               class="mb-5 mt-5 flex h-11 flex-row items-center"
             >
               <m-search-icon class="text-s1 ml-8"></m-search-icon>
@@ -452,12 +458,16 @@
               </div>
             </div>
 
-            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+            <div
+              *ngIf="model?.hasAccess !== false"
+              class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
+            >
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
             </div>
 
             <m-model-tree
+              *ngIf="model?.hasAccess !== false"
               class="flex flex-1"
               (expandFilters)="expandFiltersPanel()"
             ></m-model-tree>

@@ -305,6 +305,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   );
 
   filteredModels: ModelX[];
+  modelSelectItems: ModelX[] = [];
 
   models: ModelX[];
   modelsSubscription: Subscription;
@@ -387,6 +388,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
       );
 
       this.modelForm.controls['model'].setValue(this.model.modelId);
+
+      this.updateModelSelectItems();
 
       this.updateFiltered({
         chartSpaceNodes: this.chartsQuery.getValue().chartSpaceNodes
@@ -730,6 +733,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
         tap(ml => {
           this.models = ml.models;
           this.filteredModels = this.models.filter(model => model.hasAccess);
+          this.updateModelSelectItems();
 
           let selectedModel = this.modelQuery.getValue();
 
@@ -1626,6 +1630,21 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
 
     this.cd.detectChanges();
+  }
+
+  updateModelSelectItems() {
+    let model = this.modelQuery.getValue();
+
+    let currentModelIsInOptions = this.filteredModels?.some(
+      x => x.modelId === model.modelId
+    );
+
+    this.modelSelectItems =
+      isDefined(model.modelId) &&
+      model.hasAccess === false &&
+      currentModelIsInOptions !== true
+        ? [...(this.filteredModels ?? []), model as ModelX]
+        : [...(this.filteredModels ?? [])];
   }
 
   navToChart(chart: { chartId: string; modelId: string }) {
