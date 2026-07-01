@@ -38,12 +38,19 @@
       >
     </div>
 
-    <div class="ml-5 flex flex-col items-start">
+    <div
+      class="ml-5 flex flex-col items-start"
+      tp="Admin or Editor role required"
+      [tpIsEnabled]="canChangeSpace === false"
+    >
       <ng-select
         #editDashboardInfoDialogSpaceSelect
         [fixNgSelectBottom]="editDashboardInfoDialogSpaceSelect"
         data-cy="editDashboardInfoDialogSpaceSelect"
         class="select-h-10 w-96 flex-shrink-0"
+        [ngClass]="{
+          'pointer-events-none': canChangeSpace === false
+        }"
         [items]="spacesPlusEmpty"
         [multiple]="false"
         [searchable]="true"
