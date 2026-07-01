@@ -678,15 +678,18 @@ export class ModelsComponent implements OnInit, OnDestroy {
   updateChartAccessControls() {
     let chartTypeControl = this.chartTypeForm.controls['chartType'];
     let chartTitleControl = this.chartTitleForm.controls['chartTitle'];
+    let limitControl = this.limitForm.controls['limit'];
 
     if (this.canAccessChartModel === false) {
       chartTypeControl.disable({ emitEvent: false });
       chartTitleControl.disable({ emitEvent: false });
+      limitControl.disable({ emitEvent: false });
       return;
     }
 
     chartTypeControl.enable({ emitEvent: false });
     chartTitleControl.enable({ emitEvent: false });
+    limitControl.enable({ emitEvent: false });
   }
 
   actionMapping: IActionMapping = {
@@ -1161,10 +1164,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   timezoneChange() {
-    if (this.canAccessChartModel === false) {
-      return;
-    }
-
     (document.activeElement as HTMLElement).blur();
 
     let timezone = this.timezoneForm.controls['timezone'].value;
