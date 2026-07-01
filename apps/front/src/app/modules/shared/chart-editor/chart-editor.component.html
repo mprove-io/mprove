@@ -16,8 +16,8 @@
 
   <div
     *ngIf="canAccessModel === false && isReport === false"
-    class="text-s500 ml-2 mt-3 select-none text-base"
-    >No access to model</div
+    class="text-s500 select-none text-center text-base"
+    >Read-only chart</div
   >
 
   <ng-container *ngIf="canAccessModel !== false || isReport === true">

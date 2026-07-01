@@ -1105,6 +1105,8 @@
                   *ngIf="mconfig?.select.length > 0"
                   [formGroup]="chartTitleForm"
                   class="ml-5 mr-5 flex w-full flex-col items-start"
+                  tp="Read-only chart"
+                  [tpIsEnabled]="canAccessChartModel === false"
                 >
                   <div class="h-6"></div>
                   <input
@@ -1118,7 +1120,6 @@
                         chartTitleForm.controls['chartTitle'].touched
                     }"
                     formControlName="chartTitle"
-                    [disabled]="canAccessChartModel === false"
                     placeholder="Title"
                     (blur)="chartTitleBlur()"
                   />
@@ -1130,72 +1131,79 @@
                 <div
                   *ngIf="mconfig?.select.length > 0"
                   class="flex w-1/3 flex-shrink-0 flex-row items-center justify-end space-x-5 pr-4"
-                  [ngClass]="{ hidden: canAccessChartModel === false }"
+                  [ngClass]="{
+                    'pointer-events-none': canAccessChartModel === false
+                  }"
                 >
-                  <m-chart-table-icon
-                    class="h-6 w-6 cursor-pointer"
-                    [ngClass]="{
-                      'text-m500': mconfig.chart?.type === chartTypeEnumTable,
-                      'text-s500': mconfig.chart?.type !== chartTypeEnumTable
-                    }"
-                    (click)="chartTypeChange(chartTypeEnumTable)"
-                  ></m-chart-table-icon>
+                  <ng-container *ngIf="canAccessChartModel === true">
+                    <m-chart-table-icon
+                      class="h-6 w-6 cursor-pointer"
+                      [ngClass]="{
+                        'text-m500': mconfig.chart?.type === chartTypeEnumTable,
+                        'text-s500': mconfig.chart?.type !== chartTypeEnumTable
+                      }"
+                      (click)="chartTypeChange(chartTypeEnumTable)"
+                    ></m-chart-table-icon>
 
-                  <m-chart-pivot-table-icon
-                    class="h-6 w-6 cursor-pointer"
-                    [ngClass]="{
-                      'text-m500':
-                        mconfig.chart?.type === chartTypeEnumPivotTable,
-                      'text-s500':
-                        mconfig.chart?.type !== chartTypeEnumPivotTable
-                    }"
-                    (click)="chartTypeChange(chartTypeEnumPivotTable)"
-                  ></m-chart-pivot-table-icon>
+                    <m-chart-pivot-table-icon
+                      class="h-6 w-6 cursor-pointer"
+                      [ngClass]="{
+                        'text-m500':
+                          mconfig.chart?.type === chartTypeEnumPivotTable,
+                        'text-s500':
+                          mconfig.chart?.type !== chartTypeEnumPivotTable
+                      }"
+                      (click)="chartTypeChange(chartTypeEnumPivotTable)"
+                    ></m-chart-pivot-table-icon>
 
-                  <m-chart-line-icon
-                    class="h-6 w-6 cursor-pointer"
-                    [ngClass]="{
-                      'text-m500': mconfig.chart?.type === chartTypeEnumLine,
-                      'text-s500': mconfig.chart?.type !== chartTypeEnumLine
-                    }"
-                    (click)="chartTypeChange(chartTypeEnumLine)"
-                  ></m-chart-line-icon>
+                    <m-chart-line-icon
+                      class="h-6 w-6 cursor-pointer"
+                      [ngClass]="{
+                        'text-m500': mconfig.chart?.type === chartTypeEnumLine,
+                        'text-s500': mconfig.chart?.type !== chartTypeEnumLine
+                      }"
+                      (click)="chartTypeChange(chartTypeEnumLine)"
+                    ></m-chart-line-icon>
 
-                  <m-chart-bar-icon
-                    class="h-6 w-6 cursor-pointer"
-                    [ngClass]="{
-                      'text-m500': mconfig.chart?.type === chartTypeEnumBar,
-                      'text-s500': mconfig.chart?.type !== chartTypeEnumBar
-                    }"
-                    (click)="chartTypeChange(chartTypeEnumBar)"
-                  ></m-chart-bar-icon>
+                    <m-chart-bar-icon
+                      class="h-6 w-6 cursor-pointer"
+                      [ngClass]="{
+                        'text-m500': mconfig.chart?.type === chartTypeEnumBar,
+                        'text-s500': mconfig.chart?.type !== chartTypeEnumBar
+                      }"
+                      (click)="chartTypeChange(chartTypeEnumBar)"
+                    ></m-chart-bar-icon>
 
-                  <m-chart-scatter-icon
-                    class="h-6 w-6 cursor-pointer"
-                    [ngClass]="{
-                      'text-m500': mconfig.chart?.type === chartTypeEnumScatter,
-                      'text-s500': mconfig.chart?.type !== chartTypeEnumScatter
-                    }"
-                    (click)="chartTypeChange(chartTypeEnumScatter)"
-                  ></m-chart-scatter-icon>
+                    <m-chart-scatter-icon
+                      class="h-6 w-6 cursor-pointer"
+                      [ngClass]="{
+                        'text-m500':
+                          mconfig.chart?.type === chartTypeEnumScatter,
+                        'text-s500':
+                          mconfig.chart?.type !== chartTypeEnumScatter
+                      }"
+                      (click)="chartTypeChange(chartTypeEnumScatter)"
+                    ></m-chart-scatter-icon>
 
-                  <m-chart-single-icon
-                    class="h-6 w-6 cursor-pointer"
-                    [ngClass]="{
-                      'text-m500': mconfig.chart?.type === chartTypeEnumSingle,
-                      'text-s500': mconfig.chart?.type !== chartTypeEnumSingle
-                    }"
-                    (click)="chartTypeChange(chartTypeEnumSingle)"
-                  ></m-chart-single-icon>
+                    <m-chart-single-icon
+                      class="h-6 w-6 cursor-pointer"
+                      [ngClass]="{
+                        'text-m500':
+                          mconfig.chart?.type === chartTypeEnumSingle,
+                        'text-s500': mconfig.chart?.type !== chartTypeEnumSingle
+                      }"
+                      (click)="chartTypeChange(chartTypeEnumSingle)"
+                    ></m-chart-single-icon>
 
-                  <m-chart-pie-icon
-                    class="h-6 w-6 cursor-pointer"
-                    [ngClass]="{
-                      'text-m500': mconfig.chart?.type === chartTypeEnumPie,
-                      'text-s500': mconfig.chart?.type !== chartTypeEnumPie
-                    }"
-                    (click)="chartTypeChange(chartTypeEnumPie)"
-                  ></m-chart-pie-icon>
+                    <m-chart-pie-icon
+                      class="h-6 w-6 cursor-pointer"
+                      [ngClass]="{
+                        'text-m500': mconfig.chart?.type === chartTypeEnumPie,
+                        'text-s500': mconfig.chart?.type !== chartTypeEnumPie
+                      }"
+                      (click)="chartTypeChange(chartTypeEnumPie)"
+                    ></m-chart-pie-icon>
+                  </ng-container>
 
                   <form
                     [formGroup]="chartTypeForm"
@@ -1307,7 +1315,14 @@
                       'border-r600': mconfig.chart.isValid === false
                     }"
                   >
+                    <div
+                      *ngIf="canAccessChartModel === false"
+                      class="text-s500 flex h-full select-none items-center justify-center text-center text-base"
+                      >Read-only chart</div
+                    >
+
                     <ng-scrollbar
+                      *ngIf="canAccessChartModel === true"
                       [orientation]="'vertical'"
                       [visibility]="'hover'"
                       [appearance]="'compact'"

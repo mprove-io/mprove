@@ -477,6 +477,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.canAccessChartModel =
         this.chart?.tiles?.[0]?.hasAccessToModel !== false;
 
+      this.updateChartAccessControls();
+
       if (
         this.prevChartId !== this.chart.chartId &&
         this.isInitialScrollCompleted === true
@@ -672,6 +674,20 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   private searchSchemaTimer: any;
   private searchChartsTimer: any;
+
+  updateChartAccessControls() {
+    let chartTypeControl = this.chartTypeForm.controls['chartType'];
+    let chartTitleControl = this.chartTitleForm.controls['chartTitle'];
+
+    if (this.canAccessChartModel === false) {
+      chartTypeControl.disable({ emitEvent: false });
+      chartTitleControl.disable({ emitEvent: false });
+      return;
+    }
+
+    chartTypeControl.enable({ emitEvent: false });
+    chartTitleControl.enable({ emitEvent: false });
+  }
 
   actionMapping: IActionMapping = {
     mouse: {}
