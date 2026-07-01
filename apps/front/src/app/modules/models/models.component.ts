@@ -251,7 +251,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
       this.charts = [...x.chartUnitDrafts, ...nonDraftChartUnits];
 
-      let chartToExpand = this.charts.find(chart => {
+      let chartToExpand: ChartUnit;
+      let chartToScroll: ChartUnit;
+
+      this.charts.forEach(chart => {
         let previousChart = previousCharts.find(
           previous => previous.chartId === chart.chartId
         );
@@ -281,7 +284,20 @@ export class ModelsComponent implements OnInit, OnDestroy {
             isSavedFromDraft === true ||
             isDisplaySpaceChanged === true);
 
-        return shouldExpand;
+        if (
+          isInitialLoad === false &&
+          isDisplaySpaceChanged === true &&
+          chart.chartId === this.selectedChartId
+        ) {
+          chartToScroll = chart;
+        }
+
+        if (
+          shouldExpand === true &&
+          (isUndefined(chartToExpand) || chart.chartId === this.selectedChartId)
+        ) {
+          chartToExpand = chart;
+        }
       });
 
       this.pendingExpandSpace = isDefined(chartToExpand)
@@ -290,7 +306,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
       this.updateFiltered({ chartSpaceNodes: x.chartSpaceNodes });
 
-      if (isDefined(this.pendingExpandSpace)) {
+      if (isDefined(chartToScroll)) {
+        this.pendingExpandSpace = undefined;
+
+        setTimeout(() => {
+          this.scrollToSelectedChart({ isSmooth: true });
+        }, 0);
+      } else if (isDefined(this.pendingExpandSpace)) {
         let space = this.pendingExpandSpace;
 
         this.pendingExpandSpace = undefined;

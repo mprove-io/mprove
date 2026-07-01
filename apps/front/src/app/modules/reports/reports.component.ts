@@ -254,7 +254,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       this.reports = [...x.reportUnitDrafts, ...nonDraftReportUnits];
 
-      let reportToExpand = this.reports.find(report => {
+      let reportToExpand: ReportUnit;
+      let reportToScroll: ReportUnit;
+
+      this.reports.forEach(report => {
         let previousReport = previousReports.find(
           previous => previous.reportId === report.reportId
         );
@@ -284,7 +287,21 @@ export class ReportsComponent implements OnInit, OnDestroy {
             isSavedFromDraft === true ||
             isDisplaySpaceChanged === true);
 
-        return shouldExpand;
+        if (
+          isInitialLoad === false &&
+          isDisplaySpaceChanged === true &&
+          report.reportId === this.report?.reportId
+        ) {
+          reportToScroll = report;
+        }
+
+        if (
+          shouldExpand === true &&
+          (isUndefined(reportToExpand) ||
+            report.reportId === this.report?.reportId)
+        ) {
+          reportToExpand = report;
+        }
       });
 
       this.pendingExpandSpace = isDefined(reportToExpand)
@@ -293,7 +310,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       this.updateFiltered({ reportSpaceNodes: x.reportSpaceNodes });
 
-      if (isDefined(this.pendingExpandSpace)) {
+      if (isDefined(reportToScroll)) {
+        this.pendingExpandSpace = undefined;
+
+        setTimeout(() => {
+          this.scrollToSelectedReport({ isSmooth: true });
+        }, 0);
+      } else if (isDefined(this.pendingExpandSpace)) {
         let space = this.pendingExpandSpace;
 
         this.pendingExpandSpace = undefined;

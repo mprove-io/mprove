@@ -178,7 +178,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         ...nonDraftDashboardUnits
       ];
 
-      let dashboardToExpand = this.dashboardUnits.find(dashboard => {
+      let dashboardToExpand: DashboardUnit;
+      let dashboardToScroll: DashboardUnit;
+
+      this.dashboardUnits.forEach(dashboard => {
         let previousDashboard = previousDashboardUnits.find(
           previous => previous.dashboardId === dashboard.dashboardId
         );
@@ -209,7 +212,21 @@ export class DashboardsComponent implements OnInit, OnDestroy {
             isSavedFromDraft === true ||
             isDisplaySpaceChanged === true);
 
-        return shouldExpand;
+        if (
+          isInitialLoad === false &&
+          isDisplaySpaceChanged === true &&
+          dashboard.dashboardId === this.dashboard?.dashboardId
+        ) {
+          dashboardToScroll = dashboard;
+        }
+
+        if (
+          shouldExpand === true &&
+          (isUndefined(dashboardToExpand) ||
+            dashboard.dashboardId === this.dashboard?.dashboardId)
+        ) {
+          dashboardToExpand = dashboard;
+        }
       });
 
       this.pendingExpandSpace = isDefined(dashboardToExpand)
@@ -218,7 +235,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
       this.updateFiltered({ dashboardSpaceNodes: x.dashboardSpaceNodes });
 
-      if (isDefined(this.pendingExpandSpace)) {
+      if (isDefined(dashboardToScroll)) {
+        this.pendingExpandSpace = undefined;
+
+        setTimeout(() => {
+          this.scrollToSelectedDashboard({ isSmooth: true });
+        }, 0);
+      } else if (isDefined(this.pendingExpandSpace)) {
         let space = this.pendingExpandSpace;
 
         this.pendingExpandSpace = undefined;
