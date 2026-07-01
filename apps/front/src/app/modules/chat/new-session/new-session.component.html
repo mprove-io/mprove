@@ -67,7 +67,8 @@
   >
     <div class="mb-10 flex items-center justify-center">
       <img
-        class="invisible w-40"
+        class="w-40"
+        [class.invisible]="chatScope !== 'explorer'"
         src="assets/logo/mprove_logo_web-01-b-gray.svg"
       />
     </div>
