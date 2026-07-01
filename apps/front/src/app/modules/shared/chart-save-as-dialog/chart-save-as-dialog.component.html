@@ -134,18 +134,17 @@
 
         <div
           class="ml-5 flex flex-col items-start"
-          [tp]="templateSpecifyChartSpace"
+          tp="Admin or Editor role required"
           [tpIsEnabled]="canSpecifyChartSpace === false"
         >
-          <ng-template #templateSpecifyChartSpace>
-            <div>Only Admins and Editors can change space</div>
-          </ng-template>
-
           <ng-select
             #chartSaveAsDialogSpaceSelect
             [fixNgSelectBottom]="chartSaveAsDialogSpaceSelect"
             data-cy="chartSaveAsDialogSpaceSelect"
             class="select-h-10 w-96 flex-shrink-0"
+            [ngClass]="{
+              'pointer-events-none': canSpecifyChartSpace === false
+            }"
             [class.report-space-select-disabled]="
               canSpecifyChartSpace === false
             "

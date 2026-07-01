@@ -180,18 +180,17 @@
 
     <div
       class="ml-5 flex flex-col items-start"
-      [tp]="templateSpecifyReportSpace"
+      tp="Admin or Editor role required"
       [tpIsEnabled]="canSpecifyReportSpace === false"
     >
-      <ng-template #templateSpecifyReportSpace>
-        <div>Only Admins and Editors can change space</div>
-      </ng-template>
-
       <ng-select
         #reportSaveAsDialogSpaceSelect
         [fixNgSelectBottom]="reportSaveAsDialogSpaceSelect"
         data-cy="reportSaveAsDialogSpaceSelect"
         class="select-h-10 w-96 flex-shrink-0"
+        [ngClass]="{
+          'pointer-events-none': canSpecifyReportSpace === false
+        }"
         [class.report-space-select-disabled]="canSpecifyReportSpace === false"
         [items]="spacesPlusEmpty"
         [multiple]="false"
