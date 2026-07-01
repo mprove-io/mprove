@@ -1556,6 +1556,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   addColumn() {
+    if (this.canAccessChartModel === false) {
+      return;
+    }
+
     this.myDialogService.showAddColumnField({
       apiService: this.apiService,
       chart: this.chart,

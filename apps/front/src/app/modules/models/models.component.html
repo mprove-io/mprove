@@ -1926,18 +1926,25 @@
 
                     <div class="flex h-2 w-2 flex-shrink-0"></div>
 
-                    <button
-                      type="button"
-                      data-cy="chartsAddColumnButton"
+                    <div
                       [ngClass]="{
                         'ml-8': mconfig?.select.length === 0,
                         'ml-3': mconfig?.select.length > 0
                       }"
-                      class="border-s400 text-s500 hover:bg-s100 mt-[64px] flex flex-shrink-0 select-none rounded border px-1 py-1 focus:outline-none"
-                      (click)="addColumn()"
+                      class="mt-[64px] flex flex-shrink-0"
+                      tp="Read-only chart"
+                      [tpIsEnabled]="canAccessChartModel === false"
                     >
-                      <m-add-icon></m-add-icon>
-                    </button>
+                      <button
+                        type="button"
+                        data-cy="chartsAddColumnButton"
+                        class="border-s400 text-s500 hover:bg-s100 disabled:border-s300 disabled:text-s400 flex select-none rounded border px-1 py-1 focus:outline-none disabled:cursor-default disabled:bg-gray-100 disabled:hover:bg-gray-100"
+                        [disabled]="canAccessChartModel === false"
+                        (click)="addColumn()"
+                      >
+                        <m-add-icon></m-add-icon>
+                      </button>
+                    </div>
 
                     <div class="flex h-2 w-[24px] flex-shrink-0"></div>
                   </div>
