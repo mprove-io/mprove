@@ -14,12 +14,6 @@
     CHART FIELDS
   </div> -->
 
-  <div
-    *ngIf="canAccessModel === false && isReport === false"
-    class="text-s500 select-none text-center text-base"
-    >Read-only chart</div
-  >
-
   <ng-container *ngIf="canAccessModel !== false || isReport === true">
     <div
       *ngIf="

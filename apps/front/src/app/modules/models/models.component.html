@@ -1113,7 +1113,7 @@
                     autocomplete="off"
                     spellcheck="false"
                     data-cy="modelChartTitleInput"
-                    class="form-input border-s3 focus:border-m600 text-s500 h-10 w-full select-none rounded font-semibold"
+                    class="form-input border-s3 focus:border-m600 text-s500 h-10 w-full select-none rounded font-semibold disabled:cursor-default disabled:bg-gray-100 disabled:opacity-100"
                     [ngClass]="{
                       'border-r600':
                         chartTitleForm.controls['chartTitle'].invalid &&
@@ -1317,7 +1317,7 @@
                   >
                     <div
                       *ngIf="canAccessChartModel === false"
-                      class="text-s500 flex h-full select-none items-center justify-center text-center text-base"
+                      class="text-s500 flex h-full select-none items-center justify-center text-center text-lg"
                       >Read-only chart</div
                     >
 
