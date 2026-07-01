@@ -752,7 +752,7 @@
 
                 <div
                   *ngIf="filteredChartNodes?.length === 0"
-                  class="text-s1 flex select-none justify-center px-6 py-8 text-base"
+                  class="text-s1 flex select-none justify-center px-6 py-8 text-[17px]"
                 >
                   {{
                     !!searchChartsWord
@@ -1016,17 +1016,23 @@
                 ></m-panel-title>
 
                 <ng-template #templateChartSaveAs>
+                  <div *ngIf="canAccessChartModel === false"
+                    >Read-only chart</div
+                  >
+
                   <div
                     *ngIf="
-                      isSelectValid === false ||
-                      mconfig?.chart?.isValid === false ||
-                      chartTitleForm?.valid === false
+                      canAccessChartModel !== false &&
+                      (isSelectValid === false ||
+                        mconfig?.chart?.isValid === false ||
+                        chartTitleForm?.valid === false)
                     "
                     >Chart is not valid</div
                   >
 
                   <div
                     *ngIf="
+                      canAccessChartModel !== false &&
                       isSelectValid === true &&
                       mconfig?.chart?.isValid === true &&
                       chartTitleForm?.valid === true &&
