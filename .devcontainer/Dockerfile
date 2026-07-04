@@ -30,3 +30,7 @@ RUN npm install -g @malloydata/cli
 RUN npm install -g @openai/codex
 
 RUN npm install -g opencode-ai
+
+# opencode web tries to launch a browser with xdg-open, but devcontainers are headless.
+RUN printf '#!/bin/sh exit 0' > /usr/local/bin/xdg-open \
+    && chmod +x /usr/local/bin/xdg-open
