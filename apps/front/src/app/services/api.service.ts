@@ -268,7 +268,7 @@ export class ApiService {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
-              this.navigateToLastModelChart(nav);
+              this.navigateService.navigateToModels();
             });
         }).bind(this);
 

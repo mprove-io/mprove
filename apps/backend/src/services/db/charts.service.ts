@@ -82,7 +82,18 @@ export class ChartsService {
 
     let chartsGrantedAccess = charts.filter(chart => {
       if (chart.draft === true) {
-        return true;
+        let model = models.find(x => x.modelId === chart.modelId);
+
+        if (isUndefined(model)) {
+          return false;
+        }
+
+        let hasModelAccess = checkModelAccess({
+          member: apiUserMember,
+          modelAccessRoles: model.accessRolesCombined
+        });
+
+        return hasModelAccess === true;
       }
 
       let hasChartAccess = checkAccess({
