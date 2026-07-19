@@ -1923,6 +1923,7 @@
                       [isTableHeaderWide]="true"
                       *ngIf="mconfig?.select.length > 0"
                       [isEdit]="true"
+                      [canAccessModel]="canAccessChartModel"
                       [isFormat]="isFormat"
                       [mconfig]="mconfig"
                       [qData]="qData"

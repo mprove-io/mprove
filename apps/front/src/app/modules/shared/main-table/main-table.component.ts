@@ -57,6 +57,9 @@ export class MainTableComponent {
   @Input()
   isEdit: boolean;
 
+  @Input()
+  canAccessModel = true;
+
   chart: ChartX;
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
@@ -78,6 +81,10 @@ export class MainTableComponent {
   ) {}
 
   sort(fieldId: string, desc: boolean) {
+    if (this.canAccessModel === false) {
+      return;
+    }
+
     let newMconfig = this.structService.makeMconfig();
 
     if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
@@ -157,6 +164,10 @@ export class MainTableComponent {
   }
 
   replaceColumn(column: MconfigField) {
+    if (this.canAccessModel === false) {
+      return;
+    }
+
     this.myDialogService.showReplaceColumnField({
       apiService: this.apiService,
       chart: this.chart,
@@ -166,6 +177,10 @@ export class MainTableComponent {
   }
 
   remove(fieldId: string) {
+    if (this.canAccessModel === false) {
+      return;
+    }
+
     let newMconfig = this.structService.makeMconfig();
 
     let fields: ModelField[] = this.modelQuery.getValue().fields;
@@ -220,6 +235,10 @@ export class MainTableComponent {
   }
 
   drop(event: CdkDragDrop<string[]>) {
+    if (this.canAccessModel === false) {
+      return;
+    }
+
     let previousFieldIds = this.mconfigFields.map(x => x.id);
 
     let newColumnsOrder = [...this.mconfigFields.map(x => x.id)];

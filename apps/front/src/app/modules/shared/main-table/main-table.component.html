@@ -5,6 +5,7 @@
     <thead
       cdkDropList
       cdkDropListOrientation="horizontal"
+      [cdkDropListDisabled]="canAccessModel === false"
       (cdkDropListDropped)="drop($event)"
     >
       <tr>
@@ -74,6 +75,8 @@
         <div
           *ngIf="isEdit === true"
           class="bg-m0 flex h-12 items-start justify-start space-x-3 pr-4 pt-2"
+          tp="Read-only chart"
+          [tpIsEnabled]="canAccessModel === false"
         >
           <div class="flex items-center justify-start">
             <div
@@ -89,10 +92,13 @@
 
             <button
               *ngIf="column.sorting?.desc === false"
-              class="hover:bg-m200 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+              class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
               [ngClass]="{
-                invisible: isDrag === true
+                invisible: isDrag === true,
+                'hover:bg-m200 text-m500': canAccessModel !== false,
+                'text-s400 cursor-default': canAccessModel === false
               }"
+              [disabled]="canAccessModel === false"
               (click)="sort(column.id, false)"
             >
               <m-asc-icon></m-asc-icon>
@@ -100,21 +106,27 @@
 
             <button
               *ngIf="column.sorting?.desc === true"
-              class="hover:bg-m200 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+              class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
               (click)="sort(column.id, true)"
               [ngClass]="{
-                invisible: isDrag === true
+                invisible: isDrag === true,
+                'hover:bg-m200 text-m500': canAccessModel !== false,
+                'text-s400 cursor-default': canAccessModel === false
               }"
+              [disabled]="canAccessModel === false"
             >
               <m-desc-icon></m-desc-icon>
             </button>
 
             <button
               *ngIf="!column.sorting"
-              class="hover:bg-m200 text-s500 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+              class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none"
               [ngClass]="{
-                'group-hover:visible': isDrag === false
+                'group-hover:visible': isDrag === false,
+                'hover:bg-m200 text-s500': canAccessModel !== false,
+                'text-s400 cursor-default': canAccessModel === false
               }"
+              [disabled]="canAccessModel === false"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>
@@ -186,16 +198,18 @@
 
           <div
             tp="A required field cannot be replaced"
-            [tpIsEnabled]="column.required === true"
+            [tpIsEnabled]="canAccessModel !== false && column.required === true"
           >
             <button
               class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none"
               [ngClass]="{
                 'group-hover:visible': isDrag === false,
-                'text-s300 cursor-default': column.required === true,
-                'hover:bg-m200 text-s500': column.required === false
+                'text-s300 cursor-default':
+                  canAccessModel === false || column.required === true,
+                'hover:bg-m200 text-s500':
+                  canAccessModel !== false && column.required === false
               }"
-              [disabled]="column.required === true"
+              [disabled]="canAccessModel === false || column.required === true"
               (click)="replaceColumn(column)"
             >
               <m-edit-icon></m-edit-icon>
@@ -204,16 +218,18 @@
 
           <div
             tp="A required field cannot be deselected"
-            [tpIsEnabled]="column.required === true"
+            [tpIsEnabled]="canAccessModel !== false && column.required === true"
           >
             <button
               class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none"
               [ngClass]="{
                 'group-hover:visible': isDrag === false,
-                'text-s300 cursor-default': column.required === true,
-                'hover:bg-m200 text-s500': column.required === false
+                'text-s300 cursor-default':
+                  canAccessModel === false || column.required === true,
+                'hover:bg-m200 text-s500':
+                  canAccessModel !== false && column.required === false
               }"
-              [disabled]="column.required === true"
+              [disabled]="canAccessModel === false || column.required === true"
               (click)="remove(column.id)"
             >
               <m-trash-icon></m-trash-icon>
@@ -224,10 +240,11 @@
         <div
           cdkDrag
           cdkDragHandle
-          [cdkDragDisabled]="isEdit === false"
+          [cdkDragDisabled]="isEdit === false || canAccessModel === false"
           class="draggable-element flex flex-col items-start justify-center overflow-hidden text-clip border-b border-r border-t border-gray-300 px-5 py-2"
           [ngClass]="{
-            'drag-handle': isEdit === true,
+            'drag-handle': isEdit === true && canAccessModel !== false,
+            'cursor-default': canAccessModel === false,
             'border-l': columnIndex === 0,
             'bg-m150': column.fieldClass === fieldClassDimension,
             'bg-g2':
