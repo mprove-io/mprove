@@ -111,7 +111,13 @@ Explorer is an AI chat section of Mprove UI.
 
 ## Explorer AI Session
 
-Explorer AI Session can answer user data questions by creating charts.
+Explorer data agent can answer user questions by creating charts based on existing models.
+
+## Project-specific Instructions
+
+You can add the \`mprove-explorer.md\` file anywhere in the \`mprove_dir\` folder, specifying your own instructions.
+Its contents will be added to the system prompt of Explorer AI session.
+
 ` },
   { pageId: 'ai-sessions/openai-codex-setup', content: `# OpenAI Codex Setup
 
