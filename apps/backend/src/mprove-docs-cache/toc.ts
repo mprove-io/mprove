@@ -19,6 +19,7 @@ export const toc: readonly string[] = [
   'reference/parameters',
   'reference/project-config',
   'reference/report',
+  'reference/space',
   'row-level-security',
   'user-roles',
   'version-control'

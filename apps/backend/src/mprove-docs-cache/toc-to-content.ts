@@ -21,23 +21,19 @@ Initially, Mprove YAML had its own module for SQL transformation logic, similar 
 ` },
   { pageId: 'access-roles', content: `# Access Roles
 
-Access roles can be assigned to project members by users with **ProjectAdmin** role.
+Project admins can assign access roles to project members in UI.
 
-Dashboards, Reports and Models have \`access_roles\` parameter:
+Charts, Dashboards, Reports, Models and Spaces have \`access_roles\` parameter:
 - Syntax for Mprove YAML - \`access_roles: [sales, marketing]\`
 - Syntax for Malloy model custom tags - \`access_roles="sales, marketing"\`
 
-Only project members with "sales" or "marketing" access roles will be able to access these objects.
+In this case, access will be granted to project members with "Sales" or "Marketing" access roles.
 
-If an object has no \`access_roles\` then any project member can access this object. This means that the object is public for all project members.
+Reports, Charts and Dashboards (objects) authored by user are stored in personal folder under \`mprove-users\` path. 
+Project admins and editors can specify object's \`space\` in UI. Specifying space will move file to the space folder.
 
 <Callout>
-  If a user has access to a model, then he also has access to all model's charts.
-
-  A user may have access to the dashboard, but not have access to the models of
-  dashboard tiles.
-
-  A user may have access to the report, but not have access to the models of report rows (metrics).
+Users with **ProjectAdmin** or **FileEditor** roles have access to all Charts, Dashboards, Reports, Models and Spaces of project.
 </Callout>
 ` },
   { pageId: 'ai-sessions/builder', content: `# Builder
@@ -1316,6 +1312,7 @@ import './tables/c1_distribution_centers_tx.malloy';
 #(mprove) label="Order Items"
 #(mprove) top_label="Order Items"
 #(mprove) access_roles="sales, marketing"
+#(mprove) space="sales"
 source: c1_order_items is c1_order_items_tx extend {
   join_one: orders is c1_orders_tx on order_id = orders.order_id
   join_one: users is c1_users_tx on orders.user_id = users.user_id
@@ -1386,6 +1383,7 @@ source: c1_orders_tx is c1_orders_table include {
 | label                  | tag  | -       | Model label in UI                                                                                                                                                                                                                 |
 | top_label              | tag  | -       | Top node label in the Model Schema                                                                                                                                                                                                |
 | access_roles           | tag  | -       | User roles list separated by comma. If \`access_roles\` tag is set, only users with specified roles will be able to explore the model. If \`access_roles\` tag is not specified, all project users will be able to explore the model. |
+| space                  | tag  | -       | full space path (separated by dots, like "sales.s2.s3")                                                                                                                                                                                                                       |
 | tree_double_underscore | tag  | -       | If this tag is set, the portion of the field name preceding the double underscore will be used to create a top-level group in the model fields tree in the UI.                                                                    |
 
 ### Dimension #(mprove) Tags
@@ -1428,6 +1426,7 @@ connection: c7_google
 label: Google Analytics
 description: 'Google Analytics Reporting'
 access_roles: []
+space: sales
 method: POST
 request: |
   <createRequest.js content>
@@ -2116,17 +2115,17 @@ let data = $RESPONSE_DATA;
 
 These constants are provided based on Store file, [Project Config](/content/docs/reference/project-config#project) and UI control values set by user for a specific query.
 
-| Name                            | Type                                | Default         | Description                                                                                                                                               |
-| ------------------------------- | ----------------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| \`PROJECT_CONFIG_CASE_SENSITIVE\` | boolean                             | false           | Should string filter be case sensitive or not                                                                                                             |
-| \`METRICS_DATE_FROM\`             | YYYY-MM-DD                          | today's date    | The start date of time range (based on the time filter on the Reports page, otherwise today's date)                                                       |
-| \`METRICS_DATE_TO\`               | YYYY-MM-DD                          | tomorrow's date | The end date of time range (based on the time filter on the Reports page, otherwise tomorrow's date)                                                      |
+| Name                            | Type                                | Default         | Description                                                                                                                                                             |
+| ------------------------------- | ----------------------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| \`PROJECT_CONFIG_CASE_SENSITIVE\` | boolean                             | false           | Should string filter be case sensitive or not                                                                                                                           |
+| \`METRICS_DATE_FROM\`             | YYYY-MM-DD                          | today's date    | The start date of time range (based on the time filter on the Reports page, otherwise today's date)                                                                     |
+| \`METRICS_DATE_TO\`               | YYYY-MM-DD                          | tomorrow's date | The end date of time range (based on the time filter on the Reports page, otherwise tomorrow's date)                                                                    |
 | \`STORE_FIELDS\`                  | \\<storeField \\| storeParameter\\> [] | []              | [STORE_FIELDS](/content/docs/reference/model-store#store_fields) - all store parameters and fields in a single array                                                    |
 | \`QUERY_ORDER_BY\`                | orderByField []                     | []              | [QUERY_ORDER_BY](/content/docs/reference/model-store#query_order_by) - fields by which the user wants to sort the data                                                  |
 | \`QUERY_SELECTED_DIMENSIONS\`     | storeField []                       | []              | [QUERY_SELECTED_DIMENSIONS](/content/docs/reference/model-store#query_selected_dimensions) - dimensions selected by user                                                |
 | \`QUERY_SELECTED_MEASURES\`       | storeField []                       | []              | [QUERY_SELECTED_MEASURES](/content/docs/reference/model-store#query_selected_measures) - measures selected by user                                                      |
 | \`QUERY_PARAMETERS\`              | storeParameter []                   | []              | [QUERY_PARAMETERS](/content/docs/reference/model-store#query_parameters) - filters set by user                                                                          |
-| \`QUERY_LIMIT\`                   | number                              | 500             | Max number of rows in response                                                                                                                            |
+| \`QUERY_LIMIT\`                   | number                              | 500             | Max number of rows in response                                                                                                                                          |
 | \`RESPONSE_DATA\`                 | any                                 | -               | Response data that needs to be converted into Mprove compatible format as a result of [processResponse.js](/content/docs/reference/model-store#store-processresponsejs) |
 
 #### STORE_FIELDS
@@ -2350,6 +2349,7 @@ const QUERY_PARAMETERS = [
 | label                            | string                                               | -       | Store label in UI                                                                                                                                                                                |
 | description                      | string                                               | -       | Store description in UI                                                                                                                                                                          |
 | access_roles                     | string []                                            | -       | If specified, only users with the listed roles will have access to Store Model                                                                                                                   |
+| space                            | string                                               | -       | full space path (separated by dots, like "sales.s2.s3")                                                                                                                                          |
 | method\\*                         | enum                                                 | -       | <span>Request method:</span><ul><li>**POST** </li><li>**GET** (does not have a payload)</li></ul>                                                                                                |
 | request\\*                        | string                                               | -       | JavaScript function to build Request JSON payload body and URL path. Must return \\{ urlPath: string, body: any \\};                                                                               |
 | response\\*                       | string                                               | -       | JavaScript function to convert Response payload data into the required Mprove format                                                                                                             |
@@ -2363,13 +2363,13 @@ const QUERY_PARAMETERS = [
 
 ### Store Filter
 
-| Name              | Type                                                         | Default | Description                |
-| ----------------- | ------------------------------------------------------------ | ------- | -------------------------- |
-| filter\\*          | string                                                       | -       | Filter name                |
-| label             | string                                                       | -       | Override filter name in UI |
-| description       | string                                                       | -       | Filter description in UI   |
-| max_fractions     | number                                                       | -       | Max number of fractions    |
-| required          | boolean                                                      | -       | Always select filter       |
+| Name              | Type                                                                       | Default | Description                |
+| ----------------- | -------------------------------------------------------------------------- | ------- | -------------------------- |
+| filter\\*          | string                                                                     | -       | Filter name                |
+| label             | string                                                                     | -       | Override filter name in UI |
+| description       | string                                                                     | -       | Filter description in UI   |
+| max_fractions     | number                                                                     | -       | Max number of fractions    |
+| required          | boolean                                                                    | -       | Always select filter       |
 | fraction_controls | [Fraction Control []](/content/docs/reference/parameters#fraction-control) | -       | List of fraction controls  |
 
 ### Store Result
@@ -2381,11 +2381,11 @@ const QUERY_PARAMETERS = [
 
 ### Result Fraction Type
 
-| Name     | Type                                                         | Default | Description               |
-| -------- | ------------------------------------------------------------ | ------- | ------------------------- |
-| type\\*   | string                                                       | -       | Type name                 |
-| label    | string                                                       | -       | Override type name in UI  |
-| meta     | any                                                          | -       | Custom metadata           |
+| Name     | Type                                                                       | Default | Description               |
+| -------- | -------------------------------------------------------------------------- | ------- | ------------------------- |
+| type\\*   | string                                                                     | -       | Type name                 |
+| label    | string                                                                     | -       | Override type name in UI  |
+| meta     | any                                                                        | -       | Custom metadata           |
 | controls | [Fraction Control []](/content/docs/reference/parameters#fraction-control) | -       | List of fraction controls |
 
 ### Store Field Group
@@ -2423,9 +2423,9 @@ const QUERY_PARAMETERS = [
 | detail          | enum    | -       | <ul><li>years</li><li>quarters</li><li>months</li><li>weeksMonday</li><li>weeksSunday</li><li>days</li><li>hours</li><li>minutes</li><li>timestamps</li></ul> |
 | required        | boolean | -       | Always select field                                                                                                                                           |
 | meta            | any     | -       | Custom metadata                                                                                                                                               |
-| format_number   | string  | -       | [Format Number](/content/docs/reference/format-number)                                                                                                                      |
-| currency_prefix | string  | -       | [Format Number - Symbol](/content/docs/reference/format-number#symbol)                                                                                                      |
-| currency_suffix | string  | -       | [Format Number - Symbol](/content/docs/reference/format-number#symbol)                                                                                                      |
+| format_number   | string  | -       | [Format Number](/content/docs/reference/format-number)                                                                                                        |
+| currency_prefix | string  | -       | [Format Number - Symbol](/content/docs/reference/format-number#symbol)                                                                                        |
+| currency_suffix | string  | -       | [Format Number - Symbol](/content/docs/reference/format-number#symbol)                                                                                        |
 ` },
   { pageId: 'reference/parameters', content: `# Parameters
 
@@ -2711,6 +2711,47 @@ Row parameter must have **conditions**, **listen** or **fractions**.
 | listen     | string                                       | -       | Specify report parameter to listen to                       |
 | conditions | string []                                    | -       | \`for parameters mapped to Model\` <br/> List of filter expressions |
 | fractions  | [Fraction []](/content/docs/reference/parameters#fraction) | -       | \`for parameters mapped to Store\` <br/> List of fractions          |
+` },
+  { pageId: 'reference/space', content: `# Space
+
+"Spaces" in Mprove are used to create UI catalog trees for reports, charts and dashboards.
+
+\`.space\` file adds \`access_roles\` to the actual folder contents. 
+
+Each top level space must be stored as **space_name.space** YAML file:
+
+\`\`\`yaml
+space: space_name
+title: ''
+access_roles:
+- role
+- role
+folders:
+- space: s2
+  access_roles:
+  - role
+  - role
+  folders:
+  - space: s3
+    access_roles: 
+    - role
+    - role
+\`\`\`
+
+\`space_name.space\` file must be stored in a folder named \`space_name\`.
+
+\`folders\` (subspaces) are optional; they can be useful if certain users need access to a portion of the parent space.
+
+## Reference
+
+### Space
+
+| Name         | Type                                            | Default | Description                                                                  |
+| ------------ | ----------------------------------------------- | ------- | ---------------------------------------------------------------------------- |
+| space\\*      | string                                          | -       | Space name                                                                   |
+| title        | string                                          | -       | Space title in UI                                                            |
+| access_roles | string []                                       | -       | If specified, only users with the listed roles will have access to the Space |
+| folders      | [Space []](/content/docs/reference/space#space) | -       | Begin a section of subspaces                                                 |
 ` },
   { pageId: 'row-level-security', content: `# Row Level Security
 
