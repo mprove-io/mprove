@@ -490,8 +490,8 @@ Check that the chart you created is visible on the Models page in the Charts sec
   { pageId: 'reference/chart', content: `# Chart
 
 <Callout>
-  Reports, Charts, Dashboards are intended to be created and modified through the
-  user interface. The file representation is for checking errors during
+  Reports, Charts, Dashboards are intended to be created and modified through
+  the user interface. The file representation is for checking errors during
   validation.
 </Callout>
 
@@ -499,6 +499,9 @@ Each chart must be stored as **chart_name.chart** YAML file:
 
 \`\`\`yaml
 chart: chart_name
+access_roles:
+- role
+- role
 tiles: # Chart must have exactly one tile
 - title: 'tile title'
   description: ''
@@ -545,10 +548,11 @@ tiles: # Chart must have exactly one tile
 
 ### Chart
 
-| Name    | Type                                | Default | Description                                             |
-| ------- | ----------------------------------- | ------- | ------------------------------------------------------- |
-| chart\\* | string                              | -       | Chart name                                              |
-| tiles\\* | [Tile []](/content/docs/reference/dashboard#tile) | -       | Chart tile has the same configuration as dashboard tile |
+| Name         | Type                                              | Default | Description                                                              |
+| ------------ | ------------------------------------------------- | ------- | ------------------------------------------------------------------------ |
+| chart\\*      | string                                            | -       | Chart name                                                               |
+| access_roles | string []                                         | -       | If specified, only users with the listed roles will have access to Chart |
+| tiles\\*      | [Tile []](/content/docs/reference/dashboard#tile) | -       | Chart tile has the same configuration as dashboard tile                  |
 ` },
   { pageId: 'reference/dashboard', content: `# Dashboard
 
