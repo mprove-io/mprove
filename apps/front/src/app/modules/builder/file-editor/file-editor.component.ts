@@ -293,6 +293,12 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     {
       key: 'Cmd-/',
       run(view: EditorView) {
+        let isEditable = view.state.facet(EditorView.editable);
+
+        if (view.state.readOnly || isEditable === false) {
+          return false;
+        }
+
         let selection = view.state.selection;
         let changes: { from: number; to: number; insert: string }[] = [];
 
