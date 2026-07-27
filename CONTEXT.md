@@ -242,11 +242,14 @@ if (!member) {
 if (!this.membersService.getMember(memberId)) {
 ```
 
-## External Dependencies
+## External
+
+"External" directory is reserved for source code some of deps used in project.
+They are for read-only debugging. Do not modify.
 
 ### external/opencode
 
-Source code for the [OpenCode](https://github.com/anomalyco/opencode) dependency used in the project. Kept locally for reference and debugging.
+Source code for the [OpenCode](https://github.com/anomalyco/opencode).
 
 ## Commit and PR Guidelines
 
