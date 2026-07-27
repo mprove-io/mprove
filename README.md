@@ -85,4 +85,4 @@ Login using values from `.env` file environment variables:
 - `BACKEND_MPROVE_ADMIN_EMAIL`
 - `BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD`
 
-Continue with [Quickstart Docs](https://docs.mprove.io/docs/quickstart).
+Continue with [Quickstart Docs](https://docs.mprove.io/content/docs/quickstart).
