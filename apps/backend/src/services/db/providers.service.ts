@@ -1,0 +1,115 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { and, eq } from 'drizzle-orm';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { ErEnum } from '#common/enums/er.enum';
+import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
+import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { ServerError } from '#common/models/server-error';
+import type { Provider } from '#common/zod/backend/provider';
+import type { LlmOpenAICompatibleOptions } from '#common/zod/backend/provider-parts/llm-openai-compatible-options';
+import { HashService } from '../hash.service';
+
+@Injectable()
+export class ProvidersService {
+  constructor(
+    private hashService: HashService,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
+
+  makeProvider(item: {
+    projectId: string;
+    providerId: string;
+    kind: ProviderKindEnum.LLM;
+    type: ProviderLlmTypeEnum.OpenAICompatible;
+    isEnabled: boolean;
+    options: LlmOpenAICompatibleOptions;
+  }): ProviderTab {
+    let { projectId, providerId, kind, type, isEnabled, options } = item;
+
+    let provider: ProviderTab = {
+      providerFullId: this.hashService.makeProviderFullId({
+        projectId: projectId,
+        providerId: providerId
+      }),
+      projectId: projectId,
+      providerId: providerId,
+      kind: kind,
+      type: type,
+      isEnabled: isEnabled,
+      options: options,
+      keyTag: undefined,
+      serverTs: undefined
+    };
+
+    return provider;
+  }
+
+  tabToApiProvider(item: {
+    provider: ProviderTab;
+    isIncludePasswords: boolean;
+  }): Provider {
+    let { provider, isIncludePasswords } = item;
+    let options = provider.options;
+
+    let headers = isDefined(options.headers)
+      ? Object.fromEntries(
+          Object.entries(options.headers).map(([key, value]) => [
+            key,
+            isIncludePasswords === true ? value : ''
+          ])
+        )
+      : undefined;
+
+    let apiProvider: Provider = {
+      projectId: provider.projectId,
+      providerId: provider.providerId,
+      kind: ProviderKindEnum.LLM,
+      type: ProviderLlmTypeEnum.OpenAICompatible,
+      isEnabled: provider.isEnabled,
+      options: {
+        baseURL: options.baseURL,
+        apiKey:
+          isIncludePasswords === true
+            ? options.apiKey
+            : isDefined(options.apiKey)
+              ? ''
+              : undefined,
+        headers: headers,
+        queryParams: options.queryParams,
+        includeUsage: options.includeUsage,
+        supportsStructuredOutputs: options.supportsStructuredOutputs,
+        models: options.models.map(model => ({
+          modelId: model.modelId,
+          name: model.name
+        }))
+      },
+      serverTs: provider.serverTs
+    };
+
+    return apiProvider;
+  }
+
+  async checkProviderDoesNotExist(item: {
+    projectId: string;
+    providerId: string;
+  }) {
+    let { projectId, providerId } = item;
+
+    let provider = await this.db.drizzle.query.providersTable.findFirst({
+      where: and(
+        eq(providersTable.projectId, projectId),
+        eq(providersTable.providerId, providerId)
+      )
+    });
+
+    if (isDefined(provider)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROVIDER_ALREADY_EXISTS
+      });
+    }
+  }
+}

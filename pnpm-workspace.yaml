@@ -14,6 +14,7 @@ catalog:
   'ai': 6.0.138
   '@ai-sdk/openai': 3.0.48
   '@ai-sdk/anthropic': 3.0.64
+  '@ai-sdk/openai-compatible': 2.0.35
   '@acrodata/code-editor': 0.5.1
   '@ali-hm/angular-tree-component': 21.0.3
   '@toolbox-web/grid': 2.17.1

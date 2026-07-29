@@ -102,9 +102,9 @@ export function getDevConfig() {
 
     demoProjectRemotePassPhrase: process.env.BACKEND_DEMO_PROJECT_PASS_PHRASE,
 
-    storeApiBlockHosts: process.env.BACKEND_STORE_API_BLOCK_HOSTS,
+    apiBlockHosts: process.env.BACKEND_STORE_API_BLOCK_HOSTS,
 
-    storeApiAllowHosts: process.env.BACKEND_STORE_API_ALLOW_HOSTS,
+    apiAllowHosts: process.env.BACKEND_STORE_API_ALLOW_HOSTS,
 
     seedDemoOrgAndProject: enumToBoolean({
       value: process.env.BACKEND_SEED_DEMO_ORG_AND_PROJECT,

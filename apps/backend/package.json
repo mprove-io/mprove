@@ -31,6 +31,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "catalog:",
     "@ai-sdk/openai": "catalog:",
+    "@ai-sdk/openai-compatible": "catalog:",
     "@codemirror/language": "catalog:",
     "@codemirror/state": "catalog:",
     "@codemirror/view": "catalog:",

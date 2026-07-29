@@ -88,6 +88,7 @@ import { GetProjectsListController } from './controllers/projects/get-projects-l
 import { IsProjectExistController } from './controllers/projects/is-project-exist/is-project-exist.controller';
 import { SetProjectApiKeyController } from './controllers/projects/set-project-api-key/set-project-api-key.controller';
 import { SetProjectInfoController } from './controllers/projects/set-project-info/set-project-info.controller';
+import { CreateProviderController } from './controllers/providers/create-provider/create-provider.controller';
 import { CancelQueriesController } from './controllers/queries/cancel-queries/cancel-queries.controller';
 import { GetQueriesController } from './controllers/queries/get-queries/get-queries.controller';
 import { GetQueryController } from './controllers/queries/get-query/get-query.controller';
@@ -203,6 +204,8 @@ export const appControllers = [
   RefreshCachedColumnController,
   ClearCachedColumnController,
   GetConnectionsListController,
+
+  CreateProviderController,
 
   CreateFileController,
   DeleteFileController,

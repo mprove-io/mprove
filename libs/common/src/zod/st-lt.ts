@@ -17,6 +17,7 @@ import { zExtraSchema } from '#common/zod/backend/connection-schemas/extra-schem
 import { zConnectionRawSchema } from '#common/zod/backend/connection-schemas/raw-schema';
 import { zEv } from '#common/zod/backend/ev';
 import { zMproveConfig } from '#common/zod/backend/mprove-config';
+import { zLlmOpenAICompatibleOptions } from '#common/zod/backend/provider-parts/llm-openai-compatible-options';
 import { zUi } from '#common/zod/backend/ui';
 import { zAppliedGivenValue } from '#common/zod/blockml/applied-given-value';
 import { zBmlError } from '#common/zod/blockml/bml-error';
@@ -115,7 +116,7 @@ export let zConnectionLt = z
 export type ConnectionLt = z.infer<typeof zConnectionLt>;
 
 export let zProviderSt = z
-  .object({ emptyData: z.number().nullish() })
+  .object({ options: zLlmOpenAICompatibleOptions })
   .meta({ id: 'ProviderSt' });
 export type ProviderSt = z.infer<typeof zProviderSt>;
 

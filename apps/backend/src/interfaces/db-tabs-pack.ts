@@ -22,6 +22,7 @@ import type {
   OcSessionTab,
   OrgTab,
   ProjectTab,
+  ProviderTab,
   QueryTab,
   ReportTab,
   RoleTab,
@@ -54,6 +55,7 @@ export class DbTabsPack {
   orgs?: OrgTab[];
   ocParts?: OcPartTab[];
   projects?: ProjectTab[];
+  providers?: ProviderTab[];
   queries?: QueryTab[];
   reports?: ReportTab[];
   roles?: RoleTab[];

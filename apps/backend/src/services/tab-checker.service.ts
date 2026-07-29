@@ -36,6 +36,7 @@ import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
@@ -106,6 +107,7 @@ export class TabCheckerService {
     await this.checkNotes(isAllRecords);
     await this.checkOrgs(isAllRecords);
     await this.checkProjects(isAllRecords);
+    await this.checkProviders(isAllRecords);
     await this.checkQueries(isAllRecords);
     await this.checkUsers(isAllRecords);
     await this.checkOcEvents(isAllRecords);
@@ -1279,6 +1281,89 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Projects, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  async checkProviders(isAllRecords: boolean) {
+    let startTs = Date.now();
+    let providerLatest = await this.db.drizzle.query.providersTable
+      .findFirst({
+        orderBy: desc(providersTable.serverTs)
+      })
+      .then(x => this.tabService.providerEntToTab({ providerEnt: x }));
+
+    if (isUndefined(providerLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(providersTable.serverTs, providerLatest.serverTs)
+        : this.isEncryptDb === true
+          ? or(
+              isNull(providersTable.keyTag),
+              eq(providersTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(providersTable.keyTag, this.keyTag),
+              eq(providersTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let provider = await this.db.drizzle.query.providersTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.providerEntToTab({ providerEnt: x }));
+
+      if (isUndefined(provider)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  providers: [provider]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let providersResult = await this.db.drizzle
+      .select({
+        record: providersTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(providersTable)
+      .where(
+        and(
+          isNotNull(providersTable.keyTag),
+          notInArray(providersTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (providersResult.length > 0 && providersResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'providers',
+          count: providersResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Providers, ${durationMs} ms`,
       logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs

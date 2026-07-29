@@ -42,6 +42,7 @@ import { ocPartsTable } from './schema/oc-parts';
 import { ocSessionsTable } from './schema/oc-sessions';
 import { orgsTable } from './schema/orgs';
 import { projectsTable } from './schema/projects';
+import { providersTable } from './schema/providers';
 import { queriesTable } from './schema/queries';
 import { reportsTable } from './schema/reports';
 import { rolesTable } from './schema/roles';
@@ -259,6 +260,10 @@ export class DrizzlePacker {
 
       if (insertEnts.projects.length > 0) {
         await tx.insert(projectsTable).values(insertEnts.projects);
+      }
+
+      if (insertEnts.providers.length > 0) {
+        await tx.insert(providersTable).values(insertEnts.providers);
       }
 
       if (insertEnts.queries.length > 0) {
@@ -566,6 +571,20 @@ export class DrizzlePacker {
             .update(projectsTable)
             .set(x)
             .where(eq(projectsTable.projectId, x.projectId));
+        });
+      }
+
+      if (updateEnts.providers.length > 0) {
+        updateEnts.providers = setUndefinedToNull({
+          ents: updateEnts.providers,
+          table: providersTable
+        });
+
+        await forEachSeries(updateEnts.providers, async x => {
+          await tx
+            .update(providersTable)
+            .set(x)
+            .where(eq(providersTable.providerFullId, x.providerFullId));
         });
       }
 
@@ -1146,6 +1165,29 @@ export class DrizzlePacker {
           });
       }
 
+      if (insOrUpdEnts.providers.length > 0) {
+        let uniqueProviderFullIds = [
+          ...new Set(insOrUpdEnts.providers.map(x => x.providerFullId))
+        ];
+
+        insOrUpdEnts.providers = uniqueProviderFullIds.map(id =>
+          insOrUpdEnts.providers.find(x => x.providerFullId === id)
+        );
+
+        insOrUpdEnts.providers = setUndefinedToNull({
+          ents: insOrUpdEnts.providers,
+          table: providersTable
+        });
+
+        await tx
+          .insert(providersTable)
+          .values(insOrUpdEnts.providers)
+          .onConflictDoUpdate({
+            target: providersTable.providerFullId,
+            set: drizzleSetAllColumnsFull({ table: providersTable })
+          });
+      }
+
       if (insOrUpdEnts.queries.length > 0) {
         let uniqueQueryIds = [
           ...new Set(insOrUpdEnts.queries.map(x => x.queryId))
@@ -1380,6 +1422,26 @@ export class DrizzlePacker {
     //
 
     if (isDefined(insOrDoNothingEnts)) {
+      if (insOrDoNothingEnts.providers.length > 0) {
+        let uniqueDoNothingProviderFullIds = [
+          ...new Set(insOrDoNothingEnts.providers.map(x => x.providerFullId))
+        ];
+
+        insOrDoNothingEnts.providers = uniqueDoNothingProviderFullIds.map(id =>
+          insOrDoNothingEnts.providers.find(x => x.providerFullId === id)
+        );
+
+        insOrDoNothingEnts.providers = setUndefinedToNull({
+          ents: insOrDoNothingEnts.providers,
+          table: providersTable
+        });
+
+        await tx
+          .insert(providersTable)
+          .values(insOrDoNothingEnts.providers)
+          .onConflictDoNothing();
+      }
+
       if (insOrDoNothingEnts.queries.length > 0) {
         let uniqueDoNothingQueryIds = [
           ...new Set(insOrDoNothingEnts.queries.map(x => x.queryId))

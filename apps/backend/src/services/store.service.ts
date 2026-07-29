@@ -17,7 +17,6 @@ import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ControlClassEnum } from '#common/enums/control-class.enum';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { ErEnum } from '#common/enums/er.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
@@ -29,14 +28,13 @@ import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
 import { MyRegex } from '#common/models/my-regex';
-import { ServerError } from '#common/models/server-error';
 import type { Filter } from '#common/zod/blockml/filter';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { FieldAny } from '#common/zod/blockml/internal/field-any';
-import { checkStoreApiHostname } from '#node-common/functions/check-store-api-hostname';
 import { getYYYYMMDDCurrentDateByTimezone } from '#node-common/functions/get-yyyymmdd-current-date-by-timezone';
 import { TabService } from './tab.service';
+import { UrlService } from './url.service';
 import { UserCodeService } from './user-code.service';
 
 export interface StoreUserCodeReturn {
@@ -47,78 +45,14 @@ export interface StoreUserCodeReturn {
 
 @Injectable()
 export class StoreService {
-  storeApiBlockHostsLowerCase: string[] = [];
-  storeApiAllowHostsLowerCase: string[] = [];
-
   constructor(
     private tabService: TabService,
     private userCodeService: UserCodeService,
+    private urlService: UrlService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
-  ) {
-    let storeApiBlockHosts =
-      this.cs.get<BackendConfig['storeApiBlockHosts']>('storeApiBlockHosts');
-
-    if (isDefinedAndNotEmpty(storeApiBlockHosts)) {
-      this.storeApiBlockHostsLowerCase = storeApiBlockHosts
-        .split(',')
-        .map(x => x.trim())
-        .map(x => x.toLowerCase());
-    }
-    let storeApiAllowHosts =
-      this.cs.get<BackendConfig['storeApiAllowHosts']>('storeApiAllowHosts');
-
-    if (isDefinedAndNotEmpty(storeApiAllowHosts)) {
-      this.storeApiAllowHostsLowerCase = storeApiAllowHosts
-        .split(',')
-        .map(x => x.trim())
-        .map(x => x.toLowerCase());
-    }
-  }
-
-  async checkStoreApiUrl(item: { urlStr: string }) {
-    let { urlStr } = item;
-
-    let protocol: string;
-    let hostnameLowerCase: string;
-
-    try {
-      let parsedUrl: URL = new URL(urlStr);
-      protocol = parsedUrl.protocol;
-      hostnameLowerCase = parsedUrl.hostname.toLowerCase();
-    } catch (e) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_STORE_API_INVALID_URL,
-        displayData: { url: urlStr },
-        originalError: e
-      });
-    }
-
-    if (protocol !== 'https:') {
-      throw new ServerError({
-        message: ErEnum.BACKEND_STORE_API_PROTOCOL_MUST_BE_HTTPS,
-        displayData: { url: urlStr }
-      });
-    }
-
-    if (
-      this.storeApiBlockHostsLowerCase.some(
-        x =>
-          hostnameLowerCase === x ||
-          hostnameLowerCase.endsWith('.' + x) === true
-      )
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_LIST,
-        displayData: { url: urlStr }
-      });
-    }
-
-    if (this.storeApiAllowHostsLowerCase.indexOf(hostnameLowerCase) < 0) {
-      await checkStoreApiHostname({ hostname: hostnameLowerCase });
-    }
-  }
+  ) {}
 
   async adjustMconfig(item: {
     mconfig: MconfigTab;
@@ -504,7 +438,7 @@ ${inputSub}
 
       let url = queryStart.apiUrl;
 
-      await this.checkStoreApiUrl({ urlStr: url });
+      await this.urlService.checkApiUrl({ urlStr: url });
 
       let headers: any = {};
 

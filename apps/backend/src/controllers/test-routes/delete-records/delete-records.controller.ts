@@ -37,6 +37,7 @@ import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-fie
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
@@ -214,6 +215,10 @@ export class DeleteRecordsController {
             await tx
               .delete(connectionsTable)
               .where(inArray(connectionsTable.projectId, projectIds));
+
+            await tx
+              .delete(providersTable)
+              .where(inArray(providersTable.projectId, projectIds));
 
             await tx
               .delete(branchesTable)

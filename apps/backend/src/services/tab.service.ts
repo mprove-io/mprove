@@ -25,6 +25,7 @@ import type {
   OcSessionTab,
   OrgTab,
   ProjectTab,
+  ProviderTab,
   QueryTab,
   ReportTab,
   RoleTab,
@@ -55,6 +56,7 @@ import { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
 import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
+import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
 import { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
@@ -531,6 +533,21 @@ export class TabService {
     };
 
     return project;
+  }
+
+  providerEntToTab(item: { providerEnt: ProviderEnt }): ProviderTab {
+    let { providerEnt } = item;
+
+    if (isUndefined(providerEnt)) {
+      return;
+    }
+
+    let provider: ProviderTab = {
+      ...providerEnt,
+      ...this.getTabProps({ ent: providerEnt })
+    };
+
+    return provider;
   }
 
   queryEntToTab(queryEnt: QueryEnt): QueryTab {

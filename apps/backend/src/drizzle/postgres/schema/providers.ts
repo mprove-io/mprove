@@ -1,4 +1,4 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
   boolean,
@@ -9,9 +9,9 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
-import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
-import { ProviderSandboxTypeEnum } from '#common/enums/provider-sandbox-type.enum';
+import type { ProviderKindEnum } from '#common/enums/provider-kind.enum';
+import type { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
+import type { ProviderSandboxTypeEnum } from '#common/enums/provider-sandbox-type.enum';
 import type { ProviderLt, ProviderSt } from '#common/zod/st-lt';
 
 export const providersTable = pgTable(

@@ -43,6 +43,8 @@ import type {
   OrgSt,
   ProjectLt,
   ProjectSt,
+  ProviderLt,
+  ProviderSt,
   QueryLt,
   QuerySt,
   ReportLt,
@@ -81,6 +83,7 @@ import { OcPartEnt } from './oc-parts';
 import { OcSessionEnt } from './oc-sessions';
 import { OrgEnt } from './orgs';
 import { ProjectEnt } from './projects';
+import type { ProviderEnt } from './providers';
 import { QueryEnt } from './queries';
 import { ReportEnt } from './reports';
 import { RoleEnt } from './roles';
@@ -169,6 +172,11 @@ export interface ProjectTab
   extends Omit<ProjectEnt, 'st' | 'lt'>,
     ProjectSt,
     ProjectLt {}
+
+export interface ProviderTab
+  extends Omit<ProviderEnt, 'st' | 'lt'>,
+    ProviderSt,
+    ProviderLt {}
 
 export interface QueryTab
   extends Omit<QueryEnt, 'st' | 'lt'>,

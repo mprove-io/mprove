@@ -31,8 +31,8 @@ import { ConnectionsService } from '#backend/services/db/connections.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
-import { StoreService } from '#backend/services/store.service';
 import { TabService } from '#backend/services/tab.service';
+import { UrlService } from '#backend/services/url.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -49,7 +49,7 @@ export class CreateConnectionController {
   constructor(
     private tabService: TabService,
     private projectsService: ProjectsService,
-    private storeService: StoreService,
+    private urlService: UrlService,
     private connectionsService: ConnectionsService,
     private envsService: EnvsService,
     private membersService: MembersService,
@@ -73,13 +73,13 @@ export class CreateConnectionController {
     let { projectId, envId, connectionId, type, options } = body.payload;
 
     if (isDefined(options.storeApi)) {
-      await this.storeService.checkStoreApiUrl({
+      await this.urlService.checkApiUrl({
         urlStr: options.storeApi.baseUrl
       });
     }
 
     if (isDefined(options.storeGoogleApi)) {
-      await this.storeService.checkStoreApiUrl({
+      await this.urlService.checkApiUrl({
         urlStr: options.storeApi.baseUrl
       });
     }

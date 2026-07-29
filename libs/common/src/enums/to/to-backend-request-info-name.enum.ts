@@ -99,6 +99,8 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendClearCachedColumn = 'api/ToBackendClearCachedColumn',
   ToBackendGetConnectionsList = 'api/ToBackendGetConnectionsList',
   //
+  ToBackendCreateProvider = 'api/ToBackendCreateProvider',
+  //
   ToBackendGetBranchesList = 'api/ToBackendGetBranchesList',
   ToBackendIsBranchExist = 'api/ToBackendIsBranchExist',
   ToBackendCreateBranch = 'api/ToBackendCreateBranch',

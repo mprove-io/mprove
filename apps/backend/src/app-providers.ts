@@ -53,6 +53,7 @@ import { OcMessagesService } from './services/db/oc-messages.service';
 import { OcPartsService } from './services/db/oc-parts.service';
 import { OrgsService } from './services/db/orgs.service';
 import { ProjectsService } from './services/db/projects.service';
+import { ProvidersService } from './services/db/providers.service';
 import { QueriesService } from './services/db/queries.service';
 import { ReportsService } from './services/db/reports.service';
 import { RolesService } from './services/db/roles.service';
@@ -114,6 +115,7 @@ import { TabToEntService } from './services/tab-to-ent.service';
 import { TasksService } from './services/tasks.service';
 import { ToolService } from './services/tool.service';
 import { UnitsService } from './services/units.service';
+import { UrlService } from './services/url.service';
 import { UserCodeService } from './services/user-code.service';
 
 export const appProviders = [
@@ -141,6 +143,7 @@ export const appProviders = [
   OrgsService,
   OcPartsService,
   ProjectsService,
+  ProvidersService,
   QueriesService,
   ReportsService,
   RolesService,
@@ -174,6 +177,7 @@ export const appProviders = [
   TabToEntService,
   TabService,
   UnitsService,
+  UrlService,
   //
   SessionsService,
   EditorOpencodeService,

@@ -30,8 +30,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ConnectionsService } from '#backend/services/db/connections.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
-import { StoreService } from '#backend/services/store.service';
 import { TabService } from '#backend/services/tab.service';
+import { UrlService } from '#backend/services/url.service';
 import {
   DEFAULT_QUERY_SIZE_LIMIT,
   THROTTLE_CUSTOM
@@ -51,7 +51,7 @@ export class EditConnectionController {
   constructor(
     private tabService: TabService,
     private projectsService: ProjectsService,
-    private storeService: StoreService,
+    private urlService: UrlService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
@@ -74,13 +74,13 @@ export class EditConnectionController {
     let { projectId, envId, connectionId, options } = body.payload;
 
     if (isDefined(options.storeApi)) {
-      await this.storeService.checkStoreApiUrl({
+      await this.urlService.checkApiUrl({
         urlStr: options.storeApi.baseUrl
       });
     }
 
     if (isDefined(options.storeGoogleApi)) {
-      await this.storeService.checkStoreApiUrl({
+      await this.urlService.checkApiUrl({
         urlStr: options.storeApi.baseUrl
       });
     }

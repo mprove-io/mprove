@@ -22,6 +22,7 @@ import * as ocParts from '#backend/drizzle/postgres/schema/oc-parts';
 import * as ocSessions from '#backend/drizzle/postgres/schema/oc-sessions';
 import * as orgs from '#backend/drizzle/postgres/schema/orgs';
 import * as projects from '#backend/drizzle/postgres/schema/projects';
+import * as providers from '#backend/drizzle/postgres/schema/providers';
 import * as queries from '#backend/drizzle/postgres/schema/queries';
 import * as reports from '#backend/drizzle/postgres/schema/reports';
 import * as roles from '#backend/drizzle/postgres/schema/roles';
@@ -55,6 +56,7 @@ export const schemaPostgres = {
   ...ocSessions,
   ...orgs,
   ...projects,
+  ...providers,
   ...queries,
   ...reports,
   ...roles,

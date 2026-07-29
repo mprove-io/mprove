@@ -25,6 +25,7 @@ import type {
   OcSessionTab,
   OrgTab,
   ProjectTab,
+  ProviderTab,
   QueryTab,
   ReportTab,
   RoleTab,
@@ -56,6 +57,7 @@ import { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
 import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
+import type { ProviderEnt } from '#backend/drizzle/postgres/schema/providers';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
 import { RoleEnt } from '#backend/drizzle/postgres/schema/roles';
@@ -111,6 +113,8 @@ import type {
   OrgSt,
   ProjectLt,
   ProjectSt,
+  ProviderLt,
+  ProviderSt,
   QueryLt,
   QuerySt,
   ReportLt,
@@ -274,6 +278,12 @@ export class TabToEntService {
           ?.filter(x => isDefined(x))
           .map(x => this.projectTabToEnt({ tab: x, hashSecret: hashSecret })) ??
         [],
+      providers:
+        tabsPack.providers
+          ?.filter(x => isDefined(x))
+          .map(x =>
+            this.providerTabToEnt({ tab: x, hashSecret: hashSecret })
+          ) ?? [],
       queries:
         tabsPack.queries
           ?.filter(x => isDefined(x))
@@ -1050,6 +1060,41 @@ export class TabToEntService {
     };
 
     return projectEnt;
+  }
+
+  providerTabToEnt(item: {
+    tab: ProviderTab;
+    hashSecret: string;
+  }): ProviderEnt {
+    let { tab } = item;
+
+    let providerSt: ProviderSt = {
+      options: tab.options
+    };
+
+    let providerLt: ProviderLt = {
+      emptyData: tab.emptyData
+    };
+
+    let providerEnt: ProviderEnt = {
+      providerFullId: this.hashService.makeProviderFullId({
+        projectId: tab.projectId,
+        providerId: tab.providerId
+      }),
+      projectId: tab.projectId,
+      providerId: tab.providerId,
+      kind: tab.kind,
+      type: tab.type,
+      isEnabled: tab.isEnabled,
+      ...this.getEntProps({
+        dataSt: providerSt,
+        dataLt: providerLt,
+        isMetadata: false
+      }),
+      serverTs: tab.serverTs
+    };
+
+    return providerEnt;
   }
 
   queryTabToEnt(item: { tab: QueryTab; hashSecret: string }): QueryEnt {
