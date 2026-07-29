@@ -114,6 +114,16 @@ export let zConnectionLt = z
   .meta({ id: 'ConnectionLt' });
 export type ConnectionLt = z.infer<typeof zConnectionLt>;
 
+export let zProviderSt = z
+  .object({ emptyData: z.number().nullish() })
+  .meta({ id: 'ProviderSt' });
+export type ProviderSt = z.infer<typeof zProviderSt>;
+
+export let zProviderLt = z
+  .object({ emptyData: z.number().nullish() })
+  .meta({ id: 'ProviderLt' });
+export type ProviderLt = z.infer<typeof zProviderLt>;
+
 export let zDashboardSt = z
   .object({
     title: z.string(),
