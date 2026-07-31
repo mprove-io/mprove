@@ -103,6 +103,10 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetProviders = 'api/ToBackendGetProviders',
   ToBackendEditProvider = 'api/ToBackendEditProvider',
   ToBackendDeleteProvider = 'api/ToBackendDeleteProvider',
+  ToBackendToggleProvider = 'api/ToBackendToggleProvider',
+  ToBackendAddProviderModel = 'api/ToBackendAddProviderModel',
+  ToBackendEditProviderModel = 'api/ToBackendEditProviderModel',
+  ToBackendDeleteProviderModel = 'api/ToBackendDeleteProviderModel',
   //
   ToBackendGetBranchesList = 'api/ToBackendGetBranchesList',
   ToBackendIsBranchExist = 'api/ToBackendIsBranchExist',

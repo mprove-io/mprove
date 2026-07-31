@@ -141,4 +141,36 @@ export class ProvidersService {
 
     return provider;
   }
+
+  checkProviderModelDoesNotExist(item: {
+    provider: ProviderTab;
+    modelId: string;
+  }) {
+    let { provider, modelId } = item;
+
+    let model = provider.options.models.find(x => x.modelId === modelId);
+
+    if (isDefined(model)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROVIDER_MODEL_ALREADY_EXISTS
+      });
+    }
+  }
+
+  getProviderModelCheckExists(item: {
+    provider: ProviderTab;
+    modelId: string;
+  }) {
+    let { provider, modelId } = item;
+
+    let model = provider.options.models.find(x => x.modelId === modelId);
+
+    if (isUndefined(model)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROVIDER_MODEL_DOES_NOT_EXIST
+      });
+    }
+
+    return model;
+  }
 }
