@@ -8,15 +8,18 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
 import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { Provider } from '#common/zod/backend/provider';
 import type { LlmOpenAICompatibleOptions } from '#common/zod/backend/provider-parts/llm-openai-compatible-options';
 import { HashService } from '../hash.service';
+import { TabService } from '../tab.service';
 
 @Injectable()
 export class ProvidersService {
   constructor(
     private hashService: HashService,
+    private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -111,5 +114,31 @@ export class ProvidersService {
         message: ErEnum.BACKEND_PROVIDER_ALREADY_EXISTS
       });
     }
+  }
+
+  async getProviderCheckExists(item: {
+    projectId: string;
+    providerId: string;
+  }): Promise<ProviderTab> {
+    let { projectId, providerId } = item;
+
+    let provider = await this.db.drizzle.query.providersTable
+      .findFirst({
+        where: and(
+          eq(providersTable.projectId, projectId),
+          eq(providersTable.providerId, providerId)
+        )
+      })
+      .then(providerEnt =>
+        this.tabService.providerEntToTab({ providerEnt: providerEnt })
+      );
+
+    if (isUndefined(provider)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROVIDER_DOES_NOT_EXIST
+      });
+    }
+
+    return provider;
   }
 }

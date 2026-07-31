@@ -100,6 +100,9 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetConnectionsList = 'api/ToBackendGetConnectionsList',
   //
   ToBackendCreateProvider = 'api/ToBackendCreateProvider',
+  ToBackendGetProviders = 'api/ToBackendGetProviders',
+  ToBackendEditProvider = 'api/ToBackendEditProvider',
+  ToBackendDeleteProvider = 'api/ToBackendDeleteProvider',
   //
   ToBackendGetBranchesList = 'api/ToBackendGetBranchesList',
   ToBackendIsBranchExist = 'api/ToBackendIsBranchExist',

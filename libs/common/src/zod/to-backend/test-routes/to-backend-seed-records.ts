@@ -3,12 +3,15 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
+import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
 import { zConnectionRawSchema } from '#common/zod/backend/connection-schemas/raw-schema';
 import { zEv } from '#common/zod/backend/ev';
+import { zLlmOpenAICompatibleOptions } from '#common/zod/backend/provider-parts/llm-openai-compatible-options';
 import { zMconfig } from '#common/zod/blockml/mconfig';
 import { zQuery } from '#common/zod/blockml/query';
 import { zMyResponse } from '#common/zod/to/my-response';
@@ -82,6 +85,17 @@ export let zToBackendSeedRecordsRequestPayloadConnectionsItem = z
     rawSchema: zConnectionRawSchema.nullish()
   })
   .meta({ id: 'ToBackendSeedRecordsRequestPayloadConnectionsItem' });
+
+export let zToBackendSeedRecordsRequestPayloadProvidersItem = z
+  .object({
+    projectId: z.string(),
+    providerId: z.string(),
+    kind: z.literal(ProviderKindEnum.LLM),
+    type: z.literal(ProviderLlmTypeEnum.OpenAICompatible),
+    isEnabled: z.boolean(),
+    options: zLlmOpenAICompatibleOptions
+  })
+  .meta({ id: 'ToBackendSeedRecordsRequestPayloadProvidersItem' });
 
 export let zToBackendSeedRecordsRequestPayloadEnvsItem = z
   .object({
@@ -173,6 +187,9 @@ export let zToBackendSeedRecordsRequestPayload = z
     connections: z
       .array(zToBackendSeedRecordsRequestPayloadConnectionsItem)
       .nullish(),
+    providers: z
+      .array(zToBackendSeedRecordsRequestPayloadProvidersItem)
+      .nullish(),
     envs: z.array(zToBackendSeedRecordsRequestPayloadEnvsItem).nullish(),
     sessions: z
       .array(zToBackendSeedRecordsRequestPayloadSessionsItem)
@@ -236,6 +253,9 @@ export type ToBackendSeedRecordsRequestPayloadMembersItem = z.infer<
 >;
 export type ToBackendSeedRecordsRequestPayloadConnectionsItem = z.infer<
   typeof zToBackendSeedRecordsRequestPayloadConnectionsItem
+>;
+export type ToBackendSeedRecordsRequestPayloadProvidersItem = z.infer<
+  typeof zToBackendSeedRecordsRequestPayloadProvidersItem
 >;
 export type ToBackendSeedRecordsRequestPayloadEnvsItem = z.infer<
   typeof zToBackendSeedRecordsRequestPayloadEnvsItem

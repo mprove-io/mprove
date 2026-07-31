@@ -35,6 +35,7 @@ import type {
   ModelTab,
   OrgTab,
   ProjectTab,
+  ProviderTab,
   QueryTab,
   ReportTab,
   SessionTab,
@@ -55,6 +56,7 @@ import { MconfigsService } from '#backend/services/db/mconfigs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { ProvidersService } from '#backend/services/db/providers.service';
 import { QueriesService } from '#backend/services/db/queries.service';
 import { ReportsService } from '#backend/services/db/reports.service';
 import { UsersService } from '#backend/services/db/users.service';
@@ -112,6 +114,7 @@ export class SeedRecordsController {
     private rpcService: RpcService,
     private usersService: UsersService,
     private connectionsService: ConnectionsService,
+    private providersService: ProvidersService,
     private envsService: EnvsService,
     private membersService: MembersService,
     private chartsService: ChartsService,
@@ -141,6 +144,7 @@ export class SeedRecordsController {
     let payloadOrgs = body.payload.orgs;
     let payloadProjects = body.payload.projects;
     let payloadConnections = body.payload.connections;
+    let payloadProviders = body.payload.providers;
     let payloadEnvs = body.payload.envs;
     let payloadSessions = body.payload.sessions;
     let payloadQueries = body.payload.queries;
@@ -168,6 +172,7 @@ export class SeedRecordsController {
     // let notes = ...
     let orgs: OrgTab[] = [];
     let projects: ProjectTab[] = [];
+    let providers: ProviderTab[] = [];
     let queries: QueryTab[] = [];
     let reports: ReportTab[] = [];
     let sessions: SessionTab[] = [];
@@ -335,6 +340,21 @@ export class SeedRecordsController {
         newConnection.rawSchema = x.rawSchema;
 
         connections.push(newConnection);
+      });
+    }
+
+    if (isDefined(payloadProviders)) {
+      payloadProviders.forEach(x => {
+        let newProvider = this.providersService.makeProvider({
+          projectId: x.projectId,
+          providerId: x.providerId,
+          kind: x.kind,
+          type: x.type,
+          isEnabled: x.isEnabled,
+          options: x.options
+        });
+
+        providers.push(newProvider);
       });
     }
 
@@ -735,6 +755,7 @@ export class SeedRecordsController {
                 envs: envs,
                 members: members,
                 connections: connections,
+                providers: providers,
                 branches: branches,
                 bridges: bridges,
                 structs: structs,

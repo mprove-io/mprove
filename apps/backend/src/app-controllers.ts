@@ -89,6 +89,9 @@ import { IsProjectExistController } from './controllers/projects/is-project-exis
 import { SetProjectApiKeyController } from './controllers/projects/set-project-api-key/set-project-api-key.controller';
 import { SetProjectInfoController } from './controllers/projects/set-project-info/set-project-info.controller';
 import { CreateProviderController } from './controllers/providers/create-provider/create-provider.controller';
+import { DeleteProviderController } from './controllers/providers/delete-provider/delete-provider.controller';
+import { EditProviderController } from './controllers/providers/edit-provider/edit-provider.controller';
+import { GetProvidersController } from './controllers/providers/get-providers/get-providers.controller';
 import { CancelQueriesController } from './controllers/queries/cancel-queries/cancel-queries.controller';
 import { GetQueriesController } from './controllers/queries/get-queries/get-queries.controller';
 import { GetQueryController } from './controllers/queries/get-query/get-query.controller';
@@ -206,6 +209,9 @@ export const appControllers = [
   GetConnectionsListController,
 
   CreateProviderController,
+  GetProvidersController,
+  EditProviderController,
+  DeleteProviderController,
 
   CreateFileController,
   DeleteFileController,
