@@ -250,13 +250,19 @@ export class AddConnectionDialogComponent implements OnInit {
     });
 
     this.addApiForm = this.fb.group({
-      baseUrl: [undefined, [Validators.required]],
+      baseUrl: [
+        undefined,
+        [Validators.required, ValidationService.apiUrlValidator]
+      ],
       headers: this.fb.array([])
     });
 
     this.addGoogleApiForm = this.fb.group({
       serviceAccountCredentials: [undefined, [Validators.required]],
-      baseUrl: ['https://analyticsdata.googleapis.com', [Validators.required]],
+      baseUrl: [
+        'https://analyticsdata.googleapis.com',
+        [Validators.required, ValidationService.apiUrlValidator]
+      ],
       headers: this.fb.array([]),
       scopes: this.fb.array([
         this.fb.group({
@@ -852,7 +858,7 @@ export class AddConnectionDialogComponent implements OnInit {
       storeApi:
         cType === ConnectionTypeEnum.Api
           ? {
-              baseUrl: this.addApiForm.value.baseUrl,
+              baseUrl: this.addApiForm.value.baseUrl.trim(),
               headers: this.addApiForm.value.headers
             }
           : undefined,
@@ -864,7 +870,7 @@ export class AddConnectionDialogComponent implements OnInit {
               googleCloudProject: undefined,
               googleCloudClientEmail: undefined,
               serviceAccountCredentials: googleApiCredentials,
-              baseUrl: this.addGoogleApiForm.value.baseUrl,
+              baseUrl: this.addGoogleApiForm.value.baseUrl.trim(),
               headers: this.addGoogleApiForm.value.headers,
               googleAuthScopes:
                 [ConnectionTypeEnum.GoogleApi].indexOf(

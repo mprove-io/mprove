@@ -26,6 +26,8 @@ export class ValidationService {
       ['max', `Max value: ${validatorValue.max}`],
       ['email', 'Invalid email address'],
       ['pattern', 'Invalid pattern'],
+      ['apiUrlInvalid', 'Enter a valid URL'],
+      ['apiUrlProtocolMustBeHttpsOrHttp', 'URL must use HTTPS or HTTP'],
       [
         'isNotDayOfWeekIndexValues',
         'Should be Day of week indexes separated by comma'
@@ -224,6 +226,27 @@ export class ValidationService {
     } else {
       return { isNotInteger: true };
     }
+  }
+
+  static apiUrlValidator(control: FormControl): ValidationErrors | null {
+    if (isUndefined(control.value) || control.value === '') {
+      return null;
+    }
+
+    let url: URL;
+    let value = control.value.toString().trim();
+
+    try {
+      url = new URL(value);
+    } catch {
+      return { apiUrlInvalid: true };
+    }
+
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+      return { apiUrlProtocolMustBeHttpsOrHttp: true };
+    }
+
+    return null;
   }
 
   static zeroToThreeDigitsIntegerOrEmptyValidator(control: FormControl) {

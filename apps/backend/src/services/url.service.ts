@@ -51,9 +51,9 @@ export class UrlService {
       });
     }
 
-    if (protocol !== 'https:') {
+    if (protocol !== 'https:' && protocol !== 'http:') {
       throw new ServerError({
-        message: ErEnum.BACKEND_API_PROTOCOL_MUST_BE_HTTPS,
+        message: ErEnum.BACKEND_API_PROTOCOL_MUST_BE_HTTPS_OR_HTTP,
         displayData: { url: urlStr }
       });
     }

@@ -65,7 +65,10 @@ export class AddProviderDialogComponent implements OnInit {
           Validators.maxLength(32)
         ]
       ],
-      baseURL: [undefined, [Validators.required]],
+      baseURL: [
+        undefined,
+        [Validators.required, ValidationService.apiUrlValidator]
+      ],
       apiKey: [undefined],
       headers: this.fb.array([]),
       queryParams: this.fb.array([]),
