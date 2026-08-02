@@ -131,8 +131,7 @@ test('1', async t => {
             supportsStructuredOutputs: true,
             models: [
               {
-                modelId: 'model-1',
-                name: 'Model One'
+                modelId: 'model-1'
               }
             ]
           }
@@ -189,7 +188,7 @@ test('1', async t => {
         models: [
           {
             modelId: 'model-1',
-            name: 'Model One'
+            name: 'Model-1'
           }
         ]
       }
@@ -211,7 +210,7 @@ test('1', async t => {
       models: [
         {
           modelId: 'model-1',
-          name: 'Model One'
+          name: 'Model-1'
         }
       ]
     });

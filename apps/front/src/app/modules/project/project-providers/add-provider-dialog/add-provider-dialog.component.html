@@ -10,7 +10,7 @@
     [formGroup]="addProviderForm"
     (ngSubmit)="add()"
   >
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-start">
+    <div class="flex flex-col sm:flex-row sm:items-start">
       <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
         Provider Name
       </label>
@@ -26,7 +26,6 @@
               addProviderForm.controls['providerId'].touched
           }"
           formControlName="providerId"
-          placeholder="openai_compatible"
         />
         <m-validation
           [control]="addProviderForm.controls['providerId']"
@@ -39,7 +38,7 @@
       <div class="text-s500">OpenAICompatible</div>
     </div>
 
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-start">
+    <div class="flex flex-col sm:flex-row sm:items-start">
       <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
         Base URL
       </label>
@@ -99,7 +98,7 @@
         <div
           *ngFor="let model of getModels().controls; let i = index"
           [formGroupName]="i"
-          class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start"
+          class="flex flex-col gap-3 sm:flex-row sm:items-start"
         >
           <button
             class="text-s500 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded focus:outline-none"
@@ -157,7 +156,7 @@
         <div
           *ngFor="let header of getHeaders().controls; let i = index"
           [formGroupName]="i"
-          class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start"
+          class="flex flex-col gap-3 sm:flex-row sm:items-start"
         >
           <button
             class="text-s500 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded focus:outline-none"
@@ -212,7 +211,7 @@
         <div
           *ngFor="let queryParam of getQueryParams().controls; let i = index"
           [formGroupName]="i"
-          class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start"
+          class="flex flex-col gap-3 sm:flex-row sm:items-start"
         >
           <button
             class="text-s500 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded focus:outline-none"
