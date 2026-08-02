@@ -47,6 +47,7 @@ import {
   PATH_PROFILE,
   PATH_PROJECT,
   PATH_PROJECT_DELETED,
+  PATH_PROVIDERS,
   PATH_REGISTER,
   PATH_REPO,
   PATH_REPORT,
@@ -101,6 +102,7 @@ import { ProjectConnectionsComponent } from './modules/project/project-connectio
 import { ProjectEnvironmentsComponent } from './modules/project/project-environments/project-environments.component';
 import { ProjectGivensComponent } from './modules/project/project-givens/project-givens.component';
 import { ProjectInfoComponent } from './modules/project/project-info/project-info.component';
+import { ProjectProvidersComponent } from './modules/project/project-providers/project-providers.component';
 import { ProjectRolesComponent } from './modules/project/project-roles/project-roles.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
 import { ReportComponent } from './modules/reports/report/report.component';
@@ -123,6 +125,7 @@ import { ProjectConnectionsResolver } from './resolvers/project-connections.reso
 import { ProjectEnvironmentsResolver } from './resolvers/project-environments.resolver';
 import { ProjectGivensResolver } from './resolvers/project-givens.resolver';
 import { ProjectInfoResolver } from './resolvers/project-info.resolver';
+import { ProjectProvidersResolver } from './resolvers/project-providers.resolver';
 import { ProjectRolesResolver } from './resolvers/project-roles.resolver';
 import { ProjectTeamResolver } from './resolvers/project-team.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
@@ -257,6 +260,11 @@ export const appRoutes: Routes = [
                 component: ProjectConnectionsComponent,
                 path: PATH_CONNECTIONS,
                 resolve: [ProjectConnectionsResolver]
+              },
+              {
+                component: ProjectProvidersComponent,
+                path: PATH_PROVIDERS,
+                resolve: [ProjectProvidersResolver]
               },
               {
                 component: ProjectEnvironmentsComponent,

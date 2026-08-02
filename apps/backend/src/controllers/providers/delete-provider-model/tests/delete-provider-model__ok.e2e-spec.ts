@@ -104,8 +104,10 @@ test('1', async t => {
               options: {
                 baseURL: 'https://api.example.com/v1',
                 apiKey: 'provider-api-key',
-                headers: { Authorization: 'provider-header-secret' },
-                queryParams: { version: '1' },
+                headers: [
+                  { key: 'Authorization', value: 'provider-header-secret' }
+                ],
+                queryParams: [{ key: 'version', value: '1' }],
                 includeUsage: true,
                 supportsStructuredOutputs: true,
                 models: [{ modelId: 'model-1', name: 'Model One' }]
@@ -178,8 +180,8 @@ test('1', async t => {
       options: {
         baseURL: 'https://api.example.com/v1',
         apiKey: '',
-        headers: { Authorization: '' },
-        queryParams: { version: '1' },
+        headers: [{ key: 'Authorization', value: '' }],
+        queryParams: [{ key: 'version', value: '1' }],
         includeUsage: true,
         supportsStructuredOutputs: true,
         models: []
@@ -189,8 +191,8 @@ test('1', async t => {
     assert.deepEqual(providerTab.options, {
       baseURL: 'https://api.example.com/v1',
       apiKey: 'provider-api-key',
-      headers: { Authorization: 'provider-header-secret' },
-      queryParams: { version: '1' },
+      headers: [{ key: 'Authorization', value: 'provider-header-secret' }],
+      queryParams: [{ key: 'version', value: '1' }],
       includeUsage: true,
       supportsStructuredOutputs: true,
       models: []

@@ -93,7 +93,7 @@ test('1', async t => {
               options: {
                 baseURL: 'https://zeta.example.com/v1',
                 apiKey: 'zeta-key',
-                headers: { Authorization: 'zeta-secret' },
+                headers: [{ key: 'Authorization', value: 'zeta-secret' }],
                 models: [{ modelId: 'zeta-model', name: 'Zeta Model' }]
               }
             },
@@ -106,8 +106,8 @@ test('1', async t => {
               options: {
                 baseURL: 'https://alpha.example.com/v1',
                 apiKey: 'alpha-key',
-                headers: { Authorization: 'alpha-secret' },
-                queryParams: { version: '1' },
+                headers: [{ key: 'Authorization', value: 'alpha-secret' }],
+                queryParams: [{ key: 'version', value: '1' }],
                 models: [{ modelId: 'alpha-model', name: 'Alpha Model' }]
               }
             }
@@ -157,12 +157,12 @@ test('1', async t => {
       ['alpha', 'zeta']
     );
     assert.equal(resp.payload.providers[0].options.apiKey, '');
-    assert.deepEqual(resp.payload.providers[0].options.headers, {
-      Authorization: ''
-    });
-    assert.deepEqual(resp.payload.providers[0].options.queryParams, {
-      version: '1'
-    });
+    assert.deepEqual(resp.payload.providers[0].options.headers, [
+      { key: 'Authorization', value: '' }
+    ]);
+    assert.deepEqual(resp.payload.providers[0].options.queryParams, [
+      { key: 'version', value: '1' }
+    ]);
     assert.equal(
       resp.payload.providers[0].options.baseURL,
       'https://alpha.example.com/v1'

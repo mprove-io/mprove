@@ -11,7 +11,7 @@ export let zToBackendEditProviderModelRequestPayload = z
     projectId: z.string(),
     providerId: z.string(),
     modelId: z.string().trim().min(1),
-    name: z.string().trim().min(1)
+    name: z.string().trim().nullish()
   })
   .meta({ id: 'ToBackendEditProviderModelRequestPayload' });
 

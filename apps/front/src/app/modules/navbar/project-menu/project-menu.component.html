@@ -37,15 +37,26 @@
         >Project Info</button
       >
 
-      <button
-        class="text-s1 hover:bg-m50 block w-full cursor-pointer px-4 py-2 text-left text-base focus:outline-none"
-        [ngClass]="{
-          'font-semibold': lastUrl === pathApiKeys
-        }"
-        [disabled]="lastUrl === pathApiKeys"
-        (click)="t1.hide(); navigateApiKeys()"
-        >API Keys</button
+      <div
+        tp="Admin or Editor role required"
+        placement="left"
+        [tpIsEnabled]="isAdmin === false && isEditor === false"
       >
+        <button
+          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+          [ngClass]="{
+            'font-semibold': lastUrl === pathProviders,
+            'text-s400': isAdmin === false && isEditor === false,
+            'border-s3 cursor-pointer': isAdmin === true || isEditor === true
+          }"
+          [disabled]="
+            lastUrl === pathProviders ||
+            (isAdmin === false && isEditor === false)
+          "
+          (click)="t1.hide(); navigateProviders()"
+          >LLM Providers</button
+        >
+      </div>
 
       <div
         tp="Admin or Editor role required"
@@ -67,6 +78,16 @@
           >Connections</button
         >
       </div>
+
+      <button
+        class="text-s1 hover:bg-m50 block w-full cursor-pointer px-4 py-2 text-left text-base focus:outline-none"
+        [ngClass]="{
+          'font-semibold': lastUrl === pathApiKeys
+        }"
+        [disabled]="lastUrl === pathApiKeys"
+        (click)="t1.hide(); navigateApiKeys()"
+        >API Keys</button
+      >
 
       <div
         tp="Admin or Editor role required"

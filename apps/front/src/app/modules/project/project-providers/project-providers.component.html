@@ -1,0 +1,293 @@
+<div class="bg-m1 flex h-full cursor-default flex-col">
+  <div
+    class="mx-4 mb-4 mt-6 flex h-2 flex-grow flex-col sm:mx-6 sm:mb-6 sm:mt-8"
+  >
+    <div class="flex min-h-11 flex-row items-center justify-start">
+      <div
+        data-cy="projectProvidersTitle"
+        class="text-s1 flex select-none text-2xl font-semibold"
+        >{{ pageTitle }}</div
+      >
+
+      <div
+        class="ml-6 sm:ml-10"
+        tp="Admin role required"
+        [tpIsEnabled]="isAdmin === false"
+      >
+        <button
+          data-cy="projectProvidersAddProviderButton"
+          class="text-m0 h-11 flex-shrink-0 select-none rounded px-4 py-2 text-base font-medium focus:outline-none sm:px-5"
+          type="button"
+          [ngClass]="{
+            'bg-m600': isAdmin === true,
+            'bg-s400 cursor-default': isAdmin === false
+          }"
+          (click)="addProvider()"
+          [disabled]="isAdmin === false"
+          >Add Provider</button
+        >
+      </div>
+    </div>
+
+    <div class="bg-m0 mt-6 flex-grow overflow-auto rounded shadow">
+      <ng-scrollbar
+        [orientation]="'auto'"
+        [visibility]="'hover'"
+        [appearance]="'compact'"
+        *ngIf="providers.length > 0"
+      >
+        <div class="text-s1 mx-5 mt-8 min-w-[1700px]">
+          <table class="divide-s500 min-w-full table-fixed divide-y">
+            <thead>
+              <tr class="h-12 text-sm">
+                <th class="w-[100px] select-none text-left"></th>
+                <th class="w-24 select-none text-left"></th>
+                <th class="w-28 select-none pr-8 text-left">Enabled</th>
+                <th class="w-48 select-none pr-8 text-left">Provider Name</th>
+                <th class="w-48 select-none pr-8 text-left">Type</th>
+                <th class="w-96 select-none pr-8 text-left">Base URL</th>
+                <th class="w-[480px] select-none pr-8 text-left">Models</th>
+                <th class="select-none pr-8 text-left">Extra</th>
+              </tr>
+            </thead>
+
+            <tbody class="divide-s300 divide-y text-base">
+              <tr *ngFor="let provider of providers" class="h-16 align-top">
+                <td class="w-[100px] py-3">
+                  <div
+                    class="w-fit"
+                    tp="Admin role required"
+                    [tpIsEnabled]="isAdmin === false"
+                  >
+                    <button
+                      data-cy="projectProvidersDeleteButton"
+                      class="ml-5 h-9 w-9 rounded focus:outline-none"
+                      [ngClass]="{
+                        'text-s1 hover:bg-m200': isAdmin === true,
+                        'text-s400 cursor-default': isAdmin === false
+                      }"
+                      [disabled]="isAdmin === false"
+                      (click)="deleteProvider({ provider: provider })"
+                    >
+                      <div class="flex justify-center">
+                        <m-trash-icon></m-trash-icon>
+                      </div>
+                    </button>
+                  </div>
+                </td>
+
+                <td class="w-24 py-3">
+                  <div
+                    class="w-fit"
+                    tp="Admin role required"
+                    [tpIsEnabled]="isAdmin === false"
+                  >
+                    <button
+                      data-cy="projectProvidersEditButton"
+                      class="h-9 select-none rounded border px-3 text-base leading-3 shadow-sm focus:outline-none"
+                      [ngClass]="{
+                        'border-s400 text-s500 hover:bg-s100': isAdmin === true,
+                        'border-s300 text-s400 cursor-default':
+                          isAdmin === false
+                      }"
+                      [disabled]="isAdmin === false"
+                      (click)="editProvider({ provider: provider })"
+                      >Edit</button
+                    >
+                  </div>
+                </td>
+
+                <td class="w-28 py-4 pr-8">
+                  <div
+                    class="w-fit"
+                    tp="Admin role required"
+                    [tpIsEnabled]="isAdmin === false"
+                  >
+                    <div
+                      class="flex max-w-min items-center"
+                      [ngClass]="{
+                        'cursor-pointer': isAdmin === true,
+                        'cursor-default': isAdmin === false
+                      }"
+                      (click)="toggleProvider({ provider: provider })"
+                    >
+                      <ui-switch
+                        [checked]="provider.isEnabled"
+                        [disabled]="isAdmin === false"
+                        color="#64BD63"
+                      ></ui-switch>
+                    </div>
+                  </div>
+                </td>
+                <td class="w-48 py-5 pr-8 font-medium">
+                  {{ provider.providerId }}
+                </td>
+                <td class="w-48 py-5 pr-8">{{ provider.type }}</td>
+                <td class="w-96 break-all py-5 pr-8">
+                  {{ provider.options.baseURL }}
+                </td>
+                <td class="w-[480px] pr-8">
+                  <div class="flex flex-row items-center">
+                    <div
+                      tp="Admin role required"
+                      [tpIsEnabled]="isAdmin === false"
+                    >
+                      <button
+                        data-cy="projectProvidersAddModelButton"
+                        class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                        [ngClass]="{
+                          'text-s400 cursor-default': isAdmin === false,
+                          'text-m600 hover:bg-m200': isAdmin === true
+                        }"
+                        [disabled]="isAdmin === false"
+                        (click)="addProviderModel({ provider: provider })"
+                        aria-label="Add model"
+                      >
+                        <m-add-icon></m-add-icon>
+                      </button>
+                    </div>
+
+                    <div class="my-3 ml-5 flex min-w-[360px] flex-col">
+                      <div
+                        *ngFor="let model of provider.options.models"
+                        class="group flex h-8 flex-row items-center text-base"
+                      >
+                        <div
+                          class="truncate rounded bg-blue-100 px-2 text-blue-800"
+                          >{{ model.modelId }}</div
+                        >
+                        <div class="text-s400 ml-2 truncate">
+                          {{ model.name }}
+                        </div>
+
+                        <div
+                          tp="Admin role required"
+                          [tpIsEnabled]="isAdmin === false"
+                          class="ml-3"
+                        >
+                          <button
+                            data-cy="projectProvidersEditModelButton"
+                            class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                            [ngClass]="{
+                              'text-s400 cursor-default': isAdmin === false,
+                              'text-s1 hover:bg-m200': isAdmin === true
+                            }"
+                            [disabled]="isAdmin === false"
+                            (click)="
+                              editProviderModel({
+                                provider: provider,
+                                model: model
+                              })
+                            "
+                            aria-label="Edit model"
+                          >
+                            <m-edit-icon></m-edit-icon>
+                          </button>
+                        </div>
+
+                        <div
+                          tp="Admin role required"
+                          [tpIsEnabled]="isAdmin === false"
+                          class="ml-2"
+                        >
+                          <button
+                            data-cy="projectProvidersDeleteModelButton"
+                            class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                            [ngClass]="{
+                              'text-s300 cursor-default': isAdmin === false,
+                              'text-s1 hover:bg-m200': isAdmin === true
+                            }"
+                            [disabled]="isAdmin === false"
+                            (click)="
+                              deleteProviderModel({
+                                provider: provider,
+                                model: model
+                              })
+                            "
+                            aria-label="Delete model"
+                          >
+                            <m-delete-icon></m-delete-icon>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div
+                        class="text-s400 flex h-8 items-center"
+                        *ngIf="provider.options.models.length === 0"
+                        >No models</div
+                      >
+                    </div>
+                  </div>
+                </td>
+                <td class="break-all py-5 pr-8">
+                  <div
+                    class="text-g700"
+                    *ngIf="
+                      provider.options.apiKey !== undefined &&
+                      provider.options.apiKey !== null
+                    "
+                  >
+                    API key is set
+                  </div>
+
+                  <div
+                    class="flex-col"
+                    *ngIf="(provider.options.headers?.length ?? 0) > 0"
+                  >
+                    <div
+                      class="font-medium"
+                      [ngClass]="{
+                        'mt-2':
+                          provider.options.apiKey !== undefined &&
+                          provider.options.apiKey !== null
+                      }"
+                      >Headers:</div
+                    >
+                    <div *ngFor="let header of provider.options.headers">
+                      <span class="ml-5 font-medium">{{ header.key }}: </span>
+                      <span class="text-g700">{{ header.value }}</span>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex-col"
+                    *ngIf="(provider.options.queryParams?.length ?? 0) > 0"
+                  >
+                    <div
+                      class="font-medium"
+                      [ngClass]="{
+                        'mt-2':
+                          (provider.options.headers?.length ?? 0) > 0 ||
+                          (provider.options.apiKey !== undefined &&
+                            provider.options.apiKey !== null)
+                      }"
+                      >Query Parameters:</div
+                    >
+                    <div
+                      *ngFor="let queryParam of provider.options.queryParams"
+                    >
+                      <span class="ml-5 font-medium"
+                        >{{ queryParam.key }}:
+                      </span>
+                      <span class="text-g700">{{ queryParam.value }}</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-scrollbar>
+
+      <div
+        class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
+        *ngIf="providers.length === 0"
+        >No providers</div
+      >
+    </div>
+  </div>
+</div>
+
+<div *ngIf="projectId$ | async"></div>
+<div *ngIf="isAdmin$ | async"></div>
+<div *ngIf="providers$ | async"></div>

@@ -1,0 +1,197 @@
+<div class="bg-m0 max-h-[92vh] overflow-y-auto p-6 sm:p-9">
+  <div
+    data-cy="editProviderDialogTitle"
+    class="text-s2 mt-2 text-left text-2xl font-semibold sm:mt-5"
+    >Edit Provider</div
+  >
+
+  <form
+    class="mt-8 flex w-full max-w-[720px] flex-col"
+    [formGroup]="editProviderForm"
+    (ngSubmit)="save()"
+  >
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center">
+      <div class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0">
+        Provider Name
+      </div>
+      <div class="text-s500">{{ ref.data.provider.providerId }}</div>
+    </div>
+
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center">
+      <div class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0">Type</div>
+      <div class="text-s500">OpenAICompatible</div>
+    </div>
+
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-start">
+      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
+        Base URL
+      </label>
+      <div class="flex w-full flex-col">
+        <input
+          autocomplete="off"
+          spellcheck="false"
+          data-cy="editProviderDialogBaseUrlInput"
+          class="form-input border-s3 focus:border-m600 w-full rounded"
+          [ngClass]="{
+            'border-r600':
+              editProviderForm.controls['baseURL'].invalid &&
+              editProviderForm.controls['baseURL'].touched
+          }"
+          formControlName="baseURL"
+          placeholder="https://api.example.com/v1"
+        />
+        <m-validation
+          [control]="editProviderForm.controls['baseURL']"
+        ></m-validation>
+      </div>
+    </div>
+
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-start">
+      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
+        API Key
+      </label>
+      <div class="flex w-full flex-col">
+        <input
+          autocomplete="off"
+          spellcheck="false"
+          data-cy="editProviderDialogApiKeyInput"
+          class="form-input border-s3 focus:border-m600 w-full rounded"
+          formControlName="apiKey"
+          placeholder="Will be empty after Save if not set"
+          type="text"
+        />
+        <div class="text-s400 mt-1 text-sm">
+          Sent as Authorization: Bearer &lt;key&gt;
+        </div>
+      </div>
+    </div>
+
+    <div class="border-s300 mb-8 border-t pt-7">
+      <div class="mb-4 flex items-center justify-between">
+        <div class="text-lg font-semibold">Headers</div>
+        <button
+          data-cy="editProviderDialogAddHeaderButton"
+          class="border-s400 text-s500 hover:bg-s100 h-10 rounded border px-4 text-base shadow-sm focus:outline-none"
+          type="button"
+          (click)="addHeader()"
+          >Add Header</button
+        >
+      </div>
+
+      <div formArrayName="headers">
+        <div
+          *ngFor="let header of getHeaders().controls; let i = index"
+          [formGroupName]="i"
+          class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start"
+        >
+          <button
+            class="text-s500 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+            type="button"
+            (click)="removeHeader({ index: i })"
+            aria-label="Remove header"
+          >
+            <m-trash-icon></m-trash-icon>
+          </button>
+          <div class="flex flex-1 flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              class="form-input border-s3 focus:border-m600 w-full rounded"
+              formControlName="key"
+              placeholder="Key"
+            />
+            <m-validation
+              [control]="getControl({ group: header, controlName: 'key' })"
+            ></m-validation>
+          </div>
+          <div class="flex flex-1 flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              class="form-input border-s3 focus:border-m600 w-full rounded"
+              formControlName="value"
+              placeholder="Will be empty after Save if not set"
+              type="text"
+            />
+            <m-validation
+              [control]="getControl({ group: header, controlName: 'value' })"
+            ></m-validation>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-s300 mb-2 border-t pt-7">
+      <div class="mb-4 flex items-center justify-between">
+        <div class="text-lg font-semibold">Query Parameters</div>
+        <button
+          data-cy="editProviderDialogAddQueryParamButton"
+          class="border-s400 text-s500 hover:bg-s100 h-10 rounded border px-4 text-base shadow-sm focus:outline-none"
+          type="button"
+          (click)="addQueryParam()"
+          >Add Parameter</button
+        >
+      </div>
+
+      <div formArrayName="queryParams">
+        <div
+          *ngFor="let queryParam of getQueryParams().controls; let i = index"
+          [formGroupName]="i"
+          class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start"
+        >
+          <button
+            class="text-s500 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+            type="button"
+            (click)="removeQueryParam({ index: i })"
+            aria-label="Remove query parameter"
+          >
+            <m-trash-icon></m-trash-icon>
+          </button>
+          <div class="flex flex-1 flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              class="form-input border-s3 focus:border-m600 w-full rounded"
+              formControlName="key"
+              placeholder="Key"
+            />
+            <m-validation
+              [control]="getControl({ group: queryParam, controlName: 'key' })"
+            ></m-validation>
+          </div>
+          <div class="flex flex-1 flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              class="form-input border-s3 focus:border-m600 w-full rounded"
+              formControlName="value"
+              placeholder="Value"
+              type="text"
+            />
+            <m-validation
+              [control]="
+                getControl({ group: queryParam, controlName: 'value' })
+              "
+            ></m-validation>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center">
+      <button
+        data-cy="editProviderDialogSaveButton"
+        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+      <button
+        data-cy="editProviderDialogCancelButton"
+        class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

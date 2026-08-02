@@ -212,6 +212,30 @@ import {
   EditProjectNameDialogData
 } from '../modules/project/project-info/edit-project-name-dialog/edit-project-name-dialog.component';
 import {
+  AddProviderDialogComponent,
+  AddProviderDialogData
+} from '../modules/project/project-providers/add-provider-dialog/add-provider-dialog.component';
+import {
+  AddProviderModelDialogComponent,
+  AddProviderModelDialogData
+} from '../modules/project/project-providers/add-provider-model-dialog/add-provider-model-dialog.component';
+import {
+  DeleteProviderDialogComponent,
+  DeleteProviderDialogData
+} from '../modules/project/project-providers/delete-provider-dialog/delete-provider-dialog.component';
+import {
+  DeleteProviderModelDialogComponent,
+  DeleteProviderModelDialogData
+} from '../modules/project/project-providers/delete-provider-model-dialog/delete-provider-model-dialog.component';
+import {
+  EditProviderDialogComponent,
+  EditProviderDialogData
+} from '../modules/project/project-providers/edit-provider-dialog/edit-provider-dialog.component';
+import {
+  EditProviderModelDialogComponent,
+  EditProviderModelDialogData
+} from '../modules/project/project-providers/edit-provider-model-dialog/edit-provider-model-dialog.component';
+import {
   AddProjectRoleDialogComponent,
   type AddProjectRoleDialogData
 } from '../modules/project/project-roles/add-project-role-dialog/add-project-role-dialog.component';
@@ -768,6 +792,58 @@ export class MyDialogService {
 
   showDeleteConnection(item: DeleteConnectionDialogData): void {
     this.dialogService.open(DeleteConnectionDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showAddProvider(item: AddProviderDialogData): void {
+    this.dialogService.open(AddProviderDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 800
+    });
+  }
+
+  showEditProvider(item: EditProviderDialogData): void {
+    this.dialogService.open(EditProviderDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 800
+    });
+  }
+
+  showDeleteProvider(item: DeleteProviderDialogData): void {
+    this.dialogService.open(DeleteProviderDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showAddProviderModel(item: AddProviderModelDialogData): void {
+    this.dialogService.open(AddProviderModelDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 600
+    });
+  }
+
+  showEditProviderModel(item: EditProviderModelDialogData): void {
+    this.dialogService.open(EditProviderModelDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 600
+    });
+  }
+
+  showDeleteProviderModel(item: DeleteProviderModelDialogData): void {
+    this.dialogService.open(DeleteProviderModelDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

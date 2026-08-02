@@ -1,0 +1,46 @@
+<div class="bg-m0 flex select-none flex-col p-9">
+  <div class="text-s2 mt-5 text-left text-2xl font-semibold"> Add Model </div>
+
+  <form
+    class="mt-9 flex w-[30rem] max-w-full flex-col"
+    [formGroup]="modelForm"
+    (ngSubmit)="save()"
+  >
+    <label class="mb-2 font-semibold">Model ID</label>
+    <input
+      autocomplete="off"
+      spellcheck="false"
+      data-cy="providerModelDialogModelIdInput"
+      class="form-input border-s3 focus:border-m600 rounded"
+      formControlName="modelId"
+    />
+    <m-validation [control]="modelForm.controls['modelId']"></m-validation>
+
+    <label class="mb-2 mt-6 font-semibold">Name</label>
+    <input
+      autocomplete="off"
+      spellcheck="false"
+      data-cy="providerModelDialogNameInput"
+      class="form-input border-s3 focus:border-m600 rounded"
+      formControlName="name"
+      placeholder="Optional"
+    />
+    <m-validation [control]="modelForm.controls['name']"></m-validation>
+
+    <div class="mt-8 flex items-center">
+      <button
+        data-cy="providerModelDialogSaveButton"
+        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+        type="submit"
+        >Add</button
+      >
+      <button
+        data-cy="providerModelDialogCancelButton"
+        class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

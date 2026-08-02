@@ -59,12 +59,10 @@ export class ProvidersService {
     let options = provider.options;
 
     let headers = isDefined(options.headers)
-      ? Object.fromEntries(
-          Object.entries(options.headers).map(([key, value]) => [
-            key,
-            isIncludePasswords === true ? value : ''
-          ])
-        )
+      ? options.headers.map(header => ({
+          key: header.key,
+          value: isIncludePasswords === true ? header.value : ''
+        }))
       : undefined;
 
     let apiProvider: Provider = {

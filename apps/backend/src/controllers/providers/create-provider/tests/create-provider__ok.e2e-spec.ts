@@ -120,12 +120,13 @@ test('1', async t => {
           options: {
             baseURL: baseURL,
             apiKey: apiKey,
-            headers: {
-              Authorization: 'Bearer provider-header-secret'
-            },
-            queryParams: {
-              token: 'provider-query-secret'
-            },
+            headers: [
+              {
+                key: 'Authorization',
+                value: 'Bearer provider-header-secret'
+              }
+            ],
+            queryParams: [{ key: 'token', value: 'provider-query-secret' }],
             includeUsage: true,
             supportsStructuredOutputs: true,
             models: [
@@ -181,12 +182,8 @@ test('1', async t => {
       options: {
         baseURL: baseURL,
         apiKey: '',
-        headers: {
-          Authorization: ''
-        },
-        queryParams: {
-          token: 'provider-query-secret'
-        },
+        headers: [{ key: 'Authorization', value: '' }],
+        queryParams: [{ key: 'token', value: 'provider-query-secret' }],
         includeUsage: true,
         supportsStructuredOutputs: true,
         models: [
@@ -205,12 +202,10 @@ test('1', async t => {
     assert.deepEqual(providerTab.options, {
       baseURL: baseURL,
       apiKey: apiKey,
-      headers: {
-        Authorization: 'Bearer provider-header-secret'
-      },
-      queryParams: {
-        token: 'provider-query-secret'
-      },
+      headers: [
+        { key: 'Authorization', value: 'Bearer provider-header-secret' }
+      ],
+      queryParams: [{ key: 'token', value: 'provider-query-secret' }],
       includeUsage: true,
       supportsStructuredOutputs: true,
       models: [

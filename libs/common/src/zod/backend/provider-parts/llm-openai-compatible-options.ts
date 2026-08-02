@@ -5,8 +5,22 @@ export let zLlmOpenAICompatibleOptions = z
   .object({
     baseURL: z.string().trim().min(1),
     apiKey: z.string().nullish(),
-    headers: z.record(z.string().min(1), z.string()).nullish(),
-    queryParams: z.record(z.string().min(1), z.string()).nullish(),
+    headers: z
+      .array(
+        z.object({
+          key: z.string().trim().min(1),
+          value: z.string()
+        })
+      )
+      .nullish(),
+    queryParams: z
+      .array(
+        z.object({
+          key: z.string().trim().min(1),
+          value: z.string()
+        })
+      )
+      .nullish(),
     includeUsage: z.boolean().nullish(),
     supportsStructuredOutputs: z.boolean().nullish(),
     models: z.array(zLlmModel)

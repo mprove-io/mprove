@@ -105,12 +105,13 @@ test('1', async t => {
           options: {
             baseURL: 'https://api.example.com/v1',
             apiKey: 'provider-api-key',
-            headers: {
-              Authorization: 'Bearer provider-header-secret'
-            },
-            queryParams: {
-              token: 'provider-query-secret'
-            },
+            headers: [
+              {
+                key: 'Authorization',
+                value: 'Bearer provider-header-secret'
+              }
+            ],
+            queryParams: [{ key: 'token', value: 'provider-query-secret' }],
             includeUsage: true,
             supportsStructuredOutputs: true,
             models: [

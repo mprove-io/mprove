@@ -129,8 +129,8 @@ test('1', async t => {
           options: {
             baseURL: 'https://new.example.com/v1',
             apiKey: 'new-key',
-            headers: { Authorization: 'new-header-secret' },
-            queryParams: { version: '2' },
+            headers: [{ key: 'Authorization', value: 'new-header-secret' }],
+            queryParams: [{ key: 'version', value: '2' }],
             includeUsage: true,
             supportsStructuredOutputs: true,
             models: [{ modelId: 'new-model', name: 'New Model' }]
@@ -178,18 +178,18 @@ test('1', async t => {
       'https://new.example.com/v1'
     );
     assert.equal(resp.payload.provider.options.apiKey, '');
-    assert.deepEqual(resp.payload.provider.options.headers, {
-      Authorization: ''
-    });
-    assert.deepEqual(resp.payload.provider.options.queryParams, {
-      version: '2'
-    });
+    assert.deepEqual(resp.payload.provider.options.headers, [
+      { key: 'Authorization', value: '' }
+    ]);
+    assert.deepEqual(resp.payload.provider.options.queryParams, [
+      { key: 'version', value: '2' }
+    ]);
     assert.equal(providerTab.isEnabled, false);
     assert.deepEqual(providerTab.options, {
       baseURL: 'https://new.example.com/v1',
       apiKey: 'new-key',
-      headers: { Authorization: 'new-header-secret' },
-      queryParams: { version: '2' },
+      headers: [{ key: 'Authorization', value: 'new-header-secret' }],
+      queryParams: [{ key: 'version', value: '2' }],
       includeUsage: true,
       supportsStructuredOutputs: true,
       models: [{ modelId: 'new-model', name: 'New Model' }]

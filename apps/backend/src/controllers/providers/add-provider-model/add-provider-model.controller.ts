@@ -26,6 +26,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
+import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
 import type { ToBackendAddProviderModelResponsePayload } from '#common/zod/to-backend/providers/to-backend-add-provider-model';
 
 @ApiTags('Providers')
@@ -71,7 +73,14 @@ export class AddProviderModelController {
       modelId: model.modelId
     });
 
-    provider.options.models.push(model);
+    let modelName = isUndefinedOrEmpty(model.name)
+      ? capitalizeFirstLetter(model.modelId)
+      : model.name;
+
+    provider.options.models.push({
+      modelId: model.modelId,
+      name: modelName
+    });
 
     await retry(
       async () =>

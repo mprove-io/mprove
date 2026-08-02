@@ -22,6 +22,7 @@ export const PROJECT_ENVIRONMENTS_PAGE_TITLE = 'Project - Environments';
 export const PROJECT_GIVENS_PAGE_TITLE = 'Project - Givens';
 export const PROJECT_ROLES_PAGE_TITLE = 'Project - Access Roles';
 export const PROJECT_CONNECTIONS_PAGE_TITLE = 'Project - Connections';
+export const PROJECT_PROVIDERS_PAGE_TITLE = 'Project - LLM Providers';
 export const PROJECT_INFO_PAGE_TITLE = 'Project - Info';
 export const PROJECT_TEAM_PAGE_TITLE = 'Project - Team';
 export const PROJECT_API_KEYS_PAGE_TITLE = 'Project - API Keys';
