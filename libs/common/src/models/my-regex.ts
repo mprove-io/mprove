@@ -191,6 +191,9 @@ export class MyRegex {
   static ROLE_ID(): RegExp {
     return cloneRegexp(/^[a-z_][a-z0-9_]*$/);
   }
+  static PROVIDER_ID(): RegExp {
+    return cloneRegexp(/^[a-z0-9][a-z0-9-_]*$/);
+  }
   static CAPTURE_NOT_ALLOWED_CONNECTION_NAME_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);
   }

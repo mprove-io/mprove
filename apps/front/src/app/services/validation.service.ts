@@ -46,6 +46,10 @@ export class ValidationService {
       ['wrongFormatNumber', 'Wrong format number'],
       ['titleIsNotUnique', 'Tile title must be unique for dashboard'],
       ['connectionNameWrongChars', 'Use only "a-z0-9_" chars'],
+      [
+        'providerNameWrongChars',
+        'Start with a-z or 0-9 and use only a-z, 0-9, -, _'
+      ],
       ['fileNameWrongChars', 'Use only "a-z0-9_" chars'],
       ['envVariableNameWrongChars', 'Use only "A-Z0-9_" chars'],
       ['givenIdWrongChars', 'Start with A-Z or _ and use only A-Z, 0-9, _'],
@@ -302,6 +306,20 @@ export class ValidationService {
       return null;
     } else {
       return { connectionNameWrongChars: true };
+    }
+  }
+
+  static providerNameWrongChars(control: FormControl) {
+    if (isUndefined(control.value) || control.value === '') {
+      return null;
+    }
+
+    let isMatch = control.value.toString().match(MyRegex.PROVIDER_ID());
+
+    if (isMatch) {
+      return null;
+    } else {
+      return { providerNameWrongChars: true };
     }
   }
 

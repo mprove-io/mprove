@@ -61,7 +61,7 @@ export class AddProviderDialogComponent implements OnInit {
         undefined,
         [
           Validators.required,
-          ValidationService.connectionNameWrongChars,
+          ValidationService.providerNameWrongChars,
           Validators.maxLength(32)
         ]
       ],

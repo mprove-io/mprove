@@ -15,9 +15,9 @@ export let zToBackendCreateProviderRequestPayload = z
     providerId: z
       .string()
       .max(32)
-      .regex(/^[a-z0-9_]+$/, {
+      .regex(/^[a-z0-9][a-z0-9-_]*$/, {
         message:
-          'providerId must contain only lowercase letters, digits or underscores'
+          'providerId must start with a lowercase letter or digit and contain only lowercase letters, digits, hyphens or underscores'
       }),
     kind: z.literal(ProviderKindEnum.LLM),
     type: z.literal(ProviderLlmTypeEnum.OpenAICompatible),
