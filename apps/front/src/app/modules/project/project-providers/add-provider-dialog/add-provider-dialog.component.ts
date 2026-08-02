@@ -145,8 +145,6 @@ export class AddProviderDialogComponent implements OnInit {
           value: queryParam.value
         })
       ),
-      includeUsage: true,
-      supportsStructuredOutputs: true,
       models: this.addProviderForm.value.models.map(
         (model: { modelId: string; name?: string }) => ({
           modelId: model.modelId.trim(),

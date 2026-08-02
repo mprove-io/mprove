@@ -137,9 +137,6 @@ export class EditProviderDialogComponent implements OnInit {
           value: queryParam.value
         })
       ),
-      includeUsage: provider.options.includeUsage ?? true,
-      supportsStructuredOutputs:
-        provider.options.supportsStructuredOutputs ?? true,
       models: provider.options.models
     };
     let payload: ToBackendEditProviderRequestPayload = {

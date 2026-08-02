@@ -108,8 +108,6 @@ test('1', async t => {
                   { key: 'Authorization', value: 'provider-header-secret' }
                 ],
                 queryParams: [{ key: 'version', value: '1' }],
-                includeUsage: true,
-                supportsStructuredOutputs: true,
                 models: [{ modelId: 'model-1', name: 'Model One' }]
               }
             }
@@ -183,8 +181,6 @@ test('1', async t => {
         apiKey: '',
         headers: [{ key: 'Authorization', value: '' }],
         queryParams: [{ key: 'version', value: '1' }],
-        includeUsage: true,
-        supportsStructuredOutputs: true,
         models: [
           { modelId: 'model-1', name: 'Model One' },
           { modelId: 'model-2', name: 'Model Two' }
@@ -197,8 +193,6 @@ test('1', async t => {
       apiKey: 'provider-api-key',
       headers: [{ key: 'Authorization', value: 'provider-header-secret' }],
       queryParams: [{ key: 'version', value: '1' }],
-      includeUsage: true,
-      supportsStructuredOutputs: true,
       models: [
         { modelId: 'model-1', name: 'Model One' },
         { modelId: 'model-2', name: 'Model Two' }

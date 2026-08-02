@@ -81,8 +81,6 @@ export class ProvidersService {
               : undefined,
         headers: headers,
         queryParams: options.queryParams,
-        includeUsage: options.includeUsage,
-        supportsStructuredOutputs: options.supportsStructuredOutputs,
         models: options.models.map(model => ({
           modelId: model.modelId,
           name: model.name

@@ -21,8 +21,6 @@ export let zLlmOpenAICompatibleOptions = z
         })
       )
       .nullish(),
-    includeUsage: z.boolean().nullish(),
-    supportsStructuredOutputs: z.boolean().nullish(),
     models: z.array(zLlmModel)
   })
   .meta({ id: 'LlmOpenAICompatibleOptions' });

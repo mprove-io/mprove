@@ -131,8 +131,6 @@ test('1', async t => {
             apiKey: 'new-key',
             headers: [{ key: 'Authorization', value: 'new-header-secret' }],
             queryParams: [{ key: 'version', value: '2' }],
-            includeUsage: true,
-            supportsStructuredOutputs: true,
             models: [{ modelId: 'new-model', name: 'New Model' }]
           }
         }
@@ -190,8 +188,6 @@ test('1', async t => {
       apiKey: 'new-key',
       headers: [{ key: 'Authorization', value: 'new-header-secret' }],
       queryParams: [{ key: 'version', value: '2' }],
-      includeUsage: true,
-      supportsStructuredOutputs: true,
       models: [{ modelId: 'new-model', name: 'New Model' }]
     });
 

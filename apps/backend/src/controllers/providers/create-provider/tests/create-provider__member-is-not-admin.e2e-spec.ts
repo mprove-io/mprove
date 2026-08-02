@@ -112,8 +112,6 @@ test('1', async t => {
               }
             ],
             queryParams: [{ key: 'token', value: 'provider-query-secret' }],
-            includeUsage: true,
-            supportsStructuredOutputs: true,
             models: [
               {
                 modelId: 'model-1',

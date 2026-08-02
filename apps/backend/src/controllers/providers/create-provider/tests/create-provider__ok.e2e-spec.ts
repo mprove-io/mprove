@@ -127,8 +127,6 @@ test('1', async t => {
               }
             ],
             queryParams: [{ key: 'token', value: 'provider-query-secret' }],
-            includeUsage: true,
-            supportsStructuredOutputs: true,
             models: [
               {
                 modelId: 'model-1'
@@ -183,8 +181,6 @@ test('1', async t => {
         apiKey: '',
         headers: [{ key: 'Authorization', value: '' }],
         queryParams: [{ key: 'token', value: 'provider-query-secret' }],
-        includeUsage: true,
-        supportsStructuredOutputs: true,
         models: [
           {
             modelId: 'model-1',
@@ -205,8 +201,6 @@ test('1', async t => {
         { key: 'Authorization', value: 'Bearer provider-header-secret' }
       ],
       queryParams: [{ key: 'token', value: 'provider-query-secret' }],
-      includeUsage: true,
-      supportsStructuredOutputs: true,
       models: [
         {
           modelId: 'model-1',
