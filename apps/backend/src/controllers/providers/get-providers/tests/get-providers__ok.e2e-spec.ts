@@ -9,31 +9,35 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
-import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type {
-  ToBackendGetProvidersRequest,
-  ToBackendGetProvidersResponse
-} from '#common/zod/to-backend/providers/to-backend-get-providers';
+import type { Provider } from '#common/zod/backend/provider';
+import type { ToBackendGetProvidersRequest } from '#common/zod/to-backend/providers/get-providers/get-providers-request';
+import type { ToBackendGetProvidersResponse } from '#common/zod/to-backend/providers/get-providers/get-providers-response';
 
 let testId = 'backend-get-providers__ok';
+
 let traceId = testId;
 
-let userId = makeId();
+let userId: string = makeId();
+
 let email = `${testId}@example.com`;
+
 let password = '123456';
 
 let orgId = testId;
+
 let orgName = testId;
 
-let projectId = makeId();
+let projectId: string = makeId();
+
 let projectName = testId;
 
 test('1', async t => {
   let isPass = false;
+
   let prep: Prep;
 
   await retry(async () => {
@@ -87,28 +91,42 @@ test('1', async t => {
             {
               projectId: projectId,
               providerId: 'zeta',
-              kind: ProviderKindEnum.LLM,
-              type: ProviderLlmTypeEnum.OpenAICompatible,
+              type: ProviderTypeEnum.OpenAICompatible,
+              name: 'Zeta',
               isEnabled: false,
+              models: [
+                {
+                  modelId: 'zeta-model',
+                  name: 'Zeta Model',
+                  isExplorer: true,
+                  isBuilder: true
+                }
+              ],
               options: {
                 baseURL: 'https://zeta.example.com/v1',
                 apiKey: 'zeta-key',
-                headers: [{ key: 'Authorization', value: 'zeta-secret' }],
-                models: [{ modelId: 'zeta-model', name: 'Zeta Model' }]
+                headers: [{ key: 'Authorization', value: 'zeta-secret' }]
               }
             },
             {
               projectId: projectId,
               providerId: 'alpha',
-              kind: ProviderKindEnum.LLM,
-              type: ProviderLlmTypeEnum.OpenAICompatible,
+              type: ProviderTypeEnum.OpenAICompatible,
+              name: 'Alpha',
               isEnabled: true,
+              models: [
+                {
+                  modelId: 'alpha-model',
+                  name: 'Alpha Model',
+                  isExplorer: true,
+                  isBuilder: true
+                }
+              ],
               options: {
                 baseURL: 'https://alpha.example.com/v1',
                 apiKey: 'alpha-key',
                 headers: [{ key: 'Authorization', value: 'alpha-secret' }],
-                queryParams: [{ key: 'version', value: '1' }],
-                models: [{ modelId: 'alpha-model', name: 'Alpha Model' }]
+                queryParams: [{ key: 'version', value: '1' }]
               }
             }
           ]
@@ -144,29 +162,46 @@ test('1', async t => {
         logger: prep?.logger,
         cs: prep?.cs
       });
+
       if (prep) {
         await prep.app.close();
       }
     }
 
     assert.equal(resp.info.error, undefined);
+
     assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+
     assert.equal(resp.payload.userMember.memberId, userId);
-    assert.deepEqual(
-      resp.payload.providers.map(provider => provider.providerId),
-      ['alpha', 'zeta']
+
+    let providerIds: string[] = resp.payload.providers.map(
+      provider => provider.providerId
     );
-    assert.equal(resp.payload.providers[0].options.apiKey, '');
-    assert.deepEqual(resp.payload.providers[0].options.headers, [
+
+    assert.deepEqual(providerIds, ['alpha', 'zeta']);
+
+    let alphaProvider: Provider = resp.payload.providers[0];
+
+    assert.equal(alphaProvider.type, ProviderTypeEnum.OpenAICompatible);
+
+    assert.equal(alphaProvider.name, 'Alpha');
+
+    if (alphaProvider.type !== ProviderTypeEnum.OpenAICompatible) {
+      throw new Error('Expected an OpenAI-compatible provider');
+    }
+
+    assert.equal(alphaProvider.options.apiKey, '');
+
+    assert.deepEqual(alphaProvider.options.headers, [
       { key: 'Authorization', value: '' }
     ]);
-    assert.deepEqual(resp.payload.providers[0].options.queryParams, [
+
+    assert.deepEqual(alphaProvider.options.queryParams, [
       { key: 'version', value: '1' }
     ]);
-    assert.equal(
-      resp.payload.providers[0].options.baseURL,
-      'https://alpha.example.com/v1'
-    );
+
+    assert.equal(alphaProvider.options.baseURL, 'https://alpha.example.com/v1');
+
     assert.equal(resp.payload.providers[1].isEnabled, false);
 
     isPass = true;

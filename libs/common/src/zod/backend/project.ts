@@ -10,9 +10,6 @@ export let zProject = z
     gitUrl: z.string().nullish(),
     defaultBranch: z.string().nullish(),
     publicKey: z.string().nullish(),
-    isZenApiKeySet: z.boolean().nullish(),
-    isAnthropicApiKeySet: z.boolean().nullish(),
-    isOpenaiApiKeySet: z.boolean().nullish(),
     isE2bApiKeySet: z.boolean().nullish(),
     serverTs: z.number().int().nullish()
   })

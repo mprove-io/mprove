@@ -15,17 +15,18 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { PROVIDER_TYPE_NAME_BY_TYPE } from '#common/constants/providers';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { Provider } from '#common/zod/backend/provider';
-import type { LlmOpenAICompatibleOptions } from '#common/zod/backend/provider-parts/llm-openai-compatible-options';
-import type {
-  ToBackendEditProviderRequestPayload,
-  ToBackendEditProviderResponse
-} from '#common/zod/to-backend/providers/to-backend-edit-provider';
+import type { ProviderOptionsOpenAICompatible } from '#common/zod/backend/provider-options/provider-options-openai-compatible';
+import type { ToBackendEditProviderRequestPayload } from '#common/zod/to-backend/providers/edit-provider/edit-provider-request-payload';
+import type { ToBackendEditProviderResponse } from '#common/zod/to-backend/providers/edit-provider/edit-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
+import { ValidationService } from '#front/app/services/validation.service';
 
 export interface EditProviderDialogData {
   apiService: ApiService;
@@ -48,6 +49,15 @@ export class EditProviderDialogComponent implements OnInit {
 
   editProviderForm: FormGroup;
 
+  providerTypeEnum = ProviderTypeEnum;
+
+  get providerTypeLabel(): string {
+    let providerTypeLabel: string =
+      PROVIDER_TYPE_NAME_BY_TYPE[this.ref.data.provider.type];
+
+    return providerTypeLabel;
+  }
+
   constructor(
     public ref: DialogRef<EditProviderDialogData>,
     private fb: FormBuilder,
@@ -56,25 +66,57 @@ export class EditProviderDialogComponent implements OnInit {
 
   ngOnInit() {
     let provider = this.ref.data.provider;
-    let headerGroups = (provider.options.headers ?? []).map(header =>
-      this.makeKeyValueGroup({
-        key: header.key,
-        value: header.value,
-        isValueRequired: false
-      })
-    );
-    let queryParamGroups = (provider.options.queryParams ?? []).map(
-      queryParam =>
-        this.makeKeyValueGroup({
-          key: queryParam.key,
-          value: queryParam.value
-        })
-    );
+
+    let isOpenAICompatible =
+      provider.type === ProviderTypeEnum.OpenAICompatible;
+
+    let compatibleOptions = isOpenAICompatible
+      ? (provider.options as ProviderOptionsOpenAICompatible)
+      : undefined;
+
+    let headerGroups = compatibleOptions
+      ? (compatibleOptions.headers ?? []).map(header =>
+          this.makeKeyValueGroup({
+            key: header.key,
+            value: header.value,
+            isValueRequired: false
+          })
+        )
+      : [];
+
+    let queryParamGroups = compatibleOptions
+      ? (compatibleOptions.queryParams ?? []).map(queryParam =>
+          this.makeKeyValueGroup({
+            key: queryParam.key,
+            value: queryParam.value
+          })
+        )
+      : [];
 
     this.editProviderForm = this.fb.group({
-      baseURL: [provider.options.baseURL, [Validators.required]],
-      apiKey: [undefined],
-      isEnabled: [provider.isEnabled],
+      name: [
+        provider.name,
+        isOpenAICompatible
+          ? [Validators.required, Validators.maxLength(100)]
+          : []
+      ],
+      baseURL: [
+        compatibleOptions?.baseURL,
+        isOpenAICompatible
+          ? [
+              Validators.required,
+              ValidationService.apiUrlValidator,
+              ValidationService.openAiCompatibleBaseUrlValidator
+            ]
+          : []
+      ],
+      apiKey: [
+        undefined,
+        provider.type === ProviderTypeEnum.OpenAI ||
+        provider.type === ProviderTypeEnum.Anthropic
+          ? [Validators.required]
+          : []
+      ],
       headers: this.fb.array(headerGroups),
       queryParams: this.fb.array(queryParamGroups)
     });
@@ -122,31 +164,57 @@ export class EditProviderDialogComponent implements OnInit {
     }
 
     let provider = this.ref.data.provider;
-    let options: LlmOpenAICompatibleOptions = {
-      baseURL: this.editProviderForm.value.baseURL.trim(),
-      apiKey: this.editProviderForm.value.apiKey?.trim() || undefined,
-      headers: this.editProviderForm.value.headers.map(
-        (header: { key: string; value: string }) => ({
-          key: header.key.trim(),
-          value: header.value
-        })
-      ),
-      queryParams: this.editProviderForm.value.queryParams.map(
-        (queryParam: { key: string; value: string }) => ({
-          key: queryParam.key.trim(),
-          value: queryParam.value
-        })
-      ),
-      models: provider.options.models
-    };
-    let payload: ToBackendEditProviderRequestPayload = {
-      projectId: this.ref.data.projectId,
-      providerId: provider.providerId,
-      isEnabled: this.editProviderForm.value.isEnabled,
-      options: options
-    };
+
+    let payload: ToBackendEditProviderRequestPayload;
+
+    if (provider.type === ProviderTypeEnum.OpenAICompatible) {
+      payload = {
+        name: this.editProviderForm.value.name.trim(),
+        projectId: this.ref.data.projectId,
+        providerId: provider.providerId,
+        options: {
+          baseURL: this.editProviderForm.value.baseURL.trim(),
+          apiKey: this.editProviderForm.value.apiKey?.trim() || undefined,
+          headers: this.editProviderForm.value.headers.map(
+            (header: { key: string; value: string }) => ({
+              key: header.key.trim(),
+              value: header.value
+            })
+          ),
+          queryParams: this.editProviderForm.value.queryParams.map(
+            (queryParam: { key: string; value: string }) => ({
+              key: queryParam.key.trim(),
+              value: queryParam.value
+            })
+          )
+        }
+      };
+    } else if (provider.type === ProviderTypeEnum.OpenAICodex) {
+      payload = {
+        projectId: this.ref.data.projectId,
+        providerId: provider.providerId,
+        options: {}
+      };
+    } else if (provider.type === ProviderTypeEnum.OpenAI) {
+      payload = {
+        projectId: this.ref.data.projectId,
+        providerId: provider.providerId,
+        options: {
+          apiKey: this.editProviderForm.value.apiKey?.trim() || undefined
+        }
+      };
+    } else {
+      payload = {
+        projectId: this.ref.data.projectId,
+        providerId: provider.providerId,
+        options: {
+          apiKey: this.editProviderForm.value.apiKey?.trim() || undefined
+        }
+      };
+    }
 
     this.ref.close();
+
     this.ref.data.apiService
       .req({
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditProvider,
@@ -166,7 +234,7 @@ export class EditProviderDialogComponent implements OnInit {
                 ? resp.payload.provider
                 : x
             );
-          this.providersQuery.update({
+          this.providersQuery.updatePart({
             providers: providers
           });
         }),

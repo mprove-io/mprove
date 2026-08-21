@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import type { Event } from '@opencode-ai/sdk/v2';
+import { APICallError } from 'ai';
 import { SESSION_TAB_CREATED_EVENT_TYPE } from '#common/constants/top';
 import type { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 
@@ -172,13 +173,104 @@ export class ExplorerEventsMakerService {
     } as Event;
   }
 
-  makeErrorEvent(item: { errorMessage: string }): Event {
+  makeErrorEvent(item: { error: unknown }): Event {
+    let { error } = item;
+
+    let isApiCallError: boolean = APICallError.isInstance(error);
+
+    if (isApiCallError) {
+      let apiCallError: APICallError = error as APICallError;
+
+      return {
+        type: 'session.error',
+        properties: {
+          error: {
+            name: 'APIError',
+            data: {
+              message: apiCallError.message,
+              statusCode: apiCallError.statusCode,
+              isRetryable: apiCallError.isRetryable,
+              metadata: { url: apiCallError.url }
+            }
+          }
+        }
+      } as Event;
+    }
+
+    let isNativeError: boolean = error instanceof Error;
+
+    let isErrorArray: boolean = Array.isArray(error);
+
+    let isErrorRecord: boolean =
+      typeof error === 'object' &&
+      error !== null &&
+      isNativeError === false &&
+      isErrorArray === false;
+
+    if (isErrorRecord) {
+      let errorRecord: Record<string, unknown> = error as Record<
+        string,
+        unknown
+      >;
+
+      let nestedError: unknown = errorRecord['error'];
+
+      let isNestedErrorArray: boolean = Array.isArray(nestedError);
+
+      let isNestedErrorRecord: boolean =
+        typeof nestedError === 'object' &&
+        nestedError !== null &&
+        isNestedErrorArray === false;
+
+      let providerError: Record<string, unknown> = isNestedErrorRecord
+        ? (nestedError as Record<string, unknown>)
+        : errorRecord;
+
+      let providerMessage: unknown = providerError['message'];
+
+      if (typeof providerMessage === 'string') {
+        let metadata: Record<string, string> = {};
+
+        let providerType: unknown = providerError['type'];
+        if (typeof providerType === 'string') {
+          metadata['type'] = providerType;
+        }
+
+        let providerCode: unknown = providerError['code'];
+        if (typeof providerCode === 'string') {
+          metadata['code'] = providerCode;
+        }
+
+        return {
+          type: 'session.error',
+          properties: {
+            error: {
+              name: 'APIError',
+              data: {
+                message: providerMessage,
+                isRetryable: false,
+                metadata: metadata
+              }
+            }
+          }
+        } as Event;
+      }
+    }
+
+    let errorMessage: string =
+      isNativeError === true
+        ? (error as Error).message
+        : 'AI SDK streaming failed';
+
     return {
       type: 'session.error',
       properties: {
-        error: { message: item.errorMessage }
+        error: {
+          name: 'UnknownError',
+          data: { message: errorMessage }
+        }
       }
-    } as unknown as Event;
+    } as Event;
   }
 
   makeChartTabEvent(item: {

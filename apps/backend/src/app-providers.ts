@@ -72,7 +72,6 @@ import { SnowFlakeService } from './services/dwh/snowflake.service';
 import { TrinoService } from './services/dwh/trino.service';
 import { EditorCodexService } from './services/editor/editor-codex.service';
 import { EditorConnectionsService } from './services/editor/editor-connections.service';
-import { EditorModelsService } from './services/editor/editor-models.service';
 import { EditorOpencodeService } from './services/editor/editor-opencode.service';
 import { EditorSandboxService } from './services/editor/editor-sandbox.service';
 import { EditorStreamService } from './services/editor/editor-stream.service';
@@ -93,6 +92,7 @@ import { SearchDwhSchemaFieldNamesService } from './services/explorer/tools/sear
 import { SearchModelFieldLeafNamesService } from './services/explorer/tools/search-model-fields/search-model-field-leaf-names.service';
 import { SearchModelFieldsToolService } from './services/explorer/tools/search-model-fields/search-model-fields.tool';
 import { HashService } from './services/hash.service';
+import { LlmModelService } from './services/llm-model.service';
 import { MalloyService } from './services/malloy.service';
 import { ParentService } from './services/parent.service';
 import { QueryInfoChartService } from './services/query-info-chart.service';
@@ -178,6 +178,7 @@ export const appProviders = [
   TabService,
   UnitsService,
   UrlService,
+  LlmModelService,
   //
   SessionsService,
   EditorOpencodeService,
@@ -203,7 +204,6 @@ export const appProviders = [
   ExplorerChartRebuildService,
   DocsService,
   EditorConnectionsService,
-  EditorModelsService,
   ExplorerStreamService,
   ProduceExplorerChartService,
   GetExplorerChartTabService,

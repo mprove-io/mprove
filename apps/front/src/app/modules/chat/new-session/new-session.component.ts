@@ -10,6 +10,7 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { splitModelExtraId } from '#common/functions/split-model-extra-id';
 import type { EnvsItem } from '#common/zod/backend/envs-item';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type {
@@ -50,13 +51,8 @@ export class NewSessionComponent implements OnInit {
 
   agent = 'build';
 
-  model: string;
+  modelExtraId: string;
   variant = 'default';
-  useCodex = true;
-
-  toggleUseCodex() {
-    this.useCodex = !this.useCodex;
-  }
 
   initialBranch: string;
   branches: { branchId: string; extraName: string }[] = [];
@@ -115,11 +111,10 @@ export class NewSessionComponent implements OnInit {
   ngOnInit() {
     let uiState = this.uiQuery.getValue();
     let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
-    this.model = isExplorer
-      ? uiState.newSessionExplorerProviderModel
-      : uiState.newSessionEditorProviderModel;
+    this.modelExtraId = isExplorer
+      ? uiState.newSessionExplorerModelExtraId
+      : uiState.newSessionEditorModelExtraId;
     this.variant = uiState.newSessionEditorVariant || 'default';
-    this.useCodex = uiState.newSessionUseCodex !== false; // "undefined" -> true
   }
 
   openBranchSelect() {
@@ -223,11 +218,19 @@ export class NewSessionComponent implements OnInit {
       return;
     }
 
+    let modelSelection = splitModelExtraId(this.modelExtraId);
+
+    if (!modelSelection) {
+      return;
+    }
+
     this.isSubmitting = true;
     this.uiQuery.updatePart({ showContent: false });
     this.spinner.show(APP_SPINNER_NAME);
 
-    let provider = this.model.split('/')[0];
+    let providerId = modelSelection.providerID;
+
+    let modelId = modelSelection.modelID;
 
     let nav = this.navQuery.getValue();
 
@@ -240,15 +243,14 @@ export class NewSessionComponent implements OnInit {
       let explorerPayload: ToBackendCreateExplorerSessionRequestPayload = {
         projectId: nav.projectId,
         repoId: nav.repoId,
-        provider: provider,
-        model: this.model,
+        providerId: providerId,
+        modelId: modelId,
         variant: this.variant,
         branchId: nav.branchId,
         envId: nav.envId,
         firstMessage: text,
         messageId: messageId,
-        partId: partId,
-        useCodex: this.useCodex
+        partId: partId
       };
 
       this.apiService
@@ -262,7 +264,8 @@ export class NewSessionComponent implements OnInit {
             this.processCreateSessionResponse({
               resp: resp,
               isSessionExplorer: isSessionExplorer,
-              provider: provider,
+              providerId: providerId,
+              modelId: modelId,
               text: text,
               messageId: messageId,
               partId: partId
@@ -275,16 +278,15 @@ export class NewSessionComponent implements OnInit {
       let editorPayload: ToBackendCreateEditorSessionRequestPayload = {
         projectId: nav.projectId,
         sandboxType: SandboxTypeEnum.E2B,
-        provider: provider,
-        model: this.model,
+        providerId: providerId,
+        modelId: modelId,
         agent: this.agent,
         variant: this.variant,
         envId: this.baseEnvId,
         initialBranch: this.initialBranch,
         firstMessage: text,
         messageId: messageId,
-        partId: partId,
-        useCodex: this.useCodex
+        partId: partId
       };
 
       this.apiService
@@ -298,7 +300,8 @@ export class NewSessionComponent implements OnInit {
             this.processCreateSessionResponse({
               resp: resp,
               isSessionExplorer: isSessionExplorer,
-              provider: provider,
+              providerId: providerId,
+              modelId: modelId,
               text: text,
               messageId: messageId,
               partId: partId
@@ -315,12 +318,21 @@ export class NewSessionComponent implements OnInit {
       | ToBackendCreateExplorerSessionResponse
       | ToBackendCreateEditorSessionResponse;
     isSessionExplorer: boolean;
-    provider: string;
+    providerId: string;
+    modelId: string;
     text: string;
     messageId: string;
     partId: string;
   }) {
-    let { resp, isSessionExplorer, provider, text, messageId, partId } = item;
+    let {
+      resp,
+      isSessionExplorer,
+      providerId,
+      modelId,
+      text,
+      messageId,
+      partId
+    } = item;
 
     if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
       let { sessionId, repoId, branchId, envId } = resp.payload;
@@ -333,10 +345,9 @@ export class NewSessionComponent implements OnInit {
           type: this.sessionType,
           repoId: repoId,
           branchId: branchId,
-          provider: provider,
           agent: this.agent,
-          model: this.model,
-          lastMessageProviderModel: this.model,
+          providerId: providerId,
+          modelId: modelId,
           lastMessageVariant: this.variant,
           initialBranch: this.initialBranch,
           envId: envId,
@@ -344,8 +355,7 @@ export class NewSessionComponent implements OnInit {
           status: SessionStatusEnum.New,
           createdTs: Date.now(),
           lastActivityTs: Date.now(),
-          firstMessage: text,
-          useCodex: this.useCodex
+          firstMessage: text
         };
         this.sessionsQuery.updatePart({
           sessions: [newSession, ...currentSessions]
@@ -371,7 +381,8 @@ export class NewSessionComponent implements OnInit {
         partId: partId,
         text: text,
         agent: this.agent,
-        model: this.model,
+        providerId: providerId,
+        modelId: modelId,
         variant: this.variant
       });
 

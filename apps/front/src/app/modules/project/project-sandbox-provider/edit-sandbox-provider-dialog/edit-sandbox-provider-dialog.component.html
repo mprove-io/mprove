@@ -1,0 +1,40 @@
+<div class="bg-m0 flex select-none flex-col p-9">
+  <div
+    data-cy="editSandboxProviderDialogTitle"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
+    >Edit E2B API Key</div
+  >
+  <form
+    class="flex w-[30rem] flex-col"
+    [formGroup]="editSandboxProviderForm"
+    (ngSubmit)="save()"
+  >
+    <input
+      #apiKeyInput
+      autocomplete="off"
+      spellcheck="false"
+      data-cy="editSandboxProviderDialogInput"
+      class="form-input border-s3 focus:border-m600 mt-9 rounded"
+      formControlName="apiKey"
+      placeholder="Enter new key value"
+    />
+    <m-validation
+      [control]="editSandboxProviderForm.controls['apiKey']"
+    ></m-validation>
+    <div class="mt-6 flex items-center">
+      <button
+        data-cy="editSandboxProviderDialogSaveButton"
+        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+      <button
+        data-cy="editSandboxProviderDialogCancelButton"
+        class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

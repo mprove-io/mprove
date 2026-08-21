@@ -4,27 +4,57 @@
     class="text-s2 mt-2 text-left text-2xl font-semibold sm:mt-5"
     >Add Provider</div
   >
-
   <form
     class="mt-8 flex w-full max-w-[720px] flex-col"
     [formGroup]="addProviderForm"
     (ngSubmit)="add()"
   >
-    <div class="flex flex-col sm:flex-row sm:items-start">
-      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
-        Provider ID
-      </label>
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-start">
+      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3"
+        >Type</label
+      >
+      <ng-select
+        #addProviderDialogTypeSelect
+        [fixNgSelectBottom]="addProviderDialogTypeSelect"
+        data-cy="addProviderDialogTypeSelect"
+        class="w-full"
+        [items]="providerTypes"
+        bindLabel="label"
+        bindValue="value"
+        [clearable]="false"
+        [searchable]="false"
+        appendTo="body"
+        formControlName="type"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); addProviderDialogTypeSelect.blur()
+        "
+      >
+        <ng-template ng-option-tmp let-item="item">
+          <div
+            [class.cursor-default]="item.isAlreadySelected"
+            [class.text-s400]="item.isAlreadySelected"
+            tp="Provider is already added"
+            [tpIsEnabled]="item.isAlreadySelected"
+          >
+            {{ item.label }}
+          </div>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    <div
+      *ngIf="isOpenAICompatible"
+      class="flex flex-col sm:flex-row sm:items-start"
+    >
+      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3"
+        >Provider ID</label
+      >
       <div class="flex w-full flex-col">
         <input
           autocomplete="off"
           spellcheck="false"
           data-cy="addProviderDialogProviderIdInput"
           class="form-input border-s3 focus:border-m600 w-full rounded"
-          [ngClass]="{
-            'border-r600':
-              addProviderForm.controls['providerId'].invalid &&
-              addProviderForm.controls['providerId'].touched
-          }"
           formControlName="providerId"
         />
         <m-validation
@@ -33,26 +63,40 @@
       </div>
     </div>
 
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center">
-      <div class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0">Type</div>
-      <div class="text-s500">OpenAICompatible</div>
+    <div
+      *ngIf="isOpenAICompatible"
+      class="mt-1 flex flex-col sm:flex-row sm:items-start"
+    >
+      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3"
+        >Name</label
+      >
+      <div class="flex w-full flex-col">
+        <input
+          autocomplete="off"
+          spellcheck="false"
+          data-cy="addProviderDialogNameInput"
+          class="form-input border-s3 focus:border-m600 w-full rounded"
+          formControlName="name"
+        />
+        <m-validation
+          [control]="addProviderForm.controls['name']"
+        ></m-validation>
+      </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row sm:items-start">
-      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
-        Base URL
-      </label>
+    <div
+      *ngIf="isOpenAICompatible"
+      class="mt-1 flex flex-col sm:flex-row sm:items-start"
+    >
+      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3"
+        >Base URL</label
+      >
       <div class="flex w-full flex-col">
         <input
           autocomplete="off"
           spellcheck="false"
           data-cy="addProviderDialogBaseUrlInput"
           class="form-input border-s3 focus:border-m600 w-full rounded"
-          [ngClass]="{
-            'border-r600':
-              addProviderForm.controls['baseURL'].invalid &&
-              addProviderForm.controls['baseURL'].touched
-          }"
           formControlName="baseURL"
           placeholder="https://api.example.com/v1"
         />
@@ -62,10 +106,15 @@
       </div>
     </div>
 
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-start">
-      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
-        API Key
-      </label>
+    <div
+      *ngIf="usesApiKey"
+      class="flex flex-col sm:flex-row sm:items-start"
+      [class.mb-6]="isOpenAICompatible"
+      [class.mt-1]="isOpenAICompatible"
+    >
+      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3"
+        >API Key</label
+      >
       <div class="flex w-full flex-col">
         <input
           autocomplete="off"
@@ -73,181 +122,89 @@
           data-cy="addProviderDialogApiKeyInput"
           class="form-input border-s3 focus:border-m600 w-full rounded"
           formControlName="apiKey"
-          placeholder="Optional"
+          [placeholder]="isOpenAICompatible ? 'Optional' : 'Required'"
           type="text"
         />
-        <div class="text-s400 mt-1 text-sm">
-          Sent as Authorization: Bearer &lt;key&gt;
-        </div>
+        <m-validation
+          *ngIf="!isOpenAICompatible"
+          [control]="addProviderForm.controls['apiKey']"
+        ></m-validation>
+        <div *ngIf="isOpenAICompatible" class="text-s400 mt-1 text-sm"
+          >Will be sent as Authorization: Bearer &lt;key&gt;</div
+        >
       </div>
     </div>
 
-    <div class="border-s300 mb-8 border-t pt-7">
-      <div class="mb-4 flex items-center justify-between">
-        <div class="text-lg font-semibold">Models</div>
-        <button
-          data-cy="addProviderDialogAddModelButton"
-          class="border-s400 text-s500 hover:bg-s100 h-10 rounded border px-4 text-base shadow-sm focus:outline-none"
-          type="button"
-          (click)="addModel()"
-          >Add Model</button
-        >
-      </div>
-
-      <div formArrayName="models">
-        <div
-          *ngFor="let model of getModels().controls; let i = index"
-          [formGroupName]="i"
-          class="flex flex-col gap-3 sm:flex-row sm:items-start"
-        >
-          <button
-            class="text-s500 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-            type="button"
-            (click)="removeModel({ index: i })"
-            aria-label="Remove model"
-          >
-            <m-trash-icon></m-trash-icon>
-          </button>
-          <div class="flex flex-1 flex-col">
-            <input
-              autocomplete="off"
-              spellcheck="false"
-              class="form-input border-s3 focus:border-m600 w-full rounded"
-              formControlName="modelId"
-              placeholder="Model ID"
-            />
-            <m-validation
-              [control]="getControl({ group: model, controlName: 'modelId' })"
-            ></m-validation>
-          </div>
-          <div class="flex flex-1 flex-col">
-            <input
-              autocomplete="off"
-              spellcheck="false"
-              class="form-input border-s3 focus:border-m600 w-full rounded"
-              formControlName="name"
-              placeholder="Display name (optional)"
-            />
-            <m-validation
-              [control]="getControl({ group: model, controlName: 'name' })"
-            ></m-validation>
-          </div>
-        </div>
-      </div>
-
-      <div class="text-s400" *ngIf="getModels().length === 0">
-        No models will be configured.
-      </div>
-    </div>
-
-    <div class="border-s300 mb-8 border-t pt-7">
-      <div class="mb-4 flex items-center justify-between">
-        <div class="text-lg font-semibold">Headers</div>
-        <button
+    <div *ngIf="isOpenAICompatible" class="border-s300 mb-8 border-t pt-7">
+      <div class="mb-4 flex items-center justify-between"
+        ><div class="text-lg font-semibold">Headers</div
+        ><button
           data-cy="addProviderDialogAddHeaderButton"
           class="border-s400 text-s500 hover:bg-s100 h-10 rounded border px-4 text-base shadow-sm focus:outline-none"
           type="button"
           (click)="addHeader()"
           >Add Header</button
-        >
-      </div>
-
+        ></div
+      >
       <div formArrayName="headers">
         <div
           *ngFor="let header of getHeaders().controls; let i = index"
           [formGroupName]="i"
-          class="flex flex-col gap-3 sm:flex-row sm:items-start"
+          class="mb-3 flex gap-3"
         >
           <button
-            class="text-s500 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+            class="text-s500 h-10 w-10"
             type="button"
             (click)="removeHeader({ index: i })"
-            aria-label="Remove header"
-          >
-            <m-trash-icon></m-trash-icon>
-          </button>
-          <div class="flex flex-1 flex-col">
-            <input
-              autocomplete="off"
-              spellcheck="false"
-              class="form-input border-s3 focus:border-m600 w-full rounded"
-              formControlName="key"
-              placeholder="Key"
-            />
-            <m-validation
-              [control]="getControl({ group: header, controlName: 'key' })"
-            ></m-validation>
-          </div>
-          <div class="flex flex-1 flex-col">
-            <input
-              autocomplete="off"
-              spellcheck="false"
-              class="form-input border-s3 focus:border-m600 w-full rounded"
-              formControlName="value"
-              placeholder="Will be empty after Save if not set"
-              type="text"
-            />
-            <m-validation
-              [control]="getControl({ group: header, controlName: 'value' })"
-            ></m-validation>
-          </div>
+            ><m-trash-icon></m-trash-icon
+          ></button>
+          <input
+            class="form-input border-s3 focus:border-m600 flex-1 rounded"
+            formControlName="key"
+            placeholder="Key"
+          />
+          <input
+            class="form-input border-s3 focus:border-m600 flex-1 rounded"
+            formControlName="value"
+            placeholder="Value"
+          />
         </div>
       </div>
     </div>
 
-    <div class="border-s300 mb-2 border-t pt-7">
-      <div class="mb-4 flex items-center justify-between">
-        <div class="text-lg font-semibold">Query Parameters</div>
-        <button
+    <div *ngIf="isOpenAICompatible" class="border-s300 mb-2 border-t pt-7">
+      <div class="mb-4 flex items-center justify-between"
+        ><div class="text-lg font-semibold">Query Parameters</div
+        ><button
           data-cy="addProviderDialogAddQueryParamButton"
           class="border-s400 text-s500 hover:bg-s100 h-10 rounded border px-4 text-base shadow-sm focus:outline-none"
           type="button"
           (click)="addQueryParam()"
           >Add Parameter</button
-        >
-      </div>
-
+        ></div
+      >
       <div formArrayName="queryParams">
         <div
           *ngFor="let queryParam of getQueryParams().controls; let i = index"
           [formGroupName]="i"
-          class="flex flex-col gap-3 sm:flex-row sm:items-start"
+          class="mb-3 flex gap-3"
         >
           <button
-            class="text-s500 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+            class="text-s500 h-10 w-10"
             type="button"
             (click)="removeQueryParam({ index: i })"
-            aria-label="Remove query parameter"
-          >
-            <m-trash-icon></m-trash-icon>
-          </button>
-          <div class="flex flex-1 flex-col">
-            <input
-              autocomplete="off"
-              spellcheck="false"
-              class="form-input border-s3 focus:border-m600 w-full rounded"
-              formControlName="key"
-              placeholder="Key"
-            />
-            <m-validation
-              [control]="getControl({ group: queryParam, controlName: 'key' })"
-            ></m-validation>
-          </div>
-          <div class="flex flex-1 flex-col">
-            <input
-              autocomplete="off"
-              spellcheck="false"
-              class="form-input border-s3 focus:border-m600 w-full rounded"
-              formControlName="value"
-              placeholder="Value"
-              type="text"
-            />
-            <m-validation
-              [control]="
-                getControl({ group: queryParam, controlName: 'value' })
-              "
-            ></m-validation>
-          </div>
+            ><m-trash-icon></m-trash-icon
+          ></button>
+          <input
+            class="form-input border-s3 focus:border-m600 flex-1 rounded"
+            formControlName="key"
+            placeholder="Key"
+          />
+          <input
+            class="form-input border-s3 focus:border-m600 flex-1 rounded"
+            formControlName="value"
+            placeholder="Value"
+          />
         </div>
       </div>
     </div>

@@ -6,10 +6,12 @@ import { forTestsWaitForTurnEnded } from '#backend/functions/for-tests/for-tests
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
+import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
@@ -89,8 +91,7 @@ test('1', async t => {
             name: projectName,
             remoteType: ProjectRemoteTypeEnum.Managed,
             defaultBranch: BRANCH_MAIN,
-            e2bApiKey: e2bApiKey,
-            openaiApiKey: openaiApiKey
+            e2bApiKey: e2bApiKey
           }
         ],
         members: [
@@ -101,6 +102,25 @@ test('1', async t => {
             isAdmin: true,
             isEditor: true,
             isExplorer: true
+          }
+        ],
+        providers: [
+          {
+            projectId: projectId,
+            providerId: OPENAI_PROVIDER_ID,
+            type: ProviderTypeEnum.OpenAI,
+            isEnabled: true,
+            models: [
+              {
+                modelId: 'gpt-5.1-codex-mini',
+                name: 'GPT-5.1 Codex Mini',
+                isExplorer: true,
+                isBuilder: true
+              }
+            ],
+            options: {
+              apiKey: openaiApiKey
+            }
           }
         ]
       },
@@ -117,15 +137,14 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
-        provider: 'opencode',
-        model: 'openai/gpt-5.1-codex-mini',
+        providerId: OPENAI_PROVIDER_ID,
+        modelId: 'gpt-5.1-codex-mini',
         agent: 'plan',
         variant: 'default',
         envId: PROJECT_ENV_PROD,
         initialBranch: BRANCH_MAIN,
         messageId: makeAscendingId({ prefix: 'msg' }),
-        partId: makeAscendingId({ prefix: 'prt' }),
-        useCodex: false
+        partId: makeAscendingId({ prefix: 'prt' })
       }
     };
 
@@ -178,7 +197,8 @@ test('1', async t => {
         interactionType: InteractionTypeEnum.Message,
         message: 'what is 10 + 20?',
         agent: 'plan',
-        model: 'openai/gpt-5.1-codex-mini',
+        providerId: OPENAI_PROVIDER_ID,
+        modelId: 'gpt-5.1-codex-mini',
         variant: 'default'
       }
     };

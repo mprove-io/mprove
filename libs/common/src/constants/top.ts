@@ -30,6 +30,7 @@ export const GIVEN_TYPES = [
 ];
 
 export const EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE = 75;
+export const EXPLORER_CONTEXT_USAGE_BUFFER = 20_000;
 
 export const PROJECT_CONFIG_ALLOW_TIMEZONES = 'true';
 export const PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS = 'false';
@@ -233,7 +234,7 @@ export const PATH_ENVIRONMENTS = 'environments';
 export const PATH_GIVENS = 'givens';
 export const PATH_ROLES = 'roles';
 export const PATH_TEAM = 'team';
-export const PATH_API_KEYS = 'api-keys';
+export const PATH_SANDBOX_PROVIDER = 'sandbox-provider';
 
 export const METHOD_RPC = 'RPC';
 

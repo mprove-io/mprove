@@ -11,7 +11,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import type { Event } from '@opencode-ai/sdk/v2';
 import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateExplorerSessionRequestDto,
   ToBackendCreateExplorerSessionResponseDto
@@ -33,17 +33,18 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { OcEventsService } from '#backend/services/db/oc-events.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { ProvidersService } from '#backend/services/db/providers.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined';
 import { makeSessionId } from '#common/functions/make-session-id';
-import { splitModel } from '#common/functions/split-model';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendCreateExplorerSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-explorer-session';
 
@@ -60,6 +61,7 @@ export class CreateExplorerSessionController {
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private ocEventsService: OcEventsService,
+    private providersService: ProvidersService,
     private codexService: CodexService,
     private explorerStreamService: ExplorerStreamService,
     private cs: ConfigService<BackendConfig>,
@@ -82,18 +84,17 @@ export class CreateExplorerSessionController {
     let {
       projectId,
       repoId,
-      provider,
-      model,
+      providerId,
+      modelId,
       variant,
       branchId,
       envId,
       firstMessage,
       messageId,
-      partId,
-      useCodex
+      partId
     } = body.payload;
 
-    let project = await this.projectsService.getProjectCheckExists({
+    await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
 
@@ -134,24 +135,18 @@ export class CreateExplorerSessionController {
       envId: envId
     });
 
-    let split = splitModel(model);
+    let modelSelection = await this.providersService.getModelSelection({
+      projectId: projectId,
+      providerId: providerId,
+      modelId: modelId,
+      isUserCodexAuthSet: isDefined(user.codexAuth),
+      isBuilder: false
+    });
 
-    let modelProvider = split ? split.providerID : provider;
-
-    let modelId = split ? split.modelID : model;
-
-    let isOpenaiOauth = modelProvider === 'openai' && useCodex === true;
-
-    let isCodexAuthUnset = isUndefined(user.codexAuth);
-
-    if (isOpenaiOauth && isCodexAuthUnset) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET
-      });
-    }
+    let isCodex = modelSelection.provider.type === ProviderTypeEnum.OpenAICodex;
 
     // Prewarm codex auth so first message (title + stream parallel) starts with fresh token
-    if (isOpenaiOauth) {
+    if (isCodex) {
       await this.codexService.prewarmCodexAuth({
         userId: user.userId
       });
@@ -172,19 +167,17 @@ export class CreateExplorerSessionController {
           userId: user.userId,
           projectId: projectId,
           sandboxType: undefined,
-          provider: provider,
-          model: model,
-          lastMessageProviderModel: model,
+          providerId: providerId,
+          modelId: modelId,
           lastMessageVariant: variant,
           agent: undefined,
           firstMessage: firstMessage,
           initialBranch: undefined,
           envId: envId,
           initialCommit: undefined,
-          useCodex: isOpenaiOauth,
           status: SessionStatusEnum.Active,
           lastActivityTs: now,
-          codexAuthUpdateTs: isOpenaiOauth ? user.codexAuthUpdateTs : undefined,
+          codexAuthUpdateTs: isCodex ? user.codexAuthUpdateTs : undefined,
           createdTs: now
         });
 
@@ -238,25 +231,16 @@ export class CreateExplorerSessionController {
 
     // Fire-and-forget first message streaming
     if (firstMessage) {
-      let apiKey = '';
-      if (modelProvider === 'openai') {
-        apiKey = project.openaiApiKey || '';
-      } else if (modelProvider === 'anthropic') {
-        apiKey = project.anthropicApiKey || '';
-      }
-
       this.explorerStreamService
         .streamMessage({
           sessionId: session.sessionId,
-          provider: modelProvider,
+          provider: providerId,
           modelId: modelId,
-          apiKey: apiKey,
+          variant: variant,
           userMessage: firstMessage,
           messageId: messageId,
           partId: partId,
-          isLockAcquired: false,
-          useCodex: isOpenaiOauth,
-          userId: isOpenaiOauth ? user.userId : undefined
+          isLockAcquired: false
         })
         .catch(e => {
           logToConsoleBackend({

@@ -9,10 +9,8 @@ import type { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetProvidersRequestPayload,
-  ToBackendGetProvidersResponse
-} from '#common/zod/to-backend/providers/to-backend-get-providers';
+import type { ToBackendGetProvidersRequestPayload } from '#common/zod/to-backend/providers/get-providers/get-providers-request-payload';
+import type { ToBackendGetProvidersResponse } from '#common/zod/to-backend/providers/get-providers/get-providers-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, type NavState } from '../queries/nav.query';

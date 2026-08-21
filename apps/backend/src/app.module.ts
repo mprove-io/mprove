@@ -593,18 +593,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           val: 's_db'
         };
 
-        let demoProjectZenApiKey = this.cs.get<
-          BackendConfig['demoProjectZenApiKey']
-        >('demoProjectZenApiKey');
-
-        let demoProjectAnthropicApiKey = this.cs.get<
-          BackendConfig['demoProjectAnthropicApiKey']
-        >('demoProjectAnthropicApiKey');
-
-        let demoProjectOpenaiApiKey = this.cs.get<
-          BackendConfig['demoProjectOpenaiApiKey']
-        >('demoProjectOpenaiApiKey');
-
         let demoProjectE2bApiKey = this.cs.get<
           BackendConfig['demoProjectE2bApiKey']
         >('demoProjectE2bApiKey');
@@ -623,9 +611,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           privateKey: undefined,
           privateKeyEncrypted: privateKeyEncrypted,
           passPhrase: demoProjectRemotePassPhrase,
-          zenApiKey: demoProjectZenApiKey,
-          anthropicApiKey: demoProjectAnthropicApiKey,
-          openaiApiKey: demoProjectOpenaiApiKey,
           e2bApiKey: demoProjectE2bApiKey,
           evs: [ev1],
           connections: connections

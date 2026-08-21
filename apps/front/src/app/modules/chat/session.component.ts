@@ -20,6 +20,7 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { splitModelExtraId } from '#common/functions/split-model-extra-id';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
@@ -64,7 +65,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   sessionTypeEnum = SessionTypeEnum;
 
   agent = 'plan';
-  model: string;
+  modelExtraId: string;
   variant = 'default';
 
   session: SessionApi;
@@ -216,7 +217,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   enterSession(sessionData: SessionBundleState) {
     this.agent = this.session.agent;
-    this.model = this.session.lastMessageProviderModel || this.session.model;
+    this.modelExtraId = `${this.session.providerId}/${this.session.modelId}`;
     this.variant = this.session.lastMessageVariant || 'default';
 
     this.sessionService.initForSession({
@@ -235,7 +236,8 @@ export class SessionComponent implements OnInit, OnDestroy {
           sessionId: this.session.sessionId,
           ocSessionId: this.session.opencodeSessionId || '',
           agent: pending.agent,
-          model: pending.model,
+          providerId: pending.providerId,
+          modelId: pending.modelId,
           text: pending.text,
           variant: pending.variant,
           messageId: pending.messageId,
@@ -263,7 +265,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       storeMessages: sessionData.messages,
       storeParts: sessionData.parts,
       session: this.session,
-      model: this.model,
+      model: this.modelExtraId,
       agent: this.agent,
       variant: this.variant
     });
@@ -350,7 +352,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       storeMessages: sessionData.messages,
       storeParts: sessionData.parts,
       session: this.session,
-      model: this.model,
+      model: this.modelExtraId,
       agent: this.agent,
       variant: this.variant
     });
@@ -537,11 +539,18 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.userSentMessage = true;
 
+    let modelSelection = splitModelExtraId(this.modelExtraId);
+
+    if (!modelSelection) {
+      return;
+    }
+
     let { messageId, partId } = this.sessionService.optimisticAdd({
       sessionId: this.session.sessionId,
       ocSessionId: this.session.opencodeSessionId || '',
       agent: this.agent,
-      model: this.model,
+      providerId: modelSelection.providerID,
+      modelId: modelSelection.modelID,
       text: text,
       variant: this.variant
     });
@@ -552,7 +561,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       storeMessages: updatedData.messages,
       storeParts: updatedData.parts,
       session: this.session,
-      model: this.model,
+      model: this.modelExtraId,
       agent: this.agent,
       variant: this.variant
     });
@@ -576,7 +585,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       sessionId: this.session.sessionId,
       interactionType: InteractionTypeEnum.Message,
       message: text,
-      model: this.model,
+      modelExtraId: this.modelExtraId,
       variant: this.variant,
       agent: this.agent,
       messageId: messageId,
@@ -590,7 +599,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     messageId?: string;
     partId?: string;
     message?: string;
-    model?: string;
+    modelExtraId?: string;
     variant?: string;
     agent?: string;
     permissionId?: string;
@@ -598,6 +607,12 @@ export class SessionComponent implements OnInit, OnDestroy {
     questionId?: string;
     answers?: string[][];
   }) {
+    let modelSelection = splitModelExtraId(item.modelExtraId);
+
+    let providerId = modelSelection?.providerID;
+
+    let modelId = modelSelection?.modelID;
+
     let isExplorer = this.session.type === SessionTypeEnum.Explorer;
 
     if (isExplorer) {
@@ -608,7 +623,8 @@ export class SessionComponent implements OnInit, OnDestroy {
           messageId: item.messageId,
           partId: item.partId,
           message: item.message,
-          model: item.model,
+          providerId: providerId,
+          modelId: modelId,
           variant: item.variant
         };
 
@@ -636,7 +652,8 @@ export class SessionComponent implements OnInit, OnDestroy {
         messageId: item.messageId,
         partId: item.partId,
         message: item.message,
-        model: item.model,
+        providerId: providerId,
+        modelId: modelId,
         variant: item.variant,
         agent: item.agent,
         permissionId: item.permissionId,

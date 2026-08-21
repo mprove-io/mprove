@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type { LanguageModel } from 'ai';
 import { streamText } from 'ai';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
 import { ExplorerModelsService } from './explorer-models.service';
 import { ExplorerPromptsService } from './explorer-prompts.service';
@@ -21,50 +21,29 @@ export class ExplorerTitleService {
 
   async generateTitleText(item: {
     sessionId: string;
-    provider: string;
+    model: LanguageModel;
     modelId: string;
-    apiKey: string;
     userMessage: string;
-    useCodex: boolean;
-    codexFetch?: typeof fetch;
+    isOpenAI: boolean;
+    isCodex: boolean;
   }): Promise<string | undefined> {
-    let {
-      sessionId,
-      provider,
-      modelId,
-      apiKey,
-      userMessage,
-      useCodex,
-      codexFetch
-    } = item;
-
-    let model = this.explorerModelsService.getModel({
-      provider: provider,
-      modelId: modelId,
-      apiKey: apiKey,
-      useCodex: useCodex,
-      codexFetch: codexFetch
-    });
+    let { sessionId, model, modelId, userMessage, isOpenAI, isCodex } = item;
 
     let systemPrompt = this.explorerPromptsService.getTitleSystemPrompt();
 
-    let isOpenaiOauth =
-      provider === 'openai' && useCodex === true && isDefined(codexFetch);
-
-    let providerOptions =
-      provider === 'openai'
-        ? this.explorerModelsService.buildOpenaiProviderOptions({
-            modelId: modelId,
-            sessionId: sessionId,
-            instructions: isOpenaiOauth ? systemPrompt : undefined,
-            isSmall: true
-          })
-        : undefined;
+    let providerOptions = isOpenAI
+      ? this.explorerModelsService.buildOpenaiProviderOptions({
+          modelId: modelId,
+          sessionId: sessionId,
+          instructions: isCodex ? systemPrompt : undefined,
+          isSmall: true
+        })
+      : undefined;
 
     try {
       let result = streamText({
         model: model,
-        ...(isOpenaiOauth
+        ...(isCodex
           ? {
               prompt: `Generate a title for this conversation:\n${userMessage}`,
               providerOptions: providerOptions

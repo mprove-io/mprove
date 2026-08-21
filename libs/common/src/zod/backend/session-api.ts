@@ -8,10 +8,9 @@ export let zSessionApi = z
     sessionId: z.string(),
     opencodeSessionId: z.string().nullish(),
     type: z.enum(SessionTypeEnum),
-    provider: z.string(),
+    providerId: z.string(),
     agent: z.string(),
-    model: z.string().nullish(),
-    lastMessageProviderModel: z.string().nullish(),
+    modelId: z.string(),
     lastMessageVariant: z.string().nullish(),
     status: z.string(),
     archiveReason: z.enum(ArchiveReasonEnum).nullish(),
@@ -25,7 +24,6 @@ export let zSessionApi = z
     lastActivityTs: z.number().int(),
     firstMessage: z.string().nullish(),
     title: z.string().nullish(),
-    useCodex: z.boolean(),
     closedExplorerTabIds: z.array(z.string()).nullish()
   })
   .meta({ id: 'SessionApi' });

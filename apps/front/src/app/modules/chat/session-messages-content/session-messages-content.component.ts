@@ -442,7 +442,10 @@ export class SessionMessagesContentComponent {
       | Record<string, unknown>
       | undefined;
     let message = data?.['message'] as string | undefined;
-    return message || name || 'Unknown error';
+    let topLevelMessage = this.lastSessionError['message'] as
+      | string
+      | undefined;
+    return message || topLevelMessage || name || 'Unknown error';
   }
 
   openSessionErrorDialog() {
@@ -451,11 +454,27 @@ export class SessionMessagesContentComponent {
     let data = this.lastSessionError['data'] as
       | Record<string, unknown>
       | undefined;
-    let message = (data?.['message'] as string) || JSON.stringify(data ?? {});
+    let topLevelMessage = this.lastSessionError['message'] as
+      | string
+      | undefined;
+    let message: string =
+      (data?.['message'] as string) ||
+      topLevelMessage ||
+      JSON.stringify(data ?? {});
+    let statusCode = data?.['statusCode'] as number | undefined;
+    let metadata = data?.['metadata'] as Record<string, unknown> | undefined;
+    let subtitle: string = statusCode ? `${name} - HTTP ${statusCode}` : name;
+    let output: string = message;
+
+    if (metadata) {
+      let formattedMetadata: string = JSON.stringify(metadata, undefined, 2);
+      output = `${message}\n\nMetadata:\n${formattedMetadata}`;
+    }
+
     this.myDialogService.showToolOutput({
       title: 'Session Error',
-      subtitle: name,
-      output: message,
+      subtitle: subtitle,
+      output: output,
       isError: true
     });
   }

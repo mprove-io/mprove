@@ -270,13 +270,6 @@ export function getDevConfig() {
 
     demoProjectE2bApiKey: process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY,
 
-    demoProjectZenApiKey: process.env.BACKEND_DEMO_PROJECT_ZEN_API_KEY,
-
-    demoProjectAnthropicApiKey:
-      process.env.BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY,
-
-    demoProjectOpenaiApiKey: process.env.BACKEND_DEMO_PROJECT_OPENAI_API_KEY,
-
     e2bPublicTemplate: process.env.BACKEND_E2B_PUBLIC_TEMPLATE,
 
     sandboxMproveCliHost: process.env.BACKEND_SANDBOX_MPROVE_CLI_HOST,

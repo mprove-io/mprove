@@ -77,10 +77,9 @@ export class UiState {
   permissionsAutoAcceptSessionIds: string[];
   isOptimisticLoading: boolean;
   newSessionPermissionsAutoAccept: boolean;
-  newSessionExplorerProviderModel: string;
-  newSessionEditorProviderModel: string;
+  newSessionExplorerModelExtraId: string;
+  newSessionEditorModelExtraId: string;
   newSessionEditorVariant: string;
-  newSessionUseCodex: boolean;
 }
 
 let uiState: UiState = {
@@ -140,10 +139,9 @@ let uiState: UiState = {
   chartsByModel: false,
   permissionsAutoAcceptSessionIds: [],
   newSessionPermissionsAutoAccept: false,
-  newSessionExplorerProviderModel: undefined,
-  newSessionEditorProviderModel: undefined,
-  newSessionEditorVariant: undefined,
-  newSessionUseCodex: true
+  newSessionExplorerModelExtraId: undefined,
+  newSessionEditorModelExtraId: undefined,
+  newSessionEditorVariant: undefined
 };
 
 @Injectable({ providedIn: 'root' })
@@ -265,20 +263,16 @@ export class UiQuery extends BaseQuery<UiState> {
     select(state => state.newSessionPermissionsAutoAccept)
   );
 
-  newSessionExplorerProviderModel$ = this.store.pipe(
-    select(state => state.newSessionExplorerProviderModel)
+  newSessionExplorerModelExtraId$ = this.store.pipe(
+    select(state => state.newSessionExplorerModelExtraId)
   );
 
-  newSessionEditorProviderModel$ = this.store.pipe(
-    select(state => state.newSessionEditorProviderModel)
+  newSessionEditorModelExtraId$ = this.store.pipe(
+    select(state => state.newSessionEditorModelExtraId)
   );
 
   newSessionEditorVariant$ = this.store.pipe(
     select(state => state.newSessionEditorVariant)
-  );
-
-  newSessionUseCodex$ = this.store.pipe(
-    select(state => state.newSessionUseCodex)
   );
 
   constructor() {

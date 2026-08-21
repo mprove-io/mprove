@@ -25,7 +25,7 @@ export const PROJECT_CONNECTIONS_PAGE_TITLE = 'Project - Connections';
 export const PROJECT_PROVIDERS_PAGE_TITLE = 'Project - LLM Providers';
 export const PROJECT_INFO_PAGE_TITLE = 'Project - Info';
 export const PROJECT_TEAM_PAGE_TITLE = 'Project - Team';
-export const PROJECT_API_KEYS_PAGE_TITLE = 'Project - API Keys';
+export const PROJECT_SANDBOX_PROVIDER_PAGE_TITLE = 'Project - Sandbox Provider';
 
 export const BUILDER_PAGE_TITLE = 'Builder';
 export const EXPLORER_PAGE_TITLE = 'Explorer';

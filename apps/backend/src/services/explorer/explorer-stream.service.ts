@@ -7,7 +7,7 @@ import { stepCountIs, streamText } from 'ai';
 import { and, asc, eq } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import pIteration from 'p-iteration';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -22,6 +22,7 @@ import {
 import { AiStreamCommandEnum } from '#common/enums/ai-stream-command.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeAscendingIdAfter } from '#common/functions/make-ascending-id';
@@ -29,6 +30,7 @@ import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import { CodexService } from '../codex.service';
 import { ProjectsService } from '../db/projects.service';
+import { ProvidersService } from '../db/providers.service';
 import { SessionsService } from '../db/sessions.service';
 import { StructsService } from '../db/structs.service';
 import { UsersService } from '../db/users.service';
@@ -65,12 +67,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
     Array<{
       provider: string;
       modelId: string;
-      apiKey: string;
+      variant?: string;
       userMessage: string;
       messageId: string;
       partId: string;
-      useCodex: boolean;
-      userId?: string;
     }>
   >();
 
@@ -86,6 +86,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
     private explorerModelPartsService: ExplorerModelPartsService,
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
+    private providersService: ProvidersService,
     private structsService: StructsService,
     private usersService: UsersService,
     private tabService: TabService,
@@ -156,12 +157,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
           queue.push({
             provider: payload.provider,
             modelId: payload.modelId,
-            apiKey: payload.apiKey,
+            variant: payload.variant,
             userMessage: payload.userMessage,
             messageId: payload.messageId,
-            partId: payload.partId,
-            useCodex: payload.useCodex,
-            userId: payload.userId
+            partId: payload.partId
           });
 
           this.redisClient
@@ -209,12 +208,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
     sessionId: string;
     provider: string;
     modelId: string;
-    apiKey: string;
+    variant?: string;
     userMessage: string;
     messageId: string;
     partId: string;
-    useCodex: boolean;
-    userId?: string;
   }): Promise<{ success: boolean }> {
     let correlationId = crypto.randomUUID();
 
@@ -233,12 +230,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
         payload: {
           provider: item.provider,
           modelId: item.modelId,
-          apiKey: item.apiKey,
+          variant: item.variant,
           userMessage: item.userMessage,
           messageId: item.messageId,
-          partId: item.partId,
-          useCodex: item.useCodex,
-          userId: item.userId
+          partId: item.partId
         }
       })
     );
@@ -420,13 +415,11 @@ export class ExplorerStreamService implements OnModuleDestroy {
     sessionId: string;
     provider: string;
     modelId: string;
-    apiKey: string;
+    variant?: string;
     userMessage: string;
     messageId: string;
     partId: string;
     isLockAcquired: boolean;
-    useCodex: boolean;
-    userId?: string;
   }): Promise<void> {
     let { sessionId, isLockAcquired } = item;
 
@@ -456,12 +449,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let currentParams = {
       provider: item.provider,
       modelId: item.modelId,
-      apiKey: item.apiKey,
+      variant: item.variant,
       userMessage: item.userMessage,
       messageId: item.messageId,
-      partId: item.partId,
-      useCodex: item.useCodex,
-      userId: item.userId
+      partId: item.partId
     };
 
     while (true) {
@@ -478,13 +469,11 @@ export class ExplorerStreamService implements OnModuleDestroy {
           sessionId: sessionId,
           provider: currentParams.provider,
           modelId: currentParams.modelId,
-          apiKey: currentParams.apiKey,
+          variant: currentParams.variant,
           userMessage: currentParams.userMessage,
           abortController: abortController,
           messageId: currentParams.messageId,
-          partId: currentParams.partId,
-          useCodex: currentParams.useCodex,
-          userId: currentParams.userId
+          partId: currentParams.partId
         });
       } catch (e: any) {
         logToConsoleBackend({
@@ -499,7 +488,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
         // Emit error + idle
         let errorEvent = this.explorerEventsMakerService.makeErrorEvent({
-          errorMessage: e?.message || 'AI SDK streaming failed'
+          error: e
         });
         this.sessionDrainService.enqueue({
           sessionId: sessionId,
@@ -533,12 +522,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
       currentParams = {
         provider: nextInteract.provider,
         modelId: nextInteract.modelId,
-        apiKey: nextInteract.apiKey,
+        variant: nextInteract.variant,
         userMessage: nextInteract.userMessage,
         messageId: nextInteract.messageId,
-        partId: nextInteract.partId,
-        useCodex: nextInteract.useCodex,
-        userId: nextInteract.userId
+        partId: nextInteract.partId
       };
     }
 
@@ -568,25 +555,21 @@ export class ExplorerStreamService implements OnModuleDestroy {
     sessionId: string;
     provider: string;
     modelId: string;
-    apiKey: string;
+    variant?: string;
     userMessage: string;
     abortController: AbortController;
     messageId: string;
     partId: string;
-    useCodex: boolean;
-    userId?: string;
   }): Promise<void> {
     let {
       sessionId,
       provider,
       modelId,
-      apiKey,
+      variant,
       userMessage,
       abortController,
       messageId,
-      partId,
-      useCodex,
-      userId
+      partId
     } = item;
 
     let history = await this.loadMessageHistory({
@@ -596,6 +579,20 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId
     });
+
+    let user = await this.usersService.getUserCheckExists({
+      userId: session.userId
+    });
+
+    let modelSelection = await this.providersService.getModelSelection({
+      projectId: session.projectId,
+      providerId: provider,
+      modelId: modelId,
+      isUserCodexAuthSet: isDefined(user.codexAuth),
+      isBuilder: false
+    });
+
+    let isCodex = modelSelection.provider.type === ProviderTypeEnum.OpenAICodex;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: session.projectId
@@ -617,16 +614,15 @@ export class ExplorerStreamService implements OnModuleDestroy {
       projectId: session.projectId
     });
 
-    let explorerModelParts = userId
-      ? await this.explorerModelPartsService.getExplorerModelParts({
-          userId: userId,
-          projectId: session.projectId,
-          repoId: session.repoId,
-          branchId: session.branchId,
-          envId: session.envId,
-          traceId: traceId
-        })
-      : [];
+    let explorerModelParts =
+      await this.explorerModelPartsService.getExplorerModelParts({
+        userId: user.userId,
+        projectId: session.projectId,
+        repoId: session.repoId,
+        branchId: session.branchId,
+        envId: session.envId,
+        traceId: traceId
+      });
 
     let explorerSystemPrompt =
       this.explorerPromptsService.getExplorerSessionSystemPrompt({
@@ -708,16 +704,24 @@ export class ExplorerStreamService implements OnModuleDestroy {
     });
 
     // Build codex fetch if needed (reads fresh auth from DB)
-    let codexFetch =
-      provider === 'openai' && useCodex === true && userId
-        ? await this.codexService.buildCodexFetch({
-            userId: userId,
-            sessionId: sessionId
-          })
-        : undefined;
+    let codexFetch = isCodex
+      ? await this.codexService.buildCodexFetch({
+          userId: user.userId,
+          sessionId: sessionId
+        })
+      : undefined;
 
-    let isOpenaiOauth =
-      provider === 'openai' && useCodex === true && isDefined(codexFetch);
+    let model = this.explorerModelsService.getModel({
+      provider: modelSelection.provider,
+      modelId: modelId,
+      codexFetch: codexFetch
+    });
+
+    let isOpenAI =
+      modelSelection.provider.type === ProviderTypeEnum.OpenAI || isCodex;
+
+    let isAnthropic: boolean =
+      modelSelection.provider.type === ProviderTypeEnum.Anthropic;
 
     // Start title generation in parallel
     let isFirstMessage = history.length === 0;
@@ -725,31 +729,27 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let titlePromise = isFirstMessage
       ? this.explorerTitleService.generateTitleText({
           sessionId: sessionId,
-          provider: provider,
+          model: model,
           modelId: modelId,
-          apiKey: apiKey,
           userMessage: userMessage,
-          useCodex: useCodex,
-          codexFetch: codexFetch
+          isOpenAI: isOpenAI,
+          isCodex: isCodex
         })
       : undefined;
 
     // Stream AI response
-    let model = this.explorerModelsService.getModel({
-      provider: provider,
-      modelId: modelId,
-      apiKey: apiKey,
-      useCodex: useCodex,
-      codexFetch: codexFetch
-    });
 
-    let providerOptions =
-      provider === 'openai'
-        ? this.explorerModelsService.buildOpenaiProviderOptions({
-            modelId: modelId,
-            sessionId: sessionId,
-            instructions: isOpenaiOauth ? explorerSystemPrompt : undefined,
-            isSmall: false
+    let providerOptions = isOpenAI
+      ? this.explorerModelsService.buildOpenaiProviderOptions({
+          modelId: modelId,
+          sessionId: sessionId,
+          instructions: isCodex ? explorerSystemPrompt : undefined,
+          isSmall: false
+        })
+      : isAnthropic
+        ? this.explorerModelsService.buildAnthropicProviderOptions({
+            model: modelSelection.model,
+            variant: variant
           })
         : undefined;
 
@@ -763,12 +763,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
       { role: 'user' as const, content: userMessageContent }
     ];
 
-    let user = userId
-      ? await this.usersService.getUserCheckExists({ userId: userId })
-      : undefined;
-
     let tools =
-      session.type === SessionTypeEnum.Explorer && user
+      session.type === SessionTypeEnum.Explorer
         ? this.explorerToolsService.getTools({
             user: user,
             sessionId: sessionId,
@@ -782,8 +778,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let result = streamText({
       model: model,
-      system: isOpenaiOauth ? undefined : explorerSystemPrompt,
+      system: isCodex ? undefined : explorerSystemPrompt,
       messages: messages,
+      maxOutputTokens: modelSelection.model.outputLimit,
       abortSignal: abortController.signal,
       providerOptions: providerOptions,
       tools: tools,
@@ -915,6 +912,8 @@ export class ExplorerStreamService implements OnModuleDestroy {
             sessionId: sessionId,
             event: toolPartEvent
           });
+        } else if (chunk.type === 'error') {
+          throw chunk.error;
         } else if (chunk.type === 'finish-step') {
           lastStepUsage = chunk.usage;
           lastStepMetadata = chunk.providerMetadata;
@@ -1148,10 +1147,11 @@ export class ExplorerStreamService implements OnModuleDestroy {
       });
 
       let textContent = contentParts.join('\n\n');
+      let hasContent: boolean = textContent.trim().length > 0;
 
       if (msg.role === 'user') {
         coreMessages.push({ role: 'user', content: textContent });
-      } else if (msg.role === 'assistant') {
+      } else if (msg.role === 'assistant' && hasContent) {
         coreMessages.push({ role: 'assistant', content: textContent });
       }
     });

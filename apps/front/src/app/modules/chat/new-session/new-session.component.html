@@ -75,13 +75,12 @@
 
     <div class="w-full">
       <m-session-input
-        [(model)]="model"
+        [(modelExtraId)]="modelExtraId"
         [(agent)]="agent"
         [(variant)]="variant"
         [sessionType]="sessionType"
         [disabled]="isSubmitting"
         [scrollableInput]="true"
-        [(useCodex)]="useCodex"
         (send)="sendMessage($event)"
       ></m-session-input>
     </div>

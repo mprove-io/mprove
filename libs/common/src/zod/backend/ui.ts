@@ -25,10 +25,9 @@ export let zUi = z
     chartsByModel: z.boolean().nullish(),
     permissionsAutoAcceptSessionIds: z.array(z.string()).nullish(),
     newSessionPermissionsAutoAccept: z.boolean().nullish(),
-    newSessionExplorerProviderModel: z.string().nullish(),
-    newSessionEditorProviderModel: z.string().nullish(),
-    newSessionEditorVariant: z.string().nullish(),
-    newSessionUseCodex: z.boolean().nullish()
+    newSessionExplorerModelExtraId: z.string().nullish(),
+    newSessionEditorModelExtraId: z.string().nullish(),
+    newSessionEditorVariant: z.string().nullish()
   })
   .meta({ id: 'Ui' });
 

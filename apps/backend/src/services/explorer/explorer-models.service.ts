@@ -1,304 +1,72 @@
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { Injectable } from '@nestjs/common';
 import type { LanguageModel } from 'ai';
-import { eq, sql } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
-import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import type { ModelsDevResponse } from '#backend/functions/opencode-models-dev';
+import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
 import {
-  ALLOWED_MODEL_KEYWORDS,
-  CODEX_ALLOWED_MODELS
-} from '#common/constants/top-backend';
+  type AnthropicVariantOptions,
+  getAnthropicVariantOptions
+} from '#backend/functions/anthropic-model-variants';
 import { ErEnum } from '#common/enums/er.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
-import type { SessionModelApi } from '#common/zod/backend/session-model-api';
+import type { AnthropicModel } from '#common/zod/backend/anthropic-model';
+import { zAnthropicModel } from '#common/zod/backend/anthropic-model';
+import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 
 @Injectable()
 export class ExplorerModelsService {
-  private MODELS_AI_TTL_MS = 60 * 60 * 1000; // 1 hour
-
-  constructor(
-    private cs: ConfigService<BackendConfig>,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
-  ) {}
-
-  async getAiModels(item: {
-    projectId: string;
-    openaiApiKey?: string;
-    anthropicApiKey?: string;
-    isUserCodexAuthSet?: boolean;
-    enableLoadFromCache: boolean;
-    forceLoadFromCache: boolean;
-  }): Promise<SessionModelApi[]> {
-    let {
-      projectId,
-      openaiApiKey,
-      anthropicApiKey,
-      isUserCodexAuthSet,
-      enableLoadFromCache,
-      forceLoadFromCache
-    } = item;
-
-    if (forceLoadFromCache) {
-      let cached = await this.readCache({
-        projectId: projectId,
-        ignoreTtl: true
-      });
-
-      if (cached) {
-        return cached;
-      }
-    }
-
-    if (enableLoadFromCache) {
-      let cached = await this.readCache({
-        projectId: projectId,
-        ignoreTtl: false
-      });
-
-      if (cached) {
-        return cached;
-      }
-    }
-
-    let models = await this.fetchModels({
-      openaiApiKey: isUserCodexAuthSet === true ? undefined : openaiApiKey,
-      anthropicApiKey: anthropicApiKey,
-      isUserCodexAuthSet: isUserCodexAuthSet
-    });
-
-    models = models.filter(m => {
-      let idLower = m.id.toLowerCase();
-      return ALLOWED_MODEL_KEYWORDS.some(kw => idLower.includes(kw));
-    });
-
-    await this.writeCache({
-      projectId: projectId,
-      models: models
-    });
-
-    return models;
-  }
-
-  private async readCache(item: {
-    projectId: string;
-    ignoreTtl: boolean;
-  }): Promise<SessionModelApi[] | undefined> {
-    let { projectId, ignoreTtl } = item;
-
-    let row = await this.db.drizzle.query.projectsTable.findFirst({
-      where: eq(projectsTable.projectId, projectId),
-      columns: {
-        providerModelsAi: true,
-        providerModelsAiTs: true
-      }
-    });
-
-    if (!row) {
-      return undefined;
-    }
-
-    let providerModelsAi = row.providerModelsAi;
-    let providerModelsAiTs = row.providerModelsAiTs;
-
-    let hasModels = isDefined(providerModelsAi) && providerModelsAi.length > 0;
-
-    let hasTs = isDefined(providerModelsAiTs);
-
-    if (ignoreTtl) {
-      if (hasModels && hasTs) {
-        return providerModelsAi;
-      }
-      return undefined;
-    }
-
-    let isFresh =
-      hasTs && Date.now() - providerModelsAiTs < this.MODELS_AI_TTL_MS;
-
-    if (hasModels && isFresh) {
-      return providerModelsAi;
-    }
-
-    return undefined;
-  }
-
-  private async writeCache(item: {
-    projectId: string;
-    models: SessionModelApi[];
-  }): Promise<void> {
-    let { projectId, models } = item;
-
-    try {
-      let modelsJson = JSON.stringify(models);
-      let nowMs = Date.now();
-
-      await this.db.drizzle.execute(
-        sql`UPDATE projects SET provider_models_ai = ${modelsJson}::json, provider_models_ai_ts = ${nowMs} WHERE project_id = ${projectId}`
-      );
-    } catch (e: any) {
-      logToConsoleBackend({
-        log: new ServerError({
-          message: ErEnum.BACKEND_MODELS_CACHE_PROVIDER_MODELS_ERROR,
-          originalError: e
-        }),
-        logLevel: LogLevelEnum.Info,
-        logger: this.logger,
-        cs: this.cs
-      });
-    }
-  }
-
-  private async fetchModels(item: {
-    openaiApiKey?: string;
-    anthropicApiKey?: string;
-    isUserCodexAuthSet?: boolean;
-  }): Promise<SessionModelApi[]> {
-    let { openaiApiKey, anthropicApiKey, isUserCodexAuthSet } = item;
-
-    let openaiPromise = openaiApiKey
-      ? this.fetchOpenaiModels({ apiKey: openaiApiKey })
-      : Promise.resolve([]);
-
-    let capMapPromise = this.fetchModelsDevCapabilities({
-      providerIds: ['openai', 'anthropic']
-    });
-
-    let [openaiModels, capMap] = await Promise.all([
-      openaiPromise,
-      capMapPromise
-    ]);
-
-    let models: SessionModelApi[] = [];
-
-    models.push(...openaiModels);
-
-    if (capMap) {
-      if (anthropicApiKey) {
-        capMap.forEach((cap, modelId) => {
-          if (cap.providerId !== 'anthropic') {
-            return;
-          }
-
-          models.push({
-            id: modelId,
-            name: cap.name,
-            providerId: cap.providerId,
-            providerName: cap.providerName,
-            contextLimit: cap.contextLimit
-          });
-        });
-      }
-
-      models = models.filter(m => {
-        let cap = capMap.get(m.id);
-        if (!cap) {
-          return false;
-        }
-
-        let isNotDeprecated =
-          cap.status !== 'deprecated' && cap.status !== 'alpha';
-        let hasToolCall = cap.toolcall;
-        let hasTextOutput = cap.outputText;
-
-        return isNotDeprecated && hasToolCall && hasTextOutput;
-      });
-
-      models = models.map(m => ({
-        id: m.id,
-        name: m.name,
-        providerId: m.providerId,
-        providerName: m.providerName,
-        variants: m.variants,
-        contextLimit: capMap.get(m.id)?.contextLimit
-      }));
-
-      // Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 362-371
-      if (isUserCodexAuthSet === true) {
-        CODEX_ALLOWED_MODELS.forEach(modelId => {
-          models.push({
-            id: modelId,
-            name: modelId,
-            providerId: 'openai',
-            providerName: 'OpenAI',
-            contextLimit: capMap.get(modelId)?.contextLimit
-          });
-        });
-      }
-    }
-
-    return models;
-  }
-
-  private async fetchOpenaiModels(item: {
-    apiKey: string;
-  }): Promise<SessionModelApi[]> {
-    try {
-      let response = await fetch('https://api.openai.com/v1/models', {
-        headers: { Authorization: `Bearer ${item.apiKey}` }
-      });
-
-      if (!response.ok) {
-        return [];
-      }
-
-      let data = (await response.json()) as {
-        data: { id: string; owned_by: string }[];
-      };
-
-      let models = data.data.map(m => ({
-        id: m.id,
-        name: m.id,
-        providerId: 'openai',
-        providerName: 'OpenAI'
-      }));
-
-      return models;
-    } catch (e) {
-      logToConsoleBackend({
-        log: new ServerError({
-          message: ErEnum.BACKEND_MODELS_CACHE_PROVIDER_MODELS_ERROR,
-          originalError: e
-        }),
-        logLevel: LogLevelEnum.Info,
-        logger: this.logger,
-        cs: this.cs
-      });
-      return [];
-    }
-  }
-
   getModel(item: {
-    provider: string;
+    provider: ProviderTab;
     modelId: string;
-    apiKey: string;
-    useCodex: boolean;
-    codexFetch: typeof fetch;
+    codexFetch?: typeof fetch;
   }): LanguageModel {
-    let { provider, modelId, apiKey, useCodex, codexFetch } = item;
+    let { provider, modelId, codexFetch } = item;
 
-    if (provider === 'openai') {
-      let isCodex = useCodex === true && isDefined(codexFetch);
-
-      let openai = isCodex
-        ? createOpenAI({ apiKey: 'oauth-dummy-key', fetch: codexFetch })
-        : createOpenAI({ apiKey: apiKey });
-
+    if (provider.type === ProviderTypeEnum.OpenAI) {
+      let openai = createOpenAI({ apiKey: provider.options.apiKey });
       return openai(modelId);
-    } else if (provider === 'anthropic') {
-      let anthropic = createAnthropic({ apiKey: apiKey });
+    }
+
+    if (provider.type === ProviderTypeEnum.Anthropic) {
+      let anthropic = createAnthropic({ apiKey: provider.options.apiKey });
       return anthropic(modelId);
     }
 
+    if (provider.type === ProviderTypeEnum.OpenAICompatible) {
+      let headers = Object.fromEntries(
+        (provider.options.headers ?? []).map(x => [x.key, x.value])
+      );
+
+      let queryParams = Object.fromEntries(
+        (provider.options.queryParams ?? []).map(x => [x.key, x.value])
+      );
+
+      let compatible = createOpenAICompatible({
+        name: provider.name,
+        baseURL: provider.options.baseURL,
+        apiKey: provider.options.apiKey ?? undefined,
+        headers: headers,
+        queryParams: queryParams
+      });
+
+      return compatible.chatModel(modelId);
+    }
+
+    let isCodexFetchSet = isDefined(codexFetch);
+
+    if (provider.type === ProviderTypeEnum.OpenAICodex && isCodexFetchSet) {
+      let openai = createOpenAI({
+        apiKey: 'oauth-dummy-key',
+        fetch: codexFetch
+      });
+      return openai(modelId);
+    }
+
     throw new ServerError({
-      message: ErEnum.BACKEND_PROMPT_FAILED
+      message: ErEnum.BACKEND_GET_PROVIDER_MODEL_FAILED
     });
   }
 
@@ -350,77 +118,35 @@ export class ExplorerModelsService {
     return { openai: openai };
   }
 
-  private async fetchModelsDevCapabilities(item: {
-    providerIds: string[];
-  }): Promise<
-    | Map<
-        string,
-        {
-          providerId: string;
-          providerName: string;
-          name: string;
-          toolcall: boolean;
-          outputText: boolean;
-          status: string;
-          contextLimit?: number;
-        }
-      >
-    | undefined
-  > {
-    let { providerIds } = item;
+  buildAnthropicProviderOptions(item: {
+    model: LlmModel;
+    variant?: string;
+  }): { anthropic: AnthropicVariantOptions } | undefined {
+    let { model, variant } = item;
 
-    try {
-      let response = await fetch('https://models.dev/api.json', {
-        signal: AbortSignal.timeout(10_000)
-      });
-
-      let modelsDevResponse = (await response.json()) as ModelsDevResponse;
-
-      let capMap = new Map<
-        string,
-        {
-          providerId: string;
-          providerName: string;
-          name: string;
-          toolcall: boolean;
-          outputText: boolean;
-          status: string;
-          contextLimit?: number;
-        }
-      >();
-
-      Object.entries(modelsDevResponse).forEach(([providerId, mdProvider]) => {
-        let isIncluded = providerIds.includes(providerId);
-
-        if (!isIncluded) {
-          return;
-        }
-
-        Object.entries(mdProvider.models).forEach(([_modelKey, model]) => {
-          capMap.set(model.id, {
-            providerId: providerId,
-            providerName: mdProvider.name,
-            name: model.name,
-            toolcall: model.tool_call,
-            outputText: model.modalities?.output?.includes('text') ?? false,
-            status: model.status ?? 'active',
-            contextLimit: model.limit?.context
-          });
-        });
-      });
-
-      return capMap;
-    } catch (e) {
-      logToConsoleBackend({
-        log: new ServerError({
-          message: ErEnum.BACKEND_MODELS_CACHE_PROVIDER_MODELS_ERROR,
-          originalError: e
-        }),
-        logLevel: LogLevelEnum.Info,
-        logger: this.logger,
-        cs: this.cs
-      });
+    if (!isDefined(variant) || variant === 'default') {
       return undefined;
     }
+
+    let parseResult: ReturnType<typeof zAnthropicModel.safeParse> =
+      zAnthropicModel.safeParse(model.providerModelInfo);
+
+    if (parseResult.success === false) {
+      return undefined;
+    }
+
+    let anthropicModel: AnthropicModel = parseResult.data;
+
+    let options: ReturnType<typeof getAnthropicVariantOptions> =
+      getAnthropicVariantOptions({
+        anthropicModel: anthropicModel,
+        variant: variant
+      });
+
+    if (!isDefined(options)) {
+      return undefined;
+    }
+
+    return { anthropic: options };
   }
 }

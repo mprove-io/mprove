@@ -1,17 +1,25 @@
 import { z } from 'zod';
+import {
+  ANTHROPIC_PROVIDER_ID,
+  CODEX_PROVIDER_ID,
+  OPENAI_PROVIDER_ID
+} from '#common/constants/providers';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
-import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
 import { zConnectionRawSchema } from '#common/zod/backend/connection-schemas/raw-schema';
 import { zEv } from '#common/zod/backend/ev';
-import { zLlmOpenAICompatibleOptions } from '#common/zod/backend/provider-parts/llm-openai-compatible-options';
+import { zLlmModelInput } from '#common/zod/backend/llm-models/llm-model-input';
+import { zProviderOptionsAnthropic } from '#common/zod/backend/provider-options/provider-options-anthropic';
+import { zProviderOptionsCodex } from '#common/zod/backend/provider-options/provider-options-codex';
+import { zProviderOptionsOpenAI } from '#common/zod/backend/provider-options/provider-options-openai';
+import { zProviderOptionsOpenAICompatible } from '#common/zod/backend/provider-options/provider-options-openai-compatible';
 import { zMconfig } from '#common/zod/blockml/mconfig';
 import { zQuery } from '#common/zod/blockml/query';
 import { zMyResponse } from '#common/zod/to/my-response';
@@ -55,10 +63,7 @@ export let zToBackendSeedRecordsRequestPayloadProjectsItem = z
     publicKeyEncrypted: z.string().nullish(),
     privateKeyEncrypted: z.string().nullish(),
     passPhrase: z.string().nullish(),
-    e2bApiKey: z.string().nullish(),
-    zenApiKey: z.string().nullish(),
-    anthropicApiKey: z.string().nullish(),
-    openaiApiKey: z.string().nullish()
+    e2bApiKey: z.string().nullish()
   })
   .meta({ id: 'ToBackendSeedRecordsRequestPayloadProjectsItem' });
 
@@ -87,14 +92,41 @@ export let zToBackendSeedRecordsRequestPayloadConnectionsItem = z
   .meta({ id: 'ToBackendSeedRecordsRequestPayloadConnectionsItem' });
 
 export let zToBackendSeedRecordsRequestPayloadProvidersItem = z
-  .object({
-    projectId: z.string(),
-    providerId: z.string(),
-    kind: z.literal(ProviderKindEnum.LLM),
-    type: z.literal(ProviderLlmTypeEnum.OpenAICompatible),
-    isEnabled: z.boolean(),
-    options: zLlmOpenAICompatibleOptions
-  })
+  .discriminatedUnion('type', [
+    z.strictObject({
+      projectId: z.string(),
+      providerId: z.literal(OPENAI_PROVIDER_ID),
+      type: z.literal(ProviderTypeEnum.OpenAI),
+      isEnabled: z.boolean(),
+      models: z.array(zLlmModelInput),
+      options: zProviderOptionsOpenAI
+    }),
+    z.strictObject({
+      projectId: z.string(),
+      providerId: z.literal(ANTHROPIC_PROVIDER_ID),
+      type: z.literal(ProviderTypeEnum.Anthropic),
+      isEnabled: z.boolean(),
+      models: z.array(zLlmModelInput),
+      options: zProviderOptionsAnthropic
+    }),
+    z.strictObject({
+      projectId: z.string(),
+      providerId: z.string(),
+      type: z.literal(ProviderTypeEnum.OpenAICompatible),
+      name: z.string(),
+      isEnabled: z.boolean(),
+      models: z.array(zLlmModelInput),
+      options: zProviderOptionsOpenAICompatible
+    }),
+    z.strictObject({
+      projectId: z.string(),
+      providerId: z.literal(CODEX_PROVIDER_ID),
+      type: z.literal(ProviderTypeEnum.OpenAICodex),
+      isEnabled: z.boolean(),
+      models: z.array(zLlmModelInput),
+      options: zProviderOptionsCodex
+    })
+  ])
   .meta({ id: 'ToBackendSeedRecordsRequestPayloadProvidersItem' });
 
 export let zToBackendSeedRecordsRequestPayloadEnvsItem = z

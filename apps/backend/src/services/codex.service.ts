@@ -2,22 +2,27 @@ import os from 'node:os';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
+import { z } from 'zod';
 import { backendPackageJson } from '#backend/backend-package-json';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { UsersService } from '#backend/services/db/users.service';
 import { CodexDeviceAuthStatusEnum } from '#common/enums/codex-device-auth-status.enum';
 import { ErEnum } from '#common/enums/er.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { CodexAuthOpenai } from '#common/zod/backend/codex-auth';
+import { type CodexModel, zCodexModel } from '#common/zod/backend/codex-model';
 
 // Reference: external/opencode/packages/opencode/src/plugin/codex.ts
 const CODEX_CLIENT_ID = 'app_EMoamEEZ73f0CkXaXp7hrann';
 const CODEX_ISSUER = 'https://auth.openai.com';
 const CODEX_API_ENDPOINT = 'https://chatgpt.com/backend-api/codex/responses';
+const CODEX_MODELS_ENDPOINT = 'https://chatgpt.com/backend-api/codex/models';
 const CODEX_DEVICE_VERIFICATION_URL = `${CODEX_ISSUER}/codex/device`;
 const CODEX_DEVICE_REDIRECT_URI = `${CODEX_ISSUER}/deviceauth/callback`;
 
@@ -52,6 +57,11 @@ interface CodexDeviceAuthStart {
   intervalSec: number;
   verificationUrl: string;
 }
+
+export type CodexModelsResult = {
+  codexModels: CodexModel[];
+  errorMessage?: string;
+};
 
 @Injectable()
 export class CodexService {
@@ -180,6 +190,89 @@ export class CodexService {
         headers: headers
       });
     };
+  }
+
+  async getModels(item: { userId: string }): Promise<CodexModelsResult> {
+    let { userId } = item;
+
+    try {
+      await this.prewarmCodexAuth({ userId: userId });
+
+      let auth: CodexAuthOpenai = await this.loadAuth({ userId: userId });
+
+      if (!isDefinedAndNotEmpty(auth.access)) {
+        throw new Error('Codex access token is missing');
+      }
+
+      let url: URL = new URL(CODEX_MODELS_ENDPOINT);
+
+      url.searchParams.set('client_version', CODEX_USER_AGENT_VERSION);
+
+      let headers: Headers = new Headers({
+        authorization: `Bearer ${auth.access}`,
+        originator: CODEX_ORIGINATOR,
+        version: CODEX_USER_AGENT_VERSION,
+        'User-Agent': `mprove/${CODEX_USER_AGENT_VERSION} (${os.platform()} ${os.release()}; ${os.arch()})`
+      });
+
+      if (isDefined(auth.accountId)) {
+        headers.set('ChatGPT-Account-Id', auth.accountId);
+      }
+
+      let response: Response = await fetch(url, {
+        headers: headers,
+        signal: AbortSignal.timeout(10_000)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Codex models returned ${response.status}`);
+      }
+
+      let responseJson: unknown = await response.json();
+
+      let parsed: { models: CodexModel[] } = z
+        .object({
+          models: z.array(zCodexModel)
+        })
+        .parse(responseJson);
+
+      let codexModels: CodexModel[] = parsed.models.filter(codexModel =>
+        isCodexModelAvailable({ codexModel: codexModel })
+      );
+
+      let result: CodexModelsResult = {
+        codexModels: codexModels
+      };
+
+      return result;
+    } catch (error) {
+      let isInvalidResponse: boolean = error instanceof z.ZodError;
+
+      let isSignInRequired: boolean =
+        error instanceof ServerError &&
+        error.message === ErEnum.BACKEND_CODEX_AUTH_SIGN_IN_REQUIRED;
+
+      let errorDetail: string = isInvalidResponse
+        ? 'Codex returned an invalid models response'
+        : isSignInRequired
+          ? 'Sign in to ChatGPT on your profile page to refresh Codex auth'
+          : error instanceof ServerError
+            ? 'Codex authentication failed'
+            : error instanceof Error
+              ? error.message
+              : 'Unknown error';
+
+      let errorMessage: string = `Failed to get Codex models: ${errorDetail}`;
+
+      this.logger.warn(errorMessage);
+
+      let result: CodexModelsResult = {
+        codexModels: [],
+        errorMessage: errorMessage
+      };
+
+      return result;
+    }
   }
 
   private validateExpiresIn(item: { expiresIn: number | undefined }): number {
@@ -490,4 +583,47 @@ export class CodexService {
       getRetryOption(this.cs, this.logger)
     );
   }
+}
+
+function isCodexModelAvailable(item: { codexModel: CodexModel }): boolean {
+  let { codexModel } = item;
+
+  if (codexModel.visibility !== 'list') {
+    let isAvailable = false;
+
+    return isAvailable;
+  }
+
+  let hasTextInput: boolean =
+    codexModel.input_modalities?.includes('text') ?? true;
+
+  if (hasTextInput === false) {
+    let isAvailable = false;
+
+    return isAvailable;
+  }
+
+  let retirementAt = codexModel.upgrade?.retirement_at;
+
+  if (!isDefinedAndNotEmpty(retirementAt)) {
+    let isAvailable = true;
+
+    return isAvailable;
+  }
+
+  let retirementTs: number = Date.parse(retirementAt);
+
+  let isRetirementTsValid: boolean = Number.isFinite(retirementTs);
+
+  if (isRetirementTsValid === false) {
+    let isAvailable = true;
+
+    return isAvailable;
+  }
+
+  let nowTs: number = Date.now();
+
+  let isAvailable: boolean = retirementTs > nowTs;
+
+  return isAvailable;
 }

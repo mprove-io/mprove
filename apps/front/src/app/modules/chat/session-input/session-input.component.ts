@@ -3,12 +3,13 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
+  type OnChanges,
   Output,
-  SimpleChanges
+  type SimpleChanges
 } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { take, tap } from 'rxjs/operators';
+import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import {
   EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE,
   RESTRICTED_USER_ALIAS
@@ -17,9 +18,9 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type {
-  ToBackendGetSessionProviderModelsRequestPayload,
-  ToBackendGetSessionProviderModelsResponse
-} from '#common/zod/to-backend/sessions/to-backend-get-session-provider-models';
+  ToBackendGetLlmModelsWithProviderRequestPayload,
+  ToBackendGetLlmModelsWithProviderResponse
+} from '#common/zod/to-backend/llm-models/get-llm-models-with-provider/get-llm-models-with-provider';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
@@ -35,17 +36,14 @@ import { UiService } from '#front/app/services/ui.service';
   templateUrl: './session-input.component.html'
 })
 export class SessionInputComponent implements OnChanges {
-  @Input() model: string;
-  @Output() modelChange = new EventEmitter<string>();
+  @Input() modelExtraId: string;
+  @Output() modelExtraIdChange = new EventEmitter<string>();
 
   @Input() agent = 'build';
   @Output() agentChange = new EventEmitter<string>();
 
   @Input() variant = 'default';
   @Output() variantChange = new EventEmitter<string>();
-
-  @Input() useCodex = false;
-  @Output() useCodexChange = new EventEmitter<boolean>();
 
   sessionTypeEnum = SessionTypeEnum;
 
@@ -56,8 +54,6 @@ export class SessionInputComponent implements OnChanges {
   @Input() sessionId: string;
   @Input() isWorking = false;
 
-  isCodexAuthSet = false;
-
   @Output() send = new EventEmitter<string>();
   @Output() stop = new EventEmitter<void>();
 
@@ -67,12 +63,14 @@ export class SessionInputComponent implements OnChanges {
     value: string;
     label: string;
     modelId: string;
+    modelName: string;
     providerId: string;
     providerName: string;
     contextLimit?: number;
     contextLimitFormatted: string;
   }[] = [];
   modelsLoading = false;
+  providerNameById: Record<string, string> = {};
   agents = ['build', 'plan'];
   variants: string[] = ['default'];
   modelVariantsMap = new Map<string, string[]>();
@@ -82,10 +80,8 @@ export class SessionInputComponent implements OnChanges {
   isExplorer = false;
   isRestrictedUser = false;
 
-  projectHasAnyApiKeyOrSubscription = true;
-
-  providerHasApiKeyOrSubscription = true;
   showUsageWarning = false;
+  isUsageLimitReached = false;
   contextUsageWarningPercentage = EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE;
 
   constructor(
@@ -104,7 +100,6 @@ export class SessionInputComponent implements OnChanges {
     this.isExplorer = member.isExplorer;
 
     let user = this.userQuery.getValue();
-    this.isCodexAuthSet = user.isCodexAuthSet === true;
     this.isRestrictedUser = user.alias === RESTRICTED_USER_ALIAS;
 
     let state = this.sessionModelsQuery.getValue();
@@ -129,15 +124,9 @@ export class SessionInputComponent implements OnChanges {
       this.applyModels(models);
       this.updateProjectHasE2bApiKey();
     }
-    if (changes['model']) {
+    if (changes['modelExtraId']) {
       this.updateVariants();
       this.updateProjectHasE2bApiKey();
-      this.updateProjectHasAnyApiKeyOrSubscription();
-      this.updateProviderHasApiKeyOrSubscription();
-    }
-    if (changes['disabled'] || changes['useCodex']) {
-      this.updateProjectHasAnyApiKeyOrSubscription();
-      this.updateProviderHasApiKeyOrSubscription();
     }
   }
 
@@ -152,17 +141,12 @@ export class SessionInputComponent implements OnChanges {
     this.stop.emit();
   }
 
-  toggleUseCodex() {
-    this.useCodex = !this.useCodex;
-    this.useCodexChange.emit(this.useCodex);
-    this.uiQuery.updatePart({ newSessionUseCodex: this.useCodex });
-    this.uiService.setUserUi({ newSessionUseCodex: this.useCodex });
-    this.updateProjectHasAnyApiKeyOrSubscription();
-    this.updateProviderHasApiKeyOrSubscription();
-  }
-
   onSend() {
-    if (!this.messageText.trim() || this.effectiveDisabled || !this.model) {
+    if (
+      !this.messageText.trim() ||
+      this.effectiveDisabled ||
+      !this.modelExtraId
+    ) {
       return;
     }
     let text = this.messageText.trim();
@@ -177,27 +161,25 @@ export class SessionInputComponent implements OnChanges {
   onModelSelect() {
     this.updateVariants();
 
-    this.updateProviderHasApiKeyOrSubscription();
-
-    this.modelChange.emit(this.model);
+    this.modelExtraIdChange.emit(this.modelExtraId);
     this.variantChange.emit(this.variant);
 
     let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
 
     if (isExplorer) {
       this.uiQuery.updatePart({
-        newSessionExplorerProviderModel: this.model
+        newSessionExplorerModelExtraId: this.modelExtraId
       });
       this.uiService.setUserUi({
-        newSessionExplorerProviderModel: this.model
+        newSessionExplorerModelExtraId: this.modelExtraId
       });
     } else {
       this.uiQuery.updatePart({
-        newSessionEditorProviderModel: this.model,
+        newSessionEditorModelExtraId: this.modelExtraId,
         newSessionEditorVariant: this.variant
       });
       this.uiService.setUserUi({
-        newSessionEditorProviderModel: this.model,
+        newSessionEditorModelExtraId: this.modelExtraId,
         newSessionEditorVariant: this.variant
       });
     }
@@ -210,11 +192,11 @@ export class SessionInputComponent implements OnChanges {
 
     if (isExplorer) {
       this.uiService.setUserUi({
-        newSessionExplorerProviderModel: this.model
+        newSessionExplorerModelExtraId: this.modelExtraId
       });
     } else {
       this.uiService.setUserUi({
-        newSessionEditorProviderModel: this.model,
+        newSessionEditorModelExtraId: this.modelExtraId,
         newSessionEditorVariant: this.variant
       });
     }
@@ -236,9 +218,17 @@ export class SessionInputComponent implements OnChanges {
       this.isRestrictedUser ||
       isEditorSessionWithoutEditorRole ||
       isExplorerSessionWithoutExplorerRole ||
-      !this.projectHasAnyApiKeyOrSubscription ||
-      !this.providerHasApiKeyOrSubscription ||
-      isEditorWithoutE2b;
+      isEditorWithoutE2b ||
+      (this.sessionType === SessionTypeEnum.Explorer &&
+        this.isUsageLimitReached);
+  }
+
+  onUsageLimitReachedChange(item: { isReached: boolean }) {
+    let { isReached } = item;
+
+    this.isUsageLimitReached = isReached;
+
+    this.updateEffectiveDisabled();
   }
 
   updateProjectHasE2bApiKey() {
@@ -249,48 +239,8 @@ export class SessionInputComponent implements OnChanges {
     this.updateEffectiveDisabled();
   }
 
-  updateProjectHasAnyApiKeyOrSubscription() {
-    let project = this.projectQuery.getValue();
-
-    let hasCodexSubscriptionAndEnabled = this.useCodex && this.isCodexAuthSet;
-
-    this.projectHasAnyApiKeyOrSubscription =
-      !!project.isZenApiKeySet ||
-      !!project.isOpenaiApiKeySet ||
-      !!project.isAnthropicApiKeySet ||
-      hasCodexSubscriptionAndEnabled;
-
-    this.updateEffectiveDisabled();
-  }
-
-  updateProviderHasApiKeyOrSubscription() {
-    if (!this.model) {
-      this.providerHasApiKeyOrSubscription = true;
-      this.updateEffectiveDisabled();
-      return;
-    }
-
-    let project = this.projectQuery.getValue();
-
-    let provider = this.model.split('/')[0];
-
-    let hasCodexSubscriptionAndEnabled = this.useCodex && this.isCodexAuthSet;
-
-    if (provider === 'opencode') {
-      this.providerHasApiKeyOrSubscription = !!project.isZenApiKeySet;
-    } else if (provider === 'openai') {
-      this.providerHasApiKeyOrSubscription =
-        !!project.isOpenaiApiKeySet || hasCodexSubscriptionAndEnabled;
-    } else if (provider === 'anthropic') {
-      this.providerHasApiKeyOrSubscription = !!project.isAnthropicApiKeySet;
-    } else {
-      this.providerHasApiKeyOrSubscription = false;
-    }
-    this.updateEffectiveDisabled();
-  }
-
   updateVariants() {
-    let modelVariants = this.modelVariantsMap.get(this.model);
+    let modelVariants = this.modelVariantsMap.get(this.modelExtraId);
     if (modelVariants && modelVariants.length > 0) {
       this.variants = ['default', ...modelVariants];
     } else {
@@ -303,42 +253,60 @@ export class SessionInputComponent implements OnChanges {
 
   applyModels(
     apiModels: {
-      id: string;
+      modelId: string;
+      name?: string;
       providerId: string;
       providerName: string;
       variants?: string[];
       contextLimit?: number;
+      inputLimit?: number;
     }[]
   ) {
     this.modelVariantsMap.clear();
+    this.providerNameById = {};
+
     let modelOptions = apiModels.map(m => {
-      let value = `${m.providerId}/${m.id}`;
+      let value = `${m.providerId}/${m.modelId}`;
+      let modelName: string = m.name ?? m.modelId;
+
+      this.providerNameById[m.providerId] = m.providerName;
+
       if (m.variants && m.variants.length > 0) {
         this.modelVariantsMap.set(value, m.variants);
       }
+
       return {
         value: value,
-        label: `${m.id}`,
-        modelId: m.id,
+        label: modelName,
+        modelId: m.modelId,
+        modelName: modelName,
         providerId: m.providerId,
         providerName: m.providerName,
-        contextLimit: m.contextLimit,
+        contextLimit: m.contextLimit ?? m.inputLimit,
         contextLimitFormatted: this.formatContextLimit({
-          contextLimit: m.contextLimit
+          contextLimit: m.contextLimit ?? m.inputLimit
         })
       };
     });
-    let providerOrder: Record<string, number> = {
-      anthropic: 0,
-      openai: 1,
-      opencode: 2
-    };
     modelOptions.sort((a, b) => {
-      let aOrder = providerOrder[a.providerId] ?? 1;
-      let bOrder = providerOrder[b.providerId] ?? 1;
-      if (aOrder !== bOrder) {
-        return aOrder - bOrder;
+      let aIsOpenAICompatible: boolean =
+        PROVIDER_NAME_BY_ID[a.providerId] === undefined;
+
+      let bIsOpenAICompatible: boolean =
+        PROVIDER_NAME_BY_ID[b.providerId] === undefined;
+
+      if (aIsOpenAICompatible !== bIsOpenAICompatible) {
+        return aIsOpenAICompatible ? 1 : -1;
       }
+
+      let providerNameComparison: number = a.providerName.localeCompare(
+        b.providerName
+      );
+
+      if (providerNameComparison !== 0) {
+        return providerNameComparison;
+      }
+
       return a.modelId.localeCompare(b.modelId);
     });
     this.models = modelOptions;
@@ -368,7 +336,7 @@ export class SessionInputComponent implements OnChanges {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendGetSessionProviderModelsRequestPayload = {
+    let payload: ToBackendGetLlmModelsWithProviderRequestPayload = {
       projectId: nav.projectId,
       sessionTypes: [this.sessionType]
     };
@@ -376,11 +344,11 @@ export class SessionInputComponent implements OnChanges {
     this.apiService
       .req({
         pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendGetSessionProviderModels,
+          ToBackendRequestInfoNameEnum.ToBackendGetLlmModelsWithProvider,
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendGetSessionProviderModelsResponse) => {
+        tap((resp: ToBackendGetLlmModelsWithProviderResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let state = this.sessionModelsQuery.getValue();
 
@@ -424,9 +392,16 @@ export class SessionInputComponent implements OnChanges {
 
   modelsSearchFn(
     term: string,
-    model: { label: string; modelId: string; providerName: string }
+    model: {
+      label: string;
+      modelId: string;
+      modelName: string;
+      providerName: string;
+    }
   ) {
-    let haystack = [`${model.providerName} ${model.modelId}`];
+    let haystack = [
+      `${model.providerName} ${model.modelName} ${model.modelId}`
+    ];
     let opts = {};
     let uf = new uFuzzy(opts);
     let idxs = uf.filter(haystack, term);

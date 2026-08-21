@@ -12,7 +12,7 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateEditorSessionRequestDto,
   ToBackendCreateEditorSessionResponseDto
@@ -38,6 +38,7 @@ import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { ProvidersService } from '#backend/services/db/providers.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { EditorCodexService } from '#backend/services/editor/editor-codex.service';
@@ -51,12 +52,13 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
 import { makeSessionId } from '#common/functions/make-session-id';
 import { ServerError } from '#common/models/server-error';
@@ -79,6 +81,7 @@ export class CreateEditorSessionController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private sessionsService: SessionsService,
+    private providersService: ProvidersService,
     private usersService: UsersService,
     private editorStreamService: EditorStreamService,
     private editorOpencodeService: EditorOpencodeService,
@@ -110,16 +113,15 @@ export class CreateEditorSessionController {
     let {
       projectId,
       sandboxType,
-      provider,
-      model,
+      providerId,
+      modelId,
       agent,
       variant,
       envId,
       initialBranch,
       firstMessage,
       messageId,
-      partId,
-      useCodex
+      partId
     } = body.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -154,11 +156,16 @@ export class CreateEditorSessionController {
       });
     }
 
-    if (useCodex === true && isUndefined(user.codexAuth)) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_USER_PROFILE_CODEX_AUTH_NOT_SET
-      });
-    }
+    let modelSelection = await this.providersService.getModelSelection({
+      projectId: projectId,
+      providerId: providerId,
+      modelId: modelId,
+      isUserCodexAuthSet: isDefined(user.codexAuth),
+      isBuilder: true
+    });
+
+    let useCodex =
+      modelSelection.provider.type === ProviderTypeEnum.OpenAICodex;
 
     if (useCodex === true) {
       await this.codexService.prewarmCodexAuth({
@@ -172,17 +179,19 @@ export class CreateEditorSessionController {
 
     // Type Editor: existing sandboxed opencode flow
 
-    let sandboxEnvs: Record<string, string> = {};
+    let providers = await this.providersService.getEnabledProviders({
+      projectId: projectId
+    });
 
-    if (project.zenApiKey) {
-      sandboxEnvs.OPENCODE_API_KEY = project.zenApiKey;
-    }
-    if (project.anthropicApiKey) {
-      sandboxEnvs.ANTHROPIC_API_KEY = project.anthropicApiKey;
-    }
-    if (project.openaiApiKey && useCodex === false) {
-      sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
-    }
+    let providerConfig = await this.editorOpencodeService.buildProviderConfig({
+      providers: providers,
+      isUserCodexAuthSet: isDefined(user.codexAuth)
+    });
+
+    let sandboxEnvs: Record<string, string> = {
+      ...providerConfig.envs,
+      OPENCODE_CONFIG_CONTENT: providerConfig.content
+    };
 
     // Phase 1: Save session with status=New and return immediately
 
@@ -210,9 +219,8 @@ export class CreateEditorSessionController {
           userId: user.userId,
           projectId: projectId,
           sandboxType: sandboxType,
-          provider: provider,
-          model: model,
-          lastMessageProviderModel: model,
+          providerId: providerId,
+          modelId: modelId,
           lastMessageVariant: variant,
           agent: agent,
           firstMessage: firstMessage,
@@ -222,7 +230,6 @@ export class CreateEditorSessionController {
           initialBranch: initialBranch,
           envId: envId,
           initialCommit: undefined,
-          useCodex: useCodex,
           codexAuthUpdateTs:
             useCodex === true ? user.codexAuthUpdateTs : undefined,
           status: SessionStatusEnum.New,
@@ -286,9 +293,13 @@ export class CreateEditorSessionController {
       )
     };
 
-    let codexAuthFile: { path: string; data: string };
+    let codexAuthFile: { path: string; data: string } | undefined;
 
-    if (useCodex === true) {
+    let hasCodexProvider = providers.some(
+      provider => provider.type === ProviderTypeEnum.OpenAICodex
+    );
+
+    if (hasCodexProvider && isDefined(user.codexAuth)) {
       codexAuthFile = this.editorCodexService.buildCodexAuthFile({
         codexAuth: user.codexAuth
       });
@@ -309,7 +320,8 @@ export class CreateEditorSessionController {
       sessionId: session.sessionId,
       projectId: projectId,
       envId: envId,
-      model: session.model,
+      providerId: session.providerId,
+      modelId: session.modelId,
       agent: session.agent,
       sandboxType: sandboxType,
       sandboxEnvs: sandboxEnvs,
@@ -356,7 +368,8 @@ export class CreateEditorSessionController {
     sessionId: string;
     projectId: string;
     envId: string;
-    model?: string;
+    providerId: string;
+    modelId: string;
     agent?: string;
     sandboxType: SandboxTypeEnum;
     sandboxEnvs: Record<string, string>;
@@ -371,7 +384,8 @@ export class CreateEditorSessionController {
       sessionId,
       projectId,
       envId,
-      model,
+      providerId,
+      modelId,
       agent,
       sandboxType,
       sandboxEnvs,
@@ -503,7 +517,8 @@ export class CreateEditorSessionController {
             interactionType: InteractionTypeEnum.Message,
             message: firstMessage,
             agent: agent,
-            model: model,
+            providerId: providerId,
+            modelId: modelId,
             variant: variant,
             messageId: messageId,
             partId: partId

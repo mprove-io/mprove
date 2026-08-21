@@ -30,35 +30,7 @@ export const KEY_SSE_TICKET = 'sse-ticket';
 export const KEY_OPENCODE_STREAM_OWNER = 'opencode-stream-owner';
 export const KEY_AI_STREAM_OWNER = 'ai-stream-owner';
 
-export const MODEL_PROVIDERS: { provider_id: string; label: string }[] = [
-  { provider_id: 'openai', label: 'OpenAI' },
-  { provider_id: 'anthropic', label: 'Anthropic' },
-  { provider_id: 'opencode', label: 'Zen' }
-];
-
-export const ALLOWED_MODEL_KEYWORDS: string[] = [
-  'opus',
-  'sonnet',
-  'codex',
-  'gpt-5.4',
-  'gpt-5.5'
-];
-
-// Reference: external/opencode/packages/opencode/src/plugin/codex.ts lines 362-371
-export const CODEX_ALLOWED_MODELS: string[] = [
-  'gpt-5.1-codex',
-  'gpt-5.1-codex-max',
-  'gpt-5.1-codex-mini',
-  'gpt-5.2',
-  'gpt-5.2-codex',
-  'gpt-5.3-codex',
-  'gpt-5.4',
-  'gpt-5.4-mini',
-  'gpt-5.5'
-];
-
 // Mirrors exactly: external/opencode/packages/opencode/src/plugin/codex.ts lines 362-371
-// Does NOT include gpt-5.5 (not supported by opencode's Codex plugin)
 export const CODEX_ALLOWED_MODELS_EDITOR: string[] = [
   'gpt-5.1-codex',
   'gpt-5.1-codex-max',
@@ -144,8 +116,7 @@ export const DEFAULT_SRV_UI: Ui = {
   chartsByModel: false,
   permissionsAutoAcceptSessionIds: [],
   newSessionPermissionsAutoAccept: false,
-  newSessionExplorerProviderModel: undefined,
-  newSessionEditorProviderModel: undefined,
-  newSessionEditorVariant: 'default',
-  newSessionUseCodex: true
+  newSessionExplorerModelExtraId: undefined,
+  newSessionEditorModelExtraId: undefined,
+  newSessionEditorVariant: 'default'
 };

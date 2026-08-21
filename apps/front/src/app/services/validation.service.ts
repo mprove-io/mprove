@@ -24,10 +24,18 @@ export class ValidationService {
       ['maxlength', `Maximum length: ${validatorValue.requiredLength}`],
       ['min', `Min value: ${validatorValue.min}`],
       ['max', `Max value: ${validatorValue.max}`],
+      [
+        'modelLimitExceedsContext',
+        `Value must be less than or equal to context window (${validatorValue.contextLimit})`
+      ],
       ['email', 'Invalid email address'],
       ['pattern', 'Invalid pattern'],
       ['apiUrlInvalid', 'Enter a valid URL'],
       ['apiUrlProtocolMustBeHttpsOrHttp', 'URL must use HTTPS or HTTP'],
+      [
+        'openAiCompatibleBaseUrlIncludesChatCompletions',
+        'Enter the API base URL without /chat/completions'
+      ],
       [
         'isNotDayOfWeekIndexValues',
         'Should be Day of week indexes separated by comma'
@@ -220,7 +228,7 @@ export class ValidationService {
     }
   }
 
-  static integerOrEmptyValidator(control: FormControl) {
+  static integerOrEmptyValidator(control: AbstractControl) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }
@@ -248,6 +256,33 @@ export class ValidationService {
 
     if (url.protocol !== 'https:' && url.protocol !== 'http:') {
       return { apiUrlProtocolMustBeHttpsOrHttp: true };
+    }
+
+    return null;
+  }
+
+  static openAiCompatibleBaseUrlValidator(
+    control: FormControl
+  ): ValidationErrors | null {
+    if (isUndefined(control.value) || control.value === '') {
+      return null;
+    }
+
+    let value: string = control.value.toString().trim();
+    let url: URL;
+
+    try {
+      url = new URL(value);
+    } catch {
+      return null;
+    }
+
+    let pathname: string = url.pathname.replace(/\/+$/, '');
+    let includesChatCompletions: boolean =
+      pathname.endsWith('/chat/completions');
+
+    if (includesChatCompletions) {
+      return { openAiCompatibleBaseUrlIncludesChatCompletions: true };
     }
 
     return null;
@@ -309,7 +344,7 @@ export class ValidationService {
     }
   }
 
-  static providerNameWrongChars(control: FormControl) {
+  static providerNameWrongChars(control: AbstractControl) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
     }

@@ -10,30 +10,33 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
-import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type {
-  ToBackendCreateProviderRequest,
-  ToBackendCreateProviderResponse
-} from '#common/zod/to-backend/providers/to-backend-create-provider';
+import type { ToBackendCreateProviderRequest } from '#common/zod/to-backend/providers/create-provider/create-provider-request';
+import type { ToBackendCreateProviderResponse } from '#common/zod/to-backend/providers/create-provider/create-provider-response';
 
 let testId = 'backend-create-provider__member-is-not-admin';
+
 let traceId = testId;
 
-let userId = makeId();
+let userId: string = makeId();
+
 let email = `${testId}@example.com`;
+
 let password = '123456';
 
 let orgId = testId;
+
 let orgName = testId;
 
-let projectId = makeId();
+let projectId: string = makeId();
+
 let projectName = testId;
 
 test('1', async t => {
   let isPass = false;
+
   let prep: Prep;
 
   await retry(async () => {
@@ -99,9 +102,8 @@ test('1', async t => {
         payload: {
           projectId: projectId,
           providerId: 'non_admin_provider',
-          kind: ProviderKindEnum.LLM,
-          type: ProviderLlmTypeEnum.OpenAICompatible,
-          isEnabled: true,
+          type: ProviderTypeEnum.OpenAICompatible,
+          name: 'Non-admin Provider',
           options: {
             baseURL: 'https://api.example.com/v1',
             apiKey: 'provider-api-key',
@@ -111,13 +113,7 @@ test('1', async t => {
                 value: 'Bearer provider-header-secret'
               }
             ],
-            queryParams: [{ key: 'token', value: 'provider-query-secret' }],
-            models: [
-              {
-                modelId: 'model-1',
-                name: 'Model One'
-              }
-            ]
+            queryParams: [{ key: 'token', value: 'provider-query-secret' }]
           }
         }
       };
@@ -136,6 +132,7 @@ test('1', async t => {
         logger: prep?.logger,
         cs: prep?.cs
       });
+
       if (prep) {
         await prep.app.close();
       }

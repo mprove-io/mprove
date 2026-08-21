@@ -365,7 +365,7 @@ export class SessionDrainService {
             .properties;
           ocSessionStatus = statusProps.status;
 
-          if (statusProps.status.type === 'idle' && lastSessionError) {
+          if (statusProps.status.type === 'busy' && lastSessionError) {
             isLastErrorRecovered = true;
           }
         }

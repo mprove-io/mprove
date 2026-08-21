@@ -50,6 +50,7 @@
         *ngIf="
           showPromptEnabled &&
           session?.type === sessionTypeEnum.Explorer &&
+          turnIndex === 0 &&
           turn.userMessage.systemPrompt
         "
         type="button"
@@ -417,15 +418,16 @@
 
       <!-- Session error indicator (compact, clickable) -->
       <div
-        *ngIf="lastSessionError && !isSessionError && !isAbortError()"
+        *ngIf="
+          lastSessionError &&
+          !isLastErrorRecovered &&
+          !isSessionError &&
+          !isAbortError()
+        "
         class="mb-4 ml-[34px] flex items-start gap-3"
       >
         <span
-          class="mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full"
-          [ngClass]="{
-            'bg-red-500': !isLastErrorRecovered,
-            'bg-red-300': isLastErrorRecovered
-          }"
+          class="mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-red-500"
         ></span>
         <button
           class="border-s200 max-w-[90%] overflow-hidden rounded-lg border text-left hover:bg-gray-50 focus:outline-none"

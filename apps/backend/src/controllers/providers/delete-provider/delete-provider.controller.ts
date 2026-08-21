@@ -11,7 +11,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteProviderRequestDto,
   ToBackendDeleteProviderResponseDto
@@ -28,7 +28,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendDeleteProviderResponsePayload } from '#common/zod/to-backend/providers/to-backend-delete-provider';
+import type { ToBackendDeleteProviderRequestPayload } from '#common/zod/to-backend/providers/delete-provider/delete-provider-request-payload';
+import type { ToBackendDeleteProviderResponsePayload } from '#common/zod/to-backend/providers/delete-provider/delete-provider-response-payload';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -56,7 +57,9 @@ export class DeleteProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteProviderRequestDto
   ) {
-    let { projectId, providerId } = body.payload;
+    let bodyPayload: ToBackendDeleteProviderRequestPayload = body.payload;
+
+    let { projectId, providerId } = bodyPayload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -68,7 +71,7 @@ export class DeleteProviderController {
     });
 
     await retry(
-      async () =>
+      async () => {
         await this.db.drizzle.transaction(async tx => {
           await tx
             .delete(providersTable)
@@ -78,7 +81,8 @@ export class DeleteProviderController {
                 eq(providersTable.providerId, providerId)
               )
             );
-        }),
+        });
+      },
       getRetryOption(this.cs, this.logger)
     );
 

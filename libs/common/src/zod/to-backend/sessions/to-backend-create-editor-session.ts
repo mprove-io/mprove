@@ -10,16 +10,15 @@ export let zToBackendCreateEditorSessionRequestPayload = z
   .object({
     projectId: z.string(),
     sandboxType: z.enum(SandboxTypeEnum),
-    provider: z.string(),
-    model: z.string(),
+    providerId: z.string(),
+    modelId: z.string(),
     agent: z.string(),
     variant: z.string(),
     envId: z.string(),
     initialBranch: z.string(),
     firstMessage: z.string().nullish(),
     messageId: z.string(),
-    partId: z.string(),
-    useCodex: z.boolean()
+    partId: z.string()
   })
   .meta({ id: 'ToBackendCreateEditorSessionRequestPayload' });
 

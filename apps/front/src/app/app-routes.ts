@@ -13,7 +13,6 @@ import {
   PARAMETER_REPORT_ID,
   PARAMETER_SESSION_ID,
   PATH_ACCOUNT,
-  PATH_API_KEYS,
   PATH_BRANCH,
   PATH_BUILDER,
   PATH_CHART,
@@ -54,6 +53,7 @@ import {
   PATH_REPORTS,
   PATH_REPORTS_LIST,
   PATH_ROLES,
+  PATH_SANDBOX_PROVIDER,
   PATH_SELECT_FILE,
   PATH_SERVER_USERS,
   PATH_SESSION,
@@ -97,13 +97,13 @@ import { NavbarComponent } from './modules/navbar/navbar.component';
 import { OrgAccountComponent } from './modules/org/org-account/org-account.component';
 import { OrgUsersComponent } from './modules/org/org-users/org-users.component';
 import { ProfileComponent } from './modules/profile/profile.component';
-import { ProjectApiKeysComponent } from './modules/project/project-api-keys/project-api-keys.component';
 import { ProjectConnectionsComponent } from './modules/project/project-connections/project-connections.component';
 import { ProjectEnvironmentsComponent } from './modules/project/project-environments/project-environments.component';
 import { ProjectGivensComponent } from './modules/project/project-givens/project-givens.component';
 import { ProjectInfoComponent } from './modules/project/project-info/project-info.component';
 import { ProjectProvidersComponent } from './modules/project/project-providers/project-providers.component';
 import { ProjectRolesComponent } from './modules/project/project-roles/project-roles.component';
+import { ProjectSandboxProviderComponent } from './modules/project/project-sandbox-provider/project-sandbox-provider.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
 import { ReportComponent } from './modules/reports/report/report.component';
 import { ReportsComponent } from './modules/reports/reports.component';
@@ -287,8 +287,8 @@ export const appRoutes: Routes = [
                 resolve: [ProjectTeamResolver]
               },
               {
-                component: ProjectApiKeysComponent,
-                path: PATH_API_KEYS,
+                component: ProjectSandboxProviderComponent,
+                path: PATH_SANDBOX_PROVIDER,
                 resolve: [ProjectInfoResolver]
               },
               {

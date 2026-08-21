@@ -9,9 +9,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { ProviderKindEnum } from '#common/enums/provider-kind.enum';
-import type { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
-import type { ProviderSandboxTypeEnum } from '#common/enums/provider-sandbox-type.enum';
+import type { ProviderTypeEnum } from '#common/enums/provider-type.enum';
+import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { ProviderLt, ProviderSt } from '#common/zod/st-lt';
 
 export const providersTable = pgTable(
@@ -22,11 +21,9 @@ export const providersTable = pgTable(
       .primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     providerId: varchar('provider_id', { length: 32 }).notNull(), // name
-    kind: varchar('kind').$type<ProviderKindEnum>().notNull(),
-    type: varchar('type')
-      .$type<ProviderLlmTypeEnum | ProviderSandboxTypeEnum>()
-      .notNull(),
+    type: varchar('type').$type<ProviderTypeEnum>().notNull(),
     isEnabled: boolean('is_enabled').notNull(),
+    models: json('models').$type<LlmModel[]>().notNull(),
     st: json('st')
       .$type<{ encrypted: string; decrypted: ProviderSt }>()
       .notNull(),

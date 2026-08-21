@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
+import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import { PATH_NEW_SESSION } from '#common/constants/top';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -52,12 +53,6 @@ export class SessionsComponent implements OnInit {
   sessionStatusArchived = SessionStatusEnum.Archived;
   sessionTypeEnum = SessionTypeEnum;
   spinnerName = SESSIONS_SPINNER_NAME;
-  providerLabels: Record<string, string> = {
-    opencode: 'Zen',
-    openai: 'OpenAI',
-    anthropic: 'Anthropic'
-  };
-
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {
       this.sessions = x
@@ -65,7 +60,7 @@ export class SessionsComponent implements OnInit {
         .map(s =>
           Object.assign({}, s, <SessionApiX>{
             displayTitle: makeTitle(s),
-            providerLabel: this.providerLabels[s.provider] || s.provider
+            providerLabel: PROVIDER_NAME_BY_ID[s.providerId] || s.providerId
           })
         )
         .sort((a, b) => {

@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSendMessageToEditorSessionRequestDto,
   ToBackendSendMessageToEditorSessionResponseDto
@@ -23,16 +23,19 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { ProvidersService } from '#backend/services/db/providers.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { EditorCodexService } from '#backend/services/editor/editor-codex.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
+import { CODEX_PROVIDER_ID } from '#common/constants/providers';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
@@ -49,6 +52,7 @@ export class SendMessageToEditorSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
+    private providersService: ProvidersService,
     private usersService: UsersService,
     private editorStreamService: EditorStreamService,
     private editorOpencodeService: EditorOpencodeService,
@@ -77,7 +81,8 @@ export class SendMessageToEditorSessionController {
       interactionType,
       message,
       agent,
-      model,
+      providerId,
+      modelId,
       variant,
       permissionId,
       reply,
@@ -125,7 +130,43 @@ export class SendMessageToEditorSessionController {
       });
     }
 
-    if (session.useCodex === true) {
+    let isCodex = session.providerId === CODEX_PROVIDER_ID;
+
+    if (interactionType === InteractionTypeEnum.Message) {
+      if (isDefined(providerId) === false) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_MESSAGE_PROVIDER_REQUIRED
+        });
+      }
+
+      if (isDefined(modelId) === false) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_MESSAGE_MODEL_REQUIRED
+        });
+      }
+
+      let modelSelection = await this.providersService.getModelSelection({
+        projectId: session.projectId,
+        providerId: providerId,
+        modelId: modelId,
+        isUserCodexAuthSet: isDefined(user.codexAuth),
+        isBuilder: true
+      });
+
+      let providerChangedAfterSessionCreated =
+        isDefined(modelSelection.provider.serverTs) &&
+        modelSelection.provider.serverTs > session.createdTs;
+
+      if (providerChangedAfterSessionCreated) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_PROVIDER_CHANGED_AFTER_SESSION_CREATED
+        });
+      }
+
+      isCodex = modelSelection.provider.type === ProviderTypeEnum.OpenAICodex;
+    }
+
+    if (isCodex === true) {
       await this.codexService.prewarmCodexAuth({
         userId: user.userId
       });
@@ -181,7 +222,7 @@ export class SendMessageToEditorSessionController {
         });
 
         if (
-          session.useCodex === true &&
+          isCodex === true &&
           user.codexAuthUpdateTs !== session.codexAuthUpdateTs
         ) {
           await this.editorCodexService.writeAuthJsonToSandbox({
@@ -214,12 +255,6 @@ export class SendMessageToEditorSessionController {
           });
         }
 
-        if (model === undefined) {
-          throw new ServerError({
-            message: ErEnum.BACKEND_MESSAGE_MODEL_REQUIRED
-          });
-        }
-
         if (variant === undefined) {
           throw new ServerError({
             message: ErEnum.BACKEND_MESSAGE_VARIANT_REQUIRED
@@ -243,7 +278,8 @@ export class SendMessageToEditorSessionController {
             interactionType: interactionType,
             message: message,
             agent: agent,
-            model: model,
+            providerId: providerId,
+            modelId: modelId,
             variant: variant,
             permissionId: permissionId,
             reply: reply,
@@ -275,7 +311,8 @@ export class SendMessageToEditorSessionController {
           interactionType: interactionType,
           message: message,
           agent: agent,
-          model: model,
+          providerId: providerId,
+          modelId: modelId,
           variant: variant,
           permissionId: permissionId,
           reply: reply,
@@ -290,8 +327,8 @@ export class SendMessageToEditorSessionController {
         session = {
           ...session,
           agent: agent,
-          model: model,
-          lastMessageProviderModel: model,
+          providerId: providerId,
+          modelId: modelId,
           lastMessageVariant: variant
         };
       }

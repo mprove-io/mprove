@@ -1,0 +1,395 @@
+<div class="bg-m0 flex max-h-[90vh] select-none flex-col overflow-y-auto p-9">
+  <div class="text-s2 mt-5 text-left text-2xl font-semibold">
+    Add Model for {{ ref.data.provider.name }}
+  </div>
+
+  <form
+    class="mt-9 grid w-full grid-cols-1 gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(20rem,2fr)]"
+    [formGroup]="modelForm"
+    (ngSubmit)="save()"
+  >
+    <div class="flex min-w-0 flex-col">
+      <div
+        *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICodex"
+        class="mb-4 flex w-fit items-center gap-3"
+        [ngClass]="{
+          'cursor-pointer': isManualEntryRequired === false,
+          'cursor-default': isManualEntryRequired
+        }"
+        tp="add codex auth in user profile for model discovery"
+        [tpIsEnabled]="isManualEntryRequired"
+        (click)="toggleManualEntry()"
+      >
+        <ui-switch
+          data-cy="llmModelDialogManualEntrySwitch"
+          class="mt-1"
+          [checked]="isManualEntry"
+          [disabled]="isManualEntryRequired"
+          color="#64BD63"
+        ></ui-switch>
+        <div class="flex h-9 items-center">Manual entry</div>
+      </div>
+
+      <ng-container
+        *ngIf="
+          ref.data.provider.type === providerTypeEnum.OpenAICompatible ||
+          isManualEntry
+        "
+      >
+        <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+          <label class="pt-3 font-semibold">Model ID</label>
+          <div class="flex min-w-0 flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="llmModelDialogModelIdInput"
+              class="form-input border-s3 focus:border-m600 min-w-0 rounded"
+              formControlName="modelId"
+            />
+            <m-validation
+              [control]="modelForm.controls['modelId']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+          <label class="pt-3 font-semibold">Name</label>
+          <div class="flex min-w-0 flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="llmModelDialogNameInput"
+              class="form-input border-s3 focus:border-m600 min-w-0 rounded"
+              formControlName="name"
+              placeholder="Optional"
+            />
+            <m-validation [control]="modelForm.controls['name']"></m-validation>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+          <label class="pt-3 font-semibold">Context window</label>
+          <div class="flex min-w-0 flex-col">
+            <input
+              type="number"
+              min="1"
+              autocomplete="off"
+              data-cy="llmModelDialogContextLimitInput"
+              class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              formControlName="contextLimit"
+              placeholder="Required"
+            />
+            <m-validation
+              [control]="modelForm.controls['contextLimit']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+          <label class="pt-3 font-semibold">Max input tokens</label>
+          <div class="flex min-w-0 flex-col">
+            <input
+              type="number"
+              min="1"
+              autocomplete="off"
+              data-cy="llmModelDialogInputLimitInput"
+              class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              formControlName="inputLimit"
+              placeholder="Optional"
+            />
+            <m-validation
+              [control]="modelForm.controls['inputLimit']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+          <label class="pt-3 font-semibold">Max output tokens</label>
+          <div class="flex min-w-0 flex-col">
+            <input
+              type="number"
+              min="1"
+              autocomplete="off"
+              data-cy="llmModelDialogOutputLimitInput"
+              class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              formControlName="outputLimit"
+              placeholder="Optional"
+            />
+            <m-validation
+              [control]="modelForm.controls['outputLimit']"
+            ></m-validation>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-select
+        #llmModelDialogModelIdSelect
+        *ngIf="
+          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+          !isManualEntry
+        "
+        [fixNgSelectBottom]="llmModelDialogModelIdSelect"
+        data-cy="llmModelDialogModelIdSelect"
+        class="llm-model-select"
+        [items]="modelParts"
+        bindLabel="catalogName"
+        bindValue="modelId"
+        [clearable]="false"
+        [searchable]="true"
+        [loading]="modelsLoading"
+        appendTo="body"
+        formControlName="modelId"
+        (change)="modelSelected({ modelId: $any($event).modelId })"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); llmModelDialogModelIdSelect.blur()
+        "
+        placeholder="Select model"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="flex w-full items-center gap-3">
+            <span class="min-w-0 flex-1 truncate"
+              >{{ item.catalogName }}
+              <span class="text-s400">{{ item.modelId }}</span></span
+            >
+            <span
+              *ngIf="item.isOpencodeSupported === false"
+              class="flex flex-shrink-0 gap-1 text-xs"
+            >
+              <span class="bg-r100 text-r700 rounded px-2 py-0.5">Builder</span>
+            </span>
+          </div>
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item">
+          <div
+            class="flex items-center gap-3"
+            [class.cursor-default]="item.isAlreadySelected"
+            tp="Model is already added"
+            [tpIsEnabled]="item.isAlreadySelected"
+          >
+            <span
+              class="min-w-0 flex-1 truncate"
+              [class.text-s400]="item.isAlreadySelected"
+              >{{ item.catalogName }}
+              <span
+                [ngClass]="item.isAlreadySelected ? 'text-s300' : 'text-s400'"
+                >{{ item.modelId }}</span
+              ></span
+            >
+            <span
+              *ngIf="item.isOpencodeSupported === false"
+              class="flex flex-shrink-0 gap-1 text-xs"
+            >
+              <span class="bg-r100 text-r700 rounded px-2 py-0.5">Builder</span>
+            </span>
+          </div>
+        </ng-template>
+      </ng-select>
+      <m-validation
+        *ngIf="
+          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+          !isManualEntry
+        "
+        [control]="modelForm.controls['modelId']"
+      >
+      </m-validation>
+
+      <div
+        *ngIf="modelsErrorMessage"
+        class="bg-r100 text-r700 mt-3 break-words rounded px-3 py-2 text-sm"
+      >
+        {{ modelsErrorMessage }}
+      </div>
+
+      <div class="mt-2 flex flex-col gap-4">
+        <div
+          class="llm-model-destination flex w-fit cursor-pointer items-center gap-3"
+          [class.llm-model-destination-animated]="
+            animatedDestination === 'isBuilder'
+          "
+          [tp]="selectedModelPart ? 'Builder is not supported' : 'Select model'"
+          [tpIsEnabled]="modelForm.controls['isBuilder'].disabled"
+          (click)="toggleDestination({ controlName: 'isBuilder' })"
+        >
+          <ui-switch
+            class="mt-1"
+            [checked]="modelForm.controls['isBuilder'].value === true"
+            [disabled]="modelForm.controls['isBuilder'].disabled"
+            color="#64BD63"
+          ></ui-switch>
+          <div
+            class="flex h-9 items-center"
+            [class.text-s400]="modelForm.controls['isBuilder'].disabled"
+            >Builder</div
+          >
+        </div>
+
+        <div
+          class="llm-model-destination flex w-fit cursor-pointer items-center gap-3"
+          [class.llm-model-destination-animated]="
+            animatedDestination === 'isExplorer'
+          "
+          [tp]="
+            selectedModelPart ? 'Explorer is not supported' : 'Select model'
+          "
+          [tpIsEnabled]="modelForm.controls['isExplorer'].disabled"
+          (click)="toggleDestination({ controlName: 'isExplorer' })"
+        >
+          <ui-switch
+            class="mt-1"
+            [checked]="modelForm.controls['isExplorer'].value === true"
+            [disabled]="modelForm.controls['isExplorer'].disabled"
+            color="#64BD63"
+          ></ui-switch>
+          <div
+            class="flex h-9 items-center"
+            [class.text-s400]="modelForm.controls['isExplorer'].disabled"
+            >Explorer</div
+          >
+        </div>
+      </div>
+
+      <div class="mt-auto flex items-center pt-8">
+        <button
+          data-cy="llmModelDialogSaveButton"
+          class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+          type="submit"
+          >Add</button
+        >
+        <button
+          data-cy="llmModelDialogCancelButton"
+          class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+          type="button"
+          (click)="cancel()"
+          >Cancel</button
+        >
+      </div>
+    </div>
+
+    <div class="min-w-0">
+      <div
+        *ngIf="
+          !selectedModelPart &&
+          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+          !isManualEntry
+        "
+        class="border-s300 bg-s100 text-s400 flex h-full min-h-[16rem] items-center justify-center rounded border p-4 text-sm"
+      >
+        Model info
+      </div>
+
+      <div
+        *ngIf="
+          !selectedModelPart &&
+          (ref.data.provider.type === providerTypeEnum.OpenAICompatible ||
+            isManualEntry)
+        "
+        data-cy="llmModelDialogManualModelInfo"
+        class="border-s300 bg-s100 text-s400 flex h-full min-h-[16rem] items-center justify-center rounded border p-4 text-sm"
+      >
+        Model Info not available
+      </div>
+
+      <div
+        *ngIf="selectedModelPart"
+        data-cy="llmModelDialogSelectedModelInfo"
+        class="border-s300 bg-s100 min-h-[16rem] rounded border p-4 text-sm"
+      >
+        <div class="grid grid-cols-[11rem_1fr] gap-x-3 gap-y-2">
+          <ng-container *ngIf="selectedModelPart.isOpencodeSupported === false">
+            <div class="text-s400">Builder inactive</div>
+            <div>OpenCode filters out this model</div>
+          </ng-container>
+          <div class="text-s400">Variants</div>
+          <div>
+            {{
+              selectedModelPart.variants?.length
+                ? selectedModelPart.variants?.join(', ')
+                : 'Not available'
+            }}
+          </div>
+          <ng-container
+            *ngIf="
+              ref.data.provider.type === providerTypeEnum.OpenAI &&
+              selectedModelPart.modelsDevStatus
+            "
+          >
+            <div class="text-s400">models.dev status</div>
+            <div>{{ selectedModelPart.modelsDevStatus }}</div>
+          </ng-container>
+          <div
+            *ngIf="
+              selectedModelPart.codexContextWindow === undefined &&
+              selectedModelPart.codexMaxContextWindow === undefined
+            "
+            class="text-s400"
+            >Context window</div
+          >
+          <div
+            *ngIf="
+              selectedModelPart.codexContextWindow === undefined &&
+              selectedModelPart.codexMaxContextWindow === undefined
+            "
+          >
+            {{
+              formatContextLimit({
+                contextLimit: selectedModelPart.contextLimit
+              })
+            }}
+          </div>
+          <div
+            *ngIf="selectedModelPart.codexContextWindow !== undefined"
+            class="text-s400"
+            >Context window</div
+          >
+          <div *ngIf="selectedModelPart.codexContextWindow !== undefined">
+            {{
+              formatContextLimit({
+                contextLimit: selectedModelPart.codexContextWindow
+              })
+            }}
+          </div>
+          <div
+            *ngIf="selectedModelPart.codexMaxContextWindow !== undefined"
+            class="text-s400"
+            >Max context window</div
+          >
+          <div *ngIf="selectedModelPart.codexMaxContextWindow !== undefined">
+            {{
+              formatContextLimit({
+                contextLimit: selectedModelPart.codexMaxContextWindow
+              })
+            }}
+          </div>
+          <div class="text-s400">Max input tokens</div>
+          <div>
+            {{
+              formatContextLimit({
+                contextLimit: selectedModelPart.inputLimit
+              })
+            }}
+          </div>
+          <div class="text-s400">Max output tokens</div>
+          <div>
+            {{
+              formatContextLimit({
+                contextLimit: selectedModelPart.outputLimit
+              })
+            }}
+          </div>
+        </div>
+
+        <div
+          *ngIf="selectedModelPart.providerModelInfo"
+          class="border-s300 mt-4 border-t pt-4"
+        >
+          <div class="text-s400 mb-2">Provider model JSON</div>
+          <pre
+            data-cy="llmModelDialogProviderModelInfo"
+            class="bg-m0 max-h-72 select-text overflow-auto whitespace-pre rounded p-3 text-xs"
+            >{{ selectedModelPart.providerModelInfo | json }}</pre
+          >
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -80,9 +80,6 @@ export class ProjectsService {
       defaultBranch: project.defaultBranch,
       gitUrl: isAddGitUrl === true ? project.gitUrl : undefined,
       publicKey: isAddPublicKey === true ? project.publicKey : undefined,
-      isZenApiKeySet: isDefinedAndNotEmpty(project.zenApiKey),
-      isAnthropicApiKeySet: isDefinedAndNotEmpty(project.anthropicApiKey),
-      isOpenaiApiKeySet: isDefinedAndNotEmpty(project.openaiApiKey),
       isE2bApiKeySet: isDefinedAndNotEmpty(project.e2bApiKey),
       serverTs: Number(project.serverTs)
     };
@@ -140,9 +137,6 @@ export class ProjectsService {
     publicKeyEncrypted?: string;
     privateKeyEncrypted?: string;
     passPhrase?: string;
-    zenApiKey?: string;
-    anthropicApiKey?: string;
-    openaiApiKey?: string;
     e2bApiKey?: string;
     testProjectId: string;
     user: UserTab;
@@ -161,9 +155,6 @@ export class ProjectsService {
       publicKeyEncrypted,
       privateKeyEncrypted,
       passPhrase,
-      zenApiKey,
-      anthropicApiKey,
-      openaiApiKey,
       e2bApiKey,
       testProjectId,
       user,
@@ -184,16 +175,9 @@ export class ProjectsService {
       publicKeyEncrypted: publicKeyEncrypted,
       privateKeyEncrypted: privateKeyEncrypted,
       passPhrase: passPhrase,
-      zenApiKey: zenApiKey,
-      anthropicApiKey: anthropicApiKey,
-      openaiApiKey: openaiApiKey,
       e2bApiKey: e2bApiKey,
       nameHash: undefined, // tab-to-ent
       gitUrlHash: undefined, // tab-to-ent
-      providerModelsOpencode: undefined,
-      providerModelsOpencodeTs: undefined,
-      providerModelsAi: undefined,
-      providerModelsAiTs: undefined,
       keyTag: undefined,
       serverTs: undefined
     };

@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateProviderRequestDto,
   ToBackendCreateProviderResponseDto
@@ -18,7 +18,10 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ProviderTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members.service';
@@ -26,10 +29,12 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { UrlService } from '#backend/services/url.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
-import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
-import type { ToBackendCreateProviderResponsePayload } from '#common/zod/to-backend/providers/to-backend-create-provider';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import type { Provider } from '#common/zod/backend/provider';
+import type { ToBackendCreateProviderRequestPayload } from '#common/zod/to-backend/providers/create-provider/create-provider-request-payload';
+import type { ToBackendCreateProviderResponsePayload } from '#common/zod/to-backend/providers/create-provider/create-provider-response-payload';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -58,8 +63,9 @@ export class CreateProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateProviderRequestDto
   ) {
-    let { projectId, providerId, kind, type, isEnabled, options } =
-      body.payload;
+    let bodyPayload: ToBackendCreateProviderRequestPayload = body.payload;
+
+    let { projectId, providerId, type, options } = bodyPayload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -70,38 +76,27 @@ export class CreateProviderController {
       projectId: projectId
     });
 
-    await this.urlService.checkApiUrl({
-      urlStr: options.baseURL
-    });
+    if (type === ProviderTypeEnum.OpenAICompatible && 'baseURL' in options) {
+      await this.urlService.checkApiUrl({
+        urlStr: options.baseURL
+      });
+    }
+
+    if ('apiKey' in options) {
+      options.apiKey = isDefinedAndNotEmpty(options.apiKey)
+        ? options.apiKey
+        : undefined;
+    }
 
     await this.providersService.checkProviderDoesNotExist({
       projectId: projectId,
       providerId: providerId
     });
 
-    let models = options.models.map(model => {
-      let name = isUndefinedOrEmpty(model.name)
-        ? capitalizeFirstLetter(model.modelId)
-        : model.name;
-
-      return {
-        modelId: model.modelId,
-        name: name
-      };
-    });
-
-    let providerOptions = {
-      ...options,
-      models: models
-    };
-
-    let newProvider = this.providersService.makeProvider({
-      projectId: projectId,
-      providerId: providerId,
-      kind: kind,
-      type: type,
-      isEnabled: isEnabled,
-      options: providerOptions
+    let newProvider: ProviderTab = this.providersService.makeProvider({
+      ...bodyPayload,
+      isEnabled: true,
+      models: []
     });
 
     await retry(
@@ -118,11 +113,13 @@ export class CreateProviderController {
       getRetryOption(this.cs, this.logger)
     );
 
+    let provider: Provider = this.providersService.tabToApiProvider({
+      provider: newProvider,
+      isIncludePasswords: false
+    });
+
     let payload: ToBackendCreateProviderResponsePayload = {
-      provider: this.providersService.tabToApiProvider({
-        provider: newProvider,
-        isIncludePasswords: false
-      })
+      provider: provider
     };
 
     return payload;

@@ -59,6 +59,12 @@ import { CreateGivenController } from './controllers/givens/create-given/create-
 import { DeleteGivenController } from './controllers/givens/delete-given/delete-given.controller';
 import { EditGivenController } from './controllers/givens/edit-given/edit-given.controller';
 import { GetGivensController } from './controllers/givens/get-givens/get-givens.controller';
+import { CreateLlmModelController } from './controllers/llm-models/create-llm-model/create-llm-model.controller';
+import { DeleteLlmModelController } from './controllers/llm-models/delete-llm-model/delete-llm-model.controller';
+import { EditLlmModelController } from './controllers/llm-models/edit-llm-model/edit-llm-model.controller';
+import { GetLlmModelPartsController } from './controllers/llm-models/get-llm-model-parts/get-llm-model-parts.controller';
+import { GetLlmModelsWithProviderController } from './controllers/llm-models/get-llm-models-with-provider/get-llm-models-with-provider.controller';
+import { RefreshLlmModelController } from './controllers/llm-models/refresh-llm-model/refresh-llm-model.controller';
 import { DuplicateMconfigAndQueryController } from './controllers/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query.controller';
 import { GroupMetricByDimensionController } from './controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.controller';
 import { SuggestDimensionValuesController } from './controllers/mconfigs/suggest-dimension-values/suggest-dimension-values.controller';
@@ -86,14 +92,11 @@ import { GenerateProjectRemoteKeyController } from './controllers/projects/gener
 import { GetProjectController } from './controllers/projects/get-project/get-project.controller';
 import { GetProjectsListController } from './controllers/projects/get-projects-list/get-projects-list.controller';
 import { IsProjectExistController } from './controllers/projects/is-project-exist/is-project-exist.controller';
-import { SetProjectApiKeyController } from './controllers/projects/set-project-api-key/set-project-api-key.controller';
 import { SetProjectInfoController } from './controllers/projects/set-project-info/set-project-info.controller';
-import { AddProviderModelController } from './controllers/providers/add-provider-model/add-provider-model.controller';
+import { SetProjectSandboxProviderController } from './controllers/projects/set-project-sandbox-provider/set-project-sandbox-provider.controller';
 import { CreateProviderController } from './controllers/providers/create-provider/create-provider.controller';
 import { DeleteProviderController } from './controllers/providers/delete-provider/delete-provider.controller';
-import { DeleteProviderModelController } from './controllers/providers/delete-provider-model/delete-provider-model.controller';
 import { EditProviderController } from './controllers/providers/edit-provider/edit-provider.controller';
-import { EditProviderModelController } from './controllers/providers/edit-provider-model/edit-provider-model.controller';
 import { GetProvidersController } from './controllers/providers/get-providers/get-providers.controller';
 import { ToggleProviderController } from './controllers/providers/toggle-provider/toggle-provider.controller';
 import { CancelQueriesController } from './controllers/queries/cancel-queries/cancel-queries.controller';
@@ -133,7 +136,6 @@ import { CreateSessionSseTicketController } from './controllers/sessions/create-
 import { DeleteSessionController } from './controllers/sessions/delete-session/delete-session.controller';
 import { GetSessionController } from './controllers/sessions/get-session/get-session.controller';
 import { GetSessionEventsSseController } from './controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
-import { GetSessionProviderModelsController } from './controllers/sessions/get-session-provider-models/get-session-provider-models.controller';
 import { GetSessionsListController } from './controllers/sessions/get-sessions-list/get-sessions-list.controller';
 import { PauseEditorSessionController } from './controllers/sessions/pause-editor-session/pause-editor-session.controller';
 import { SendMessageToEditorSessionController } from './controllers/sessions/send-message-to-editor-session/send-message-to-editor-session.controller';
@@ -186,7 +188,7 @@ export const appControllers = [
   GetSessionController,
   CloseExplorerSessionTabController,
   SetSessionTitleController,
-  GetSessionProviderModelsController,
+  GetLlmModelsWithProviderController,
 
   GetAvatarBigController,
   SetAvatarController,
@@ -214,12 +216,14 @@ export const appControllers = [
 
   CreateProviderController,
   GetProvidersController,
+  GetLlmModelPartsController,
   EditProviderController,
   DeleteProviderController,
   ToggleProviderController,
-  AddProviderModelController,
-  EditProviderModelController,
-  DeleteProviderModelController,
+  CreateLlmModelController,
+  EditLlmModelController,
+  RefreshLlmModelController,
+  DeleteLlmModelController,
 
   CreateFileController,
   DeleteFileController,
@@ -267,7 +271,7 @@ export const appControllers = [
   GetProjectController,
   GetProjectsListController,
   IsProjectExistController,
-  SetProjectApiKeyController,
+  SetProjectSandboxProviderController,
   SetProjectInfoController,
 
   CreateEnvController,

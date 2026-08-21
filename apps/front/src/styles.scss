@@ -128,6 +128,17 @@ scrollbar-thumb-y {
   outline: none;
 }
 
+.llm-model-destination .switch,
+.llm-model-destination .switch small {
+  cursor: pointer !important;
+  transition: none !important;
+}
+
+.llm-model-destination-animated .switch,
+.llm-model-destination-animated .switch small {
+  transition: 0.3s ease-out all !important;
+}
+
 @import '@ng-select/ng-select/themes/default.theme.css';
 
 @import 'tippy.js/dist/tippy.css';
@@ -324,6 +335,18 @@ ngneat-dialog {
   caret-color: dodgerblue;
 }
 
+.ng-select.llm-model-select .ng-select-container .ng-value-container .ng-value {
+  width: 100%;
+}
+
+.ng-select.llm-model-select
+  .ng-select-container
+  .ng-value-container
+  .ng-value-label {
+  display: block;
+  width: 100%;
+}
+
 .ng-select.ng-select-multiple.ng-select-clearable .ng-clear-wrapper {
   width: 26px;
   height: 26px;
@@ -507,6 +530,10 @@ ngneat-dialog {
   max-height: 35vh;
 }
 
+.ng-dropdown-panel.llm-model-select .scroll-host {
+  max-height: 40vh;
+}
+
 .ng-dropdown-panel.connection-type-select .scroll-host {
   max-height: 45vh;
 }
@@ -529,6 +556,19 @@ ngneat-dialog {
 
 .ng-dropdown-panel.session-models-select .scroll-host {
   max-height: 30vh;
+}
+
+.ng-dropdown-panel.session-models-select .ng-dropdown-panel-items .ng-optgroup {
+  color: #6a7282;
+  font-weight: 600;
+  padding-left: 16px;
+  text-align: left;
+}
+
+.ng-dropdown-panel.session-models-select
+  .ng-dropdown-panel-items
+  .ng-option.ng-option-child {
+  padding-left: 38px;
 }
 
 .session-models-select-error .ng-select-container {

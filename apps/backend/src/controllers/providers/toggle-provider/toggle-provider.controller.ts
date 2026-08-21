@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendToggleProviderRequestDto,
   ToBackendToggleProviderResponseDto
@@ -18,7 +18,10 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ProviderTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members.service';
@@ -26,7 +29,9 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendToggleProviderResponsePayload } from '#common/zod/to-backend/providers/to-backend-toggle-provider';
+import type { Provider } from '#common/zod/backend/provider';
+import type { ToBackendToggleProviderRequestPayload } from '#common/zod/to-backend/providers/toggle-provider/toggle-provider-request-payload';
+import type { ToBackendToggleProviderResponsePayload } from '#common/zod/to-backend/providers/toggle-provider/toggle-provider-response-payload';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -52,7 +57,9 @@ export class ToggleProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendToggleProviderRequestDto
   ) {
-    let { projectId, providerId, isEnabled } = body.payload;
+    let bodyPayload: ToBackendToggleProviderRequestPayload = body.payload;
+
+    let { projectId, providerId, isEnabled } = bodyPayload;
 
     await this.projectsService.getProjectCheckExists({ projectId: projectId });
 
@@ -61,10 +68,11 @@ export class ToggleProviderController {
       projectId: projectId
     });
 
-    let provider = await this.providersService.getProviderCheckExists({
-      projectId: projectId,
-      providerId: providerId
-    });
+    let provider: ProviderTab =
+      await this.providersService.getProviderCheckExists({
+        projectId: projectId,
+        providerId: providerId
+      });
 
     provider.isEnabled = isEnabled;
 
@@ -80,11 +88,13 @@ export class ToggleProviderController {
       getRetryOption(this.cs, this.logger)
     );
 
+    let apiProvider: Provider = this.providersService.tabToApiProvider({
+      provider: provider,
+      isIncludePasswords: false
+    });
+
     let payload: ToBackendToggleProviderResponsePayload = {
-      provider: this.providersService.tabToApiProvider({
-        provider: provider,
-        isIncludePasswords: false
-      })
+      provider: apiProvider
     };
 
     return payload;

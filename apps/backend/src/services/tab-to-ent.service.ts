@@ -1019,9 +1019,6 @@ export class TabToEntService {
 
     let projectSt: ProjectSt = {
       name: tab.name,
-      zenApiKey: tab.zenApiKey,
-      anthropicApiKey: tab.anthropicApiKey,
-      openaiApiKey: tab.openaiApiKey,
       e2bApiKey: tab.e2bApiKey
     };
 
@@ -1052,10 +1049,6 @@ export class TabToEntService {
         input: tab.gitUrl,
         hashSecret: hashSecret
       }),
-      providerModelsOpencode: tab.providerModelsOpencode,
-      providerModelsOpencodeTs: tab.providerModelsOpencodeTs,
-      providerModelsAi: tab.providerModelsAi,
-      providerModelsAiTs: tab.providerModelsAiTs,
       serverTs: tab.serverTs
     };
 
@@ -1069,6 +1062,7 @@ export class TabToEntService {
     let { tab } = item;
 
     let providerSt: ProviderSt = {
+      name: tab.name,
       options: tab.options
     };
 
@@ -1083,9 +1077,9 @@ export class TabToEntService {
       }),
       projectId: tab.projectId,
       providerId: tab.providerId,
-      kind: tab.kind,
       type: tab.type,
       isEnabled: tab.isEnabled,
+      models: tab.models,
       ...this.getEntProps({
         dataSt: providerSt,
         dataLt: providerLt,
@@ -1325,11 +1319,10 @@ export class TabToEntService {
       userId: tab.userId,
       projectId: tab.projectId,
       apiKeyPrefix: tab.apiKeyPrefix,
-      model: tab.model,
-      lastMessageProviderModel: tab.lastMessageProviderModel,
+      modelId: tab.modelId,
       lastMessageVariant: tab.lastMessageVariant,
       sandboxType: tab.sandboxType,
-      provider: tab.provider,
+      providerId: tab.providerId,
       agent: tab.agent,
       status: tab.status,
       archiveReason: tab.archiveReason,
@@ -1348,7 +1341,6 @@ export class TabToEntService {
       sandboxInfo: tab.sandboxInfo,
       lastFetchEventIndex: tab.lastFetchEventIndex,
       reloadRequestedTs: tab.reloadRequestedTs,
-      useCodex: tab.useCodex,
       codexAuthUpdateTs: tab.codexAuthUpdateTs,
       createdTs: tab.createdTs,
       serverTs: tab.serverTs

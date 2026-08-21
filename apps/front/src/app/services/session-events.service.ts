@@ -247,7 +247,7 @@ export class SessionEventsService {
         let updates: Partial<SessionBundleState> = {
           ocSessionStatus: status
         };
-        if (status.type === 'idle' && state.lastSessionError) {
+        if (status.type === 'busy' && state.lastSessionError) {
           updates.isLastErrorRecovered = true;
         }
         return { ...state, ...updates };

@@ -39,15 +39,15 @@
         [ngClass]="{
           'bg-m600 cursor-pointer':
             (isWorking && !messageText.trim()) ||
-            (messageText.trim() && !effectiveDisabled && !!model),
+            (messageText.trim() && !effectiveDisabled && !!modelExtraId),
           'bg-s300 cursor-default':
             !(isWorking && !messageText.trim()) &&
-            (!messageText.trim() || effectiveDisabled || !model)
+            (!messageText.trim() || effectiveDisabled || !modelExtraId)
         }"
         (click)="isWorking && !messageText.trim() ? onStop() : onSend()"
         [disabled]="
           !(isWorking && !messageText.trim()) &&
-          (!messageText.trim() || effectiveDisabled || !model)
+          (!messageText.trim() || effectiveDisabled || !modelExtraId)
         "
       >
         <m-stop-icon
@@ -67,7 +67,6 @@
   *ngIf="
     showSelects &&
     !(isRestrictedUser && sessionType === sessionTypeEnum.Explorer) &&
-    projectHasAnyApiKeyOrSubscription &&
     (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer)
   "
   class="mt-4 flex h-10 flex-row items-center justify-center space-x-3"
@@ -104,15 +103,16 @@
     #sessionModelSelect
     [fixNgSelectBottom]="sessionModelSelect"
     class="session-models-select w-[340px] select-none text-base"
-    [class.session-models-select-error]="!model && messageText.trim()"
+    [class.session-models-select-error]="!modelExtraId && messageText.trim()"
     [items]="models"
     bindLabel="label"
     bindValue="value"
+    [groupBy]="'providerId'"
     [clearable]="false"
     [searchable]="true"
     [searchFn]="modelsSearchFn"
     [loading]="modelsLoading"
-    [(ngModel)]="model"
+    [(ngModel)]="modelExtraId"
     (ngModelChange)="onModelSelect()"
     (open)="openModelSelect()"
     [disabled]="disabled"
@@ -122,31 +122,27 @@
     <ng-template ng-label-tmp let-item="item">
       <div class="ml-1 flex items-center truncate">
         <m-provider-icon
-          *ngIf="item.providerId"
           [providerId]="item.providerId"
-          class="mr-2 flex-shrink-0"
-          [ngClass]="{
-            'text-green-600': useCodex && item.providerId === 'openai',
-            'text-s500': !(useCodex && item.providerId === 'openai')
-          }"
+          class="text-s500 mr-2 flex-shrink-0"
         ></m-provider-icon>
-        <span>{{ item.modelId }}</span>
+        <span class="truncate">{{ item.modelName }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template ng-optgroup-tmp let-item="item">
+      <div class="flex items-center gap-1.5">
+        <m-provider-icon
+          [providerId]="item.providerId"
+          class="text-s500 flex-shrink-0"
+        ></m-provider-icon>
+        <span>{{ providerNameById[item.providerId] }}</span>
       </div>
     </ng-template>
 
     <ng-template ng-option-tmp let-item="item">
       <div class="ml-1 flex items-center gap-2 truncate">
         <div class="flex min-w-0 items-center truncate">
-          <m-provider-icon
-            *ngIf="item.providerId"
-            [providerId]="item.providerId"
-            class="mr-2 flex-shrink-0"
-            [ngClass]="{
-              'text-green-600': useCodex && item.providerId === 'openai',
-              'text-s500': !(useCodex && item.providerId === 'openai')
-            }"
-          ></m-provider-icon>
-          <span class="truncate">{{ item.modelId }}</span>
+          <span class="truncate">{{ item.modelName }}</span>
         </div>
         <span
           *ngIf="item.contextLimitFormatted"
@@ -175,28 +171,13 @@
 
   <div class="h-10 w-10 flex-shrink-0">
     <m-context-usage-circle
-      [model]="model"
+      [modelExtraId]="modelExtraId"
       (usageWarningChange)="showUsageWarning = $event"
+      (usageLimitReachedChange)="
+        onUsageLimitReachedChange({ isReached: $event })
+      "
     ></m-context-usage-circle>
   </div>
-</div>
-
-<div
-  *ngIf="
-    scrollableInput &&
-    showSelects &&
-    isCodexAuthSet &&
-    (sessionType === sessionTypeEnum.Explorer || projectHasE2bApiKey) &&
-    model?.startsWith('openai/')
-  "
-  class="mt-3 flex cursor-pointer select-none flex-row items-center justify-center"
-  (click)="toggleUseCodex()"
->
-  <span
-    class="ml-[64px] inline-block w-[340px] text-left text-base"
-    [ngClass]="{ 'text-green-600': useCodex, 'text-s400': !useCodex }"
-    >OpenAI Codex Subscription is {{ useCodex ? 'Enabled' : 'Disabled' }}</span
-  >
 </div>
 
 <div *ngIf="scrollableInput" class="mt-5">
@@ -204,6 +185,13 @@
 </div>
 
 <ng-template #errorMessages>
+  <div
+    *ngIf="isUsageLimitReached && sessionType === sessionTypeEnum.Explorer"
+    class="mb-2 text-center text-[17px] text-red-500"
+    >Context limit reached. Start a new session or select a model with a larger
+    context window.</div
+  >
+
   <div
     *ngIf="isRestrictedUser"
     class="mb-2 text-center text-[17px] text-red-500"
@@ -233,42 +221,9 @@
       !isRestrictedUser &&
       isEditor &&
       !projectHasE2bApiKey &&
-      sessionType == sessionTypeEnum.Editor
+      sessionType === sessionTypeEnum.Editor
     "
     class="mb-2 text-center text-[17px] text-red-500"
     >Editor session requires E2B API Key (see Project Settings)</div
-  >
-
-  <div
-    *ngIf="
-      !isRestrictedUser &&
-      (isEditor || sessionType === sessionTypeEnum.Explorer) &&
-      (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
-      !projectHasAnyApiKeyOrSubscription
-    "
-    class="mb-2 text-center text-[17px] text-red-500"
-    >{{
-      isCodexAuthSet && !useCodex
-        ? 'Enable Codex Subscription or set provider API Key (see Project Settings)'
-        : 'Session requires Codex Subscription (see Profile) or provider API Key (see Project Settings)'
-    }}</div
-  >
-
-  <div
-    *ngIf="
-      !isRestrictedUser &&
-      (isEditor || sessionType === sessionTypeEnum.Explorer) &&
-      (projectHasE2bApiKey || sessionType === sessionTypeEnum.Explorer) &&
-      projectHasAnyApiKeyOrSubscription &&
-      !providerHasApiKeyOrSubscription
-    "
-    class="mb-2 text-center text-[17px] text-red-500"
-    >{{
-      model?.startsWith('openai/') && isCodexAuthSet && !useCodex
-        ? 'Enable Codex Subscription or set OpenAI API Key (see Project Settings)'
-        : model?.startsWith('openai/') && !isCodexAuthSet
-          ? 'This provider requires Codex Subscription (see Profile) or API key (see Project Settings)'
-          : 'This provider requires an API key (see Project Settings)'
-    }}</div
   >
 </ng-template>

@@ -36,9 +36,8 @@ export class SessionsService {
     userId: string;
     projectId: string;
     sandboxType: string;
-    provider: string;
-    model?: string;
-    lastMessageProviderModel?: string;
+    providerId: string;
+    modelId: string;
     lastMessageVariant?: string;
     agent: string;
     sandboxId?: string;
@@ -52,7 +51,6 @@ export class SessionsService {
     initialBranch?: string;
     envId?: string;
     initialCommit?: string;
-    useCodex: boolean;
     codexAuthUpdateTs: number;
     status: SessionStatusEnum;
     lastActivityTs: number;
@@ -69,9 +67,8 @@ export class SessionsService {
       userId: item.userId,
       projectId: item.projectId,
       sandboxType: item.sandboxType,
-      provider: item.provider,
-      model: item.model,
-      lastMessageProviderModel: item.lastMessageProviderModel,
+      providerId: item.providerId,
+      modelId: item.modelId,
       lastMessageVariant: item.lastMessageVariant,
       agent: item.agent,
       sandboxId: item.sandboxId,
@@ -86,7 +83,6 @@ export class SessionsService {
       initialBranch: item.initialBranch,
       envId: item.envId,
       initialCommit: item.initialCommit,
-      useCodex: item.useCodex,
       codexAuthUpdateTs: item.codexAuthUpdateTs,
       status: item.status,
       archiveReason: undefined,
@@ -152,10 +148,9 @@ export class SessionsService {
       type: session.type,
       repoId: session.repoId,
       branchId: session.branchId,
-      provider: session.provider,
+      providerId: session.providerId,
       agent: session.agent,
-      model: session.model,
-      lastMessageProviderModel: session.lastMessageProviderModel,
+      modelId: session.modelId,
       lastMessageVariant: session.lastMessageVariant,
       status: session.status,
       archiveReason: session.archiveReason,
@@ -168,7 +163,6 @@ export class SessionsService {
       firstMessage: session.firstMessage,
       title: ocSession?.openSession?.title,
       opencodeSessionId: session.opencodeSessionId,
-      useCodex: session.useCodex,
       closedExplorerTabIds: session.closedExplorerTabIds
     };
   }

@@ -3,7 +3,6 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, take, tap } from 'rxjs/operators';
 import {
   DEMO_ORG_NAME,
-  PATH_API_KEYS,
   PATH_CONNECTIONS,
   PATH_ENVIRONMENTS,
   PATH_GIVENS,
@@ -12,6 +11,7 @@ import {
   PATH_PROJECT,
   PATH_PROVIDERS,
   PATH_ROLES,
+  PATH_SANDBOX_PROVIDER,
   PATH_TEAM,
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
@@ -39,9 +39,9 @@ export class ProjectMenuComponent implements OnInit {
   demoOrgName = DEMO_ORG_NAME;
 
   pathInfo = PATH_INFO;
-  pathApiKeys = PATH_API_KEYS;
-  pathConnections = PATH_CONNECTIONS;
+  pathSandboxProvider = PATH_SANDBOX_PROVIDER;
   pathProviders = PATH_PROVIDERS;
+  pathConnections = PATH_CONNECTIONS;
   pathEnvironments = PATH_ENVIRONMENTS;
   pathGivens = PATH_GIVENS;
   pathRoles = PATH_ROLES;
@@ -177,13 +177,13 @@ export class ProjectMenuComponent implements OnInit {
     ]);
   }
 
-  navigateApiKeys() {
+  navigateSandboxProvider() {
     this.router.navigate([
       PATH_ORG,
       this.nav.orgId,
       PATH_PROJECT,
       this.nav.projectId,
-      PATH_API_KEYS
+      PATH_SANDBOX_PROVIDER
     ]);
   }
 

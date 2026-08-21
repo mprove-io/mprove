@@ -442,7 +442,7 @@
 
                 <ng-template #templateCachedColumnInfo>
                   <div
-                    *ngIf="node.data.cachedColumn == null"
+                    *ngIf="!node.data.cachedColumn"
                     class="whitespace-nowrap"
                   >
                     Unique values cache is empty

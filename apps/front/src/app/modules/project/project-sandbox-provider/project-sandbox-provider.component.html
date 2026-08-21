@@ -1,0 +1,67 @@
+<div class="bg-m1 flex h-full cursor-default flex-col">
+  <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
+    <div class="flex h-11 items-center">
+      <div
+        data-cy="projectSandboxProviderTitle"
+        class="text-s1 select-none text-2xl font-semibold"
+        >{{ pageTitle }}</div
+      >
+    </div>
+
+    <div class="bg-m0 mt-6 h-2 w-full flex-1 rounded shadow">
+      <div class="h-full overflow-y-auto">
+        <div class="ml-16 mt-16 flex items-center text-base">
+          <div tp="Admin role required" [tpIsEnabled]="isAdmin === false">
+            <button
+              data-cy="projectSandboxProviderDeleteE2bApiKeyButton"
+              class="flex select-none items-center focus:outline-none"
+              [ngClass]="{
+                'text-s500 hover:text-r1': isAdmin === true,
+                'text-s400 cursor-default': isAdmin === false
+              }"
+              [disabled]="isAdmin === false"
+              (click)="deleteE2bApiKey()"
+              aria-label="Delete E2B API key"
+              ><m-trash-icon></m-trash-icon
+            ></button>
+          </div>
+
+          <div
+            class="ml-10"
+            tp="Admin role required"
+            [tpIsEnabled]="isAdmin === false"
+          >
+            <button
+              data-cy="projectSandboxProviderEditE2bApiKeyButton"
+              class="select-none rounded border px-3 py-2 leading-3 shadow-sm focus:outline-none"
+              [ngClass]="{
+                'border-s400 text-s500 hover:bg-s100': isAdmin === true,
+                'border-s300 text-s400 cursor-default': isAdmin === false
+              }"
+              [disabled]="isAdmin === false"
+              (click)="editE2bApiKey()"
+              >Edit</button
+            >
+          </div>
+
+          <div class="ml-10 w-44 text-left text-[17px] font-semibold">E2B</div>
+          <div
+            data-cy="projectSandboxProviderE2bApiKeyStatus"
+            class="ml-6 w-36"
+            [ngClass]="{
+              'text-g700': project?.isE2bApiKeySet,
+              'text-s400': !project?.isE2bApiKeySet
+            }"
+          >
+            {{
+              project?.isE2bApiKeySet ? 'API key is set' : 'API key is not set'
+            }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="project$ | async"></div>
+<div *ngIf="isAdmin$ | async"></div>

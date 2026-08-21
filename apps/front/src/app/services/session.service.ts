@@ -5,7 +5,6 @@ import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { splitModel } from '#common/functions/split-model';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
 import type { SessionPartApi } from '#common/zod/backend/session-part-api';
@@ -68,7 +67,8 @@ export class SessionService {
         partId: string;
         text: string;
         agent: string;
-        model: string;
+        providerId: string;
+        modelId: string;
         variant: string;
       }
     | undefined;
@@ -92,7 +92,8 @@ export class SessionService {
     partId: string;
     text: string;
     agent: string;
-    model: string;
+    providerId: string;
+    modelId: string;
     variant: string;
   }) {
     this.pendingFirstMessage = item;
@@ -104,7 +105,8 @@ export class SessionService {
         partId: string;
         text: string;
         agent: string;
-        model: string;
+        providerId: string;
+        modelId: string;
         variant: string;
       }
     | undefined {
@@ -120,21 +122,18 @@ export class SessionService {
     sessionId: string;
     ocSessionId: string;
     agent: string;
-    model: string;
+    providerId: string;
+    modelId: string;
     text: string;
     variant: string;
     messageId?: string;
     partId?: string;
   }): { messageId: string; partId: string } {
-    let { sessionId, ocSessionId, agent, model, text, variant } = item;
+    let { sessionId, ocSessionId, agent, providerId, modelId, text, variant } =
+      item;
 
     let messageId = item.messageId || makeAscendingId({ prefix: 'message' });
     let partId = item.partId || makeAscendingId({ prefix: 'part' });
-
-    let modelSplit = splitModel(model) || {
-      providerID: '',
-      modelID: model || ''
-    };
 
     let optimisticMessage: SessionMessageApi = {
       messageId: messageId,
@@ -147,7 +146,10 @@ export class SessionService {
         variant: variant,
         time: { created: Date.now() },
         agent: agent,
-        model: modelSplit
+        model: {
+          providerID: providerId,
+          modelID: modelId
+        }
       } as any
     };
 

@@ -40,10 +40,9 @@ export class UiService {
     chartsByModel?: boolean;
     permissionsAutoAcceptSessionIds?: string[];
     newSessionPermissionsAutoAccept?: boolean;
-    newSessionExplorerProviderModel?: string;
-    newSessionEditorProviderModel?: string;
+    newSessionExplorerModelExtraId?: string;
+    newSessionEditorModelExtraId?: string;
     newSessionEditorVariant?: string;
-    newSessionUseCodex?: boolean;
   }) {
     let {
       timezone,
@@ -57,10 +56,9 @@ export class UiService {
       chartsByModel,
       permissionsAutoAcceptSessionIds,
       newSessionPermissionsAutoAccept,
-      newSessionExplorerProviderModel,
-      newSessionEditorProviderModel,
-      newSessionEditorVariant,
-      newSessionUseCodex
+      newSessionExplorerModelExtraId,
+      newSessionEditorModelExtraId,
+      newSessionEditorVariant
     } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -103,20 +101,15 @@ export class UiService {
       )
         ? newSessionPermissionsAutoAccept
         : uiState.newSessionPermissionsAutoAccept,
-      newSessionExplorerProviderModel: isDefined(
-        newSessionExplorerProviderModel
-      )
-        ? newSessionExplorerProviderModel
-        : uiState.newSessionExplorerProviderModel,
-      newSessionEditorProviderModel: isDefined(newSessionEditorProviderModel)
-        ? newSessionEditorProviderModel
-        : uiState.newSessionEditorProviderModel,
+      newSessionExplorerModelExtraId: isDefined(newSessionExplorerModelExtraId)
+        ? newSessionExplorerModelExtraId
+        : uiState.newSessionExplorerModelExtraId,
+      newSessionEditorModelExtraId: isDefined(newSessionEditorModelExtraId)
+        ? newSessionEditorModelExtraId
+        : uiState.newSessionEditorModelExtraId,
       newSessionEditorVariant: isDefined(newSessionEditorVariant)
         ? newSessionEditorVariant
-        : uiState.newSessionEditorVariant,
-      newSessionUseCodex: isDefined(newSessionUseCodex)
-        ? newSessionUseCodex
-        : uiState.newSessionUseCodex
+        : uiState.newSessionEditorVariant
     };
 
     let payload: ToBackendSetUserUiRequestPayload = {

@@ -12,36 +12,41 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
-import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type {
-  ToBackendDeleteProviderRequest,
-  ToBackendDeleteProviderResponse
-} from '#common/zod/to-backend/providers/to-backend-delete-provider';
+import type { ToBackendDeleteProviderRequest } from '#common/zod/to-backend/providers/delete-provider/delete-provider-request';
+import type { ToBackendDeleteProviderResponse } from '#common/zod/to-backend/providers/delete-provider/delete-provider-response';
 
 let testId = 'backend-delete-provider__ok';
+
 let traceId = testId;
 
-let userId = makeId();
+let userId: string = makeId();
+
 let email = `${testId}@example.com`;
+
 let password = '123456';
 
 let orgId = testId;
+
 let orgName = testId;
 
-let projectId = makeId();
+let projectId: string = makeId();
+
 let projectName = testId;
+
 let providerId = 'custom_llm';
 
 test('1', async t => {
   let isPass = false;
+
   let prep: Prep;
 
   await retry(async () => {
     let resp: ToBackendDeleteProviderResponse;
+
     let deletedProvider: unknown;
 
     try {
@@ -92,13 +97,20 @@ test('1', async t => {
             {
               projectId: projectId,
               providerId: providerId,
-              kind: ProviderKindEnum.LLM,
-              type: ProviderLlmTypeEnum.OpenAICompatible,
+              type: ProviderTypeEnum.OpenAICompatible,
+              name: 'Custom LLM',
               isEnabled: true,
+              models: [
+                {
+                  modelId: 'model-1',
+                  name: 'Model One',
+                  isExplorer: true,
+                  isBuilder: true
+                }
+              ],
               options: {
                 baseURL: 'https://api.example.com/v1',
-                apiKey: 'provider-key',
-                models: [{ modelId: 'model-1', name: 'Model One' }]
+                apiKey: 'provider-key'
               }
             }
           ]
@@ -127,7 +139,8 @@ test('1', async t => {
         req: req
       });
 
-      let db = prep.moduleRef.get<Db>(DRIZZLE);
+      let db: Db = prep.moduleRef.get<Db>(DRIZZLE);
+
       deletedProvider = await db.drizzle.query.providersTable.findFirst({
         where: and(
           eq(providersTable.projectId, projectId),
@@ -143,14 +156,18 @@ test('1', async t => {
         logger: prep?.logger,
         cs: prep?.cs
       });
+
       if (prep) {
         await prep.app.close();
       }
     }
 
     assert.equal(resp.info.error, undefined);
+
     assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+
     assert.deepEqual(resp.payload, {});
+
     assert.equal(deletedProvider, undefined);
 
     isPass = true;

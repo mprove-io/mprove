@@ -9,7 +9,6 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import type { SessionModelApi } from '#common/zod/backend/session-model-api';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 
 export const projectsTable = pgTable(
@@ -27,14 +26,6 @@ export const projectsTable = pgTable(
     keyTag: text('key_tag'),
     nameHash: varchar('name_hash').notNull(), // name is unique across org projects
     gitUrlHash: varchar('git_url_hash'),
-    providerModelsOpencode: json('provider_models_opencode').$type<
-      SessionModelApi[]
-    >(),
-    providerModelsOpencodeTs: bigint('provider_models_opencode_ts', {
-      mode: 'number'
-    }),
-    providerModelsAi: json('provider_models_ai').$type<SessionModelApi[]>(),
-    providerModelsAiTs: bigint('provider_models_ai_ts', { mode: 'number' }),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

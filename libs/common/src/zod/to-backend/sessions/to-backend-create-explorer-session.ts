@@ -9,15 +9,14 @@ export let zToBackendCreateExplorerSessionRequestPayload = z
   .object({
     projectId: z.string(),
     repoId: z.string(),
-    provider: z.string(),
-    model: z.string(),
+    providerId: z.string(),
+    modelId: z.string(),
     variant: z.string(),
     branchId: z.string(),
     envId: z.string(),
     firstMessage: z.string().nullish(),
     messageId: z.string(),
-    partId: z.string(),
-    useCodex: z.boolean()
+    partId: z.string()
   })
   .meta({ id: 'ToBackendCreateExplorerSessionRequestPayload' });
 

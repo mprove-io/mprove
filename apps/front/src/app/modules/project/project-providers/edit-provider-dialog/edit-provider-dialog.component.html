@@ -10,6 +10,11 @@
     [formGroup]="editProviderForm"
     (ngSubmit)="save()"
   >
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center">
+      <div class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0">Type</div>
+      <div class="text-s500">{{ providerTypeLabel }}</div>
+    </div>
+
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center">
       <div class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0">
         Provider ID
@@ -17,12 +22,41 @@
       <div class="text-s500">{{ ref.data.provider.providerId }}</div>
     </div>
 
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center">
-      <div class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0">Type</div>
-      <div class="text-s500">OpenAICompatible</div>
+    <div
+      class="flex flex-col sm:flex-row sm:items-start"
+      [class.mb-6]="
+        ref.data.provider.type !== providerTypeEnum.OpenAICompatible
+      "
+    >
+      <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
+        Name
+      </label>
+      <div class="flex w-full flex-col">
+        <input
+          *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+          autocomplete="off"
+          spellcheck="false"
+          data-cy="editProviderDialogNameInput"
+          class="form-input border-s3 focus:border-m600 w-full rounded"
+          formControlName="name"
+        />
+        <div
+          *ngIf="ref.data.provider.type !== providerTypeEnum.OpenAICompatible"
+          class="text-s500 py-3"
+        >
+          {{ ref.data.provider.name }}
+        </div>
+        <m-validation
+          *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+          [control]="editProviderForm.controls['name']"
+        ></m-validation>
+      </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row sm:items-start">
+    <div
+      *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+      class="mt-1 flex flex-col sm:flex-row sm:items-start"
+    >
       <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
         Base URL
       </label>
@@ -46,7 +80,13 @@
       </div>
     </div>
 
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-start">
+    <div
+      *ngIf="ref.data.provider.type !== providerTypeEnum.OpenAICodex"
+      class="mb-6 flex flex-col sm:flex-row sm:items-start"
+      [class.mt-1]="
+        ref.data.provider.type === providerTypeEnum.OpenAICompatible
+      "
+    >
       <label class="mb-2 w-[200px] flex-shrink-0 font-semibold sm:mb-0 sm:mt-3">
         API Key
       </label>
@@ -57,16 +97,33 @@
           data-cy="editProviderDialogApiKeyInput"
           class="form-input border-s3 focus:border-m600 w-full rounded"
           formControlName="apiKey"
-          placeholder="Will be empty after Save if not set"
+          [placeholder]="
+            ref.data.provider.type === providerTypeEnum.OpenAICompatible
+              ? 'Will be empty after Save if not set'
+              : ''
+          "
           type="text"
         />
-        <div class="text-s400 mt-1 text-sm">
-          Sent as Authorization: Bearer &lt;key&gt;
+        <m-validation
+          *ngIf="
+            ref.data.provider.type === providerTypeEnum.OpenAI ||
+            ref.data.provider.type === providerTypeEnum.Anthropic
+          "
+          [control]="editProviderForm.controls['apiKey']"
+        ></m-validation>
+        <div
+          *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+          class="text-s400 mt-1 text-sm"
+        >
+          Will be sent as Authorization: Bearer &lt;key&gt;
         </div>
       </div>
     </div>
 
-    <div class="border-s300 mb-8 border-t pt-7">
+    <div
+      *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+      class="border-s300 mb-8 border-t pt-7"
+    >
       <div class="mb-4 flex items-center justify-between">
         <div class="text-lg font-semibold">Headers</div>
         <button
@@ -121,7 +178,10 @@
       </div>
     </div>
 
-    <div class="border-s300 mb-2 border-t pt-7">
+    <div
+      *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+      class="border-s300 mb-2 border-t pt-7"
+    >
       <div class="mb-4 flex items-center justify-between">
         <div class="text-lg font-semibold">Query Parameters</div>
         <button
@@ -181,8 +241,9 @@
     <div class="mt-6 flex items-center">
       <button
         data-cy="editProviderDialogSaveButton"
-        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none disabled:cursor-default disabled:opacity-50"
         type="submit"
+        [disabled]="ref.data.provider.type === providerTypeEnum.OpenAICodex"
         >Save</button
       >
       <button

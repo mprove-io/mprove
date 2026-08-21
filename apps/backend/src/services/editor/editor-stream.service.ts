@@ -17,6 +17,10 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import {
+  CODEX_PROVIDER_ID,
+  OPENAI_PROVIDER_ID
+} from '#common/constants/providers';
+import {
   CHANNEL_OPENCODE_FETCH_REPLY,
   CHANNEL_OPENCODE_INTERACT_REPLY,
   CHANNEL_OPENCODE_STREAM_COMMAND,
@@ -28,13 +32,15 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { OpencodeStreamCommandEnum } from '#common/enums/opencode-stream-command.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { splitModel } from '#common/functions/split-model';
 import { ServerError } from '#common/models/server-error';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
 import { SessionsService } from '../db/sessions.service';
 import { SessionDrainService } from '../session/session-drain.service';
-import { EditorOpencodeService } from './editor-opencode.service';
+import {
+  EditorOpencodeService,
+  OPENCODE_PROJECT_OPENAI_PROVIDER_ID
+} from './editor-opencode.service';
 import { EditorSandboxService } from './editor-sandbox.service';
 
 const { forEachSeries } = pIteration;
@@ -132,7 +138,8 @@ export class EditorStreamService implements OnModuleDestroy {
             interactionType: payload.interactionType,
             message: payload.message,
             agent: payload.agent,
-            model: payload.model,
+            providerId: payload.providerId,
+            modelId: payload.modelId,
             variant: payload.variant,
             permissionId: payload.permissionId,
             reply: payload.reply,
@@ -755,7 +762,8 @@ export class EditorStreamService implements OnModuleDestroy {
     interactionType: InteractionTypeEnum;
     message?: string;
     agent?: string;
-    model?: string;
+    providerId?: string;
+    modelId?: string;
     variant?: string;
     permissionId?: string;
     reply?: string;
@@ -784,10 +792,19 @@ export class EditorStreamService implements OnModuleDestroy {
         promptBody.agent = item.agent;
       }
 
-      let split = splitModel(item.model);
+      let ocProviderId = item.providerId;
 
-      if (split) {
-        promptBody.model = split;
+      if (item.providerId === CODEX_PROVIDER_ID) {
+        ocProviderId = OPENAI_PROVIDER_ID;
+      } else if (item.providerId === OPENAI_PROVIDER_ID) {
+        ocProviderId = OPENCODE_PROJECT_OPENAI_PROVIDER_ID;
+      }
+
+      if (ocProviderId && item.modelId) {
+        promptBody.model = {
+          providerID: ocProviderId,
+          modelID: item.modelId
+        };
       }
 
       if (item.variant) {
@@ -813,9 +830,9 @@ export class EditorStreamService implements OnModuleDestroy {
       // fix for missing user message part in returned opencode state, if it was sent to paused session
       if (item.messageId && item.partId) {
         try {
-          let modelSplit = split || {
-            providerID: '',
-            modelID: item.model || ''
+          let messageModel = {
+            providerID: ocProviderId || '',
+            modelID: item.modelId || ''
           };
 
           let userMessageTab = this.ocMessagesService.makeOcMessage({
@@ -829,7 +846,7 @@ export class EditorStreamService implements OnModuleDestroy {
               variant: item.variant,
               time: { created: Date.now() },
               agent: item.agent,
-              model: modelSplit
+              model: messageModel
             } as any
           });
 
@@ -901,7 +918,8 @@ export class EditorStreamService implements OnModuleDestroy {
     interactionType: InteractionTypeEnum;
     message?: string;
     agent?: string;
-    model?: string;
+    providerId?: string;
+    modelId?: string;
     variant?: string;
     permissionId?: string;
     reply?: string;
@@ -929,7 +947,8 @@ export class EditorStreamService implements OnModuleDestroy {
           interactionType: item.interactionType,
           message: item.message,
           agent: item.agent,
-          model: item.model,
+          providerId: item.providerId,
+          modelId: item.modelId,
           variant: item.variant,
           permissionId: item.permissionId,
           reply: item.reply,

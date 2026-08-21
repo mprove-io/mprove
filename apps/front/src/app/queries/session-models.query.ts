@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { SessionModelApi } from '#common/zod/backend/session-model-api';
+import type { LlmModelWithProvider } from '#common/zod/backend/llm-models/llm-model-with-provider';
 import { BaseQuery } from './base.query';
 
 export class SessionModelsState {
-  modelsOpencode: SessionModelApi[];
-  modelsAi: SessionModelApi[];
+  modelsOpencode: LlmModelWithProvider[];
+  modelsAi: LlmModelWithProvider[];
 }
 
 let sessionModelsState: SessionModelsState = {

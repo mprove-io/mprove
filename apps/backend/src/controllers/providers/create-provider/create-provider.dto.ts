@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#common/functions/zod-strip-custom';
-import {
-  zToBackendCreateProviderRequest,
-  zToBackendCreateProviderResponse
-} from '#common/zod/to-backend/providers/to-backend-create-provider';
+import { zToBackendCreateProviderRequest } from '#common/zod/to-backend/providers/create-provider/create-provider-request';
+import { zToBackendCreateProviderResponse } from '#common/zod/to-backend/providers/create-provider/create-provider-response';
 
 export class ToBackendCreateProviderRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendCreateProviderRequest })

@@ -6,9 +6,9 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type {
-  ToBackendGetSessionProviderModelsRequestPayload,
-  ToBackendGetSessionProviderModelsResponse
-} from '#common/zod/to-backend/sessions/to-backend-get-session-provider-models';
+  ToBackendGetLlmModelsWithProviderRequestPayload,
+  ToBackendGetLlmModelsWithProviderResponse
+} from '#common/zod/to-backend/llm-models/get-llm-models-with-provider/get-llm-models-with-provider';
 import { NavQuery } from '../queries/nav.query';
 import { SessionModelsQuery } from '../queries/session-models.query';
 import { ApiService } from '../services/api.service';
@@ -33,20 +33,19 @@ export class SessionModelsResolver {
         nav = x;
       });
 
-    let payload: ToBackendGetSessionProviderModelsRequestPayload = {
+    let payload: ToBackendGetLlmModelsWithProviderRequestPayload = {
       projectId: nav.projectId,
-      sessionTypes: [SessionTypeEnum.Explorer, SessionTypeEnum.Editor],
-      forceLoadFromCache: true
+      sessionTypes: [SessionTypeEnum.Explorer, SessionTypeEnum.Editor]
     };
 
     return this.apiService
       .req({
         pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendGetSessionProviderModels,
+          ToBackendRequestInfoNameEnum.ToBackendGetLlmModelsWithProvider,
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetSessionProviderModelsResponse) => {
+        map((resp: ToBackendGetLlmModelsWithProviderResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.sessionModelsQuery.update({
               modelsOpencode: resp.payload.modelsOpencode,

@@ -14,7 +14,8 @@ export let zToBackendSendMessageToExplorerSessionRequestPayload = z
     partId: z.string().nullish(),
     interactionType: z.enum(InteractionTypeEnum),
     message: z.string().nullish(),
-    model: z.string().nullish(),
+    providerId: z.string().nullish(),
+    modelId: z.string().nullish(),
     variant: z.string().nullish()
   })
   .meta({ id: 'ToBackendSendMessageToExplorerSessionRequestPayload' });

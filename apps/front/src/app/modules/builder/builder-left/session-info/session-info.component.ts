@@ -2,6 +2,10 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import type { Todo } from '@opencode-ai/sdk/v2';
 import { interval } from 'rxjs';
 import { startWith, tap } from 'rxjs/operators';
+import {
+  CODEX_PROVIDER_ID,
+  PROVIDER_NAME_BY_ID
+} from '#common/constants/providers';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -19,6 +23,7 @@ export class SessionInfoComponent {
   archiveReasonEnum = ArchiveReasonEnum;
   pauseReasonEnum = PauseReasonEnum;
   sessionStatusEnum = SessionStatusEnum;
+  codexProviderId = CODEX_PROVIDER_ID;
 
   sessionId: string;
   session: SessionApi;
@@ -32,12 +37,6 @@ export class SessionInfoComponent {
   providerDisplay = '-';
   modelDisplay = '-';
 
-  providerLabels: Record<string, string> = {
-    opencode: 'Zen',
-    openai: 'OpenAI',
-    anthropic: 'Anthropic'
-  };
-
   session$ = this.sessionQuery.select().pipe(
     tap(x => {
       this.session = x;
@@ -46,14 +45,11 @@ export class SessionInfoComponent {
         ? this.timeService.timeAgoFromNow(x.lastActivityTs)
         : '';
 
-      if (x?.model && x.model !== 'default' && x.model.includes('/')) {
-        let parts = x.model.split('/');
-        this.providerDisplay = this.providerLabels[parts[0]] || parts[0];
-        this.modelDisplay = parts.slice(1).join('/');
-      } else {
-        this.providerDisplay = x?.model || '-';
-        this.modelDisplay = '-';
-      }
+      this.providerDisplay = x?.providerId
+        ? PROVIDER_NAME_BY_ID[x.providerId] || x.providerId
+        : '-';
+
+      this.modelDisplay = x?.modelId || '-';
 
       this.cd.detectChanges();
     })

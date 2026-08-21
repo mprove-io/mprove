@@ -17,37 +17,44 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
-import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type {
-  ToBackendToggleProviderRequest,
-  ToBackendToggleProviderResponse
-} from '#common/zod/to-backend/providers/to-backend-toggle-provider';
+import type { Provider } from '#common/zod/backend/provider';
+import type { ToBackendToggleProviderRequest } from '#common/zod/to-backend/providers/toggle-provider/toggle-provider-request';
+import type { ToBackendToggleProviderResponse } from '#common/zod/to-backend/providers/toggle-provider/toggle-provider-response';
 
 let testId = 'backend-toggle-provider__ok';
+
 let traceId = testId;
 
-let userId = makeId();
+let userId: string = makeId();
+
 let email = `${testId}@example.com`;
+
 let password = '123456';
 
 let orgId = testId;
+
 let orgName = testId;
 
-let projectId = makeId();
+let projectId: string = makeId();
+
 let projectName = testId;
+
 let providerId = 'custom_llm';
 
 test('1', async t => {
   let isPass = false;
+
   let prep: Prep;
 
   await retry(async () => {
     let resp: ToBackendToggleProviderResponse;
+
     let providerEnt: ProviderEnt;
+
     let providerTab: ProviderTab;
 
     try {
@@ -98,20 +105,30 @@ test('1', async t => {
             {
               projectId: projectId,
               providerId: providerId,
-              kind: ProviderKindEnum.LLM,
-              type: ProviderLlmTypeEnum.OpenAICompatible,
+              type: ProviderTypeEnum.OpenAICompatible,
+              name: 'Custom LLM',
               isEnabled: true,
+              models: [
+                {
+                  modelId: 'model-1',
+                  name: 'Model One',
+                  isExplorer: true,
+                  isBuilder: true
+                },
+                {
+                  modelId: 'model-2',
+                  name: 'Model Two',
+                  isExplorer: true,
+                  isBuilder: true
+                }
+              ],
               options: {
                 baseURL: 'https://api.example.com/v1',
                 apiKey: 'provider-api-key',
                 headers: [
                   { key: 'Authorization', value: 'provider-header-secret' }
                 ],
-                queryParams: [{ key: 'version', value: '1' }],
-                models: [
-                  { modelId: 'model-1', name: 'Model One' },
-                  { modelId: 'model-2', name: 'Model Two' }
-                ]
+                queryParams: [{ key: 'version', value: '1' }]
               }
             }
           ]
@@ -141,17 +158,22 @@ test('1', async t => {
         req: req
       });
 
-      let db = prep.moduleRef.get<Db>(DRIZZLE);
-      let foundProviderEnt = await db.drizzle.query.providersTable.findFirst({
-        where: and(
-          eq(providersTable.projectId, projectId),
-          eq(providersTable.providerId, providerId)
-        )
-      });
+      let db: Db = prep.moduleRef.get<Db>(DRIZZLE);
+
+      let foundProviderEnt: ProviderEnt =
+        (await db.drizzle.query.providersTable.findFirst({
+          where: and(
+            eq(providersTable.projectId, projectId),
+            eq(providersTable.providerId, providerId)
+          )
+        })) as ProviderEnt;
+
       assert.notEqual(foundProviderEnt, undefined);
+
       providerEnt = foundProviderEnt;
 
-      let tabService = prep.moduleRef.get<TabService>(TabService);
+      let tabService: TabService = prep.moduleRef.get<TabService>(TabService);
+
       providerTab = tabService.providerEntToTab({ providerEnt: providerEnt });
 
       await prep.app.close();
@@ -162,6 +184,7 @@ test('1', async t => {
         logger: prep?.logger,
         cs: prep?.cs
       });
+
       if (prep) {
         await prep.app.close();
       }
@@ -171,25 +194,27 @@ test('1', async t => {
 
     assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
 
-    let { serverTs, ...providerWithoutServerTs } = resp.payload.provider;
+    let provider: Provider = resp.payload.provider;
+
+    let { serverTs, ...providerWithoutServerTs } = provider;
 
     assert.equal(typeof serverTs, 'number');
 
     assert.deepEqual(providerWithoutServerTs, {
       projectId: projectId,
       providerId: providerId,
-      kind: ProviderKindEnum.LLM,
-      type: ProviderLlmTypeEnum.OpenAICompatible,
+      type: ProviderTypeEnum.OpenAICompatible,
+      name: 'Custom LLM',
       isEnabled: false,
+      models: [
+        { modelId: 'model-1', name: 'Model One' },
+        { modelId: 'model-2', name: 'Model Two' }
+      ],
       options: {
         baseURL: 'https://api.example.com/v1',
         apiKey: '',
         headers: [{ key: 'Authorization', value: '' }],
-        queryParams: [{ key: 'version', value: '1' }],
-        models: [
-          { modelId: 'model-1', name: 'Model One' },
-          { modelId: 'model-2', name: 'Model Two' }
-        ]
+        queryParams: [{ key: 'version', value: '1' }]
       }
     });
 
@@ -199,12 +224,13 @@ test('1', async t => {
       baseURL: 'https://api.example.com/v1',
       apiKey: 'provider-api-key',
       headers: [{ key: 'Authorization', value: 'provider-header-secret' }],
-      queryParams: [{ key: 'version', value: '1' }],
-      models: [
-        { modelId: 'model-1', name: 'Model One' },
-        { modelId: 'model-2', name: 'Model Two' }
-      ]
+      queryParams: [{ key: 'version', value: '1' }]
     });
+
+    assert.deepEqual(providerTab.models, [
+      { modelId: 'model-1', name: 'Model One' },
+      { modelId: 'model-2', name: 'Model Two' }
+    ]);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: unknown) => {

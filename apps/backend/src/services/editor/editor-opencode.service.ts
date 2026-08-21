@@ -4,17 +4,33 @@ import { ConfigService } from '@nestjs/config';
 import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
 import { Sandbox, type SandboxInfo } from 'e2b';
 import pIteration from 'p-iteration';
-import { BackendConfig } from '#backend/config/backend-config';
+import type { BackendConfig } from '#backend/config/backend-config';
 
 const { forEachSeries } = pIteration;
 
-import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ProjectTab,
+  ProviderTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import {
+  type AnthropicVariantOptions,
+  getAnthropicVariantOptions
+} from '#backend/functions/anthropic-model-variants';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
+import {
+  type AnthropicModel,
+  zAnthropicModel
+} from '#common/zod/backend/anthropic-model';
+import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
+
+export const OPENCODE_PROJECT_OPENAI_PROVIDER_ID = '_mprove_openai';
 
 export interface CreateSandboxResult {
   sandboxId: string;
@@ -32,6 +48,149 @@ export class EditorOpencodeService {
     private cs: ConfigService<BackendConfig>,
     private sessionsService: SessionsService
   ) {}
+
+  async buildProviderConfig(item: {
+    providers: ProviderTab[];
+    isUserCodexAuthSet: boolean;
+  }): Promise<{ envs: Record<string, string>; content: string }> {
+    let envs: Record<string, string> = {};
+    let config: Record<string, Record<string, unknown>> = {};
+
+    await Promise.all(
+      item.providers.map(async (provider, index) => {
+        let models = provider.models.filter(
+          model => model.isOpencodeSupported && model.isBuilder
+        );
+
+        let modelIds = models.map(model => model.modelId);
+
+        if (modelIds.length === 0) {
+          return;
+        }
+
+        if (provider.type === ProviderTypeEnum.OpenAICodex) {
+          if (item.isUserCodexAuthSet === false) {
+            return;
+          }
+
+          let current = config.openai ?? {};
+
+          let whitelist = Array.isArray(current.whitelist)
+            ? (current.whitelist as string[])
+            : [];
+
+          let currentModels =
+            typeof current.models === 'object' && current.models !== null
+              ? (current.models as Record<string, unknown>)
+              : {};
+
+          config.openai = {
+            ...current,
+            whitelist: [...new Set([...whitelist, ...modelIds])],
+            models: {
+              ...currentModels,
+              ...Object.fromEntries(
+                models.map(model => [
+                  model.modelId,
+                  llmModelToOpenCodeConfig({ model: model })
+                ])
+              )
+            }
+          };
+
+          return;
+        }
+
+        let apiKey = provider.options.apiKey;
+
+        if (provider.type === ProviderTypeEnum.OpenAICompatible) {
+          let prefix = `MPROVE_LLM_${index}`;
+
+          let apiKeyEnv = `${prefix}_API_KEY`;
+
+          if (apiKey) {
+            envs[apiKeyEnv] = apiKey;
+          }
+
+          let headers = Object.fromEntries(
+            (provider.options.headers ?? []).map((header, headerIndex) => {
+              let name = `${prefix}_HEADER_${headerIndex}`;
+              envs[name] = header.value;
+              return [header.key, `{env:${name}}`];
+            })
+          );
+
+          let queryParams = Object.fromEntries(
+            (provider.options.queryParams ?? []).map((query, queryIndex) => {
+              let name = `${prefix}_QUERY_${queryIndex}`;
+              envs[name] = query.value;
+              return [query.key, `{env:${name}}`];
+            })
+          );
+
+          config[provider.providerId] = {
+            name: provider.name,
+            npm: '@ai-sdk/openai-compatible',
+            env: apiKey ? [apiKeyEnv] : [],
+            options: {
+              baseURL: provider.options.baseURL,
+              headers: headers,
+              queryParams: queryParams
+            },
+            whitelist: modelIds,
+            models: Object.fromEntries(
+              models.map(model => [
+                model.modelId,
+                llmModelToOpenCodeConfig({ model: model })
+              ])
+            )
+          };
+          return;
+        }
+
+        if (!apiKey) {
+          return;
+        }
+
+        if (provider.type === ProviderTypeEnum.OpenAI) {
+          let apiKeyEnv = 'MPROVE_OPENAI_API_KEY';
+          envs[apiKeyEnv] = apiKey;
+          config[OPENCODE_PROJECT_OPENAI_PROVIDER_ID] = {
+            name: provider.name,
+            npm: '@ai-sdk/openai',
+            env: [apiKeyEnv],
+            whitelist: modelIds,
+            models: Object.fromEntries(
+              models.map(model => [
+                model.modelId,
+                llmModelToOpenCodeConfig({ model: model })
+              ])
+            )
+          };
+          return;
+        }
+
+        if (provider.type === ProviderTypeEnum.Anthropic) {
+          envs.ANTHROPIC_API_KEY = apiKey;
+          config.anthropic = {
+            whitelist: modelIds,
+            models: Object.fromEntries(
+              models.map(model => [
+                model.modelId,
+                anthropicModelToOpenCodeConfig({ model: model })
+              ])
+            )
+          };
+          return;
+        }
+      })
+    );
+
+    return {
+      envs: envs,
+      content: JSON.stringify({ provider: config })
+    };
+  }
 
   hasOpenCodeClient(item: { sessionId: string }): boolean {
     return this.opencodeClients.some(x => x.sessionId === item.sessionId);
@@ -288,4 +447,85 @@ export class EditorOpencodeService {
       await item.sandbox.commands.run(`rm -rf ${keyDir}`).catch(() => {});
     }
   }
+}
+
+function anthropicModelToOpenCodeConfig(item: {
+  model: LlmModel;
+}): Record<string, unknown> {
+  let { model } = item;
+
+  let parseResult: ReturnType<typeof zAnthropicModel.safeParse> =
+    zAnthropicModel.safeParse(model.providerModelInfo);
+
+  if (parseResult.success === false) {
+    return { name: model.name };
+  }
+
+  let anthropicModel: AnthropicModel = parseResult.data;
+
+  let variantEntries: [string, AnthropicVariantOptions][] = (
+    model.variants ?? []
+  ).flatMap(variant => {
+    let options: ReturnType<typeof getAnthropicVariantOptions> =
+      getAnthropicVariantOptions({
+        anthropicModel: anthropicModel,
+        variant: variant
+      });
+
+    return isDefined(options) ? [[variant, options]] : [];
+  });
+
+  let inputModalities: string[] = ['text'];
+
+  let isImageInputSupported: boolean =
+    anthropicModel.capabilities?.image_input?.supported === true;
+
+  if (isImageInputSupported) {
+    inputModalities.push('image');
+  }
+
+  let isPdfInputSupported: boolean =
+    anthropicModel.capabilities?.pdf_input?.supported === true;
+
+  if (isPdfInputSupported) {
+    inputModalities.push('pdf');
+  }
+
+  let modelConfig: Record<string, unknown> = {
+    name: model.name ?? model.catalogName,
+    release_date: anthropicModel.created_at.slice(0, 10),
+    reasoning: anthropicModel.capabilities?.thinking?.supported === true,
+    attachment: inputModalities.length > 1,
+    tool_call: true,
+    limit: {
+      context: anthropicModel.max_input_tokens ?? 0,
+      input: anthropicModel.max_input_tokens,
+      output: anthropicModel.max_tokens ?? 0
+    },
+    modalities: {
+      input: inputModalities,
+      output: ['text']
+    },
+    variants: Object.fromEntries(variantEntries)
+  };
+
+  return modelConfig;
+}
+
+function llmModelToOpenCodeConfig(item: {
+  model: LlmModel;
+}): Record<string, unknown> {
+  let { model } = item;
+
+  let modelConfig: Record<string, unknown> = { name: model.name };
+
+  if (isDefined(model.contextLimit)) {
+    modelConfig.limit = {
+      context: model.contextLimit,
+      input: model.inputLimit,
+      output: model.outputLimit ?? 0
+    };
+  }
+
+  return modelConfig;
 }

@@ -17,37 +17,43 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
-import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type {
-  ToBackendEditProviderRequest,
-  ToBackendEditProviderResponse
-} from '#common/zod/to-backend/providers/to-backend-edit-provider';
+import type { ToBackendEditProviderRequest } from '#common/zod/to-backend/providers/edit-provider/edit-provider-request';
+import type { ToBackendEditProviderResponse } from '#common/zod/to-backend/providers/edit-provider/edit-provider-response';
 
 let testId = 'backend-edit-provider__ok';
+
 let traceId = testId;
 
-let userId = makeId();
+let userId: string = makeId();
+
 let email = `${testId}@example.com`;
+
 let password = '123456';
 
 let orgId = testId;
+
 let orgName = testId;
 
-let projectId = makeId();
+let projectId: string = makeId();
+
 let projectName = testId;
+
 let providerId = 'custom_llm';
 
 test('1', async t => {
   let isPass = false;
+
   let prep: Prep;
 
   await retry(async () => {
     let resp: ToBackendEditProviderResponse;
+
     let providerEnt: ProviderEnt;
+
     let providerTab: ProviderTab;
 
     try {
@@ -98,13 +104,20 @@ test('1', async t => {
             {
               projectId: projectId,
               providerId: providerId,
-              kind: ProviderKindEnum.LLM,
-              type: ProviderLlmTypeEnum.OpenAICompatible,
+              type: ProviderTypeEnum.OpenAICompatible,
+              name: 'Old Provider Name',
               isEnabled: true,
+              models: [
+                {
+                  modelId: 'old-model',
+                  name: 'Old Model',
+                  isExplorer: true,
+                  isBuilder: true
+                }
+              ],
               options: {
                 baseURL: 'https://old.example.com/v1',
-                apiKey: 'old-key',
-                models: [{ modelId: 'old-model', name: 'Old Model' }]
+                apiKey: 'old-key'
               }
             }
           ]
@@ -125,13 +138,12 @@ test('1', async t => {
         payload: {
           projectId: projectId,
           providerId: providerId,
-          isEnabled: false,
+          name: 'New Provider Name',
           options: {
             baseURL: 'https://new.example.com/v1',
             apiKey: 'new-key',
             headers: [{ key: 'Authorization', value: 'new-header-secret' }],
-            queryParams: [{ key: 'version', value: '2' }],
-            models: [{ modelId: 'new-model', name: 'New Model' }]
+            queryParams: [{ key: 'version', value: '2' }]
           }
         }
       };
@@ -142,17 +154,22 @@ test('1', async t => {
         req: req
       });
 
-      let db = prep.moduleRef.get<Db>(DRIZZLE);
-      let foundProviderEnt = await db.drizzle.query.providersTable.findFirst({
-        where: and(
-          eq(providersTable.projectId, projectId),
-          eq(providersTable.providerId, providerId)
-        )
-      });
+      let db: Db = prep.moduleRef.get<Db>(DRIZZLE);
+
+      let foundProviderEnt: ProviderEnt =
+        (await db.drizzle.query.providersTable.findFirst({
+          where: and(
+            eq(providersTable.projectId, projectId),
+            eq(providersTable.providerId, providerId)
+          )
+        })) as ProviderEnt;
+
       assert.notEqual(foundProviderEnt, undefined);
+
       providerEnt = foundProviderEnt;
 
-      let tabService = prep.moduleRef.get<TabService>(TabService);
+      let tabService: TabService = prep.moduleRef.get<TabService>(TabService);
+
       providerTab = tabService.providerEntToTab({ providerEnt: providerEnt });
 
       await prep.app.close();
@@ -163,33 +180,55 @@ test('1', async t => {
         logger: prep?.logger,
         cs: prep?.cs
       });
+
       if (prep) {
         await prep.app.close();
       }
     }
 
     assert.equal(resp.info.error, undefined);
+
     assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-    assert.equal(resp.payload.provider.isEnabled, false);
+
+    assert.equal(resp.payload.provider.isEnabled, true);
+
+    assert.equal(resp.payload.provider.name, 'New Provider Name');
+
+    assert.equal(resp.payload.provider.type, ProviderTypeEnum.OpenAICompatible);
+
+    if (resp.payload.provider.type !== ProviderTypeEnum.OpenAICompatible) {
+      throw new Error('Expected an OpenAI-compatible provider');
+    }
+
     assert.equal(
       resp.payload.provider.options.baseURL,
       'https://new.example.com/v1'
     );
+
     assert.equal(resp.payload.provider.options.apiKey, '');
+
     assert.deepEqual(resp.payload.provider.options.headers, [
       { key: 'Authorization', value: '' }
     ]);
+
     assert.deepEqual(resp.payload.provider.options.queryParams, [
       { key: 'version', value: '2' }
     ]);
-    assert.equal(providerTab.isEnabled, false);
+
+    assert.equal(providerTab.isEnabled, true);
+
+    assert.equal(providerTab.name, 'New Provider Name');
+
     assert.deepEqual(providerTab.options, {
       baseURL: 'https://new.example.com/v1',
       apiKey: 'new-key',
       headers: [{ key: 'Authorization', value: 'new-header-secret' }],
-      queryParams: [{ key: 'version', value: '2' }],
-      models: [{ modelId: 'new-model', name: 'New Model' }]
+      queryParams: [{ key: 'version', value: '2' }]
     });
+
+    assert.deepEqual(providerTab.models, [
+      { modelId: 'old-model', name: 'Old Model' }
+    ]);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: unknown) => {

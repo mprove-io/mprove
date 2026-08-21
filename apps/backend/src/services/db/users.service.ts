@@ -103,25 +103,21 @@ export class UsersService {
           ? user.ui?.newSessionPermissionsAutoAccept
           : defaultSrvUi.newSessionPermissionsAutoAccept,
         //
-        newSessionExplorerProviderModel: isDefined(
-          user.ui?.newSessionExplorerProviderModel
+        newSessionExplorerModelExtraId: isDefined(
+          user.ui?.newSessionExplorerModelExtraId
         )
-          ? user.ui?.newSessionExplorerProviderModel
-          : defaultSrvUi.newSessionExplorerProviderModel,
+          ? user.ui?.newSessionExplorerModelExtraId
+          : defaultSrvUi.newSessionExplorerModelExtraId,
         //
-        newSessionEditorProviderModel: isDefined(
-          user.ui?.newSessionEditorProviderModel
+        newSessionEditorModelExtraId: isDefined(
+          user.ui?.newSessionEditorModelExtraId
         )
-          ? user.ui?.newSessionEditorProviderModel
-          : defaultSrvUi.newSessionEditorProviderModel,
+          ? user.ui?.newSessionEditorModelExtraId
+          : defaultSrvUi.newSessionEditorModelExtraId,
         //
         newSessionEditorVariant: isDefined(user.ui?.newSessionEditorVariant)
           ? user.ui?.newSessionEditorVariant
-          : defaultSrvUi.newSessionEditorVariant,
-        //
-        newSessionUseCodex: isDefined(user.ui?.newSessionUseCodex)
-          ? user.ui?.newSessionUseCodex
-          : defaultSrvUi.newSessionUseCodex
+          : defaultSrvUi.newSessionEditorVariant
       },
       isCodexAuthSet: isDefined(user.codexAuth),
       codexAuthUpdateTs: user.codexAuthUpdateTs,

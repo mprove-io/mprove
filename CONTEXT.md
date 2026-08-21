@@ -222,6 +222,133 @@ status: z.enum(FileStatusEnum).nullish(),
 status: z.enum(FileStatusEnum).optional(),
 ```
 
+### Zod schemas and native types
+
+Define each named Zod schema in a separate file with its corresponding handwritten TypeScript type.
+
+Export both and verify equivalence with `assertTypesEqual<Type, z.infer<typeof schema>>`.
+
+Do not define the native type using `z.infer`.
+
+For every Zod `.extend()`, define the native type using `Extend` from `#common/types/extend`;
+do not use TypeScript `extends` or intersection types for this purpose.
+
+See `libs/common/src/zod/backend/provider.ts` and existing `ToBackend*Request` files.
+
+### Explicit variable types
+
+Always declare an explicit type for a variable assigned from a function or method call.
+Before returning a value, assign it to an explicitly typed variable and return that variable.
+Do not rely on return-type inference at invocation or return sites.
+
+Exception: `PackerOutput` flows do not require explicit variable or callback return types.
+A `retry` callback may directly return `db.drizzle.transaction`, and its transaction callback
+may directly return `db.packer.write`, without intermediate variables.
+
+```ts
+await retry(
+  async () =>
+    await this.db.drizzle.transaction(
+      async tx =>
+        await this.db.packer.write({
+          tx: tx,
+          update: { providers: [provider] }
+        })
+    ),
+  getRetryOption(this.cs, this.logger)
+);
+```
+
+Exception: callbacks passed to collection methods such as `map`, `filter`, `find`, `findIndex`, `some`,
+and `sort` may return expressions directly without an explicit callback return type or an intermediate variable.
+
+```ts
+let modelIndex: number = provider.models.findIndex(
+  item => item.modelId === modelId
+);
+```
+
+For local object projections, prefer a named handwritten type over `Pick`.
+Use explicit mapping when the runtime object must contain only the projected fields.
+
+```ts
+// correct
+type ResponseModelPart = {
+  modelId: string;
+  name: string;
+};
+
+let responseModelParts: ResponseModelPart[] = models.map(model => ({
+  modelId: model.modelId,
+  name: model.name
+}));
+
+// wrong
+type ResponseModelPart = Pick<LlmModel, 'modelId' | 'name'>;
+```
+
+```ts
+// correct
+let modelParts: LlmModelPart[] = await this.llmModelService.getModelParts({
+  providerType: providerType
+});
+
+let devModels: DevModel[] = models.map(model => toDevModel(model));
+
+return devModels;
+
+// wrong
+let modelParts = await this.llmModelService.getModelParts({
+  providerType: providerType
+});
+
+return models.map(model => toDevModel(model));
+```
+
+### Empty lines between statements
+
+Add an empty line between code statements. Do not add empty lines within a single multiline statement.
+
+```ts
+// correct
+let modelParts: LlmModelPart[] = await this.llmModelService.getModelParts({
+  providerType: providerType
+});
+
+let devModels: DevModel[] = models.map(model => toDevModel(model));
+
+return devModels;
+
+// wrong
+let modelParts: LlmModelPart[] = await this.llmModelService.getModelParts({
+  providerType: providerType
+});
+let devModels: DevModel[] = models.map(model => toDevModel(model));
+return devModels;
+```
+
+### Optional TypeScript properties
+
+Do not explicitly add `| null` or `| undefined` to TypeScript types.
+
+- For optional properties and arguments, use `name?: string`.
+- For variables that may be absent, restructure initialization instead of declaring an explicit `| null` or `| undefined` union.
+- Corresponding Zod schemas should still use `.nullish()` when runtime input may contain `null` or `undefined`.
+
+```ts
+// correct
+apiKey?: string;
+let availableModelIds = condition ? new Set<string>() : undefined;
+
+// wrong
+apiKey?: string | null;
+let availableModelIds: Set<string> | undefined;
+```
+
+### Discriminated unions
+
+In every member of a discriminated union, declare the discriminator property first. In corresponding object literals, also place the discriminator property first.
+
 ### No calls in conditions
 
 Do not call functions or methods inside `if` conditions. Extract the result to a variable first.

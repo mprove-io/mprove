@@ -13,8 +13,9 @@ import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE } from '#common/constants/top';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
+import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold';
+import type { LlmModelWithProvider } from '#common/zod/backend/llm-models/llm-model-with-provider';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
-import type { SessionModelApi } from '#common/zod/backend/session-model-api';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionModelsQuery } from '#front/app/queries/session-models.query';
@@ -25,8 +26,9 @@ import { SessionModelsQuery } from '#front/app/queries/session-models.query';
   templateUrl: './context-usage-circle.component.html'
 })
 export class ContextUsageCircleComponent implements OnChanges, OnDestroy {
-  @Input() model: string;
+  @Input() modelExtraId: string;
   @Output() usageWarningChange = new EventEmitter<boolean>();
+  @Output() usageLimitReachedChange = new EventEmitter<boolean>();
 
   strokeWidth = 2.5;
   radius = 11 - this.strokeWidth / 2;
@@ -42,8 +44,8 @@ export class ContextUsageCircleComponent implements OnChanges, OnDestroy {
   showUsageWarning = false;
 
   private messages: SessionMessageApi[] = [];
-  private modelsOpencode: SessionModelApi[] = [];
-  private modelsAi: SessionModelApi[] = [];
+  private modelsOpencode: LlmModelWithProvider[] = [];
+  private modelsAi: LlmModelWithProvider[] = [];
   private usageWarningTimeout: ReturnType<typeof setTimeout> | undefined;
 
   contextUsage$ = combineLatest([
@@ -61,7 +63,7 @@ export class ContextUsageCircleComponent implements OnChanges, OnDestroy {
   );
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['model']) {
+    if (changes['modelExtraId']) {
       this.updateUsage();
     }
   }
@@ -79,6 +81,7 @@ export class ContextUsageCircleComponent implements OnChanges, OnDestroy {
     this.hasData = false;
     this.dashOffset = this.circumference;
     let showUsageWarning = false;
+    let isUsageLimitReached = false;
 
     let found = [...this.messages].reverse().find(msg => {
       if (msg.role !== 'assistant') return false;
@@ -119,9 +122,23 @@ export class ContextUsageCircleComponent implements OnChanges, OnDestroy {
           : this.modelsOpencode;
 
       let selectedModel = this.findSelectedModel({ models: models });
-      let assistantModel = models.find(m => m.id === assistantMessage.modelID);
-      this.contextLimit =
-        selectedModel?.contextLimit ?? assistantModel?.contextLimit;
+      let assistantModel = models.find(
+        m => m.modelId === assistantMessage.modelID
+      );
+      let usageModel = selectedModel ?? assistantModel;
+
+      this.contextLimit = usageModel?.contextLimit ?? usageModel?.inputLimit;
+
+      let blockThreshold: number | undefined = getExplorerContextBlockThreshold(
+        {
+          contextLimit: usageModel?.contextLimit,
+          inputLimit: usageModel?.inputLimit,
+          outputLimit: usageModel?.outputLimit
+        }
+      );
+
+      isUsageLimitReached =
+        blockThreshold !== undefined && total >= blockThreshold;
 
       if (this.contextLimit) {
         this.percentage = Math.round((total / this.contextLimit) * 100);
@@ -138,22 +155,25 @@ export class ContextUsageCircleComponent implements OnChanges, OnDestroy {
       }
     }
 
+    this.usageLimitReachedChange.emit(isUsageLimitReached);
     this.updateUsageWarning({ show: showUsageWarning });
     this.cd.detectChanges();
   }
 
-  findSelectedModel(item: { models: SessionModelApi[] }) {
+  findSelectedModel(item: { models: LlmModelWithProvider[] }) {
     let { models } = item;
 
-    if (!this.model) {
+    if (!this.modelExtraId) {
       return undefined;
     }
 
-    let selected = this.model.split('/');
+    let selected = this.modelExtraId.split('/');
     let providerId = selected[0];
     let modelId = selected.slice(1).join('/');
 
-    return models.find(m => m.providerId === providerId && m.id === modelId);
+    return models.find(
+      m => m.providerId === providerId && m.modelId === modelId
+    );
   }
 
   updateUsageWarning(item: { show: boolean }) {

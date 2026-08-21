@@ -7,13 +7,13 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
-import { ProjectApiKeysComponent } from './project-api-keys/project-api-keys.component';
 import { ProjectConnectionsComponent } from './project-connections/project-connections.component';
 import { ProjectEnvironmentsComponent } from './project-environments/project-environments.component';
 import { ProjectGivensComponent } from './project-givens/project-givens.component';
 import { ProjectInfoComponent } from './project-info/project-info.component';
 import { ProjectProvidersComponent } from './project-providers/project-providers.component';
 import { ProjectRolesComponent } from './project-roles/project-roles.component';
+import { ProjectSandboxProviderComponent } from './project-sandbox-provider/project-sandbox-provider.component';
 import { ProjectTeamComponent } from './project-team/project-team.component';
 
 @NgModule({
@@ -25,7 +25,7 @@ import { ProjectTeamComponent } from './project-team/project-team.component';
     ProjectEnvironmentsComponent,
     ProjectGivensComponent,
     ProjectRolesComponent,
-    ProjectApiKeysComponent
+    ProjectSandboxProviderComponent
   ],
   imports: [
     CommonModule,

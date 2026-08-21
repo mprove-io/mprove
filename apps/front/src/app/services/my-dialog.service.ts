@@ -152,10 +152,6 @@ import {
   ShowKeyDialogData
 } from '../modules/profile/show-key-dialog/show-key-dialog.component';
 import {
-  EditApiKeyDialogComponent,
-  EditApiKeyDialogData
-} from '../modules/project/project-api-keys/edit-api-key-dialog/edit-api-key-dialog.component';
-import {
   AddConnectionDialogComponent,
   AddConnectionDialogData
 } from '../modules/project/project-connections/add-connection-dialog/add-connection-dialog.component';
@@ -212,29 +208,29 @@ import {
   EditProjectNameDialogData
 } from '../modules/project/project-info/edit-project-name-dialog/edit-project-name-dialog.component';
 import {
+  AddLlmModelDialogComponent,
+  AddLlmModelDialogData
+} from '../modules/project/project-providers/add-llm-model-dialog/add-llm-model-dialog.component';
+import {
   AddProviderDialogComponent,
   AddProviderDialogData
 } from '../modules/project/project-providers/add-provider-dialog/add-provider-dialog.component';
 import {
-  AddProviderModelDialogComponent,
-  AddProviderModelDialogData
-} from '../modules/project/project-providers/add-provider-model-dialog/add-provider-model-dialog.component';
+  DeleteLlmModelDialogComponent,
+  DeleteLlmModelDialogData
+} from '../modules/project/project-providers/delete-llm-model-dialog/delete-llm-model-dialog.component';
 import {
   DeleteProviderDialogComponent,
   DeleteProviderDialogData
 } from '../modules/project/project-providers/delete-provider-dialog/delete-provider-dialog.component';
 import {
-  DeleteProviderModelDialogComponent,
-  DeleteProviderModelDialogData
-} from '../modules/project/project-providers/delete-provider-model-dialog/delete-provider-model-dialog.component';
+  EditLlmModelDialogComponent,
+  EditLlmModelDialogData
+} from '../modules/project/project-providers/edit-llm-model-dialog/edit-llm-model-dialog.component';
 import {
   EditProviderDialogComponent,
   EditProviderDialogData
 } from '../modules/project/project-providers/edit-provider-dialog/edit-provider-dialog.component';
-import {
-  EditProviderModelDialogComponent,
-  EditProviderModelDialogData
-} from '../modules/project/project-providers/edit-provider-model-dialog/edit-provider-model-dialog.component';
 import {
   AddProjectRoleDialogComponent,
   type AddProjectRoleDialogData
@@ -251,6 +247,10 @@ import {
   EditRoleGivenDialogComponent,
   type EditRoleGivenDialogData
 } from '../modules/project/project-roles/edit-role-given-dialog/edit-role-given-dialog.component';
+import {
+  EditSandboxProviderDialogComponent,
+  type EditSandboxProviderDialogData
+} from '../modules/project/project-sandbox-provider/edit-sandbox-provider-dialog/edit-sandbox-provider-dialog.component';
 import {
   AddRoleDialogComponent,
   AddRoleDialogData
@@ -723,8 +723,8 @@ export class MyDialogService {
     });
   }
 
-  showEditApiKey(item: EditApiKeyDialogData): void {
-    this.dialogService.open(EditApiKeyDialogComponent, {
+  showEditSandboxProvider(item: EditSandboxProviderDialogData): void {
+    this.dialogService.open(EditSandboxProviderDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item
@@ -824,26 +824,26 @@ export class MyDialogService {
     });
   }
 
-  showAddProviderModel(item: AddProviderModelDialogData): void {
-    this.dialogService.open(AddProviderModelDialogComponent, {
+  showAddLlmModel(item: AddLlmModelDialogData): void {
+    this.dialogService.open(AddLlmModelDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,
-      width: 600
+      width: 1100
     });
   }
 
-  showEditProviderModel(item: EditProviderModelDialogData): void {
-    this.dialogService.open(EditProviderModelDialogComponent, {
+  showEditLlmModel(item: EditLlmModelDialogData): void {
+    this.dialogService.open(EditLlmModelDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,
-      width: 600
+      width: 1100
     });
   }
 
-  showDeleteProviderModel(item: DeleteProviderModelDialogData): void {
-    this.dialogService.open(DeleteProviderModelDialogComponent, {
+  showDeleteLlmModel(item: DeleteLlmModelDialogData): void {
+    this.dialogService.open(DeleteLlmModelDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

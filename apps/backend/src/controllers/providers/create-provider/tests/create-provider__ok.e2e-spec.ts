@@ -17,40 +17,49 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ProviderKindEnum } from '#common/enums/provider-kind.enum';
-import { ProviderLlmTypeEnum } from '#common/enums/provider-llm-type.enum';
+import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type {
-  ToBackendCreateProviderRequest,
-  ToBackendCreateProviderResponse
-} from '#common/zod/to-backend/providers/to-backend-create-provider';
+import type { ToBackendCreateProviderRequest } from '#common/zod/to-backend/providers/create-provider/create-provider-request';
+import type { ToBackendCreateProviderResponse } from '#common/zod/to-backend/providers/create-provider/create-provider-response';
 
 let testId = 'backend-create-provider__ok';
+
 let traceId = testId;
 
-let userId = makeId();
+let userId: string = makeId();
+
 let email = `${testId}@example.com`;
+
 let password = '123456';
 
 let orgId = testId;
+
 let orgName = testId;
 
-let projectId = makeId();
+let projectId: string = makeId();
+
 let projectName = testId;
 
 let providerId = 'openai_compatible';
+
+let providerName = 'OpenAI Compatible';
+
 let baseURL = 'https://api.example.com/v1';
+
 let apiKey = 'provider-api-key';
 
 test('1', async t => {
   let isPass = false;
+
   let prep: Prep;
 
   await retry(async () => {
     let resp: ToBackendCreateProviderResponse;
+
     let providerEnt: ProviderEnt;
+
     let providerTab: ProviderTab;
 
     try {
@@ -114,9 +123,8 @@ test('1', async t => {
         payload: {
           projectId: projectId,
           providerId: providerId,
-          kind: ProviderKindEnum.LLM,
-          type: ProviderLlmTypeEnum.OpenAICompatible,
-          isEnabled: true,
+          type: ProviderTypeEnum.OpenAICompatible,
+          name: providerName,
           options: {
             baseURL: baseURL,
             apiKey: apiKey,
@@ -126,12 +134,7 @@ test('1', async t => {
                 value: 'Bearer provider-header-secret'
               }
             ],
-            queryParams: [{ key: 'token', value: 'provider-query-secret' }],
-            models: [
-              {
-                modelId: 'model-1'
-              }
-            ]
+            queryParams: [{ key: 'token', value: 'provider-query-secret' }]
           }
         }
       };
@@ -142,17 +145,22 @@ test('1', async t => {
         req: req
       });
 
-      let db = prep.moduleRef.get<Db>(DRIZZLE);
-      let foundProviderEnt = await db.drizzle.query.providersTable.findFirst({
-        where: and(
-          eq(providersTable.projectId, projectId),
-          eq(providersTable.providerId, providerId)
-        )
-      });
+      let db: Db = prep.moduleRef.get<Db>(DRIZZLE);
+
+      let foundProviderEnt: ProviderEnt =
+        (await db.drizzle.query.providersTable.findFirst({
+          where: and(
+            eq(providersTable.projectId, projectId),
+            eq(providersTable.providerId, providerId)
+          )
+        })) as ProviderEnt;
+
       assert.notEqual(foundProviderEnt, undefined);
+
       providerEnt = foundProviderEnt;
 
-      let tabService = prep.moduleRef.get<TabService>(TabService);
+      let tabService: TabService = prep.moduleRef.get<TabService>(TabService);
+
       providerTab = tabService.providerEntToTab({ providerEnt: providerEnt });
 
       await prep.app.close();
@@ -163,51 +171,51 @@ test('1', async t => {
         logger: prep?.logger,
         cs: prep?.cs
       });
+
       if (prep) {
         await prep.app.close();
       }
     }
 
     assert.equal(resp.info.error, undefined);
+
     assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+
     assert.deepEqual(resp.payload.provider, {
       projectId: projectId,
       providerId: providerId,
-      kind: ProviderKindEnum.LLM,
-      type: ProviderLlmTypeEnum.OpenAICompatible,
+      type: ProviderTypeEnum.OpenAICompatible,
+      name: providerName,
       isEnabled: true,
+      models: [],
       options: {
         baseURL: baseURL,
         apiKey: '',
         headers: [{ key: 'Authorization', value: '' }],
-        queryParams: [{ key: 'token', value: 'provider-query-secret' }],
-        models: [
-          {
-            modelId: 'model-1',
-            name: 'Model-1'
-          }
-        ]
+        queryParams: [{ key: 'token', value: 'provider-query-secret' }]
       }
     });
 
     assert.equal(typeof providerEnt.st.encrypted, 'string');
+
     assert.equal(providerEnt.st.encrypted.length > 0, true);
+
     assert.equal(providerEnt.st.decrypted, undefined);
+
     assert.equal(typeof providerEnt.keyTag, 'string');
+
     assert.deepEqual(providerTab.options, {
       baseURL: baseURL,
       apiKey: apiKey,
       headers: [
         { key: 'Authorization', value: 'Bearer provider-header-secret' }
       ],
-      queryParams: [{ key: 'token', value: 'provider-query-secret' }],
-      models: [
-        {
-          modelId: 'model-1',
-          name: 'Model-1'
-        }
-      ]
+      queryParams: [{ key: 'token', value: 'provider-query-secret' }]
     });
+
+    assert.equal(providerTab.name, providerName);
+
+    assert.deepEqual(providerTab.models, []);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: unknown) => {

@@ -36,23 +36,31 @@
         [appearance]="'compact'"
         *ngIf="providers.length > 0"
       >
-        <div class="text-s1 mx-5 mt-8 min-w-[1700px]">
+        <div class="text-s1 mx-5 mt-8 min-w-[1860px]">
           <table class="divide-s500 min-w-full table-fixed divide-y">
             <thead>
               <tr class="h-12 text-sm">
                 <th class="w-[100px] select-none text-left"></th>
                 <th class="w-24 select-none text-left"></th>
                 <th class="w-28 select-none pr-8 text-left">Enabled</th>
-                <th class="w-48 select-none pr-8 text-left">Provider ID</th>
-                <th class="w-48 select-none pr-8 text-left">Type</th>
-                <th class="w-96 select-none pr-8 text-left">Base URL</th>
-                <th class="w-[480px] select-none pr-8 text-left">Models</th>
+                <th class="w-10 select-none text-left"></th>
+                <th class="w-48 select-none pr-8 text-left">Name</th>
+                <th class="w-[700px] select-none pr-8 text-left">Models</th>
+                <th class="w-96 select-none pr-8 text-left">URL</th>
                 <th class="select-none pr-8 text-left">Extra</th>
               </tr>
             </thead>
 
-            <tbody class="divide-s300 divide-y text-base">
-              <tr *ngFor="let provider of providers" class="h-16 align-top">
+            <tbody class="text-base">
+              <tr aria-hidden="true" class="h-2">
+                <td colspan="8"></td>
+              </tr>
+
+              <tr
+                *ngFor="let provider of providers; let isFirst = first"
+                class="border-s300 h-16 align-top"
+                [class.border-t]="!isFirst"
+              >
                 <td class="w-[100px] py-3">
                   <div
                     class="w-fit"
@@ -119,14 +127,16 @@
                     </div>
                   </div>
                 </td>
-                <td class="w-48 py-5 pr-8 font-medium">
-                  {{ provider.providerId }}
+                <td class="w-10 py-5">
+                  <m-provider-icon
+                    [providerId]="provider.providerId"
+                    class="text-s500 relative top-px"
+                  ></m-provider-icon>
                 </td>
-                <td class="w-48 py-5 pr-8">{{ provider.type }}</td>
-                <td class="w-96 break-all py-5 pr-8">
-                  {{ provider.options.baseURL }}
+                <td class="w-48 py-5 pr-8">
+                  {{ provider.name }}
                 </td>
-                <td class="w-[480px] pr-8">
+                <td class="w-[700px] pr-8">
                   <div class="flex flex-row items-center">
                     <div
                       tp="Admin role required"
@@ -140,30 +150,89 @@
                           'text-m600 hover:bg-m200': isAdmin === true
                         }"
                         [disabled]="isAdmin === false"
-                        (click)="addProviderModel({ provider: provider })"
+                        (click)="addLlmModel({ provider: provider })"
                         aria-label="Add model"
                       >
                         <m-add-icon></m-add-icon>
                       </button>
                     </div>
 
-                    <div class="my-3 ml-5 flex min-w-[360px] flex-col">
+                    <div class="my-3 ml-5 flex min-w-[600px] flex-col">
                       <div
-                        *ngFor="let model of provider.options.models"
-                        class="group flex h-8 flex-row items-center text-base"
+                        *ngFor="let model of provider.models"
+                        class="group flex h-9 flex-row items-center text-base"
                       >
-                        <div
-                          class="bg-s150 text-s500 truncate rounded px-2 font-medium"
-                          >{{ model.modelId }}</div
-                        >
-                        <div class="text-s400 ml-2 truncate">
+                        <div class="text-s1 truncate">
                           {{ model.name }}
+                        </div>
+
+                        <div
+                          class="ml-auto flex flex-shrink-0 select-none gap-2 text-xs"
+                        >
+                          <span
+                            class="rounded px-2.5 py-1 text-sm"
+                            [ngClass]="{
+                              'bg-g100 text-g700':
+                                model.isOpencodeSupported && model.isBuilder,
+                              'bg-s150 text-s400':
+                                model.isOpencodeSupported &&
+                                model.isBuilder === false,
+                              'bg-r100 text-r700':
+                                model.isOpencodeSupported === false
+                            }"
+                            [title]="
+                              inactiveReasonsText({
+                                reasons: model.builderInactiveReasons
+                              })
+                            "
+                            >Builder</span
+                          >
+                          <span
+                            class="rounded px-2.5 py-1 text-sm"
+                            [ngClass]="{
+                              'bg-g100 text-g700': model.isExplorer,
+                              'bg-s150 text-s400': model.isExplorer === false
+                            }"
+                            >Explorer</span
+                          >
+                          <span
+                            class="relative top-[3px] ml-1 w-14 text-right text-sm"
+                            [ngClass]="{
+                              'text-m600':
+                                provider.type ===
+                                  providerTypeEnum.OpenAICompatible ||
+                                model.isManual === true,
+                              'text-s400':
+                                provider.type !==
+                                  providerTypeEnum.OpenAICompatible &&
+                                model.isManual !== true
+                            }"
+                            [tp]="
+                              provider.type ===
+                                providerTypeEnum.OpenAICompatible ||
+                              model.isManual === true
+                                ? 'User-provided value'
+                                : model.contextLimit !== undefined
+                                  ? 'Context window'
+                                  : model.inputLimit !== undefined
+                                    ? 'Max input tokens'
+                                    : 'Context window'
+                            "
+                            [tpIsEnabled]="true"
+                          >
+                            {{
+                              formatContextLimit({
+                                contextLimit:
+                                  model.contextLimit ?? model.inputLimit
+                              })
+                            }}
+                          </span>
                         </div>
 
                         <div
                           tp="Admin role required"
                           [tpIsEnabled]="isAdmin === false"
-                          class="ml-3"
+                          class="ml-4"
                         >
                           <button
                             data-cy="projectProvidersEditModelButton"
@@ -174,7 +243,7 @@
                             }"
                             [disabled]="isAdmin === false"
                             (click)="
-                              editProviderModel({
+                              editLlmModel({
                                 provider: provider,
                                 model: model
                               })
@@ -199,7 +268,7 @@
                             }"
                             [disabled]="isAdmin === false"
                             (click)="
-                              deleteProviderModel({
+                              deleteLlmModel({
                                 provider: provider,
                                 model: model
                               })
@@ -213,36 +282,60 @@
 
                       <div
                         class="text-s400 flex h-8 items-center"
-                        *ngIf="provider.options.models.length === 0"
+                        *ngIf="provider.models.length === 0"
                         >No models</div
                       >
                     </div>
                   </div>
                 </td>
+                <td class="w-96 break-all py-5 pr-8">
+                  <ng-container
+                    *ngIf="provider.type === providerTypeEnum.OpenAICompatible"
+                  >
+                    {{ provider.options.baseURL }}
+                  </ng-container>
+                  <span
+                    *ngIf="provider.type === providerTypeEnum.OpenAICodex"
+                    class="text-s400"
+                    >User's Codex subscription</span
+                  >
+                  <span
+                    *ngIf="
+                      provider.type === providerTypeEnum.OpenAI ||
+                      provider.type === providerTypeEnum.Anthropic
+                    "
+                    class="text-s400"
+                    >Official provider API</span
+                  >
+                </td>
                 <td class="break-all py-5 pr-8">
                   <div
-                    class="text-g700"
-                    *ngIf="
+                    [ngClass]="{
+                      'text-g700':
+                        provider.options.apiKey !== undefined &&
+                        provider.options.apiKey !== null,
+                      'text-s400':
+                        provider.options.apiKey === undefined ||
+                        provider.options.apiKey === null
+                    }"
+                    *ngIf="provider.type !== providerTypeEnum.OpenAICodex"
+                  >
+                    {{
                       provider.options.apiKey !== undefined &&
                       provider.options.apiKey !== null
-                    "
-                  >
-                    API key is set
+                        ? 'API key is set'
+                        : 'API key is not set'
+                    }}
                   </div>
 
                   <div
                     class="flex-col"
-                    *ngIf="(provider.options.headers?.length ?? 0) > 0"
+                    *ngIf="
+                      provider.type === providerTypeEnum.OpenAICompatible &&
+                      (provider.options.headers?.length ?? 0) > 0
+                    "
                   >
-                    <div
-                      class="font-medium"
-                      [ngClass]="{
-                        'mt-2':
-                          provider.options.apiKey !== undefined &&
-                          provider.options.apiKey !== null
-                      }"
-                      >Headers:</div
-                    >
+                    <div class="mt-3 font-medium">Headers:</div>
                     <div *ngFor="let header of provider.options.headers">
                       <span class="ml-5 font-medium">{{ header.key }}: </span>
                       <span class="text-g700">{{ header.value }}</span>
@@ -251,18 +344,12 @@
 
                   <div
                     class="flex-col"
-                    *ngIf="(provider.options.queryParams?.length ?? 0) > 0"
+                    *ngIf="
+                      provider.type === providerTypeEnum.OpenAICompatible &&
+                      (provider.options.queryParams?.length ?? 0) > 0
+                    "
                   >
-                    <div
-                      class="font-medium"
-                      [ngClass]="{
-                        'mt-2':
-                          (provider.options.headers?.length ?? 0) > 0 ||
-                          (provider.options.apiKey !== undefined &&
-                            provider.options.apiKey !== null)
-                      }"
-                      >Query Parameters:</div
-                    >
+                    <div class="mt-2 font-medium">Query Parameters:</div>
                     <div
                       *ngFor="let queryParam of provider.options.queryParams"
                     >

@@ -63,6 +63,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { HashService } from '#backend/services/hash.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
+import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import {
   BRANCH_MAIN,
   PROD_REPO_ID,
@@ -79,6 +80,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
+import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type {
   ToBackendSeedRecordsRequestPayloadCachedColumnsItem,
   ToBackendSeedRecordsRequestPayloadCachedPartsItem,
@@ -254,9 +256,8 @@ export class SeedRecordsController {
             apiKeySecretHash: x.apiKeySecretHash,
             apiKeySalt: x.apiKeySalt,
             sandboxType: SandboxTypeEnum.E2B,
-            provider: 'openai',
-            model: undefined,
-            lastMessageProviderModel: undefined,
+            providerId: OPENAI_PROVIDER_ID,
+            modelId: 'gpt-5.1-codex-mini',
             lastMessageVariant: undefined,
             agent: 'build',
             status: x.status,
@@ -278,7 +279,6 @@ export class SeedRecordsController {
             lastFetchEventIndex: undefined,
             reloadRequestedTs: undefined,
             codexAuthUpdateTs: undefined,
-            useCodex: false,
             keyTag: undefined,
             serverTs: undefined
           };
@@ -345,13 +345,26 @@ export class SeedRecordsController {
 
     if (isDefined(payloadProviders)) {
       payloadProviders.forEach(x => {
+        let models = x.models.map<LlmModel>(model => ({
+          modelId: model.modelId,
+          name: model.name,
+          isManual: model.isManual,
+          catalogName: model.name,
+          contextLimit: model.contextLimit,
+          inputLimit: model.inputLimit,
+          outputLimit: model.outputLimit,
+          variants: undefined,
+          isOpencodeSupported: true,
+          explorerInactiveReasons: [],
+          builderInactiveReasons: [],
+          isExplorer: model.isExplorer,
+          isBuilder: model.isBuilder,
+          refreshedTs: Date.now()
+        }));
+
         let newProvider = this.providersService.makeProvider({
-          projectId: x.projectId,
-          providerId: x.providerId,
-          kind: x.kind,
-          type: x.type,
-          isEnabled: x.isEnabled,
-          options: x.options
+          ...x,
+          models: models
         });
 
         providers.push(newProvider);
@@ -388,15 +401,8 @@ export class SeedRecordsController {
             privateKeyEncrypted: x.privateKeyEncrypted,
             passPhrase: x.passPhrase,
             e2bApiKey: x.e2bApiKey,
-            zenApiKey: x.zenApiKey,
-            anthropicApiKey: x.anthropicApiKey,
-            openaiApiKey: x.openaiApiKey,
             nameHash: undefined, // tab-to-ent
             gitUrlHash: undefined, // tab-to-ent
-            providerModelsOpencode: undefined,
-            providerModelsOpencodeTs: undefined,
-            providerModelsAi: undefined,
-            providerModelsAiTs: undefined,
             keyTag: undefined,
             serverTs: undefined
           };

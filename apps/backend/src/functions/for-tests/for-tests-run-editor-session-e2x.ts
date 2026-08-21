@@ -31,6 +31,14 @@ import type {
   ToBackendSendMessageToEditorSessionRequest,
   ToBackendSendMessageToEditorSessionResponse
 } from '#common/zod/to-backend/sessions/to-backend-send-message-to-editor-session';
+import type { ToBackendSeedRecordsRequestPayloadProvidersItem } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
+
+type EditorSessionProviderSeed =
+  ToBackendSeedRecordsRequestPayloadProvidersItem extends infer T
+    ? T extends ToBackendSeedRecordsRequestPayloadProvidersItem
+      ? Omit<T, 'projectId'>
+      : never
+    : never;
 
 export async function forTestsRunEditorSessionE2x(item: {
   t: ExecutionContext;
@@ -38,11 +46,9 @@ export async function forTestsRunEditorSessionE2x(item: {
   inspectUI: boolean;
   projectApiKeys: {
     e2bApiKey: string;
-    zenApiKey?: string;
-    anthropicApiKey?: string;
-    openaiApiKey?: string;
   };
-  model: string;
+  provider: EditorSessionProviderSeed;
+  modelId: string;
   variant: string;
 }): Promise<void> {
   let { t, testId, inspectUI } = item;
@@ -100,10 +106,7 @@ export async function forTestsRunEditorSessionE2x(item: {
             name: projectName,
             remoteType: ProjectRemoteTypeEnum.Managed,
             defaultBranch: BRANCH_MAIN,
-            e2bApiKey: item.projectApiKeys.e2bApiKey,
-            zenApiKey: item.projectApiKeys.zenApiKey,
-            anthropicApiKey: item.projectApiKeys.anthropicApiKey,
-            openaiApiKey: item.projectApiKeys.openaiApiKey
+            e2bApiKey: item.projectApiKeys.e2bApiKey
           }
         ],
         members: [
@@ -114,6 +117,12 @@ export async function forTestsRunEditorSessionE2x(item: {
             isAdmin: true,
             isEditor: true,
             isExplorer: true
+          }
+        ],
+        providers: [
+          {
+            ...item.provider,
+            projectId: projectId
           }
         ]
       },
@@ -134,15 +143,14 @@ export async function forTestsRunEditorSessionE2x(item: {
       payload: {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
-        provider: 'opencode',
-        model: item.model,
+        providerId: item.provider.providerId,
+        modelId: item.modelId,
         agent: 'plan',
         variant: item.variant,
         envId: PROJECT_ENV_PROD,
         initialBranch: BRANCH_MAIN,
         messageId: makeAscendingId({ prefix: 'msg' }),
-        partId: makeAscendingId({ prefix: 'prt' }),
-        useCodex: false
+        partId: makeAscendingId({ prefix: 'prt' })
       }
     };
 
@@ -204,7 +212,8 @@ export async function forTestsRunEditorSessionE2x(item: {
         interactionType: InteractionTypeEnum.Message,
         message: 'hello, what model is used?',
         agent: 'plan',
-        model: item.model,
+        providerId: item.provider.providerId,
+        modelId: item.modelId,
         variant: item.variant
       }
     };
@@ -242,7 +251,8 @@ export async function forTestsRunEditorSessionE2x(item: {
         interactionType: InteractionTypeEnum.Message,
         message: 'what is 2 + 2?',
         agent: 'plan',
-        model: item.model,
+        providerId: item.provider.providerId,
+        modelId: item.modelId,
         variant: item.variant
       }
     };

@@ -248,9 +248,6 @@ export class TabService {
 
     let projectSt: ProjectSt = {
       name: project.name,
-      zenApiKey: undefined, // baseProject does not need project.zenApiKey
-      anthropicApiKey: undefined, // baseProject does not need project.anthropicApiKey
-      openaiApiKey: undefined, // baseProject does not need project.openaiApiKey
       e2bApiKey: undefined // baseProject does not need project.e2bApiKey
     };
 
@@ -545,7 +542,7 @@ export class TabService {
     let provider: ProviderTab = {
       ...providerEnt,
       ...this.getTabProps({ ent: providerEnt })
-    };
+    } as ProviderTab;
 
     return provider;
   }

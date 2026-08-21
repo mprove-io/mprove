@@ -8,15 +8,25 @@ import {
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import type {
+  MemberTab,
+  ProviderTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import {
+  type ProviderEnt,
+  providersTable
+} from '#backend/drizzle/postgres/schema/providers';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetProvidersResponsePayload } from '#common/zod/to-backend/providers/to-backend-get-providers';
+import type { Member } from '#common/zod/backend/member';
+import type { Provider } from '#common/zod/backend/provider';
+import type { ToBackendGetProvidersRequestPayload } from '#common/zod/to-backend/providers/get-providers/get-providers-request-payload';
+import type { ToBackendGetProvidersResponsePayload } from '#common/zod/to-backend/providers/get-providers/get-providers-response-payload';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -42,39 +52,49 @@ export class GetProvidersController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetProvidersRequestDto
   ) {
-    let { projectId } = body.payload;
+    let bodyPayload: ToBackendGetProvidersRequestPayload = body.payload;
+
+    let { projectId } = bodyPayload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
 
-    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
-      memberId: user.userId,
-      projectId: projectId
+    let userMember: MemberTab =
+      await this.membersService.getMemberCheckIsEditorOrAdmin({
+        memberId: user.userId,
+        projectId: projectId
+      });
+
+    let providerEnts: ProviderEnt[] =
+      await this.db.drizzle.query.providersTable.findMany({
+        where: eq(providersTable.projectId, projectId)
+      });
+
+    let providers: ProviderTab[] = providerEnts.map(providerEnt =>
+      this.tabService.providerEntToTab({ providerEnt: providerEnt })
+    );
+
+    let sortedProviders: ProviderTab[] = providers.sort((a, b) =>
+      a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+    );
+
+    let apiProviders: Provider[] = await Promise.all(
+      sortedProviders.map(provider =>
+        this.providersService.tabToApiProvider({
+          provider: provider,
+          isIncludePasswords: false
+        })
+      )
+    );
+
+    let apiUserMember: Member = this.membersService.tabToApi({
+      member: userMember
     });
 
-    let providers = await this.db.drizzle.query.providersTable
-      .findMany({
-        where: eq(providersTable.projectId, projectId)
-      })
-      .then(providerEnts =>
-        providerEnts.map(providerEnt =>
-          this.tabService.providerEntToTab({ providerEnt: providerEnt })
-        )
-      );
-
     let payload: ToBackendGetProvidersResponsePayload = {
-      userMember: this.membersService.tabToApi({ member: userMember }),
-      providers: providers
-        .sort((a, b) =>
-          a.providerId > b.providerId ? 1 : b.providerId > a.providerId ? -1 : 0
-        )
-        .map(provider =>
-          this.providersService.tabToApiProvider({
-            provider: provider,
-            isIncludePasswords: false
-          })
-        )
+      userMember: apiUserMember,
+      providers: apiProviders
     };
 
     return payload;

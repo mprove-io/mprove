@@ -58,6 +58,16 @@
         >
       </div>
 
+      <button
+        class="text-s1 hover:bg-m50 block w-full cursor-pointer px-4 py-2 text-left text-base focus:outline-none"
+        [ngClass]="{
+          'font-semibold': lastUrl === pathSandboxProvider
+        }"
+        [disabled]="lastUrl === pathSandboxProvider"
+        (click)="t1.hide(); navigateSandboxProvider()"
+        >Sandbox Provider</button
+      >
+
       <div
         tp="Admin or Editor role required"
         placement="left"
@@ -78,16 +88,6 @@
           >Connections</button
         >
       </div>
-
-      <button
-        class="text-s1 hover:bg-m50 block w-full cursor-pointer px-4 py-2 text-left text-base focus:outline-none"
-        [ngClass]="{
-          'font-semibold': lastUrl === pathApiKeys
-        }"
-        [disabled]="lastUrl === pathApiKeys"
-        (click)="t1.hide(); navigateApiKeys()"
-        >API Keys</button
-      >
 
       <div
         tp="Admin or Editor role required"
