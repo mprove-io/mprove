@@ -19,6 +19,7 @@ import { take, tap } from 'rxjs/operators';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { Provider } from '#common/zod/backend/provider';
@@ -154,14 +155,12 @@ export class EditLlmModelDialogComponent implements OnInit {
 
     let isInputLimitInvalid: boolean =
       isManualModel &&
-      value.inputLimit !== undefined &&
-      value.inputLimit !== null &&
+      isDefined(value.inputLimit) &&
       value.inputLimit > value.contextLimit;
 
     let isOutputLimitInvalid: boolean =
       isManualModel &&
-      value.outputLimit !== undefined &&
-      value.outputLimit !== null &&
+      isDefined(value.outputLimit) &&
       value.outputLimit > value.contextLimit;
 
     if (isInputLimitInvalid) {
