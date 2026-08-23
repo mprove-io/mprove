@@ -3,20 +3,17 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 export const OPENAI_PROVIDER_ID = 'openai';
 export const ANTHROPIC_PROVIDER_ID = 'anthropic';
 export const CODEX_PROVIDER_ID = 'openai-codex';
-export const ZEN_PROVIDER_ID = 'opencode';
 
 export const ANTHROPIC_PROVIDER_NAME = 'Anthropic';
 export const OPENAI_PROVIDER_NAME = 'OpenAI';
 export const CODEX_PROVIDER_NAME = 'OpenAI Codex';
-export const ZEN_PROVIDER_NAME = 'Zen';
 
 export const OPENAI_COMPATIBLE_PROVIDER_TYPE_NAME = 'OpenAI Compatible';
 
 export const PROVIDER_NAME_BY_ID: Readonly<Record<string, string>> = {
   [OPENAI_PROVIDER_ID]: OPENAI_PROVIDER_NAME,
   [ANTHROPIC_PROVIDER_ID]: ANTHROPIC_PROVIDER_NAME,
-  [CODEX_PROVIDER_ID]: CODEX_PROVIDER_NAME,
-  [ZEN_PROVIDER_ID]: ZEN_PROVIDER_NAME
+  [CODEX_PROVIDER_ID]: CODEX_PROVIDER_NAME
 };
 
 export const PROVIDER_TYPE_BY_ID: Readonly<

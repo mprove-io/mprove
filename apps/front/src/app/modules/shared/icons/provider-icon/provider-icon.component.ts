@@ -2,8 +2,7 @@ import { Component, Input } from '@angular/core';
 import {
   ANTHROPIC_PROVIDER_ID,
   CODEX_PROVIDER_ID,
-  OPENAI_PROVIDER_ID,
-  ZEN_PROVIDER_ID
+  OPENAI_PROVIDER_ID
 } from '#common/constants/providers';
 
 @Component({
@@ -18,7 +17,6 @@ export class ProviderIconComponent {
   openaiProviderId = OPENAI_PROVIDER_ID;
   anthropicProviderId = ANTHROPIC_PROVIDER_ID;
   codexProviderId = CODEX_PROVIDER_ID;
-  zenProviderId = ZEN_PROVIDER_ID;
 
   constructor() {}
 }
