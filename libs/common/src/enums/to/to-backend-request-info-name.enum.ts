@@ -108,7 +108,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendToggleProvider = 'api/ToBackendToggleProvider',
   ToBackendCreateLlmModel = 'api/ToBackendCreateLlmModel',
   ToBackendEditLlmModel = 'api/ToBackendEditLlmModel',
-  ToBackendRefreshLlmModel = 'api/ToBackendRefreshLlmModel',
   ToBackendDeleteLlmModel = 'api/ToBackendDeleteLlmModel',
   //
   ToBackendGetBranchesList = 'api/ToBackendGetBranchesList',

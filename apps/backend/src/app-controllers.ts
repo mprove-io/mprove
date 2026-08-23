@@ -64,7 +64,6 @@ import { DeleteLlmModelController } from './controllers/llm-models/delete-llm-mo
 import { EditLlmModelController } from './controllers/llm-models/edit-llm-model/edit-llm-model.controller';
 import { GetLlmModelPartsController } from './controllers/llm-models/get-llm-model-parts/get-llm-model-parts.controller';
 import { GetLlmModelsWithProviderController } from './controllers/llm-models/get-llm-models-with-provider/get-llm-models-with-provider.controller';
-import { RefreshLlmModelController } from './controllers/llm-models/refresh-llm-model/refresh-llm-model.controller';
 import { DuplicateMconfigAndQueryController } from './controllers/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query.controller';
 import { GroupMetricByDimensionController } from './controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.controller';
 import { SuggestDimensionValuesController } from './controllers/mconfigs/suggest-dimension-values/suggest-dimension-values.controller';
@@ -222,7 +221,6 @@ export const appControllers = [
   ToggleProviderController,
   CreateLlmModelController,
   EditLlmModelController,
-  RefreshLlmModelController,
   DeleteLlmModelController,
 
   CreateFileController,
