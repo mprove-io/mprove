@@ -355,8 +355,6 @@ export class SeedRecordsController {
           outputLimit: model.outputLimit,
           variants: undefined,
           isOpencodeSupported: true,
-          explorerInactiveReasons: [],
-          builderInactiveReasons: [],
           isExplorer: model.isExplorer,
           isBuilder: model.isBuilder,
           refreshedTs: Date.now()

@@ -127,8 +127,6 @@ export class ProvidersService {
       codexMaxContextWindow: model.codexMaxContextWindow,
       variants: model.variants,
       isOpencodeSupported: model.isOpencodeSupported,
-      explorerInactiveReasons: model.explorerInactiveReasons,
-      builderInactiveReasons: model.builderInactiveReasons,
       isExplorer: model.isExplorer,
       isBuilder: model.isBuilder,
       refreshedTs: model.refreshedTs

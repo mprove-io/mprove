@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_PROVIDERS_PAGE_TITLE } from '#common/constants/page-titles';
-import { LlmModelInactiveReasonEnum } from '#common/enums/llm-model-inactive-reason.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -15,7 +14,6 @@ import { NavQuery } from '#front/app/queries/nav.query';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
-import { LLM_MODEL_INACTIVE_REASON_LABELS } from './llm-model-inactive-reason-labels';
 
 @Component({
   standalone: false,
@@ -44,7 +42,6 @@ export class ProjectProvidersComponent implements OnInit {
   providers: Provider[] = [];
 
   providerTypeEnum = ProviderTypeEnum;
-  inactiveReasonLabels = LLM_MODEL_INACTIVE_REASON_LABELS;
 
   providers$ = this.providersQuery.providers$.pipe(
     tap(x => {
@@ -65,11 +62,6 @@ export class ProjectProvidersComponent implements OnInit {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
-  }
-
-  inactiveReasonsText(item: { reasons: LlmModelInactiveReasonEnum[] }): string {
-    let { reasons } = item;
-    return reasons.map(reason => this.inactiveReasonLabels[reason]).join('\n');
   }
 
   formatContextLimit(item: { contextLimit?: number }): string {

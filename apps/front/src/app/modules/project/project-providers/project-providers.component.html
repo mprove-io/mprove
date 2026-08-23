@@ -181,9 +181,9 @@
                                 model.isOpencodeSupported === false
                             }"
                             [title]="
-                              inactiveReasonsText({
-                                reasons: model.builderInactiveReasons
-                              })
+                              model.isOpencodeSupported === false
+                                ? 'OpenCode filters out this model'
+                                : ''
                             "
                             >Builder</span
                           >

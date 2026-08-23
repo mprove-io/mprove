@@ -8,7 +8,6 @@ import {
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import { CODEX_ALLOWED_MODELS_EDITOR } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { LlmModelInactiveReasonEnum } from '#common/enums/llm-model-inactive-reason.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
@@ -86,11 +85,6 @@ export class LlmModelService {
           ? isModelSupportedByOpencode({ modelId: modelInput.modelId })
           : isCodexModelSupportedByOpencode({ modelId: modelInput.modelId });
 
-      let builderInactiveReasons: LlmModelInactiveReasonEnum[] =
-        isOpencodeSupported
-          ? []
-          : [LlmModelInactiveReasonEnum.OpencodeModelFiltered];
-
       let model: LlmModel = {
         modelId: modelInput.modelId,
         name: modelInput.name,
@@ -101,8 +95,6 @@ export class LlmModelService {
         outputLimit: modelInput.outputLimit,
         variants: undefined,
         isOpencodeSupported: isOpencodeSupported,
-        explorerInactiveReasons: [],
-        builderInactiveReasons: builderInactiveReasons,
         isExplorer: modelInput.isExplorer,
         isBuilder: modelInput.isBuilder,
         refreshedTs: refreshedTs
@@ -428,10 +420,6 @@ function codexModelToLlmModelPart(item: {
     modelId: codexModel.slug
   });
 
-  let builderInactiveReasons: LlmModelInactiveReasonEnum[] = isOpencodeSupported
-    ? []
-    : [LlmModelInactiveReasonEnum.OpencodeModelFiltered];
-
   let variants: string[] = (codexModel.supported_reasoning_levels ?? []).map(
     level => level.effort
   );
@@ -446,9 +434,7 @@ function codexModelToLlmModelPart(item: {
     codexContextWindow: codexModel.context_window,
     codexMaxContextWindow: codexModel.max_context_window,
     variants: variants.length > 0 ? variants : undefined,
-    isOpencodeSupported: isOpencodeSupported,
-    explorerInactiveReasons: [],
-    builderInactiveReasons: builderInactiveReasons
+    isOpencodeSupported: isOpencodeSupported
   };
 
   return modelPart;
@@ -467,10 +453,6 @@ function anthropicModelToLlmModelPart(item: {
     modelId: anthropicModel.id
   });
 
-  let builderInactiveReasons: LlmModelInactiveReasonEnum[] = isOpencodeSupported
-    ? []
-    : [LlmModelInactiveReasonEnum.OpencodeModelFiltered];
-
   let modelPart: LlmModelPart = {
     modelId: anthropicModel.id,
     catalogName: anthropicModel.display_name,
@@ -486,9 +468,7 @@ function anthropicModelToLlmModelPart(item: {
         ? anthropicModel.max_tokens
         : undefined,
     variants: variants.length > 0 ? variants : undefined,
-    isOpencodeSupported: isOpencodeSupported,
-    explorerInactiveReasons: [],
-    builderInactiveReasons: builderInactiveReasons
+    isOpencodeSupported: isOpencodeSupported
   };
 
   return modelPart;
@@ -515,17 +495,9 @@ function openAiModelToLlmModelPart(item: {
     return undefined;
   }
 
-  let builderInactiveReasons: LlmModelInactiveReasonEnum[] = [];
-
-  let opencodeReasons: LlmModelInactiveReasonEnum[] = [];
-
-  // Adapted from external/opencode/packages/opencode/src/provider/provider.ts
-  // Provider state model filtering for the pinned OpenCode version.
-  if (devModel.id === 'gpt-5-chat-latest') {
-    opencodeReasons.push(LlmModelInactiveReasonEnum.OpencodeModelFiltered);
-  }
-
-  opencodeReasons.forEach(reason => builderInactiveReasons.push(reason));
+  let isOpencodeSupported: boolean = isModelSupportedByOpencode({
+    modelId: devModel.id
+  });
 
   let variants: string[] = [];
   if (devModel.reasoning) {
@@ -584,9 +556,7 @@ function openAiModelToLlmModelPart(item: {
     inputLimit: devModel.limit.input,
     outputLimit: devModel.limit.output,
     variants: variants.length > 0 ? variants : undefined,
-    isOpencodeSupported: opencodeReasons.length === 0,
-    explorerInactiveReasons: [],
-    builderInactiveReasons: builderInactiveReasons
+    isOpencodeSupported: isOpencodeSupported
   };
 }
 

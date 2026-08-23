@@ -323,10 +323,6 @@ test('1', async t => {
 
     assert.equal(providerTab.models[1].isOpencodeSupported, true);
 
-    assert.deepEqual(providerTab.models[1].explorerInactiveReasons, []);
-
-    assert.deepEqual(providerTab.models[1].builderInactiveReasons, []);
-
     assert.equal(codexProviderTab.models[0].modelId, 'gpt-codex-manual');
 
     assert.equal(codexProviderTab.models[0].name, 'Manual Codex Model');
