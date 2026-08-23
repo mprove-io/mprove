@@ -197,7 +197,7 @@ test('1', async t => {
     ]);
 
     assert.deepEqual(alphaProvider.options.queryParams, [
-      { key: 'version', value: '1' }
+      { key: 'version', value: '' }
     ]);
 
     assert.equal(alphaProvider.options.baseURL, 'https://alpha.example.com/v1');

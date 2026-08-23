@@ -212,7 +212,7 @@ test('1', async t => {
     ]);
 
     assert.deepEqual(resp.payload.provider.options.queryParams, [
-      { key: 'version', value: '2' }
+      { key: 'version', value: '' }
     ]);
 
     assert.equal(providerTab.isEnabled, true);

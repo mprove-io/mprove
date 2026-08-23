@@ -192,7 +192,7 @@ test('1', async t => {
         baseURL: baseURL,
         apiKey: '',
         headers: [{ key: 'Authorization', value: '' }],
-        queryParams: [{ key: 'token', value: 'provider-query-secret' }]
+        queryParams: [{ key: 'token', value: '' }]
       }
     });
 

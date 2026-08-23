@@ -285,7 +285,7 @@ test('1', async t => {
         baseURL: 'https://api.example.com/v1',
         apiKey: '',
         headers: [{ key: 'Authorization', value: '' }],
-        queryParams: [{ key: 'version', value: '1' }]
+        queryParams: [{ key: 'version', value: '' }]
       }
     });
 

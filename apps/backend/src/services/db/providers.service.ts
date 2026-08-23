@@ -168,6 +168,13 @@ export class ProvidersService {
           }))
         : undefined;
 
+      let queryParams = isDefined(provider.options.queryParams)
+        ? provider.options.queryParams.map(queryParam => ({
+            key: queryParam.key,
+            value: isIncludePasswords === true ? queryParam.value : ''
+          }))
+        : undefined;
+
       return {
         ...common,
         type: provider.type,
@@ -175,7 +182,7 @@ export class ProvidersService {
           baseURL: provider.options.baseURL,
           apiKey: apiKey,
           headers: headers,
-          queryParams: provider.options.queryParams
+          queryParams: queryParams
         }
       };
     }
