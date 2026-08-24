@@ -125,6 +125,7 @@ export class ExplorerEventsMakerService {
       };
     };
     finish?: string;
+    errorMessage?: string;
   }): EventMessageUpdated {
     let tokens: AssistantMessage['tokens'] = item.tokens ?? {
       input: 0,
@@ -149,7 +150,15 @@ export class ExplorerEventsMakerService {
       path: { cwd: '', root: '' },
       cost: 0,
       tokens: tokens,
-      finish: item.finish
+      finish: item.finish,
+      ...(item.errorMessage
+        ? {
+            error: {
+              name: 'UnknownError' as const,
+              data: { message: item.errorMessage }
+            }
+          }
+        : {})
     };
 
     let event: EventMessageUpdated = {

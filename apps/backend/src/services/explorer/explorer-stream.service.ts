@@ -14,6 +14,7 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { EMPTY_ASSISTANT_RESPONSE_MESSAGE } from '#common/constants/top';
 import {
   CHANNEL_AI_INTERACT_REPLY,
   CHANNEL_AI_STREAM_COMMAND,
@@ -806,9 +807,16 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let lastStepUsage: LanguageModelUsage | undefined;
     let lastStepMetadata: ProviderMetadata | undefined;
     let finishReason: string | undefined;
+    let rawFinishReason: string | undefined;
+    let streamChunkCounts: Record<string, number> = {};
 
     try {
       for await (let chunk of result.fullStream) {
+        let chunkType: string = chunk.type;
+        let chunkCount: number = streamChunkCounts[chunkType] ?? 0;
+
+        streamChunkCounts[chunkType] = chunkCount + 1;
+
         if (chunk.type === 'text-delta') {
           let delta = chunk.text;
 
@@ -969,6 +977,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
           lastStepUsage = chunk.usage;
           lastStepMetadata = chunk.providerMetadata;
           finishReason = chunk.finishReason;
+          rawFinishReason = chunk.rawFinishReason;
         }
       }
     } catch (e: any) {
@@ -992,6 +1001,77 @@ export class ExplorerStreamService implements OnModuleDestroy {
         event: finalPartEvent
       });
     });
+
+    let textCharacterCount = 0;
+    let hasTextOutput = false;
+
+    textPartContents.forEach(text => {
+      textCharacterCount += text.length;
+
+      let trimmedText: string = text.trim();
+
+      if (trimmedText.length > 0) {
+        hasTextOutput = true;
+      }
+    });
+
+    let hasToolOutput: boolean = toolPartIds.size > 0;
+    let hasRenderableOutput: boolean = hasTextOutput || hasToolOutput;
+
+    if (wasAborted === false && hasRenderableOutput === false) {
+      let response: Awaited<typeof result.response> = await result.response;
+
+      type StreamDiagnostic = {
+        message: string;
+        sessionId: string;
+        providerId: string;
+        providerType: ProviderTypeEnum;
+        modelId: string;
+        responseId: string;
+        responseModelId: string;
+        contentType?: string;
+        finishReason?: string;
+        rawFinishReason?: string;
+        usage?: {
+          total?: number;
+          input: number;
+          output: number;
+          reasoning: number;
+          cache: { read: number; write: number };
+        };
+        textCharacterCount: number;
+        streamChunkCounts: Record<string, number>;
+      };
+
+      let streamDiagnostic: StreamDiagnostic = {
+        message: 'Explorer AI stream completed without renderable output',
+        sessionId: sessionId,
+        providerId: provider,
+        providerType: modelSelection.provider.type,
+        modelId: modelId,
+        responseId: response.id,
+        responseModelId: response.modelId,
+        contentType: response.headers?.['content-type'],
+        finishReason: finishReason,
+        rawFinishReason: rawFinishReason,
+        textCharacterCount: textCharacterCount,
+        streamChunkCounts: streamChunkCounts
+      };
+
+      if (lastStepUsage) {
+        streamDiagnostic.usage = this.aiUsageToOpenCodeTokens({
+          usage: lastStepUsage,
+          metadata: lastStepMetadata
+        });
+      }
+
+      logToConsoleBackend({
+        log: streamDiagnostic,
+        logLevel: LogLevelEnum.Info,
+        logger: this.logger,
+        cs: this.cs
+      });
+    }
 
     if (wasAborted) {
       let abortedMsgEvent =
@@ -1031,7 +1111,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
             provider: provider,
             modelId: modelId,
             tokens: tokens,
-            finish: finishReason
+            finish: finishReason,
+            errorMessage: hasRenderableOutput
+              ? undefined
+              : EMPTY_ASSISTANT_RESPONSE_MESSAGE
           });
 
         this.sessionDrainService.enqueue({

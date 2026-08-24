@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import type { ToolPart, UserMessage } from '@opencode-ai/sdk/v2';
+import type {
+  AssistantMessage,
+  ToolPart,
+  UserMessage
+} from '@opencode-ai/sdk/v2';
+import { EMPTY_ASSISTANT_RESPONSE_MESSAGE } from '#common/constants/top';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
 import type { SessionPartApi } from '#common/zod/backend/session-part-api';
@@ -129,7 +134,9 @@ export class SessionMessagesService {
           if (!part) return;
 
           if (part.type === 'text') {
-            if (part.text) {
+            let hasText: boolean = part.text.trim().length > 0;
+
+            if (hasText) {
               chatMessages.push({
                 role: 'agent',
                 text: part.text
@@ -144,7 +151,9 @@ export class SessionMessagesService {
             });
             partCount++;
           } else if (part.type === 'reasoning') {
-            if (part.text) {
+            let hasReasoning: boolean = part.text.trim().length > 0;
+
+            if (hasReasoning) {
               chatMessages.push({
                 role: 'thought',
                 text: part.text
@@ -160,12 +169,28 @@ export class SessionMessagesService {
           }
         });
 
-        let error = (msg.ocMessage as any)?.error;
+        let assistantMessage = msg.ocMessage as AssistantMessage;
+        let error = assistantMessage.error;
+
         if (error?.name === 'MessageAbortedError') {
           chatMessages.push({ role: 'interrupted', text: 'Interrupted' });
         } else if (partCount === 0 && error) {
-          let errorText = unwrapErrorMessage(error.data?.message ?? '');
+          let rawErrorMessage: unknown = error.data?.message;
+          let errorMessage: string =
+            typeof rawErrorMessage === 'string' ? rawErrorMessage : '';
+          let errorText: string = unwrapErrorMessage(errorMessage);
+
           chatMessages.push({ role: 'error', text: errorText });
+        } else if (partCount === 0) {
+          let isCompleted: boolean =
+            typeof assistantMessage.time.completed === 'number';
+
+          if (isCompleted) {
+            chatMessages.push({
+              role: 'error',
+              text: EMPTY_ASSISTANT_RESPONSE_MESSAGE
+            });
+          }
         }
       }
     });

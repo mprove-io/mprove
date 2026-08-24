@@ -31,6 +31,8 @@ export const GIVEN_TYPES = [
 
 export const EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE = 75;
 export const EXPLORER_CONTEXT_USAGE_BUFFER = 20_000;
+export const EMPTY_ASSISTANT_RESPONSE_MESSAGE =
+  'The selected model returned no response. It may not support tool calling. Try a different model.';
 
 export const PROJECT_CONFIG_ALLOW_TIMEZONES = 'true';
 export const PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS = 'false';
