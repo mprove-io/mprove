@@ -6,7 +6,9 @@ import type {
   OpencodeClient,
   PermissionRequest,
   QuestionRequest,
-  SessionPromptAsyncData
+  SessionPromptAsyncData,
+  TextPart,
+  UserMessage
 } from '@opencode-ai/sdk/v2';
 import { and, eq, lt, max, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
@@ -486,18 +488,16 @@ export class EditorStreamService implements OnModuleDestroy {
 
   async respondToPermission(item: {
     sessionId: string;
-    opencodeSessionId: string;
     permissionId: string;
-    reply: string;
+    reply: 'always' | 'once' | 'reject';
   }): Promise<void> {
     let opencodeClient = await this.editorOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
-    await opencodeClient.permission.respond({
-      sessionID: item.opencodeSessionId,
-      permissionID: item.permissionId,
-      response: item.reply as 'always' | 'once' | 'reject'
+    await opencodeClient.permission.reply({
+      requestID: item.permissionId,
+      reply: item.reply
     });
   }
 
@@ -778,11 +778,13 @@ export class EditorStreamService implements OnModuleDestroy {
     });
 
     if (item.interactionType === InteractionTypeEnum.Message) {
+      let message: string = item.message ?? '';
+
       let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
         parts: [
           {
             type: 'text',
-            text: item.message,
+            text: message,
             ...(item.partId ? { id: item.partId } : {})
           }
         ]
@@ -830,37 +832,41 @@ export class EditorStreamService implements OnModuleDestroy {
       // fix for missing user message part in returned opencode state, if it was sent to paused session
       if (item.messageId && item.partId) {
         try {
-          let messageModel = {
+          let messageModel: UserMessage['model'] = {
             providerID: ocProviderId || '',
-            modelID: item.modelId || ''
+            modelID: item.modelId || '',
+            variant: item.variant
+          };
+
+          let userMessage: UserMessage = {
+            id: item.messageId,
+            sessionID: item.opencodeSessionId,
+            role: 'user',
+            time: { created: Date.now() },
+            agent: item.agent ?? '',
+            model: messageModel
           };
 
           let userMessageTab = this.ocMessagesService.makeOcMessage({
             messageId: item.messageId,
             sessionId: item.sessionId,
             role: 'user',
-            ocMessage: {
-              id: item.messageId,
-              sessionID: item.opencodeSessionId,
-              role: 'user',
-              variant: item.variant,
-              time: { created: Date.now() },
-              agent: item.agent,
-              model: messageModel
-            } as any
+            ocMessage: userMessage
           });
+
+          let userPart: TextPart = {
+            id: item.partId,
+            sessionID: item.opencodeSessionId,
+            messageID: item.messageId,
+            type: 'text',
+            text: message
+          };
 
           let userPartTab = this.ocPartsService.makeOcPart({
             partId: item.partId,
             messageId: item.messageId,
             sessionId: item.sessionId,
-            ocPart: {
-              id: item.partId,
-              sessionID: item.opencodeSessionId,
-              messageID: item.messageId,
-              type: 'text',
-              text: item.message
-            } as any
+            ocPart: userPart
           });
 
           await this.db.drizzle.transaction(async tx => {
@@ -879,11 +885,20 @@ export class EditorStreamService implements OnModuleDestroy {
         }
       }
     } else if (item.interactionType === InteractionTypeEnum.Permission) {
+      if (
+        item.reply !== 'always' &&
+        item.reply !== 'once' &&
+        item.reply !== 'reject'
+      ) {
+        throw new Error('Invalid permission reply');
+      }
+
+      let permissionReply: 'always' | 'once' | 'reject' = item.reply;
+
       await this.respondToPermission({
         sessionId: item.sessionId,
-        opencodeSessionId: item.opencodeSessionId,
         permissionId: item.permissionId,
-        reply: item.reply
+        reply: permissionReply
       });
     } else if (item.interactionType === InteractionTypeEnum.Question) {
       if (item.answers !== undefined) {

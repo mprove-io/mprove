@@ -95,7 +95,8 @@ export class SessionSseService {
               eventIndex: 0,
               eventType: RELOAD_SESSION_EVENT_TYPE,
               ocEvent: {
-                type: RELOAD_SESSION_EVENT_TYPE as any,
+                id: `${sessionId}_reload_${reloadTs}`,
+                type: RELOAD_SESSION_EVENT_TYPE,
                 properties: {}
               }
             });

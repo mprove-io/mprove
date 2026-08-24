@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import type { Event } from '@opencode-ai/sdk/v2';
-import { SESSION_TAB_CREATED_EVENT_TYPE } from '#common/constants/top';
+import {
+  SESSION_TAB_CREATED_EVENT_TYPE,
+  SESSION_TITLE_UPDATED_EVENT_TYPE
+} from '#common/constants/top';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
 import type { SessionPartApi } from '#common/zod/backend/session-part-api';
+import type { SessionStreamEvent } from '#common/zod/backend/session-stream-event';
 import type { SessionTabCreatedEventProperties } from '#common/zod/backend/session-tab-created-event';
 import { binarySearch } from '../functions/binary-search';
 import { ExplorerTabsQuery } from '../queries/explorer-tabs.query';
@@ -22,7 +25,7 @@ export class SessionEventsService {
     private explorerTabsQuery: ExplorerTabsQuery
   ) {}
 
-  applyEvent(event: Event) {
+  applyEvent(event: SessionStreamEvent) {
     if (this.applySpecialEvent(event)) {
       return;
     }
@@ -33,7 +36,7 @@ export class SessionEventsService {
     }
   }
 
-  applyEvents(events: Event[]) {
+  applyEvents(events: SessionStreamEvent[]) {
     let state = this.sessionBundleQuery.getValue();
     events.forEach(event => {
       if (this.applySpecialEvent(event)) {
@@ -82,7 +85,7 @@ export class SessionEventsService {
     this.explorerTabsQuery.resetTabs();
   }
 
-  private applySpecialEvent(event: Event): boolean {
+  private applySpecialEvent(event: SessionStreamEvent): boolean {
     let raw = event as unknown as { type?: string; properties?: unknown };
 
     if (raw.type !== SESSION_TAB_CREATED_EVENT_TYPE) {
@@ -127,7 +130,7 @@ export class SessionEventsService {
 
   private reduceEvent(
     state: SessionBundleState,
-    event: Event
+    event: SessionStreamEvent
   ): SessionBundleState {
     switch (event.type) {
       case 'message.updated': {
@@ -267,6 +270,10 @@ export class SessionEventsService {
       case 'session.updated': {
         let info = event.properties.info;
         return { ...state, sessionTitle: info?.title };
+      }
+
+      case SESSION_TITLE_UPDATED_EVENT_TYPE: {
+        return { ...state, sessionTitle: event.properties.title };
       }
 
       case 'todo.updated': {

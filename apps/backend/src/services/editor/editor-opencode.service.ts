@@ -1,6 +1,8 @@
 import crypto from 'node:crypto';
+import type Anthropic from '@anthropic-ai/sdk';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type { Model } from '@opencode-ai/models';
 import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
 import { Sandbox, type SandboxInfo } from 'e2b';
 import pIteration from 'p-iteration';
@@ -16,6 +18,7 @@ import {
   type AnthropicVariantOptions,
   getAnthropicVariantOptions
 } from '#backend/functions/anthropic-model-variants';
+import { getOpenAiVariantOptions } from '#backend/functions/openai-model-variants';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -24,10 +27,6 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
-import {
-  type AnthropicModel,
-  zAnthropicModel
-} from '#common/zod/backend/anthropic-model';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 
 export const OPENCODE_PROJECT_OPENAI_PROVIDER_ID = '_mprove_openai';
@@ -159,11 +158,12 @@ export class EditorOpencodeService {
             name: provider.name,
             npm: '@ai-sdk/openai',
             env: [apiKeyEnv],
+            options: { setCacheKey: true },
             whitelist: modelIds,
             models: Object.fromEntries(
               models.map(model => [
                 model.modelId,
-                llmModelToOpenCodeConfig({ model: model })
+                openAiModelToOpenCodeConfig({ model: model })
               ])
             )
           };
@@ -454,14 +454,8 @@ function anthropicModelToOpenCodeConfig(item: {
 }): Record<string, unknown> {
   let { model } = item;
 
-  let parseResult: ReturnType<typeof zAnthropicModel.safeParse> =
-    zAnthropicModel.safeParse(model.providerModelInfo);
-
-  if (parseResult.success === false) {
-    return { name: model.name };
-  }
-
-  let anthropicModel: AnthropicModel = parseResult.data;
+  let anthropicModel: Anthropic.Models.ModelInfo =
+    model.providerModelInfo as unknown as Anthropic.Models.ModelInfo;
 
   let variantEntries: [string, AnthropicVariantOptions][] = (
     model.variants ?? []
@@ -526,6 +520,47 @@ function llmModelToOpenCodeConfig(item: {
       output: model.outputLimit ?? 0
     };
   }
+
+  let variantEntries: [string, Record<string, unknown>][] = (
+    model.variants ?? []
+  ).map(variant => [variant, getOpenAiVariantOptions({ variant: variant })]);
+
+  if (variantEntries.length > 0) {
+    modelConfig.variants = Object.fromEntries(variantEntries);
+  }
+
+  return modelConfig;
+}
+
+function openAiModelToOpenCodeConfig(item: {
+  model: LlmModel;
+}): Record<string, unknown> {
+  let { model } = item;
+
+  let modelsDev: Model = model.providerModelInfo?.modelsDev as unknown as Model;
+
+  let variantEntries: [string, Record<string, unknown>][] = (
+    model.variants ?? []
+  ).map(variant => [variant, getOpenAiVariantOptions({ variant: variant })]);
+
+  let modelConfig: Record<string, unknown> = {
+    name: model.name ?? model.catalogName,
+    release_date: modelsDev.release_date,
+    status: modelsDev.status,
+    reasoning: modelsDev.reasoning,
+    attachment: modelsDev.attachment,
+    tool_call: modelsDev.tool_call,
+    limit: {
+      context: modelsDev.limit.context,
+      input: modelsDev.limit.input,
+      output: modelsDev.limit.output
+    },
+    modalities: {
+      input: modelsDev.modalities.input,
+      output: modelsDev.modalities.output
+    },
+    variants: Object.fromEntries(variantEntries)
+  };
 
   return modelConfig;
 }

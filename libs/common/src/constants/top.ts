@@ -380,5 +380,6 @@ export const STORE_FIELD_DETAIL_VALUES = [
 export const LOGIC_VALUES = [FractionLogicEnum.Or, FractionLogicEnum.AndNot];
 
 export const RELOAD_SESSION_EVENT_TYPE = 'session.mprove-reload-session';
+export const SESSION_TITLE_UPDATED_EVENT_TYPE = 'session.mprove-title-updated';
 
 export const SESSION_TAB_CREATED_EVENT_TYPE = 'session.tab.created';

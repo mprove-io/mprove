@@ -1,7 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
-  Event,
   EventMessagePartUpdated,
   EventMessageUpdated,
   EventPermissionAsked,
@@ -14,7 +13,8 @@ import type {
   EventSessionUpdated,
   EventTodoUpdated,
   PermissionRequest,
-  QuestionRequest
+  QuestionRequest,
+  Session
 } from '@opencode-ai/sdk/v2';
 import { eq, max, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
@@ -28,10 +28,15 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { SESSION_TITLE_UPDATED_EVENT_TYPE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
+import type {
+  MproveSessionTitleUpdatedEvent,
+  SessionStreamEvent
+} from '#common/zod/backend/session-stream-event';
 import { OcEventsService } from '../db/oc-events.service';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
@@ -43,7 +48,7 @@ const { forEachSeries } = pIteration;
 export class SessionDrainService {
   pendingEvents = new Map<
     string,
-    { sessionId: string; event: Event; eventIndex: number }[]
+    { sessionId: string; event: SessionStreamEvent; eventIndex: number }[]
   >();
 
   eventCounters = new Map<string, number>();
@@ -95,7 +100,7 @@ export class SessionDrainService {
     }
   }
 
-  enqueue(item: { sessionId: string; event: Event }): void {
+  enqueue(item: { sessionId: string; event: SessionStreamEvent }): void {
     let eventIndex = this.eventCounters.get(item.sessionId) ?? 0;
     let queue = this.pendingEvents.get(item.sessionId);
     if (!queue) {
@@ -198,6 +203,9 @@ export class SessionDrainService {
     let sessionUpdatedItems = items.filter(
       item => item.event.type === 'session.updated'
     );
+    let sessionTitleUpdatedItems = items.filter(
+      item => item.event.type === SESSION_TITLE_UPDATED_EVENT_TYPE
+    );
     let todoItems = items.filter(item => item.event.type === 'todo.updated');
     let questionAskedItems = items.filter(
       item => item.event.type === 'question.asked'
@@ -222,6 +230,7 @@ export class SessionDrainService {
 
     if (
       sessionUpdatedItems.length > 0 ||
+      sessionTitleUpdatedItems.length > 0 ||
       todoItems.length > 0 ||
       questionAskedItems.length > 0 ||
       questionResolvedItems.length > 0 ||
@@ -243,6 +252,34 @@ export class SessionDrainService {
         let ocSessionData = (lastItem.event as EventSessionUpdated).properties
           .info;
         ocSessionTabs.push({ ...ocSessionTab, openSession: ocSessionData });
+      }
+
+      if (sessionTitleUpdatedItems.length > 0) {
+        let lastItem =
+          sessionTitleUpdatedItems[sessionTitleUpdatedItems.length - 1];
+
+        let titleEvent = lastItem.event as MproveSessionTitleUpdatedEvent;
+
+        let existingIndex = ocSessionTabs.findIndex(
+          tab => tab.sessionId === sessionId
+        );
+
+        let base =
+          existingIndex >= 0 ? ocSessionTabs[existingIndex] : ocSessionTab;
+
+        let openSession: Session = {
+          ...base.openSession,
+          title: titleEvent.properties.title
+        } as Session;
+
+        if (existingIndex >= 0) {
+          ocSessionTabs[existingIndex] = {
+            ...base,
+            openSession: openSession
+          };
+        } else {
+          ocSessionTabs.push({ ...base, openSession: openSession });
+        }
       }
 
       if (todoItems.length > 0) {

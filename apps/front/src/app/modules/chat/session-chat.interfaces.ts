@@ -5,8 +5,7 @@ export interface FileDiffInfo {
   additions: number;
   deletions: number;
   status?: 'added' | 'deleted' | 'modified';
-  before?: string;
-  after?: string;
+  patch?: string;
 }
 
 export interface ChatMessage {

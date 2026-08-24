@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SESSION_TAB_CREATED_EVENT_TYPE } from '#common/constants/top';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 
 export let zSessionTabCreatedEventProperties = z
@@ -14,3 +15,9 @@ export let zSessionTabCreatedEventProperties = z
 export type SessionTabCreatedEventProperties = z.infer<
   typeof zSessionTabCreatedEventProperties
 >;
+
+export type SessionTabCreatedEvent = {
+  id: string;
+  type: typeof SESSION_TAB_CREATED_EVENT_TYPE;
+  properties: SessionTabCreatedEventProperties;
+};

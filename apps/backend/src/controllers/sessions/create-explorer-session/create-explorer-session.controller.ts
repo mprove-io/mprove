@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import {
   Body,
   Controller,
@@ -9,7 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import type { Event } from '@opencode-ai/sdk/v2';
+import type { EventSessionStatus, SessionStatus } from '@opencode-ai/sdk/v2';
 import retry from 'async-retry';
 import type { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -186,14 +187,20 @@ export class CreateExplorerSessionController {
         });
 
         if (firstMessage) {
-          let busyEvent: Event = {
+          let busyEvent: EventSessionStatus = {
+            id: crypto.randomUUID(),
             type: 'session.status',
-            properties: { status: { type: 'busy' } }
-          } as Event;
+            properties: {
+              sessionID: sessionId,
+              status: { type: 'busy' }
+            }
+          };
+
+          let busyStatus: SessionStatus = { type: 'busy' };
 
           ocSession = {
             ...ocSession,
-            ocSessionStatus: { type: 'busy' } as any
+            ocSessionStatus: busyStatus
           };
 
           let busyEventTab = this.ocEventsService.makeOcEvent({

@@ -1,6 +1,5 @@
 import type { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import type {
-  Event,
   Message,
   Part,
   PermissionRequest,
@@ -21,6 +20,7 @@ import { zProviderOptionsAnthropic } from '#common/zod/backend/provider-options/
 import { zProviderOptionsCodex } from '#common/zod/backend/provider-options/provider-options-codex';
 import { zProviderOptionsOpenAI } from '#common/zod/backend/provider-options/provider-options-openai';
 import { zProviderOptionsOpenAICompatible } from '#common/zod/backend/provider-options/provider-options-openai-compatible';
+import type { SessionStreamEvent } from '#common/zod/backend/session-stream-event';
 import { zUi } from '#common/zod/backend/ui';
 import { zAppliedGivenValue } from '#common/zod/blockml/applied-given-value';
 import { zBmlError } from '#common/zod/blockml/bml-error';
@@ -404,7 +404,7 @@ export let zUserLt = z
 export type UserLt = z.infer<typeof zUserLt>;
 
 export let zOcEventSt = z
-  .object({ ocEvent: z.custom<Event>() })
+  .object({ ocEvent: z.custom<SessionStreamEvent>() })
   .meta({ id: 'OcEventSt' });
 export type OcEventSt = z.infer<typeof zOcEventSt>;
 

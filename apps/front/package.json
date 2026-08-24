@@ -68,6 +68,7 @@
     "d3-format": "catalog:",
     "d3-shape": "catalog:",
     "dayjs": "catalog:",
+    "diff": "catalog:",
     "echarts": "catalog:",
     "fast-deep-equal": "catalog:",
     "hammerjs": "catalog:",

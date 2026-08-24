@@ -1,37 +1,28 @@
+import Anthropic from '@anthropic-ai/sdk';
 import { Injectable } from '@nestjs/common';
-import { z } from 'zod';
+import {
+  type Model,
+  Models,
+  type Provider,
+  type ProviderMap
+} from '@opencode-ai/models';
+import OpenAI from 'openai';
 import { getAnthropicModelVariants } from '#backend/functions/anthropic-model-variants';
+import { getOpenAiReasoningEfforts } from '#backend/functions/openai-model-variants';
 import {
   type CodexModelsResult,
   CodexService
 } from '#backend/services/codex.service';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
-import { CODEX_ALLOWED_MODELS_EDITOR } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { ServerError } from '#common/models/server-error';
-import type { AnthropicModel } from '#common/zod/backend/anthropic-model';
-import {
-  type AnthropicModelsResponse,
-  zAnthropicModelsResponse
-} from '#common/zod/backend/anthropic-models-response';
 import type { CodexModel } from '#common/zod/backend/codex-model';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelInput } from '#common/zod/backend/llm-models/llm-model-input';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
-import type { DevModel } from '#common/zod/backend/models-dev/dev-model';
-import {
-  type DevProvider,
-  type ModelsDevResponse,
-  zDevProvider
-} from '#common/zod/backend/models-dev/dev-provider';
-import type { OpenAiModel } from '#common/zod/backend/openai-model';
-import {
-  type OpenAiModelsResponse,
-  zOpenAiModelsResponse
-} from '#common/zod/backend/openai-models-response';
 
 export type LlmModelPartsResult = {
   modelParts: LlmModelPart[];
@@ -41,7 +32,7 @@ export type LlmModelPartsResult = {
 @Injectable()
 export class LlmModelService {
   private readonly modelsDevTtlMs = 60 * 60 * 1000;
-  private modelsDev?: ModelsDevResponse;
+  private modelsDev?: ProviderMap;
   private modelsDevTs?: number;
 
   constructor(private codexService: CodexService) {}
@@ -82,7 +73,7 @@ export class LlmModelService {
     ) {
       let isOpencodeSupported: boolean =
         providerType === ProviderTypeEnum.OpenAICompatible
-          ? isModelSupportedByOpencode({ modelId: modelInput.modelId })
+          ? true
           : isCodexModelSupportedByOpencode({ modelId: modelInput.modelId });
 
       let model: LlmModel = {
@@ -235,23 +226,17 @@ export class LlmModelService {
       isDefinedAndNotEmpty(this.modelsDevTs) &&
       Date.now() - this.modelsDevTs < this.modelsDevTtlMs;
 
-    let modelsDev: ModelsDevResponse;
+    let modelsDev: ProviderMap;
 
     if (isModelsDevFresh) {
-      modelsDev = this.modelsDev as ModelsDevResponse;
+      modelsDev = this.modelsDev as ProviderMap;
     } else {
       try {
-        let response: Response = await fetch('https://models.dev/api.json', {
+        let modelsClient: ReturnType<typeof Models.make> = Models.make();
+
+        modelsDev = await modelsClient.providers({
           signal: AbortSignal.timeout(10_000)
         });
-
-        if (!response.ok) {
-          throw new Error(`models.dev returned ${response.status}`);
-        }
-
-        let responseJson: unknown = await response.json();
-
-        modelsDev = z.record(z.string(), zDevProvider).parse(responseJson);
 
         this.modelsDev = modelsDev;
 
@@ -264,7 +249,7 @@ export class LlmModelService {
       }
     }
 
-    let devProvider: DevProvider = modelsDev[OPENAI_PROVIDER_ID];
+    let devProvider: Provider = modelsDev[OPENAI_PROVIDER_ID];
 
     if (!devProvider) {
       throw new ServerError({
@@ -272,42 +257,29 @@ export class LlmModelService {
       });
     }
 
-    let devModels: DevModel[] = Object.values(devProvider.models);
+    let devModels: Model[] = Object.values(devProvider.models);
 
-    let openAiModelsById: Map<string, OpenAiModel> = new Map();
+    let openAiModelsById: Map<string, OpenAI.Models.Model> = new Map();
 
     try {
-      let response: Response = await fetch('https://api.openai.com/v1/models', {
-        headers: { Authorization: `Bearer ${apiKey}` },
-        signal: AbortSignal.timeout(10_000)
+      let openAiClient: OpenAI = new OpenAI({
+        apiKey: apiKey,
+        timeout: 10_000,
+        maxRetries: 0
       });
 
-      if (!response.ok) {
-        let responseError: Error = new Error(
-          `OpenAI returned ${response.status}`
-        );
-
-        if (response.status === 401) {
-          throw new ServerError({
-            message: ErEnum.BACKEND_PROVIDER_NOT_VALID_API_KEY,
-            originalError: responseError
-          });
-        }
-
-        throw responseError;
-      }
-
-      let responseJson: unknown = await response.json();
-
-      let openAiResponse: OpenAiModelsResponse =
-        zOpenAiModelsResponse.parse(responseJson);
+      let openAiResponse: OpenAI.Models.ModelsPage =
+        await openAiClient.models.list();
 
       openAiModelsById = new Map(
         openAiResponse.data.map(model => [model.id, model])
       );
     } catch (error) {
-      if (error instanceof ServerError) {
-        throw error;
+      if (error instanceof OpenAI.AuthenticationError) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_PROVIDER_NOT_VALID_API_KEY,
+          originalError: error
+        });
       }
 
       throw new ServerError({
@@ -338,63 +310,35 @@ export class LlmModelService {
   }): Promise<LlmModelPart[]> {
     let { apiKey } = item;
 
-    let anthropicModels: AnthropicModel[] = [];
-
-    let url: URL = new URL('https://api.anthropic.com/v1/models');
-
-    url.searchParams.set('limit', '1000');
-
-    let hasMore: boolean = true;
+    let anthropicModels: Anthropic.Models.ModelInfo[] = [];
 
     try {
-      while (hasMore) {
-        let response: Response = await fetch(url, {
-          headers: {
-            'anthropic-version': '2023-06-01',
-            'x-api-key': apiKey
-          },
-          signal: AbortSignal.timeout(10_000)
-        });
+      let anthropicClient: Anthropic = new Anthropic({
+        apiKey: apiKey,
+        timeout: 10_000,
+        maxRetries: 0
+      });
 
-        if (!response.ok) {
-          let responseError: Error = new Error(
-            `Anthropic returned ${response.status}`
-          );
+      let page: Anthropic.Models.ModelInfosPage =
+        await anthropicClient.models.list({ limit: 1000 });
 
-          if (response.status === 401) {
-            throw new ServerError({
-              message: ErEnum.BACKEND_PROVIDER_NOT_VALID_API_KEY,
-              originalError: responseError
-            });
-          }
+      anthropicModels.push(...page.data);
 
-          throw responseError;
-        }
+      let hasNextPage: boolean = page.hasNextPage();
 
-        let responseJson: unknown = await response.json();
+      while (hasNextPage) {
+        page = await page.getNextPage();
 
-        let anthropicResponse: AnthropicModelsResponse =
-          zAnthropicModelsResponse.parse(responseJson);
+        anthropicModels.push(...page.data);
 
-        anthropicModels.push(...anthropicResponse.data);
-
-        hasMore = anthropicResponse.has_more;
-
-        if (hasMore) {
-          let hasLastId: boolean = isDefinedAndNotEmpty(
-            anthropicResponse.last_id
-          );
-
-          if (!hasLastId) {
-            throw new Error('Anthropic returned invalid pagination metadata');
-          }
-
-          url.searchParams.set('after_id', anthropicResponse.last_id as string);
-        }
+        hasNextPage = page.hasNextPage();
       }
     } catch (error) {
-      if (error instanceof ServerError) {
-        throw error;
+      if (error instanceof Anthropic.AuthenticationError) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_PROVIDER_NOT_VALID_API_KEY,
+          originalError: error
+        });
       }
 
       throw new ServerError({
@@ -441,16 +385,12 @@ function codexModelToLlmModelPart(item: {
 }
 
 function anthropicModelToLlmModelPart(item: {
-  anthropicModel: AnthropicModel;
+  anthropicModel: Anthropic.Models.ModelInfo;
 }): LlmModelPart {
   let { anthropicModel } = item;
 
   let variants: string[] = getAnthropicModelVariants({
     anthropicModel: anthropicModel
-  });
-
-  let isOpencodeSupported: boolean = isModelSupportedByOpencode({
-    modelId: anthropicModel.id
   });
 
   let modelPart: LlmModelPart = {
@@ -468,16 +408,16 @@ function anthropicModelToLlmModelPart(item: {
         ? anthropicModel.max_tokens
         : undefined,
     variants: variants.length > 0 ? variants : undefined,
-    isOpencodeSupported: isOpencodeSupported
+    isOpencodeSupported: true
   };
 
   return modelPart;
 }
 
 function openAiModelToLlmModelPart(item: {
-  devModel: DevModel;
-  devProvider: DevProvider;
-  openAiModel?: OpenAiModel;
+  devModel: Model;
+  devProvider: Provider;
+  openAiModel?: OpenAI.Models.Model;
 }): LlmModelPart | undefined {
   let { devModel, devProvider, openAiModel } = item;
 
@@ -491,48 +431,32 @@ function openAiModelToLlmModelPart(item: {
   let hasTextOutput: boolean =
     devModel.modalities?.output.includes('text') ?? false;
 
-  if (!hasTextInput || !hasTextOutput || !devModel.tool_call) {
+  let hasRequiredToolSupport: boolean =
+    devModel.tool_call || devModel.id === 'gpt-5-chat-latest';
+
+  if (!hasTextInput || !hasTextOutput || !hasRequiredToolSupport) {
     return undefined;
   }
 
-  let isOpencodeSupported: boolean = isModelSupportedByOpencode({
-    modelId: devModel.id
-  });
-
   let variants: string[] = [];
+
   if (devModel.reasoning) {
-    // Adapted from external/opencode/packages/opencode/src/provider/transform.ts
-    // ProviderTransform.variants for the pinned OpenCode version.
-    let widelySupportedEfforts: string[] = ['low', 'medium', 'high'];
+    let effortOption = devModel.reasoning_options?.find(
+      option => option.type === 'effort'
+    );
 
-    if (devModel.id !== 'gpt-5-pro') {
-      variants = [...widelySupportedEfforts];
+    variants = effortOption
+      ? effortOption.values.flatMap(value => {
+          if (value === null) {
+            return ['none'];
+          }
 
-      let isGpt5: boolean =
-        devModel.id.includes('gpt-5-') || devModel.id === 'gpt-5';
-
-      if (isGpt5) {
-        variants.unshift('minimal');
-      }
-
-      let isCodex: boolean = devModel.id.includes('codex');
-
-      if (isCodex) {
-        let isCodexXhigh: boolean =
-          devModel.id.includes('5.2') || devModel.id.includes('5.3');
-
-        variants = isCodexXhigh
-          ? [...widelySupportedEfforts, 'xhigh']
-          : widelySupportedEfforts;
-      } else {
-        if (devModel.release_date >= '2025-11-13') {
-          variants.unshift('none');
-        }
-        if (devModel.release_date >= '2025-12-04') {
-          variants.push('xhigh');
-        }
-      }
-    }
+          return typeof value === 'string' ? [value] : [];
+        })
+      : getOpenAiReasoningEfforts({
+          modelId: devModel.id,
+          releaseDate: devModel.release_date
+        });
   }
 
   let providerModelInfo: Record<string, unknown> = {
@@ -546,6 +470,9 @@ function openAiModelToLlmModelPart(item: {
     },
     openAi: openAiModel
   };
+
+  let isOpencodeSupported: boolean =
+    devModel.status !== 'alpha' && devModel.status !== 'deprecated';
 
   return {
     modelId: devModel.id,
@@ -563,24 +490,34 @@ function openAiModelToLlmModelPart(item: {
 function isCodexModelSupportedByOpencode(item: { modelId: string }): boolean {
   let { modelId } = item;
 
-  let isCodexModel: boolean = modelId.includes('codex');
+  let allowedModels: Set<string> = new Set([
+    'gpt-5.5',
+    'gpt-5.3-codex-spark',
+    'gpt-5.4',
+    'gpt-5.4-mini'
+  ]);
 
-  let isAllowedModel: boolean = CODEX_ALLOWED_MODELS_EDITOR.includes(modelId);
+  let isExplicitlyAllowed: boolean = allowedModels.has(modelId);
 
-  let isModelSupported: boolean = isModelSupportedByOpencode({
-    modelId: modelId
-  });
+  if (isExplicitlyAllowed) {
+    return true;
+  }
 
-  let isSupported: boolean =
-    isModelSupported && (isCodexModel || isAllowedModel);
+  let deniedModels: Set<string> = new Set(['gpt-5.5-pro', 'gpt-5.6']);
 
-  return isSupported;
-}
+  let isExplicitlyDenied: boolean = deniedModels.has(modelId);
 
-function isModelSupportedByOpencode(item: { modelId: string }): boolean {
-  let { modelId } = item;
+  if (isExplicitlyDenied) {
+    return false;
+  }
 
-  let isSupported: boolean = modelId !== 'gpt-5-chat-latest';
+  let match: RegExpMatchArray | null = modelId.match(/^gpt-(\d+\.\d+)/);
+
+  let version: number | undefined = match
+    ? Number.parseFloat(match[1])
+    : undefined;
+
+  let isSupported: boolean = version !== undefined && version > 5.4;
 
   return isSupported;
 }

@@ -16,6 +16,7 @@ import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { EditorState, Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { DialogRef } from '@ngneat/dialog';
+import { parsePatch, type StructuredPatchHunk } from 'diff';
 import { Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
@@ -29,18 +30,10 @@ import {
   PlaceNameEnum
 } from '#front/app/services/highlight.service';
 import { SharedModule } from '../../shared/shared.module';
-
-export interface FileDiffDialogItem {
-  file: string;
-  additions: number;
-  deletions: number;
-  status?: 'added' | 'deleted' | 'modified';
-  before?: string;
-  after?: string;
-}
+import type { FileDiffInfo } from '../session-chat.interfaces';
 
 export interface FileDiffsDialogData {
-  diff: FileDiffDialogItem;
+  diff: FileDiffInfo;
 }
 
 @Component({
@@ -62,6 +55,9 @@ export class FileDiffsDialogComponent implements OnInit, OnDestroy {
   dataItem = this.ref.data;
 
   diffContent: { original: string; modified: string };
+  isDiffRenderable = false;
+  diffNotice?: string;
+  rawPatch?: string;
   originalExtensions: Extension[];
   modifiedExtensions: Extension[];
 
@@ -143,6 +139,18 @@ export class FileDiffsDialogComponent implements OnInit, OnDestroy {
   private async initDiffState() {
     let diff = this.dataItem.diff;
 
+    let parsedDiff: { original: string; modified: string; isPartial: boolean } =
+      this.parseDiff({ patch: diff.patch });
+
+    this.diffContent = {
+      original: parsedDiff.original,
+      modified: parsedDiff.modified
+    };
+
+    if (parsedDiff.isPartial) {
+      this.diffNotice = 'Partial patch: only changed sections are shown.';
+    }
+
     let readOnlyExt = EditorState.readOnly.of(true);
 
     let ext = this.getFileExtension(diff.file);
@@ -187,11 +195,6 @@ export class FileDiffsDialogComponent implements OnInit, OnDestroy {
     this.originalExtensions = originalExtensions;
     this.modifiedExtensions = modifiedExtensions;
 
-    this.diffContent = {
-      original: diff.before ?? '',
-      modified: diff.after ?? ''
-    };
-
     this.cd.detectChanges();
 
     this.setupDiffEditorSyncScroll();
@@ -199,7 +202,7 @@ export class FileDiffsDialogComponent implements OnInit, OnDestroy {
     if (isMalloyLang === true) {
       this.highLightService.updateDocText({
         placeName: PlaceNameEnum.DiffDialogOriginal,
-        docText: diff.before ?? '',
+        docText: this.diffContent.original,
         shikiLanguage: this.lang.toLowerCase(),
         shikiTheme: 'light-plus-extended',
         isThrottle: false
@@ -207,12 +210,148 @@ export class FileDiffsDialogComponent implements OnInit, OnDestroy {
 
       this.highLightService.updateDocText({
         placeName: PlaceNameEnum.DiffDialogModified,
-        docText: diff.after ?? '',
+        docText: this.diffContent.modified,
         shikiLanguage: this.lang.toLowerCase(),
         shikiTheme: 'light-plus-extended',
         isThrottle: false
       });
     }
+  }
+
+  private parseDiff(item: { patch?: string }): {
+    original: string;
+    modified: string;
+    isPartial: boolean;
+  } {
+    let { patch } = item;
+
+    if (patch === undefined) {
+      this.diffNotice = 'Patch content is unavailable.';
+
+      return { original: '', modified: '', isPartial: false };
+    }
+
+    if (patch.length === 0) {
+      this.diffNotice = 'No textual diff is available.';
+
+      return { original: '', modified: '', isPartial: false };
+    }
+
+    try {
+      let parsedPatches: ReturnType<typeof parsePatch> = parsePatch(patch);
+
+      if (parsedPatches.length !== 1 || parsedPatches[0].hunks.length === 0) {
+        this.diffNotice = 'The patch could not be displayed.';
+        this.rawPatch = patch;
+
+        return { original: '', modified: '', isPartial: false };
+      }
+
+      let parsedPatch = parsedPatches[0];
+
+      let firstHunk: StructuredPatchHunk = parsedPatch.hunks[0];
+
+      let hasCompleteEnvelope: boolean =
+        patch.startsWith('Index: ') || patch.startsWith('diff --git ');
+
+      let isComplete: boolean =
+        hasCompleteEnvelope &&
+        parsedPatch.hunks.length === 1 &&
+        firstHunk.oldStart <= 1 &&
+        firstHunk.newStart <= 1;
+
+      let content: { original: string; modified: string } =
+        this.reconstructHunks({
+          hunks: parsedPatch.hunks,
+          includeHeaders: !isComplete
+        });
+
+      this.isDiffRenderable = true;
+
+      return {
+        original: content.original,
+        modified: content.modified,
+        isPartial: !isComplete
+      };
+    } catch {
+      this.diffNotice = 'The patch could not be parsed.';
+      this.rawPatch = patch;
+
+      return { original: '', modified: '', isPartial: false };
+    }
+  }
+
+  private reconstructHunks(item: {
+    hunks: StructuredPatchHunk[];
+    includeHeaders: boolean;
+  }): { original: string; modified: string } {
+    let { hunks, includeHeaders } = item;
+
+    let originalLines: { text: string; newline: boolean }[] = [];
+
+    let modifiedLines: { text: string; newline: boolean }[] = [];
+
+    hunks.forEach((hunk, hunkIndex) => {
+      if (includeHeaders) {
+        let header: string = `@@ -${hunk.oldStart},${hunk.oldLines} +${hunk.newStart},${hunk.newLines} @@`;
+
+        if (hunkIndex > 0) {
+          originalLines.push({ text: '', newline: true });
+          modifiedLines.push({ text: '', newline: true });
+        }
+
+        originalLines.push({ text: header, newline: true });
+        modifiedLines.push({ text: header, newline: true });
+      }
+
+      let previousPrefix: string | undefined;
+
+      hunk.lines.forEach(line => {
+        let prefix: string = line.slice(0, 1);
+
+        if (prefix === '\\') {
+          if (previousPrefix === '-' || previousPrefix === ' ') {
+            let previousOriginal = originalLines.at(-1);
+
+            if (previousOriginal) {
+              previousOriginal.newline = false;
+            }
+          }
+
+          if (previousPrefix === '+' || previousPrefix === ' ') {
+            let previousModified = modifiedLines.at(-1);
+
+            if (previousModified) {
+              previousModified.newline = false;
+            }
+          }
+
+          return;
+        }
+
+        let text: string = line.slice(1);
+
+        if (prefix === '-' || prefix === ' ') {
+          originalLines.push({ text: text, newline: true });
+        }
+
+        if (prefix === '+' || prefix === ' ') {
+          modifiedLines.push({ text: text, newline: true });
+        }
+
+        previousPrefix = prefix;
+      });
+    });
+
+    let original: string = originalLines
+      .map(line => line.text + (line.newline ? '\n' : ''))
+      .join('');
+
+    let modified: string = modifiedLines
+      .map(line => line.text + (line.newline ? '\n' : ''))
+      .join('');
+
+    return { original: original, modified: modified };
   }
 
   private forceReRender(item: { side: 'original' | 'modified' }) {

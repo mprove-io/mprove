@@ -73,7 +73,7 @@ export class SessionMessagesService {
         let userOcMsg = msg.ocMessage as UserMessage;
         let agentName = userOcMsg?.agent || '';
         let modelId = userOcMsg?.model?.modelID || '';
-        let rawVariant = userOcMsg?.variant || '';
+        let rawVariant = userOcMsg?.model?.variant || '';
         let msgVariant = rawVariant !== 'default' ? rawVariant : '';
 
         // Extract summary diffs
@@ -86,15 +86,20 @@ export class SessionMessagesService {
           let diffs: FileDiffInfo[] = [];
 
           rawDiffs.forEach(d => {
-            let idx = seenFiles.indexOf(d.file);
+            if (typeof d.file !== 'string') {
+              return;
+            }
+
+            let idx: number = seenFiles.indexOf(d.file);
+
             let diff: FileDiffInfo = {
               file: d.file,
+              patch: d.patch,
               additions: d.additions,
               deletions: d.deletions,
-              status: d.status,
-              before: d.before ?? '',
-              after: d.after ?? ''
+              status: d.status
             };
+
             if (idx < 0) {
               seenFiles.push(d.file);
               diffs.push(diff);

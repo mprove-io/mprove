@@ -1,6 +1,7 @@
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAI } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import type Anthropic from '@anthropic-ai/sdk';
 import { Injectable } from '@nestjs/common';
 import type { LanguageModel } from 'ai';
 import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -8,12 +9,17 @@ import {
   type AnthropicVariantOptions,
   getAnthropicVariantOptions
 } from '#backend/functions/anthropic-model-variants';
+import {
+  getOpenAiReasoningEfforts,
+  getOpenAiVariantOptions,
+  isOpenAiGpt5Chat,
+  isOpenAiGpt5Family,
+  isOpenAiGpt5Pro
+} from '#backend/functions/openai-model-variants';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
-import type { AnthropicModel } from '#common/zod/backend/anthropic-model';
-import { zAnthropicModel } from '#common/zod/backend/anthropic-model';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 
 @Injectable()
@@ -77,9 +83,10 @@ export class ExplorerModelsService {
     modelId: string;
     sessionId: string;
     instructions?: string;
+    variant?: string;
     isSmall: boolean;
   }): { openai: Record<string, any> } {
-    let { modelId, sessionId, instructions, isSmall } = item;
+    let { modelId, sessionId, instructions, variant, isSmall } = item;
 
     let openai: Record<string, any> = {
       store: false
@@ -89,19 +96,33 @@ export class ExplorerModelsService {
       openai.instructions = instructions;
     }
 
-    let isGpt5 = modelId.includes('gpt-5');
+    let isGpt5: boolean = isOpenAiGpt5Family({ modelId: modelId });
 
     if (isSmall) {
       if (isGpt5) {
-        openai.reasoningEffort = modelId.includes('5.') ? 'low' : 'minimal';
+        let efforts: string[] = getOpenAiReasoningEfforts({
+          modelId: modelId,
+          releaseDate: ''
+        });
+
+        let firstEffort: string | undefined = efforts[0];
+
+        if (isDefined(firstEffort)) {
+          Object.assign(
+            openai,
+            getOpenAiVariantOptions({ variant: firstEffort })
+          );
+        }
       }
     } else {
-      let isGpt5Chat = modelId.includes('gpt-5-chat');
-      let isGpt5Pro = modelId.includes('gpt-5-pro');
+      let isGpt5Chat: boolean = isOpenAiGpt5Chat({ modelId: modelId });
+
+      let isGpt5Pro: boolean = isOpenAiGpt5Pro({ modelId: modelId });
 
       if (isGpt5 && !isGpt5Chat && !isGpt5Pro) {
         openai.reasoningEffort = 'medium';
         openai.reasoningSummary = 'auto';
+        openai.include = ['reasoning.encrypted_content'];
       }
 
       openai.promptCacheKey = sessionId;
@@ -112,6 +133,10 @@ export class ExplorerModelsService {
 
       if (isGpt5Dotted && !isCodexVariant && !isChatVariant) {
         openai.textVerbosity = 'low';
+      }
+
+      if (isDefined(variant) && variant !== 'default') {
+        Object.assign(openai, getOpenAiVariantOptions({ variant: variant }));
       }
     }
 
@@ -128,14 +153,8 @@ export class ExplorerModelsService {
       return undefined;
     }
 
-    let parseResult: ReturnType<typeof zAnthropicModel.safeParse> =
-      zAnthropicModel.safeParse(model.providerModelInfo);
-
-    if (parseResult.success === false) {
-      return undefined;
-    }
-
-    let anthropicModel: AnthropicModel = parseResult.data;
+    let anthropicModel: Anthropic.Models.ModelInfo =
+      model.providerModelInfo as unknown as Anthropic.Models.ModelInfo;
 
     let options: ReturnType<typeof getAnthropicVariantOptions> =
       getAnthropicVariantOptions({

@@ -30,18 +30,6 @@ export const KEY_SSE_TICKET = 'sse-ticket';
 export const KEY_OPENCODE_STREAM_OWNER = 'opencode-stream-owner';
 export const KEY_AI_STREAM_OWNER = 'ai-stream-owner';
 
-// Mirrors exactly: external/opencode/packages/opencode/src/plugin/codex.ts lines 362-371
-export const CODEX_ALLOWED_MODELS_EDITOR: string[] = [
-  'gpt-5.1-codex',
-  'gpt-5.1-codex-max',
-  'gpt-5.1-codex-mini',
-  'gpt-5.2',
-  'gpt-5.2-codex',
-  'gpt-5.3-codex',
-  'gpt-5.4',
-  'gpt-5.4-mini'
-];
-
 export const PASSWORD_EXPIRES_OFFSET = 86400000;
 
 export const IDEMP_EXPIRE_SECONDS = 600;

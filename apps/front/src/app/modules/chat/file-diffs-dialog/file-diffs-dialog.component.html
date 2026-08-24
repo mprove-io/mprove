@@ -27,9 +27,15 @@
   </div>
 
   <div class="flex-1 px-4 py-4">
+    <div
+      *ngIf="diffNotice"
+      class="border-s200 bg-s100 text-s2 mb-3 rounded border px-3 py-2 text-sm"
+    >
+      {{ diffNotice }}
+    </div>
     <diff-editor
       #diffEditor
-      *ngIf="diffContent"
+      *ngIf="diffContent && isDiffRenderable"
       class="block w-full outline-none"
       style="height: 70vh"
       [setup]="null"
@@ -38,6 +44,11 @@
       [originalExtensions]="originalExtensions"
       [modifiedExtensions]="modifiedExtensions"
     ></diff-editor>
+    <pre
+      *ngIf="rawPatch"
+      class="bg-s100 max-h-[65vh] overflow-auto rounded p-4 text-xs"
+      >{{ rawPatch }}</pre
+    >
   </div>
 </div>
 

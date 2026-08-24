@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Event } from '@opencode-ai/sdk/v2';
+import type { EventMessagePartUpdated, ToolPart } from '@opencode-ai/sdk/v2';
 import type { LanguageModelUsage, ModelMessage, ProviderMetadata } from 'ai';
 import { stepCountIs, streamText } from 'ai';
 import { and, asc, eq } from 'drizzle-orm';
@@ -134,6 +134,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
           // );
 
           let titleEvent = this.explorerEventsMakerService.makeTitleEvent({
+            sessionId: sessionId,
             title: parsed.title
           });
           this.sessionDrainService.enqueue({
@@ -318,6 +319,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       });
 
       let titleEvent = this.explorerEventsMakerService.makeTitleEvent({
+        sessionId: item.sessionId,
         title: item.title
       });
 
@@ -488,6 +490,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
         // Emit error + idle
         let errorEvent = this.explorerEventsMakerService.makeErrorEvent({
+          sessionId: sessionId,
           error: e
         });
         this.sessionDrainService.enqueue({
@@ -495,7 +498,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
           event: errorEvent
         });
 
-        let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
+        let idleEvent = this.explorerEventsMakerService.makeIdleEvent({
+          sessionId: sessionId
+        });
         this.sessionDrainService.enqueue({
           sessionId: sessionId,
           event: idleEvent
@@ -636,7 +641,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
       });
 
     // Pre-streaming events
-    let busyEvent = this.explorerEventsMakerService.makeBusyEvent();
+    let busyEvent = this.explorerEventsMakerService.makeBusyEvent({
+      sessionId: sessionId
+    });
 
     this.sessionDrainService.enqueue({
       sessionId: sessionId,
@@ -650,6 +657,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       sessionId: sessionId,
       provider: provider,
       modelId: modelId,
+      variant: variant,
       system: explorerSystemPrompt
     });
     this.sessionDrainService.enqueue({
@@ -679,6 +687,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       this.explorerEventsMakerService.makeAssistantMessageEvent({
         messageId: assistantMessageId,
         sessionId: sessionId,
+        parentId: userMessageId,
         provider: provider,
         modelId: modelId
       });
@@ -744,6 +753,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
           modelId: modelId,
           sessionId: sessionId,
           instructions: isCodex ? explorerSystemPrompt : undefined,
+          variant: variant,
           isSmall: false
         })
       : isAnthropic
@@ -789,6 +799,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
     let wasAborted = false;
     let toolPartIds = new Map<string, string>();
+    let toolStartTimes = new Map<string, number>();
     let lastPartId = assistantPartId;
     let currentTextPartId: string | undefined = assistantPartId;
     let textPartContents = new Map<string, string>([[assistantPartId, '']]);
@@ -832,6 +843,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
           let deltaEvent = this.explorerEventsMakerService.makeTextDeltaEvent({
             messageId: assistantMessageId,
             partId: currentTextPartId,
+            sessionId: sessionId,
             delta: delta
           });
 
@@ -851,23 +863,42 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
           toolPartIds.set(chunk.toolCallId, toolPartId);
 
-          let toolPartEvent = {
+          let toolStartTime: number = Date.now();
+
+          toolStartTimes.set(chunk.toolCallId, toolStartTime);
+
+          let isInputRecord: boolean =
+            typeof chunk.input === 'object' &&
+            chunk.input !== null &&
+            !Array.isArray(chunk.input);
+
+          let toolInput: Record<string, unknown> = isInputRecord
+            ? (chunk.input as Record<string, unknown>)
+            : {};
+
+          let toolPart: ToolPart = {
+            id: toolPartId,
+            messageID: assistantMessageId,
+            sessionID: sessionId,
+            type: 'tool',
+            tool: chunk.toolName,
+            callID: chunk.toolCallId,
+            state: {
+              status: 'running',
+              input: toolInput,
+              time: { start: toolStartTime }
+            }
+          };
+
+          let toolPartEvent: EventMessagePartUpdated = {
+            id: crypto.randomUUID(),
             type: 'message.part.updated',
             properties: {
-              part: {
-                id: toolPartId,
-                messageID: assistantMessageId,
-                sessionID: sessionId,
-                type: 'tool',
-                tool: chunk.toolName,
-                callID: chunk.toolCallId,
-                state: {
-                  status: 'running',
-                  input: chunk.input
-                }
-              }
+              sessionID: sessionId,
+              part: toolPart,
+              time: Date.now()
             }
-          } as unknown as Event;
+          };
 
           this.sessionDrainService.enqueue({
             sessionId: sessionId,
@@ -889,24 +920,44 @@ export class ExplorerStreamService implements OnModuleDestroy {
             outputText = String(chunk.output);
           }
 
-          let toolPartEvent = {
+          let isInputRecord: boolean =
+            typeof chunk.input === 'object' &&
+            chunk.input !== null &&
+            !Array.isArray(chunk.input);
+
+          let toolInput: Record<string, unknown> = isInputRecord
+            ? (chunk.input as Record<string, unknown>)
+            : {};
+
+          let toolStartTime: number =
+            toolStartTimes.get(chunk.toolCallId) ?? Date.now();
+
+          let toolPart: ToolPart = {
+            id: toolPartId,
+            messageID: assistantMessageId,
+            sessionID: sessionId,
+            type: 'tool',
+            tool: chunk.toolName,
+            callID: chunk.toolCallId,
+            state: {
+              status: 'completed',
+              input: toolInput,
+              output: outputText,
+              title: chunk.toolName,
+              metadata: {},
+              time: { start: toolStartTime, end: Date.now() }
+            }
+          };
+
+          let toolPartEvent: EventMessagePartUpdated = {
+            id: crypto.randomUUID(),
             type: 'message.part.updated',
             properties: {
-              part: {
-                id: toolPartId,
-                messageID: assistantMessageId,
-                sessionID: sessionId,
-                type: 'tool',
-                tool: chunk.toolName,
-                callID: chunk.toolCallId,
-                state: {
-                  status: 'completed',
-                  input: chunk.input,
-                  output: outputText
-                }
-              }
+              sessionID: sessionId,
+              part: toolPart,
+              time: Date.now()
             }
-          } as unknown as Event;
+          };
 
           this.sessionDrainService.enqueue({
             sessionId: sessionId,
@@ -946,7 +997,10 @@ export class ExplorerStreamService implements OnModuleDestroy {
       let abortedMsgEvent =
         this.explorerEventsMakerService.makeAbortedMessageEvent({
           messageId: assistantMessageId,
-          sessionId: sessionId
+          sessionId: sessionId,
+          parentId: userMessageId,
+          provider: provider,
+          modelId: modelId
         });
 
       this.sessionDrainService.enqueue({
@@ -954,7 +1008,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
         event: abortedMsgEvent
       });
 
-      let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
+      let idleEvent = this.explorerEventsMakerService.makeIdleEvent({
+        sessionId: sessionId
+      });
 
       this.sessionDrainService.enqueue({
         sessionId: sessionId,
@@ -971,6 +1027,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
           this.explorerEventsMakerService.makeAssistantMessageEvent({
             messageId: assistantMessageId,
             sessionId: sessionId,
+            parentId: userMessageId,
             provider: provider,
             modelId: modelId,
             tokens: tokens,
@@ -983,7 +1040,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
         });
       }
 
-      let idleEvent = this.explorerEventsMakerService.makeIdleEvent();
+      let idleEvent = this.explorerEventsMakerService.makeIdleEvent({
+        sessionId: sessionId
+      });
       this.sessionDrainService.enqueue({
         sessionId: sessionId,
         event: idleEvent
@@ -995,6 +1054,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
 
         if (title) {
           let titleEvent = this.explorerEventsMakerService.makeTitleEvent({
+            sessionId: sessionId,
             title: title
           });
           this.sessionDrainService.enqueue({

@@ -1,23 +1,50 @@
+import crypto from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import type { Event } from '@opencode-ai/sdk/v2';
+import type {
+  AssistantMessage,
+  EventMessagePartDelta,
+  EventMessagePartUpdated,
+  EventMessageUpdated,
+  EventSessionError,
+  EventSessionStatus,
+  TextPart,
+  UserMessage
+} from '@opencode-ai/sdk/v2';
 import { APICallError } from 'ai';
-import { SESSION_TAB_CREATED_EVENT_TYPE } from '#common/constants/top';
+import {
+  SESSION_TAB_CREATED_EVENT_TYPE,
+  SESSION_TITLE_UPDATED_EVENT_TYPE
+} from '#common/constants/top';
 import type { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import type { MproveSessionTitleUpdatedEvent } from '#common/zod/backend/session-stream-event';
+import type { SessionTabCreatedEvent } from '#common/zod/backend/session-tab-created-event';
 
 @Injectable()
 export class ExplorerEventsMakerService {
-  makeBusyEvent(): Event {
-    return {
+  makeBusyEvent(item: { sessionId: string }): EventSessionStatus {
+    let event: EventSessionStatus = {
+      id: crypto.randomUUID(),
       type: 'session.status',
-      properties: { status: { type: 'busy' } }
-    } as Event;
+      properties: {
+        sessionID: item.sessionId,
+        status: { type: 'busy' }
+      }
+    };
+
+    return event;
   }
 
-  makeIdleEvent(): Event {
-    return {
+  makeIdleEvent(item: { sessionId: string }): EventSessionStatus {
+    let event: EventSessionStatus = {
+      id: crypto.randomUUID(),
       type: 'session.status',
-      properties: { status: { type: 'idle' } }
-    } as Event;
+      properties: {
+        sessionID: item.sessionId,
+        status: { type: 'idle' }
+      }
+    };
+
+    return event;
   }
 
   makeUserMessageEvent(item: {
@@ -25,20 +52,33 @@ export class ExplorerEventsMakerService {
     sessionId: string;
     provider: string;
     modelId: string;
+    variant?: string;
     system?: string;
-  }): Event {
-    return {
+  }): EventMessageUpdated {
+    let message: UserMessage = {
+      id: item.messageId,
+      sessionID: item.sessionId,
+      role: 'user',
+      time: { created: Date.now() },
+      agent: 'explorer',
+      model: {
+        providerID: item.provider,
+        modelID: item.modelId,
+        variant: item.variant
+      },
+      system: item.system
+    };
+
+    let event: EventMessageUpdated = {
+      id: crypto.randomUUID(),
       type: 'message.updated',
       properties: {
-        info: {
-          id: item.messageId,
-          sessionID: item.sessionId,
-          role: 'user',
-          model: { providerID: item.provider, modelID: item.modelId },
-          system: item.system
-        }
+        sessionID: item.sessionId,
+        info: message
       }
-    } as Event;
+    };
+
+    return event;
   }
 
   makeUserPartEvent(item: {
@@ -46,26 +86,34 @@ export class ExplorerEventsMakerService {
     messageId: string;
     sessionId: string;
     text: string;
-  }): Event {
-    return {
+  }): EventMessagePartUpdated {
+    let part: TextPart = {
+      id: item.partId,
+      messageID: item.messageId,
+      sessionID: item.sessionId,
+      type: 'text',
+      text: item.text
+    };
+
+    let event: EventMessagePartUpdated = {
+      id: crypto.randomUUID(),
       type: 'message.part.updated',
       properties: {
-        part: {
-          id: item.partId,
-          messageID: item.messageId,
-          sessionID: item.sessionId,
-          type: 'text',
-          text: item.text
-        }
+        sessionID: item.sessionId,
+        part: part,
+        time: Date.now()
       }
-    } as Event;
+    };
+
+    return event;
   }
 
   makeAssistantMessageEvent(item: {
     messageId: string;
     sessionId: string;
-    provider?: string;
-    modelId?: string;
+    parentId: string;
+    provider: string;
+    modelId: string;
     tokens?: {
       total?: number;
       input: number;
@@ -77,56 +125,90 @@ export class ExplorerEventsMakerService {
       };
     };
     finish?: string;
-  }): Event {
-    return {
+  }): EventMessageUpdated {
+    let tokens: AssistantMessage['tokens'] = item.tokens ?? {
+      input: 0,
+      output: 0,
+      reasoning: 0,
+      cache: { read: 0, write: 0 }
+    };
+
+    let message: AssistantMessage = {
+      id: item.messageId,
+      sessionID: item.sessionId,
+      role: 'assistant',
+      time: {
+        created: Date.now(),
+        ...(item.finish ? { completed: Date.now() } : {})
+      },
+      parentID: item.parentId,
+      modelID: item.modelId,
+      providerID: item.provider,
+      mode: 'explorer',
+      agent: 'explorer',
+      path: { cwd: '', root: '' },
+      cost: 0,
+      tokens: tokens,
+      finish: item.finish
+    };
+
+    let event: EventMessageUpdated = {
+      id: crypto.randomUUID(),
       type: 'message.updated',
       properties: {
-        info: {
-          id: item.messageId,
-          sessionID: item.sessionId,
-          role: 'assistant',
-          providerID: item.provider,
-          modelID: item.modelId,
-          tokens: item.tokens,
-          finish: item.finish
-        }
+        sessionID: item.sessionId,
+        info: message
       }
-    } as Event;
+    };
+
+    return event;
   }
 
   makeAssistantPartEvent(item: {
     partId: string;
     messageId: string;
     sessionId: string;
-  }): Event {
-    return {
+  }): EventMessagePartUpdated {
+    let part: TextPart = {
+      id: item.partId,
+      messageID: item.messageId,
+      sessionID: item.sessionId,
+      type: 'text',
+      text: ''
+    };
+
+    let event: EventMessagePartUpdated = {
+      id: crypto.randomUUID(),
       type: 'message.part.updated',
       properties: {
-        part: {
-          id: item.partId,
-          messageID: item.messageId,
-          sessionID: item.sessionId,
-          type: 'text',
-          text: ''
-        }
+        sessionID: item.sessionId,
+        part: part,
+        time: Date.now()
       }
-    } as Event;
+    };
+
+    return event;
   }
 
   makeTextDeltaEvent(item: {
     messageId: string;
     partId: string;
+    sessionId: string;
     delta: string;
-  }): Event {
-    return {
+  }): EventMessagePartDelta {
+    let event: EventMessagePartDelta = {
+      id: crypto.randomUUID(),
       type: 'message.part.delta',
       properties: {
+        sessionID: item.sessionId,
         messageID: item.messageId,
         partID: item.partId,
         field: 'text',
         delta: item.delta
       }
-    } as Event;
+    };
+
+    return event;
   }
 
   makeFinalPartEvent(item: {
@@ -134,46 +216,88 @@ export class ExplorerEventsMakerService {
     messageId: string;
     sessionId: string;
     text: string;
-  }): Event {
-    return {
+  }): EventMessagePartUpdated {
+    let part: TextPart = {
+      id: item.partId,
+      messageID: item.messageId,
+      sessionID: item.sessionId,
+      type: 'text',
+      text: item.text
+    };
+
+    let event: EventMessagePartUpdated = {
+      id: crypto.randomUUID(),
       type: 'message.part.updated',
       properties: {
-        part: {
-          id: item.partId,
-          messageID: item.messageId,
-          sessionID: item.sessionId,
-          type: 'text',
-          text: item.text
-        }
+        sessionID: item.sessionId,
+        part: part,
+        time: Date.now()
       }
-    } as Event;
+    };
+
+    return event;
   }
 
   makeAbortedMessageEvent(item: {
     messageId: string;
     sessionId: string;
-  }): Event {
-    return {
+    parentId: string;
+    provider: string;
+    modelId: string;
+  }): EventMessageUpdated {
+    let message: AssistantMessage = {
+      id: item.messageId,
+      sessionID: item.sessionId,
+      role: 'assistant',
+      time: { created: Date.now(), completed: Date.now() },
+      error: {
+        name: 'MessageAbortedError',
+        data: { message: 'Message generation was aborted' }
+      },
+      parentID: item.parentId,
+      modelID: item.modelId,
+      providerID: item.provider,
+      mode: 'explorer',
+      agent: 'explorer',
+      path: { cwd: '', root: '' },
+      cost: 0,
+      tokens: {
+        input: 0,
+        output: 0,
+        reasoning: 0,
+        cache: { read: 0, write: 0 }
+      }
+    };
+
+    let event: EventMessageUpdated = {
+      id: crypto.randomUUID(),
       type: 'message.updated',
       properties: {
-        info: {
-          id: item.messageId,
-          sessionID: item.sessionId,
-          role: 'assistant',
-          error: { name: 'MessageAbortedError' }
-        }
+        sessionID: item.sessionId,
+        info: message
       }
-    } as Event;
+    };
+
+    return event;
   }
 
-  makeTitleEvent(item: { title: string }): Event {
-    return {
-      type: 'session.updated',
-      properties: { info: { title: item.title } }
-    } as Event;
+  makeTitleEvent(item: {
+    sessionId: string;
+    title: string;
+  }): MproveSessionTitleUpdatedEvent {
+    let event: MproveSessionTitleUpdatedEvent = {
+      id: crypto.randomUUID(),
+      type: SESSION_TITLE_UPDATED_EVENT_TYPE,
+      properties: { sessionID: item.sessionId, title: item.title }
+    };
+
+    return event;
   }
 
-  makeErrorEvent(item: { error: unknown }): Event {
+  makeErrorEvent(item: {
+    sessionId: string;
+    error: unknown;
+  }): EventSessionError {
     let { error } = item;
 
     let isApiCallError: boolean = APICallError.isInstance(error);
@@ -181,9 +305,11 @@ export class ExplorerEventsMakerService {
     if (isApiCallError) {
       let apiCallError: APICallError = error as APICallError;
 
-      return {
+      let event: EventSessionError = {
+        id: crypto.randomUUID(),
         type: 'session.error',
         properties: {
+          sessionID: item.sessionId,
           error: {
             name: 'APIError',
             data: {
@@ -194,7 +320,9 @@ export class ExplorerEventsMakerService {
             }
           }
         }
-      } as Event;
+      };
+
+      return event;
     }
 
     let isNativeError: boolean = error instanceof Error;
@@ -241,9 +369,11 @@ export class ExplorerEventsMakerService {
           metadata['code'] = providerCode;
         }
 
-        return {
+        let event: EventSessionError = {
+          id: crypto.randomUUID(),
           type: 'session.error',
           properties: {
+            sessionID: item.sessionId,
             error: {
               name: 'APIError',
               data: {
@@ -253,7 +383,9 @@ export class ExplorerEventsMakerService {
               }
             }
           }
-        } as Event;
+        };
+
+        return event;
       }
     }
 
@@ -262,15 +394,19 @@ export class ExplorerEventsMakerService {
         ? (error as Error).message
         : 'AI SDK streaming failed';
 
-    return {
+    let event: EventSessionError = {
+      id: crypto.randomUUID(),
       type: 'session.error',
       properties: {
+        sessionID: item.sessionId,
         error: {
           name: 'UnknownError',
           data: { message: errorMessage }
         }
       }
-    } as Event;
+    };
+
+    return event;
   }
 
   makeChartTabEvent(item: {
@@ -279,8 +415,9 @@ export class ExplorerEventsMakerService {
     chartType: ChartTypeEnum;
     title: string;
     modelId: string;
-  }): Event {
-    return {
+  }): SessionTabCreatedEvent {
+    let event: SessionTabCreatedEvent = {
+      id: crypto.randomUUID(),
       type: SESSION_TAB_CREATED_EVENT_TYPE,
       properties: {
         tabId: item.tabId,
@@ -289,6 +426,8 @@ export class ExplorerEventsMakerService {
         title: item.title,
         modelId: item.modelId
       }
-    } as unknown as Event;
+    };
+
+    return event;
   }
 }

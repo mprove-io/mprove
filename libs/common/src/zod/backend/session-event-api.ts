@@ -1,12 +1,12 @@
-import type { Event } from '@opencode-ai/sdk/v2';
 import { z } from 'zod';
+import type { SessionStreamEvent } from './session-stream-event';
 
 export let zSessionEventApi = z
   .object({
     eventId: z.string(),
     eventIndex: z.number().int(),
     eventType: z.string(),
-    ocEvent: z.custom<Event>()
+    ocEvent: z.custom<SessionStreamEvent>()
   })
   .meta({ id: 'SessionEventApi' });
 
