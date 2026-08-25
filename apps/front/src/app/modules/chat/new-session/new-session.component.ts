@@ -114,7 +114,9 @@ export class NewSessionComponent implements OnInit {
     this.modelExtraId = isExplorer
       ? uiState.newSessionExplorerModelExtraId
       : uiState.newSessionEditorModelExtraId;
-    this.variant = uiState.newSessionEditorVariant || 'default';
+    this.variant = isExplorer
+      ? uiState.newSessionExplorerVariant || 'default'
+      : uiState.newSessionEditorVariant || 'default';
   }
 
   openBranchSelect() {

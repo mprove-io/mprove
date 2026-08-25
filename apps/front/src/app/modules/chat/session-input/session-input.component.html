@@ -156,7 +156,6 @@
   <ng-select
     #sessionVariantSelect
     [fixNgSelectBottom]="sessionVariantSelect"
-    *ngIf="sessionType !== sessionTypeEnum.Explorer"
     class="session-variants-select w-[140px] select-none text-base"
     [items]="variants"
     [clearable]="false"

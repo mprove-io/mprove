@@ -168,10 +168,12 @@ export class SessionInputComponent implements OnChanges {
 
     if (isExplorer) {
       this.uiQuery.updatePart({
-        newSessionExplorerModelExtraId: this.modelExtraId
+        newSessionExplorerModelExtraId: this.modelExtraId,
+        newSessionExplorerVariant: this.variant
       });
       this.uiService.setUserUi({
-        newSessionExplorerModelExtraId: this.modelExtraId
+        newSessionExplorerModelExtraId: this.modelExtraId,
+        newSessionExplorerVariant: this.variant
       });
     } else {
       this.uiQuery.updatePart({
@@ -191,8 +193,13 @@ export class SessionInputComponent implements OnChanges {
     let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
 
     if (isExplorer) {
+      this.uiQuery.updatePart({
+        newSessionExplorerVariant: this.variant
+      });
+
       this.uiService.setUserUi({
-        newSessionExplorerModelExtraId: this.modelExtraId
+        newSessionExplorerModelExtraId: this.modelExtraId,
+        newSessionExplorerVariant: this.variant
       });
     } else {
       this.uiService.setUserUi({

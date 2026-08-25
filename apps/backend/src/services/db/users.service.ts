@@ -109,6 +109,10 @@ export class UsersService {
           ? user.ui?.newSessionExplorerModelExtraId
           : defaultSrvUi.newSessionExplorerModelExtraId,
         //
+        newSessionExplorerVariant: isDefined(user.ui?.newSessionExplorerVariant)
+          ? user.ui?.newSessionExplorerVariant
+          : defaultSrvUi.newSessionExplorerVariant,
+        //
         newSessionEditorModelExtraId: isDefined(
           user.ui?.newSessionEditorModelExtraId
         )

@@ -41,6 +41,7 @@ export class UiService {
     permissionsAutoAcceptSessionIds?: string[];
     newSessionPermissionsAutoAccept?: boolean;
     newSessionExplorerModelExtraId?: string;
+    newSessionExplorerVariant?: string;
     newSessionEditorModelExtraId?: string;
     newSessionEditorVariant?: string;
   }) {
@@ -57,6 +58,7 @@ export class UiService {
       permissionsAutoAcceptSessionIds,
       newSessionPermissionsAutoAccept,
       newSessionExplorerModelExtraId,
+      newSessionExplorerVariant,
       newSessionEditorModelExtraId,
       newSessionEditorVariant
     } = item;
@@ -104,6 +106,9 @@ export class UiService {
       newSessionExplorerModelExtraId: isDefined(newSessionExplorerModelExtraId)
         ? newSessionExplorerModelExtraId
         : uiState.newSessionExplorerModelExtraId,
+      newSessionExplorerVariant: isDefined(newSessionExplorerVariant)
+        ? newSessionExplorerVariant
+        : uiState.newSessionExplorerVariant,
       newSessionEditorModelExtraId: isDefined(newSessionEditorModelExtraId)
         ? newSessionEditorModelExtraId
         : uiState.newSessionEditorModelExtraId,

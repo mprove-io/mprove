@@ -26,6 +26,7 @@ export let zUi = z
     permissionsAutoAcceptSessionIds: z.array(z.string()).nullish(),
     newSessionPermissionsAutoAccept: z.boolean().nullish(),
     newSessionExplorerModelExtraId: z.string().nullish(),
+    newSessionExplorerVariant: z.string().nullish(),
     newSessionEditorModelExtraId: z.string().nullish(),
     newSessionEditorVariant: z.string().nullish()
   })

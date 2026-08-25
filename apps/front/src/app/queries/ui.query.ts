@@ -78,6 +78,7 @@ export class UiState {
   isOptimisticLoading: boolean;
   newSessionPermissionsAutoAccept: boolean;
   newSessionExplorerModelExtraId: string;
+  newSessionExplorerVariant: string;
   newSessionEditorModelExtraId: string;
   newSessionEditorVariant: string;
 }
@@ -140,6 +141,7 @@ let uiState: UiState = {
   permissionsAutoAcceptSessionIds: [],
   newSessionPermissionsAutoAccept: false,
   newSessionExplorerModelExtraId: undefined,
+  newSessionExplorerVariant: undefined,
   newSessionEditorModelExtraId: undefined,
   newSessionEditorVariant: undefined
 };
@@ -265,6 +267,10 @@ export class UiQuery extends BaseQuery<UiState> {
 
   newSessionExplorerModelExtraId$ = this.store.pipe(
     select(state => state.newSessionExplorerModelExtraId)
+  );
+
+  newSessionExplorerVariant$ = this.store.pipe(
+    select(state => state.newSessionExplorerVariant)
   );
 
   newSessionEditorModelExtraId$ = this.store.pipe(

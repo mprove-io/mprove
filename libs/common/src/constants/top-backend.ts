@@ -105,6 +105,7 @@ export const DEFAULT_SRV_UI: Ui = {
   permissionsAutoAcceptSessionIds: [],
   newSessionPermissionsAutoAccept: false,
   newSessionExplorerModelExtraId: undefined,
+  newSessionExplorerVariant: 'default',
   newSessionEditorModelExtraId: undefined,
   newSessionEditorVariant: 'default'
 };
