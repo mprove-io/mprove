@@ -594,6 +594,7 @@ export class ExplorerStreamService implements OnModuleDestroy {
       projectId: session.projectId,
       providerId: provider,
       modelId: modelId,
+      variant: variant,
       isUserCodexAuthSet: isDefined(user.codexAuth),
       isBuilder: false
     });
@@ -733,6 +734,9 @@ export class ExplorerStreamService implements OnModuleDestroy {
     let isAnthropic: boolean =
       modelSelection.provider.type === ProviderTypeEnum.Anthropic;
 
+    let isOpenAICompatible: boolean =
+      modelSelection.provider.type === ProviderTypeEnum.OpenAICompatible;
+
     // Start title generation in parallel
     let isFirstMessage = history.length === 0;
 
@@ -762,7 +766,11 @@ export class ExplorerStreamService implements OnModuleDestroy {
             model: modelSelection.model,
             variant: variant
           })
-        : undefined;
+        : isOpenAICompatible
+          ? this.explorerModelsService.buildOpenaiCompatibleProviderOptions({
+              variant: variant
+            })
+          : undefined;
 
     let userMessageContent = this.buildUserMessageContent({
       structId: bridge?.structId || '',

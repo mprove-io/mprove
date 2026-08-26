@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { take, tap } from 'rxjs/operators';
+import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import {
   EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE,
@@ -17,6 +18,7 @@ import {
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 import type {
   ToBackendGetLlmModelsWithProviderRequestPayload,
   ToBackendGetLlmModelsWithProviderResponse
@@ -29,6 +31,12 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { UiService } from '#front/app/services/ui.service';
+
+type SessionVariantOption = {
+  value: string;
+  label: string;
+  isRecommended: boolean;
+};
 
 @Component({
   standalone: false,
@@ -72,8 +80,14 @@ export class SessionInputComponent implements OnChanges {
   modelsLoading = false;
   providerNameById: Record<string, string> = {};
   agents = ['build', 'plan'];
-  variants: string[] = ['default'];
-  modelVariantsMap = new Map<string, string[]>();
+  variants: SessionVariantOption[] = [
+    {
+      value: LLM_MODEL_DEFAULT_VARIANT,
+      label: LLM_MODEL_DEFAULT_VARIANT,
+      isRecommended: false
+    }
+  ];
+  modelVariantsMap = new Map<string, LlmModelVariant[]>();
   projectHasE2bApiKey = true;
   effectiveDisabled = false;
   isEditor = true;
@@ -109,7 +123,7 @@ export class SessionInputComponent implements OnChanges {
         ? state.modelsAi
         : state.modelsOpencode;
 
-    this.applyModels(models);
+    this.applyModels({ apiModels: models, selectRecommended: false });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -121,11 +135,13 @@ export class SessionInputComponent implements OnChanges {
           ? state.modelsAi
           : state.modelsOpencode;
 
-      this.applyModels(models);
+      this.applyModels({ apiModels: models, selectRecommended: false });
       this.updateProjectHasE2bApiKey();
     }
     if (changes['modelExtraId']) {
-      this.updateVariants();
+      this.updateVariants({
+        selectRecommended: changes['modelExtraId'].firstChange === false
+      });
       this.updateProjectHasE2bApiKey();
     }
   }
@@ -159,7 +175,7 @@ export class SessionInputComponent implements OnChanges {
   }
 
   onModelSelect() {
-    this.updateVariants();
+    this.updateVariants({ selectRecommended: true });
 
     this.modelExtraIdChange.emit(this.modelExtraId);
     this.variantChange.emit(this.variant);
@@ -246,29 +262,60 @@ export class SessionInputComponent implements OnChanges {
     this.updateEffectiveDisabled();
   }
 
-  updateVariants() {
-    let modelVariants = this.modelVariantsMap.get(this.modelExtraId);
-    if (modelVariants && modelVariants.length > 0) {
-      this.variants = ['default', ...modelVariants];
-    } else {
-      this.variants = ['default'];
-    }
-    if (!this.variants.includes(this.variant)) {
-      this.variant = 'default';
+  updateVariants(item: { selectRecommended: boolean }) {
+    let { selectRecommended } = item;
+    let modelVariants: LlmModelVariant[] =
+      this.modelVariantsMap.get(this.modelExtraId) ?? [];
+
+    let enabledVariants: LlmModelVariant[] = modelVariants.filter(variant =>
+      this.sessionType === SessionTypeEnum.Explorer
+        ? variant.isExplorer
+        : variant.isBuilder
+    );
+
+    this.variants = enabledVariants.map(variant => {
+      let isRecommended: boolean =
+        this.sessionType === SessionTypeEnum.Explorer
+          ? variant.isExplorerRecommended
+          : variant.isBuilderRecommended;
+
+      return {
+        value: variant.variant,
+        label: variant.variant,
+        isRecommended: isRecommended
+      };
+    });
+
+    let isCurrentVariantAvailable: boolean = this.variants.some(
+      variant => variant.value === this.variant
+    );
+
+    if (selectRecommended || isCurrentVariantAvailable === false) {
+      let selectedVariant: SessionVariantOption =
+        this.variants.find(variant => variant.isRecommended) ??
+        this.variants.find(
+          variant => variant.value === LLM_MODEL_DEFAULT_VARIANT
+        ) ??
+        this.variants[0];
+
+      this.variant = selectedVariant?.value ?? LLM_MODEL_DEFAULT_VARIANT;
     }
   }
 
-  applyModels(
+  applyModels(item: {
     apiModels: {
       modelId: string;
       name?: string;
       providerId: string;
       providerName: string;
-      variants?: string[];
+      variants: LlmModelVariant[];
       contextLimit?: number;
       inputLimit?: number;
-    }[]
-  ) {
+    }[];
+    selectRecommended: boolean;
+  }) {
+    let { apiModels, selectRecommended } = item;
+
     this.modelVariantsMap.clear();
     this.providerNameById = {};
 
@@ -278,7 +325,7 @@ export class SessionInputComponent implements OnChanges {
 
       this.providerNameById[m.providerId] = m.providerName;
 
-      if (m.variants && m.variants.length > 0) {
+      if (m.variants.length > 0) {
         this.modelVariantsMap.set(value, m.variants);
       }
 
@@ -317,7 +364,7 @@ export class SessionInputComponent implements OnChanges {
       return a.modelId.localeCompare(b.modelId);
     });
     this.models = modelOptions;
-    this.updateVariants();
+    this.updateVariants({ selectRecommended: selectRecommended });
   }
 
   formatContextLimit(item: { contextLimit?: number }) {
@@ -379,7 +426,7 @@ export class SessionInputComponent implements OnChanges {
                 ? resp.payload.modelsAi
                 : resp.payload.modelsOpencode;
 
-            this.applyModels(models);
+            this.applyModels({ apiModels: models, selectRecommended: false });
           }
           this.modelsLoading = false;
           this.cd.detectChanges();
@@ -415,8 +462,8 @@ export class SessionInputComponent implements OnChanges {
     return idxs != null && idxs.length > 0;
   }
 
-  variantsSearchFn(term: string, variant: string) {
-    let haystack = [`${variant}`];
+  variantsSearchFn(term: string, variant: SessionVariantOption) {
+    let haystack = [`${variant.value}`];
     let opts = {};
     let uf = new uFuzzy(opts);
     let idxs = uf.filter(haystack, term);

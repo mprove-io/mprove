@@ -19,6 +19,7 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
+import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ProviderOptionsAnthropic } from '#common/zod/backend/provider-options/provider-options-anthropic';
 import type { ProviderOptionsCodex } from '#common/zod/backend/provider-options/provider-options-codex';
@@ -292,6 +293,7 @@ export class ProvidersService {
     projectId: string;
     providerId: string;
     modelId: string;
+    variant?: string;
     isUserCodexAuthSet: boolean;
     isBuilder: boolean;
   }) {
@@ -329,6 +331,28 @@ export class ProvidersService {
     } else if (model.isExplorer === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_EXPLORER
+      });
+    }
+
+    if (!isDefined(item.variant)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MESSAGE_VARIANT_REQUIRED
+      });
+    }
+
+    let matchingModelVariants: LlmModelVariant[] = model.variants.filter(
+      variant => variant.variant === item.variant
+    );
+
+    let isVariantAvailable: boolean =
+      isDefined(matchingModelVariants[0]) &&
+      (item.isBuilder === true
+        ? matchingModelVariants[0].isBuilder
+        : matchingModelVariants[0].isExplorer);
+
+    if (isVariantAvailable === false) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROVIDER_MODEL_VARIANT_NOT_AVAILABLE
       });
     }
 

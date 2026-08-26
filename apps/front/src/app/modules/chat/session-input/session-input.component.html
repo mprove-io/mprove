@@ -158,6 +158,8 @@
     [fixNgSelectBottom]="sessionVariantSelect"
     class="session-variants-select w-[140px] select-none text-base"
     [items]="variants"
+    bindLabel="label"
+    bindValue="value"
     [clearable]="false"
     [searchable]="true"
     [searchFn]="variantsSearchFn"
@@ -166,7 +168,17 @@
     [disabled]="disabled"
     appendTo="body"
     placeholder="Thinking"
-  ></ng-select>
+  >
+    <ng-template ng-option-tmp let-item="item">
+      <div class="flex items-center gap-2">
+        <span>{{ item.label }}</span>
+        <m-thumbs-up-icon
+          *ngIf="item.isRecommended"
+          class="ml-auto flex-shrink-0 text-gray-400"
+        ></m-thumbs-up-icon>
+      </div>
+    </ng-template>
+  </ng-select>
 
   <div class="h-10 w-10 flex-shrink-0">
     <m-context-usage-circle

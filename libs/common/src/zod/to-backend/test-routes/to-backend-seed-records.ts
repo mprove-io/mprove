@@ -15,7 +15,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { zConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
 import { zConnectionRawSchema } from '#common/zod/backend/connection-schemas/raw-schema';
 import { zEv } from '#common/zod/backend/ev';
-import { zLlmModelInput } from '#common/zod/backend/llm-models/llm-model-input';
 import { zProviderOptionsAnthropic } from '#common/zod/backend/provider-options/provider-options-anthropic';
 import { zProviderOptionsCodex } from '#common/zod/backend/provider-options/provider-options-codex';
 import { zProviderOptionsOpenAI } from '#common/zod/backend/provider-options/provider-options-openai';
@@ -24,6 +23,7 @@ import { zMconfig } from '#common/zod/blockml/mconfig';
 import { zQuery } from '#common/zod/blockml/query';
 import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
+import { zToBackendSeedRecordsModel } from '#common/zod/to-backend/test-routes/to-backend-seed-records-model';
 import { zToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 import { zToBackendRequestInfo } from '#common/zod/to-backend/to-backend-request-info';
 
@@ -98,7 +98,7 @@ export let zToBackendSeedRecordsRequestPayloadProvidersItem = z
       providerId: z.literal(OPENAI_PROVIDER_ID),
       type: z.literal(ProviderTypeEnum.OpenAI),
       isEnabled: z.boolean(),
-      models: z.array(zLlmModelInput),
+      models: z.array(zToBackendSeedRecordsModel),
       options: zProviderOptionsOpenAI
     }),
     z.strictObject({
@@ -106,7 +106,7 @@ export let zToBackendSeedRecordsRequestPayloadProvidersItem = z
       providerId: z.literal(ANTHROPIC_PROVIDER_ID),
       type: z.literal(ProviderTypeEnum.Anthropic),
       isEnabled: z.boolean(),
-      models: z.array(zLlmModelInput),
+      models: z.array(zToBackendSeedRecordsModel),
       options: zProviderOptionsAnthropic
     }),
     z.strictObject({
@@ -115,7 +115,7 @@ export let zToBackendSeedRecordsRequestPayloadProvidersItem = z
       type: z.literal(ProviderTypeEnum.OpenAICompatible),
       name: z.string(),
       isEnabled: z.boolean(),
-      models: z.array(zLlmModelInput),
+      models: z.array(zToBackendSeedRecordsModel),
       options: zProviderOptionsOpenAICompatible
     }),
     z.strictObject({
@@ -123,7 +123,7 @@ export let zToBackendSeedRecordsRequestPayloadProvidersItem = z
       providerId: z.literal(CODEX_PROVIDER_ID),
       type: z.literal(ProviderTypeEnum.OpenAICodex),
       isEnabled: z.boolean(),
-      models: z.array(zLlmModelInput),
+      models: z.array(zToBackendSeedRecordsModel),
       options: zProviderOptionsCodex
     })
   ])

@@ -140,6 +140,7 @@ export class CreateExplorerSessionController {
       projectId: projectId,
       providerId: providerId,
       modelId: modelId,
+      variant: variant,
       isUserCodexAuthSet: isDefined(user.codexAuth),
       isBuilder: false
     });

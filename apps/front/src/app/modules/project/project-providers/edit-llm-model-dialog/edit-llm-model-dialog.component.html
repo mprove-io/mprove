@@ -1,14 +1,18 @@
-<div class="bg-m0 flex max-h-[90vh] select-none flex-col overflow-y-auto p-9">
+<div
+  class="bg-m0 flex max-h-[80vh] min-h-[40vh] select-none flex-col overflow-hidden p-9"
+>
   <div class="text-s2 mt-5 text-left text-2xl font-semibold">
     Edit Model for {{ ref.data.provider.name }}
   </div>
 
   <form
-    class="mt-9 grid w-full grid-cols-1 gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(20rem,2fr)]"
+    class="mt-9 grid min-h-0 w-full flex-1 grid-cols-1 gap-8 overflow-hidden lg:grid-cols-[minmax(0,3fr)_minmax(20rem,2fr)]"
     [formGroup]="modelForm"
     (ngSubmit)="save()"
   >
-    <div class="flex min-w-0 flex-col">
+    <div
+      class="flex min-h-0 min-w-0 flex-col overflow-y-auto pr-1 pt-px [scrollbar-gutter:stable]"
+    >
       <div
         *ngIf="
           ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
@@ -24,7 +28,7 @@
 
       <ng-container
         *ngIf="
-          ref.data.provider.type === providerTypeEnum.OpenAICompatible ||
+          ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
           ref.data.model.isManual === true
         "
       >
@@ -35,9 +39,7 @@
           </div>
         </div>
 
-        <div
-          class="mt-4 grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3"
-        >
+        <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
           <label class="pt-3 font-semibold">Name</label>
           <div class="flex min-w-0 flex-col">
             <input
@@ -52,57 +54,58 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
-          <label class="pt-3 font-semibold">Context window</label>
-          <div class="flex min-w-0 flex-col">
-            <input
-              type="number"
-              min="1"
-              autocomplete="off"
-              data-cy="editLlmModelDialogContextLimitInput"
-              class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              formControlName="contextLimit"
-              placeholder="Required"
-            />
-            <m-validation
-              [control]="modelForm.controls['contextLimit']"
-            ></m-validation>
+        <div>
+          <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+            <label class="pt-3 font-semibold">Context window</label>
+            <div class="flex min-w-0 flex-col">
+              <input
+                type="number"
+                min="1"
+                autocomplete="off"
+                data-cy="editLlmModelDialogContextLimitInput"
+                class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                formControlName="contextLimit"
+              />
+              <m-validation
+                [control]="modelForm.controls['contextLimit']"
+              ></m-validation>
+            </div>
           </div>
-        </div>
 
-        <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
-          <label class="pt-3 font-semibold">Max input tokens</label>
-          <div class="flex min-w-0 flex-col">
-            <input
-              type="number"
-              min="1"
-              autocomplete="off"
-              data-cy="editLlmModelDialogInputLimitInput"
-              class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              formControlName="inputLimit"
-              placeholder="Optional"
-            />
-            <m-validation
-              [control]="modelForm.controls['inputLimit']"
-            ></m-validation>
+          <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+            <label class="pt-3 font-semibold">Max input tokens</label>
+            <div class="flex min-w-0 flex-col">
+              <input
+                type="number"
+                min="1"
+                autocomplete="off"
+                data-cy="editLlmModelDialogInputLimitInput"
+                class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                formControlName="inputLimit"
+                placeholder="Optional"
+              />
+              <m-validation
+                [control]="modelForm.controls['inputLimit']"
+              ></m-validation>
+            </div>
           </div>
-        </div>
 
-        <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
-          <label class="pt-3 font-semibold">Max output tokens</label>
-          <div class="flex min-w-0 flex-col">
-            <input
-              type="number"
-              min="1"
-              autocomplete="off"
-              data-cy="editLlmModelDialogOutputLimitInput"
-              class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              formControlName="outputLimit"
-              placeholder="Optional"
-            />
-            <m-validation
-              [control]="modelForm.controls['outputLimit']"
-            ></m-validation>
+          <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+            <label class="pt-3 font-semibold">Max output tokens</label>
+            <div class="flex min-w-0 flex-col">
+              <input
+                type="number"
+                min="1"
+                autocomplete="off"
+                data-cy="editLlmModelDialogOutputLimitInput"
+                class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                formControlName="outputLimit"
+                placeholder="Optional"
+              />
+              <m-validation
+                [control]="modelForm.controls['outputLimit']"
+              ></m-validation>
+            </div>
           </div>
         </div>
       </ng-container>
@@ -163,10 +166,28 @@
         </div>
       </div>
 
-      <div class="mt-auto flex items-center pt-8">
+      <m-llm-model-variants
+        [variants]="variants"
+        [isExplorer]="modelForm.controls['isExplorer'].value === true"
+        [isBuilder]="modelForm.controls['isBuilder'].value === true"
+        [allowManualVariants]="
+          ref.data.provider.type === providerTypeEnum.OpenAICompatible ||
+          ref.data.model.isManual === true
+        "
+        (variantsChange)="variants = $event"
+      ></m-llm-model-variants>
+
+      <div *ngIf="variantsDiscoveryErrorMessage" class="text-r600 mt-3 text-sm">
+        {{ variantsDiscoveryErrorMessage }}
+      </div>
+
+      <div class="mt-[60px] flex items-center">
         <button
           data-cy="editLlmModelDialogSaveButton"
           class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+          [class.cursor-default]="variantsDiscoveryErrorMessage"
+          [class.opacity-60]="variantsDiscoveryErrorMessage"
+          [disabled]="!!variantsDiscoveryErrorMessage"
           type="submit"
           >Save</button
         >
@@ -177,122 +198,240 @@
           (click)="cancel()"
           >Cancel</button
         >
+        <div
+          *ngIf="showVariantsValidation && variantsErrorMessage"
+          class="text-r600 ml-4 text-sm"
+        >
+          {{ variantsErrorMessage }}
+        </div>
       </div>
     </div>
 
-    <div class="min-w-0">
-      <div
-        *ngIf="
-          ref.data.provider.type === providerTypeEnum.OpenAICompatible ||
-          ref.data.model.isManual === true
-        "
-        data-cy="editLlmModelDialogManualModelInfo"
-        class="border-s300 bg-s100 text-s400 flex h-full min-h-[16rem] items-center justify-center rounded border p-4 text-sm"
-      >
-        Model Info not available
-      </div>
-
+    <div class="flex min-h-[16rem] min-w-0 flex-col overflow-hidden">
       <div
         *ngIf="
           ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
           ref.data.model.isManual !== true
         "
-        class="border-s300 bg-s100 min-h-[16rem] rounded border p-4 text-sm"
+        class="mb-3 flex h-9 flex-shrink-0 items-center justify-end"
       >
-        <div class="grid grid-cols-[11rem_1fr] gap-x-3 gap-y-2">
-          <ng-container *ngIf="ref.data.model.isOpencodeSupported === false">
-            <div class="text-s400">Builder inactive</div>
-            <div>OpenCode filters out this model</div>
-          </ng-container>
-          <div class="text-s400">Variants</div>
-          <div>
-            {{
-              ref.data.model.variants?.length
-                ? ref.data.model.variants?.join(', ')
-                : 'Not available'
-            }}
-          </div>
-          <ng-container
-            *ngIf="
-              ref.data.provider.type === providerTypeEnum.OpenAI &&
-              ref.data.model.modelsDevStatus
-            "
+        <div class="relative mr-3 flex h-7 w-7 flex-shrink-0">
+          <ngx-spinner
+            *ngIf="isRefreshing"
+            [name]="refreshSpinnerName"
+            color="#0084d1"
+            bdColor="#00000000"
+            size="default"
+            type="ball-clip-rotate"
+            [fullScreen]="false"
+            [disableAnimation]="true"
+            [zIndex]="10"
           >
-            <div class="text-s400">models.dev status</div>
-            <div>{{ ref.data.model.modelsDevStatus }}</div>
-          </ng-container>
+          </ngx-spinner>
+        </div>
+
+        <button
+          type="button"
+          tp="Refresh model"
+          class="hover:bg-m200 text-s500 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+          [class.cursor-default]="isRefreshing"
+          [disabled]="isRefreshing"
+          (click)="refreshModel()"
+        >
+          <m-refresh-icon></m-refresh-icon>
+        </button>
+      </div>
+
+      <div class="relative min-h-0 flex-1">
+        <div
+          *ngIf="ref.data.provider.type === providerTypeEnum.OpenAICompatible"
+          class="absolute inset-0 flex flex-col overflow-y-auto pl-4 pr-px pt-px"
+        >
+          <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+            <label class="pt-3 font-semibold">Model ID</label>
+            <div class="text-s500 min-w-0 break-all pt-3">
+              {{ ref.data.model.modelId }}
+            </div>
+          </div>
+
           <div
-            *ngIf="
-              ref.data.model.codexContextWindow === undefined &&
-              ref.data.model.codexMaxContextWindow === undefined
-            "
-            class="text-s400"
-            >Context window</div
+            class="mt-4 grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3"
           >
-          <div
-            *ngIf="
-              ref.data.model.codexContextWindow === undefined &&
-              ref.data.model.codexMaxContextWindow === undefined
-            "
-          >
-            {{
-              formatContextLimit({
-                contextLimit: ref.data.model.contextLimit
-              })
-            }}
+            <label class="pt-3 font-semibold">Name</label>
+            <div class="flex min-w-0 flex-col">
+              <input
+                autocomplete="off"
+                spellcheck="false"
+                data-cy="editLlmModelDialogNameInput"
+                class="form-input border-s3 focus:border-m600 min-w-0 rounded"
+                formControlName="name"
+                placeholder="Optional"
+              />
+              <m-validation
+                [control]="modelForm.controls['name']"
+              ></m-validation>
+            </div>
           </div>
-          <div
-            *ngIf="ref.data.model.codexContextWindow !== undefined"
-            class="text-s400"
-            >Context window</div
-          >
-          <div *ngIf="ref.data.model.codexContextWindow !== undefined">
-            {{
-              formatContextLimit({
-                contextLimit: ref.data.model.codexContextWindow
-              })
-            }}
+
+          <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+            <label class="pt-3 font-semibold">Context window</label>
+            <div class="flex min-w-0 flex-col">
+              <input
+                type="number"
+                min="1"
+                autocomplete="off"
+                data-cy="editLlmModelDialogContextLimitInput"
+                class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                formControlName="contextLimit"
+              />
+              <m-validation
+                [control]="modelForm.controls['contextLimit']"
+              ></m-validation>
+            </div>
           </div>
-          <div
-            *ngIf="ref.data.model.codexMaxContextWindow !== undefined"
-            class="text-s400"
-            >Max context window</div
-          >
-          <div *ngIf="ref.data.model.codexMaxContextWindow !== undefined">
-            {{
-              formatContextLimit({
-                contextLimit: ref.data.model.codexMaxContextWindow
-              })
-            }}
+
+          <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+            <label class="pt-3 font-semibold">Max input tokens</label>
+            <div class="flex min-w-0 flex-col">
+              <input
+                type="number"
+                min="1"
+                autocomplete="off"
+                data-cy="editLlmModelDialogInputLimitInput"
+                class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                formControlName="inputLimit"
+                placeholder="Optional"
+              />
+              <m-validation
+                [control]="modelForm.controls['inputLimit']"
+              ></m-validation>
+            </div>
           </div>
-          <div class="text-s400">Max input tokens</div>
-          <div>
-            {{
-              formatContextLimit({
-                contextLimit: ref.data.model.inputLimit
-              })
-            }}
-          </div>
-          <div class="text-s400">Max output tokens</div>
-          <div>
-            {{
-              formatContextLimit({
-                contextLimit: ref.data.model.outputLimit
-              })
-            }}
+
+          <div class="grid grid-cols-[10rem_minmax(0,1fr)] items-start gap-3">
+            <label class="pt-3 font-semibold">Max output tokens</label>
+            <div class="flex min-w-0 flex-col">
+              <input
+                type="number"
+                min="1"
+                autocomplete="off"
+                data-cy="editLlmModelDialogOutputLimitInput"
+                class="form-input border-s3 focus:border-m600 min-w-0 rounded [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                formControlName="outputLimit"
+                placeholder="Optional"
+              />
+              <m-validation
+                [control]="modelForm.controls['outputLimit']"
+              ></m-validation>
+            </div>
           </div>
         </div>
 
         <div
-          *ngIf="ref.data.model.providerModelInfo"
-          class="border-s300 mt-4 border-t pt-4"
+          *ngIf="
+            ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+            ref.data.model.isManual === true
+          "
+          data-cy="editLlmModelDialogManualModelInfo"
+          class="border-s300 bg-s100 text-s400 absolute inset-0 flex items-center justify-center rounded border p-4 text-sm"
         >
-          <div class="text-s400 mb-2">Provider model JSON</div>
-          <pre
-            data-cy="editLlmModelDialogProviderModelInfo"
-            class="bg-m0 max-h-72 select-text overflow-auto whitespace-pre rounded p-3 text-xs"
-            >{{ ref.data.model.providerModelInfo | json }}</pre
+          Model Info not available
+        </div>
+
+        <div
+          *ngIf="
+            ref.data.provider.type !== providerTypeEnum.OpenAICompatible &&
+            ref.data.model.isManual !== true
+          "
+          class="border-s300 bg-s100 absolute inset-0 flex flex-col rounded border p-4 text-sm"
+        >
+          <div class="grid grid-cols-[11rem_1fr] gap-x-3 gap-y-2">
+            <ng-container *ngIf="model.isOpencodeSupported === false">
+              <div class="text-s400">Builder inactive</div>
+              <div>OpenCode filters out this model</div>
+            </ng-container>
+            <ng-container
+              *ngIf="
+                ref.data.provider.type === providerTypeEnum.OpenAI &&
+                model.modelsDevStatus
+              "
+            >
+              <div class="text-s400">models.dev status</div>
+              <div>{{ model.modelsDevStatus }}</div>
+            </ng-container>
+            <div
+              *ngIf="
+                model.codexContextWindow === undefined &&
+                model.codexMaxContextWindow === undefined
+              "
+              class="text-s400"
+              >Context window</div
+            >
+            <div
+              *ngIf="
+                model.codexContextWindow === undefined &&
+                model.codexMaxContextWindow === undefined
+              "
+            >
+              {{
+                formatContextLimit({
+                  contextLimit: model.contextLimit
+                })
+              }}
+            </div>
+            <div
+              *ngIf="model.codexContextWindow !== undefined"
+              class="text-s400"
+              >Context window</div
+            >
+            <div *ngIf="model.codexContextWindow !== undefined">
+              {{
+                formatContextLimit({
+                  contextLimit: model.codexContextWindow
+                })
+              }}
+            </div>
+            <div
+              *ngIf="model.codexMaxContextWindow !== undefined"
+              class="text-s400"
+              >Max context window</div
+            >
+            <div *ngIf="model.codexMaxContextWindow !== undefined">
+              {{
+                formatContextLimit({
+                  contextLimit: model.codexMaxContextWindow
+                })
+              }}
+            </div>
+            <div class="text-s400">Max input tokens</div>
+            <div>
+              {{
+                formatContextLimit({
+                  contextLimit: model.inputLimit
+                })
+              }}
+            </div>
+            <div class="text-s400">Max output tokens</div>
+            <div>
+              {{
+                formatContextLimit({
+                  contextLimit: model.outputLimit
+                })
+              }}
+            </div>
+          </div>
+
+          <div
+            *ngIf="model.providerModelInfo"
+            class="border-s300 mt-4 flex min-h-0 flex-1 flex-col border-t pt-4"
           >
+            <div class="text-s400 mb-2">Provider model JSON</div>
+            <pre
+              data-cy="editLlmModelDialogProviderModelInfo"
+              class="bg-m0 min-h-0 w-full min-w-0 max-w-full flex-1 select-text overflow-auto whitespace-pre rounded p-3 text-xs"
+              >{{ model.providerModelInfo | json }}</pre
+            >
+          </div>
         </div>
       </div>
     </div>

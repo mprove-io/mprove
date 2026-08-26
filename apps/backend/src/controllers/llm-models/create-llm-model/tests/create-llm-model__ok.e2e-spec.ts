@@ -22,6 +22,7 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 import type { ToBackendCreateLlmModelRequest } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-request';
 import type { ToBackendCreateLlmModelResponse } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-response';
 
@@ -170,6 +171,29 @@ test('1', async t => {
           contextLimit: 128_000,
           inputLimit: 96_000,
           outputLimit: 32_000,
+          variants: [
+            {
+              variant: 'default',
+              isExplorer: false,
+              isBuilder: false,
+              isExplorerRecommended: false,
+              isBuilderRecommended: false
+            },
+            {
+              variant: 'low',
+              isExplorer: false,
+              isBuilder: false,
+              isExplorerRecommended: false,
+              isBuilderRecommended: false
+            },
+            {
+              variant: 'high',
+              isExplorer: false,
+              isBuilder: false,
+              isExplorerRecommended: false,
+              isBuilderRecommended: false
+            }
+          ],
           isExplorer: false,
           isBuilder: false
         }
@@ -190,12 +214,28 @@ test('1', async t => {
         payload: {
           projectId: projectId,
           providerId: CODEX_PROVIDER_ID,
-          modelId: 'gpt-codex-manual',
+          modelId: 'gpt-5.5',
           name: 'Manual Codex Model',
           isManual: true,
           contextLimit: 256_000,
           inputLimit: 224_000,
           outputLimit: 32_000,
+          variants: [
+            {
+              variant: 'default',
+              isExplorer: true,
+              isBuilder: true,
+              isExplorerRecommended: true,
+              isBuilderRecommended: true
+            },
+            {
+              variant: 'custom-effort',
+              isExplorer: true,
+              isBuilder: true,
+              isExplorerRecommended: false,
+              isBuilderRecommended: false
+            }
+          ],
           isExplorer: true,
           isBuilder: true
         }
@@ -323,7 +363,35 @@ test('1', async t => {
 
     assert.equal(providerTab.models[1].isOpencodeSupported, true);
 
-    assert.equal(codexProviderTab.models[0].modelId, 'gpt-codex-manual');
+    let expectedVariants: LlmModelVariant[] = [
+      {
+        variant: 'default',
+        isExplorer: false,
+        isBuilder: false,
+        isExplorerRecommended: false,
+        isBuilderRecommended: false
+      },
+      {
+        variant: 'low',
+        isExplorer: false,
+        isBuilder: false,
+        isExplorerRecommended: false,
+        isBuilderRecommended: false
+      },
+      {
+        variant: 'high',
+        isExplorer: false,
+        isBuilder: false,
+        isExplorerRecommended: false,
+        isBuilderRecommended: false
+      }
+    ];
+
+    assert.deepEqual(responseModels[1].variants, expectedVariants);
+
+    assert.deepEqual(providerTab.models[1].variants, expectedVariants);
+
+    assert.equal(codexProviderTab.models[0].modelId, 'gpt-5.5');
 
     assert.equal(codexProviderTab.models[0].name, 'Manual Codex Model');
 
@@ -336,6 +404,33 @@ test('1', async t => {
     assert.equal(codexProviderTab.models[0].outputLimit, 32_000);
 
     assert.equal(codexProviderTab.models[0].isOpencodeSupported, true);
+
+    let expectedCodexVariants: LlmModelVariant[] = [
+      {
+        variant: 'default',
+        isExplorer: true,
+        isBuilder: true,
+        isExplorerRecommended: true,
+        isBuilderRecommended: true
+      },
+      {
+        variant: 'custom-effort',
+        isExplorer: true,
+        isBuilder: true,
+        isExplorerRecommended: false,
+        isBuilderRecommended: false
+      }
+    ];
+
+    assert.deepEqual(
+      codexResp.payload.provider.models[0].variants,
+      expectedCodexVariants
+    );
+
+    assert.deepEqual(
+      codexProviderTab.models[0].variants,
+      expectedCodexVariants
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: unknown) => {

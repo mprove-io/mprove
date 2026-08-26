@@ -1,0 +1,117 @@
+<div class="mt-8 overflow-x-auto">
+  <div class="mb-4">
+    <div class="text-lg font-semibold">Variants</div>
+  </div>
+
+  <div
+    class="border-s300 text-s400 mb-2 grid grid-cols-[minmax(11rem,1fr)_5rem_4rem_5rem_4rem_2.5rem] items-center gap-2 border-b px-1 py-2 text-xs font-semibold"
+  >
+    <div>Variant</div>
+    <div class="text-center">Builder</div>
+    <div></div>
+    <div class="text-center">Explorer</div>
+    <div></div>
+    <div></div>
+  </div>
+
+  @for (row of variants; track $index) {
+    <div
+      class="grid h-14 grid-cols-[minmax(11rem,1fr)_5rem_4rem_5rem_4rem_2.5rem] items-center gap-2 px-1"
+    >
+      @if (
+        draftVariantStartIndex !== undefined && $index >= draftVariantStartIndex
+      ) {
+        <input
+          class="form-input border-s3 focus:border-m600 min-w-0 rounded"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Variant name"
+          [ngModel]="row.variant"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="updateDraftVariantName({ row: row, name: $event })"
+          (blur)="validateDraftVariant({ row: row })"
+          (keydown.enter)="
+            $event.preventDefault(); validateDraftVariant({ row: row })
+          "
+        />
+      } @else {
+        <div
+          class="min-w-0 truncate text-sm"
+          [attr.title]="displayName({ variant: row })"
+        >
+          {{ displayName({ variant: row }) }}
+        </div>
+      }
+
+      <div class="flex h-full items-center justify-center">
+        <ui-switch
+          *ngIf="isBuilder"
+          class="flex items-center"
+          [checked]="row.isBuilder"
+          color="#64BD63"
+          (change)="toggleEnabled({ row: row, destination: 'Builder' })"
+        ></ui-switch>
+      </div>
+
+      <div class="mx-auto flex h-5 w-5 items-center justify-center">
+        <button
+          *ngIf="isBuilder"
+          type="button"
+          class="flex h-7 w-7 items-center justify-center rounded focus:outline-none"
+          [class.text-m600]="row.isBuilderRecommended"
+          [class.text-s300]="row.isBuilderRecommended === false"
+          [attr.aria-label]="'Recommend ' + row.variant + ' for Builder'"
+          tp="Recommend variant"
+          (click)="selectRecommended({ row: row, destination: 'Builder' })"
+        >
+          <m-thumbs-up-icon></m-thumbs-up-icon>
+        </button>
+      </div>
+
+      <div class="flex h-full items-center justify-center">
+        <ui-switch
+          *ngIf="isExplorer"
+          class="flex items-center"
+          [checked]="row.isExplorer"
+          color="#64BD63"
+          (change)="toggleEnabled({ row: row, destination: 'Explorer' })"
+        ></ui-switch>
+      </div>
+
+      <div class="mx-auto flex h-5 w-5 items-center justify-center">
+        <button
+          *ngIf="isExplorer"
+          type="button"
+          class="flex h-7 w-7 items-center justify-center rounded focus:outline-none"
+          [class.text-m600]="row.isExplorerRecommended"
+          [class.text-s300]="row.isExplorerRecommended === false"
+          [attr.aria-label]="'Recommend ' + row.variant + ' for Explorer'"
+          tp="Recommend variant"
+          (click)="selectRecommended({ row: row, destination: 'Explorer' })"
+        >
+          <m-thumbs-up-icon></m-thumbs-up-icon>
+        </button>
+      </div>
+
+      <button
+        *ngIf="allowManualVariants && row.variant !== 'default'"
+        type="button"
+        class="text-s500 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+        [attr.aria-label]="'Remove ' + row.variant"
+        (click)="removeVariant({ row: row, index: $index })"
+      >
+        <m-trash-icon></m-trash-icon>
+      </button>
+    </div>
+  }
+
+  <div *ngIf="allowManualVariants" class="mt-4 flex">
+    <button
+      type="button"
+      class="border-s400 text-s500 hover:bg-s100 h-10 rounded border px-4 text-base shadow-sm focus:outline-none"
+      (click)="startAddVariant()"
+    >
+      Add Variant
+    </button>
+  </div>
+</div>

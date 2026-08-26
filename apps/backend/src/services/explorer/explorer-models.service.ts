@@ -143,6 +143,22 @@ export class ExplorerModelsService {
     return { openai: openai };
   }
 
+  buildOpenaiCompatibleProviderOptions(item: {
+    variant?: string;
+  }): { openaiCompatible: { reasoningEffort: string } } | undefined {
+    let { variant } = item;
+
+    if (!isDefined(variant) || variant === 'default') {
+      return undefined;
+    }
+
+    let providerOptions: { openaiCompatible: { reasoningEffort: string } } = {
+      openaiCompatible: { reasoningEffort: variant }
+    };
+
+    return providerOptions;
+  }
+
   buildAnthropicProviderOptions(item: {
     model: LlmModel;
     variant?: string;

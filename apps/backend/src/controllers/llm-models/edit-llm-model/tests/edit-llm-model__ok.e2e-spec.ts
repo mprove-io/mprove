@@ -13,6 +13,7 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import type { Prep } from '#backend/interfaces/prep';
 import { TabService } from '#backend/services/tab.service';
+import { CODEX_PROVIDER_ID } from '#common/constants/providers';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -21,6 +22,7 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 import type { ToBackendEditLlmModelRequest } from '#common/zod/to-backend/llm-models/edit-llm-model/edit-llm-model-request';
 import type { ToBackendEditLlmModelResponse } from '#common/zod/to-backend/llm-models/edit-llm-model/edit-llm-model-response';
 
@@ -58,6 +60,10 @@ test('1', async t => {
   let isPass = false;
 
   let prep: Prep;
+
+  let codexResp: ToBackendEditLlmModelResponse;
+
+  let codexProviderTab: ProviderTab;
 
   await retry(async () => {
     let resp: ToBackendEditLlmModelResponse;
@@ -145,6 +151,25 @@ test('1', async t => {
                 ],
                 queryParams: [{ key: 'version', value: '1' }]
               }
+            },
+            {
+              projectId: projectId,
+              providerId: CODEX_PROVIDER_ID,
+              type: ProviderTypeEnum.OpenAICodex,
+              isEnabled: true,
+              models: [
+                {
+                  modelId: 'gpt-5.5',
+                  name: 'Manual Codex Model',
+                  isManual: true,
+                  contextLimit: 256_000,
+                  inputLimit: 224_000,
+                  outputLimit: 32_000,
+                  isExplorer: true,
+                  isBuilder: true
+                }
+              ],
+              options: {}
             }
           ]
         },
@@ -153,6 +178,50 @@ test('1', async t => {
         },
         loginUserPayload: { email: email, password: password }
       });
+
+      let addVariantsReq: ToBackendEditLlmModelRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendEditLlmModel,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          providerId: providerId,
+          modelId: 'model-2',
+          name: 'Model Two',
+          contextLimit: 128_000,
+          inputLimit: 96_000,
+          outputLimit: 32_000,
+          variants: [
+            {
+              variant: 'default',
+              isExplorer: false,
+              isBuilder: false,
+              isExplorerRecommended: false,
+              isBuilderRecommended: false
+            },
+            {
+              variant: 'low',
+              isExplorer: false,
+              isBuilder: false,
+              isExplorerRecommended: false,
+              isBuilderRecommended: false
+            }
+          ],
+          isExplorer: false,
+          isBuilder: false
+        }
+      };
+
+      let addVariantsResp: ToBackendEditLlmModelResponse =
+        await sendToBackend<ToBackendEditLlmModelResponse>({
+          httpServer: prep.httpServer,
+          loginToken: prep.loginToken,
+          req: addVariantsReq
+        });
+
+      assert.equal(addVariantsResp.info.error, undefined);
 
       let req: ToBackendEditLlmModelRequest = {
         info: {
@@ -168,6 +237,22 @@ test('1', async t => {
           contextLimit: 200_000,
           inputLimit: 160_000,
           outputLimit: 40_000,
+          variants: [
+            {
+              variant: 'default',
+              isExplorer: false,
+              isBuilder: false,
+              isExplorerRecommended: false,
+              isBuilderRecommended: false
+            },
+            {
+              variant: 'medium',
+              isExplorer: false,
+              isBuilder: false,
+              isExplorerRecommended: false,
+              isBuilderRecommended: false
+            }
+          ],
           isExplorer: false,
           isBuilder: false
         }
@@ -177,6 +262,47 @@ test('1', async t => {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
+      });
+
+      let codexReq: ToBackendEditLlmModelRequest = {
+        info: {
+          name: ToBackendRequestInfoNameEnum.ToBackendEditLlmModel,
+          traceId: traceId,
+          idempotencyKey: makeId()
+        },
+        payload: {
+          projectId: projectId,
+          providerId: CODEX_PROVIDER_ID,
+          modelId: 'gpt-5.5',
+          name: 'Manual Codex Model',
+          contextLimit: 256_000,
+          inputLimit: 224_000,
+          outputLimit: 32_000,
+          variants: [
+            {
+              variant: 'default',
+              isExplorer: true,
+              isBuilder: true,
+              isExplorerRecommended: false,
+              isBuilderRecommended: false
+            },
+            {
+              variant: 'custom-effort',
+              isExplorer: true,
+              isBuilder: true,
+              isExplorerRecommended: true,
+              isBuilderRecommended: true
+            }
+          ],
+          isExplorer: true,
+          isBuilder: true
+        }
+      };
+
+      codexResp = await sendToBackend<ToBackendEditLlmModelResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: codexReq
       });
 
       let db: Db = prep.moduleRef.get<Db>(DRIZZLE);
@@ -196,6 +322,18 @@ test('1', async t => {
       let tabService: TabService = prep.moduleRef.get<TabService>(TabService);
 
       providerTab = tabService.providerEntToTab({ providerEnt: providerEnt });
+
+      let foundCodexProviderEnt: ProviderEnt =
+        (await db.drizzle.query.providersTable.findFirst({
+          where: and(
+            eq(providersTable.projectId, projectId),
+            eq(providersTable.providerId, CODEX_PROVIDER_ID)
+          )
+        })) as ProviderEnt;
+
+      codexProviderTab = tabService.providerEntToTab({
+        providerEnt: foundCodexProviderEnt
+      });
 
       await prep.app.close();
     } catch (e) {
@@ -287,6 +425,56 @@ test('1', async t => {
     assert.equal(providerTab.models[1].isExplorer, false);
 
     assert.equal(providerTab.models[1].isBuilder, false);
+
+    let expectedVariants: LlmModelVariant[] = [
+      {
+        variant: 'default',
+        isExplorer: false,
+        isBuilder: false,
+        isExplorerRecommended: false,
+        isBuilderRecommended: false
+      },
+      {
+        variant: 'medium',
+        isExplorer: false,
+        isBuilder: false,
+        isExplorerRecommended: false,
+        isBuilderRecommended: false
+      }
+    ];
+
+    assert.deepEqual(responseModels[1].variants, expectedVariants);
+
+    assert.deepEqual(providerTab.models[1].variants, expectedVariants);
+
+    let expectedCodexVariants: LlmModelVariant[] = [
+      {
+        variant: 'default',
+        isExplorer: true,
+        isBuilder: true,
+        isExplorerRecommended: false,
+        isBuilderRecommended: false
+      },
+      {
+        variant: 'custom-effort',
+        isExplorer: true,
+        isBuilder: true,
+        isExplorerRecommended: true,
+        isBuilderRecommended: true
+      }
+    ];
+
+    assert.equal(codexResp.info.error, undefined);
+
+    assert.deepEqual(
+      codexResp.payload.provider.models[0].variants,
+      expectedCodexVariants
+    );
+
+    assert.deepEqual(
+      codexProviderTab.models[0].variants,
+      expectedCodexVariants
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: unknown) => {

@@ -149,6 +149,7 @@ export class SendMessageToEditorSessionController {
         projectId: session.projectId,
         providerId: providerId,
         modelId: modelId,
+        variant: variant,
         isUserCodexAuthSet: isDefined(user.codexAuth),
         isBuilder: true
       });

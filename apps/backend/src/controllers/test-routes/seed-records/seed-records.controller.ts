@@ -63,6 +63,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { HashService } from '#backend/services/hash.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
+import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import {
   BRANCH_MAIN,
@@ -353,7 +354,15 @@ export class SeedRecordsController {
           contextLimit: model.contextLimit,
           inputLimit: model.inputLimit,
           outputLimit: model.outputLimit,
-          variants: undefined,
+          variants: [
+            {
+              variant: LLM_MODEL_DEFAULT_VARIANT,
+              isExplorer: model.isExplorer,
+              isBuilder: model.isBuilder,
+              isExplorerRecommended: model.isExplorerRecommended ?? false,
+              isBuilderRecommended: model.isBuilderRecommended ?? false
+            }
+          ],
           isOpencodeSupported: true,
           isExplorer: model.isExplorer,
           isBuilder: model.isBuilder,

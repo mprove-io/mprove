@@ -5,6 +5,10 @@ import {
   type LlmModelPart,
   zLlmModelPart
 } from '#common/zod/backend/llm-models/llm-model-part';
+import {
+  type LlmModelVariant,
+  zLlmModelVariant
+} from '#common/zod/backend/llm-models/llm-model-variant';
 
 export type LlmModel = Extend<
   LlmModelPart,
@@ -12,6 +16,7 @@ export type LlmModel = Extend<
     catalogName?: string;
     name?: string;
     isManual?: boolean;
+    variants: LlmModelVariant[];
     isExplorer: boolean;
     isBuilder: boolean;
     refreshedTs: number;
@@ -23,6 +28,7 @@ export let zLlmModel = zLlmModelPart
     catalogName: z.string().trim().nullish(),
     name: z.string().trim().nullish(),
     isManual: z.boolean().nullish(),
+    variants: z.array(zLlmModelVariant),
     isExplorer: z.boolean(),
     isBuilder: z.boolean(),
     refreshedTs: z.number().int()

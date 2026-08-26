@@ -77,6 +77,7 @@ export class CreateLlmModelController {
       contextLimit,
       inputLimit,
       outputLimit,
+      variants,
       isExplorer,
       isBuilder
     } = bodyPayload;
@@ -113,6 +114,7 @@ export class CreateLlmModelController {
           : provider.options.apiKey,
       userId: user.userId,
       isCodexAuthSet: isCodexAuthSet,
+      variants: variants,
       modelInput: {
         modelId: modelId,
         name: modelName,

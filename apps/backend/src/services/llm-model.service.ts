@@ -13,6 +13,7 @@ import {
   type CodexModelsResult,
   CodexService
 } from '#backend/services/codex.service';
+import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
@@ -23,6 +24,7 @@ import type { CodexModel } from '#common/zod/backend/codex-model';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelInput } from '#common/zod/backend/llm-models/llm-model-input';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
+import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 
 export type LlmModelPartsResult = {
   modelParts: LlmModelPart[];
@@ -43,6 +45,7 @@ export class LlmModelService {
     userId?: string;
     isCodexAuthSet?: boolean;
     modelInput: LlmModelInput;
+    variants: LlmModelVariant[];
     isForceRefresh?: boolean;
   }): Promise<LlmModel> {
     let {
@@ -51,6 +54,7 @@ export class LlmModelService {
       userId,
       isCodexAuthSet,
       modelInput,
+      variants,
       isForceRefresh
     } = item;
 
@@ -84,12 +88,18 @@ export class LlmModelService {
         contextLimit: modelInput.contextLimit,
         inputLimit: modelInput.inputLimit,
         outputLimit: modelInput.outputLimit,
-        variants: undefined,
+        variants: variants,
         isOpencodeSupported: isOpencodeSupported,
         isExplorer: modelInput.isExplorer,
         isBuilder: modelInput.isBuilder,
         refreshedTs: refreshedTs
       };
+
+      this.validateModelVariants({
+        variants: model.variants,
+        isExplorer: model.isExplorer,
+        isBuilder: model.isBuilder
+      });
 
       return model;
     }
@@ -120,12 +130,211 @@ export class LlmModelService {
       ...modelPart,
       name: modelInput.name,
       isManual: false,
+      variants: variants,
       isExplorer: modelInput.isExplorer,
       isBuilder: modelInput.isBuilder,
       refreshedTs: refreshedTs
     };
 
+    let currentVariantNames: string[] = [
+      LLM_MODEL_DEFAULT_VARIANT,
+      ...(modelPart.variants ?? [])
+    ];
+
+    model.variants = this.reconcileDiscoveredModelVariants({
+      variants: model.variants,
+      storedVariants: [],
+      currentVariantNames: currentVariantNames,
+      isExplorer: model.isExplorer,
+      isBuilder: model.isBuilder
+    });
+
+    this.validateModelVariants({
+      variants: model.variants,
+      isExplorer: model.isExplorer,
+      isBuilder: model.isBuilder
+    });
+
     return model;
+  }
+
+  validateModelVariants(item: {
+    variants: LlmModelVariant[];
+    isExplorer: boolean;
+    isBuilder: boolean;
+  }): void {
+    let { variants, isExplorer, isBuilder } = item;
+
+    let variantNames: string[] = variants.map(variant => variant.variant);
+
+    let normalizedVariantNames: string[] = variantNames.map(variantName =>
+      variantName.toLocaleLowerCase()
+    );
+
+    let uniqueVariantNames: Set<string> = new Set(normalizedVariantNames);
+
+    let hasUniqueVariantNames: boolean =
+      uniqueVariantNames.size === normalizedVariantNames.length;
+
+    let hasDefaultVariant: boolean = variantNames.includes(
+      LLM_MODEL_DEFAULT_VARIANT
+    );
+
+    let explorerEnabledCount: number = variants.filter(
+      variant => variant.isExplorer
+    ).length;
+
+    let builderEnabledCount: number = variants.filter(
+      variant => variant.isBuilder
+    ).length;
+
+    let hasEnabledExplorerVariant: boolean =
+      isExplorer === false || explorerEnabledCount > 0;
+
+    let hasEnabledBuilderVariant: boolean =
+      isBuilder === false || builderEnabledCount > 0;
+
+    let isInvalid: boolean =
+      hasUniqueVariantNames === false ||
+      hasDefaultVariant === false ||
+      hasEnabledExplorerVariant === false ||
+      hasEnabledBuilderVariant === false;
+
+    if (isInvalid) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROVIDER_MODEL_VARIANTS_INVALID
+      });
+    }
+  }
+
+  reconcileDiscoveredModelVariants(item: {
+    variants: LlmModelVariant[];
+    storedVariants: LlmModelVariant[];
+    currentVariantNames: string[];
+    isExplorer: boolean;
+    isBuilder: boolean;
+  }): LlmModelVariant[] {
+    let {
+      variants,
+      storedVariants,
+      currentVariantNames,
+      isExplorer,
+      isBuilder
+    } = item;
+
+    let storedNames: Set<string> = new Set(
+      storedVariants.map(variant => variant.variant)
+    );
+
+    let currentNames: Set<string> = new Set(currentVariantNames);
+
+    let normalizedVariantNames: string[] = variants.map(variant =>
+      variant.variant.toLocaleLowerCase()
+    );
+
+    let uniqueVariantNames: Set<string> = new Set(normalizedVariantNames);
+
+    let hasUniqueVariantNames: boolean =
+      uniqueVariantNames.size === normalizedVariantNames.length;
+
+    if (hasUniqueVariantNames === false) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROVIDER_MODEL_VARIANTS_INVALID
+      });
+    }
+
+    let hasUnknownVariant: boolean = variants.some(
+      variant =>
+        currentNames.has(variant.variant) === false &&
+        storedNames.has(variant.variant) === false
+    );
+
+    if (hasUnknownVariant) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROVIDER_MODEL_VARIANTS_INVALID
+      });
+    }
+
+    let submittedVariantsByName: Map<string, LlmModelVariant> = new Map(
+      variants.map(variant => [variant.variant, variant])
+    );
+
+    let storedVariantsByName: Map<string, LlmModelVariant> = new Map(
+      storedVariants.map(variant => [variant.variant, variant])
+    );
+
+    let reconciledVariants: LlmModelVariant[] = currentVariantNames.map(
+      variantName =>
+        submittedVariantsByName.get(variantName) ??
+        storedVariantsByName.get(variantName) ?? {
+          variant: variantName,
+          isExplorer: false,
+          isExplorerRecommended: false,
+          isBuilder: false,
+          isBuilderRecommended: false
+        }
+    );
+
+    let adjustedVariants: LlmModelVariant[] = this.syncDiscoveredModelVariants({
+      variants: reconciledVariants,
+      currentVariantNames: currentVariantNames,
+      isExplorer: isExplorer,
+      isBuilder: isBuilder
+    });
+
+    return adjustedVariants;
+  }
+
+  syncDiscoveredModelVariants(item: {
+    variants: LlmModelVariant[];
+    currentVariantNames: string[];
+    isExplorer: boolean;
+    isBuilder: boolean;
+  }): LlmModelVariant[] {
+    let { variants, currentVariantNames, isExplorer, isBuilder } = item;
+
+    let variantsByName: Map<string, LlmModelVariant> = new Map(
+      variants.map(variant => [variant.variant, variant])
+    );
+
+    let syncedVariants: LlmModelVariant[] = currentVariantNames.map(
+      variantName =>
+        variantsByName.get(variantName) ?? {
+          variant: variantName,
+          isExplorer: false,
+          isExplorerRecommended: false,
+          isBuilder: false,
+          isBuilderRecommended: false
+        }
+    );
+
+    let hasEnabledExplorerVariant: boolean = syncedVariants.some(
+      variant => variant.isExplorer
+    );
+
+    let hasEnabledBuilderVariant: boolean = syncedVariants.some(
+      variant => variant.isBuilder
+    );
+
+    let adjustedVariants: LlmModelVariant[] = syncedVariants.map(variant => ({
+      variant: variant.variant,
+      isExplorer:
+        variant.variant === LLM_MODEL_DEFAULT_VARIANT &&
+        isExplorer &&
+        hasEnabledExplorerVariant === false
+          ? true
+          : variant.isExplorer,
+      isExplorerRecommended: variant.isExplorerRecommended,
+      isBuilder:
+        variant.variant === LLM_MODEL_DEFAULT_VARIANT &&
+        isBuilder &&
+        hasEnabledBuilderVariant === false
+          ? true
+          : variant.isBuilder,
+      isBuilderRecommended: variant.isBuilderRecommended
+    }));
+
+    return adjustedVariants;
   }
 
   validateManualModelLimits(item: { modelInput: LlmModelInput }): void {

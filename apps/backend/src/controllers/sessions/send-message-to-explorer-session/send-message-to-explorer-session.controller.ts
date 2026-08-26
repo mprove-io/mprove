@@ -142,6 +142,7 @@ export class SendMessageToExplorerSessionController {
         projectId: session.projectId,
         providerId: providerId,
         modelId: modelId,
+        variant: variant,
         isUserCodexAuthSet: isDefined(user.codexAuth),
         isBuilder: false
       });

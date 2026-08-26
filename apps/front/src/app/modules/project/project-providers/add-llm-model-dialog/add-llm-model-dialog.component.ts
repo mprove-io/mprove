@@ -18,6 +18,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { delay, take, tap } from 'rxjs/operators';
+import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -25,11 +26,14 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { Extend } from '#common/types/extend';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
+import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ToBackendCreateLlmModelRequestPayload } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-request-payload';
 import type { ToBackendCreateLlmModelResponse } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-response';
 import type { ToBackendGetLlmModelPartsRequestPayload } from '#common/zod/to-backend/llm-models/get-llm-model-parts/get-llm-model-parts-request-payload';
 import type { ToBackendGetLlmModelPartsResponse } from '#common/zod/to-backend/llm-models/get-llm-model-parts/get-llm-model-parts-response';
+import { getLlmModelVariantsError } from '#front/app/functions/get-llm-model-variants-error';
+import { LlmModelVariantsComponent } from '#front/app/modules/project/project-providers/llm-model-variants/llm-model-variants.component';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { UserQuery } from '#front/app/queries/user.query';
@@ -57,7 +61,8 @@ type SelectableLlmModelPart = Extend<
     SharedModule,
     NgSelectModule,
     UiSwitchModule,
-    TippyDirective
+    TippyDirective,
+    LlmModelVariantsComponent
   ]
 })
 export class AddLlmModelDialogComponent implements OnInit {
@@ -76,6 +81,9 @@ export class AddLlmModelDialogComponent implements OnInit {
   modelsErrorMessage?: string;
   animatedDestination?: 'isExplorer' | 'isBuilder';
   destinationAnimationTimer?: ReturnType<typeof setTimeout>;
+  variants: LlmModelVariant[] = [];
+  showVariantsValidation = false;
+  variantsErrorMessage?: string;
 
   constructor(
     public ref: DialogRef<AddLlmModelDialogData>,
@@ -121,6 +129,12 @@ export class AddLlmModelDialogComponent implements OnInit {
       isBuilder: [isManualModel]
     });
 
+    this.variants = this.makeLlmModelVariants({
+      names: [],
+      isExplorer: isManualModel,
+      isBuilder: isManualModel
+    });
+
     this.updateManualLimitValidators({ isManualModel: isManualModel });
 
     if (isManualModel === false) {
@@ -140,6 +154,12 @@ export class AddLlmModelDialogComponent implements OnInit {
       this.modelForm.controls['name'].setValue(model.catalogName);
       this.modelForm.controls['isExplorer'].setValue(true);
       this.modelForm.controls['isBuilder'].setValue(model.isOpencodeSupported);
+
+      this.variants = this.makeLlmModelVariants({
+        names: model.variants ?? [],
+        isExplorer: true,
+        isBuilder: model.isOpencodeSupported
+      });
 
       this.modelForm.controls['isExplorer'].enable();
 
@@ -174,6 +194,12 @@ export class AddLlmModelDialogComponent implements OnInit {
 
     this.modelForm.controls['isBuilder'].setValue(this.isManualEntry);
 
+    this.variants = this.makeLlmModelVariants({
+      names: [],
+      isExplorer: this.isManualEntry,
+      isBuilder: this.isManualEntry
+    });
+
     this.updateManualLimitValidators({ isManualModel: this.isManualEntry });
 
     if (this.isManualEntry) {
@@ -204,6 +230,38 @@ export class AddLlmModelDialogComponent implements OnInit {
     contextControl.updateValueAndValidity();
   }
 
+  private makeLlmModelVariants(item: {
+    names: string[];
+    isExplorer: boolean;
+    isBuilder: boolean;
+  }): LlmModelVariant[] {
+    let { names, isExplorer, isBuilder } = item;
+
+    let uniqueNames: string[] = names
+      .map(name => name.trim())
+      .filter(
+        (name, index, values) =>
+          name.length > 0 &&
+          name.toLocaleLowerCase() !== LLM_MODEL_DEFAULT_VARIANT &&
+          values.findIndex(
+            value => value.toLocaleLowerCase() === name.toLocaleLowerCase()
+          ) === index
+      );
+
+    let variants: LlmModelVariant[] = [
+      LLM_MODEL_DEFAULT_VARIANT,
+      ...uniqueNames
+    ].map(variant => ({
+      variant: variant,
+      isExplorer: isExplorer,
+      isExplorerRecommended: false,
+      isBuilder: isBuilder,
+      isBuilderRecommended: false
+    }));
+
+    return variants;
+  }
+
   toggleDestination(item: { controlName: 'isExplorer' | 'isBuilder' }) {
     let { controlName } = item;
     let control = this.modelForm.controls[controlName];
@@ -215,12 +273,47 @@ export class AddLlmModelDialogComponent implements OnInit {
 
     this.animatedDestination = controlName;
 
-    control.setValue(control.value !== true);
+    let enabled: boolean = control.value !== true;
+
+    control.setValue(enabled);
+
+    if (enabled) {
+      this.ensureDestinationVariant({ controlName: controlName });
+    }
 
     this.destinationAnimationTimer = setTimeout(() => {
       this.animatedDestination = undefined;
       this.changeDetectorRef.detectChanges();
     }, 300);
+  }
+
+  ensureDestinationVariant(item: { controlName: 'isExplorer' | 'isBuilder' }) {
+    let { controlName } = item;
+    let enabledKey: 'isExplorer' | 'isBuilder' = controlName;
+
+    let hasEnabledVariant: boolean = this.variants.some(
+      variant => variant[enabledKey]
+    );
+
+    if (hasEnabledVariant) {
+      return;
+    }
+
+    let selectedVariant: LlmModelVariant = this.variants[0];
+
+    this.variants = this.variants.map(variant => ({
+      variant: variant.variant,
+      isExplorer:
+        controlName === 'isExplorer' && variant === selectedVariant
+          ? true
+          : variant.isExplorer,
+      isExplorerRecommended: variant.isExplorerRecommended,
+      isBuilder:
+        controlName === 'isBuilder' && variant === selectedVariant
+          ? true
+          : variant.isBuilder,
+      isBuilderRecommended: variant.isBuilderRecommended
+    }));
   }
 
   formatContextLimit(item: { contextLimit?: number }): string {
@@ -305,13 +398,25 @@ export class AddLlmModelDialogComponent implements OnInit {
 
   save() {
     this.modelForm.markAllAsTouched();
+    this.showVariantsValidation = true;
+
+    let value = this.modelForm.getRawValue();
+
+    this.variantsErrorMessage = getLlmModelVariantsError({
+      variants: this.variants,
+      isExplorer: value.isExplorer === true,
+      isBuilder: value.isBuilder === true
+    });
 
     if (!this.modelForm.valid) {
       return;
     }
 
     let provider = this.ref.data.provider;
-    let value = this.modelForm.getRawValue();
+
+    if (this.variantsErrorMessage) {
+      return;
+    }
 
     let isManualModel: boolean =
       provider.type === ProviderTypeEnum.OpenAICompatible || this.isManualEntry;
@@ -353,7 +458,8 @@ export class AddLlmModelDialogComponent implements OnInit {
       inputLimit: isManualModel ? value.inputLimit || undefined : undefined,
       outputLimit: isManualModel ? value.outputLimit || undefined : undefined,
       isExplorer: value.isExplorer === true,
-      isBuilder: value.isBuilder === true
+      isBuilder: value.isBuilder === true,
+      variants: this.variants
     };
 
     this.ref.close();

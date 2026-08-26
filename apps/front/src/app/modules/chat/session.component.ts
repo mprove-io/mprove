@@ -255,7 +255,10 @@ export class SessionComponent implements OnInit, OnDestroy {
           ? state.modelsAi
           : state.modelsOpencode;
 
-      this.sessionInput.applyModels(models);
+      this.sessionInput.applyModels({
+        apiModels: models,
+        selectRecommended: false
+      });
     }
 
     this.permissions = sessionData.permissions || [];

@@ -27,15 +27,21 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
-import { LlmModelService } from '#backend/services/llm-model.service';
+import {
+  type LlmModelPartsResult,
+  LlmModelService
+} from '#backend/services/llm-model.service';
+import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
 import { ServerError } from '#common/models/server-error';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
+import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ToBackendEditLlmModelRequestPayload } from '#common/zod/to-backend/llm-models/edit-llm-model/edit-llm-model-request-payload';
 import type { ToBackendEditLlmModelResponsePayload } from '#common/zod/to-backend/llm-models/edit-llm-model/edit-llm-model-response-payload';
@@ -75,6 +81,7 @@ export class EditLlmModelController {
       contextLimit,
       inputLimit,
       outputLimit,
+      variants,
       isExplorer,
       isBuilder
     } = bodyPayload;
@@ -97,19 +104,82 @@ export class EditLlmModelController {
       modelId: modelId
     });
 
+    let isManualModel: boolean =
+      provider.type === ProviderTypeEnum.OpenAICompatible ||
+      model.isManual === true;
+
+    if (
+      provider.type !== ProviderTypeEnum.OpenAICompatible &&
+      model.isManual !== true
+    ) {
+      let isCodexAuthSet: boolean = isDefined(user.codexAuth);
+
+      let modelPartsResult: LlmModelPartsResult =
+        await this.llmModelService.getModelParts({
+          providerType: provider.type,
+          apiKey:
+            provider.type === ProviderTypeEnum.OpenAICodex
+              ? undefined
+              : provider.options.apiKey,
+          userId: user.userId,
+          isCodexAuthSet: isCodexAuthSet,
+          isForceRefresh: true
+        });
+
+      let modelPartIndex: number = modelPartsResult.modelParts.findIndex(
+        modelPart => modelPart.modelId === modelId
+      );
+
+      if (modelPartIndex < 0) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_PROVIDER_MODEL_NOT_DISCOVERED
+        });
+      }
+
+      let modelPart: LlmModelPart = modelPartsResult.modelParts[modelPartIndex];
+
+      let currentVariantNames: string[] = [
+        LLM_MODEL_DEFAULT_VARIANT,
+        ...(modelPart.variants ?? [])
+      ];
+
+      variants = this.llmModelService.reconcileDiscoveredModelVariants({
+        variants: variants,
+        storedVariants: model.variants,
+        currentVariantNames: currentVariantNames,
+        isExplorer: isExplorer,
+        isBuilder: isBuilder
+      });
+
+      let refreshedModel: LlmModel = {
+        ...model,
+        ...modelPart,
+        name: model.name,
+        isManual: false,
+        variants: variants,
+        isExplorer: model.isExplorer,
+        isBuilder: model.isBuilder,
+        refreshedTs: Date.now()
+      };
+
+      Object.assign(model, refreshedModel);
+    }
+
     if (isBuilder === true && model.isOpencodeSupported === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_PROVIDER_MODEL_NOT_AVAILABLE_IN_BUILDER
       });
     }
 
+    this.llmModelService.validateModelVariants({
+      variants: variants,
+      isExplorer: isExplorer,
+      isBuilder: isBuilder
+    });
+
     model.name = isUndefinedOrEmpty(name)
       ? capitalizeFirstLetter(modelId)
       : name;
-
-    let isManualModel: boolean =
-      provider.type === ProviderTypeEnum.OpenAICompatible ||
-      model.isManual === true;
 
     if (isManualModel) {
       this.llmModelService.validateManualModelLimits({
@@ -135,6 +205,8 @@ export class EditLlmModelController {
     model.isExplorer = isExplorer;
 
     model.isBuilder = isBuilder;
+
+    model.variants = variants;
 
     await retry(
       async () =>

@@ -20,6 +20,7 @@ import {
 } from '#backend/functions/anthropic-model-variants';
 import { getOpenAiVariantOptions } from '#backend/functions/openai-model-variants';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -457,17 +458,20 @@ function anthropicModelToOpenCodeConfig(item: {
   let anthropicModel: Anthropic.Models.ModelInfo =
     model.providerModelInfo as unknown as Anthropic.Models.ModelInfo;
 
-  let variantEntries: [string, AnthropicVariantOptions][] = (
-    model.variants ?? []
-  ).flatMap(variant => {
-    let options: ReturnType<typeof getAnthropicVariantOptions> =
-      getAnthropicVariantOptions({
-        anthropicModel: anthropicModel,
-        variant: variant
-      });
+  let variantEntries: [string, AnthropicVariantOptions][] = model.variants
+    .filter(
+      variant =>
+        variant.isBuilder && variant.variant !== LLM_MODEL_DEFAULT_VARIANT
+    )
+    .flatMap(variant => {
+      let options: ReturnType<typeof getAnthropicVariantOptions> =
+        getAnthropicVariantOptions({
+          anthropicModel: anthropicModel,
+          variant: variant.variant
+        });
 
-    return isDefined(options) ? [[variant, options]] : [];
-  });
+      return isDefined(options) ? [[variant.variant, options]] : [];
+    });
 
   let inputModalities: string[] = ['text'];
 
@@ -521,9 +525,12 @@ function llmModelToOpenCodeConfig(item: {
     };
   }
 
-  let variantEntries: [string, Record<string, unknown>][] = (
-    model.variants ?? []
-  ).map(variant => [variant, getOpenAiVariantOptions({ variant: variant })]);
+  let variantEntries: [string, Record<string, unknown>][] = model.variants
+    .filter(
+      variant =>
+        variant.isBuilder && variant.variant !== LLM_MODEL_DEFAULT_VARIANT
+    )
+    .map(variant => [variant.variant, { reasoningEffort: variant.variant }]);
 
   if (variantEntries.length > 0) {
     modelConfig.variants = Object.fromEntries(variantEntries);
@@ -539,9 +546,15 @@ function openAiModelToOpenCodeConfig(item: {
 
   let modelsDev: Model = model.providerModelInfo?.modelsDev as unknown as Model;
 
-  let variantEntries: [string, Record<string, unknown>][] = (
-    model.variants ?? []
-  ).map(variant => [variant, getOpenAiVariantOptions({ variant: variant })]);
+  let variantEntries: [string, Record<string, unknown>][] = model.variants
+    .filter(
+      variant =>
+        variant.isBuilder && variant.variant !== LLM_MODEL_DEFAULT_VARIANT
+    )
+    .map(variant => [
+      variant.variant,
+      getOpenAiVariantOptions({ variant: variant.variant })
+    ]);
 
   let modelConfig: Record<string, unknown> = {
     name: model.name ?? model.catalogName,

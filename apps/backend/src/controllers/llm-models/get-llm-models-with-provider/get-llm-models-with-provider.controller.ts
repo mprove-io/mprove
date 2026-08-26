@@ -78,13 +78,23 @@ export class GetLlmModelsWithProviderController {
     let modelsAi: LlmModelWithProvider[] = sessionTypes.includes(
       SessionTypeEnum.Explorer
     )
-      ? allModels.filter(model => model.isExplorer)
+      ? allModels
+          .filter(model => model.isExplorer)
+          .map(model => ({
+            ...model,
+            variants: model.variants.filter(variant => variant.isExplorer)
+          }))
       : [];
 
     let modelsOpencode: LlmModelWithProvider[] = sessionTypes.includes(
       SessionTypeEnum.Editor
     )
-      ? allModels.filter(model => model.isOpencodeSupported && model.isBuilder)
+      ? allModels
+          .filter(model => model.isOpencodeSupported && model.isBuilder)
+          .map(model => ({
+            ...model,
+            variants: model.variants.filter(variant => variant.isBuilder)
+          }))
       : [];
 
     let payload: ToBackendGetLlmModelsWithProviderResponsePayload = {

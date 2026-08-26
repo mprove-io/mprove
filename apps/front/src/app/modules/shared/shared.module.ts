@@ -128,6 +128,7 @@ import { StarIconComponent } from './icons/star-icon/star-icon.component';
 import { StopIconComponent } from './icons/stop-icon/stop-icon.component';
 import { TableCellsIconComponent } from './icons/table-cells-icon/table-cells-icon.component';
 import { TableIconComponent } from './icons/table-icon/table-icon.component';
+import { ThumbsUpIconComponent } from './icons/thumbs-up-icon/thumbs-up-icon.component';
 import { TrashIconComponent } from './icons/trash-icon/trash-icon.component';
 import { TreeIconComponent } from './icons/tree-icon/tree-icon.component';
 import { TreeStructureIconComponent } from './icons/tree-structure-icon/tree-structure-icon.component';
@@ -195,6 +196,7 @@ let sharedComponents = [
   TrashIconComponent,
   SaveIconComponent,
   StarIconComponent,
+  ThumbsUpIconComponent,
   CheckIconComponent,
   AddIconComponent,
   ChevronLeftIconComponent,

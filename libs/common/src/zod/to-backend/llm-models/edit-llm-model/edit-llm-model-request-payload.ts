@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import {
+  type LlmModelVariant,
+  zLlmModelVariant
+} from '#common/zod/backend/llm-models/llm-model-variant';
 
 export type ToBackendEditLlmModelRequestPayload = {
   projectId: string;
@@ -9,6 +13,7 @@ export type ToBackendEditLlmModelRequestPayload = {
   contextLimit?: number;
   inputLimit?: number;
   outputLimit?: number;
+  variants: LlmModelVariant[];
   isExplorer: boolean;
   isBuilder: boolean;
 };
@@ -22,6 +27,7 @@ export let zToBackendEditLlmModelRequestPayload = z
     contextLimit: z.number().int().positive().nullish(),
     inputLimit: z.number().int().positive().nullish(),
     outputLimit: z.number().int().positive().nullish(),
+    variants: z.array(zLlmModelVariant),
     isExplorer: z.boolean(),
     isBuilder: z.boolean()
   })
