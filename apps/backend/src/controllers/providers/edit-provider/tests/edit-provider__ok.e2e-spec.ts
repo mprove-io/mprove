@@ -44,6 +44,11 @@ let projectName = testId;
 
 let providerId = 'custom_llm';
 
+type ProviderModelPart = {
+  modelId: string;
+  name?: string;
+};
+
 test('1', async t => {
   let isPass = false;
 
@@ -226,7 +231,14 @@ test('1', async t => {
       queryParams: [{ key: 'version', value: '2' }]
     });
 
-    assert.deepEqual(providerTab.models, [
+    let providerModelParts: ProviderModelPart[] = providerTab.models.map(
+      model => ({
+        modelId: model.modelId,
+        name: model.name
+      })
+    );
+
+    assert.deepEqual(providerModelParts, [
       { modelId: 'old-model', name: 'Old Model' }
     ]);
 

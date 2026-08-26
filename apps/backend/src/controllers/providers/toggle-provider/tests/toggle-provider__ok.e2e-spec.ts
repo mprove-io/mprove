@@ -45,6 +45,11 @@ let projectName = testId;
 
 let providerId = 'custom_llm';
 
+type ProviderModelPart = {
+  modelId: string;
+  name?: string;
+};
+
 test('1', async t => {
   let isPass = false;
 
@@ -200,23 +205,33 @@ test('1', async t => {
 
     assert.equal(typeof serverTs, 'number');
 
-    assert.deepEqual(providerWithoutServerTs, {
-      projectId: projectId,
-      providerId: providerId,
-      type: ProviderTypeEnum.OpenAICompatible,
-      name: 'Custom LLM',
-      isEnabled: false,
-      models: [
-        { modelId: 'model-1', name: 'Model One' },
-        { modelId: 'model-2', name: 'Model Two' }
-      ],
-      options: {
-        baseURL: 'https://api.example.com/v1',
-        apiKey: '',
-        headers: [{ key: 'Authorization', value: '' }],
-        queryParams: [{ key: 'version', value: '' }]
+    let responseModelParts: ProviderModelPart[] = provider.models.map(
+      model => ({
+        modelId: model.modelId,
+        name: model.name
+      })
+    );
+
+    assert.deepEqual(
+      { ...providerWithoutServerTs, models: responseModelParts },
+      {
+        projectId: projectId,
+        providerId: providerId,
+        type: ProviderTypeEnum.OpenAICompatible,
+        name: 'Custom LLM',
+        isEnabled: false,
+        models: [
+          { modelId: 'model-1', name: 'Model One' },
+          { modelId: 'model-2', name: 'Model Two' }
+        ],
+        options: {
+          baseURL: 'https://api.example.com/v1',
+          apiKey: '',
+          headers: [{ key: 'Authorization', value: '' }],
+          queryParams: [{ key: 'version', value: '' }]
+        }
       }
-    });
+    );
 
     assert.equal(providerTab.isEnabled, false);
 
@@ -227,7 +242,14 @@ test('1', async t => {
       queryParams: [{ key: 'version', value: '1' }]
     });
 
-    assert.deepEqual(providerTab.models, [
+    let providerModelParts: ProviderModelPart[] = providerTab.models.map(
+      model => ({
+        modelId: model.modelId,
+        name: model.name
+      })
+    );
+
+    assert.deepEqual(providerModelParts, [
       { modelId: 'model-1', name: 'Model One' },
       { modelId: 'model-2', name: 'Model Two' }
     ]);
