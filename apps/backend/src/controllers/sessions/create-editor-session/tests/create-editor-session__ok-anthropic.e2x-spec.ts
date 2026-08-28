@@ -1,5 +1,5 @@
 import test from 'ava';
-import { ANTHROPIC_MODEL_INFO } from '#backend/controllers/sessions/create-editor-session/tests/anthropic-model-info.fixture';
+import { ANTHROPIC_CLAUDE_SONNET_5_MODEL_INFO } from '#backend/controllers/sessions/create-editor-session/tests/fixtures/anthropic-claude-sonnet-5-model-info.fixture';
 import { forTestsRunEditorSessionE2x } from '#backend/functions/for-tests/for-tests-run-editor-session-e2x';
 import { ANTHROPIC_PROVIDER_ID } from '#common/constants/providers';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
@@ -30,9 +30,11 @@ test('1', async t => {
       isEnabled: true,
       models: [
         {
-          modelId: ANTHROPIC_MODEL_INFO.id,
-          name: ANTHROPIC_MODEL_INFO.display_name,
-          providerModelInfo: { ...ANTHROPIC_MODEL_INFO },
+          modelId: ANTHROPIC_CLAUDE_SONNET_5_MODEL_INFO.id,
+          name: ANTHROPIC_CLAUDE_SONNET_5_MODEL_INFO.display_name,
+          providerModelInfo: {
+            ...ANTHROPIC_CLAUDE_SONNET_5_MODEL_INFO
+          },
           isExplorer: true,
           isBuilder: true
         }
@@ -41,7 +43,7 @@ test('1', async t => {
         apiKey: anthropicApiKey
       }
     },
-    modelId: ANTHROPIC_MODEL_INFO.id,
+    modelId: ANTHROPIC_CLAUDE_SONNET_5_MODEL_INFO.id,
     variant: 'default'
   });
 });

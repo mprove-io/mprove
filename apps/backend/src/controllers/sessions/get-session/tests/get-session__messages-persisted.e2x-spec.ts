@@ -1,4 +1,5 @@
 import test from 'ava';
+import { OPENAI_GPT_5_6_LUNA_MODEL_INFO } from '#backend/controllers/sessions/get-session/tests/fixtures/openai-gpt-5-6-luna-model-info.fixture';
 import { forTestsConnectSse } from '#backend/functions/for-tests/for-tests-connect-sse';
 import { forTestsGetSseTicket } from '#backend/functions/for-tests/for-tests-get-sse-ticket';
 import { forTestsWaitForSessionActive } from '#backend/functions/for-tests/for-tests-wait-for-session-active';
@@ -112,8 +113,9 @@ test('1', async t => {
             isEnabled: true,
             models: [
               {
-                modelId: 'gpt-5.1-codex-mini',
-                name: 'GPT-5.1 Codex Mini',
+                modelId: OPENAI_GPT_5_6_LUNA_MODEL_INFO.modelsDev.id,
+                name: OPENAI_GPT_5_6_LUNA_MODEL_INFO.modelsDev.name,
+                providerModelInfo: { ...OPENAI_GPT_5_6_LUNA_MODEL_INFO },
                 isExplorer: true,
                 isBuilder: true
               }
@@ -138,7 +140,7 @@ test('1', async t => {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
         providerId: OPENAI_PROVIDER_ID,
-        modelId: 'gpt-5.1-codex-mini',
+        modelId: OPENAI_GPT_5_6_LUNA_MODEL_INFO.modelsDev.id,
         agent: 'plan',
         variant: 'default',
         envId: PROJECT_ENV_PROD,
@@ -198,7 +200,7 @@ test('1', async t => {
         message: 'what is 10 + 20?',
         agent: 'plan',
         providerId: OPENAI_PROVIDER_ID,
-        modelId: 'gpt-5.1-codex-mini',
+        modelId: OPENAI_GPT_5_6_LUNA_MODEL_INFO.modelsDev.id,
         variant: 'default'
       }
     };

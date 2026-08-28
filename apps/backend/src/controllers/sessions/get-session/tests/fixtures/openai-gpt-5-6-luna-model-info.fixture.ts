@@ -14,13 +14,12 @@ type OpenAiModelInfo = {
   openAi: OpenAI.Models.Model;
 };
 
-export let OPENAI_MODEL_INFO: OpenAiModelInfo = {
+export let OPENAI_GPT_5_6_LUNA_MODEL_INFO: OpenAiModelInfo = {
   modelsDev: {
-    id: 'gpt-5.6-sol',
-    name: 'GPT-5.6 Sol',
-    description:
-      'Frontier GPT-5.6 model for complex professional work, coding, and agentic workflows',
-    family: 'gpt-sol',
+    id: 'gpt-5.6-luna',
+    name: 'GPT-5.6 Luna',
+    description: 'Cost-efficient GPT-5.6 model for fast, high-volume workloads',
+    family: 'gpt-luna',
     attachment: true,
     reasoning: true,
     reasoning_options: [
@@ -49,10 +48,10 @@ export let OPENAI_MODEL_INFO: OpenAiModelInfo = {
       modes: {
         fast: {
           cost: {
-            input: 8,
-            output: 40,
-            cache_read: 0.8,
-            cache_write: 10
+            input: 0.4,
+            output: 2.4,
+            cache_read: 0.04,
+            cache_write: 0.5
           },
           provider: {
             body: {
@@ -72,16 +71,16 @@ export let OPENAI_MODEL_INFO: OpenAiModelInfo = {
       }
     },
     cost: {
-      input: 4,
-      output: 20,
-      cache_read: 0.4,
-      cache_write: 5,
+      input: 0.2,
+      output: 1.2,
+      cache_read: 0.02,
+      cache_write: 0.25,
       tiers: [
         {
-          input: 8,
-          output: 30,
-          cache_read: 0.8,
-          cache_write: 10,
+          input: 0.4,
+          output: 1.8,
+          cache_read: 0.04,
+          cache_write: 0.5,
           tier: {
             type: 'context',
             size: 272000
@@ -89,10 +88,10 @@ export let OPENAI_MODEL_INFO: OpenAiModelInfo = {
         }
       ],
       context_over_200k: {
-        input: 8,
-        output: 30,
-        cache_read: 0.8,
-        cache_write: 10
+        input: 0.4,
+        output: 1.8,
+        cache_read: 0.04,
+        cache_write: 0.5
       }
     }
   },
@@ -103,9 +102,9 @@ export let OPENAI_MODEL_INFO: OpenAiModelInfo = {
     npm: '@ai-sdk/openai'
   },
   openAi: {
-    id: 'gpt-5.6-sol',
+    id: 'gpt-5.6-luna',
     object: 'model',
-    created: 1782228018,
+    created: 1782228658,
     owned_by: 'system',
     shutdown_date: null
   }

@@ -1,5 +1,5 @@
 import test from 'ava';
-import { OPENAI_MODEL_INFO } from '#backend/controllers/sessions/create-editor-session/tests/openai-model-info.fixture';
+import { OPENAI_GPT_5_6_SOL_MODEL_INFO } from '#backend/controllers/sessions/create-editor-session/tests/fixtures/openai-gpt-5-6-sol-model-info.fixture';
 import { forTestsRunEditorSessionE2x } from '#backend/functions/for-tests/for-tests-run-editor-session-e2x';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
@@ -30,9 +30,9 @@ test('1', async t => {
       isEnabled: true,
       models: [
         {
-          modelId: OPENAI_MODEL_INFO.modelsDev.id,
-          name: OPENAI_MODEL_INFO.modelsDev.name,
-          providerModelInfo: { ...OPENAI_MODEL_INFO },
+          modelId: OPENAI_GPT_5_6_SOL_MODEL_INFO.modelsDev.id,
+          name: OPENAI_GPT_5_6_SOL_MODEL_INFO.modelsDev.name,
+          providerModelInfo: { ...OPENAI_GPT_5_6_SOL_MODEL_INFO },
           isExplorer: true,
           isBuilder: true
         }
@@ -41,7 +41,7 @@ test('1', async t => {
         apiKey: openaiApiKey
       }
     },
-    modelId: OPENAI_MODEL_INFO.modelsDev.id,
+    modelId: OPENAI_GPT_5_6_SOL_MODEL_INFO.modelsDev.id,
     variant: 'default'
   });
 });
