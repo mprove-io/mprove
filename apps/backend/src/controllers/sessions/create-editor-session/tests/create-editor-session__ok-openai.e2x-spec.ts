@@ -1,4 +1,5 @@
 import test from 'ava';
+import { OPENAI_MODEL_INFO } from '#backend/controllers/sessions/create-editor-session/tests/openai-model-info.fixture';
 import { forTestsRunEditorSessionE2x } from '#backend/functions/for-tests/for-tests-run-editor-session-e2x';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
@@ -29,8 +30,9 @@ test('1', async t => {
       isEnabled: true,
       models: [
         {
-          modelId: 'gpt-5.1-codex-mini',
-          name: 'GPT-5.1 Codex Mini',
+          modelId: OPENAI_MODEL_INFO.modelsDev.id,
+          name: OPENAI_MODEL_INFO.modelsDev.name,
+          providerModelInfo: { ...OPENAI_MODEL_INFO },
           isExplorer: true,
           isBuilder: true
         }
@@ -39,7 +41,7 @@ test('1', async t => {
         apiKey: openaiApiKey
       }
     },
-    modelId: 'gpt-5.1-codex-mini',
+    modelId: OPENAI_MODEL_INFO.modelsDev.id,
     variant: 'default'
   });
 });
