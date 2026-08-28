@@ -139,7 +139,7 @@ let uiState: UiState = {
   projectSelectedGivenLinks: [],
   chartsByModel: false,
   permissionsAutoAcceptSessionIds: [],
-  newSessionPermissionsAutoAccept: false,
+  newSessionPermissionsAutoAccept: true,
   newSessionExplorerModelExtraId: undefined,
   newSessionExplorerVariant: undefined,
   newSessionEditorModelExtraId: undefined,

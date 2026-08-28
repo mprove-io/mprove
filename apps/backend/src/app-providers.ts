@@ -74,6 +74,7 @@ import { EditorCodexService } from './services/editor/editor-codex.service';
 import { EditorConnectionsService } from './services/editor/editor-connections.service';
 import { EditorOpencodeService } from './services/editor/editor-opencode.service';
 import { EditorSandboxService } from './services/editor/editor-sandbox.service';
+import { EditorSessionLockService } from './services/editor/editor-session-lock.service';
 import { EditorStreamService } from './services/editor/editor-stream.service';
 import { EmailService } from './services/email.service';
 import { ExplorerChartRebuildService } from './services/explorer/explorer-chart-rebuild.service';
@@ -187,6 +188,7 @@ export const appProviders = [
   SessionDrainService,
   SessionDrainTimerService,
   SessionSseService,
+  EditorSessionLockService,
   EditorStreamService,
   EditorSandboxService,
   ExplorerEventsMakerService,
@@ -249,6 +251,7 @@ export const appProviders = [
       structsService: StructsService,
       notesService: NotesService,
       editorSandboxService: EditorSandboxService,
+      editorSessionLockService: EditorSessionLockService,
       editorStreamService: EditorStreamService,
       logger: Logger
     ) =>
@@ -259,6 +262,7 @@ export const appProviders = [
             structsService,
             notesService,
             editorSandboxService,
+            editorSessionLockService,
             editorStreamService,
             logger
           )
@@ -269,6 +273,7 @@ export const appProviders = [
       StructsService,
       NotesService,
       EditorSandboxService,
+      EditorSessionLockService,
       EditorStreamService,
       Logger
     ]

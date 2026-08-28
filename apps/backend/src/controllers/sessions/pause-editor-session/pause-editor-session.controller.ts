@@ -10,6 +10,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
+import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -27,6 +28,7 @@ export class PauseEditorSessionController {
   constructor(
     private sessionsService: SessionsService,
     private editorSandboxService: EditorSandboxService,
+    private editorSessionLockService: EditorSessionLockService,
     private editorStreamService: EditorStreamService
   ) {}
 
@@ -60,27 +62,39 @@ export class PauseEditorSessionController {
       });
     }
 
-    await this.editorStreamService.publishStopSessionStream({
-      sessionId: sessionId
-    });
+    let sessionLockToken: string =
+      await this.editorSessionLockService.acquireSessionLock({
+        sessionId: sessionId
+      });
 
-    await this.editorSandboxService.pauseSessionById({
-      sessionId: sessionId,
-      pauseReason: PauseReasonEnum.User
-    });
+    try {
+      await this.editorStreamService.publishStopSessionStream({
+        sessionId: sessionId
+      });
 
-    let freshSession = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: sessionId
-    });
+      await this.editorSandboxService.pauseSessionById({
+        sessionId: sessionId,
+        pauseReason: PauseReasonEnum.User
+      });
 
-    let freshSessionApi = this.sessionsService.tabToSessionApi({
-      session: freshSession
-    });
+      let freshSession = await this.sessionsService.getSessionByIdCheckExists({
+        sessionId: sessionId
+      });
 
-    let payload: ToBackendPauseEditorSessionResponsePayload = {
-      session: freshSessionApi
-    };
+      let freshSessionApi = this.sessionsService.tabToSessionApi({
+        session: freshSession
+      });
 
-    return payload;
+      let payload: ToBackendPauseEditorSessionResponsePayload = {
+        session: freshSessionApi
+      };
+
+      return payload;
+    } finally {
+      await this.editorSessionLockService.releaseSessionLock({
+        sessionId: sessionId,
+        token: sessionLockToken
+      });
+    }
   }
 }

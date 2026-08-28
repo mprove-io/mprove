@@ -48,6 +48,7 @@ export class SessionsService {
     apiKeyPrefix?: string;
     apiKeySecretHash?: string;
     apiKeySalt?: string;
+    providerConfigHash?: string;
     initialBranch?: string;
     envId?: string;
     initialCommit?: string;
@@ -79,6 +80,7 @@ export class SessionsService {
       apiKeyPrefix: item.apiKeyPrefix,
       apiKeySecretHash: item.apiKeySecretHash,
       apiKeySalt: item.apiKeySalt,
+      providerConfigHash: item.providerConfigHash,
       closedExplorerTabIds: [],
       initialBranch: item.initialBranch,
       envId: item.envId,

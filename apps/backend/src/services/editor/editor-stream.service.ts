@@ -16,6 +16,7 @@ import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import {
@@ -44,6 +45,7 @@ import {
   OPENCODE_PROJECT_OPENAI_PROVIDER_ID
 } from './editor-opencode.service';
 import { EditorSandboxService } from './editor-sandbox.service';
+import { EditorSessionLockService } from './editor-session-lock.service';
 
 const { forEachSeries } = pIteration;
 
@@ -76,6 +78,7 @@ export class EditorStreamService implements OnModuleDestroy {
     private cs: ConfigService<BackendConfig>,
     private sessionDrainService: SessionDrainService,
     private editorSandboxService: EditorSandboxService,
+    private editorSessionLockService: EditorSessionLockService,
     private editorOpencodeService: EditorOpencodeService,
     private sessionsService: SessionsService,
     private ocMessagesService: OcMessagesService,
@@ -260,16 +263,50 @@ export class EditorStreamService implements OnModuleDestroy {
 
     await forEachSeries(sessionIds, async (sessionId: string) => {
       try {
-        await this.stopEventStream({ sessionId: sessionId });
+        let sessionLockToken: string =
+          await this.editorSessionLockService.acquireSessionLock({
+            sessionId: sessionId
+          });
 
-        await this.editorSandboxService.pauseSessionById({
-          sessionId: sessionId,
-          pauseReason: PauseReasonEnum.Safe
-        });
+        try {
+          let session: SessionTab =
+            await this.sessionsService.getSessionByIdCheckExists({
+              sessionId: sessionId
+            });
 
-        await this.setSessionRequestedReloadTs({
-          sessionId: sessionId
-        });
+          let client: OpencodeClient =
+            await this.editorOpencodeService.getOpenCodeClient({
+              sessionId: sessionId
+            });
+
+          let statusResp: Awaited<
+            ReturnType<OpencodeClient['session']['status']>
+          > = await client.session.status();
+
+          let status = statusResp.data?.[session.opencodeSessionId];
+
+          let isIdle = status?.type === 'idle';
+
+          if (isIdle !== true) {
+            return;
+          }
+
+          await this.stopEventStream({ sessionId: sessionId });
+
+          await this.editorSandboxService.pauseSessionById({
+            sessionId: sessionId,
+            pauseReason: PauseReasonEnum.Safe
+          });
+
+          await this.setSessionRequestedReloadTs({
+            sessionId: sessionId
+          });
+        } finally {
+          await this.editorSessionLockService.releaseSessionLock({
+            sessionId: sessionId,
+            token: sessionLockToken
+          });
+        }
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({

@@ -422,6 +422,7 @@ export let zSessionSt = z
     firstMessage: z.string().nullish(),
     apiKeySecretHash: z.string().nullish(),
     apiKeySalt: z.string().nullish(),
+    providerConfigHash: z.string().nullish(),
     closedExplorerTabIds: z.array(z.string()).nullish()
   })
   .meta({ id: 'SessionSt' });

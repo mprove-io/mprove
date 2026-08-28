@@ -9,12 +9,14 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
+import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
+import { isDefined } from '#common/functions/is-defined';
 import type { SessionApi } from '#common/zod/backend/session-api';
 
 @Injectable()
@@ -23,6 +25,7 @@ export class SessionArchiveService {
     @Inject(DRIZZLE) private db: Db,
     private sessionsService: SessionsService,
     private editorSandboxService: EditorSandboxService,
+    private editorSessionLockService: EditorSessionLockService,
     private editorStreamService: EditorStreamService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
@@ -37,59 +40,81 @@ export class SessionArchiveService {
 
     // TODO: check session type is editor
 
-    let isActiveOrPaused =
-      [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
-        session.status
-      ) > -1;
-
-    if (session.type === SessionTypeEnum.Editor && isActiveOrPaused) {
-      await this.editorSandboxService.stopSandbox({
-        sandboxType: session.sandboxType as SandboxTypeEnum,
-        sandboxId: session.sandboxId,
-        e2bApiKey: e2bApiKey
-      });
-    }
-
-    let updatedSession: SessionTab = {
-      ...session,
-      status: SessionStatusEnum.Archived,
-      archiveReason: archiveReason
-    };
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await this.db.packer.write({
-            tx: tx,
-            insertOrUpdate: {
-              sessions: [updatedSession]
-            }
-          });
-        }),
-      getRetryOption(this.cs, this.logger)
-    );
-
-    setTimeout(() => {
-      if (session.type === SessionTypeEnum.Editor) {
-        this.editorStreamService
-          .publishStopSessionStream({
+    let sessionLockToken =
+      session.type === SessionTypeEnum.Editor
+        ? await this.editorSessionLockService.acquireSessionLock({
             sessionId: session.sessionId
           })
-          .catch(e => {
-            logToConsoleBackend({
-              log: e,
-              logLevel: LogLevelEnum.Error,
-              logger: this.logger,
-              cs: this.cs
-            });
-          });
+        : undefined;
+
+    try {
+      if (session.type === SessionTypeEnum.Editor) {
+        session = await this.sessionsService.getSessionByIdCheckExists({
+          sessionId: session.sessionId
+        });
       }
-    }, 10_000);
 
-    let sessionApi = this.sessionsService.tabToSessionApi({
-      session: updatedSession
-    });
+      let isActiveOrPaused =
+        [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
+          session.status
+        ) > -1;
 
-    return sessionApi;
+      if (session.type === SessionTypeEnum.Editor && isActiveOrPaused) {
+        await this.editorSandboxService.stopSandbox({
+          sandboxType: session.sandboxType as SandboxTypeEnum,
+          sandboxId: session.sandboxId,
+          e2bApiKey: e2bApiKey
+        });
+      }
+
+      let updatedSession: SessionTab = {
+        ...session,
+        status: SessionStatusEnum.Archived,
+        archiveReason: archiveReason
+      };
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(async tx => {
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                sessions: [updatedSession]
+              }
+            });
+          }),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      setTimeout(() => {
+        if (session.type === SessionTypeEnum.Editor) {
+          this.editorStreamService
+            .publishStopSessionStream({
+              sessionId: session.sessionId
+            })
+            .catch(e => {
+              logToConsoleBackend({
+                log: e,
+                logLevel: LogLevelEnum.Error,
+                logger: this.logger,
+                cs: this.cs
+              });
+            });
+        }
+      }, 10_000);
+
+      let sessionApi = this.sessionsService.tabToSessionApi({
+        session: updatedSession
+      });
+
+      return sessionApi;
+    } finally {
+      if (isDefined(sessionLockToken)) {
+        await this.editorSessionLockService.releaseSessionLock({
+          sessionId: session.sessionId,
+          token: sessionLockToken
+        });
+      }
+    }
   }
 }

@@ -1306,6 +1306,7 @@ export class TabToEntService {
       firstMessage: tab.firstMessage,
       apiKeySecretHash: tab.apiKeySecretHash,
       apiKeySalt: tab.apiKeySalt,
+      providerConfigHash: tab.providerConfigHash,
       closedExplorerTabIds: tab.closedExplorerTabIds
     };
 

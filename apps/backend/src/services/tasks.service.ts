@@ -12,6 +12,7 @@ import { NotesService } from './db/notes.service';
 import { QueriesService } from './db/queries.service';
 import { StructsService } from './db/structs.service';
 import { EditorSandboxService } from './editor/editor-sandbox.service';
+import { EditorSessionLockService } from './editor/editor-session-lock.service';
 import { EditorStreamService } from './editor/editor-stream.service';
 
 const { forEachSeries } = pIteration;
@@ -31,6 +32,7 @@ export class TasksService {
     private structsService: StructsService,
     private notesService: NotesService,
     private editorSandboxService: EditorSandboxService,
+    private editorSessionLockService: EditorSessionLockService,
     private editorStreamService: EditorStreamService,
     private logger: Logger
   ) {}
@@ -135,18 +137,39 @@ export class TasksService {
 
         await forEachSeries(sessionIdsToPause, async sessionId => {
           try {
-            await this.editorStreamService.publishStopSessionStream({
-              sessionId: sessionId
-            });
+            let sessionLockToken: string =
+              await this.editorSessionLockService.acquireSessionLock({
+                sessionId: sessionId
+              });
 
-            await this.editorSandboxService.pauseSessionById({
-              sessionId: sessionId,
-              pauseReason: PauseReasonEnum.Idle
-            });
+            try {
+              let freshSessionIdsToPause: string[] =
+                await this.editorSandboxService.getEditorSessionsToPause();
 
-            await this.editorStreamService.setSessionRequestedReloadTs({
-              sessionId: sessionId
-            });
+              let shouldPause = freshSessionIdsToPause.includes(sessionId);
+
+              if (shouldPause === false) {
+                return;
+              }
+
+              await this.editorStreamService.publishStopSessionStream({
+                sessionId: sessionId
+              });
+
+              await this.editorSandboxService.pauseSessionById({
+                sessionId: sessionId,
+                pauseReason: PauseReasonEnum.Idle
+              });
+
+              await this.editorStreamService.setSessionRequestedReloadTs({
+                sessionId: sessionId
+              });
+            } finally {
+              await this.editorSessionLockService.releaseSessionLock({
+                sessionId: sessionId,
+                token: sessionLockToken
+              });
+            }
           } catch (e) {
             logToConsoleBackend({
               log: new ServerError({

@@ -228,6 +228,7 @@ export class CreateEditorSessionController {
           apiKeyPrefix: apiKeyParts.prefix,
           apiKeySecretHash: apiKeyParts.secretHash,
           apiKeySalt: apiKeyParts.salt,
+          providerConfigHash: providerConfig.hash,
           initialBranch: initialBranch,
           envId: envId,
           initialCommit: undefined,

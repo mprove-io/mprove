@@ -21,6 +21,7 @@ import { ServerError } from '#common/models/server-error';
 import { ProjectsService } from '../db/projects.service';
 import { SessionsService } from '../db/sessions.service';
 import { TabService } from '../tab.service';
+import { EditorSessionLockService } from './editor-session-lock.service';
 
 const { forEachSeries } = pIteration;
 
@@ -31,6 +32,7 @@ export class EditorSandboxService {
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private tabService: TabService,
+    private editorSessionLockService: EditorSessionLockService,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -275,26 +277,51 @@ export class EditorSandboxService {
       return [];
     }
 
-    let sandboxes = await this.listSandboxes({
-      e2bApiKey: item.e2bApiKey
-    });
-
     let pausedSessionIds: string[] = [];
 
     await forEachSeries(sessionsWithSandbox, async session => {
       try {
-        let sandboxInfo = sandboxes.find(
-          s => s.sandboxId === session.sandboxId
-        );
+        let sandboxInfo = await this.getSandboxInfo({
+          sandboxId: session.sandboxId,
+          e2bApiKey: item.e2bApiKey
+        });
 
-        if (!sandboxInfo) {
-          // Sandbox no longer exists
+        let needsStatusChange =
+          !sandboxInfo ||
+          (session.status === SessionStatusEnum.Active &&
+            sandboxInfo.state === 'paused');
+
+        if (needsStatusChange === false) {
+          return;
+        }
+
+        let sessionLockToken: string =
+          await this.editorSessionLockService.acquireSessionLock({
+            sessionId: session.sessionId
+          });
+
+        try {
           let freshSession =
             await this.sessionsService.getSessionByIdCheckExists({
               sessionId: session.sessionId
             });
 
-          if (freshSession.status !== SessionStatusEnum.Archived) {
+          let isActiveOrPaused = [
+            SessionStatusEnum.Active,
+            SessionStatusEnum.Paused
+          ].includes(freshSession.status);
+
+          if (isActiveOrPaused === false || !freshSession.sandboxId) {
+            return;
+          }
+
+          sandboxInfo = await this.getSandboxInfo({
+            sandboxId: freshSession.sandboxId,
+            e2bApiKey: item.e2bApiKey
+          });
+
+          if (!sandboxInfo) {
+            // Sandbox no longer exists
             let updatedSession: SessionTab = {
               ...freshSession,
               status: SessionStatusEnum.Archived,
@@ -309,31 +336,36 @@ export class EditorSandboxService {
                 }
               });
             });
+          } else if (
+            freshSession.status === SessionStatusEnum.Active &&
+            sandboxInfo.state === 'paused'
+          ) {
+            let updatedSession: SessionTab = {
+              ...freshSession,
+              status: SessionStatusEnum.Paused,
+              pauseReason: PauseReasonEnum.External,
+              sandboxStartTs: sandboxInfo.startedAt.getTime(),
+              sandboxEndTs: sandboxInfo.endAt.getTime(),
+              sandboxInfo: sandboxInfo
+            };
+
+            await this.db.drizzle.transaction(
+              async tx =>
+                await this.db.packer.write({
+                  tx: tx,
+                  insertOrUpdate: {
+                    sessions: [updatedSession]
+                  }
+                })
+            );
+
+            pausedSessionIds.push(freshSession.sessionId);
           }
-        } else if (
-          session.status === SessionStatusEnum.Active &&
-          sandboxInfo.state === 'paused'
-        ) {
-          let updatedSession: SessionTab = {
-            ...session,
-            status: SessionStatusEnum.Paused,
-            pauseReason: PauseReasonEnum.External,
-            sandboxStartTs: sandboxInfo.startedAt.getTime(),
-            sandboxEndTs: sandboxInfo.endAt.getTime(),
-            sandboxInfo: sandboxInfo
-          };
-
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insertOrUpdate: {
-                  sessions: [updatedSession]
-                }
-              })
-          );
-
-          pausedSessionIds.push(session.sessionId);
+        } finally {
+          await this.editorSessionLockService.releaseSessionLock({
+            sessionId: session.sessionId,
+            token: sessionLockToken
+          });
         }
       } catch (e) {
         logToConsoleBackend({

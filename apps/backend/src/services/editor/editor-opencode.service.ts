@@ -4,7 +4,12 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Model } from '@opencode-ai/models';
 import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
-import { Sandbox, type SandboxInfo } from 'e2b';
+import {
+  type CommandHandle,
+  type ProcessInfo,
+  Sandbox,
+  type SandboxInfo
+} from 'e2b';
 import pIteration from 'p-iteration';
 import type { BackendConfig } from '#backend/config/backend-config';
 
@@ -40,6 +45,12 @@ export interface CreateSandboxResult {
   sandboxInfo: SandboxInfo;
 }
 
+export interface ProviderConfigResult {
+  envs: Record<string, string>;
+  content: string;
+  hash: string;
+}
+
 @Injectable()
 export class EditorOpencodeService {
   private opencodeClients: { sessionId: string; client: OpencodeClient }[] = [];
@@ -52,15 +63,19 @@ export class EditorOpencodeService {
   async buildProviderConfig(item: {
     providers: ProviderTab[];
     isUserCodexAuthSet: boolean;
-  }): Promise<{ envs: Record<string, string>; content: string }> {
+  }): Promise<ProviderConfigResult> {
     let envs: Record<string, string> = {};
     let config: Record<string, Record<string, unknown>> = {};
 
+    let providers = [...item.providers].sort((a, b) =>
+      a.providerId.localeCompare(b.providerId)
+    );
+
     await Promise.all(
-      item.providers.map(async (provider, index) => {
-        let models = provider.models.filter(
-          model => model.isOpencodeSupported && model.isBuilder
-        );
+      providers.map(async (provider, index) => {
+        let models = provider.models
+          .filter(model => model.isOpencodeSupported && model.isBuilder)
+          .sort((a, b) => a.modelId.localeCompare(b.modelId));
 
         let modelIds = models.map(model => model.modelId);
 
@@ -187,9 +202,27 @@ export class EditorOpencodeService {
       })
     );
 
+    let content = JSON.stringify({ provider: config });
+
+    let sandboxMproveCliHost: string = this.cs.get<
+      BackendConfig['sandboxMproveCliHost']
+    >('sandboxMproveCliHost');
+
+    let hash = crypto
+      .createHash('sha256')
+      .update(
+        JSON.stringify({
+          content: content,
+          envs: envs,
+          sandboxMproveCliHost: sandboxMproveCliHost
+        })
+      )
+      .digest('hex');
+
     return {
       envs: envs,
-      content: JSON.stringify({ provider: config })
+      content: content,
+      hash: hash
     };
   }
 
@@ -344,8 +377,94 @@ export class EditorOpencodeService {
     }
   }
 
+  async restartOpencodeServer(item: {
+    sessionId: string;
+    sandboxType: SandboxTypeEnum;
+    sandboxId: string;
+    e2bApiKey: string;
+    sandboxBaseUrl: string;
+    opencodePassword: string;
+    sandboxEnvs: Record<string, string>;
+    sessionApiKey: string;
+  }): Promise<void> {
+    try {
+      switch (item.sandboxType) {
+        case SandboxTypeEnum.E2B: {
+          let sandbox: Sandbox = await Sandbox.connect(item.sandboxId, {
+            apiKey: item.e2bApiKey
+          });
+
+          let processes: ProcessInfo[] = await sandbox.commands.list();
+
+          let opencodeProcesses: ProcessInfo[] = processes.filter(process =>
+            [process.cmd, ...process.args].join(' ').includes('opencode serve')
+          );
+
+          let sandboxEnvs: Record<string, string> = {
+            ...item.sandboxEnvs,
+            MPROVE_CLI_API_KEY: item.sessionApiKey
+          };
+
+          for (let i = 0; i < opencodeProcesses.length; i++) {
+            let processKilled: boolean = await sandbox.commands.kill(
+              opencodeProcesses[i].pid
+            );
+
+            if (processKilled === false) {
+              throw new Error(
+                'Previous OpenCode server process was not killed'
+              );
+            }
+          }
+
+          this.disposeOpenCodeClient({ sessionId: item.sessionId });
+
+          let serverProcess: CommandHandle = await sandbox.commands.run(
+            `cd /home/user/project && opencode serve --port 3000`,
+            {
+              background: true,
+              timeoutMs: 0,
+              envs: {
+                ...sandboxEnvs,
+                OPENCODE_SERVER_PASSWORD: item.opencodePassword
+              }
+            }
+          );
+
+          await this.healthCheckOpenCode({
+            sandboxBaseUrl: item.sandboxBaseUrl,
+            opencodePassword: item.opencodePassword,
+            maxAttempts: 30
+          });
+
+          let runningProcesses: ProcessInfo[] = await sandbox.commands.list();
+
+          let startedProcesses: ProcessInfo[] = runningProcesses.filter(
+            process => process.pid === serverProcess.pid
+          );
+
+          if (startedProcesses.length === 0) {
+            throw new Error('Refreshed OpenCode server process exited');
+          }
+
+          return;
+        }
+        default:
+          throw new ServerError({
+            message: ErEnum.BACKEND_UNKNOWN_SANDBOX_TYPE
+          });
+      }
+    } catch (e) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_SANDBOX_OPENCODE_REFRESH_FAILED,
+        originalError: e
+      });
+    }
+  }
+
   async healthCheckOpenCode(item: {
     sandboxBaseUrl: string;
+    opencodePassword?: string;
     maxAttempts?: number;
   }): Promise<void> {
     let maxAttempts = item.maxAttempts ?? 15;
@@ -354,11 +473,23 @@ export class EditorOpencodeService {
 
     let healthy = false;
 
+    let headers: Record<string, string> = {};
+
+    if (item.opencodePassword) {
+      headers.Authorization = `Basic ${Buffer.from(`opencode:${item.opencodePassword}`).toString('base64')}`;
+    }
+
     for (let i = 0; i < maxAttempts; i++) {
       try {
-        let res = await fetch(`${item.sandboxBaseUrl}/config`);
+        let res = await fetch(`${item.sandboxBaseUrl}/config`, {
+          headers: headers
+        });
 
-        if (res.status === 401) {
+        let isExpectedStatus = item.opencodePassword
+          ? res.ok
+          : res.status === 401;
+
+        if (isExpectedStatus) {
           healthy = true;
           break;
         } else {

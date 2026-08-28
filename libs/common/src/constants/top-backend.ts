@@ -28,6 +28,7 @@ export const CHANNEL_AI_INTERACT_REPLY = 'ai-interact-reply';
 
 export const KEY_SSE_TICKET = 'sse-ticket';
 export const KEY_OPENCODE_STREAM_OWNER = 'opencode-stream-owner';
+export const KEY_EDITOR_SESSION_LOCK = 'editor-session-lock';
 export const KEY_AI_STREAM_OWNER = 'ai-stream-owner';
 
 export const PASSWORD_EXPIRES_OFFSET = 86400000;
@@ -103,7 +104,7 @@ export const DEFAULT_SRV_UI: Ui = {
   projectReportLinks: [],
   chartsByModel: false,
   permissionsAutoAcceptSessionIds: [],
-  newSessionPermissionsAutoAccept: false,
+  newSessionPermissionsAutoAccept: true,
   newSessionExplorerModelExtraId: undefined,
   newSessionExplorerVariant: 'default',
   newSessionEditorModelExtraId: undefined,

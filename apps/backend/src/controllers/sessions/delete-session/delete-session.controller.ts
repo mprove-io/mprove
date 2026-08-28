@@ -38,6 +38,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
+import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { RpcService } from '#backend/services/rpc.service';
@@ -51,6 +52,7 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
 import type {
   ToDiskDeleteDevRepoRequest,
@@ -66,6 +68,7 @@ export class DeleteSessionController {
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private editorSandboxService: EditorSandboxService,
+    private editorSessionLockService: EditorSessionLockService,
     private editorStreamService: EditorStreamService,
     private explorerStreamService: ExplorerStreamService,
     private tabService: TabService,
@@ -104,153 +107,175 @@ export class DeleteSessionController {
       projectId: session.projectId
     });
 
-    if (
-      session.type === SessionTypeEnum.Editor &&
-      [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
-        session.status
-      ) > -1
-    ) {
-      await this.editorSandboxService.stopSandbox({
-        sandboxType: session.sandboxType as SandboxTypeEnum,
-        sandboxId: session.sandboxId,
-        e2bApiKey: project.e2bApiKey
-      });
-    }
+    let sessionLockToken =
+      session.type === SessionTypeEnum.Editor
+        ? await this.editorSessionLockService.acquireSessionLock({
+            sessionId: session.sessionId
+          })
+        : undefined;
 
-    if (session.type === SessionTypeEnum.Editor) {
-      let baseProject = this.tabService.projectTabToBaseProject({
-        project: project
-      });
+    try {
+      if (session.type === SessionTypeEnum.Editor) {
+        session = await this.sessionsService.getSessionByIdCheckExists({
+          sessionId: session.sessionId
+        });
+      }
 
-      let toDiskDeleteDevRepoRequest: ToDiskDeleteDevRepoRequest = {
-        info: {
-          name: ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
-          traceId: traceId
-        },
-        payload: {
+      if (
+        session.type === SessionTypeEnum.Editor &&
+        [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
+          session.status
+        ) > -1
+      ) {
+        await this.editorSandboxService.stopSandbox({
+          sandboxType: session.sandboxType as SandboxTypeEnum,
+          sandboxId: session.sandboxId,
+          e2bApiKey: project.e2bApiKey
+        });
+      }
+
+      if (session.type === SessionTypeEnum.Editor) {
+        let baseProject = this.tabService.projectTabToBaseProject({
+          project: project
+        });
+
+        let toDiskDeleteDevRepoRequest: ToDiskDeleteDevRepoRequest = {
+          info: {
+            name: ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
+            traceId: traceId
+          },
+          payload: {
+            orgId: project.orgId,
+            projectId: session.projectId,
+            baseProject: baseProject,
+            devRepoId: sessionId
+          }
+        };
+
+        await this.rpcService.sendToDisk<ToDiskDeleteDevRepoResponse>({
           orgId: project.orgId,
           projectId: session.projectId,
-          baseProject: baseProject,
-          devRepoId: sessionId
-        }
+          repoId: sessionId,
+          message: toDiskDeleteDevRepoRequest,
+          checkIsOk: true
+        });
+      }
+
+      let updatedSession: SessionTab = {
+        ...session,
+        status: SessionStatusEnum.Deleted
       };
 
-      await this.rpcService.sendToDisk<ToDiskDeleteDevRepoResponse>({
-        orgId: project.orgId,
-        projectId: session.projectId,
-        repoId: sessionId,
-        message: toDiskDeleteDevRepoRequest,
-        checkIsOk: true
-      });
-    }
-
-    let updatedSession: SessionTab = {
-      ...session,
-      status: SessionStatusEnum.Deleted
-    };
-
-    await this.db.drizzle.transaction(
-      async tx =>
-        await this.db.packer.write({
-          tx: tx,
-          insertOrUpdate: {
-            sessions: [updatedSession]
-          }
-        })
-    );
-
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(ocMessagesTable)
-            .where(and(eq(ocMessagesTable.sessionId, sessionId)));
-
-          await tx
-            .delete(ocPartsTable)
-            .where(and(eq(ocPartsTable.sessionId, sessionId)));
-
-          await tx
-            .delete(ocEventsTable)
-            .where(and(eq(ocEventsTable.sessionId, sessionId)));
-
-          await tx
-            .delete(ocSessionsTable)
-            .where(and(eq(ocSessionsTable.sessionId, sessionId)));
-
-          if (session.type === SessionTypeEnum.Explorer) {
-            await tx
-              .delete(chartsTable)
-              .where(eq(chartsTable.sessionId, sessionId));
-
-            await tx
-              .delete(mconfigsTable)
-              .where(eq(mconfigsTable.sessionId, sessionId));
-
-            await tx
-              .delete(queriesTable)
-              .where(eq(queriesTable.sessionId, sessionId));
-          }
-
-          if (session.type === SessionTypeEnum.Editor) {
-            await tx
-              .delete(branchesTable)
-              .where(
-                and(
-                  eq(branchesTable.projectId, session.projectId),
-                  eq(branchesTable.repoId, sessionId)
-                )
-              );
-
-            await tx
-              .delete(bridgesTable)
-              .where(
-                and(
-                  eq(bridgesTable.projectId, session.projectId),
-                  eq(bridgesTable.repoId, sessionId)
-                )
-              );
-          }
-        }),
-      getRetryOption(this.cs, this.logger)
-    );
-
-    let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
-
-    let stopDelay = backendEnv === BackendEnvEnum.TEST ? 0 : 10_000;
-
-    setTimeout(() => {
-      if (session.type === SessionTypeEnum.Explorer) {
-        this.explorerStreamService
-          .publishStopSessionStream({
-            sessionId: sessionId
+      await this.db.drizzle.transaction(
+        async tx =>
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              sessions: [updatedSession]
+            }
           })
-          .catch(e => {
-            logToConsoleBackend({
-              log: e,
-              logLevel: LogLevelEnum.Error,
-              logger: this.logger,
-              cs: this.cs
+      );
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(async tx => {
+            await tx
+              .delete(ocMessagesTable)
+              .where(and(eq(ocMessagesTable.sessionId, sessionId)));
+
+            await tx
+              .delete(ocPartsTable)
+              .where(and(eq(ocPartsTable.sessionId, sessionId)));
+
+            await tx
+              .delete(ocEventsTable)
+              .where(and(eq(ocEventsTable.sessionId, sessionId)));
+
+            await tx
+              .delete(ocSessionsTable)
+              .where(and(eq(ocSessionsTable.sessionId, sessionId)));
+
+            if (session.type === SessionTypeEnum.Explorer) {
+              await tx
+                .delete(chartsTable)
+                .where(eq(chartsTable.sessionId, sessionId));
+
+              await tx
+                .delete(mconfigsTable)
+                .where(eq(mconfigsTable.sessionId, sessionId));
+
+              await tx
+                .delete(queriesTable)
+                .where(eq(queriesTable.sessionId, sessionId));
+            }
+
+            if (session.type === SessionTypeEnum.Editor) {
+              await tx
+                .delete(branchesTable)
+                .where(
+                  and(
+                    eq(branchesTable.projectId, session.projectId),
+                    eq(branchesTable.repoId, sessionId)
+                  )
+                );
+
+              await tx
+                .delete(bridgesTable)
+                .where(
+                  and(
+                    eq(bridgesTable.projectId, session.projectId),
+                    eq(bridgesTable.repoId, sessionId)
+                  )
+                );
+            }
+          }),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+
+      let stopDelay = backendEnv === BackendEnvEnum.TEST ? 0 : 10_000;
+
+      setTimeout(() => {
+        if (session.type === SessionTypeEnum.Explorer) {
+          this.explorerStreamService
+            .publishStopSessionStream({
+              sessionId: sessionId
+            })
+            .catch(e => {
+              logToConsoleBackend({
+                log: e,
+                logLevel: LogLevelEnum.Error,
+                logger: this.logger,
+                cs: this.cs
+              });
             });
-          });
-      } else if (session.type === SessionTypeEnum.Editor) {
-        this.editorStreamService
-          .publishStopSessionStream({
-            sessionId: sessionId
-          })
-          .catch(e => {
-            logToConsoleBackend({
-              log: e,
-              logLevel: LogLevelEnum.Error,
-              logger: this.logger,
-              cs: this.cs
+        } else if (session.type === SessionTypeEnum.Editor) {
+          this.editorStreamService
+            .publishStopSessionStream({
+              sessionId: sessionId
+            })
+            .catch(e => {
+              logToConsoleBackend({
+                log: e,
+                logLevel: LogLevelEnum.Error,
+                logger: this.logger,
+                cs: this.cs
+              });
             });
-          });
+        }
+      }, stopDelay);
+
+      let payload = {};
+
+      return payload;
+    } finally {
+      if (isDefined(sessionLockToken)) {
+        await this.editorSessionLockService.releaseSessionLock({
+          sessionId: session.sessionId,
+          token: sessionLockToken
+        });
       }
-    }, stopDelay);
-
-    let payload = {};
-
-    return payload;
+    }
   }
 }
