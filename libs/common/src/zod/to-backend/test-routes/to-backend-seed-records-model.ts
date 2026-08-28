@@ -9,6 +9,7 @@ import {
 export type ToBackendSeedRecordsModel = Extend<
   LlmModelInput,
   {
+    providerModelInfo?: Record<string, unknown>;
     isExplorerRecommended?: boolean;
     isBuilderRecommended?: boolean;
   }
@@ -16,6 +17,7 @@ export type ToBackendSeedRecordsModel = Extend<
 
 export let zToBackendSeedRecordsModel = zLlmModelInput
   .extend({
+    providerModelInfo: z.record(z.string(), z.unknown()).nullish(),
     isExplorerRecommended: z.boolean().nullish(),
     isBuilderRecommended: z.boolean().nullish()
   })

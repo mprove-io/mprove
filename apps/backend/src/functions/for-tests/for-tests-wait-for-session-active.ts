@@ -25,7 +25,7 @@ export async function forTestsWaitForSessionActive(item: {
         },
         payload: {
           sessionId: item.sessionId,
-          skipFetchSessionState: false
+          isFetchFromOpencode: false
         }
       },
       checkIsOk: true

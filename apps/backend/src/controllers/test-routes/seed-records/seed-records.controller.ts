@@ -351,6 +351,7 @@ export class SeedRecordsController {
           name: model.name,
           isManual: model.isManual,
           catalogName: model.name,
+          providerModelInfo: model.providerModelInfo,
           contextLimit: model.contextLimit,
           inputLimit: model.inputLimit,
           outputLimit: model.outputLimit,
