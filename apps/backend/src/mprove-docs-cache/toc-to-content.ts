@@ -5,19 +5,42 @@ export const tocToContent: { pageId: string; content: string }[] = [
 
 Hey! I'm Alexander.
 
-[Mprove](https://mprove.io/) is an [Open Source](https://github.com/mprove-io/mprove) Business Intelligence tool focused on Metrics.
+I started working on Mprove in 2015 inspired by Looker. Understanding how things should work and look comes through a lot of trial and error. This is my third big attempt to build it right. Initially, Mprove YAML had its own module for SQL transformation logic, similar to LookML. In 2025, I replaced this part with Malloy as the next-generation data modeling language.
 
-With Mprove, instead of directly querying tables, you query semantic data models:
-- For SQL data sources, see [Malloy Models](/content/docs/reference/model-malloy).
-- For HTTP API data sources, see [Store Models](/content/docs/reference/model-store).
+[Mprove](https://mprove.io/) is a fully [Open Source](https://github.com/mprove-io/mprove) Business Intelligence tool
+with Malloy Semantic Layer.
 
-All Models, Charts, Reports and Dashboards are stored under git version control.
+Main Features:
 
-I started working on Mprove in 2015 inspired by Looker.
+- AI assists in building semantic data models (see [Editor](/content/docs/ai-sessions/editor))
+- AI answer questions based on governed data models (see [Explorer](/content/docs/ai-sessions/explorer))
+- [Git version control](/content/docs/builder#version-control) for Models, Charts, Dashboards and Reports
+- [DWH Schema](/content/docs/reference/dwh-schema) Discovery
+- [Spaces](/content/docs/reference/space)
+- [Access Roles](/content/docs/access-roles) and [Row Level Security](/content/docs/row-level-security)
+- Reports UI focused on Metrics
 
-Understanding how things should work and look comes through a lot of trial and error. This is my third big attempt to build it right.
+Working with Semantic Data Layer involves two parts:
 
-Initially, Mprove YAML had its own module for SQL transformation logic, similar to LookML. In 2025, I replaced this part with Malloy as the next-generation data modeling language.
+1. Build semantic data model (dont confuse with LLM models)
+2. Query data model
+
+When creating a data model, you specify:
+
+- How tables can be joined
+- What aggregations can be made
+- Access roles and parameters
+- And more
+
+We recommend creating and testing models locally using the Malloy VS Code Extension.
+
+You can then publish your work to the Mprove server by synchronizing uncommitted changes or performing a git commit.
+
+Mprove models are based on Malloy models but use a different library for rendering charts, dashboards, and reports.
+They use Mprove access_roles and Malloy Givens for row level security.
+
+With Mprove models in place, you can ask questions in the Explorer UI or explore manually by clicking Charts and choosing a model.
+
 ` },
   { pageId: 'access-roles', content: `# Access Roles
 
@@ -33,7 +56,7 @@ Reports, Charts and Dashboards (objects) authored by user are stored in personal
 Project admins and editors can specify object's \`space\` in UI. Specifying space will move file to the space folder.
 
 <Callout>
-Users with **ProjectAdmin** or **FileEditor** roles have access to all Charts, Dashboards, Reports, Models and Spaces of project.
+Users with **ProjectAdmin** or **FileEditor** roles have access to all Charts, Dashboards, Reports, Models and Spaces of the project.
 </Callout>
 ` },
   { pageId: 'ai-sessions/builder', content: `# Builder
@@ -101,34 +124,199 @@ These global instructions are merged with your project's local instruction files
 
 - [mprove-instructions.md](https://github.com/mprove-io/mprove/blob/master/sandbox/mprove-instructions.md)
 ` },
+  { pageId: 'ai-sessions/editor', content: `# Editor
+
+Editor AI agent can build Mprove models and create charts, reports and dashboards that are persisted as files (non-drafts).
+
+Editor Session runs in a sandbox ([E2B](https://e2b.dev/) provider).
+
+It is powered by open source [OpenCode](https://opencode.ai/) Server with default agents (build/plan + subagents).
+You can use your own [Opencode config](https://opencode.ai/docs/config/) that is local to project.
+
+AI agent uses [mprove sync](/content/cli/main-commands/sync) CLI command to sync uncommitted changes between sandbox repo and Mprove server.
+
+## Notes
+
+Each Editor Session runs in its own sandbox.
+
+It takes 10 to 15 seconds for session initial activation time (starting sandbox, pulling user project git repo and starting an Opencode server).
+
+After session is activated, there is a safe pause logic in place to save sandbox resources when session is 5 min+ idle.
+To resume a paused session (sandbox) you need to send a new message. Unpause (resume) is fast.
+Session state is preserved on pause/resume.
+
+## Capabilities
+
+- Setup Mprove project
+- Add metadata to dwh schemas
+- Build Mprove models
+- Build charts (non-draft)
+- Build reports (non-draft)
+- Build dashboards (non-draft)
+
+## E2B Sandbox Template
+
+- node 24.14.0
+- brew, curl, git, ripgrep, openssh-client, ca-certificates
+- opencode
+- [Opencode global config](https://github.com/mprove-io/mprove/blob/master/skills/opencode-global-config.json) with [Mprove MCP Server](/content/mcp/mcp-server) configured
+- [Mprove Skills](/content/skills/download-skill-md)
+- [Mprove CLI](/content/cli/install-cli) (only "mprove sync" is needed, other useful commands have corresponding mcp tools)
+- Malloy Docs repository
+
+## Credentials
+
+Credentials that are provided to sandbox during session activation:
+
+- LLM provider api key for selected session Model (see project settings API keys)
+- \`MPROVE_CLI_API_KEY\` (has access to mprove session repo branch and session env connections)
+- \`MPROVE_CLI_PROJECT_ID\`
+- \`MPROVE_CLI_HOST\`
+
+## Global Instructions
+
+These global instructions are merged with your project's local instruction files. See [Opencode Docs](https://opencode.ai/docs/rules/).
+
+- [mprove-instructions.md](https://github.com/mprove-io/mprove/blob/master/sandbox/mprove-instructions.md)
+` },
   { pageId: 'ai-sessions/explorer', content: `# Explorer
 
-Explorer is an AI chat section of Mprove UI.
+Explorer AI agent can answer user questions in Mprove UI by creating charts based on existing governed semantic data models.
 
-## Explorer AI Session
-
-Explorer data agent can answer user questions by creating charts based on existing models.
+Explorer AI Session has access to the same models that user has access to.
 
 ## Project-specific Instructions
+
+Custom instructions can help Explorer better understand user prompts. 
+For example, your team may use specialized words or terms that form an internal dictionary — language that has specific meanings for users.
 
 You can add the \`mprove-explorer.md\` file anywhere in the \`mprove_dir\` folder, specifying your own instructions.
 Its contents will be added to the system prompt of Explorer AI session.
 
 ` },
-  { pageId: 'ai-sessions/openai-codex-setup', content: `# OpenAI Codex Setup
+  { pageId: 'ai-sessions/llm-providers', content: `# LLM Providers
 
-You can use OPENAI_API_KEY or Codex Subscription for AI Sessions.
+Project admins can configure LLM Models separately for Explorer and Editor (Builder) AI Sessions.
 
-## Codex Subscription
+**Project gear icon** in navbar >> **LLM Providers** page
 
-Open user profile page and click "SignIn with ChatGPT".
+## Anthropic
+Anthropic provider requires API Key.
+
+Model discovery uses official API.
+
+## OpenAI
+
+OpenAI provider requires API Key.
+
+Model capabilities data provided by models.dev.
+
+## Custom (OpenAI Compatible)
+
+Custom (OpenAI Compatible) provider requires to specify URL and API Key (or custom headers).
+
+There are no model discovery. Make sure to specify model that supports text input/output and tool calling.
+
+## OpenAI Codex
+
+Each user of OpenAI Codex must authenticate through their Mprove user profile page.
+
+**User profile** page >> **SignIn with ChatGPT**
 
 Follow instructions to authenticate.
 
-Your AI Session will be able to use Codex Subscription. 
+Your AI Sessions will be able to use Codex Subscription. 
 
-Other Mprove users will need to use OPENAI_API_KEY or setup their own Codex Subsctiptions.
+` },
+  { pageId: 'builder', content: `# Builder
 
+Builder is a lightweight IDE that is part of the Mprove UI.
+
+You can create complete semantic models in the web UI, but we recommend working with Malloy files in your local IDE using the Malloy VS Code extension. 
+You can then sync the files with the Mprove Server to check for errors and explore Mprove models.
+
+## Mprove Files
+
+Mprove project supports the following file types::
+
+- [mprove.yml](/content/docs/reference/project-config) (Project Config)
+- [\\*.malloy](/content/docs/reference/model-malloy)
+- [\\*.store](/content/docs/reference/model-store)
+- [\\*.chart](/content/docs/reference/chart)
+- [\\*.report](/content/docs/reference/report)
+- [\\*.dashboard](/content/docs/reference/dashboard)
+- [\\*.schema](/content/docs/reference/dwh-schema)
+
+## Version Control
+
+Mprove treats the files in the project repository as the single source of truth.
+
+Drafts are stored in the database. Once satisfied with a draft, the user can save it as a file for future use.
+
+When a user saves a draft as a file in the Production repository, the change is committed automatically.
+
+When a user saves a draft as a file in their Dev repository, the change remains uncommitted.
+
+## Project Repositories
+
+Each project has 3 types of repositories that are local to mprove server:
+
+- **Production** - repository that mirrors **Remote** repository content
+- **Dev** - personal repository for each project member with **FilesEditor** role
+- **Session** - separate repository for each session of type Editor
+
+Dev repositories allow users to edit files and test changes without affecting **Production** version of files.
+
+Users with **FilesEditor** role can manually edit files in their personal Dev repositories.
+
+<Callout type="info">
+  To be able to edit files, a user with the **FilesEditor** role must select the
+  **Dev** repository in the navigation bar.
+</Callout>
+
+## Files Validation
+
+When user makes a manual change to any file, Mprove does the following:
+
+- Validates all files
+- Shows validation errors (if any)
+- Updates Models, Charts, Dashboards and Reports structure that have passed validation
+
+Once the user is satisfied with the changes made, the user can **_commit_** and **_push (deploy)_** changes to **Production** repository to share results with the team.
+
+<Callout type="info">
+  When changes are pushed to **Production**, they are actually pushed to
+  **Remote** first, and then pulled from **Remote** to **Production**. In other
+  words, changes from the **Dev** repository are pushed to the **Production**
+  repository via the **Remote** repository in a single user action.
+</Callout>
+
+## File and git-related operations
+
+These operations are available on the Files page:
+
+- **Save and Validate** - Save the changes. Mprove will automatically check all files in the project repository data folder for errors.
+
+<Callout type="warn">
+  If errors are found during files validation step, they need to be fixed before pushing to production.
+</Callout>
+
+- **Commit** - Commit changes in Dev repo.
+- **Push** - Deploy committed changes from Dev repo to Production repo (and to Remote repo).
+- **Revert to Last Commit** - Discard saved changes in Dev repo that were not committed.
+- **Revert to Production** - Revert all changes in the Dev repo to the current Production version of files.
+- **Pull from Remote** - Fetch changes from Remote repo branch and merge into the selected repo branch.
+- **Merge branch** - Merge changes from another branch into the current branch.
+- **Create branch** - Create a new branch.
+- **Delete branch** - Delete current branch.
+
+## Git Branches
+
+Small projects may only need to use one branch (usually called master or main). Advanced git users may work in different branches.
+
+<Callout type="info">
+  Users can switch between branches using **repo-branch** selector in navigation bar.
+</Callout>
 ` },
   { pageId: 'connections', content: `# Connections
 
@@ -170,169 +358,6 @@ the host and port that are not internal, because the sandbox is not on a local n
 
 If the mprove server has an internal host and internal port specified for a connection, it will use them 
 instead of the host/port. This removes an extra network hop from the mprove server to the DWH.` },
-  { pageId: 'dwh-schema', content: `# DWH Schema
-
-There are three types of Connection Schemas in Mprove:
-
-- **Raw schemas** are fetched automatically from SQL connections - tables, columns, data types, foreign keys, and indexes.
-- **Extra schemas** are YAML files with extra metadata - descriptions, examples, and relationship type.
-- **Combined schemas** merge Raw and Extra schemas. They are useful for LLMs and humans to build Malloy semantic models.
-
-<Callout type="info" title="Viewing Combined Schemas">
-User see combined schemas in UI and explore Relationships Graph.
-
-LLM can use MCP tool.
-
-There is also \`get-schemas\` mprove CLI command.
-
-</Callout>
-
-Raw schemas are cached. User must click "Refresh" button in UI to refresh a raw schema cache when db schema changes. Raw schema cache is not refreshed on page load.
-
-Mprove validates (rebuilds) all files on every file save in UI or repo sync through CLI.
-During validation a raw cache is provided for Malloy compilation in a compatible format.
-This way Malloy does not need to fetch schema from db. It improves compilation time.
-
-Without a cache, Malloy retrieves the schema for each table separately. Even with a cache, in some cases, Malloy needs to sample data (some SnowFlake data types) to determine the data structure.
-
-## File Format
-
-Each schema must be stored as **connection_name.schema_name.schema** YAML file:
-
-\`\`\`yaml
-schema: c1_postgres.fleet
-description: 'Fleet management system tracking vehicles, drivers, trips, and maintenance'
-tables:
-  - table: trips
-    description: 'Individual vehicle trips with route, distance, and assigned driver'
-    columns:
-      - column: trip_id
-        description: 'Unique identifier for each trip'
-        example: '80234'
-      - column: vehicle_id
-        description: 'The vehicle used for this trip'
-        example: '152'
-        relationships:
-          - to: vehicles.vehicle_id
-            type: many_to_one
-      - column: driver_id
-        description: 'The driver who operated the vehicle on this trip'
-        example: '38'
-        relationships:
-          - to: drivers.driver_id
-            type: many_to_one
-      - column: customer_id
-        description: 'The customer who requested this trip'
-        example: '4501'
-        relationships:
-          - to: customers.customer_id
-            to_schema: c1_postgres.billing
-            type: many_to_one
-      - column: status
-        description: 'Trip completion status'
-        example: 'completed'
-        cache_unique_values: true
-
-  - table: vehicles
-    description: 'Fleet vehicles with make, model, and current operational status'
-    columns:
-      - column: vehicle_id
-        description: 'Unique identifier for each vehicle'
-        example: '152'
-      - column: license_plate
-        description: 'Vehicle registration plate number'
-        example: 'AB-1234-CD'
-
-  - table: drivers
-    description: 'Drivers certified to operate fleet vehicles'
-    columns:
-      - column: driver_id
-        description: 'Unique identifier for each driver'
-        example: '38'
-      - column: name
-        description: 'Full name of the driver'
-        example: 'Carlos Rivera'
-        cache_unique_values: true
-
-  - table: maintenance_records
-    description: 'Scheduled and unscheduled vehicle maintenance events'
-    columns:
-      - column: record_id
-        description: 'Unique identifier for each maintenance record'
-        example: '6010'
-      - column: vehicle_id
-        description: 'The vehicle that was serviced'
-        example: '152'
-        relationships:
-          - to: vehicles.vehicle_id
-            type: many_to_one
-      - column: service_type
-        description: 'Type of maintenance performed'
-        example: 'oil change'
-        cache_unique_values: true
-\`\`\`
-
-## Reference
-
-### Schema
-
-| Name        | Type               | Required | Description                                              |
-| ----------- | ------------------ | -------- | -------------------------------------------------------- |
-| schema      | string             | yes      | Connection and schema name in \`connection.schema\` format |
-| description | string             | no       | Human-readable description of the database schema        |
-| tables      | [Table []](#table) | yes      | List of table definitions                                |
-
-### Table
-
-| Name        | Type                 | Required | Description                                |
-| ----------- | -------------------- | -------- | ------------------------------------------ |
-| table       | string               | yes      | Table name                                 |
-| description | string               | no       | Business-oriented description of the table |
-| columns     | [Column []](#column) | no       | List of column definitions                 |
-
-### Column
-
-| Name                | Type                             | Required | Description                            |
-| ------------------- | -------------------------------- | -------- | -------------------------------------- |
-| column              | string                           | yes      | Column name                            |
-| description         | string                           | no       | What this column represents            |
-| example             | string                           | no       | A realistic sample value               |
-| cache_unique_values | boolean                          | no       | Cache unique values for column or not  |
-| relationships       | [Relationship []](#relationship) | no       | List of relationships to other columns |
-
-### Relationship
-
-| Name      | Type   | Required | Description                                                          |
-| --------- | ------ | -------- | -------------------------------------------------------------------- |
-| to        | string | yes      | Target in \`table.column\` format (exactly one dot)                    |
-| type      | enum   | yes      | \`one_to_one\`, \`one_to_many\`, \`many_to_one\`, \`many_to_many\`           |
-| to_schema | string | no       | For cross-schema relationships: \`connection_name.schema_name\` format |
-
-## Relationship Rules
-
-Defining one side is sufficient (no need to define both sides).
-
-**Preferred convention:** Define \`many_to_one\` on the "many" side pointing to the "one" side.
-
-**Mirror consistency:** If you define both sides of a relationship (e.g., A->B and B->A), the types must be consistent mirrors:
-
-| Side A         | Side B         |
-| -------------- | -------------- |
-| \`many_to_one\`  | \`one_to_many\`  |
-| \`one_to_one\`   | \`one_to_one\`   |
-| \`many_to_many\` | \`many_to_many\` |
-
-**No duplicates:** A column cannot have two relationships with the same \`to\` and \`to_schema\` values.
-
-**Cross-schema:** Use \`to_schema\` to reference a table in a different schema on the same connection. See the \`customer_id\` column in the example above. Cross-connection relationships are not supported.
-
-**Partial coverage:** You do not need to define every table or column. You should include tables and columns that have relationships. Also include those columns where you want to add descriptions or examples. Omitted columns still appear in the combined schema with their raw metadata.
-
-## Cache Unique Values
-
-\`cache_unique_values: true\` marks the column as recommended for caching unique values. 
-If a column unique values are cached, the Explorer AI session can look up the correct model fields by value before producing the charts. 
-` },
   { pageId: 'environments', content: `# Environments
 
 Each project has **prod** environment by default. All project members have access to it.
@@ -346,20 +371,13 @@ A project administrator can create additional environments and give a project me
 
 ## Environment Connections
 
-Mprove models refer to connections by name. Each connection is tied to one environment. Two or more connections can have the same name but belong to different
-environments.
+Mprove models refer to connections by name. 
 
-<Callout type="info">
-  Connection names are not unique across environments.
-</Callout>
+Two or more connections can have the same name but belong to different environments.
+
+Mprove decides which connection to use based on selected Environment.
 
 Users with **FilesEditor** role can switch between environments in UI while working in their Dev repositories.
-
-## Environment Variables
-
-<Callout type="warn">Environment variables are not implemented yet.</Callout>
-
-If you need environment variables for your use case, please let us know on [Github](https://github.com/mprove-io/mprove/issues).
 ` },
   { pageId: 'quickstart', content: `# Quickstart
 
@@ -372,67 +390,79 @@ To self host Mprove use [README.md](https://github.com/mprove-io/mprove/blob/mas
 <div className="fd-step">
 ### Sign Up
 
-After signing up, you will be able to log in and create an organization.
+After signing up, you will be able to log in and create an organization
 
 </div>
 
 <div className="fd-step">
 ### Create Organization
 
-To create a new organization, click the org selector in navbar and click the **New Org** button.
-
-Enter your organization name and click **Create**.
+Click the **org selector** in navbar >> **New Org**
 
 </div>
 
 <div className="fd-step">
 ### Create Project
 
-To create a new project, first select your organization in navbar.
+To create a new project, first select your organization in navbar
 
-Click the project selector in navbar and click the **New Project** button.
-
-Enter your project name and click **Create**.
+Click the **project selector** in navbar >> **New Project**
 
 </div>
 
 <div className="fd-step">
-### Add Project API Keys
+### Add Sandbox Provider (optional)
 
-Click the project gear icon in navbar and click the **API Keys** button.
+You can build semantic data models locally, using your own AI agent or without AI.
 
-Add Sandbox Provider api key
+You can also launch an Editor AI agent session via the Mprove UI on the Builder page.
 
-Add LLM Provider api key or use [OpenAI Codex Setup](/content/docs/ai-sessions/openai-codex-setup)
+This will start an OpenCode server in a remote sandbox (a separate sandbox for each session).
 
-</div>
+To do this, you need to provide an API key from the E2B provider.
 
-<div className="fd-step">
-### Add Connection
-
-To create a new database connection, first select your project in navbar.
-
-Click the project gear icon in navbar and click the **Connections** button.
-
-On the Project Connections page, click the **New Connection** button.
-
-Enter your connection details and click **Create**.
+Click the **project gear icon** in navbar >> **Sandbox Provider** >> Add E2B Api Key
 
 </div>
 
 <div className="fd-step">
-### Ask AI to Setup Mprove Project
 
-Click the **Builder** in navbar.
+### Add LLM Provider and Model
 
-Toggle Editor Session.
+You need to add an LLM model for AI Explorer or Editor (Builder) sessions.
 
-Ask "Setup mprove project and use malloy types"
+Click the **project gear icon** in navbar >> **LLM Providers** >> **New Provider**
+
+Add LLM Provider details and click **Add**.
+
+Click **Plus icon** in Models column.
+
+Add LLM Model details and click **Add**.
 
 </div>
 
 <div className="fd-step">
-### Explore created Model in UI
+### Create SQL Connection
+
+Click the **project gear icon** in navbar >> **Connections** >> **New Connection**
+
+</div>
+
+<div className="fd-step">
+### Ask AI to Setup Mprove Project (optional)
+
+Click the **Builder** in navbar >> **Sessions** >> **New Session**.
+
+Ask "Setup Mprove project and use Malloy types" to start Editor Session.
+
+It will create a separate session repository and branch.
+
+As a recommended alternative, you can create semantic models locally and sync your uncommitted changes with Mprove server.
+
+</div>
+
+<div className="fd-step">
+### Explore created Semantic Model in UI
 
 On the Models page, click on the model selector and select the model you created.
 
@@ -727,6 +757,175 @@ Tile parameter must have **listen**, **conditions** or **fractions**.
 | plate_height | integer | 12      | Plate height (min is 1)                                                  |
 | plate_x      | integer | 0       | X coordinate of plate's top left corner on the dashboard grid (0 to 23)  |
 | plate_y      | integer | 0       | Y coordinate of plate's top left corner on the dashboard grid (min is 0) |
+` },
+  { pageId: 'reference/dwh-schema', content: `# DWH Schema
+
+There are three types of Connection DWH Schemas in Mprove:
+
+- **Raw schemas** are fetched automatically from SQL connections - tables, columns, data types, foreign keys, and indexes.
+  They are stored in database and are visible to admins and editors through Combined Schemas.
+- **Extra schemas** contain extra metadata for raw schemas - relationships, descriptions and examples.
+  They are stored as YAML files and managed by project members with File Editor roles.
+- **Combined schemas** merge metadata from Raw and Extra schemas. They are useful for LLMs and humans to build Malloy semantic models.
+
+<Callout type="info" title="Viewing Combined Schemas">
+User see combined schemas in UI and explore Relationships Graph.
+
+LLM can use MCP tool.
+
+There is also \`get-schemas\` mprove CLI command.
+
+</Callout>
+
+Raw schemas are cached. User must click "Refresh" button in UI to refresh a raw schema cache when db schema changes. Raw schema cache is not refreshed on page load.
+
+Mprove validates (rebuilds) all files on every file save in UI or repo sync through CLI.
+During validation a raw cache is provided for Malloy compilation in a compatible format.
+This way Malloy does not need to fetch schema from db. It improves compilation time.
+
+Without a cache, Malloy retrieves the schema for each table separately. Even with a cache, in some cases, Malloy needs to sample data (some SnowFlake data types) to determine the data structure.
+
+## File Format
+
+Each schema must be stored as **connection_name.schema_name.schema** YAML file:
+
+\`\`\`yaml
+schema: c1_postgres.fleet
+description: 'Fleet management system tracking vehicles, drivers, trips, and maintenance'
+tables:
+  - table: trips
+    description: 'Individual vehicle trips with route, distance, and assigned driver'
+    columns:
+      - column: trip_id
+        description: 'Unique identifier for each trip'
+        example: '80234'
+      - column: vehicle_id
+        description: 'The vehicle used for this trip'
+        example: '152'
+        relationships:
+          - to: vehicles.vehicle_id
+            type: many_to_one
+      - column: driver_id
+        description: 'The driver who operated the vehicle on this trip'
+        example: '38'
+        relationships:
+          - to: drivers.driver_id
+            type: many_to_one
+      - column: customer_id
+        description: 'The customer who requested this trip'
+        example: '4501'
+        relationships:
+          - to: customers.customer_id
+            to_schema: c1_postgres.billing
+            type: many_to_one
+      - column: status
+        description: 'Trip completion status'
+        example: 'completed'
+        cache_unique_values: true
+
+  - table: vehicles
+    description: 'Fleet vehicles with make, model, and current operational status'
+    columns:
+      - column: vehicle_id
+        description: 'Unique identifier for each vehicle'
+        example: '152'
+      - column: license_plate
+        description: 'Vehicle registration plate number'
+        example: 'AB-1234-CD'
+
+  - table: drivers
+    description: 'Drivers certified to operate fleet vehicles'
+    columns:
+      - column: driver_id
+        description: 'Unique identifier for each driver'
+        example: '38'
+      - column: name
+        description: 'Full name of the driver'
+        example: 'Carlos Rivera'
+        cache_unique_values: true
+
+  - table: maintenance_records
+    description: 'Scheduled and unscheduled vehicle maintenance events'
+    columns:
+      - column: record_id
+        description: 'Unique identifier for each maintenance record'
+        example: '6010'
+      - column: vehicle_id
+        description: 'The vehicle that was serviced'
+        example: '152'
+        relationships:
+          - to: vehicles.vehicle_id
+            type: many_to_one
+      - column: service_type
+        description: 'Type of maintenance performed'
+        example: 'oil change'
+        cache_unique_values: true
+\`\`\`
+
+## Reference
+
+### Schema
+
+| Name        | Type               | Required | Description                                              |
+| ----------- | ------------------ | -------- | -------------------------------------------------------- |
+| schema      | string             | yes      | Connection and schema name in \`connection.schema\` format |
+| description | string             | no       | Human-readable description of the database schema        |
+| tables      | [Table []](#table) | yes      | List of table definitions                                |
+
+### Table
+
+| Name        | Type                 | Required | Description                                |
+| ----------- | -------------------- | -------- | ------------------------------------------ |
+| table       | string               | yes      | Table name                                 |
+| description | string               | no       | Business-oriented description of the table |
+| columns     | [Column []](#column) | no       | List of column definitions                 |
+
+### Column
+
+| Name                | Type                             | Required | Description                            |
+| ------------------- | -------------------------------- | -------- | -------------------------------------- |
+| column              | string                           | yes      | Column name                            |
+| description         | string                           | no       | What this column represents            |
+| example             | string                           | no       | A realistic sample value               |
+| cache_unique_values | boolean                          | no       | Cache unique values for column or not  |
+| relationships       | [Relationship []](#relationship) | no       | List of relationships to other columns |
+
+### Relationship
+
+| Name      | Type   | Required | Description                                                          |
+| --------- | ------ | -------- | -------------------------------------------------------------------- |
+| to        | string | yes      | Target in \`table.column\` format (exactly one dot)                    |
+| type      | enum   | yes      | \`one_to_one\`, \`one_to_many\`, \`many_to_one\`, \`many_to_many\`           |
+| to_schema | string | no       | For cross-schema relationships: \`connection_name.schema_name\` format |
+
+## Relationship Rules
+
+Defining one side is sufficient (no need to define both sides).
+
+**Preferred convention:** Define \`many_to_one\` on the "many" side pointing to the "one" side.
+
+**Mirror consistency:** If you define both sides of a relationship (e.g., A->B and B->A), the types must be consistent mirrors:
+
+| Side A         | Side B         |
+| -------------- | -------------- |
+| \`many_to_one\`  | \`one_to_many\`  |
+| \`one_to_one\`   | \`one_to_one\`   |
+| \`many_to_many\` | \`many_to_many\` |
+
+**No duplicates:** A column cannot have two relationships with the same \`to\` and \`to_schema\` values.
+
+**Cross-schema:** Use \`to_schema\` to reference a table in a different schema on the same connection. See the \`customer_id\` column in the example above. Cross-connection relationships are not supported.
+
+**Partial coverage:** You do not need to define every table or column. You should include tables and columns that have relationships. Also include those columns where you want to add descriptions or examples. Omitted columns still appear in the combined schema with their raw metadata.
+
+## Cache Unique Values
+
+\`cache_unique_values: true\` marks the column as recommended for caching unique values.
+If a column unique values are cached, the Explorer AI session can look up the correct model fields by value before producing the charts.
+
+For example, if a user asks for "Jeans Sales for the last 3 months" the LLM could look up 
+the cache for the value "Jeans" (to discover the "Product name" dimension) and for "Sales" 
+(to find the corresponding measure), and then construct a query.
 ` },
   { pageId: 'reference/filter-conditions', content: `# Filter Conditions
 
@@ -1386,7 +1585,7 @@ source: c1_orders_tx is c1_orders_table include {
 | model                  | tag  | -       | If specified, the Malloy source will become available for exploration as an Mprove model.                                                                                                                                         |
 | label                  | tag  | -       | Model label in UI                                                                                                                                                                                                                 |
 | top_label              | tag  | -       | Top node label in the Model Schema                                                                                                                                                                                                |
-| access_roles           | tag  | -       | User roles list separated by comma. If \`access_roles\` tag is set, only users with specified roles will be able to explore the model. If \`access_roles\` tag is not specified, all project users will be able to explore the model. |
+| access_roles           | tag  | -       | User roles list separated by comma. If \`access_roles\` tag is set, only users with specified roles will be able to explore the model. If \`access_roles\` tag is not specified, only project admins and project members with file editor role will be able to explore the model. |
 | space                  | tag  | -       | full space path (separated by dots, like "sales.s2.s3")                                                                                                                                                                                                                       |
 | tree_double_underscore | tag  | -       | If this tag is set, the portion of the field name preceding the double underscore will be used to create a top-level group in the model fields tree in the UI.                                                                    |
 
@@ -2345,25 +2544,25 @@ const QUERY_PARAMETERS = [
 
 ### Store
 
-| Name                             | Type                                                 | Default | Description                                                                                                                                                                                      |
-| -------------------------------- | ---------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| store\\*                          | string                                               | -       | Store name                                                                                                                                                                                       |
-| connection\\*                     | string                                               | -       | Connection name                                                                                                                                                                                  |
-| preset                           | string                                               | -       | <span>When you specify a preset, all missing definitions in the current store will be set to the same values ​​as in the preset. Available presets:</span><ul><li>**google_analytics**</li></ul> |
-| label                            | string                                               | -       | Store label in UI                                                                                                                                                                                |
-| description                      | string                                               | -       | Store description in UI                                                                                                                                                                          |
-| access_roles                     | string []                                            | -       | If specified, only users with the listed roles will have access to Store Model                                                                                                                   |
-| space                            | string                                               | -       | full space path (separated by dots, like "sales.s2.s3")                                                                                                                                          |
-| method\\*                         | enum                                                 | -       | <span>Request method:</span><ul><li>**POST** </li><li>**GET** (does not have a payload)</li></ul>                                                                                                |
-| request\\*                        | string                                               | -       | JavaScript function to build Request JSON payload body and URL path. Must return \\{ urlPath: string, body: any \\};                                                                               |
-| response\\*                       | string                                               | -       | JavaScript function to convert Response payload data into the required Mprove format                                                                                                             |
-| date_range_includes_right_side\\* | boolean                                              | -       | Specify whether the API time filter includes the right range boundary                                                                                                                            |
-| parameters                       | [Store Filter []](#store-filter)                     | -       | Begin a section of store parameters                                                                                                                                                              |
-| results\\*                        | [Store Result []](#store-result)                     | -       | Begin a section of store results                                                                                                                                                                 |
-| field_groups\\*                   | [Store Field Group []](#store-field-group)           | -       | Begin a section of store field groups                                                                                                                                                            |
-| field_time_groups                | [Store Field Time Group []](#store-field-time-group) | -       | Begin a section of store field time groups                                                                                                                                                       |
-| build_metrics                    | [Store Build Metric []](#store-build-metric)         | -       | Begin a section of store BuildMetrics                                                                                                                                                            |
-| fields\\*                         | [Store Field []](#store-field)                       | -       | Begin a section of store fields                                                                                                                                                                  |
+| Name                             | Type                                                 | Default | Description                                                                                                                                                                                                              |
+| -------------------------------- | ---------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| store\\*                          | string                                               | -       | Store name                                                                                                                                                                                                               |
+| connection\\*                     | string                                               | -       | Connection name                                                                                                                                                                                                          |
+| preset                           | string                                               | -       | <span>When you specify a preset, all missing definitions in the current store will be set to the same values ​​as in the preset. Available presets:</span><ul><li>**google_analytics**</li></ul>                         |
+| label                            | string                                               | -       | Store label in UI                                                                                                                                                                                                        |
+| description                      | string                                               | -       | Store description in UI                                                                                                                                                                                                  |
+| access_roles                     | string []                                            | -       | If specified, only users with the listed roles will have access to Store Model. If \`access_roles\` tag is not specified, only project admins and project members with file editor role will be able to explore the model. |
+| space                            | string                                               | -       | full space path (separated by dots, like "sales.s2.s3")                                                                                                                                                                  |
+| method\\*                         | enum                                                 | -       | <span>Request method:</span><ul><li>**POST** </li><li>**GET** (does not have a payload)</li></ul>                                                                                                                        |
+| request\\*                        | string                                               | -       | JavaScript function to build Request JSON payload body and URL path. Must return \\{ urlPath: string, body: any \\};                                                                                                       |
+| response\\*                       | string                                               | -       | JavaScript function to convert Response payload data into the required Mprove format                                                                                                                                     |
+| date_range_includes_right_side\\* | boolean                                              | -       | Specify whether the API time filter includes the right range boundary                                                                                                                                                    |
+| parameters                       | [Store Filter []](#store-filter)                     | -       | Begin a section of store parameters                                                                                                                                                                                      |
+| results\\*                        | [Store Result []](#store-result)                     | -       | Begin a section of store results                                                                                                                                                                                         |
+| field_groups\\*                   | [Store Field Group []](#store-field-group)           | -       | Begin a section of store field groups                                                                                                                                                                                    |
+| field_time_groups                | [Store Field Time Group []](#store-field-time-group) | -       | Begin a section of store field time groups                                                                                                                                                                               |
+| build_metrics                    | [Store Build Metric []](#store-build-metric)         | -       | Begin a section of store BuildMetrics                                                                                                                                                                                    |
+| fields\\*                         | [Store Field []](#store-field)                       | -       | Begin a section of store fields                                                                                                                                                                                          |
 
 ### Store Filter
 
@@ -2773,9 +2972,7 @@ Selected Givens applied to each user query.
 ` },
   { pageId: 'user-roles', content: `# User Roles
 
-## Organization Level Roles
-
-### Organization Owner
+## Organization Owner
 
 Mprove users can create new organizations. The creator of the organization is given **Organization Owner** role. It can be changed on the Organization Account page.
 
@@ -2827,7 +3024,7 @@ Users with **FilesEditor** role can do the following:
 - Switch between Dev and Production repositories
 - Switch between branches of Production repository
 - Switch between branches of Dev repository
-- Perform [.git related user actions](/content/docs/version-control#user-actions)
+- Perform [file and git-related operations](/content/docs/builder#file-and-git-related-operations)
   {/* - Add and remove project environment variables */}
 
 ### ProjectAdmin
@@ -2839,75 +3036,5 @@ Users with **ProjectAdmin** role can do the following:
 - Add and remove project environments
 - Add and remove project connections
 - Add and remove project members
-` },
-  { pageId: 'version-control', content: `# Version Control
-
-## Dev, Production and Session Repositories
-
-Mprove files:
-
-- [mprove.yml](/content/docs/reference/project-config) (Project Config)
-- [\\*.malloy](/content/docs/reference/model-malloy)
-- [\\*.store](/content/docs/reference/model-store)
-- [\\*.chart](/content/docs/reference/chart)
-- [\\*.report](/content/docs/reference/report)
-- [\\*.dashboard](/content/docs/reference/dashboard)
-
-Each project has 3 types of repositories that are local to mprove server:
-
-- **Production** - repository that mirrors **Remote** repository content
-- **Dev** - personal repository for each project member with **FilesEditor** role
-- **Session** - separate repository for each session of type Editor
-
-Dev repositories allow users to edit files and test changes without affecting **Production** version of files.
-
-Users with **FilesEditor** role can manually edit files in their personal Dev repositories.
-
-<Callout type="info">
-  To be able to edit files, a user with the **FilesEditor** role must select the
-  **Dev** repository in the navigation bar.
-</Callout>
-
-When user makes a manual change to any file, Mprove does the following:
-
-- Validates all files
-- Shows validation errors (if any)
-- Updates Models, Charts, Dashboards and Reports structure that have passed validation
-
-Once the user is satisfied with the changes made, the user can **_commit_** and **_push (deploy)_** changes to **Production** repository to share results with the team.
-
-<Callout type="info">
-  When changes are pushed to **Production**, they are actually pushed to
-  **Remote** first, and then pulled from **Remote** to **Production**. In other
-  words, changes from the **Dev** repository are pushed to the **Production**
-  repository via the **Remote** repository in a single user action.
-</Callout>
-
-## Git Branches
-
-Small projects may only need to use one branch (usually called master or main). Advanced git users may work in different branches.
-
-<Callout type="info">
-  Users can switch between branches using **repo-branch** selector in navigation bar.
-</Callout>
-
-## User Actions
-
-Git related actions are available on the Files page:
-
-- **Save and Validate** - Save the changes. Mprove will automatically check all files in the project repository data folder for errors.
-
-<Callout type="warn">
-  If errors are found during files validation step, they need to be fixed before pushing to production.
-</Callout>
-
-- **Commit** - Commit changes in Dev repo.
-- **Push** - Deploy committed changes from Dev repo to Production repo (and to Remote repo).
-- **Revert to Last Commit** - Discard saved changes in Dev repo that were not committed.
-- **Revert to Production** - Revert all changes in the Dev repo to the current Production version of files.
-- **Pull from Remote** - Fetch changes from Remote repo branch and merge into the selected repo branch.
-- **Merge branch** - Merge changes from another branch into the current branch.
-- **Create branch** - Create a new branch.
-- **Delete branch** - Delete current branch.
 ` }
 ];

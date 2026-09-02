@@ -4,14 +4,16 @@ export const toc: readonly string[] = [
   'about',
   'access-roles',
   'ai-sessions/builder',
+  'ai-sessions/editor',
   'ai-sessions/explorer',
-  'ai-sessions/openai-codex-setup',
+  'ai-sessions/llm-providers',
+  'builder',
   'connections',
-  'dwh-schema',
   'environments',
   'quickstart',
   'reference/chart',
   'reference/dashboard',
+  'reference/dwh-schema',
   'reference/filter-conditions',
   'reference/format-number',
   'reference/model-malloy',
@@ -21,6 +23,5 @@ export const toc: readonly string[] = [
   'reference/report',
   'reference/space',
   'row-level-security',
-  'user-roles',
-  'version-control'
+  'user-roles'
 ];
