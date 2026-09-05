@@ -58,10 +58,8 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendSaveCreateChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-save-create-chart';
-import type {
-  ToDiskCreateFileRequest,
-  ToDiskCreateFileResponse
-} from '#common/zod/to-disk/07-files/to-disk-create-file';
+import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/create-file/create-file-request';
+import type { ToDiskCreateFileResponse } from '#common/zod/to-disk/07-files/create-file/create-file-response';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)

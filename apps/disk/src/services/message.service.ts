@@ -1,9 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { match } from 'ts-pattern';
 import { METHOD_RPC } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { ServerError } from '#common/models/server-error';
+import type { MyResponse } from '#common/zod/to/my-response';
+import type {
+  ToDiskOperationRequest,
+  ToDiskOperationResponse,
+  ToDiskResponseForRequest
+} from '#common/zod/to-disk/to-disk-operation-contract';
 import { DiskConfig } from '#disk/config/disk-config';
 import { CreateOrgService } from '#disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '#disk/controllers/01-orgs/delete-org/delete-org.service';
@@ -36,7 +41,10 @@ import { SaveFileService } from '#disk/controllers/07-files/save-file/save-file.
 import { SeedProjectService } from '#disk/controllers/08-seed/seed-project/seed-project.service';
 import { CloneTestRepoService } from '#disk/controllers/09-test/clone-test-repo/clone-test-repo.service';
 import { makeErrorResponseDisk } from '#disk/functions/make-error-response-disk';
-import { makeOkResponseDisk } from '#disk/functions/make-ok-response-disk';
+import {
+  type DiskResponse,
+  makeOkResponseDisk
+} from '#disk/functions/make-ok-response-disk';
 
 @Injectable()
 export class MessageService {
@@ -83,12 +91,24 @@ export class MessageService {
     private logger: Logger
   ) {}
 
-  async processMessage(body: any) {
-    let startTs = Date.now();
-    try {
-      let payload = await this.processSwitch(body);
+  async processMessage<TRequest extends ToDiskOperationRequest>(
+    item: TRequest
+  ): Promise<ToDiskResponseForRequest<TRequest>> {
+    let body: TRequest = item;
 
-      return makeOkResponseDisk({
+    let startTs: number = Date.now();
+
+    let response: MyResponse;
+
+    try {
+      let payload: ToDiskOperationResponse['payload'] =
+        await this.processSwitch(body);
+
+      let okResponse: DiskResponse<
+        ToDiskOperationResponse['payload'],
+        TRequest['info']['name'],
+        typeof METHOD_RPC
+      > = makeOkResponseDisk({
         payload: payload,
         body: body,
         path: body.info.name,
@@ -97,6 +117,8 @@ export class MessageService {
         cs: this.cs,
         logger: this.logger
       });
+
+      response = okResponse;
     } catch (e) {
       let { resp, wrappedError } = makeErrorResponseDisk({
         e: e,
@@ -108,85 +130,146 @@ export class MessageService {
         logger: this.logger
       });
 
-      return resp;
+      response = resp;
     }
+
+    // Existing operation schemas describe success payloads, but runtime errors
+    // intentionally use {}. This boundary also restores the generic correlation.
+    return response as ToDiskResponseForRequest<TRequest>;
   }
 
-  async processSwitch(request: any): Promise<any> {
-    switch (request.info.name) {
-      case ToDiskRequestInfoNameEnum.ToDiskCreateOrg:
-        return await this.createOrgService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskDeleteOrg:
-        return await this.deleteOrgService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskIsOrgExist:
-        return await this.isOrgExistService.process(request);
+  async processSwitch(
+    item: ToDiskOperationRequest
+  ): Promise<ToDiskOperationResponse['payload']> {
+    let request: ToDiskOperationRequest = item;
 
-      case ToDiskRequestInfoNameEnum.ToDiskCreateProject:
-        return await this.createProjectService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskDeleteProject:
-        return await this.deleteProjectService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskIsProjectExist:
-        return await this.isProjectExistService.process(request);
+    let payload: ToDiskOperationResponse['payload'] = await match(request)
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg } },
+        request => this.createOrgService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskDeleteOrg } },
+        request => this.deleteOrgService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskIsOrgExist } },
+        request => this.isOrgExistService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskCreateProject } },
+        request => this.createProjectService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskDeleteProject } },
+        request => this.deleteProjectService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskIsProjectExist } },
+        request => this.isProjectExistService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskCommitRepo } },
+        request => this.commitRepoService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo } },
+        request => this.createDevRepoService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo } },
+        request => this.deleteDevRepoService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskMergeRepo } },
+        request => this.mergeRepoService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskPullRepo } },
+        request => this.pullRepoService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskPushRepo } },
+        request => this.pushRepoService.process(request)
+      )
+      .with(
+        {
+          info: {
+            name: ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit
+          }
+        },
+        request => this.revertRepoToLastCommitService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote } },
+        request => this.revertRepoToRemoteService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskSyncRepo } },
+        request => this.syncRepoService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles } },
+        request => this.getCatalogFilesService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes } },
+        request => this.getCatalogNodesService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode } },
+        request => this.moveCatalogNodeService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode } },
+        request => this.renameCatalogNodeService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskCreateBranch } },
+        request => this.createBranchService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskDeleteBranch } },
+        request => this.deleteBranchService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskIsBranchExist } },
+        request => this.isBranchExistService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskCreateFolder } },
+        request => this.createFolderService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskDeleteFolder } },
+        request => this.deleteFolderService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskCreateFile } },
+        request => this.createFileService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile } },
+        request => this.deleteFileService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskGetFile } },
+        request => this.getFileService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskSaveFile } },
+        request => this.saveFileService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskSeedProject } },
+        request => this.seedProjectService.process(request)
+      )
+      .with(
+        { info: { name: ToDiskRequestInfoNameEnum.ToDiskCloneTestRepo } },
+        request => this.cloneTestRepoService.process(request)
+      )
+      .exhaustive();
 
-      case ToDiskRequestInfoNameEnum.ToDiskCommitRepo:
-        return await this.commitRepoService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo:
-        return await this.createDevRepoService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo:
-        return await this.deleteDevRepoService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskMergeRepo:
-        return await this.mergeRepoService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskPullRepo:
-        return await this.pullRepoService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskPushRepo:
-        return await this.pushRepoService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit:
-        return await this.revertRepoToLastCommitService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote:
-        return await this.revertRepoToRemoteService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskSyncRepo:
-        return await this.syncRepoService.process(request);
-
-      case ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles:
-        return await this.getCatalogFilesService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes:
-        return await this.getCatalogNodesService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode:
-        return await this.moveCatalogNodeService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode:
-        return await this.renameCatalogNodeService.process(request);
-
-      case ToDiskRequestInfoNameEnum.ToDiskCreateBranch:
-        return await this.createBranchService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskDeleteBranch:
-        return await this.deleteBranchService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskIsBranchExist:
-        return await this.isBranchExistService.process(request);
-
-      case ToDiskRequestInfoNameEnum.ToDiskCreateFolder:
-        return await this.createFolderService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskDeleteFolder:
-        return await this.deleteFolderService.process(request);
-
-      case ToDiskRequestInfoNameEnum.ToDiskCreateFile:
-        return await this.createFileService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskDeleteFile:
-        return await this.deleteFileService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskGetFile:
-        return await this.getFileService.process(request);
-      case ToDiskRequestInfoNameEnum.ToDiskSaveFile:
-        return await this.saveFileService.process(request);
-
-      case ToDiskRequestInfoNameEnum.ToDiskSeedProject:
-        return await this.seedProjectService.process(request);
-
-      case ToDiskRequestInfoNameEnum.ToDiskCloneTestRepo:
-        return await this.cloneTestRepoService.process(request);
-
-      default:
-        throw new ServerError({
-          message: ErEnum.DISK_WRONG_REQUEST_INFO_NAME
-        });
-    }
+    return payload;
   }
 }

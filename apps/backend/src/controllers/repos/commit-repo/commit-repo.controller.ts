@@ -23,10 +23,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendCommitRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-commit-repo';
-import type {
-  ToDiskCommitRepoRequest,
-  ToDiskCommitRepoResponse
-} from '#common/zod/to-disk/03-repos/to-disk-commit-repo';
+import type { ToDiskCommitRepoRequest } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-request';
+import type { ToDiskCommitRepoResponse } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

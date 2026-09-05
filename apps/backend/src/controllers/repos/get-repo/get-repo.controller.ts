@@ -23,10 +23,8 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToBackendGetRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-get-repo';
-import type {
-  ToDiskGetCatalogNodesRequest,
-  ToDiskGetCatalogNodesResponse
-} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-nodes';
+import type { ToDiskGetCatalogNodesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-request';
+import type { ToDiskGetCatalogNodesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

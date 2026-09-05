@@ -58,10 +58,8 @@ import { ServerError } from '#common/models/server-error';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { ToBackendSaveCreateDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-save-create-dashboard';
-import type {
-  ToDiskCreateFileRequest,
-  ToDiskCreateFileResponse
-} from '#common/zod/to-disk/07-files/to-disk-create-file';
+import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/create-file/create-file-request';
+import type { ToDiskCreateFileResponse } from '#common/zod/to-disk/07-files/create-file/create-file-response';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)

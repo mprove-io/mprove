@@ -54,10 +54,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
-import type {
-  ToDiskDeleteDevRepoRequest,
-  ToDiskDeleteDevRepoResponse
-} from '#common/zod/to-disk/03-repos/to-disk-delete-dev-repo';
+import type { ToDiskDeleteDevRepoRequest } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-request';
+import type { ToDiskDeleteDevRepoResponse } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-response';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

@@ -75,10 +75,8 @@ import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendCreateMemberResponsePayload } from '#common/zod/to-backend/members/to-backend-create-member';
-import type {
-  ToDiskCreateDevRepoRequest,
-  ToDiskCreateDevRepoResponse
-} from '#common/zod/to-disk/03-repos/to-disk-create-dev-repo';
+import type { ToDiskCreateDevRepoRequest } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-request';
+import type { ToDiskCreateDevRepoResponse } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-response';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)

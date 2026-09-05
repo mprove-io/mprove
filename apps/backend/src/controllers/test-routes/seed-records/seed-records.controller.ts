@@ -95,10 +95,8 @@ import type {
 } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskCreateOrgResponse } from '#common/zod/to-disk/01-orgs/create-org/create-org-response';
-import type {
-  ToDiskSeedProjectRequest,
-  ToDiskSeedProjectResponse
-} from '#common/zod/to-disk/08-seed/to-disk-seed-project';
+import type { ToDiskSeedProjectRequest } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request';
+import type { ToDiskSeedProjectResponse } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response';
 import { parseApiKey } from '#node-common/functions/api-key/parse-api-key';
 
 @ApiTags('TestRoutes')

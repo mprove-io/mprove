@@ -24,10 +24,8 @@ import { TabService } from '#backend/services/tab.service';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendValidateFilesResponsePayload } from '#common/zod/to-backend/files/to-backend-validate-files';
-import type {
-  ToDiskGetCatalogFilesRequest,
-  ToDiskGetCatalogFilesResponse
-} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-files';
+import type { ToDiskGetCatalogFilesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request';
+import type { ToDiskGetCatalogFilesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @Injectable()
 export class ValidateFilesService {

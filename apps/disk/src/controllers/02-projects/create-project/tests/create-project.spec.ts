@@ -91,9 +91,7 @@ test('1', async t => {
     await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(createProjectRequest);
 
-    resp = (await messageService.processMessage(
-      isProjectExistRequest
-    )) as ToDiskIsProjectExistResponse;
+    resp = await messageService.processMessage(isProjectExistRequest);
   } catch (e) {
     logToConsoleDisk({
       log: e,

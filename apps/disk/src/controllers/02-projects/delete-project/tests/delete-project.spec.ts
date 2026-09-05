@@ -104,9 +104,7 @@ test('1', async t => {
     await messageService.processMessage(createProjectRequest);
     await messageService.processMessage(deleteProjectRequest);
 
-    resp = (await messageService.processMessage(
-      isProjectExistRequest
-    )) as ToDiskIsProjectExistResponse;
+    resp = await messageService.processMessage(isProjectExistRequest);
   } catch (e) {
     logToConsoleDisk({
       log: e,

@@ -43,10 +43,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendPullRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-pull-repo';
-import type {
-  ToDiskPullRepoRequest,
-  ToDiskPullRepoResponse
-} from '#common/zod/to-disk/03-repos/to-disk-pull-repo';
+import type { ToDiskPullRepoRequest } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-request';
+import type { ToDiskPullRepoResponse } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

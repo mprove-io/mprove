@@ -17,10 +17,8 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToBackendGetRebuildStructRequest } from '#common/zod/to-backend/test-routes/to-backend-get-rebuild-struct';
 import type { ToBlockmlRebuildStructResponse } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
-import type {
-  ToDiskSeedProjectRequest,
-  ToDiskSeedProjectResponse
-} from '#common/zod/to-disk/08-seed/to-disk-seed-project';
+import type { ToDiskSeedProjectRequest } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request';
+import type { ToDiskSeedProjectResponse } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response';
 
 let testId = 'get-rebuild-struct__ok';
 

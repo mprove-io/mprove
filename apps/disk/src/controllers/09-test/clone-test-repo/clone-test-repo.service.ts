@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ensureDir, remove } from 'fs-extra';
 import { ErEnum } from '#common/enums/er.enum';
-import { zToDiskCloneTestRepoRequest } from '#common/zod/to-disk/10-test/to-disk-clone-test-repo';
+import { zToDiskCloneTestRepoRequest } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-request';
 import { DiskConfig } from '#disk/config/disk-config';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';

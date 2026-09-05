@@ -46,10 +46,8 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendCreateFileResponsePayload } from '#common/zod/to-backend/files/to-backend-create-file';
-import type {
-  ToDiskCreateFileRequest,
-  ToDiskCreateFileResponse
-} from '#common/zod/to-disk/07-files/to-disk-create-file';
+import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/create-file/create-file-request';
+import type { ToDiskCreateFileResponse } from '#common/zod/to-disk/07-files/create-file/create-file-response';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)

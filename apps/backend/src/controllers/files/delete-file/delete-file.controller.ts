@@ -43,10 +43,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendDeleteFileResponsePayload } from '#common/zod/to-backend/files/to-backend-delete-file';
-import type {
-  ToDiskDeleteFileRequest,
-  ToDiskDeleteFileResponse
-} from '#common/zod/to-disk/07-files/to-disk-delete-file';
+import type { ToDiskDeleteFileRequest } from '#common/zod/to-disk/07-files/delete-file/delete-file-request';
+import type { ToDiskDeleteFileResponse } from '#common/zod/to-disk/07-files/delete-file/delete-file-response';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)

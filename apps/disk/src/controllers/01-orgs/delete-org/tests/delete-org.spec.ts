@@ -58,9 +58,7 @@ test('1', async t => {
     await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(deleteOrgRequest);
 
-    resp = (await messageService.processMessage(
-      isOrgExistRequest
-    )) as ToDiskIsOrgExistResponse;
+    resp = await messageService.processMessage(isOrgExistRequest);
   } catch (e) {
     logToConsoleDisk({
       log: e,

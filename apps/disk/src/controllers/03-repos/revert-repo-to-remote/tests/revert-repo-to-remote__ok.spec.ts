@@ -10,17 +10,13 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
-import type { ToDiskCommitRepoRequest } from '#common/zod/to-disk/03-repos/to-disk-commit-repo';
-import type { ToDiskPushRepoRequest } from '#common/zod/to-disk/03-repos/to-disk-push-repo';
-import type {
-  ToDiskRevertRepoToRemoteRequest,
-  ToDiskRevertRepoToRemoteResponse
-} from '#common/zod/to-disk/03-repos/to-disk-revert-repo-to-remote';
-import type {
-  ToDiskGetFileRequest,
-  ToDiskGetFileResponse
-} from '#common/zod/to-disk/07-files/to-disk-get-file';
-import type { ToDiskSaveFileRequest } from '#common/zod/to-disk/07-files/to-disk-save-file';
+import type { ToDiskCommitRepoRequest } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-request';
+import type { ToDiskPushRepoRequest } from '#common/zod/to-disk/03-repos/push-repo/push-repo-request';
+import type { ToDiskRevertRepoToRemoteRequest } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-request';
+import type { ToDiskRevertRepoToRemoteResponse } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-response';
+import type { ToDiskGetFileRequest } from '#common/zod/to-disk/07-files/get-file/get-file-request';
+import type { ToDiskGetFileResponse } from '#common/zod/to-disk/07-files/get-file/get-file-response';
+import type { ToDiskSaveFileRequest } from '#common/zod/to-disk/07-files/save-file/save-file-request';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 

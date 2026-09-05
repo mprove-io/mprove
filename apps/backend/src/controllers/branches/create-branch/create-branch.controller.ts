@@ -46,10 +46,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
-import type {
-  ToDiskCreateBranchRequest,
-  ToDiskCreateBranchResponse
-} from '#common/zod/to-disk/05-branches/to-disk-create-branch';
+import type { ToDiskCreateBranchRequest } from '#common/zod/to-disk/05-branches/create-branch/create-branch-request';
+import type { ToDiskCreateBranchResponse } from '#common/zod/to-disk/05-branches/create-branch/create-branch-response';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)

@@ -57,10 +57,8 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { ToBackendSaveCreateReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-save-create-report';
-import type {
-  ToDiskCreateFileRequest,
-  ToDiskCreateFileResponse
-} from '#common/zod/to-disk/07-files/to-disk-create-file';
+import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/create-file/create-file-request';
+import type { ToDiskCreateFileResponse } from '#common/zod/to-disk/07-files/create-file/create-file-response';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)

@@ -28,10 +28,8 @@ import { getModelUrl } from '#common/functions/get-model-url';
 import { getReportUrl } from '#common/functions/get-report-url';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
 import type { ToBackendGetStateResponsePayload } from '#common/zod/to-backend/state/to-backend-get-state';
-import type {
-  ToDiskGetCatalogNodesRequest,
-  ToDiskGetCatalogNodesResponse
-} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-nodes';
+import type { ToDiskGetCatalogNodesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-request';
+import type { ToDiskGetCatalogNodesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
 
 @Injectable()
 export class GetStateService {

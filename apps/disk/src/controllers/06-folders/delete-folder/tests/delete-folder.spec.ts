@@ -9,13 +9,11 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
-import type { ToDiskCommitRepoRequest } from '#common/zod/to-disk/03-repos/to-disk-commit-repo';
-import type { ToDiskCreateFolderRequest } from '#common/zod/to-disk/06-folders/to-disk-create-folder';
-import type {
-  ToDiskDeleteFolderRequest,
-  ToDiskDeleteFolderResponse
-} from '#common/zod/to-disk/06-folders/to-disk-delete-folder';
-import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/to-disk-create-file';
+import type { ToDiskCommitRepoRequest } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-request';
+import type { ToDiskCreateFolderRequest } from '#common/zod/to-disk/06-folders/create-folder/create-folder-request';
+import type { ToDiskDeleteFolderRequest } from '#common/zod/to-disk/06-folders/delete-folder/delete-folder-request';
+import type { ToDiskDeleteFolderResponse } from '#common/zod/to-disk/06-folders/delete-folder/delete-folder-response';
+import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/create-file/create-file-request';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 

@@ -57,12 +57,8 @@ test('1', async t => {
 
     await messageService.processMessage(createOrgRequest);
 
-    resp1 = (await messageService.processMessage(
-      isOrgExistRequest_1
-    )) as ToDiskIsOrgExistResponse;
-    resp2 = (await messageService.processMessage(
-      isOrgExistRequest_2
-    )) as ToDiskIsOrgExistResponse;
+    resp1 = await messageService.processMessage(isOrgExistRequest_1);
+    resp2 = await messageService.processMessage(isOrgExistRequest_2);
   } catch (e) {
     logToConsoleDisk({
       log: e,

@@ -17,10 +17,8 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import type {
-  ToDiskGetCatalogFilesRequest,
-  ToDiskGetCatalogFilesResponse
-} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-files';
+import type { ToDiskGetCatalogFilesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request';
+import type { ToDiskGetCatalogFilesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @Injectable()
 export class GetModelsToolService {

@@ -262,6 +262,9 @@ await retry(
 Exception: callbacks passed to collection methods such as `map`, `filter`, `find`, `findIndex`, `some`,
 and `sort` may return expressions directly without an explicit callback return type or an intermediate variable.
 
+Exception: callbacks passed to ts-pattern `with` may return expressions directly without an explicit
+callback return type or an intermediate variable.
+
 ```ts
 let modelIndex: number = provider.models.findIndex(
   item => item.modelId === modelId

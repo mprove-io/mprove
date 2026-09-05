@@ -615,6 +615,9 @@ catalogs:
     trino-client:
       specifier: 0.2.9
       version: 0.2.9
+    ts-pattern:
+      specifier: 5.9.0
+      version: 5.9.0
     tslib:
       specifier: 2.7.0
       version: 2.7.0
@@ -1004,6 +1007,9 @@ importers:
       trino-client:
         specifier: 'catalog:'
         version: 0.2.9
+      ts-pattern:
+        specifier: 'catalog:'
+        version: 5.9.0
       tslib:
         specifier: 'catalog:'
         version: 2.7.0
@@ -1254,6 +1260,9 @@ importers:
       trino-client:
         specifier: 'catalog:'
         version: 0.2.9
+      ts-pattern:
+        specifier: 'catalog:'
+        version: 5.9.0
       tslib:
         specifier: 'catalog:'
         version: 2.7.0
@@ -1462,6 +1471,9 @@ importers:
       trino-client:
         specifier: 'catalog:'
         version: 0.2.9
+      ts-pattern:
+        specifier: 'catalog:'
+        version: 5.9.0
       tslib:
         specifier: 'catalog:'
         version: 2.7.0
@@ -1851,6 +1863,9 @@ importers:
       trino-client:
         specifier: 0.2.9
         version: 0.2.9
+      ts-pattern:
+        specifier: 5.9.0
+        version: 5.9.0
       tslib:
         specifier: 2.7.0
         version: 2.7.0
@@ -12560,6 +12575,9 @@ packages:
   ts-interface-checker@0.1.13:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
 
+  ts-pattern@5.9.0:
+    resolution: {integrity: sha512-6s5V71mX8qBUmlgbrfL33xDUwO0fq48rxAu2LBE11WBeGdpCPOsXksQbZJHvHwhrd3QjUusd3mAOM5Gg0mFBLg==}
+
   tsconfig-paths@4.2.0:
     resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
     engines: {node: '>=6'}
@@ -16982,6 +17000,7 @@ snapshots:
       nanoid: 3.3.10
       reflect-metadata: 0.2.2
       trino-client: 0.2.9
+      ts-pattern: 5.9.0
       tslib: 2.7.0
       zod: 4.3.6
     transitivePeerDependencies:
@@ -25899,6 +25918,8 @@ snapshots:
       '@ts-graphviz/core': 2.0.7
 
   ts-interface-checker@0.1.13: {}
+
+  ts-pattern@5.9.0: {}
 
   tsconfig-paths@4.2.0:
     dependencies:

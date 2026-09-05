@@ -43,10 +43,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendRenameCatalogNodeResponsePayload } from '#common/zod/to-backend/catalogs/to-backend-rename-catalog-node';
-import type {
-  ToDiskRenameCatalogNodeRequest,
-  ToDiskRenameCatalogNodeResponse
-} from '#common/zod/to-disk/04-catalogs/to-disk-rename-catalog-node';
+import type { ToDiskRenameCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request';
+import type { ToDiskRenameCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response';
 
 @ApiTags('Catalogs')
 @UseGuards(ThrottlerUserIdGuard)

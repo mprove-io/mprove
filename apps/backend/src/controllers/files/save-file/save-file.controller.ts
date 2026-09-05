@@ -43,10 +43,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendSaveFileResponsePayload } from '#common/zod/to-backend/files/to-backend-save-file';
-import type {
-  ToDiskSaveFileRequest,
-  ToDiskSaveFileResponse
-} from '#common/zod/to-disk/07-files/to-disk-save-file';
+import type { ToDiskSaveFileRequest } from '#common/zod/to-disk/07-files/save-file/save-file-request';
+import type { ToDiskSaveFileResponse } from '#common/zod/to-disk/07-files/save-file/save-file-response';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)

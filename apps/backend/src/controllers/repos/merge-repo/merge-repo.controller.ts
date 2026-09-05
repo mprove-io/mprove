@@ -46,10 +46,8 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendMergeRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-merge-repo';
-import type {
-  ToDiskMergeRepoRequest,
-  ToDiskMergeRepoResponse
-} from '#common/zod/to-disk/03-repos/to-disk-merge-repo';
+import type { ToDiskMergeRepoRequest } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-request';
+import type { ToDiskMergeRepoResponse } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

@@ -47,10 +47,8 @@ import type {
   BridgeItem,
   ToBackendSpecialRebuildStructsResponsePayload
 } from '#common/zod/to-backend/special/to-backend-special-rebuild-structs';
-import type {
-  ToDiskGetCatalogFilesRequest,
-  ToDiskGetCatalogFilesResponse
-} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-files';
+import type { ToDiskGetCatalogFilesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request';
+import type { ToDiskGetCatalogFilesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @ApiTags('Special')
 @SkipJwtCheck()

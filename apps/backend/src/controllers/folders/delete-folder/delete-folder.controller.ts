@@ -44,10 +44,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendDeleteFolderResponsePayload } from '#common/zod/to-backend/folders/to-backend-delete-folder';
-import type {
-  ToDiskDeleteFolderRequest,
-  ToDiskDeleteFolderResponse
-} from '#common/zod/to-disk/06-folders/to-disk-delete-folder';
+import type { ToDiskDeleteFolderRequest } from '#common/zod/to-disk/06-folders/delete-folder/delete-folder-request';
+import type { ToDiskDeleteFolderResponse } from '#common/zod/to-disk/06-folders/delete-folder/delete-folder-response';
 
 @ApiTags('Folders')
 @UseGuards(ThrottlerUserIdGuard)

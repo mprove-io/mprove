@@ -46,10 +46,8 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendRevertRepoToRemoteResponsePayload } from '#common/zod/to-backend/repos/to-backend-revert-repo-to-remote';
-import type {
-  ToDiskRevertRepoToRemoteRequest,
-  ToDiskRevertRepoToRemoteResponse
-} from '#common/zod/to-disk/03-repos/to-disk-revert-repo-to-remote';
+import type { ToDiskRevertRepoToRemoteRequest } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-request';
+import type { ToDiskRevertRepoToRemoteResponse } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

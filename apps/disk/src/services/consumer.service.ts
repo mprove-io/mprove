@@ -5,6 +5,7 @@ import Redis from 'ioredis';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
 import type { RpcRequestData } from '#common/zod/rpc-request-data';
 import type { MyResponse } from '#common/zod/to/my-response';
+import type { ToDiskOperationRequest } from '#common/zod/to-disk/to-disk-operation-contract';
 import { DiskConfig } from '#disk/config/disk-config';
 import { MessageService } from './message.service';
 
@@ -48,7 +49,9 @@ export class ConsumerService {
       queue: this.queue,
       concurrency: diskConcurrency,
       handler: async job => {
-        let { message, replyTo } = job.data as RpcRequestData;
+        let { message, replyTo } = job.data as RpcRequestData & {
+          message: ToDiskOperationRequest;
+        };
 
         let response: MyResponse =
           await this.messageService.processMessage(message);

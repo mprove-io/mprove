@@ -35,10 +35,8 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
-import type {
-  ToDiskDeleteBranchRequest,
-  ToDiskDeleteBranchResponse
-} from '#common/zod/to-disk/05-branches/to-disk-delete-branch';
+import type { ToDiskDeleteBranchRequest } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-request';
+import type { ToDiskDeleteBranchResponse } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-response';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)

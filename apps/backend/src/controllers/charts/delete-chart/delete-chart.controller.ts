@@ -46,10 +46,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
-import type {
-  ToDiskDeleteFileRequest,
-  ToDiskDeleteFileResponse
-} from '#common/zod/to-disk/07-files/to-disk-delete-file';
+import type { ToDiskDeleteFileRequest } from '#common/zod/to-disk/07-files/delete-file/delete-file-request';
+import type { ToDiskDeleteFileResponse } from '#common/zod/to-disk/07-files/delete-file/delete-file-response';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)

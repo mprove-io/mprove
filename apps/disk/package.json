@@ -75,6 +75,7 @@
     "rxjs": "catalog:",
     "simple-git": "catalog:",
     "trino-client": "catalog:",
+    "ts-pattern": "catalog:",
     "tslib": "catalog:",
     "winston": "catalog:",
     "zod": "catalog:"

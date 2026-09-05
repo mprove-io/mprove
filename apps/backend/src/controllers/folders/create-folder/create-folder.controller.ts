@@ -44,10 +44,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendCreateFolderResponsePayload } from '#common/zod/to-backend/folders/to-backend-create-folder';
-import type {
-  ToDiskCreateFolderRequest,
-  ToDiskCreateFolderResponse
-} from '#common/zod/to-disk/06-folders/to-disk-create-folder';
+import type { ToDiskCreateFolderRequest } from '#common/zod/to-disk/06-folders/create-folder/create-folder-request';
+import type { ToDiskCreateFolderResponse } from '#common/zod/to-disk/06-folders/create-folder/create-folder-response';
 
 @ApiTags('Folders')
 @UseGuards(ThrottlerUserIdGuard)

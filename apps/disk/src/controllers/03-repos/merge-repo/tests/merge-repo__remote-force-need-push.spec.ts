@@ -9,15 +9,13 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
-import type { ToDiskCommitRepoRequest } from '#common/zod/to-disk/03-repos/to-disk-commit-repo';
-import type {
-  ToDiskMergeRepoRequest,
-  ToDiskMergeRepoResponse
-} from '#common/zod/to-disk/03-repos/to-disk-merge-repo';
-import type { ToDiskPushRepoRequest } from '#common/zod/to-disk/03-repos/to-disk-push-repo';
-import type { ToDiskCreateBranchRequest } from '#common/zod/to-disk/05-branches/to-disk-create-branch';
-import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/to-disk-create-file';
-import type { ToDiskSaveFileRequest } from '#common/zod/to-disk/07-files/to-disk-save-file';
+import type { ToDiskCommitRepoRequest } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-request';
+import type { ToDiskMergeRepoRequest } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-request';
+import type { ToDiskMergeRepoResponse } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-response';
+import type { ToDiskPushRepoRequest } from '#common/zod/to-disk/03-repos/push-repo/push-repo-request';
+import type { ToDiskCreateBranchRequest } from '#common/zod/to-disk/05-branches/create-branch/create-branch-request';
+import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/create-file/create-file-request';
+import type { ToDiskSaveFileRequest } from '#common/zod/to-disk/07-files/save-file/save-file-request';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 

@@ -11,10 +11,8 @@ import { RpcService } from '#backend/services/rpc.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToBackendCloneTestRepoResponse } from '#common/zod/to-backend/test-routes/to-backend-clone-test-repo';
-import type {
-  ToDiskCloneTestRepoRequest,
-  ToDiskCloneTestRepoResponse
-} from '#common/zod/to-disk/10-test/to-disk-clone-test-repo';
+import type { ToDiskCloneTestRepoRequest } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-request';
+import type { ToDiskCloneTestRepoResponse } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-response';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()

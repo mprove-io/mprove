@@ -25,10 +25,8 @@ import type {
   ToBlockmlRebuildStructRequest,
   ToBlockmlRebuildStructResponse
 } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
-import type {
-  ToDiskGetCatalogFilesRequest,
-  ToDiskGetCatalogFilesResponse
-} from '#common/zod/to-disk/04-catalogs/to-disk-get-catalog-files';
+import type { ToDiskGetCatalogFilesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request';
+import type { ToDiskGetCatalogFilesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @ApiTags('TestRoutes')
 // ToBackendGetRebuildStructRequest is for tests only

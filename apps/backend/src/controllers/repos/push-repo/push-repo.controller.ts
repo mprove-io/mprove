@@ -50,10 +50,8 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendPushRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-push-repo';
-import type {
-  ToDiskPushRepoRequest,
-  ToDiskPushRepoResponse
-} from '#common/zod/to-disk/03-repos/to-disk-push-repo';
+import type { ToDiskPushRepoRequest } from '#common/zod/to-disk/03-repos/push-repo/push-repo-request';
+import type { ToDiskPushRepoResponse } from '#common/zod/to-disk/03-repos/push-repo/push-repo-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

@@ -123,6 +123,7 @@
     "tiny-async-pool": "catalog:",
     "toposort": "catalog:",
     "trino-client": "catalog:",
+    "ts-pattern": "catalog:",
     "tslib": "catalog:",
     "uuid": "catalog:",
     "winston": "catalog:",

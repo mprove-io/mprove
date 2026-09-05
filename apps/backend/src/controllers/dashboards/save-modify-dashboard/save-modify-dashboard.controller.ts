@@ -59,14 +59,10 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { ToBackendSaveModifyDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
-import type {
-  ToDiskMoveCatalogNodeRequest,
-  ToDiskMoveCatalogNodeResponse
-} from '#common/zod/to-disk/04-catalogs/to-disk-move-catalog-node';
-import type {
-  ToDiskSaveFileRequest,
-  ToDiskSaveFileResponse
-} from '#common/zod/to-disk/07-files/to-disk-save-file';
+import type { ToDiskMoveCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-request';
+import type { ToDiskMoveCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-response';
+import type { ToDiskSaveFileRequest } from '#common/zod/to-disk/07-files/save-file/save-file-request';
+import type { ToDiskSaveFileResponse } from '#common/zod/to-disk/07-files/save-file/save-file-response';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)

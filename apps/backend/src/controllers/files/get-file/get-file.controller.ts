@@ -22,10 +22,8 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToBackendGetFileResponsePayload } from '#common/zod/to-backend/files/to-backend-get-file';
-import type {
-  ToDiskGetFileRequest,
-  ToDiskGetFileResponse
-} from '#common/zod/to-disk/07-files/to-disk-get-file';
+import type { ToDiskGetFileRequest } from '#common/zod/to-disk/07-files/get-file/get-file-request';
+import type { ToDiskGetFileResponse } from '#common/zod/to-disk/07-files/get-file/get-file-response';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)

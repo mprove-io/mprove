@@ -32,10 +32,8 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { Member } from '#common/zod/backend/member';
-import type {
-  ToDiskCreateDevRepoRequest,
-  ToDiskCreateDevRepoResponse
-} from '#common/zod/to-disk/03-repos/to-disk-create-dev-repo';
+import type { ToDiskCreateDevRepoRequest } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-request';
+import type { ToDiskCreateDevRepoResponse } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-response';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';

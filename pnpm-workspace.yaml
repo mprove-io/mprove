@@ -226,6 +226,7 @@ catalog:
   trino-client: 0.2.9
   ts-loader: 9.5.1
   ts-node: 10.9.2
+  ts-pattern: 5.9.0
   tsconfig-paths: 3.14.2
   tslib: 2.7.0
   turbo: 2.9.3

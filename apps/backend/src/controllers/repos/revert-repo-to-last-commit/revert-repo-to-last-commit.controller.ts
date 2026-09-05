@@ -43,10 +43,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendRevertRepoToLastCommitResponsePayload } from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
-import type {
-  ToDiskRevertRepoToLastCommitRequest,
-  ToDiskRevertRepoToLastCommitResponse
-} from '#common/zod/to-disk/03-repos/to-disk-revert-repo-to-last-commit';
+import type { ToDiskRevertRepoToLastCommitRequest } from '#common/zod/to-disk/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
+import type { ToDiskRevertRepoToLastCommitResponse } from '#common/zod/to-disk/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
