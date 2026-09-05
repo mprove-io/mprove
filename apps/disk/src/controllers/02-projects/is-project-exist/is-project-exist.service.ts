@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
 import { zToDiskIsProjectExistRequest } from '#common/zod/to-disk/02-projects/is-project-exist/is-project-exist-request';
 import type { ToDiskIsProjectExistResponsePayload } from '#common/zod/to-disk/02-projects/is-project-exist/is-project-exist-response-payload';
@@ -18,7 +19,7 @@ export class IsProjectExistService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskIsProjectExistResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -33,34 +34,37 @@ export class IsProjectExistService {
 
     let { orgId, projectId } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
+    let isProjectExistResult = Result.pipe(
+      Result.succeed({
+        orgId: orgId,
+        projectId: projectId,
+        projectDir: `${orgPath}/${orgId}/${projectId}`
+      }),
+      Result.andThrough(async item => {
+        await this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: undefined,
+          orgId: item.orgId,
+          projectId: undefined,
+          projectLt: undefined,
+          repoId: undefined,
+          branchId: undefined
+        });
+        return Result.succeed();
+      }),
+      Result.bind('isProjectExist', async item => {
+        let isProjectExist: boolean = await isPathExist(item.projectDir);
+        return Result.succeed(isProjectExist);
+      }),
+      Result.map(
+        (item): ToDiskIsProjectExistResponsePayload => ({
+          orgId: item.orgId,
+          projectId: item.projectId,
+          isProjectExist: item.isProjectExist
+        })
+      )
+    );
 
-    //
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: undefined, // undefined
-      orgId: orgId,
-      projectId: undefined, // undefined
-      projectLt: undefined, // undefined
-      repoId: undefined, // undefined
-      branchId: undefined // undefined
-    });
-
-    let isProjectExist = await isPathExist(projectDir);
-
-    let payload: ToDiskIsProjectExistResponsePayload = {
-      orgId: orgId,
-      projectId: projectId,
-      isProjectExist: isProjectExist
-    };
+    let payload = await Result.unwrap(isProjectExistResult);
 
     return payload;
   }

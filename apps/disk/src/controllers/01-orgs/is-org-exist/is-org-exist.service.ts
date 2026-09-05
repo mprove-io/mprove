@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
 import { zToDiskIsOrgExistRequest } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-request';
 import type { ToDiskIsOrgExistResponsePayload } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-response-payload';
@@ -16,7 +17,7 @@ export class IsOrgExistService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskIsOrgExistResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -31,16 +32,24 @@ export class IsOrgExistService {
 
     let { orgId } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${orgId}`;
+    let isOrgExistResult = Result.pipe(
+      Result.succeed({
+        orgId: orgId,
+        orgDir: `${orgPath}/${orgId}`
+      }),
+      Result.bind('isOrgExist', async item => {
+        let isOrgExist: boolean = await isPathExist(item.orgDir);
+        return Result.succeed(isOrgExist);
+      }),
+      Result.map(
+        (item): ToDiskIsOrgExistResponsePayload => ({
+          orgId: item.orgId,
+          isOrgExist: item.isOrgExist
+        })
+      )
+    );
 
-    //
-
-    let isOrgExist = await isPathExist(orgDir);
-
-    let payload: ToDiskIsOrgExistResponsePayload = {
-      orgId: orgId,
-      isOrgExist: isOrgExist
-    };
+    let payload = await Result.unwrap(isOrgExistResult);
 
     return payload;
   }

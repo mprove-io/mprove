@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
 import { zToDiskDeleteProjectRequest } from '#common/zod/to-disk/02-projects/delete-project/delete-project-request';
 import type { ToDiskDeleteProjectResponsePayload } from '#common/zod/to-disk/02-projects/delete-project/delete-project-response-payload';
@@ -19,7 +20,7 @@ export class DeleteProjectService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskDeleteProjectResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -34,38 +35,39 @@ export class DeleteProjectService {
 
     let { orgId, projectId } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
+    let deleteProjectResult = Result.pipe(
+      Result.succeed({
+        orgId: orgId,
+        projectId: projectId,
+        projectDir: `${orgPath}/${orgId}/${projectId}`
+      }),
+      Result.andThrough(async item => {
+        await this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: undefined,
+          orgId: item.orgId,
+          projectId: undefined,
+          projectLt: undefined,
+          repoId: undefined,
+          branchId: undefined
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        let isProjectExist: boolean = await isPathExist(item.projectDir);
+        if (isProjectExist === true) {
+          await removePath(item.projectDir);
+        }
+        return Result.succeed();
+      }),
+      Result.map(
+        (item): ToDiskDeleteProjectResponsePayload => ({
+          orgId: item.orgId,
+          deletedProjectId: item.projectId
+        })
+      )
+    );
 
-    //
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: undefined, // undefined
-      orgId: orgId,
-      projectId: undefined, // undefined
-      projectLt: undefined, // undefined
-      repoId: undefined, // undefined
-      branchId: undefined // undefined
-    });
-
-    let isProjectExist = await isPathExist(projectDir);
-    if (isProjectExist === true) {
-      await removePath(projectDir);
-    }
-
-    //
-
-    let payload: ToDiskDeleteProjectResponsePayload = {
-      orgId: orgId,
-      deletedProjectId: projectId
-    };
+    let payload = await Result.unwrap(deleteProjectResult);
 
     return payload;
   }

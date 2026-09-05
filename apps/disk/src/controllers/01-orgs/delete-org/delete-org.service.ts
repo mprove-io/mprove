@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
 import { zToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-request';
 import type { ToDiskDeleteOrgResponsePayload } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-response-payload';
@@ -17,7 +18,7 @@ export class DeleteOrgService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskDeleteOrgResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -32,17 +33,26 @@ export class DeleteOrgService {
 
     let { orgId } = requestValid.payload;
 
-    let orgDir = `${orgPath}/${orgId}`;
+    let deleteOrgResult = Result.pipe(
+      Result.succeed({
+        orgId: orgId,
+        orgDir: `${orgPath}/${orgId}`
+      }),
+      Result.andThrough(async item => {
+        let isOrgExist: boolean = await isPathExist(item.orgDir);
+        if (isOrgExist === true) {
+          await removePath(item.orgDir);
+        }
+        return Result.succeed();
+      }),
+      Result.map(
+        (item): ToDiskDeleteOrgResponsePayload => ({
+          deletedOrgId: item.orgId
+        })
+      )
+    );
 
-    let isOrgExist = await isPathExist(orgDir);
-
-    if (isOrgExist === true) {
-      await removePath(orgDir);
-    }
-
-    let payload: ToDiskDeleteOrgResponsePayload = {
-      deletedOrgId: orgId
-    };
+    let payload = await Result.unwrap(deleteOrgResult);
 
     return payload;
   }
