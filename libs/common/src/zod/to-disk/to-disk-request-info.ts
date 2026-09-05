@@ -1,6 +1,16 @@
 import { z } from 'zod';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { zRequestInfo } from '#common/zod/to/request-info';
+import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import type { Extend } from '#common/types/extend';
+import { type RequestInfo, zRequestInfo } from '#common/zod/to/request-info';
+
+export type ToDiskRequestInfo = Extend<
+  RequestInfo,
+  {
+    name: (typeof ToDiskRequestInfoNameEnum)[keyof typeof ToDiskRequestInfoNameEnum];
+    traceId: string;
+  }
+>;
 
 export let zToDiskRequestInfo = zRequestInfo
   .extend({
@@ -9,4 +19,6 @@ export let zToDiskRequestInfo = zRequestInfo
   })
   .meta({ id: 'ToDiskRequestInfo' });
 
-export type ToDiskRequestInfo = z.infer<typeof zToDiskRequestInfo>;
+assertTypesEqual<ToDiskRequestInfo, z.infer<typeof zToDiskRequestInfo>>({
+  value: true
+});

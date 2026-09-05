@@ -2,11 +2,9 @@ import test from 'ava';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
-import type { ToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/to-disk-delete-org';
-import type {
-  ToDiskIsOrgExistRequest,
-  ToDiskIsOrgExistResponse
-} from '#common/zod/to-disk/01-orgs/to-disk-is-org-exist';
+import type { ToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-request';
+import type { ToDiskIsOrgExistRequest } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-request';
+import type { ToDiskIsOrgExistResponse } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-response';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 
@@ -60,7 +58,9 @@ test('1', async t => {
     await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(deleteOrgRequest);
 
-    resp = await messageService.processMessage(isOrgExistRequest);
+    resp = (await messageService.processMessage(
+      isOrgExistRequest
+    )) as ToDiskIsOrgExistResponse;
   } catch (e) {
     logToConsoleDisk({
       log: e,

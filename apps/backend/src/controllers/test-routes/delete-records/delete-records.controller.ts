@@ -53,10 +53,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { ToBackendDeleteRecordsResponse } from '#common/zod/to-backend/test-routes/to-backend-delete-records';
-import type {
-  ToDiskDeleteOrgRequest,
-  ToDiskDeleteOrgResponse
-} from '#common/zod/to-disk/01-orgs/to-disk-delete-org';
+import type { ToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-request';
+import type { ToDiskDeleteOrgResponse } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-response';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()

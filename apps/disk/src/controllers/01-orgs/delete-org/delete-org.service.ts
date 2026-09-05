@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '#common/enums/er.enum';
-import type { ToDiskDeleteOrgResponsePayload } from '#common/zod/to-disk/01-orgs/to-disk-delete-org';
-import { zToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/to-disk-delete-org';
+import { zToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-request';
+import type { ToDiskDeleteOrgResponsePayload } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-response-payload';
 import { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';

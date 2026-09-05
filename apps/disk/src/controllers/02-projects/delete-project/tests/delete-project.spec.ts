@@ -8,11 +8,9 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
-import type { ToDiskDeleteProjectRequest } from '#common/zod/to-disk/02-projects/to-disk-delete-project';
-import type {
-  ToDiskIsProjectExistRequest,
-  ToDiskIsProjectExistResponse
-} from '#common/zod/to-disk/02-projects/to-disk-is-project-exist';
+import type { ToDiskDeleteProjectRequest } from '#common/zod/to-disk/02-projects/delete-project/delete-project-request';
+import type { ToDiskIsProjectExistRequest } from '#common/zod/to-disk/02-projects/is-project-exist/is-project-exist-request';
+import type { ToDiskIsProjectExistResponse } from '#common/zod/to-disk/02-projects/is-project-exist/is-project-exist-response';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 
@@ -106,7 +104,9 @@ test('1', async t => {
     await messageService.processMessage(createProjectRequest);
     await messageService.processMessage(deleteProjectRequest);
 
-    resp = await messageService.processMessage(isProjectExistRequest);
+    resp = (await messageService.processMessage(
+      isProjectExistRequest
+    )) as ToDiskIsProjectExistResponse;
   } catch (e) {
     logToConsoleDisk({
       log: e,

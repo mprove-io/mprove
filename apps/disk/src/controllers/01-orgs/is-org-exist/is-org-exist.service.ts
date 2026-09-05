@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '#common/enums/er.enum';
-import type { ToDiskIsOrgExistResponsePayload } from '#common/zod/to-disk/01-orgs/to-disk-is-org-exist';
-import { zToDiskIsOrgExistRequest } from '#common/zod/to-disk/01-orgs/to-disk-is-org-exist';
+import { zToDiskIsOrgExistRequest } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-request';
+import type { ToDiskIsOrgExistResponsePayload } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-response-payload';
 import { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { DiskTabService } from '#disk/services/disk-tab.service';

@@ -37,10 +37,8 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import type {
-  ToDiskDeleteProjectRequest,
-  ToDiskDeleteProjectResponse
-} from '#common/zod/to-disk/02-projects/to-disk-delete-project';
+import type { ToDiskDeleteProjectRequest } from '#common/zod/to-disk/02-projects/delete-project/delete-project-request';
+import type { ToDiskDeleteProjectResponse } from '#common/zod/to-disk/02-projects/delete-project/delete-project-response';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)
