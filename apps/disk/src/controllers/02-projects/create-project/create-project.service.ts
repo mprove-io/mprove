@@ -167,11 +167,7 @@ export class CreateProjectService {
           mproveDir: item.prodItemCatalog.mproveDir
         })
       ),
-      Result.mapError(error =>
-        toServerError({
-          message: error.message
-        })
-      )
+      Result.mapError(toServerError)
     );
 
     let payload = await Result.unwrap(createProjectResult);

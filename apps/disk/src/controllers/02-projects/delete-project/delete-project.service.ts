@@ -9,6 +9,7 @@ import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
@@ -64,7 +65,8 @@ export class DeleteProjectService {
           orgId: item.orgId,
           deletedProjectId: item.projectId
         })
-      )
+      ),
+      Result.mapError(toServerError)
     );
 
     let payload = await Result.unwrap(deleteProjectResult);

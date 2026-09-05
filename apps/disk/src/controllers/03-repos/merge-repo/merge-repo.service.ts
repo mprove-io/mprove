@@ -1,11 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskMergeRepoRequest } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-request';
+import type { ToDiskMergeRepoRequestPayload } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-request-payload';
 import type { ToDiskMergeRepoResponsePayload } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-response-payload';
 import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
@@ -17,7 +19,9 @@ import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist'
 import { merge } from '#disk/functions/git/merge';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { DiskTheirBranchIsNotExistError } from './errors/disk-their-branch-is-not-exist-error';
 
 @Injectable()
 export class MergeRepoService {
@@ -28,7 +32,7 @@ export class MergeRepoService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskMergeRepoResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -49,7 +53,7 @@ export class MergeRepoService {
       theirBranch,
       isTheirBranchRemote,
       userAlias
-    } = requestValid.payload;
+    }: ToDiskMergeRepoRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -65,147 +69,130 @@ export class MergeRepoService {
     let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
       projectLt;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
-    let repoDir = `${projectDir}/${repoId}`;
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isBranchExist = await isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
-    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: remoteType,
-      orgId: orgId,
-      projectId: projectId,
-      projectLt: projectLt,
-      repoId: repoId,
-      branchId: branch
-    });
-
-    let git = await createGit({
-      repoDir: repoDir,
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    let isTheirBranchExist =
-      isTheirBranchRemote === true
-        ? await isRemoteBranchExist({
-            repoDir: repoDir,
-            remoteBranch: theirBranch,
-            git: git,
-            isFetch: true
-          })
-        : await isLocalBranchExist({
-            repoDir: repoDir,
-            localBranch: theirBranch
-          });
-
-    if (isTheirBranchExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_THEIR_BRANCH_IS_NOT_EXIST
-      });
-    }
-
-    await checkoutBranch({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      branchName: branch,
-      git: git,
-      isFetch: false
-    });
-
-    //
-
-    await merge({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      userAlias: userAlias,
-      branch: branch,
-      theirBranch:
-        isTheirBranchRemote === true ? `origin/${theirBranch}` : theirBranch,
-      isTheirBranchRemote: isTheirBranchRemote,
-      git: git
-    });
-
-    let {
-      repoStatus,
-      currentBranch,
-      conflicts,
-      changesToCommit,
-      changesToPush
-    } = <DiskItemStatus>await getRepoStatus({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      git: git,
-      isFetch: isTheirBranchRemote === true ? false : true,
-      isCheckConflicts: true
-    });
-
-    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: true,
-      isRootMproveDir: false
-    });
-
-    let payload: ToDiskMergeRepoResponsePayload = {
-      repo: {
+    let mergeRepoResult = Result.pipe(
+      Result.succeed({
         orgId: orgId,
         projectId: projectId,
+        projectDir: `${orgPath}/${orgId}/${projectId}`,
         repoId: repoId,
-        repoStatus: repoStatus,
-        currentBranchId: currentBranch,
-        conflicts: conflicts,
-        nodes: itemCatalog.nodes,
-        changesToCommit: changesToCommit,
-        changesToPush: changesToPush
-      },
-      files: itemCatalog.files,
-      mproveDir: itemCatalog.mproveDir
-    };
+        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
+      }),
+      Result.bind('keyDir', async () => {
+        let keyDir: string =
+          await this.restoreService.checkOrgProjectRepoBranch({
+            remoteType: remoteType,
+            orgId: orgId,
+            projectId: projectId,
+            projectLt: projectLt,
+            repoId: repoId,
+            branchId: branch
+          });
+        return Result.succeed(keyDir);
+      }),
+      Result.bind('git', async item => {
+        let git: SimpleGit = await createGit({
+          repoDir: item.repoDir,
+          remoteType: remoteType,
+          keyDir: item.keyDir,
+          gitUrl: gitUrl,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed(git);
+      }),
+      Result.andThrough(async item => {
+        let isTheirBranchExist: boolean =
+          isTheirBranchRemote === true
+            ? await isRemoteBranchExist({
+                repoDir: item.repoDir,
+                remoteBranch: theirBranch,
+                git: item.git,
+                isFetch: true
+              })
+            : await isLocalBranchExist({
+                repoDir: item.repoDir,
+                localBranch: theirBranch
+              });
+
+        if (isTheirBranchExist === false) {
+          return Result.fail(new DiskTheirBranchIsNotExistError());
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await checkoutBranch({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          branchName: branch,
+          git: item.git,
+          isFetch: false
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await merge({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          userAlias: userAlias,
+          branch: branch,
+          theirBranch:
+            isTheirBranchRemote === true
+              ? `origin/${theirBranch}`
+              : theirBranch,
+          isTheirBranchRemote: isTheirBranchRemote,
+          git: item.git
+        });
+        return Result.succeed();
+      }),
+      Result.bind('repoStatus', async item => {
+        let repoStatus: DiskItemStatus = await getRepoStatus({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          git: item.git,
+          isFetch: isTheirBranchRemote === true ? false : true,
+          isCheckConflicts: true
+        });
+        return Result.succeed(repoStatus);
+      }),
+      Result.bind('itemCatalog', async item => {
+        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        });
+        return Result.succeed(itemCatalog);
+      }),
+      Result.map(
+        (item): ToDiskMergeRepoResponsePayload => ({
+          repo: {
+            orgId: item.orgId,
+            projectId: item.projectId,
+            repoId: item.repoId,
+            repoStatus: item.repoStatus.repoStatus,
+            currentBranchId: item.repoStatus.currentBranch,
+            conflicts: item.repoStatus.conflicts,
+            nodes: item.itemCatalog.nodes,
+            changesToCommit: item.repoStatus.changesToCommit,
+            changesToPush: item.repoStatus.changesToPush
+          },
+          files: item.itemCatalog.files,
+          mproveDir: item.itemCatalog.mproveDir
+        })
+      ),
+      Result.mapError(toServerError)
+    );
+
+    let payload = await Result.unwrap(mergeRepoResult);
 
     return payload;
   }

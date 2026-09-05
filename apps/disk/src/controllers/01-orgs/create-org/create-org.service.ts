@@ -49,11 +49,7 @@ export class CreateOrgService {
       Result.map(
         (item): ToDiskCreateOrgResponsePayload => ({ orgId: item.orgId })
       ),
-      Result.mapError(error =>
-        toServerError({
-          message: error.message
-        })
-      )
+      Result.mapError(toServerError)
     );
 
     let payload = await Result.unwrap(createOrgResult);

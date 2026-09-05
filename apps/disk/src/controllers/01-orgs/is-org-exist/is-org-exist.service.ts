@@ -7,6 +7,7 @@ import type { ToDiskIsOrgExistResponsePayload } from '#common/zod/to-disk/01-org
 import { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { DiskTabService } from '#disk/services/disk-tab.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
@@ -46,7 +47,8 @@ export class IsOrgExistService {
           orgId: item.orgId,
           isOrgExist: item.isOrgExist
         })
-      )
+      ),
+      Result.mapError(toServerError)
     );
 
     let payload = await Result.unwrap(isOrgExistResult);

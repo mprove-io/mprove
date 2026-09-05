@@ -8,6 +8,7 @@ import { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
 import { DiskTabService } from '#disk/services/disk-tab.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
@@ -49,7 +50,8 @@ export class DeleteOrgService {
         (item): ToDiskDeleteOrgResponsePayload => ({
           deletedOrgId: item.orgId
         })
-      )
+      ),
+      Result.mapError(toServerError)
     );
 
     let payload = await Result.unwrap(deleteOrgResult);

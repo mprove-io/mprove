@@ -1,14 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskDeleteDevRepoRequest } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-request';
+import type { ToDiskDeleteDevRepoRequestPayload } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-request-payload';
 import type { ToDiskDeleteDevRepoResponsePayload } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-response-payload';
 import { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
@@ -20,7 +23,7 @@ export class DeleteDevRepoService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskDeleteDevRepoResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -33,7 +36,12 @@ export class DeleteDevRepoService {
       logger: this.logger
     });
 
-    let { orgId, projectId, baseProject, devRepoId } = requestValid.payload;
+    let {
+      orgId,
+      projectId,
+      baseProject,
+      devRepoId
+    }: ToDiskDeleteDevRepoRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -43,45 +51,44 @@ export class DeleteDevRepoService {
       encryptedString: baseProject.lt
     });
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
-    let devRepoDir = `${projectDir}/${devRepoId}`;
+    let deleteDevRepoResult = Result.pipe(
+      Result.succeed({
+        orgId: orgId,
+        projectId: projectId,
+        devRepoId: devRepoId,
+        devRepoDir: `${orgPath}/${orgId}/${projectId}/${devRepoId}`
+      }),
+      Result.andThrough(async item => {
+        await this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: baseProject.remoteType,
+          orgId: item.orgId,
+          projectId: item.projectId,
+          projectLt: projectLt,
+          repoId: undefined,
+          branchId: undefined
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        let isDevRepoExist: boolean = await isPathExist(item.devRepoDir);
 
-    //
+        if (isDevRepoExist === true) {
+          await removePath(item.devRepoDir);
+        }
 
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
+        return Result.succeed();
+      }),
+      Result.map(
+        (item): ToDiskDeleteDevRepoResponsePayload => ({
+          orgId: item.orgId,
+          projectId: item.projectId,
+          deletedRepoId: item.devRepoId
+        })
+      ),
+      Result.mapError(toServerError)
+    );
 
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: baseProject.remoteType,
-      orgId: orgId,
-      projectId: projectId,
-      projectLt: projectLt,
-      repoId: undefined,
-      branchId: undefined
-    });
-
-    let isDevRepoExist = await isPathExist(devRepoDir);
-    if (isDevRepoExist === true) {
-      await removePath(devRepoDir);
-    }
-
-    let payload: ToDiskDeleteDevRepoResponsePayload = {
-      orgId: orgId,
-      projectId: projectId,
-      deletedRepoId: devRepoId
-    };
+    let payload = await Result.unwrap(deleteDevRepoResult);
 
     return payload;
   }
