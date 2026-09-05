@@ -15,10 +15,8 @@ import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { Org } from '#common/zod/backend/org';
 import type { OrgsItem } from '#common/zod/backend/orgs-item';
-import type {
-  ToDiskCreateOrgRequest,
-  ToDiskCreateOrgResponse
-} from '#common/zod/to-disk/01-orgs/to-disk-create-org';
+import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
+import type { ToDiskCreateOrgResponse } from '#common/zod/to-disk/01-orgs/create-org/create-org-response';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
 import { TabService } from '../tab.service';

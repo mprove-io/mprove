@@ -1,7 +1,7 @@
 import test from 'ava';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/to-disk-create-org';
+import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type {
   ToDiskIsOrgExistRequest,
   ToDiskIsOrgExistResponse

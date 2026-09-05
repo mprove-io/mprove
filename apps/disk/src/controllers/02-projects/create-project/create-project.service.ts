@@ -1,24 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import type { ToDiskCreateProjectResponsePayload } from '#common/zod/to-disk/02-projects/to-disk-create-project';
-import { zToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/to-disk-create-project';
+import { zToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
+import type { ToDiskCreateProjectRequestPayload } from '#common/zod/to-disk/02-projects/create-project/create-project-request-payload';
+import type { ToDiskCreateProjectResponsePayload } from '#common/zod/to-disk/02-projects/create-project/create-project-response-payload';
 import { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { checkProjectDoesNotExist } from './functions/check-project-does-not-exist';
 
 @Injectable()
 export class CreateProjectService {
@@ -29,7 +32,7 @@ export class CreateProjectService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskCreateProjectResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -42,8 +45,13 @@ export class CreateProjectService {
       logger: this.logger
     });
 
-    let { orgId, baseProject, testProjectId, devRepoId, userAlias } =
-      requestValid.payload;
+    let {
+      orgId,
+      baseProject,
+      testProjectId,
+      devRepoId,
+      userAlias
+    }: ToDiskCreateProjectRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -56,113 +64,117 @@ export class CreateProjectService {
     let { projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
+    let createProjectResult = Result.pipe(
+      Result.succeed({
+        orgId: orgId,
+        projectId: projectId,
+        projectDir: `${orgPath}/${orgId}/${projectId}`,
+        keyDir: `${orgPath}/${orgId}/_keys/${projectId}`,
+        prodRepoDir: `${orgPath}/${orgId}/${projectId}/${PROD_REPO_ID}`
+      }),
+      Result.andThrough(async () => {
+        await this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: orgId,
+          projectId: undefined,
+          projectLt: undefined,
+          repoId: undefined,
+          branchId: undefined
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(item =>
+        checkProjectDoesNotExist({ projectDir: item.projectDir })
+      ),
+      Result.andThrough(async item => {
+        await ensureDir(item.projectDir);
+        await ensureDir(item.keyDir);
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await prepareRemoteAndProd({
+          projectId: item.projectId,
+          projectName: projectName,
+          projectDir: item.projectDir,
+          testProjectId: testProjectId,
+          userAlias: userAlias,
+          remoteType: remoteType,
+          gitUrl: gitUrl,
+          keyDir: item.keyDir,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await cloneRemoteToDev({
+          orgId: item.orgId,
+          projectId: item.projectId,
+          devRepoId: devRepoId,
+          orgPath: orgPath,
+          remoteType: remoteType,
+          gitUrl: gitUrl,
+          keyDir: item.keyDir,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed();
+      }),
+      Result.bind('prodItemCatalog', async item => {
+        let prodItemCatalog: DiskItemCatalog = await getNodesAndFiles({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: PROD_REPO_ID,
+          readFiles: true,
+          isRootMproveDir: false
+        });
+        return Result.succeed(prodItemCatalog);
+      }),
+      Result.bind('prodGit', async item => {
+        let prodGit: SimpleGit = await createGit({
+          repoDir: item.prodRepoDir,
+          remoteType: remoteType,
+          keyDir: item.keyDir,
+          gitUrl: gitUrl,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed(prodGit);
+      }),
+      Result.bind('prodItemStatus', async item => {
+        let prodItemStatus: DiskItemStatus = await getRepoStatus({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: PROD_REPO_ID,
+          repoDir: item.prodRepoDir,
+          git: item.prodGit,
+          isFetch: true,
+          isCheckConflicts: true
+        });
+        return Result.succeed(prodItemStatus);
+      }),
+      Result.map(
+        (item): ToDiskCreateProjectResponsePayload => ({
+          orgId: item.orgId,
+          projectId: item.projectId,
+          defaultBranch: item.prodItemStatus.currentBranch,
+          prodFiles: item.prodItemCatalog.files,
+          mproveDir: item.prodItemCatalog.mproveDir
+        })
+      ),
+      Result.mapError(error =>
+        toServerError({
+          message: error.message
+        })
+      )
+    );
 
-    //
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: remoteType,
-      orgId: orgId,
-      projectId: undefined, // undefined
-      projectLt: undefined, // undefined
-      repoId: undefined, // undefined
-      branchId: undefined // undefined
-    });
-
-    let isProjectExist = await isPathExist(projectDir);
-    if (isProjectExist === true) {
-      throw new ServerError({
-        message: ErEnum.DISK_PROJECT_ALREADY_EXIST
-      });
-    }
-
-    //
-
-    await ensureDir(projectDir);
-
-    let keyDir = `${orgDir}/_keys/${projectId}`;
-    await ensureDir(keyDir);
-
-    await prepareRemoteAndProd({
-      projectId: projectId,
-      projectName: projectName,
-      projectDir: projectDir,
-      testProjectId: testProjectId,
-      userAlias: userAlias,
-      remoteType: remoteType,
-      gitUrl: gitUrl,
-      keyDir: keyDir,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    await cloneRemoteToDev({
-      orgId: orgId,
-      projectId: projectId,
-      devRepoId: devRepoId,
-      orgPath: orgPath,
-      remoteType: remoteType,
-      gitUrl: gitUrl,
-      keyDir: keyDir,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    let prodItemCatalog = <DiskItemCatalog>await getNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: PROD_REPO_ID,
-      readFiles: true,
-      isRootMproveDir: false
-    });
-
-    let prodRepoDir = `${projectDir}/${PROD_REPO_ID}`;
-    let prodGit = await createGit({
-      repoDir: prodRepoDir,
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    let {
-      repoStatus,
-      currentBranch,
-      conflicts,
-      changesToCommit,
-      changesToPush
-    } = <DiskItemStatus>await getRepoStatus({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: PROD_REPO_ID,
-      repoDir: prodRepoDir,
-      git: prodGit,
-      isFetch: true,
-      isCheckConflicts: true
-    });
-
-    let payload: ToDiskCreateProjectResponsePayload = {
-      orgId: orgId,
-      projectId: projectId,
-      defaultBranch: currentBranch,
-      prodFiles: prodItemCatalog.files,
-      mproveDir: prodItemCatalog.mproveDir
-    };
+    let payload = await Result.unwrap(createProjectResult);
 
     return payload;
   }

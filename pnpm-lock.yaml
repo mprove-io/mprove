@@ -249,6 +249,12 @@ catalogs:
     '@opentelemetry/semantic-conventions':
       specifier: 1.38.0
       version: 1.38.0
+    '@praha/byethrow':
+      specifier: 0.12.0
+      version: 0.12.0
+    '@praha/error-factory':
+      specifier: 1.4.1
+      version: 1.4.1
     '@prestodb/presto-js-client':
       specifier: 1.1.0
       version: 1.1.0
@@ -851,6 +857,12 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: 'catalog:'
         version: 1.38.0
+      '@praha/byethrow':
+        specifier: 'catalog:'
+        version: 0.12.0(typescript@5.9.2)
+      '@praha/error-factory':
+        specifier: 'catalog:'
+        version: 1.4.1
       '@prestodb/presto-js-client':
         specifier: 'catalog:'
         version: 1.1.0
@@ -1173,6 +1185,12 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: 'catalog:'
         version: 1.38.0
+      '@praha/byethrow':
+        specifier: 'catalog:'
+        version: 0.12.0(typescript@5.9.2)
+      '@praha/error-factory':
+        specifier: 'catalog:'
+        version: 1.4.1
       '@replit/codemirror-indentation-markers':
         specifier: 'catalog:'
         version: 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.5.2)(@codemirror/view@6.36.7)
@@ -1381,6 +1399,12 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: 'catalog:'
         version: 1.38.0
+      '@praha/byethrow':
+        specifier: 'catalog:'
+        version: 0.12.0(typescript@5.9.2)
+      '@praha/error-factory':
+        specifier: 'catalog:'
+        version: 1.4.1
       '@replit/codemirror-indentation-markers':
         specifier: 'catalog:'
         version: 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.5.2)(@codemirror/view@6.36.7)
@@ -5935,6 +5959,14 @@ packages:
 
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+
+  '@praha/byethrow@0.12.0':
+    resolution: {integrity: sha512-Q3dRHW8aGqYbEe/W5YKrik6GbtfLGdCrCVcDcP/YJe4uhhbbrkEw9XoRuPZhfMb4uLrUXk27h4phK3I8+cAdRw==}
+    peerDependencies:
+      typescript: '>=5.0.0'
+
+  '@praha/error-factory@1.4.1':
+    resolution: {integrity: sha512-HA+y+xwmQIl9EPvZonRk1/hsSAvAlpDjlpruyW8kTAQ++Oq5Fi7hFV0Y84TLHXJ6SciYHlKGqrekrS5wzkD5+Q==}
 
   '@prestodb/presto-js-client@1.1.0':
     resolution: {integrity: sha512-/ACj+BWW9aYJRQZ+zPqFMPDxqJODrh8O4b7bOSL/ITGysFkyjC5HbDCcGO5haprp5+JsGSoSHlBo/NKb0C/v9g==}
@@ -18317,6 +18349,13 @@ snapshots:
       '@webcomponents/shadycss': 1.11.2
 
   '@popperjs/core@2.11.8': {}
+
+  '@praha/byethrow@0.12.0(typescript@5.9.2)':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      typescript: 5.9.2
+
+  '@praha/error-factory@1.4.1': {}
 
   '@prestodb/presto-js-client@1.1.0': {}
 

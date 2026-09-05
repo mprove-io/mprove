@@ -93,10 +93,8 @@ import type {
   ToBackendSeedRecordsRequestPayloadUsersItem,
   ToBackendSeedRecordsResponse
 } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
-import type {
-  ToDiskCreateOrgRequest,
-  ToDiskCreateOrgResponse
-} from '#common/zod/to-disk/01-orgs/to-disk-create-org';
+import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
+import type { ToDiskCreateOrgResponse } from '#common/zod/to-disk/01-orgs/create-org/create-org-response';
 import type {
   ToDiskSeedProjectRequest,
   ToDiskSeedProjectResponse

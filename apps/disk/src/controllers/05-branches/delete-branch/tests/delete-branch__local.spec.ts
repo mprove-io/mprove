@@ -6,8 +6,8 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/to-disk-create-org';
-import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/to-disk-create-project';
+import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
+import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
 import type { ToDiskCreateBranchRequest } from '#common/zod/to-disk/05-branches/to-disk-create-branch';
 import type {
   ToDiskDeleteBranchRequest,

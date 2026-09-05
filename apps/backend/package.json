@@ -74,6 +74,8 @@
     "@opentelemetry/resources": "catalog:",
     "@opentelemetry/sdk-node": "catalog:",
     "@opentelemetry/semantic-conventions": "catalog:",
+    "@praha/byethrow": "catalog:",
+    "@praha/error-factory": "catalog:",
     "@prestodb/presto-js-client": "catalog:",
     "@rekog/mcp-nest": "catalog:",
     "@replit/codemirror-indentation-markers": "catalog:",

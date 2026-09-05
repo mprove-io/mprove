@@ -1,24 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
-import type { ToDiskCreateOrgResponsePayload } from '#common/zod/to-disk/01-orgs/to-disk-create-org';
-import { zToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/to-disk-create-org';
+import { zToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
+import type { ToDiskCreateOrgRequestPayload } from '#common/zod/to-disk/01-orgs/create-org/create-org-request-payload';
+import type { ToDiskCreateOrgResponsePayload } from '#common/zod/to-disk/01-orgs/create-org/create-org-response-payload';
 import { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
-import { DiskTabService } from '#disk/services/disk-tab.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { checkOrgDoesNotExist } from './functions/check-org-does-not-exist';
 
 @Injectable()
 export class CreateOrgService {
   constructor(
-    private diskTabService: DiskTabService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskCreateOrgResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -31,22 +31,32 @@ export class CreateOrgService {
       logger: this.logger
     });
 
-    let { orgId } = requestValid.payload;
+    let { orgId }: ToDiskCreateOrgRequestPayload = requestValid.payload;
 
-    let orgDir = `${orgPath}/${orgId}`;
+    let createOrgResult = Result.pipe(
+      Result.succeed({
+        orgId: orgId,
+        orgDir: `${orgPath}/${orgId}`
+      }),
+      Result.andThrough(item => checkOrgDoesNotExist({ orgDir: item.orgDir })),
+      Result.andThrough(async item => {
+        await ensureDir(item.orgDir);
+        return Result.succeed();
+      }),
+      // Result.bind('createOrgResponsePayload', item =>
+      //   Result.succeed(toCreateOrgResponsePayload({ orgId: item.orgId }))
+      // ),
+      Result.map(
+        (item): ToDiskCreateOrgResponsePayload => ({ orgId: item.orgId })
+      ),
+      Result.mapError(error =>
+        toServerError({
+          message: error.message
+        })
+      )
+    );
 
-    let isOrgExist = await isPathExist(orgDir);
-    if (isOrgExist === true) {
-      throw new ServerError({
-        message: ErEnum.DISK_ORG_ALREADY_EXIST
-      });
-    }
-
-    await ensureDir(orgDir);
-
-    let payload: ToDiskCreateOrgResponsePayload = {
-      orgId: orgId
-    };
+    let payload = await Result.unwrap(createOrgResult);
 
     return payload;
   }

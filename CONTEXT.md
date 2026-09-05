@@ -268,6 +268,30 @@ let modelIndex: number = provider.models.findIndex(
 );
 ```
 
+Exception: byethrow `Result` pipelines should preserve their compositional style.
+
+Within `Result.pipe`:
+
+- Callbacks passed to `Result.map`, `Result.mapError`, `Result.andThen`,
+  `Result.andThrough`, `Result.bind`, `Result.inspect`, and `Result.inspectError`
+  may return expressions directly without explicit callback return types or intermediate variables.
+- Variables assigned directly from `Result.pipe` or `Result.unwrap` may rely on
+  inferred types when the enclosing function or method has an explicit return type.
+- Return a `ResultAsync` helper directly instead of wrapping it in redundant `async`/`await`.
+- Continue using explicit parameter and return types on standalone Result-producing functions.
+
+Use the combinator matching the operation:
+
+- `map` transforms a successful value without introducing an anticipated error.
+- `mapError` transforms an anticipated error.
+- `andThen` replaces the successful value with another Result-producing computation.
+- `andThrough` runs a validation or side effect and preserves the successful value.
+- `bind` retains a successful computation under a semantic property name when later steps need it.
+  Do not bind `void` results or final projections.
+
+Use `Result` failures for anticipated domain errors. Unexpected infrastructure errors may throw
+unless they are intentionally converted using `Result.try` or `Result.fn`.
+
 For local object projections, prefer a named handwritten type over `Pick`.
 Use explicit mapping when the runtime object must contain only the projected fields.
 
@@ -308,6 +332,16 @@ return models.map(model => toDevModel(model));
 ### Empty lines between statements
 
 Add an empty line between code statements. Do not add empty lines within a single multiline statement.
+
+Exception: in callbacks passed to byethrow `Result` combinators, an empty line before `return`
+may be omitted when the callback body contains exactly one preceding statement.
+
+```ts
+Result.andThrough(async item => {
+  await ensureDir(item.orgDir);
+  return Result.succeed();
+});
+```
 
 ```ts
 // correct
@@ -373,6 +407,18 @@ if (!this.membersService.getMember(memberId)) {
 
 "External" directory is reserved for source code some of deps used in project.
 They are for read-only debugging. Do not modify.
+
+### external/byethrow
+
+Source code and documentation for `@praha/byethrow`.
+
+When working with byethrow `Result` APIs, consult:
+
+- English documentation: `external/byethrow/website/docs/en/`
+- Implementation: `external/byethrow/packages/byethrow/src/`
+- Tests and type tests for exact behavior: `external/byethrow/packages/byethrow/src/functions/`
+
+Treat this directory as a read-only reference. Do not modify it.
 
 ### external/opencode
 
