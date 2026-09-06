@@ -2,16 +2,18 @@ import { Result } from '@praha/byethrow';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { DiskOrgAlreadyExistsError } from '../errors/disk-org-already-exists-error';
 
-export async function checkOrgDoesNotExist(item: {
+export function checkOrgDoesNotExist(item: {
   orgDir: string;
 }): Result.ResultAsync<void, DiskOrgAlreadyExistsError> {
   let { orgDir } = item;
 
-  let isOrgExist: boolean = await isPathExist(orgDir);
-
-  if (isOrgExist === true) {
-    return Result.fail(new DiskOrgAlreadyExistsError());
-  } else {
-    return Result.succeed();
-  }
+  return Result.pipe(
+    Result.succeed({ orgDir: orgDir }),
+    Result.bind('isOrgExist', item => isPathExist({ path: item.orgDir })),
+    Result.andThen(item =>
+      item.isOrgExist === true
+        ? Result.fail(new DiskOrgAlreadyExistsError())
+        : Result.succeed()
+    )
+  );
 }
