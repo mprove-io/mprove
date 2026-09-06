@@ -1,13 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskCreateFolderRequest } from '#common/zod/to-disk/06-folders/create-folder/create-folder-request';
+import {
+  type ToDiskCreateFolderRequest,
+  zToDiskCreateFolderRequest
+} from '#common/zod/to-disk/06-folders/create-folder/create-folder-request';
+import type { ToDiskCreateFolderRequestPayload } from '#common/zod/to-disk/06-folders/create-folder/create-folder-request-payload';
 import type { ToDiskCreateFolderResponsePayload } from '#common/zod/to-disk/06-folders/create-folder/create-folder-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
@@ -16,8 +21,11 @@ import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { DiskFolderAlreadyExistError } from './errors/disk-folder-already-exist-error';
+import { DiskParentPathIsNotExistError } from './errors/disk-parent-path-is-not-exist-error';
 
 @Injectable()
 export class CreateFolderService {
@@ -28,12 +36,12 @@ export class CreateFolderService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(request: any): Promise<ToDiskCreateFolderResponsePayload> {
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
-    let requestValid = zodParseOrThrow({
+    let requestValid: ToDiskCreateFolderRequest = zodParseOrThrow({
       schema: zToDiskCreateFolderRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
@@ -41,8 +49,14 @@ export class CreateFolderService {
       logger: this.logger
     });
 
-    let { orgId, baseProject, repoId, branch, folderName, parentNodeId } =
-      requestValid.payload;
+    let {
+      orgId,
+      baseProject,
+      repoId,
+      branch,
+      folderName,
+      parentNodeId
+    }: ToDiskCreateFolderRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -55,148 +69,142 @@ export class CreateFolderService {
     let { projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
-    let repoDir = `${projectDir}/${repoId}`;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
-    let parent = parentNodeId.substring(projectId.length + 1);
+    let parent: string = parentNodeId.substring(projectId.length + 1);
+
     parent = parent.length > 0 ? parent + '/' : parent;
-    let parentPath = repoDir + '/' + parent;
 
-    let folderAbsolutePath = parentPath + folderName;
+    let parentPath: string =
+      `${orgPath}/${orgId}/${projectId}/${repoId}/` + parent;
 
-    validatePathUnderDir({ fullPath: parentPath, allowedDir: repoDir });
-    validatePathUnderDir({
-      fullPath: folderAbsolutePath,
-      allowedDir: repoDir
-    });
+    let folderAbsolutePath: string = parentPath + folderName;
 
-    //
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isBranchExist = await isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
-    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: remoteType,
-      orgId: orgId,
-      projectId: projectId,
-      projectLt: projectLt,
-      repoId: repoId,
-      branchId: branch
-    });
-
-    let git = await createGit({
-      repoDir: repoDir,
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    await checkoutBranch({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      branchName: branch,
-      git: git,
-      isFetch: false
-    });
-
-    let isParentPathExist = await isPathExist(parentPath);
-    if (isParentPathExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_PARENT_PATH_IS_NOT_EXIST
-      });
-    }
-
-    let isFolderExist = await isPathExist(folderAbsolutePath);
-    if (isFolderExist === true) {
-      throw new ServerError({
-        message: ErEnum.DISK_FOLDER_ALREADY_EXIST
-      });
-    }
-
-    //
-
-    await ensureDir(folderAbsolutePath);
-
-    let {
-      repoStatus,
-      currentBranch,
-      conflicts,
-      changesToCommit,
-      changesToPush
-    } = <DiskItemStatus>await getRepoStatus({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      git: git,
-      isFetch: true,
-      isCheckConflicts: true
-    });
-
-    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: true,
-      isRootMproveDir: false
-    });
-
-    let payload: ToDiskCreateFolderResponsePayload = {
-      repo: {
+    let createFolderResult = Result.pipe(
+      Result.succeed({
         orgId: orgId,
         projectId: projectId,
+        projectDir: `${orgPath}/${orgId}/${projectId}`,
         repoId: repoId,
-        repoStatus: repoStatus,
-        currentBranchId: currentBranch,
-        conflicts: conflicts,
-        nodes: itemCatalog.nodes,
-        changesToCommit: changesToCommit,
-        changesToPush: changesToPush
-      },
-      files: itemCatalog.files,
-      mproveDir: itemCatalog.mproveDir
-    };
+        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
+        parentPath: parentPath,
+        folderAbsolutePath: folderAbsolutePath
+      }),
+      Result.andThrough(item => {
+        validatePathUnderDir({
+          fullPath: item.parentPath,
+          allowedDir: item.repoDir
+        });
+
+        validatePathUnderDir({
+          fullPath: item.folderAbsolutePath,
+          allowedDir: item.repoDir
+        });
+
+        return Result.succeed();
+      }),
+      Result.bind('keyDir', async item => {
+        let keyDir: string =
+          await this.restoreService.checkOrgProjectRepoBranch({
+            remoteType: remoteType,
+            orgId: item.orgId,
+            projectId: item.projectId,
+            projectLt: projectLt,
+            repoId: item.repoId,
+            branchId: branch
+          });
+        return Result.succeed(keyDir);
+      }),
+      Result.bind('git', async item => {
+        let git: SimpleGit = await createGit({
+          repoDir: item.repoDir,
+          remoteType: remoteType,
+          keyDir: item.keyDir,
+          gitUrl: gitUrl,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed(git);
+      }),
+      Result.andThrough(async item => {
+        await checkoutBranch({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          branchName: branch,
+          git: item.git,
+          isFetch: false
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        let isParentPathExist: boolean = await isPathExist(item.parentPath);
+
+        if (isParentPathExist === false) {
+          return Result.fail(new DiskParentPathIsNotExistError());
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        let isFolderExist: boolean = await isPathExist(item.folderAbsolutePath);
+
+        if (isFolderExist === true) {
+          return Result.fail(new DiskFolderAlreadyExistError());
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await ensureDir(item.folderAbsolutePath);
+        return Result.succeed();
+      }),
+      Result.bind('repoStatus', async item => {
+        let repoStatus: DiskItemStatus = await getRepoStatus({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          git: item.git,
+          isFetch: true,
+          isCheckConflicts: true
+        });
+        return Result.succeed(repoStatus);
+      }),
+      Result.bind('itemCatalog', async item => {
+        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        });
+        return Result.succeed(itemCatalog);
+      }),
+      Result.map(
+        (item): ToDiskCreateFolderResponsePayload => ({
+          repo: {
+            orgId: item.orgId,
+            projectId: item.projectId,
+            repoId: item.repoId,
+            repoStatus: item.repoStatus.repoStatus,
+            currentBranchId: item.repoStatus.currentBranch,
+            conflicts: item.repoStatus.conflicts,
+            nodes: item.itemCatalog.nodes,
+            changesToCommit: item.repoStatus.changesToCommit,
+            changesToPush: item.repoStatus.changesToPush
+          },
+          files: item.itemCatalog.files,
+          mproveDir: item.itemCatalog.mproveDir
+        })
+      ),
+      Result.mapError(toServerError)
+    );
+
+    let payload = await Result.unwrap(createFolderResult);
 
     return payload;
   }

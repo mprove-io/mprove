@@ -1,10 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { ensureDir, remove } from 'fs-extra';
 import { ErEnum } from '#common/enums/er.enum';
 import { zToDiskCloneTestRepoRequest } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-request';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { ToDiskCloneTestRepoRequestPayload } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-request-payload';
+import type { ToDiskCloneTestRepoResponsePayload } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-response-payload';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
@@ -14,7 +18,7 @@ export class CloneTestRepoService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskCloneTestRepoResponsePayload> {
     let requestValid = zodParseOrThrow({
       schema: zToDiskCloneTestRepoRequest,
       object: request,
@@ -23,7 +27,7 @@ export class CloneTestRepoService {
       logger: this.logger
     });
 
-    let { testId } = requestValid.payload;
+    let { testId }: ToDiskCloneTestRepoRequestPayload = requestValid.payload;
 
     let testReposPath =
       this.cs.get<DiskConfig['diskTestReposPath']>('diskTestReposPath');
@@ -34,11 +38,29 @@ export class CloneTestRepoService {
 
     let repoPath = `${testReposPath}/${testId}`;
 
-    await ensureDir(testReposPath);
-    await remove(repoPath);
+    let cloneTestRepoResult = Result.pipe(
+      Result.succeed({
+        testReposPath: testReposPath,
+        repoPath: repoPath
+      }),
+      Result.andThrough(async item => {
+        await ensureDir(item.testReposPath);
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await remove(item.repoPath);
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await createSimpleGit({}).clone(gitUrl, item.repoPath);
+        return Result.succeed();
+      }),
+      Result.map((): ToDiskCloneTestRepoResponsePayload => ({})),
+      Result.mapError(toServerError)
+    );
 
-    await createSimpleGit({}).clone(gitUrl, repoPath);
+    let payload = await Result.unwrap(cloneTestRepoResult);
 
-    return {};
+    return payload;
   }
 }

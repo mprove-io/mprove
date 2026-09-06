@@ -1,14 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskGetFileRequest } from '#common/zod/to-disk/07-files/get-file/get-file-request';
+import {
+  type ToDiskGetFileRequest,
+  zToDiskGetFileRequest
+} from '#common/zod/to-disk/07-files/get-file/get-file-request';
+import type { ToDiskGetFileRequestPayload } from '#common/zod/to-disk/07-files/get-file/get-file-request-payload';
 import type { ToDiskGetFileResponsePayload } from '#common/zod/to-disk/07-files/get-file/get-file-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -19,8 +24,10 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { DiskFileIsNotExistError } from './errors/disk-file-is-not-exist-error';
 
 @Injectable()
 export class GetFileService {
@@ -31,12 +38,12 @@ export class GetFileService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(request: any): Promise<ToDiskGetFileResponsePayload> {
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
-    let requestValid = zodParseOrThrow({
+    let requestValid: ToDiskGetFileRequest = zodParseOrThrow({
       schema: zToDiskGetFileRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
@@ -44,8 +51,14 @@ export class GetFileService {
       logger: this.logger
     });
 
-    let { orgId, baseProject, repoId, branch, fileNodeId, builderLeft } =
-      requestValid.payload;
+    let {
+      orgId,
+      baseProject,
+      repoId,
+      branch,
+      fileNodeId,
+      builderLeft
+    }: ToDiskGetFileRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -55,161 +68,158 @@ export class GetFileService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { projectId } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
-    let repoDir = `${projectDir}/${repoId}`;
+    let filePathRelative: string = fileNodeId.substring(projectId.length + 1);
 
-    let filePathRelative = fileNodeId.substring(projectId.length + 1);
-
-    let filePath = repoDir + '/' + filePathRelative;
-
-    validatePathUnderDir({ fullPath: filePath, allowedDir: repoDir });
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isBranchExist = await isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
-    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: remoteType,
-      orgId: orgId,
-      projectId: projectId,
-      projectLt: projectLt,
-      repoId: repoId,
-      branchId: branch
-    });
-
-    let git = await createGit({
-      repoDir: repoDir,
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    await checkoutBranch({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      branchName: branch,
-      git: git,
-      isFetch: false
-    });
-
-    let content = '';
-
-    let isExist = true;
-
-    let isFileExist = await isPathExist(filePath);
-    if (isFileExist === false) {
-      isExist = false;
-      if (builderLeft === BuilderLeftEnum.Tree) {
-        throw new ServerError({
-          message: ErEnum.DISK_FILE_IS_NOT_EXIST
-        });
-      }
-    } else {
-      let { content: cont } = await readFileCheckSize({
-        filePath: filePath,
-        getStat: false
-      });
-
-      content = cont;
-    }
-
-    let originalContent;
-
-    if (builderLeft === BuilderLeftEnum.ChangesToCommit) {
-      originalContent = await getLastCommitFileContent({
-        repoDir: repoDir,
-        filePathRelative: filePathRelative
-      });
-    } else if (builderLeft === BuilderLeftEnum.ChangesToPush) {
-      originalContent = await getBaseCommitFileContent({
-        repoDir: repoDir,
-        filePathRelative: filePathRelative
-      });
-    }
-
-    let {
-      repoStatus,
-      currentBranch,
-      conflicts,
-      changesToCommit,
-      changesToPush
-    } = <DiskItemStatus>await getRepoStatus({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      git: git,
-      isFetch: false,
-      isCheckConflicts: false
-    });
-
-    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: true,
-      isRootMproveDir: false
-    });
-
-    let payload: ToDiskGetFileResponsePayload = {
-      repo: {
+    let getFileResult = Result.pipe(
+      Result.succeed({
         orgId: orgId,
         projectId: projectId,
+        projectDir: `${orgPath}/${orgId}/${projectId}`,
+        remoteType: baseProject.remoteType,
+        projectLt: projectLt,
         repoId: repoId,
-        repoStatus: repoStatus,
-        currentBranchId: currentBranch,
-        conflicts: conflicts,
-        nodes: itemCatalog.nodes,
-        changesToCommit: changesToCommit,
-        changesToPush: changesToPush
-      },
-      originalContent: originalContent,
-      content: content,
-      isExist: isExist
-    };
+        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
+        branch: branch,
+        builderLeft: builderLeft,
+        filePathRelative: filePathRelative,
+        filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${filePathRelative}`
+      }),
+      Result.andThrough(item => {
+        validatePathUnderDir({
+          fullPath: item.filePath,
+          allowedDir: item.repoDir
+        });
+        return Result.succeed();
+      }),
+      Result.bind('keyDir', async item => {
+        let keyDir: string =
+          await this.restoreService.checkOrgProjectRepoBranch({
+            remoteType: item.remoteType,
+            orgId: item.orgId,
+            projectId: item.projectId,
+            projectLt: item.projectLt,
+            repoId: item.repoId,
+            branchId: item.branch
+          });
+        return Result.succeed(keyDir);
+      }),
+      Result.bind('git', async item => {
+        let git: SimpleGit = await createGit({
+          repoDir: item.repoDir,
+          remoteType: item.remoteType,
+          keyDir: item.keyDir,
+          gitUrl: item.projectLt.gitUrl,
+          privateKeyEncrypted: item.projectLt.privateKeyEncrypted,
+          publicKey: item.projectLt.publicKey,
+          passPhrase: item.projectLt.passPhrase
+        });
+        return Result.succeed(git);
+      }),
+      Result.andThrough(async item => {
+        await checkoutBranch({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          branchName: item.branch,
+          git: item.git,
+          isFetch: false
+        });
+        return Result.succeed();
+      }),
+      Result.bind('isExist', async item => {
+        let isExist: boolean = await isPathExist(item.filePath);
+        return Result.succeed(isExist);
+      }),
+      Result.andThrough(item => {
+        if (
+          item.isExist === false &&
+          item.builderLeft === BuilderLeftEnum.Tree
+        ) {
+          return Result.fail(new DiskFileIsNotExistError());
+        }
+
+        return Result.succeed();
+      }),
+      Result.bind('content', async item => {
+        if (item.isExist === false) {
+          return Result.succeed('');
+        }
+
+        let { content }: { content: string } = await readFileCheckSize({
+          filePath: item.filePath,
+          getStat: false
+        });
+
+        return Result.succeed(content);
+      }),
+      Result.bind('originalContent', async item => {
+        if (item.builderLeft === BuilderLeftEnum.ChangesToCommit) {
+          let originalContent: string = await getLastCommitFileContent({
+            repoDir: item.repoDir,
+            filePathRelative: item.filePathRelative
+          });
+          return Result.succeed(originalContent);
+        }
+
+        if (item.builderLeft === BuilderLeftEnum.ChangesToPush) {
+          let originalContent: string = await getBaseCommitFileContent({
+            repoDir: item.repoDir,
+            filePathRelative: item.filePathRelative
+          });
+          return Result.succeed(originalContent);
+        }
+
+        return Result.succeed(undefined);
+      }),
+      Result.bind('repoStatus', async item => {
+        let repoStatus: DiskItemStatus = await getRepoStatus({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          git: item.git,
+          isFetch: false,
+          isCheckConflicts: false
+        });
+        return Result.succeed(repoStatus);
+      }),
+      Result.bind('itemCatalog', async item => {
+        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        });
+        return Result.succeed(itemCatalog);
+      }),
+      Result.map(
+        (item): ToDiskGetFileResponsePayload => ({
+          repo: {
+            orgId: item.orgId,
+            projectId: item.projectId,
+            repoId: item.repoId,
+            repoStatus: item.repoStatus.repoStatus,
+            currentBranchId: item.repoStatus.currentBranch,
+            conflicts: item.repoStatus.conflicts,
+            nodes: item.itemCatalog.nodes,
+            changesToCommit: item.repoStatus.changesToCommit,
+            changesToPush: item.repoStatus.changesToPush
+          },
+          originalContent: item.originalContent as string,
+          content: item.content,
+          isExist: item.isExist
+        })
+      ),
+      Result.mapError(toServerError)
+    );
+
+    let payload = await Result.unwrap(getFileResult);
 
     return payload;
   }

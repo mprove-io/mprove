@@ -1,18 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskGetCatalogFilesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request';
+import type { ToDiskGetCatalogFilesRequestPayload } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request-payload';
 import type { ToDiskGetCatalogFilesResponsePayload } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
@@ -24,7 +28,7 @@ export class GetCatalogFilesService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskGetCatalogFilesResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -37,7 +41,12 @@ export class GetCatalogFilesService {
       logger: this.logger
     });
 
-    let { orgId, baseProject, repoId, branch } = requestValid.payload;
+    let {
+      orgId,
+      baseProject,
+      repoId,
+      branch
+    }: ToDiskGetCatalogFilesRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -50,120 +59,96 @@ export class GetCatalogFilesService {
     let { projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
-    let repoDir = `${projectDir}/${repoId}`;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
-    //
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isBranchExist = await isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
-    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: remoteType,
-      orgId: orgId,
-      projectId: projectId,
-      projectLt: projectLt,
-      repoId: repoId,
-      branchId: branch
-    });
-
-    let git = await createGit({
-      repoDir: repoDir,
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    await checkoutBranch({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      branchName: branch,
-      git: git,
-      isFetch: false
-    });
-
-    //
-
-    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: true,
-      isRootMproveDir: false
-    });
-
-    let {
-      repoStatus,
-      currentBranch,
-      conflicts,
-      changesToCommit,
-      changesToPush
-    } = <DiskItemStatus>await getRepoStatus({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      git: git,
-      isFetch: false,
-      isCheckConflicts: true
-    });
-
-    let payload: ToDiskGetCatalogFilesResponsePayload = {
-      repo: {
+    let getCatalogFilesResult = Result.pipe(
+      Result.succeed({
         orgId: orgId,
         projectId: projectId,
         repoId: repoId,
-        repoStatus: repoStatus,
-        currentBranchId: currentBranch,
-        conflicts: conflicts,
-        nodes: itemCatalog.nodes,
-        changesToCommit: changesToCommit,
-        changesToPush: changesToPush
-      },
-      files: itemCatalog.files,
-      mproveDir: itemCatalog.mproveDir
-    };
+        projectDir: `${orgPath}/${orgId}/${projectId}`,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
+      }),
+      Result.bind('keyDir', async item => {
+        let keyDir: string =
+          await this.restoreService.checkOrgProjectRepoBranch({
+            remoteType: remoteType,
+            orgId: item.orgId,
+            projectId: item.projectId,
+            projectLt: projectLt,
+            repoId: item.repoId,
+            branchId: branch
+          });
+        return Result.succeed(keyDir);
+      }),
+      Result.bind('git', async item => {
+        let git: SimpleGit = await createGit({
+          repoDir: item.repoDir,
+          remoteType: remoteType,
+          keyDir: item.keyDir,
+          gitUrl: gitUrl,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed(git);
+      }),
+      Result.andThrough(async item => {
+        await checkoutBranch({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          branchName: branch,
+          git: item.git,
+          isFetch: false
+        });
+        return Result.succeed();
+      }),
+      Result.bind('itemCatalog', async item => {
+        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        });
+        return Result.succeed(itemCatalog);
+      }),
+      Result.bind('itemStatus', async item => {
+        let itemStatus: DiskItemStatus = await getRepoStatus({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          git: item.git,
+          isFetch: false,
+          isCheckConflicts: true
+        });
+        return Result.succeed(itemStatus);
+      }),
+      Result.map(
+        (item): ToDiskGetCatalogFilesResponsePayload => ({
+          repo: {
+            orgId: item.orgId,
+            projectId: item.projectId,
+            repoId: item.repoId,
+            repoStatus: item.itemStatus.repoStatus,
+            currentBranchId: item.itemStatus.currentBranch,
+            conflicts: item.itemStatus.conflicts,
+            nodes: item.itemCatalog.nodes,
+            changesToCommit: item.itemStatus.changesToCommit,
+            changesToPush: item.itemStatus.changesToPush
+          },
+          files: item.itemCatalog.files,
+          mproveDir: item.itemCatalog.mproveDir
+        })
+      ),
+      Result.mapError(toServerError)
+    );
+
+    let payload = await Result.unwrap(getCatalogFilesResult);
 
     return payload;
   }

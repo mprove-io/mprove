@@ -1,14 +1,16 @@
 import { dirname } from 'node:path';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskMoveCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-request';
+import type { ToDiskMoveCatalogNodeRequestPayload } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-request-payload';
 import type { ToDiskMoveCatalogNodeResponsePayload } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
@@ -19,8 +21,11 @@ import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { DiskFromPathIsNotExistError } from './errors/disk-from-path-is-not-exist-error';
+import { DiskToPathAlreadyExistError } from './errors/disk-to-path-already-exist-error';
 
 @Injectable()
 export class MoveCatalogNodeService {
@@ -31,7 +36,7 @@ export class MoveCatalogNodeService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskMoveCatalogNodeResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -44,9 +49,14 @@ export class MoveCatalogNodeService {
       logger: this.logger
     });
 
-    let { traceId } = requestValid.info;
-    let { orgId, baseProject, repoId, branch, fromNodeId, toNodeId } =
-      requestValid.payload;
+    let {
+      orgId,
+      baseProject,
+      repoId,
+      branch,
+      fromNodeId,
+      toNodeId
+    }: ToDiskMoveCatalogNodeRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -58,150 +68,149 @@ export class MoveCatalogNodeService {
 
     let { projectId, remoteType } = baseProject;
 
-    let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
-    let repoDir = `${projectDir}/${repoId}`;
-
-    let fromPath = repoDir + '/' + fromNodeId.substring(projectId.length + 1);
-    let toPath = repoDir + '/' + toNodeId.substring(projectId.length + 1);
-
-    validatePathUnderDir({ fullPath: fromPath, allowedDir: repoDir });
-    validatePathUnderDir({ fullPath: toPath, allowedDir: repoDir });
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isBranchExist = await isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
-    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: remoteType,
-      orgId: orgId,
-      projectId: projectId,
-      projectLt: projectLt,
-      repoId: repoId,
-      branchId: branch
-    });
-
-    let git = await createGit({
-      repoDir: repoDir,
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    await checkoutBranch({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      branchName: branch,
-      git: git,
-      isFetch: false
-    });
-
-    let isFromPathExist = await isPathExist(fromPath);
-    if (isFromPathExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_FROM_PATH_IS_NOT_EXIST
-      });
-    }
-
-    let isToPathExist = await isPathExist(toPath);
-    if (isToPathExist === true) {
-      throw new ServerError({
-        message: ErEnum.DISK_TO_PATH_ALREADY_EXIST
-      });
-    }
-
-    let toParentPath = dirname(toPath);
-
-    validatePathUnderDir({ fullPath: toParentPath, allowedDir: repoDir });
-
-    await ensureDir(toParentPath);
-
-    await movePath({
-      sourcePath: fromPath,
-      destinationPath: toPath
-    });
-
-    await addChangesToStage({ repoDir: repoDir });
-
-    let {
-      repoStatus,
-      currentBranch,
-      conflicts,
-      changesToCommit,
-      changesToPush
-    } = <DiskItemStatus>await getRepoStatus({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      git: git,
-      isFetch: true,
-      isCheckConflicts: true
-    });
-
-    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: true,
-      isRootMproveDir: false
-    });
-
-    let payload: ToDiskMoveCatalogNodeResponsePayload = {
-      repo: {
+    let moveCatalogNodeResult = Result.pipe(
+      Result.succeed({
         orgId: orgId,
         projectId: projectId,
         repoId: repoId,
-        repoStatus: repoStatus,
-        currentBranchId: currentBranch,
-        conflicts: conflicts,
-        nodes: itemCatalog.nodes,
-        changesToCommit: changesToCommit,
-        changesToPush: changesToPush
-      },
-      files: itemCatalog.files,
-      mproveDir: itemCatalog.mproveDir
-    };
+        projectDir: `${orgPath}/${orgId}/${projectId}`,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
+        fromPath: `${orgPath}/${orgId}/${projectId}/${repoId}/${fromNodeId.substring(projectId.length + 1)}`,
+        toPath: `${orgPath}/${orgId}/${projectId}/${repoId}/${toNodeId.substring(projectId.length + 1)}`
+      }),
+      Result.andThrough(item => {
+        validatePathUnderDir({
+          fullPath: item.fromPath,
+          allowedDir: item.repoDir
+        });
+
+        validatePathUnderDir({
+          fullPath: item.toPath,
+          allowedDir: item.repoDir
+        });
+
+        return Result.succeed();
+      }),
+      Result.bind('keyDir', async item => {
+        let keyDir: string =
+          await this.restoreService.checkOrgProjectRepoBranch({
+            remoteType: remoteType,
+            orgId: item.orgId,
+            projectId: item.projectId,
+            projectLt: projectLt,
+            repoId: item.repoId,
+            branchId: branch
+          });
+        return Result.succeed(keyDir);
+      }),
+      Result.bind('git', async item => {
+        let git: SimpleGit = await createGit({
+          repoDir: item.repoDir,
+          remoteType: remoteType,
+          keyDir: item.keyDir,
+          gitUrl: gitUrl,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed(git);
+      }),
+      Result.andThrough(async item => {
+        await checkoutBranch({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          branchName: branch,
+          git: item.git,
+          isFetch: false
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        let isFromPathExist: boolean = await isPathExist(item.fromPath);
+
+        if (isFromPathExist === false) {
+          return Result.fail(new DiskFromPathIsNotExistError());
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        let isToPathExist: boolean = await isPathExist(item.toPath);
+
+        if (isToPathExist === true) {
+          return Result.fail(new DiskToPathAlreadyExistError());
+        }
+
+        return Result.succeed();
+      }),
+      Result.bind('toParentPath', item => Result.succeed(dirname(item.toPath))),
+      Result.andThrough(async item => {
+        validatePathUnderDir({
+          fullPath: item.toParentPath,
+          allowedDir: item.repoDir
+        });
+
+        await ensureDir(item.toParentPath);
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await movePath({
+          sourcePath: item.fromPath,
+          destinationPath: item.toPath
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await addChangesToStage({ repoDir: item.repoDir });
+        return Result.succeed();
+      }),
+      Result.bind('itemStatus', async item => {
+        let itemStatus: DiskItemStatus = await getRepoStatus({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          git: item.git,
+          isFetch: true,
+          isCheckConflicts: true
+        });
+        return Result.succeed(itemStatus);
+      }),
+      Result.bind('itemCatalog', async item => {
+        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        });
+        return Result.succeed(itemCatalog);
+      }),
+      Result.map(
+        (item): ToDiskMoveCatalogNodeResponsePayload => ({
+          repo: {
+            orgId: item.orgId,
+            projectId: item.projectId,
+            repoId: item.repoId,
+            repoStatus: item.itemStatus.repoStatus,
+            currentBranchId: item.itemStatus.currentBranch,
+            conflicts: item.itemStatus.conflicts,
+            nodes: item.itemCatalog.nodes,
+            changesToCommit: item.itemStatus.changesToCommit,
+            changesToPush: item.itemStatus.changesToPush
+          },
+          files: item.itemCatalog.files,
+          mproveDir: item.itemCatalog.mproveDir
+        })
+      ),
+      Result.mapError(toServerError)
+    );
+
+    let payload = await Result.unwrap(moveCatalogNodeResult);
 
     return payload;
   }

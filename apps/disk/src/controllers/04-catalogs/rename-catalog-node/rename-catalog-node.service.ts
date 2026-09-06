@@ -1,13 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskRenameCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request';
+import type { ToDiskRenameCatalogNodeRequestPayload } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request-payload';
 import type { ToDiskRenameCatalogNodeResponsePayload } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { renamePath } from '#disk/functions/disk/rename-path';
@@ -17,8 +19,11 @@ import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { DiskNewPathAlreadyExistError } from './errors/disk-new-path-already-exist-error';
+import { DiskOldPathIsNotExistError } from './errors/disk-old-path-is-not-exist-error';
 
 @Injectable()
 export class RenameCatalogNodeService {
@@ -29,7 +34,7 @@ export class RenameCatalogNodeService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskRenameCatalogNodeResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -42,8 +47,14 @@ export class RenameCatalogNodeService {
       logger: this.logger
     });
 
-    let { orgId, baseProject, repoId, branch, nodeId, newName } =
-      requestValid.payload;
+    let {
+      orgId,
+      baseProject,
+      repoId,
+      branch,
+      nodeId,
+      newName
+    }: ToDiskRenameCatalogNodeRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -56,146 +67,154 @@ export class RenameCatalogNodeService {
     let { projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
-    let repoDir = `${projectDir}/${repoId}`;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
-    let oldPath = repoDir + '/' + nodeId.substring(projectId.length + 1);
-    let sourceArray = oldPath.split('/');
+    let projectDir: string = `${orgPath}/${orgId}/${projectId}`;
+    let repoDir: string = `${projectDir}/${repoId}`;
+
+    let oldPath: string =
+      repoDir + '/' + nodeId.substring(projectId.length + 1);
+
+    let sourceArray: string[] = oldPath.split('/');
+
     sourceArray.pop();
-    let parentPath = sourceArray.join('/');
-    let newPath = parentPath + '/' + newName;
 
-    validatePathUnderDir({ fullPath: oldPath, allowedDir: repoDir });
-    validatePathUnderDir({ fullPath: newPath, allowedDir: repoDir });
+    let parentPath: string = sourceArray.join('/');
 
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
+    let newPath: string = parentPath + '/' + newName;
 
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isBranchExist = await isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
-    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: remoteType,
-      orgId: orgId,
-      projectId: projectId,
-      projectLt: projectLt,
-      repoId: repoId,
-      branchId: branch
-    });
-
-    let git = await createGit({
-      repoDir: repoDir,
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    await checkoutBranch({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      branchName: branch,
-      git: git,
-      isFetch: false
-    });
-
-    let isOldPathExist = await isPathExist(oldPath);
-    if (isOldPathExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_OLD_PATH_IS_NOT_EXIST
-      });
-    }
-
-    //
-    let isNewPathExist = await isPathExist(newPath);
-    if (isNewPathExist === true) {
-      throw new ServerError({
-        message: ErEnum.DISK_NEW_PATH_ALREADY_EXIST
-      });
-    }
-    await renamePath({
-      oldPath: oldPath,
-      newPath: newPath
-    });
-
-    await addChangesToStage({ repoDir: repoDir });
-
-    let {
-      repoStatus,
-      currentBranch,
-      conflicts,
-      changesToCommit,
-      changesToPush
-    } = <DiskItemStatus>await getRepoStatus({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      git: git,
-      isFetch: true,
-      isCheckConflicts: true
-    });
-
-    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: true,
-      isRootMproveDir: false
-    });
-
-    let payload: ToDiskRenameCatalogNodeResponsePayload = {
-      repo: {
+    let renameCatalogNodeResult = Result.pipe(
+      Result.succeed({
         orgId: orgId,
         projectId: projectId,
         repoId: repoId,
-        repoStatus: repoStatus,
-        currentBranchId: currentBranch,
-        conflicts: conflicts,
-        nodes: itemCatalog.nodes,
-        changesToCommit: changesToCommit,
-        changesToPush: changesToPush
-      },
-      files: itemCatalog.files,
-      mproveDir: itemCatalog.mproveDir
-    };
+        projectDir: projectDir,
+        repoDir: repoDir,
+        oldPath: oldPath,
+        newPath: newPath
+      }),
+      Result.andThrough(item => {
+        validatePathUnderDir({
+          fullPath: item.oldPath,
+          allowedDir: item.repoDir
+        });
+
+        validatePathUnderDir({
+          fullPath: item.newPath,
+          allowedDir: item.repoDir
+        });
+
+        return Result.succeed();
+      }),
+      Result.bind('keyDir', async item => {
+        let keyDir: string =
+          await this.restoreService.checkOrgProjectRepoBranch({
+            remoteType: remoteType,
+            orgId: item.orgId,
+            projectId: item.projectId,
+            projectLt: projectLt,
+            repoId: item.repoId,
+            branchId: branch
+          });
+        return Result.succeed(keyDir);
+      }),
+      Result.bind('git', async item => {
+        let git: SimpleGit = await createGit({
+          repoDir: item.repoDir,
+          remoteType: remoteType,
+          keyDir: item.keyDir,
+          gitUrl: gitUrl,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed(git);
+      }),
+      Result.andThrough(async item => {
+        await checkoutBranch({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          branchName: branch,
+          git: item.git,
+          isFetch: false
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        let isOldPathExist: boolean = await isPathExist(item.oldPath);
+
+        if (isOldPathExist === false) {
+          return Result.fail(new DiskOldPathIsNotExistError());
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        let isNewPathExist: boolean = await isPathExist(item.newPath);
+
+        if (isNewPathExist === true) {
+          return Result.fail(new DiskNewPathAlreadyExistError());
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await renamePath({
+          oldPath: item.oldPath,
+          newPath: item.newPath
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await addChangesToStage({ repoDir: item.repoDir });
+        return Result.succeed();
+      }),
+      Result.bind('itemStatus', async item => {
+        let itemStatus: DiskItemStatus = await getRepoStatus({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          git: item.git,
+          isFetch: true,
+          isCheckConflicts: true
+        });
+        return Result.succeed(itemStatus);
+      }),
+      Result.bind('itemCatalog', async item => {
+        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        });
+        return Result.succeed(itemCatalog);
+      }),
+      Result.map(
+        (item): ToDiskRenameCatalogNodeResponsePayload => ({
+          repo: {
+            orgId: item.orgId,
+            projectId: item.projectId,
+            repoId: item.repoId,
+            repoStatus: item.itemStatus.repoStatus,
+            currentBranchId: item.itemStatus.currentBranch,
+            conflicts: item.itemStatus.conflicts,
+            nodes: item.itemCatalog.nodes,
+            changesToCommit: item.itemStatus.changesToCommit,
+            changesToPush: item.itemStatus.changesToPush
+          },
+          files: item.itemCatalog.files,
+          mproveDir: item.itemCatalog.mproveDir
+        })
+      ),
+      Result.mapError(toServerError)
+    );
+
+    let payload = await Result.unwrap(renameCatalogNodeResult);
 
     return payload;
   }

@@ -1,13 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
+import { isUndefined } from '#common/functions/is-undefined';
+import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskGetCatalogNodesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-request';
+import type { ToDiskGetCatalogNodesRequestPayload } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-request-payload';
 import type { ToDiskGetCatalogNodesResponsePayload } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
@@ -16,7 +20,9 @@ import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { DiskBranchIsNotExistError } from './errors/disk-branch-is-not-exist-error';
 
 @Injectable()
 export class GetCatalogNodesService {
@@ -27,7 +33,7 @@ export class GetCatalogNodesService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskGetCatalogNodesResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -40,7 +46,13 @@ export class GetCatalogNodesService {
       logger: this.logger
     });
 
-    let { orgId, baseProject, repoId, branch, isFetch } = requestValid.payload;
+    let {
+      orgId,
+      baseProject,
+      repoId,
+      branch,
+      isFetch
+    }: ToDiskGetCatalogNodesRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -53,136 +65,128 @@ export class GetCatalogNodesService {
     let { projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
-    let repoDir = `${projectDir}/${repoId}`;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
-    //
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
-    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: remoteType,
-      orgId: orgId,
-      projectId: projectId,
-      projectLt: projectLt,
-      repoId: repoId,
-      branchId: branch
-    });
-
-    let git = await createGit({
-      repoDir: repoDir,
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    let effectiveIsFetch = isFetch;
-
-    if (isFetch === true) {
-      let changesToCommitEarly = await getChangesToCommit({
-        repoDir: repoDir
-      });
-
-      let repoHasChanges = changesToCommitEarly.length > 0;
-
-      effectiveIsFetch = repoHasChanges === true ? false : isFetch;
-    }
-
-    let isFetched = false;
-
-    if (branch !== null && typeof branch !== 'undefined') {
-      let isBranchExist = await isLocalBranchExist({
-        repoDir: repoDir,
-        localBranch: branch
-      });
-      if (isBranchExist === false) {
-        throw new ServerError({
-          message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-        });
-      }
-
-      await checkoutBranch({
-        projectId: projectId,
-        projectDir: projectDir,
-        repoId: repoId,
-        repoDir: repoDir,
-        branchName: branch,
-        git: git,
-        isFetch: effectiveIsFetch
-      });
-
-      isFetched = true;
-    }
-
-    //
-
-    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: false,
-      isRootMproveDir: false
-    });
-
-    let {
-      repoStatus,
-      currentBranch,
-      conflicts,
-      changesToCommit,
-      changesToPush
-    } = <DiskItemStatus>await getRepoStatus({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      git: git,
-      isFetch: isFetched === true ? false : effectiveIsFetch,
-      isCheckConflicts: true
-    });
-
-    let payload: ToDiskGetCatalogNodesResponsePayload = {
-      repo: {
+    let getCatalogNodesResult = Result.pipe(
+      Result.succeed({
         orgId: orgId,
         projectId: projectId,
         repoId: repoId,
-        repoStatus: repoStatus,
-        currentBranchId: currentBranch,
-        conflicts: conflicts,
-        nodes: itemCatalog.nodes,
-        changesToCommit: changesToCommit,
-        changesToPush: changesToPush
-      }
-    };
+        projectDir: `${orgPath}/${orgId}/${projectId}`,
+        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
+      }),
+      Result.bind('keyDir', async item => {
+        let keyDir: string =
+          await this.restoreService.checkOrgProjectRepoBranch({
+            remoteType: remoteType,
+            orgId: item.orgId,
+            projectId: item.projectId,
+            projectLt: projectLt,
+            repoId: item.repoId,
+            branchId: branch
+          });
+        return Result.succeed(keyDir);
+      }),
+      Result.bind('git', async item => {
+        let git: SimpleGit = await createGit({
+          repoDir: item.repoDir,
+          remoteType: remoteType,
+          keyDir: item.keyDir,
+          gitUrl: gitUrl,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed(git);
+      }),
+      Result.bind('effectiveIsFetch', async item => {
+        if (isFetch === false) {
+          return Result.succeed(false);
+        }
+
+        let changesToCommitEarly: DiskFileChange[] = await getChangesToCommit({
+          repoDir: item.repoDir
+        });
+
+        let repoHasChanges: boolean = changesToCommitEarly.length > 0;
+
+        return Result.succeed(repoHasChanges === true ? false : isFetch);
+      }),
+      Result.andThrough(async item => {
+        if (isUndefined(branch)) {
+          return Result.succeed();
+        }
+
+        let isBranchExist: boolean = await isLocalBranchExist({
+          repoDir: item.repoDir,
+          localBranch: branch
+        });
+
+        if (isBranchExist === false) {
+          return Result.fail(new DiskBranchIsNotExistError());
+        }
+
+        return Result.succeed();
+      }),
+      Result.bind('isFetched', async item => {
+        if (isUndefined(branch)) {
+          return Result.succeed(false);
+        }
+
+        await checkoutBranch({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          branchName: branch,
+          git: item.git,
+          isFetch: item.effectiveIsFetch
+        });
+
+        return Result.succeed(true);
+      }),
+      Result.bind('itemCatalog', async item => {
+        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          readFiles: false,
+          isRootMproveDir: false
+        });
+        return Result.succeed(itemCatalog);
+      }),
+      Result.bind('itemStatus', async item => {
+        let itemStatus: DiskItemStatus = await getRepoStatus({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          git: item.git,
+          isFetch: item.isFetched === true ? false : item.effectiveIsFetch,
+          isCheckConflicts: true
+        });
+        return Result.succeed(itemStatus);
+      }),
+      Result.map(
+        (item): ToDiskGetCatalogNodesResponsePayload => ({
+          repo: {
+            orgId: item.orgId,
+            projectId: item.projectId,
+            repoId: item.repoId,
+            repoStatus: item.itemStatus.repoStatus,
+            currentBranchId: item.itemStatus.currentBranch,
+            conflicts: item.itemStatus.conflicts,
+            nodes: item.itemCatalog.nodes,
+            changesToCommit: item.itemStatus.changesToCommit,
+            changesToPush: item.itemStatus.changesToPush
+          }
+        })
+      ),
+      Result.mapError(toServerError)
+    );
+
+    let payload = await Result.unwrap(getCatalogNodesResult);
 
     return payload;
   }

@@ -1,19 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { emptyDir, ensureDir } from 'fs-extra';
+import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskSeedProjectRequest } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request';
+import type { ToDiskSeedProjectRequestPayload } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request-payload';
 import type { ToDiskSeedProjectResponsePayload } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
 import { DiskTabService } from '#disk/services/disk-tab.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
@@ -24,7 +28,7 @@ export class SeedProjectService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
+  async process(request: any): Promise<ToDiskSeedProjectResponsePayload> {
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
@@ -37,8 +41,13 @@ export class SeedProjectService {
       logger: this.logger
     });
 
-    let { orgId, baseProject, devRepoId, userAlias, testProjectId } =
-      requestValid.payload;
+    let {
+      orgId,
+      baseProject,
+      devRepoId,
+      userAlias,
+      testProjectId
+    }: ToDiskSeedProjectRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -51,100 +60,120 @@ export class SeedProjectService {
     let { projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let devRepoDir = `${projectDir}/${devRepoId}`;
-
-    //
-
-    await ensureDir(orgDir);
-    await emptyDir(projectDir);
-
-    //
-
     let keyDir = `${orgDir}/_keys/${projectId}`;
 
-    await ensureDir(keyDir);
-
-    await prepareRemoteAndProd({
-      projectId: projectId,
-      projectName: projectName,
-      projectDir: projectDir,
-      testProjectId: testProjectId,
-      userAlias: userAlias,
-      remoteType: remoteType,
-      gitUrl: gitUrl,
-      keyDir: keyDir,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    await cloneRemoteToDev({
-      orgId: orgId,
-      projectId: projectId,
-      devRepoId: devRepoId,
-      orgPath: orgPath,
-      remoteType: remoteType,
-      gitUrl: gitUrl,
-      keyDir: keyDir,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: devRepoId,
-      readFiles: true,
-      isRootMproveDir: false
-    });
-
-    let devGit = await createGit({
-      repoDir: devRepoDir,
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    let {
-      repoStatus,
-      currentBranch,
-      conflicts,
-      changesToCommit,
-      changesToPush
-    } = <DiskItemStatus>await getRepoStatus({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: devRepoId,
-      repoDir: devRepoDir,
-      git: devGit,
-      isFetch: true,
-      isCheckConflicts: true
-    });
-
-    let payload: ToDiskSeedProjectResponsePayload = {
-      repo: {
+    let seedProjectResult = Result.pipe(
+      Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        repoId: devRepoId,
-        repoStatus: repoStatus,
-        currentBranchId: currentBranch,
-        conflicts: conflicts,
-        nodes: itemCatalog.nodes,
-        changesToCommit: changesToCommit,
-        changesToPush: changesToPush
-      },
-      files: itemCatalog.files,
-      mproveDir: itemCatalog.mproveDir
-    };
+        devRepoId: devRepoId,
+        projectDir: projectDir,
+        devRepoDir: devRepoDir,
+        keyDir: keyDir
+      }),
+      Result.andThrough(async () => {
+        await ensureDir(orgDir);
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await emptyDir(item.projectDir);
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await ensureDir(item.keyDir);
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await prepareRemoteAndProd({
+          projectId: item.projectId,
+          projectName: projectName,
+          projectDir: item.projectDir,
+          testProjectId: testProjectId,
+          userAlias: userAlias,
+          remoteType: remoteType,
+          gitUrl: gitUrl,
+          keyDir: item.keyDir,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await cloneRemoteToDev({
+          orgId: item.orgId,
+          projectId: item.projectId,
+          devRepoId: item.devRepoId,
+          orgPath: orgPath,
+          remoteType: remoteType,
+          gitUrl: gitUrl,
+          keyDir: item.keyDir,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed();
+      }),
+      Result.bind('itemCatalog', async item => {
+        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.devRepoId,
+          readFiles: true,
+          isRootMproveDir: false
+        });
+        return Result.succeed(itemCatalog);
+      }),
+      Result.bind('devGit', async item => {
+        let devGit: SimpleGit = await createGit({
+          repoDir: item.devRepoDir,
+          remoteType: remoteType,
+          keyDir: item.keyDir,
+          gitUrl: gitUrl,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
+        });
+        return Result.succeed(devGit);
+      }),
+      Result.bind('devItemStatus', async item => {
+        let devItemStatus: DiskItemStatus = await getRepoStatus({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.devRepoId,
+          repoDir: item.devRepoDir,
+          git: item.devGit,
+          isFetch: true,
+          isCheckConflicts: true
+        });
+        return Result.succeed(devItemStatus);
+      }),
+      Result.map(
+        (item): ToDiskSeedProjectResponsePayload => ({
+          repo: {
+            orgId: item.orgId,
+            projectId: item.projectId,
+            repoId: item.devRepoId,
+            repoStatus: item.devItemStatus.repoStatus,
+            currentBranchId: item.devItemStatus.currentBranch,
+            conflicts: item.devItemStatus.conflicts,
+            nodes: item.itemCatalog.nodes,
+            changesToCommit: item.devItemStatus.changesToCommit,
+            changesToPush: item.devItemStatus.changesToPush
+          },
+          files: item.itemCatalog.files,
+          mproveDir: item.itemCatalog.mproveDir
+        })
+      ),
+      Result.mapError(toServerError)
+    );
+
+    let payload = await Result.unwrap(seedProjectResult);
 
     return payload;
   }

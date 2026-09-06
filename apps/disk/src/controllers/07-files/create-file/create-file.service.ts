@@ -1,16 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MPROVE_CONFIG_FILENAME, PROD_REPO_ID } from '#common/constants/top';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
+import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { MyRegex } from '#common/models/my-regex';
-import { ServerError } from '#common/models/server-error';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/create-file/create-file-request';
+import {
+  type ToDiskCreateFileRequest,
+  zToDiskCreateFileRequest
+} from '#common/zod/to-disk/07-files/create-file/create-file-request';
+import type { ToDiskCreateFileRequestPayload } from '#common/zod/to-disk/07-files/create-file/create-file-request-payload';
 import type { ToDiskCreateFileResponsePayload } from '#common/zod/to-disk/07-files/create-file/create-file-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
@@ -23,8 +26,11 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
+import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { DiskFileAlreadyExistError } from './errors/disk-file-already-exist-error';
+import { getContentFromFileName } from './functions/get-content-from-file-name';
 
 @Injectable()
 export class CreateFileService {
@@ -35,12 +41,12 @@ export class CreateFileService {
     private logger: Logger
   ) {}
 
-  async process(request: any) {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(request: any): Promise<ToDiskCreateFileResponsePayload> {
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
-    let requestValid = zodParseOrThrow({
+    let requestValid: ToDiskCreateFileRequest = zodParseOrThrow({
       schema: zToDiskCreateFileRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
@@ -57,7 +63,7 @@ export class CreateFileService {
       fileText,
       parentNodeId,
       userAlias
-    } = requestValid.payload;
+    }: ToDiskCreateFileRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -67,214 +73,172 @@ export class CreateFileService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { projectId } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
 
-    let orgDir = `${orgPath}/${orgId}`;
-    let projectDir = `${orgDir}/${projectId}`;
-    let repoDir = `${projectDir}/${repoId}`;
+    let parent: string = parentNodeId.substring(projectId.length + 1);
 
-    //
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isBranchExist = await isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
-    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
-      remoteType: remoteType,
-      orgId: orgId,
-      projectId: projectId,
-      projectLt: projectLt,
-      repoId: repoId,
-      branchId: branch
-    });
-
-    let git = await createGit({
-      repoDir: repoDir,
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    await checkoutBranch({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      branchName: branch,
-      git: git,
-      isFetch: false
-    });
-
-    let parent = parentNodeId.substring(projectId.length + 1);
     parent = parent.length > 0 ? parent + '/' : parent;
-    let relativeFilePath = parent + '/' + fileName;
 
-    let parentPath = repoDir + '/' + parent;
-    let filePath = parentPath + fileName;
+    let relativeFilePath: string = parent + '/' + fileName;
 
-    validatePathUnderDir({ fullPath: parentPath, allowedDir: repoDir });
-    validatePathUnderDir({ fullPath: filePath, allowedDir: repoDir });
+    let content: string =
+      fileText || getContentFromFileName({ fileName: fileName });
 
-    let content = fileText || getContentFromFileName({ fileName: fileName });
-
-    await ensureDir(parentPath);
-
-    let isFileExist = await isPathExist(filePath);
-    if (isFileExist === true) {
-      throw new ServerError({
-        message: ErEnum.DISK_FILE_ALREADY_EXIST
-      });
-    }
-
-    await writeToFile({
-      filePath: filePath,
-      content: content
-    });
-
-    await addChangesToStage({ repoDir: repoDir });
-
-    if (repoId === PROD_REPO_ID) {
-      await commit({
-        repoDir: repoDir,
-        userAlias: userAlias,
-        commitMessage: `Created file ${relativeFilePath}`
-      });
-
-      await pushToRemote({
-        projectId: projectId,
-        projectDir: projectDir,
-        repoId: repoId,
-        repoDir: repoDir,
-        branch: branch,
-        git: git,
-        isFetch: true
-      });
-    }
-
-    let {
-      repoStatus,
-      currentBranch,
-      conflicts,
-      changesToCommit,
-      changesToPush
-    } = <DiskItemStatus>await getRepoStatus({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      repoDir: repoDir,
-      git: git,
-      isFetch: true,
-      isCheckConflicts: true
-    });
-
-    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
-      projectId: projectId,
-      projectDir: projectDir,
-      repoId: repoId,
-      readFiles: true,
-      isRootMproveDir: false
-    });
-
-    let payload: ToDiskCreateFileResponsePayload = {
-      repo: {
+    let createFileResult = Result.pipe(
+      Result.succeed({
         orgId: orgId,
         projectId: projectId,
+        projectDir: `${orgPath}/${orgId}/${projectId}`,
+        remoteType: baseProject.remoteType,
+        projectLt: projectLt,
         repoId: repoId,
-        repoStatus: repoStatus,
-        currentBranchId: currentBranch,
-        conflicts: conflicts,
-        nodes: itemCatalog.nodes,
-        changesToCommit: changesToCommit,
-        changesToPush: changesToPush
-      },
-      files: itemCatalog.files,
-      mproveDir: itemCatalog.mproveDir
-    };
+        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
+        branch: branch,
+        parentPath: `${orgPath}/${orgId}/${projectId}/${repoId}/${parent}`,
+        filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${parent}${fileName}`,
+        relativeFilePath: relativeFilePath,
+        content: content,
+        userAlias: userAlias
+      }),
+      Result.bind('keyDir', async item => {
+        let keyDir: string =
+          await this.restoreService.checkOrgProjectRepoBranch({
+            remoteType: item.remoteType,
+            orgId: item.orgId,
+            projectId: item.projectId,
+            projectLt: item.projectLt,
+            repoId: item.repoId,
+            branchId: item.branch
+          });
+        return Result.succeed(keyDir);
+      }),
+      Result.bind('git', async item => {
+        let git: SimpleGit = await createGit({
+          repoDir: item.repoDir,
+          remoteType: item.remoteType,
+          keyDir: item.keyDir,
+          gitUrl: item.projectLt.gitUrl,
+          privateKeyEncrypted: item.projectLt.privateKeyEncrypted,
+          publicKey: item.projectLt.publicKey,
+          passPhrase: item.projectLt.passPhrase
+        });
+        return Result.succeed(git);
+      }),
+      Result.andThrough(async item => {
+        await checkoutBranch({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          branchName: item.branch,
+          git: item.git,
+          isFetch: false
+        });
+        return Result.succeed();
+      }),
+      Result.andThrough(item => {
+        validatePathUnderDir({
+          fullPath: item.parentPath,
+          allowedDir: item.repoDir
+        });
+
+        validatePathUnderDir({
+          fullPath: item.filePath,
+          allowedDir: item.repoDir
+        });
+
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await ensureDir(item.parentPath);
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        let isFileExist: boolean = await isPathExist(item.filePath);
+
+        if (isFileExist === true) {
+          return Result.fail(new DiskFileAlreadyExistError());
+        }
+
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        await writeToFile({
+          filePath: item.filePath,
+          content: item.content
+        });
+
+        await addChangesToStage({ repoDir: item.repoDir });
+
+        return Result.succeed();
+      }),
+      Result.andThrough(async item => {
+        if (item.repoId === PROD_REPO_ID) {
+          await commit({
+            repoDir: item.repoDir,
+            userAlias: item.userAlias,
+            commitMessage: `Created file ${item.relativeFilePath}`
+          });
+
+          await pushToRemote({
+            projectId: item.projectId,
+            projectDir: item.projectDir,
+            repoId: item.repoId,
+            repoDir: item.repoDir,
+            branch: item.branch,
+            git: item.git,
+            isFetch: true
+          });
+        }
+
+        return Result.succeed();
+      }),
+      Result.bind('repoStatus', async item => {
+        let repoStatus: DiskItemStatus = await getRepoStatus({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          git: item.git,
+          isFetch: true,
+          isCheckConflicts: true
+        });
+        return Result.succeed(repoStatus);
+      }),
+      Result.bind('itemCatalog', async item => {
+        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          readFiles: true,
+          isRootMproveDir: false
+        });
+        return Result.succeed(itemCatalog);
+      }),
+      Result.map(
+        (item): ToDiskCreateFileResponsePayload => ({
+          repo: {
+            orgId: item.orgId,
+            projectId: item.projectId,
+            repoId: item.repoId,
+            repoStatus: item.repoStatus.repoStatus,
+            currentBranchId: item.repoStatus.currentBranch,
+            conflicts: item.repoStatus.conflicts,
+            nodes: item.itemCatalog.nodes,
+            changesToCommit: item.repoStatus.changesToCommit,
+            changesToPush: item.repoStatus.changesToPush
+          },
+          files: item.itemCatalog.files,
+          mproveDir: item.itemCatalog.mproveDir
+        })
+      ),
+      Result.mapError(toServerError)
+    );
+
+    let payload = await Result.unwrap(createFileResult);
 
     return payload;
   }
-}
-
-function getContentFromFileName(item: { fileName: string }) {
-  let content: string;
-
-  let regPart = MyRegex.CAPTURE_FILE_NAME_BEFORE_EXT();
-  let rPart = regPart.exec(item.fileName.toLowerCase());
-
-  let part: any = rPart ? rPart[1] : undefined;
-
-  let regExt = MyRegex.CAPTURE_EXT();
-  let rExt = regExt.exec(item.fileName.toLowerCase());
-
-  let ext: any = rExt ? rExt[1] : '';
-
-  switch (ext) {
-    case FileExtensionEnum.Store:
-      content = `store: ${part}`;
-      break;
-    case FileExtensionEnum.Schema:
-      content = `schema: ${part}`;
-      break;
-    case FileExtensionEnum.Dashboard:
-      content = `dashboard: ${part}`;
-      break;
-    case FileExtensionEnum.Chart:
-      content = `chart: ${part}`;
-      break;
-    case FileExtensionEnum.Report:
-      content = `report: ${part}`;
-      break;
-    case FileExtensionEnum.Space:
-      content = `space: ${part}`;
-      break;
-    case FileExtensionEnum.Yml:
-      content =
-        item.fileName === MPROVE_CONFIG_FILENAME ? 'mprove_dir: ./' : '';
-      break;
-    case FileExtensionEnum.Md:
-      content = '';
-      break;
-    default:
-      content = '';
-  }
-
-  return content;
 }
