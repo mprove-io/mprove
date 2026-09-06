@@ -1,3 +1,4 @@
+import { Result } from '@praha/byethrow';
 import {
   BRANCH_MAIN,
   MPROVE_CONFIG_FILENAME,
@@ -17,7 +18,7 @@ export async function createInitialCommitToProd(item: {
   testProjectId: string;
   projectName: string;
   userAlias: string;
-}) {
+}): Promise<void> {
   return await addTraceSpan({
     spanName: 'disk.git.createInitialCommitToProd',
     fn: async () => {
@@ -37,10 +38,12 @@ export async function createInitialCommitToProd(item: {
         let readmeFilePath = `${item.prodDir}/${readmeFileName}`;
         let readmeContent = `# ${item.projectName} project`;
 
-        await writeToFile({
-          filePath: readmeFilePath,
-          content: readmeContent
-        });
+        await Result.unwrap(
+          writeToFile({
+            filePath: readmeFilePath,
+            content: readmeContent
+          })
+        );
 
         let mproveFileName = MPROVE_CONFIG_FILENAME;
         let mproveFilePath = `${item.prodDir}/${mproveFileName}`;
@@ -52,10 +55,12 @@ currency_prefix: '$'
 currency_suffix: ''
 `;
 
-        await writeToFile({
-          filePath: mproveFilePath,
-          content: mproveContent
-        });
+        await Result.unwrap(
+          writeToFile({
+            filePath: mproveFilePath,
+            content: mproveContent
+          })
+        );
       }
 
       await git.add('.');

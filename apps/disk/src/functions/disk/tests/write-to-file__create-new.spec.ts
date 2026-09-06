@@ -1,5 +1,6 @@
 import os from 'node:os';
 import path from 'node:path';
+import { Result } from '@praha/byethrow';
 import test from 'ava';
 import fse from 'fs-extra';
 import { writeToFile } from '#disk/functions/disk/write-to-file';
@@ -18,11 +19,14 @@ test.after.always(async () => {
 test('writeToFile creates a new file when path does not exist', async t => {
   let newFilePath = `${workspaceDir}/new-file.txt`;
 
-  await writeToFile({
-    filePath: newFilePath,
-    content: 'hello'
-  });
+  await Result.unwrap(
+    writeToFile({
+      filePath: newFilePath,
+      content: 'hello'
+    })
+  );
 
   let content = await fse.readFile(newFilePath, 'utf8');
+
   t.is(content, 'hello');
 });

@@ -164,12 +164,13 @@ export class CreateFileService {
 
         return Result.succeed();
       }),
-      Result.andThrough(async item => {
-        await writeToFile({
+      Result.andThrough(item =>
+        writeToFile({
           filePath: item.filePath,
           content: item.content
-        });
-
+        })
+      ),
+      Result.andThrough(async item => {
         await addChangesToStage({ repoDir: item.repoDir });
 
         return Result.succeed();

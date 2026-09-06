@@ -1,8 +1,11 @@
+import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
-import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
+import { DiskFileIsSymlinkError } from './errors/disk-file-is-symlink-error';
 
-export async function writeToFile(item: { filePath: string; content: string }) {
+export async function writeToFile(item: {
+  filePath: string;
+  content: string;
+}): Result.ResultAsync<void, DiskFileIsSymlinkError> {
   let { filePath, content } = item;
 
   let stat: fse.Stats | undefined;
@@ -15,8 +18,10 @@ export async function writeToFile(item: { filePath: string; content: string }) {
   }
 
   if (stat?.isSymbolicLink() === true) {
-    throw new ServerError({ message: ErEnum.FILE_IS_SYMLINK });
+    return Result.fail(new DiskFileIsSymlinkError());
   }
 
   await fse.writeFile(filePath, content);
+
+  return Result.succeed();
 }

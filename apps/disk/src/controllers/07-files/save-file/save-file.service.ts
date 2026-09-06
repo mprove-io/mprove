@@ -139,9 +139,10 @@ export class SaveFileService {
 
         return Result.succeed();
       }),
+      Result.andThrough(item =>
+        writeToFile({ filePath: item.filePath, content: content })
+      ),
       Result.andThrough(async item => {
-        await writeToFile({ filePath: item.filePath, content: content });
-
         await addChangesToStage({ repoDir: item.repoDir });
 
         return Result.succeed();
