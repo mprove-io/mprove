@@ -16,7 +16,6 @@ import { RestoreService } from '#disk/services/restore.service';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { checkRequestedBranchExists } from './functions/check-requested-branch-exists';
 import { checkoutRequestedBranch } from './functions/checkout-requested-branch';
 
 @Injectable()
@@ -105,12 +104,6 @@ export class GetCatalogNodesService {
 
         return Result.succeed(repoHasChanges === true ? false : isFetch);
       }),
-      Result.andThrough(item =>
-        checkRequestedBranchExists({
-          branch: branch,
-          repoDir: item.repoDir
-        })
-      ),
       Result.bind('isFetched', item =>
         checkoutRequestedBranch({
           branch: branch,
