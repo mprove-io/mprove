@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskRenameCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request';
 import type { ToDiskRenameCatalogNodeRequestPayload } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request-payload';
@@ -94,121 +91,105 @@ export class RenameCatalogNodeService {
         oldPath: oldPath,
         newPath: newPath
       }),
-      Result.andThrough(item => {
+      Result.andThrough(v => {
         validatePathUnderDir({
-          fullPath: item.oldPath,
-          allowedDir: item.repoDir
+          fullPath: v.oldPath,
+          allowedDir: v.repoDir
         });
 
         validatePathUnderDir({
-          fullPath: item.newPath,
-          allowedDir: item.repoDir
+          fullPath: v.newPath,
+          allowedDir: v.repoDir
         });
 
         return Result.succeed();
       }),
-      Result.bind('keyDir', async item => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: item.orgId,
-            projectId: item.projectId,
-            projectLt: projectLt,
-            repoId: item.repoId,
-            branchId: branch
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
-          repoDir: item.repoDir,
+      Result.bind('keyDir', v =>
+        this.restoreService.checkOrgProjectRepoBranch({
           remoteType: remoteType,
-          keyDir: item.keyDir,
+          orgId: v.orgId,
+          projectId: v.projectId,
+          projectLt: projectLt,
+          repoId: v.repoId,
+          branchId: branch
+        })
+      ),
+      Result.bind('git', v =>
+        createGit({
+          repoDir: v.repoDir,
+          remoteType: remoteType,
+          keyDir: v.keyDir,
           gitUrl: gitUrl,
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
+        })
+      ),
+      Result.andThrough(v =>
+        checkoutBranch({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          repoDir: v.repoDir,
           branchName: branch,
-          git: item.git,
+          git: v.git,
           isFetch: false
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        let isOldPathExist: boolean = await isPathExist(item.oldPath);
-
-        if (isOldPathExist === false) {
-          return Result.fail(new DiskOldPathIsNotExistError());
-        }
-
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        let isNewPathExist: boolean = await isPathExist(item.newPath);
-
-        if (isNewPathExist === true) {
-          return Result.fail(new DiskNewPathAlreadyExistError());
-        }
-
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await renamePath({
-          oldPath: item.oldPath,
-          newPath: item.newPath
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await addChangesToStage({ repoDir: item.repoDir });
-        return Result.succeed();
-      }),
-      Result.bind('itemStatus', async item => {
-        let itemStatus: DiskItemStatus = await getRepoStatus({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
-          git: item.git,
+        })
+      ),
+      Result.bind('isOldPathExist', v => isPathExist({ path: v.oldPath })),
+      Result.andThrough(v =>
+        v.isOldPathExist === false
+          ? Result.fail(new DiskOldPathIsNotExistError())
+          : Result.succeed()
+      ),
+      Result.bind('isNewPathExist', v => isPathExist({ path: v.newPath })),
+      Result.andThrough(v =>
+        v.isNewPathExist === true
+          ? Result.fail(new DiskNewPathAlreadyExistError())
+          : Result.succeed()
+      ),
+      Result.andThrough(v =>
+        renamePath({
+          oldPath: v.oldPath,
+          newPath: v.newPath
+        })
+      ),
+      Result.andThrough(v => addChangesToStage({ repoDir: v.repoDir })),
+      Result.bind('itemStatus', v =>
+        getRepoStatus({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          repoDir: v.repoDir,
+          git: v.git,
           isFetch: true,
           isCheckConflicts: true
-        });
-        return Result.succeed(itemStatus);
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
+        })
+      ),
+      Result.bind('itemCatalog', v =>
+        getNodesAndFiles({
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
+        })
+      ),
       Result.map(
-        (item): ToDiskRenameCatalogNodeResponsePayload => ({
+        (v): ToDiskRenameCatalogNodeResponsePayload => ({
           repo: {
-            orgId: item.orgId,
-            projectId: item.projectId,
-            repoId: item.repoId,
-            repoStatus: item.itemStatus.repoStatus,
-            currentBranchId: item.itemStatus.currentBranch,
-            conflicts: item.itemStatus.conflicts,
-            nodes: item.itemCatalog.nodes,
-            changesToCommit: item.itemStatus.changesToCommit,
-            changesToPush: item.itemStatus.changesToPush
+            orgId: v.orgId,
+            projectId: v.projectId,
+            repoId: v.repoId,
+            repoStatus: v.itemStatus.repoStatus,
+            currentBranchId: v.itemStatus.currentBranch,
+            conflicts: v.itemStatus.conflicts,
+            nodes: v.itemCatalog.nodes,
+            changesToCommit: v.itemStatus.changesToCommit,
+            changesToPush: v.itemStatus.changesToPush
           },
-          files: item.itemCatalog.files,
-          mproveDir: item.itemCatalog.mproveDir
+          files: v.itemCatalog.files,
+          mproveDir: v.itemCatalog.mproveDir
         })
       ),
       Result.mapError(toServerError)
