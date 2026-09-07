@@ -1,80 +1,55 @@
 import { Result } from '@praha/byethrow';
-import {
-  BRANCH_MAIN,
-  MPROVE_CONFIG_FILENAME,
-  README_FILE_NAME
-} from '#common/constants/top';
+import type { SimpleGit } from 'simple-git';
+import { BRANCH_MAIN } from '#common/constants/top';
 import { TEST_PROJECTS } from '#common/constants/top-disk';
-import { isDefined } from '#common/functions/is-defined';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
-import { copyPath } from '../disk/copy-path';
-import { isPathExist } from '../disk/is-path-exist';
-import { writeToFile } from '../disk/write-to-file';
+import type { DiskFileIsSymlinkError } from '../disk/errors/disk-file-is-symlink-error';
+import { prepareInitialProjectFiles } from './prepare-initial-project-files';
 
-export async function createInitialCommitToProd(item: {
+export function createInitialCommitToProd(item: {
   prodDir: string;
   projectId: string;
   testProjectId: string;
   projectName: string;
   userAlias: string;
-}): Promise<void> {
-  return await addTraceSpan({
+}): Result.ResultAsync<void, DiskFileIsSymlinkError> {
+  return addTraceSpan({
     spanName: 'disk.git.createInitialCommitToProd',
-    fn: async () => {
-      let git = createSimpleGit({ baseDir: item.prodDir });
-
-      let sourceDir = `${TEST_PROJECTS}/${item.testProjectId}`;
-
-      let isSourceExist = await isPathExist(sourceDir);
-
-      if (isDefined(item.testProjectId) && isSourceExist) {
-        await copyPath({
-          sourcePath: sourceDir,
-          destinationPath: item.prodDir
-        });
-      } else {
-        let readmeFileName = README_FILE_NAME;
-        let readmeFilePath = `${item.prodDir}/${readmeFileName}`;
-        let readmeContent = `# ${item.projectName} project`;
-
-        await Result.unwrap(
-          writeToFile({
-            filePath: readmeFilePath,
-            content: readmeContent
+    fn: () =>
+      Result.pipe(
+        Result.succeed({
+          ...item,
+          git: createSimpleGit({ baseDir: item.prodDir }),
+          sourceDir: `${TEST_PROJECTS}/${item.testProjectId}`
+        }),
+        Result.andThrough(v =>
+          prepareInitialProjectFiles({
+            prodDir: v.prodDir,
+            sourceDir: v.sourceDir,
+            testProjectId: v.testProjectId,
+            projectName: v.projectName
           })
-        );
+        ),
+        Result.andThen(async v => {
+          let git: SimpleGit = v.git;
 
-        let mproveFileName = MPROVE_CONFIG_FILENAME;
-        let mproveFilePath = `${item.prodDir}/${mproveFileName}`;
-        let mproveContent = `mprove_dir: ./
-case_sensitive_string_filters: false
-format_number: ''
-thousands_separator: ','
-currency_prefix: '$'
-currency_suffix: ''
-`;
+          await git.add('.');
 
-        await Result.unwrap(
-          writeToFile({
-            filePath: mproveFilePath,
-            content: mproveContent
-          })
-        );
-      }
+          await git.addConfig('user.email', `${v.userAlias}@`);
 
-      await git.add('.');
+          await git.addConfig('user.name', v.userAlias);
 
-      await git.addConfig('user.email', `${item.userAlias}@`);
-      await git.addConfig('user.name', item.userAlias);
+          let message = 'init';
 
-      let message = 'init';
+          await git.commit(message, {
+            '--author': `${v.userAlias} <${v.userAlias}@>`
+          });
 
-      await git.commit(message, {
-        '--author': `${item.userAlias} <${item.userAlias}@>`
-      });
+          await git.branch(['-M', BRANCH_MAIN]);
 
-      await git.branch(['-M', BRANCH_MAIN]);
-    }
+          return Result.succeed();
+        })
+      )
   });
 }
