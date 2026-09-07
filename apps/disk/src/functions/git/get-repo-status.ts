@@ -1,18 +1,16 @@
-import { SimpleGit } from 'simple-git';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { FileStatusEnum } from '#common/enums/file-status.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import { MyRegex } from '#common/models/my-regex';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
-import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
-import { getNodesAndFiles } from '../disk/get-nodes-and-files';
-import { isRemoteBranchExist } from './is-remote-branch-exist';
+import { getRepoConflicts } from './get-repo-conflicts';
+import { getRepoStatusWithoutStagedChanges } from './get-repo-status-without-staged-changes';
 
-export async function getRepoStatus(item: {
+export function getRepoStatus(item: {
   projectId: string;
   repoId: string;
   projectDir: string;
@@ -22,8 +20,8 @@ export async function getRepoStatus(item: {
   isCheckConflicts: boolean;
   addContent?: boolean;
   expandRenamed?: boolean;
-}): Promise<DiskItemStatus> {
-  return await addTraceSpan({
+}): Result.ResultAsync<DiskItemStatus, never> {
+  return addTraceSpan({
     spanName: 'disk.git.getRepoStatus',
     fn: async () => {
       // priorities order:
@@ -33,8 +31,6 @@ export async function getRepoStatus(item: {
       // NeedPull
       // NeedPush
       // Ok
-
-      let conflicts: DiskFileLine[] = [];
 
       let git = item.git;
 
@@ -128,120 +124,45 @@ export async function getRepoStatus(item: {
       let stagedDiff = await git.diffSummary(['--cached']);
       let stagedFilesCount = stagedDiff.files.length;
 
-      if (item.isCheckConflicts === true) {
-        // check conflicts manually instead of git - because they are already committed
-        let itemDevRepoCatalog = <DiskItemCatalog>await getNodesAndFiles({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          readFiles: true,
-          isRootMproveDir: true
-        });
+      return Result.pipe(
+        Result.succeed({
+          ...item,
+          currentBranchName: currentBranchName,
+          changesToCommit: changesToCommit,
+          changesToPush: changesToPush,
+          stagedFilesCount: stagedFilesCount
+        }),
+        Result.bind('conflicts', v =>
+          getRepoConflicts({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            isCheckConflicts: v.isCheckConflicts
+          })
+        ),
+        Result.andThen(v => {
+          // RETURN NeedCommit
+          if (v.stagedFilesCount > 0) {
+            return Result.succeed({
+              repoStatus: RepoStatusEnum.NeedCommit,
+              conflicts: v.conflicts,
+              currentBranch: v.currentBranchName,
+              changesToCommit: v.changesToCommit,
+              changesToPush: v.changesToPush
+            });
+          }
 
-        itemDevRepoCatalog.files.forEach(file => {
-          let fileArray = file.content.split('\n');
-
-          fileArray.forEach((s: string, ind) => {
-            if (s.match(MyRegex.CONTAINS_CONFLICT_START())) {
-              conflicts.push({
-                fileId: file.fileId,
-                fileName: file.name,
-                lineNumber: ind + 1
-              });
-            }
+          return getRepoStatusWithoutStagedChanges({
+            git: git,
+            currentBranchName: v.currentBranchName,
+            changesToCommit: v.changesToCommit,
+            changesToPush: v.changesToPush,
+            conflicts: v.conflicts,
+            repoDir: v.repoDir,
+            isFetch: v.isFetch
           });
-        });
-      }
-
-      // RETURN NeedCommit
-      if (stagedFilesCount > 0) {
-        return {
-          repoStatus: RepoStatusEnum.NeedCommit,
-          conflicts: conflicts,
-          currentBranch: currentBranchName,
-          changesToCommit: changesToCommit,
-          changesToPush: changesToPush
-        };
-      }
-
-      let isBranchExistRemote = await isRemoteBranchExist({
-        repoDir: item.repoDir,
-        remoteBranch: currentBranchName,
-        git: git,
-        isFetch: item.isFetch
-      });
-
-      // RETURN NeedPush
-      if (isBranchExistRemote === false) {
-        return {
-          repoStatus: RepoStatusEnum.NeedPush,
-          conflicts: conflicts,
-          currentBranch: currentBranchName,
-          changesToCommit: changesToCommit,
-          changesToPush: changesToPush
-        };
-      }
-
-      let localCommitId = await git.revparse([
-        `refs/heads/${currentBranchName}`
-      ]);
-      localCommitId = localCommitId.trim();
-
-      let remoteOriginCommitId = await git.revparse([
-        `refs/remotes/origin/${currentBranchName}`
-      ]);
-      remoteOriginCommitId = remoteOriginCommitId.trim();
-
-      //
-      let baseCommitResult = await git.raw([
-        'merge-base',
-        localCommitId,
-        remoteOriginCommitId
-      ]);
-      let baseCommitId = baseCommitResult.trim();
-
-      // RETURN Ok
-      if (localCommitId === remoteOriginCommitId) {
-        return {
-          repoStatus: RepoStatusEnum.Ok,
-          conflicts: conflicts,
-          currentBranch: currentBranchName,
-          changesToCommit: changesToCommit,
-          changesToPush: changesToPush
-        };
-      }
-
-      // RETURN NeedPull
-      if (localCommitId === baseCommitId) {
-        return {
-          repoStatus: RepoStatusEnum.NeedPull,
-          conflicts: conflicts,
-          currentBranch: currentBranchName,
-          changesToCommit: changesToCommit,
-          changesToPush: changesToPush
-        };
-      }
-
-      // RETURN NeedPush
-      if (remoteOriginCommitId === baseCommitId) {
-        return {
-          repoStatus: RepoStatusEnum.NeedPush,
-          conflicts: conflicts,
-          currentBranch: currentBranchName,
-          changesToCommit: changesToCommit,
-          changesToPush: changesToPush
-        };
-      }
-
-      // RETURN NeedPull
-      // diverged
-      return {
-        repoStatus: RepoStatusEnum.NeedPull,
-        conflicts: conflicts,
-        currentBranch: currentBranchName,
-        changesToCommit: changesToCommit,
-        changesToPush: changesToPush
-      };
+        })
+      );
     }
   });
 }
