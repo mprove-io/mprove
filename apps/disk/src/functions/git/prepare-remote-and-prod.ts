@@ -1,14 +1,16 @@
-import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
+import { Result } from '@praha/byethrow';
+import { PROD_REPO_ID } from '#common/constants/top';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { createGit } from '#disk/functions/git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
-import { createSimpleGit } from '#node-common/functions/create-simple-git';
 import { ensureDir } from '../disk/ensure-dir';
-import { createInitialCommitToProd } from './create-initial-commit-to-prod';
-import { pushToRemote } from './push-to-remote';
+import type { DiskFileIsSymlinkError } from '../disk/errors/disk-file-is-symlink-error';
+import type { DiskRepoStatusIsNotNeedPushError } from './errors/disk-repo-status-is-not-need-push-error';
+import { initializeAndPushManagedProd } from './initialize-and-push-managed-prod';
+import { initializeManagedCentralRepo } from './initialize-managed-central-repo';
 
-export async function prepareRemoteAndProd(item: {
+export function prepareRemoteAndProd(item: {
   projectId: string;
   projectDir: string;
   testProjectId: string;
@@ -20,65 +22,57 @@ export async function prepareRemoteAndProd(item: {
   privateKeyEncrypted: string;
   publicKey: string;
   passPhrase: string;
-}) {
-  return await addTraceSpan({
+}): Result.ResultAsync<
+  void,
+  DiskFileIsSymlinkError | DiskRepoStatusIsNotNeedPushError
+> {
+  return addTraceSpan({
     spanName: 'disk.git.prepareRemoteAndProd',
-    fn: async () => {
-      let prodDir = `${item.projectDir}/${PROD_REPO_ID}`;
-      let centralDir = `${item.projectDir}/${CENTRAL_REPO_ID}`;
-      await ensureDir(prodDir);
+    fn: () =>
+      Result.pipe(
+        Result.succeed({
+          ...item,
+          prodDir: `${item.projectDir}/${PROD_REPO_ID}`,
+          centralDir: `${item.projectDir}/${CENTRAL_REPO_ID}`,
+          remoteUrl:
+            item.remoteType === ProjectRemoteTypeEnum.GitClone
+              ? item.gitUrl
+              : `${item.projectDir}/${CENTRAL_REPO_ID}`
+        }),
+        Result.andThrough(v => ensureDir({ dir: v.prodDir })),
+        Result.andThrough(v =>
+          v.remoteType === ProjectRemoteTypeEnum.Managed
+            ? initializeManagedCentralRepo({ centralDir: v.centralDir })
+            : Result.succeed()
+        ),
+        Result.bind('git', v =>
+          createGit({
+            repoDir: undefined,
+            remoteType: v.remoteType,
+            keyDir: v.keyDir,
+            gitUrl: v.gitUrl,
+            privateKeyEncrypted: v.privateKeyEncrypted,
+            publicKey: v.publicKey,
+            passPhrase: v.passPhrase
+          })
+        ),
+        Result.andThrough(async v => {
+          await v.git.clone(v.remoteUrl, v.prodDir);
 
-      if (item.remoteType === ProjectRemoteTypeEnum.Managed) {
-        await ensureDir(centralDir);
-
-        // init central repo as bare
-        let centralGit = createSimpleGit({ baseDir: centralDir });
-        await centralGit.init(true);
-        await centralGit.raw([
-          'symbolic-ref',
-          'HEAD',
-          `refs/heads/${BRANCH_MAIN}`
-        ]);
-      }
-
-      let remoteUrl =
-        item.remoteType === ProjectRemoteTypeEnum.GitClone
-          ? item.gitUrl
-          : centralDir;
-
-      let git = await createGit({
-        repoDir: undefined,
-        remoteType: item.remoteType,
-        keyDir: item.keyDir,
-        gitUrl: item.gitUrl,
-        privateKeyEncrypted: item.privateKeyEncrypted,
-        publicKey: item.publicKey,
-        passPhrase: item.passPhrase
-      });
-
-      await git.clone(remoteUrl, prodDir);
-
-      if (item.remoteType === ProjectRemoteTypeEnum.Managed) {
-        await createInitialCommitToProd({
-          prodDir: prodDir,
-          testProjectId: item.testProjectId,
-          projectId: item.projectId,
-          userAlias: item.userAlias,
-          projectName: item.projectName
-        });
-
-        let prodGit = createSimpleGit({ baseDir: prodDir });
-
-        await pushToRemote({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: PROD_REPO_ID,
-          repoDir: prodDir,
-          branch: BRANCH_MAIN,
-          git: prodGit,
-          isFetch: true
-        });
-      }
-    }
+          return Result.succeed();
+        }),
+        Result.andThen(v =>
+          v.remoteType === ProjectRemoteTypeEnum.Managed
+            ? initializeAndPushManagedProd({
+                projectId: v.projectId,
+                projectDir: v.projectDir,
+                prodDir: v.prodDir,
+                testProjectId: v.testProjectId,
+                userAlias: v.userAlias,
+                projectName: v.projectName
+              })
+            : Result.succeed()
+        )
+      )
   });
 }
