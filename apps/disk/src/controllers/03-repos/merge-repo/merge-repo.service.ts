@@ -1,15 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskMergeRepoRequest } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-request';
 import type { ToDiskMergeRepoRequestPayload } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-request-payload';
 import type { ToDiskMergeRepoResponsePayload } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
@@ -77,20 +74,18 @@ export class MergeRepoService {
         repoId: repoId,
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
       }),
-      Result.bind('keyDir', async () => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: orgId,
-            projectId: projectId,
-            projectLt: projectLt,
-            repoId: repoId,
-            branchId: branch
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+      Result.bind('keyDir', () =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: orgId,
+          projectId: projectId,
+          projectLt: projectLt,
+          repoId: repoId,
+          branchId: branch
+        })
+      ),
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -98,31 +93,28 @@ export class MergeRepoService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        let isTheirBranchExist: boolean =
-          isTheirBranchRemote === true
-            ? await isRemoteBranchExist({
-                repoDir: item.repoDir,
-                remoteBranch: theirBranch,
-                git: item.git,
-                isFetch: true
-              })
-            : await isLocalBranchExist({
-                repoDir: item.repoDir,
-                localBranch: theirBranch
-              });
-
-        if (isTheirBranchExist === false) {
-          return Result.fail(new DiskTheirBranchIsNotExistError());
-        }
-
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.bind('isTheirBranchExist', item =>
+        isTheirBranchRemote === true
+          ? isRemoteBranchExist({
+              repoDir: item.repoDir,
+              remoteBranch: theirBranch,
+              git: item.git,
+              isFetch: true
+            })
+          : isLocalBranchExist({
+              repoDir: item.repoDir,
+              localBranch: theirBranch
+            })
+      ),
+      Result.andThrough(item =>
+        item.isTheirBranchExist === false
+          ? Result.fail(new DiskTheirBranchIsNotExistError())
+          : Result.succeed()
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -130,11 +122,10 @@ export class MergeRepoService {
           branchName: branch,
           git: item.git,
           isFetch: false
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await merge({
+        })
+      ),
+      Result.andThrough(item =>
+        merge({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -147,11 +138,10 @@ export class MergeRepoService {
               : theirBranch,
           isTheirBranchRemote: isTheirBranchRemote,
           git: item.git
-        });
-        return Result.succeed();
-      }),
-      Result.bind('repoStatus', async item => {
-        let repoStatus: DiskItemStatus = await getRepoStatus({
+        })
+      ),
+      Result.bind('repoStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -159,19 +149,17 @@ export class MergeRepoService {
           git: item.git,
           isFetch: isTheirBranchRemote === true ? false : true,
           isCheckConflicts: true
-        });
-        return Result.succeed(repoStatus);
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('itemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
+        })
+      ),
       Result.map(
         (item): ToDiskMergeRepoResponsePayload => ({
           repo: {

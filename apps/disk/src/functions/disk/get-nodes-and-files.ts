@@ -1,4 +1,5 @@
-import fse, { Dirent } from 'fs-extra';
+import { Result } from '@praha/byethrow';
+import fse, { type Dirent } from 'fs-extra';
 import pIteration from 'p-iteration';
 
 const { forEachSeries } = pIteration;
@@ -19,7 +20,7 @@ export async function getNodesAndFiles(item: {
   repoId: string;
   readFiles: boolean;
   isRootMproveDir: boolean;
-}) {
+}): Result.ResultAsync<DiskItemCatalog, never> {
   let topNode: DiskCatalogNode = {
     id: item.projectId,
     name: item.projectId,
@@ -57,7 +58,13 @@ export async function getNodesAndFiles(item: {
 
   let files = itemDir.files;
 
-  return { nodes: nodes, files: files, mproveDir: mproveDir };
+  let diskItemCatalog: DiskItemCatalog = {
+    nodes: nodes,
+    files: files,
+    mproveDir: mproveDir
+  };
+
+  return Result.succeed(diskItemCatalog);
 }
 
 async function getDirCatalogNodesAndFilesRecursive(item: {

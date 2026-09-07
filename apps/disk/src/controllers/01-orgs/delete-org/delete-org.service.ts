@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
 import { zToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-request';
 import type { ToDiskDeleteOrgResponsePayload } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
 import { DiskTabService } from '#disk/services/disk-tab.service';
@@ -39,13 +39,12 @@ export class DeleteOrgService {
         orgId: orgId,
         orgDir: `${orgPath}/${orgId}`
       }),
-      Result.andThrough(async item => {
-        let isOrgExist: boolean = await isPathExist(item.orgDir);
-        if (isOrgExist === true) {
-          await removePath(item.orgDir);
-        }
-        return Result.succeed();
-      }),
+      Result.bind('isOrgExist', item => isPathExist({ path: item.orgDir })),
+      Result.andThrough(item =>
+        item.isOrgExist === true
+          ? removePath({ path: item.orgDir })
+          : Result.succeed()
+      ),
       Result.map(
         (item): ToDiskDeleteOrgResponsePayload => ({
           deletedOrgId: item.orgId

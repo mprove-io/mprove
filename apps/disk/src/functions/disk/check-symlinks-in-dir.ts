@@ -1,48 +1,60 @@
+import type { Dirent } from 'node:fs';
+import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import pIteration from 'p-iteration';
+import { DiskSymlinksFoundError } from './errors/disk-symlinks-found-error';
 
 const { forEachSeries } = pIteration;
 
-export async function checkSymlinksInDir(item: { dir: string }) {
-  let { dir } = item;
+export async function checkSymlinksInDir(item: {
+  dir: string;
+}): Result.ResultAsync<void, DiskSymlinksFoundError> {
+  let dirExists: boolean = await fse.pathExists(item.dir);
 
-  let dirExists = await fse.pathExists(dir);
   if (dirExists === false) {
-    return;
+    return Result.succeed();
   }
 
   let symlinks: string[] = [];
-  await walk({ dir: dir, symlinks: symlinks });
+
+  await walk({ dir: item.dir, symlinks: symlinks });
 
   if (symlinks.length > 0) {
-    throw new Error(
-      `Symlinks found under ${dir}. Remove them before starting disk:\n` +
-        symlinks.join('\n')
+    return Result.fail(
+      new DiskSymlinksFoundError({
+        dir: item.dir,
+        symlinks: symlinks
+      })
     );
   }
+
+  return Result.succeed();
 }
 
-async function walk(item: { dir: string; symlinks: string[] }) {
-  let { dir, symlinks } = item;
-
-  let dirents = await fse.readdir(dir, { withFileTypes: true });
+async function walk(item: { dir: string; symlinks: string[] }): Promise<void> {
+  let dirents: Dirent[] = await fse.readdir(item.dir, {
+    withFileTypes: true
+  });
 
   await forEachSeries(dirents, async dirent => {
-    let entryPath = `${dir}/${dirent.name}`;
+    let entryPath = `${item.dir}/${dirent.name}`;
 
     if (dirent.isSymbolicLink() === true) {
       let target: string;
+
       try {
         target = await fse.readlink(entryPath);
       } catch {
         target = '<unreadable>';
       }
-      symlinks.push(`${entryPath} -> ${target}`);
+
+      item.symlinks.push(`${entryPath} -> ${target}`);
+
       return;
     }
 
     if (dirent.isDirectory() === true) {
-      await walk({ dir: entryPath, symlinks: symlinks });
+      await walk({ dir: entryPath, symlinks: item.symlinks });
     }
   });
 }

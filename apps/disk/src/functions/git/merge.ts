@@ -1,7 +1,8 @@
-import { SimpleGit } from 'simple-git';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
-export async function merge(item: {
+export function merge(item: {
   projectId: string;
   projectDir: string;
   repoId: string;
@@ -11,13 +12,12 @@ export async function merge(item: {
   theirBranch: string;
   isTheirBranchRemote: boolean;
   git: SimpleGit;
-}) {
-  return await addTraceSpan({
+}): Result.ResultAsync<void, never> {
+  return addTraceSpan({
     spanName: 'disk.git.merge',
     fn: async () => {
-      let git = item.git;
+      let ourCommitId = await item.git.revparse([`refs/heads/${item.branch}`]);
 
-      let ourCommitId = await git.revparse([`refs/heads/${item.branch}`]);
       ourCommitId = ourCommitId.trim();
 
       let theirRef =
@@ -25,16 +25,17 @@ export async function merge(item: {
           ? `refs/remotes/${item.theirBranch}`
           : `refs/heads/${item.theirBranch}`;
 
-      let theirCommitId = await git.revparse([theirRef]);
+      let theirCommitId = await item.git.revparse([theirRef]);
       theirCommitId = theirCommitId.trim();
 
       if (ourCommitId === theirCommitId) {
-        return;
+        return Result.succeed();
       }
 
       try {
-        await git.merge([item.theirBranch, '--ff-only']);
-        return;
+        await item.git.merge([item.theirBranch, '--ff-only']);
+
+        return Result.succeed();
       } catch {
         // Fast-forward not possible, continue with regular merge
       }
@@ -42,30 +43,32 @@ export async function merge(item: {
       // Force merge with commit
       let message = `Merged branch ${item.theirBranch} to ${item.branch}`;
 
-      await git.addConfig('user.email', `${item.userAlias}@`);
-      await git.addConfig('user.name', item.userAlias);
+      await item.git.addConfig('user.email', `${item.userAlias}@`);
+      await item.git.addConfig('user.name', item.userAlias);
 
       try {
-        await git.merge([item.theirBranch, '-m', message]);
+        await item.git.merge([item.theirBranch, '-m', message]);
       } catch (e: any) {
         // If merge fails due to conflicts, stage all and commit
-        let statusResult = await git.status();
+        let statusResult = await item.git.status();
 
         if (statusResult.conflicted.length > 0) {
           // Stage all files including conflicted ones
-          await git.add('.');
+          await item.git.add('.');
 
           // Create merge commit with conflicts
-          await git.commit(message, {
+          await item.git.commit(message, {
             '--author': `${item.userAlias} <${item.userAlias}@>`
           });
 
           // Reset to clean state
-          await git.reset(['--hard', 'HEAD']);
+          await item.git.reset(['--hard', 'HEAD']);
         } else {
           throw e;
         }
       }
+
+      return Result.succeed();
     }
   });
 }

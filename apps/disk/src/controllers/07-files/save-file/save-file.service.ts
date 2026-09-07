@@ -1,11 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import {
   type ToDiskSaveFileRequest,
@@ -87,20 +84,18 @@ export class SaveFileService {
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
         filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${relativeFilePath}`
       }),
-      Result.bind('keyDir', async item => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: item.orgId,
-            projectId: item.projectId,
-            projectLt: projectLt,
-            repoId: item.repoId,
-            branchId: branch
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+      Result.bind('keyDir', item =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: item.orgId,
+          projectId: item.projectId,
+          projectLt: projectLt,
+          repoId: item.repoId,
+          branchId: branch
+        })
+      ),
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -108,11 +103,10 @@ export class SaveFileService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -120,9 +114,8 @@ export class SaveFileService {
           branchName: branch,
           git: item.git,
           isFetch: false
-        });
-        return Result.succeed();
-      }),
+        })
+      ),
       Result.andThrough(item => {
         validatePathUnderDir({
           fullPath: item.filePath,
@@ -130,46 +123,40 @@ export class SaveFileService {
         });
         return Result.succeed();
       }),
-      Result.andThrough(async item => {
-        let isFileExist: boolean = await isPathExist(item.filePath);
-
-        if (isFileExist === false) {
-          return Result.fail(new DiskFileIsNotExistError());
-        }
-
-        return Result.succeed();
-      }),
+      Result.bind('isFileExist', item => isPathExist({ path: item.filePath })),
+      Result.andThrough(item =>
+        item.isFileExist === false
+          ? Result.fail(new DiskFileIsNotExistError())
+          : Result.succeed()
+      ),
       Result.andThrough(item =>
         writeToFile({ filePath: item.filePath, content: content })
       ),
-      Result.andThrough(async item => {
-        await addChangesToStage({ repoDir: item.repoDir });
-
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        if (item.repoId === PROD_REPO_ID) {
-          await commit({
-            repoDir: item.repoDir,
-            userAlias: userAlias,
-            commitMessage: `Modified file ${relativeFilePath}`
-          });
-
-          await pushToRemote({
-            projectId: item.projectId,
-            projectDir: item.projectDir,
-            repoId: item.repoId,
-            repoDir: item.repoDir,
-            branch: branch,
-            git: item.git,
-            isFetch: true
-          });
-        }
-
-        return Result.succeed();
-      }),
-      Result.bind('repoStatus', async item => {
-        let repoStatus: DiskItemStatus = await getRepoStatus({
+      Result.andThrough(item => addChangesToStage({ repoDir: item.repoDir })),
+      Result.andThrough(item =>
+        item.repoId === PROD_REPO_ID
+          ? commit({
+              repoDir: item.repoDir,
+              userAlias: userAlias,
+              commitMessage: `Modified file ${relativeFilePath}`
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(item =>
+        item.repoId === PROD_REPO_ID
+          ? pushToRemote({
+              projectId: item.projectId,
+              projectDir: item.projectDir,
+              repoId: item.repoId,
+              repoDir: item.repoDir,
+              branch: branch,
+              git: item.git,
+              isFetch: true
+            })
+          : Result.succeed()
+      ),
+      Result.bind('repoStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -177,19 +164,17 @@ export class SaveFileService {
           git: item.git,
           isFetch: true,
           isCheckConflicts: true
-        });
-        return Result.succeed(repoStatus);
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('itemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
+        })
+      ),
       Result.map(
         (item): ToDiskSaveFileResponsePayload => ({
           repo: {

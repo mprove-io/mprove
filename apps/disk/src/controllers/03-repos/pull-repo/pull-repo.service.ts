@@ -1,15 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskPullRepoRequest } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-request';
 import type { ToDiskPullRepoRequestPayload } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-request-payload';
 import type { ToDiskPullRepoResponsePayload } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
@@ -72,20 +69,18 @@ export class PullRepoService {
         repoId: repoId,
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
       }),
-      Result.bind('keyDir', async () => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: orgId,
-            projectId: projectId,
-            projectLt: projectLt,
-            repoId: repoId,
-            branchId: branch
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+      Result.bind('keyDir', () =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: orgId,
+          projectId: projectId,
+          projectLt: projectLt,
+          repoId: repoId,
+          branchId: branch
+        })
+      ),
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -93,11 +88,10 @@ export class PullRepoService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -105,11 +99,10 @@ export class PullRepoService {
           branchName: branch,
           git: item.git,
           isFetch: true
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await merge({
+        })
+      ),
+      Result.andThrough(item =>
+        merge({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -119,11 +112,10 @@ export class PullRepoService {
           theirBranch: `origin/${branch}`,
           isTheirBranchRemote: true,
           git: item.git
-        });
-        return Result.succeed();
-      }),
-      Result.bind('repoStatus', async item => {
-        let repoStatus: DiskItemStatus = await getRepoStatus({
+        })
+      ),
+      Result.bind('repoStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -131,19 +123,17 @@ export class PullRepoService {
           git: item.git,
           isFetch: false,
           isCheckConflicts: true
-        });
-        return Result.succeed(repoStatus);
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('itemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
+        })
+      ),
       Result.map(
         (item): ToDiskPullRepoResponsePayload => ({
           repo: {

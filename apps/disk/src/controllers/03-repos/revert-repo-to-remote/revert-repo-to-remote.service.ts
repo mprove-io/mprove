@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskRevertRepoToRemoteRequest } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-request';
 import type { ToDiskRevertRepoToRemoteRequestPayload } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-request-payload';
@@ -71,41 +68,6 @@ export class RevertRepoToRemoteService {
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isBranchExist = await isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
     let revertRepoToRemoteResult = Result.pipe(
       Result.succeed({
         orgId: orgId,
@@ -114,20 +76,18 @@ export class RevertRepoToRemoteService {
         repoId: repoId,
         repoDir: repoDir
       }),
-      Result.bind('keyDir', async () => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: orgId,
-            projectId: projectId,
-            projectLt: projectLt,
-            repoId: repoId,
-            branchId: branch
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+      Result.bind('keyDir', () =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: orgId,
+          projectId: projectId,
+          projectLt: projectLt,
+          repoId: repoId,
+          branchId: branch
+        })
+      ),
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -135,11 +95,10 @@ export class RevertRepoToRemoteService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -147,33 +106,30 @@ export class RevertRepoToRemoteService {
           branchName: branch,
           git: item.git,
           isFetch: true
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        let remoteBranchExists: boolean = await isRemoteBranchExist({
+        })
+      ),
+      Result.bind('remoteBranchExists', item =>
+        isRemoteBranchExist({
           repoDir: item.repoDir,
           remoteBranch: branch,
           git: item.git,
           isFetch: false
-        });
-
-        if (remoteBranchExists === false) {
-          return Result.fail(new DiskRemoteBranchIsNotExistError());
-        }
-
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await revertRepoToRemote({
+        })
+      ),
+      Result.andThrough(item =>
+        item.remoteBranchExists === false
+          ? Result.fail(new DiskRemoteBranchIsNotExistError())
+          : Result.succeed()
+      ),
+      Result.andThrough(item =>
+        revertRepoToRemote({
           repoDir: item.repoDir,
           remoteBranch: branch,
           git: item.git
-        });
-        return Result.succeed();
-      }),
-      Result.bind('repoStatus', async item => {
-        let repoStatus: DiskItemStatus = await getRepoStatus({
+        })
+      ),
+      Result.bind('repoStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -181,19 +137,17 @@ export class RevertRepoToRemoteService {
           git: item.git,
           isFetch: false,
           isCheckConflicts: true
-        });
-        return Result.succeed(repoStatus);
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('itemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
+        })
+      ),
       Result.map(
         (item): ToDiskRevertRepoToRemoteResponsePayload => ({
           repo: {

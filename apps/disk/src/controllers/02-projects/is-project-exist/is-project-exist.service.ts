@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
 import { zToDiskIsProjectExistRequest } from '#common/zod/to-disk/02-projects/is-project-exist/is-project-exist-request';
 import type { ToDiskIsProjectExistResponsePayload } from '#common/zod/to-disk/02-projects/is-project-exist/is-project-exist-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
@@ -41,21 +41,19 @@ export class IsProjectExistService {
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`
       }),
-      Result.andThrough(async item => {
-        await this.restoreService.checkOrgProjectRepoBranch({
+      Result.andThrough(item =>
+        this.restoreService.checkOrgProjectRepoBranch({
           remoteType: undefined,
           orgId: item.orgId,
           projectId: undefined,
           projectLt: undefined,
           repoId: undefined,
           branchId: undefined
-        });
-        return Result.succeed();
-      }),
-      Result.bind('isProjectExist', async item => {
-        let isProjectExist: boolean = await isPathExist(item.projectDir);
-        return Result.succeed(isProjectExist);
-      }),
+        })
+      ),
+      Result.bind('isProjectExist', item =>
+        isPathExist({ path: item.projectDir })
+      ),
       Result.map(
         (item): ToDiskIsProjectExistResponsePayload => ({
           orgId: item.orgId,

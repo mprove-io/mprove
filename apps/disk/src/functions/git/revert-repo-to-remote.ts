@@ -1,15 +1,18 @@
-import { SimpleGit } from 'simple-git';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
-export async function revertRepoToRemote(item: {
+export function revertRepoToRemote(item: {
   repoDir: string;
   remoteBranch: string;
   git: SimpleGit;
-}) {
-  return await addTraceSpan({
+}): Result.ResultAsync<void, never> {
+  return addTraceSpan({
     spanName: 'disk.git.revertRepoToRemote',
     fn: async () => {
       await item.git.reset(['--hard', `origin/${item.remoteBranch}`]);
+
+      return Result.succeed();
     }
   });
 }

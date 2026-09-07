@@ -2,10 +2,7 @@ import { dirname } from 'node:path';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskMoveCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-request';
 import type { ToDiskMoveCatalogNodeRequestPayload } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-request-payload';
@@ -93,20 +90,18 @@ export class MoveCatalogNodeService {
 
         return Result.succeed();
       }),
-      Result.bind('keyDir', async item => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: item.orgId,
-            projectId: item.projectId,
-            projectLt: projectLt,
-            repoId: item.repoId,
-            branchId: branch
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+      Result.bind('keyDir', item =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: item.orgId,
+          projectId: item.projectId,
+          projectLt: projectLt,
+          repoId: item.repoId,
+          branchId: branch
+        })
+      ),
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -114,11 +109,10 @@ export class MoveCatalogNodeService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -126,50 +120,40 @@ export class MoveCatalogNodeService {
           branchName: branch,
           git: item.git,
           isFetch: false
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        let isFromPathExist: boolean = await isPathExist(item.fromPath);
-
-        if (isFromPathExist === false) {
-          return Result.fail(new DiskFromPathIsNotExistError());
-        }
-
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        let isToPathExist: boolean = await isPathExist(item.toPath);
-
-        if (isToPathExist === true) {
-          return Result.fail(new DiskToPathAlreadyExistError());
-        }
-
-        return Result.succeed();
-      }),
+        })
+      ),
+      Result.bind('isFromPathExist', item =>
+        isPathExist({ path: item.fromPath })
+      ),
+      Result.andThrough(item =>
+        item.isFromPathExist === false
+          ? Result.fail(new DiskFromPathIsNotExistError())
+          : Result.succeed()
+      ),
+      Result.bind('isToPathExist', item => isPathExist({ path: item.toPath })),
+      Result.andThrough(item =>
+        item.isToPathExist === true
+          ? Result.fail(new DiskToPathAlreadyExistError())
+          : Result.succeed()
+      ),
       Result.bind('toParentPath', item => Result.succeed(dirname(item.toPath))),
-      Result.andThrough(async item => {
+      Result.andThrough(item => {
         validatePathUnderDir({
           fullPath: item.toParentPath,
           allowedDir: item.repoDir
         });
-
-        await ensureDir(item.toParentPath);
         return Result.succeed();
       }),
-      Result.andThrough(async item => {
-        await movePath({
+      Result.andThrough(item => ensureDir({ dir: item.toParentPath })),
+      Result.andThrough(item =>
+        movePath({
           sourcePath: item.fromPath,
           destinationPath: item.toPath
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await addChangesToStage({ repoDir: item.repoDir });
-        return Result.succeed();
-      }),
-      Result.bind('itemStatus', async item => {
-        let itemStatus: DiskItemStatus = await getRepoStatus({
+        })
+      ),
+      Result.andThrough(item => addChangesToStage({ repoDir: item.repoDir })),
+      Result.bind('itemStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -177,19 +161,17 @@ export class MoveCatalogNodeService {
           git: item.git,
           isFetch: true,
           isCheckConflicts: true
-        });
-        return Result.succeed(itemStatus);
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('itemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
+        })
+      ),
       Result.map(
         (item): ToDiskMoveCatalogNodeResponsePayload => ({
           repo: {

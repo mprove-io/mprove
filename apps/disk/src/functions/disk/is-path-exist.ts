@@ -4,9 +4,7 @@ import fse from 'fs-extra';
 export async function isPathExist(item: {
   path: string;
 }): Result.ResultAsync<boolean, never> {
-  let { path } = item;
-
-  let isExist: boolean = await fse.pathExists(path);
+  let isExist: boolean = await fse.pathExists(item.path);
 
   return Result.succeed(isExist);
 }

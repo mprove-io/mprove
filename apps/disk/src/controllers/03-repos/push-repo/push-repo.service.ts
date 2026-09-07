@@ -1,16 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskPushRepoRequest } from '#common/zod/to-disk/03-repos/push-repo/push-repo-request';
 import type { ToDiskPushRepoRequestPayload } from '#common/zod/to-disk/03-repos/push-repo/push-repo-request-payload';
 import type { ToDiskPushRepoResponsePayload } from '#common/zod/to-disk/03-repos/push-repo/push-repo-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createBranch } from '#disk/functions/git/create-branch';
@@ -77,20 +74,18 @@ export class PushRepoService {
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
         prodRepoDir: `${orgPath}/${orgId}/${projectId}/${PROD_REPO_ID}`
       }),
-      Result.bind('keyDir', async () => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: orgId,
-            projectId: projectId,
-            projectLt: projectLt,
-            repoId: repoId,
-            branchId: branch
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+      Result.bind('keyDir', () =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: orgId,
+          projectId: projectId,
+          projectLt: projectLt,
+          repoId: repoId,
+          branchId: branch
+        })
+      ),
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -98,11 +93,10 @@ export class PushRepoService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -110,11 +104,10 @@ export class PushRepoService {
           branchName: branch,
           git: item.git,
           isFetch: true
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await pushToRemote({
+        })
+      ),
+      Result.andThrough(item =>
+        pushToRemote({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -122,11 +115,10 @@ export class PushRepoService {
           branch: branch,
           git: item.git,
           isFetch: false
-        });
-        return Result.succeed();
-      }),
-      Result.bind('prodGit', async item => {
-        let prodGit: SimpleGit = await createGit({
+        })
+      ),
+      Result.bind('prodGit', item =>
+        createGit({
           repoDir: item.prodRepoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -134,32 +126,30 @@ export class PushRepoService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(prodGit);
-      }),
+        })
+      ),
       Result.andThrough(async item => {
         await item.prodGit.fetch('origin', ['--prune']);
         return Result.succeed();
       }),
-      Result.andThrough(async item => {
-        let isProdBranchExist: boolean = await isLocalBranchExist({
+      Result.bind('isProdBranchExist', item =>
+        isLocalBranchExist({
           repoDir: item.prodRepoDir,
           localBranch: branch
-        });
-
-        if (isProdBranchExist === false) {
-          await createBranch({
-            repoDir: item.prodRepoDir,
-            fromBranch: `origin/${branch}`,
-            newBranch: branch,
-            git: item.prodGit
-          });
-        }
-
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await merge({
+        })
+      ),
+      Result.andThrough(item =>
+        item.isProdBranchExist === false
+          ? createBranch({
+              repoDir: item.prodRepoDir,
+              fromBranch: `origin/${branch}`,
+              newBranch: branch,
+              git: item.prodGit
+            })
+          : Result.succeed()
+      ),
+      Result.andThrough(item =>
+        merge({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: PROD_REPO_ID,
@@ -169,11 +159,10 @@ export class PushRepoService {
           theirBranch: `origin/${branch}`,
           isTheirBranchRemote: true,
           git: item.prodGit
-        });
-        return Result.succeed();
-      }),
-      Result.bind('repoStatus', async item => {
-        let repoStatus: DiskItemStatus = await getRepoStatus({
+        })
+      ),
+      Result.bind('repoStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -181,21 +170,19 @@ export class PushRepoService {
           git: item.git,
           isFetch: true,
           isCheckConflicts: true
-        });
-        return Result.succeed(repoStatus);
-      }),
-      Result.bind('repoItemCatalog', async item => {
-        let repoItemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('repoItemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
           readFiles: false,
           isRootMproveDir: false
-        });
-        return Result.succeed(repoItemCatalog);
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: PROD_REPO_ID,
@@ -203,19 +190,17 @@ export class PushRepoService {
           branchName: branch,
           git: item.prodGit,
           isFetch: false
-        });
-        return Result.succeed();
-      }),
-      Result.bind('productionItemCatalog', async item => {
-        let productionItemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('productionItemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: PROD_REPO_ID,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(productionItemCatalog);
-      }),
+        })
+      ),
       Result.map(
         (item): ToDiskPushRepoResponsePayload => ({
           repo: {

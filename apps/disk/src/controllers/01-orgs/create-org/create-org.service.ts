@@ -5,7 +5,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { zToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskCreateOrgRequestPayload } from '#common/zod/to-disk/01-orgs/create-org/create-org-request-payload';
 import type { ToDiskCreateOrgResponsePayload } from '#common/zod/to-disk/01-orgs/create-org/create-org-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
@@ -39,10 +39,7 @@ export class CreateOrgService {
         orgDir: `${orgPath}/${orgId}`
       }),
       Result.andThrough(item => checkOrgDoesNotExist({ orgDir: item.orgDir })),
-      Result.andThrough(async item => {
-        await ensureDir(item.orgDir);
-        return Result.succeed();
-      }),
+      Result.andThrough(item => ensureDir({ dir: item.orgDir })),
       // Result.bind('createOrgResponsePayload', item =>
       //   Result.succeed(toCreateOrgResponsePayload({ orgId: item.orgId }))
       // ),

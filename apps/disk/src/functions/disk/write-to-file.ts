@@ -6,22 +6,22 @@ export async function writeToFile(item: {
   filePath: string;
   content: string;
 }): Result.ResultAsync<void, DiskFileIsSymlinkError> {
-  let { filePath, content } = item;
-
   let stat: fse.Stats | undefined;
+
   try {
-    stat = await fse.lstat(filePath);
+    stat = await fse.lstat(item.filePath);
   } catch (e: any) {
     if (e.code !== 'ENOENT') {
       throw e;
     }
+    // TODO: check logic
   }
 
   if (stat?.isSymbolicLink() === true) {
     return Result.fail(new DiskFileIsSymlinkError());
   }
 
-  await fse.writeFile(filePath, content);
+  await fse.writeFile(item.filePath, item.content);
 
   return Result.succeed();
 }

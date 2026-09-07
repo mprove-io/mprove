@@ -1,11 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { LogResult, SimpleGit, StatusResult } from 'simple-git';
+import type { LogResult, StatusResult } from 'simple-git';
 
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskSyncRepoRequest } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-request';
@@ -103,41 +101,6 @@ export class SyncRepoService {
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isBranchExist = await isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
-
     let syncRepoResult = Result.pipe(
       Result.succeed({
         orgId: orgId,
@@ -146,20 +109,18 @@ export class SyncRepoService {
         repoId: repoId,
         repoDir: repoDir
       }),
-      Result.bind('keyDir', async () => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: orgId,
-            projectId: projectId,
-            projectLt: projectLt,
-            repoId: repoId,
-            branchId: branch
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+      Result.bind('keyDir', () =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: orgId,
+          projectId: projectId,
+          projectLt: projectLt,
+          repoId: repoId,
+          branchId: branch
+        })
+      ),
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -167,11 +128,10 @@ export class SyncRepoService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -179,9 +139,8 @@ export class SyncRepoService {
           branchName: branch,
           git: item.git,
           isFetch: false
-        });
-        return Result.succeed();
-      }),
+        })
+      ),
       Result.andThrough(async item => {
         let logResult: LogResult = await item.git.log(['-1']);
         let diskLastCommit = logResult.latest?.hash;
@@ -238,17 +197,18 @@ export class SyncRepoService {
           deletedFiles: deletedFiles
         });
 
-        await addChangesToStage({ repoDir: item.repoDir });
-
-        let syncData: SyncData = {
-          direction: 'to-server',
-          appliedChangesOnServer: appliedChangesOnServer
-        };
-
-        return Result.succeed(syncData);
+        return Result.pipe(
+          addChangesToStage({ repoDir: item.repoDir }),
+          Result.map(
+            (): SyncData => ({
+              direction: 'to-server',
+              appliedChangesOnServer: appliedChangesOnServer
+            })
+          )
+        );
       }),
-      Result.bind('repoStatus', async item => {
-        let repoStatus: DiskItemStatus = await getRepoStatus({
+      Result.bind('repoStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -258,19 +218,17 @@ export class SyncRepoService {
           isCheckConflicts: getRepo === true,
           addContent: true,
           expandRenamed: true
-        });
-        return Result.succeed(repoStatus);
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('itemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
+        })
+      ),
       Result.map((item): ToDiskSyncRepoResponsePayload => {
         let basePayload = {
           files: item.itemCatalog.files,

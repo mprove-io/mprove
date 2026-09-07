@@ -1,5 +1,6 @@
 import os from 'node:os';
 import path from 'node:path';
+import { Result } from '@praha/byethrow';
 import test from 'ava';
 import fse from 'fs-extra';
 import { simpleGit } from 'simple-git';
@@ -48,18 +49,20 @@ test('cloneRemote must not materialise user-controlled symlinks on disk', async 
 
   await fse.ensureDir(keyDir);
 
-  await cloneRemote({
-    orgId: orgId,
-    projectId: projectId,
-    repoId: repoId,
-    orgPath: orgPath,
-    remoteType: ProjectRemoteTypeEnum.GitClone,
-    gitUrl: bareDir,
-    keyDir: keyDir,
-    privateKeyEncrypted: '',
-    publicKey: '',
-    passPhrase: ''
-  });
+  await Result.unwrap(
+    cloneRemote({
+      orgId: orgId,
+      projectId: projectId,
+      repoId: repoId,
+      orgPath: orgPath,
+      remoteType: ProjectRemoteTypeEnum.GitClone,
+      gitUrl: bareDir,
+      keyDir: keyDir,
+      privateKeyEncrypted: '',
+      publicKey: '',
+      passPhrase: ''
+    })
+  );
 
   let clonedLeakPath = `${orgPath}/${orgId}/${projectId}/${repoId}/leak.view`;
   let stat = await fse.lstat(clonedLeakPath);

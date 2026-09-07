@@ -2,10 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { emptyDir, ensureDir } from 'fs-extra';
-import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskSeedProjectRequest } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request';
 import type { ToDiskSeedProjectRequestPayload } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request-payload';
@@ -88,8 +85,8 @@ export class SeedProjectService {
         await ensureDir(item.keyDir);
         return Result.succeed();
       }),
-      Result.andThrough(async item => {
-        await prepareRemoteAndProd({
+      Result.andThrough(item =>
+        prepareRemoteAndProd({
           projectId: item.projectId,
           projectName: projectName,
           projectDir: item.projectDir,
@@ -101,11 +98,10 @@ export class SeedProjectService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await cloneRemoteToDev({
+        })
+      ),
+      Result.andThrough(item =>
+        cloneRemoteToDev({
           orgId: item.orgId,
           projectId: item.projectId,
           devRepoId: item.devRepoId,
@@ -116,21 +112,19 @@ export class SeedProjectService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed();
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('itemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.devRepoId,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
-      Result.bind('devGit', async item => {
-        let devGit: SimpleGit = await createGit({
+        })
+      ),
+      Result.bind('devGit', item =>
+        createGit({
           repoDir: item.devRepoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -138,11 +132,10 @@ export class SeedProjectService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(devGit);
-      }),
-      Result.bind('devItemStatus', async item => {
-        let devItemStatus: DiskItemStatus = await getRepoStatus({
+        })
+      ),
+      Result.bind('devItemStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.devRepoId,
@@ -150,9 +143,8 @@ export class SeedProjectService {
           git: item.devGit,
           isFetch: true,
           isCheckConflicts: true
-        });
-        return Result.succeed(devItemStatus);
-      }),
+        })
+      ),
       Result.map(
         (item): ToDiskSeedProjectResponsePayload => ({
           repo: {

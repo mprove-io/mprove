@@ -1,11 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import {
   type ToDiskCreateBranchRequest,
@@ -80,25 +77,23 @@ export class CreateBranchService {
         repoId: repoId,
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
       }),
-      Result.bind('keyDir', async item => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: item.orgId,
-            projectId: item.projectId,
-            projectLt: projectLt,
-            repoId: item.repoId,
-            branchId:
-              item.repoId === PROD_REPO_ID
+      Result.bind('keyDir', item =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: item.orgId,
+          projectId: item.projectId,
+          projectLt: projectLt,
+          repoId: item.repoId,
+          branchId:
+            item.repoId === PROD_REPO_ID
+              ? fromBranch
+              : isFromRemote === false
                 ? fromBranch
-                : isFromRemote === false
-                  ? fromBranch
-                  : undefined
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+                : undefined
+        })
+      ),
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -106,31 +101,28 @@ export class CreateBranchService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        let isFromBranchExist: boolean =
-          isFromRemote === true
-            ? await isRemoteBranchExist({
-                repoDir: item.repoDir,
-                remoteBranch: fromBranch,
-                git: item.git,
-                isFetch: true
-              })
-            : await isLocalBranchExist({
-                repoDir: item.repoDir,
-                localBranch: fromBranch
-              });
-
-        if (isFromBranchExist === false) {
-          return Result.fail(new DiskBranchIsNotExistError());
-        }
-
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.bind('isFromBranchExist', item =>
+        isFromRemote === true
+          ? isRemoteBranchExist({
+              repoDir: item.repoDir,
+              remoteBranch: fromBranch,
+              git: item.git,
+              isFetch: true
+            })
+          : isLocalBranchExist({
+              repoDir: item.repoDir,
+              localBranch: fromBranch
+            })
+      ),
+      Result.andThrough(item =>
+        item.isFromBranchExist === false
+          ? Result.fail(new DiskBranchIsNotExistError())
+          : Result.succeed()
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -138,21 +130,19 @@ export class CreateBranchService {
           branchName: fromBranch,
           git: item.git,
           isFetch: false
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        await createBranch({
+        })
+      ),
+      Result.andThrough(item =>
+        createBranch({
           repoDir: item.repoDir,
           fromBranch:
             isFromRemote === true ? `origin/${fromBranch}` : fromBranch,
           newBranch: newBranch,
           git: item.git
-        });
-        return Result.succeed();
-      }),
-      Result.bind('repoStatus', async item => {
-        let repoStatus: DiskItemStatus = await getRepoStatus({
+        })
+      ),
+      Result.bind('repoStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -160,19 +150,17 @@ export class CreateBranchService {
           git: item.git,
           isFetch: isFromRemote === true ? false : true,
           isCheckConflicts: true
-        });
-        return Result.succeed(repoStatus);
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('itemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
+        })
+      ),
       Result.map(
         (item): ToDiskCreateBranchResponsePayload => ({
           repo: {

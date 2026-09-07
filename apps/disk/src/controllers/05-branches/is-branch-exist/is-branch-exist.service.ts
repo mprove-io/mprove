@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import {
@@ -70,20 +69,18 @@ export class IsBranchExistService {
         repoId: repoId,
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
       }),
-      Result.bind('keyDir', async item => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: item.orgId,
-            projectId: item.projectId,
-            projectLt: projectLt,
-            repoId: item.repoId,
-            branchId: undefined
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+      Result.bind('keyDir', item =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: item.orgId,
+          projectId: item.projectId,
+          projectLt: projectLt,
+          repoId: item.repoId,
+          branchId: undefined
+        })
+      ),
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -91,24 +88,21 @@ export class IsBranchExistService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.bind('isBranchExist', async item => {
-        let isBranchExist: boolean =
-          isRemote === true
-            ? await isRemoteBranchExist({
-                repoDir: item.repoDir,
-                remoteBranch: branch,
-                git: item.git,
-                isFetch: true
-              })
-            : await isLocalBranchExist({
-                repoDir: item.repoDir,
-                localBranch: branch
-              });
-        return Result.succeed(isBranchExist);
-      }),
+        })
+      ),
+      Result.bind('isBranchExist', item =>
+        isRemote === true
+          ? isRemoteBranchExist({
+              repoDir: item.repoDir,
+              remoteBranch: branch,
+              git: item.git,
+              isFetch: true
+            })
+          : isLocalBranchExist({
+              repoDir: item.repoDir,
+              localBranch: branch
+            })
+      ),
       Result.map(
         (item): ToDiskIsBranchExistResponsePayload => ({
           orgId: item.orgId,

@@ -1,9 +1,10 @@
+import { Result } from '@praha/byethrow';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { createGit } from '#disk/functions/git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
-export async function cloneRemoteToDev(item: {
+export function cloneRemoteToDev(item: {
   orgId: string;
   projectId: string;
   devRepoId: string;
@@ -14,42 +15,40 @@ export async function cloneRemoteToDev(item: {
   privateKeyEncrypted: string;
   publicKey: string;
   passPhrase: string;
-}) {
-  return await addTraceSpan({
+}): Result.ResultAsync<void, never> {
+  return addTraceSpan({
     spanName: 'disk.git.cloneRemoteToDev',
-    fn: async () => {
-      let {
-        orgId,
-        projectId,
-        devRepoId,
-        orgPath,
-        remoteType,
-        gitUrl,
-        keyDir,
-        privateKeyEncrypted,
-        publicKey,
-        passPhrase
-      } = item;
+    fn: () =>
+      Result.pipe(
+        Result.succeed({
+          remoteType: item.remoteType,
+          keyDir: item.keyDir,
+          gitUrl: item.gitUrl,
+          privateKeyEncrypted: item.privateKeyEncrypted,
+          publicKey: item.publicKey,
+          passPhrase: item.passPhrase,
+          remoteUrl:
+            item.remoteType === ProjectRemoteTypeEnum.GitClone
+              ? item.gitUrl
+              : `${item.orgPath}/${item.orgId}/${item.projectId}/${CENTRAL_REPO_ID}`,
+          dirDev: `${item.orgPath}/${item.orgId}/${item.projectId}/${item.devRepoId}`
+        }),
+        Result.bind('git', item =>
+          createGit({
+            repoDir: undefined,
+            remoteType: item.remoteType,
+            keyDir: item.keyDir,
+            gitUrl: item.gitUrl,
+            privateKeyEncrypted: item.privateKeyEncrypted,
+            publicKey: item.publicKey,
+            passPhrase: item.passPhrase
+          })
+        ),
+        Result.andThen(async item => {
+          await item.git.clone(item.remoteUrl, item.dirDev);
 
-      let projectDir = `${orgPath}/${orgId}/${projectId}`;
-
-      let remoteUrl =
-        remoteType === ProjectRemoteTypeEnum.GitClone
-          ? gitUrl
-          : `${projectDir}/${CENTRAL_REPO_ID}`;
-      let dirDev = `${projectDir}/${devRepoId}`;
-
-      let git = await createGit({
-        repoDir: undefined,
-        remoteType: remoteType,
-        keyDir: keyDir,
-        gitUrl: gitUrl,
-        privateKeyEncrypted: privateKeyEncrypted,
-        publicKey: publicKey,
-        passPhrase: passPhrase
-      });
-
-      await git.clone(remoteUrl, dirDev);
-    }
+          return Result.succeed();
+        })
+      )
   });
 }

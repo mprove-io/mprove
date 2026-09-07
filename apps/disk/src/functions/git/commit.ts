@@ -1,12 +1,13 @@
+import { Result } from '@praha/byethrow';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
 
-export async function commit(item: {
+export function commit(item: {
   repoDir: string;
   userAlias: string;
   commitMessage: string;
-}) {
-  return await addTraceSpan({
+}): Result.ResultAsync<void, never> {
+  return addTraceSpan({
     spanName: 'disk.git.commit',
     fn: async () => {
       let git = createSimpleGit({ baseDir: item.repoDir });
@@ -17,6 +18,8 @@ export async function commit(item: {
       await git.commit(item.commitMessage, {
         '--author': `${item.userAlias} <${item.userAlias}@>`
       });
+
+      return Result.succeed();
     }
   });
 }

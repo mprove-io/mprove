@@ -6,7 +6,7 @@ import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskDeleteDevRepoRequest } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-request';
 import type { ToDiskDeleteDevRepoRequestPayload } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-request-payload';
 import type { ToDiskDeleteDevRepoResponsePayload } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-response-payload';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
 import { DiskTabService } from '#disk/services/disk-tab.service';
@@ -58,26 +58,24 @@ export class DeleteDevRepoService {
         devRepoId: devRepoId,
         devRepoDir: `${orgPath}/${orgId}/${projectId}/${devRepoId}`
       }),
-      Result.andThrough(async item => {
-        await this.restoreService.checkOrgProjectRepoBranch({
+      Result.andThrough(item =>
+        this.restoreService.checkOrgProjectRepoBranch({
           remoteType: baseProject.remoteType,
           orgId: item.orgId,
           projectId: item.projectId,
           projectLt: projectLt,
           repoId: undefined,
           branchId: undefined
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        let isDevRepoExist: boolean = await isPathExist(item.devRepoDir);
-
-        if (isDevRepoExist === true) {
-          await removePath(item.devRepoDir);
-        }
-
-        return Result.succeed();
-      }),
+        })
+      ),
+      Result.bind('isDevRepoExist', item =>
+        isPathExist({ path: item.devRepoDir })
+      ),
+      Result.andThrough(item =>
+        item.isDevRepoExist === true
+          ? removePath({ path: item.devRepoDir })
+          : Result.succeed()
+      ),
       Result.map(
         (item): ToDiskDeleteDevRepoResponsePayload => ({
           orgId: item.orgId,

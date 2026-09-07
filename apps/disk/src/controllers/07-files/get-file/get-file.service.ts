@@ -1,11 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import {
   type ToDiskGetFileRequest,
@@ -95,20 +92,18 @@ export class GetFileService {
         });
         return Result.succeed();
       }),
-      Result.bind('keyDir', async item => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: item.remoteType,
-            orgId: item.orgId,
-            projectId: item.projectId,
-            projectLt: item.projectLt,
-            repoId: item.repoId,
-            branchId: item.branch
-          });
-        return Result.succeed(keyDir);
-      }),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+      Result.bind('keyDir', item =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: item.remoteType,
+          orgId: item.orgId,
+          projectId: item.projectId,
+          projectLt: item.projectLt,
+          repoId: item.repoId,
+          branchId: item.branch
+        })
+      ),
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: item.remoteType,
           keyDir: item.keyDir,
@@ -116,11 +111,10 @@ export class GetFileService {
           privateKeyEncrypted: item.projectLt.privateKeyEncrypted,
           publicKey: item.projectLt.publicKey,
           passPhrase: item.projectLt.passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -128,13 +122,9 @@ export class GetFileService {
           branchName: item.branch,
           git: item.git,
           isFetch: false
-        });
-        return Result.succeed();
-      }),
-      Result.bind('isExist', async item => {
-        let isExist: boolean = await isPathExist(item.filePath);
-        return Result.succeed(isExist);
-      }),
+        })
+      ),
+      Result.bind('isExist', item => isPathExist({ path: item.filePath })),
       Result.andThrough(item => {
         if (
           item.isExist === false &&
@@ -157,27 +147,25 @@ export class GetFileService {
 
         return Result.succeed(content);
       }),
-      Result.bind('originalContent', async item => {
+      Result.bind('originalContent', item => {
         if (item.builderLeft === BuilderLeftEnum.ChangesToCommit) {
-          let originalContent: string = await getLastCommitFileContent({
+          return getLastCommitFileContent({
             repoDir: item.repoDir,
             filePathRelative: item.filePathRelative
           });
-          return Result.succeed(originalContent);
         }
 
         if (item.builderLeft === BuilderLeftEnum.ChangesToPush) {
-          let originalContent: string = await getBaseCommitFileContent({
+          return getBaseCommitFileContent({
             repoDir: item.repoDir,
             filePathRelative: item.filePathRelative
           });
-          return Result.succeed(originalContent);
         }
 
         return Result.succeed(undefined);
       }),
-      Result.bind('repoStatus', async item => {
-        let repoStatus: DiskItemStatus = await getRepoStatus({
+      Result.bind('repoStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -185,19 +173,17 @@ export class GetFileService {
           git: item.git,
           isFetch: false,
           isCheckConflicts: false
-        });
-        return Result.succeed(repoStatus);
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('itemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
           readFiles: true,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
+        })
+      ),
       Result.map(
         (item): ToDiskGetFileResponsePayload => ({
           repo: {

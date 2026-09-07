@@ -1,13 +1,12 @@
-import { SimpleGit } from 'simple-git';
+import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 
-import { ErEnum } from '#common/enums/er.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
-import { ServerError } from '#common/models/server-error';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
+import { DiskRepoStatusIsNotNeedPushError } from './errors/disk-repo-status-is-not-need-push-error';
 import { getRepoStatus } from './get-repo-status';
 
-export async function pushToRemote(item: {
+export function pushToRemote(item: {
   projectId: string;
   projectDir: string;
   repoId: string;
@@ -15,31 +14,34 @@ export async function pushToRemote(item: {
   branch: string;
   git: SimpleGit;
   isFetch: boolean;
-}) {
-  return await addTraceSpan({
+}): Result.ResultAsync<void, DiskRepoStatusIsNotNeedPushError> {
+  return addTraceSpan({
     spanName: 'disk.git.pushToRemote',
-    fn: async () => {
-      let { repoStatus, currentBranch, conflicts } = <DiskItemStatus>(
-        await getRepoStatus({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
-          git: item.git,
-          isFetch: item.isFetch,
-          isCheckConflicts: false
+    fn: () =>
+      Result.pipe(
+        Result.succeed(item),
+        Result.bind('diskItemStatus', item =>
+          getRepoStatus({
+            projectId: item.projectId,
+            projectDir: item.projectDir,
+            repoId: item.repoId,
+            repoDir: item.repoDir,
+            git: item.git,
+            isFetch: item.isFetch,
+            isCheckConflicts: false
+          })
+        ),
+        Result.andThen(async item => {
+          let { repoStatus } = item.diskItemStatus;
+
+          if (repoStatus !== RepoStatusEnum.NeedPush) {
+            return Result.fail(new DiskRepoStatusIsNotNeedPushError());
+          }
+
+          await item.git.push('origin', item.branch);
+
+          return Result.succeed();
         })
-      );
-
-      let okStatuses = [RepoStatusEnum.NeedPush];
-
-      if (okStatuses.indexOf(repoStatus) < 0) {
-        throw new ServerError({
-          message: ErEnum.DISK_REPO_STATUS_IS_NOT_NEED_PUSH
-        });
-      }
-
-      await item.git.push('origin', item.branch);
-    }
+      )
   });
 }

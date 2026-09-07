@@ -2,16 +2,18 @@ import { Result } from '@praha/byethrow';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { DiskProjectAlreadyExistsError } from '../errors/disk-project-already-exists-error';
 
-export async function checkProjectDoesNotExist(item: {
+export function checkProjectDoesNotExist(item: {
   projectDir: string;
 }): Result.ResultAsync<void, DiskProjectAlreadyExistsError> {
-  let { projectDir } = item;
-
-  let isProjectExist: boolean = await isPathExist(projectDir);
-
-  if (isProjectExist === true) {
-    return Result.fail(new DiskProjectAlreadyExistsError());
-  } else {
-    return Result.succeed();
-  }
+  return Result.pipe(
+    Result.succeed({ projectDir: item.projectDir }),
+    Result.bind('isProjectExist', item =>
+      isPathExist({ path: item.projectDir })
+    ),
+    Result.andThen(item =>
+      item.isProjectExist === true
+        ? Result.fail(new DiskProjectAlreadyExistsError())
+        : Result.succeed()
+    )
+  );
 }
