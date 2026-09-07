@@ -1,11 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { SimpleGit } from 'simple-git';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import {
   type ToDiskDeleteBranchRequest,
@@ -17,17 +13,13 @@ import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { deleteLocalBranch } from '#disk/functions/git/delete-local-branch';
-import { deleteRemoteBranch } from '#disk/functions/git/delete-remote-branch';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
-import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskBranchIsNotExistError } from './errors/disk-branch-is-not-exist-error';
 import { DiskDefaultBranchCannotBeDeletedError } from './errors/disk-default-branch-cannot-be-deleted-error';
+import { deleteBranchFromRepositories } from './functions/delete-branch-from-repositories';
 
 @Injectable()
 export class DeleteBranchService {
@@ -81,25 +73,23 @@ export class DeleteBranchService {
         repoId: repoId,
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
       }),
-      Result.bind('keyDir', async item => {
-        let keyDir: string =
-          await this.restoreService.checkOrgProjectRepoBranch({
-            remoteType: remoteType,
-            orgId: item.orgId,
-            projectId: item.projectId,
-            projectLt: projectLt,
-            repoId: item.repoId,
-            branchId: branch
-          });
-        return Result.succeed(keyDir);
-      }),
+      Result.bind('keyDir', item =>
+        this.restoreService.checkOrgProjectRepoBranch({
+          remoteType: remoteType,
+          orgId: item.orgId,
+          projectId: item.projectId,
+          projectLt: projectLt,
+          repoId: item.repoId,
+          branchId: branch
+        })
+      ),
       Result.andThrough(() =>
         branch === defaultBranch
           ? Result.fail(new DiskDefaultBranchCannotBeDeletedError())
           : Result.succeed()
       ),
-      Result.bind('git', async item => {
-        let git: SimpleGit = await createGit({
+      Result.bind('git', item =>
+        createGit({
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
@@ -107,11 +97,10 @@ export class DeleteBranchService {
           privateKeyEncrypted: privateKeyEncrypted,
           publicKey: publicKey,
           passPhrase: passPhrase
-        });
-        return Result.succeed(git);
-      }),
-      Result.andThrough(async item => {
-        await checkoutBranch({
+        })
+      ),
+      Result.andThrough(item =>
+        checkoutBranch({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -119,49 +108,19 @@ export class DeleteBranchService {
           branchName: defaultBranch,
           git: item.git,
           isFetch: false
-        });
-        return Result.succeed();
-      }),
-      Result.andThrough(async item => {
-        let errorIfNoLocalBranch: boolean = true;
-
-        if (item.repoId === PROD_REPO_ID) {
-          let isRemoteBranchExistResult: boolean = await isRemoteBranchExist({
-            repoDir: item.repoDir,
-            remoteBranch: branch,
-            git: item.git,
-            isFetch: true
-          });
-
-          if (isRemoteBranchExistResult === true) {
-            await deleteRemoteBranch({
-              projectDir: item.projectDir,
-              branch: branch,
-              git: item.git
-            });
-
-            errorIfNoLocalBranch = false;
-          }
-        }
-
-        let isLocalBranchExistResult: boolean = await isLocalBranchExist({
+        })
+      ),
+      Result.andThrough(item =>
+        deleteBranchFromRepositories({
+          projectDir: item.projectDir,
+          repoId: item.repoId,
           repoDir: item.repoDir,
-          localBranch: branch
-        });
-
-        if (isLocalBranchExistResult === true) {
-          await deleteLocalBranch({
-            repoDir: item.repoDir,
-            branch: branch
-          });
-        } else if (errorIfNoLocalBranch === true) {
-          return Result.fail(new DiskBranchIsNotExistError());
-        }
-
-        return Result.succeed();
-      }),
-      Result.bind('repoStatus', async item => {
-        let repoStatus: DiskItemStatus = await getRepoStatus({
+          branch: branch,
+          git: item.git
+        })
+      ),
+      Result.bind('repoStatus', item =>
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -169,19 +128,17 @@ export class DeleteBranchService {
           git: item.git,
           isFetch: true,
           isCheckConflicts: true
-        });
-        return Result.succeed(repoStatus);
-      }),
-      Result.bind('itemCatalog', async item => {
-        let itemCatalog: DiskItemCatalog = await getNodesAndFiles({
+        })
+      ),
+      Result.bind('itemCatalog', item =>
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
           readFiles: false,
           isRootMproveDir: false
-        });
-        return Result.succeed(itemCatalog);
-      }),
+        })
+      ),
       Result.map(
         (item): ToDiskDeleteBranchResponsePayload => ({
           repo: {
