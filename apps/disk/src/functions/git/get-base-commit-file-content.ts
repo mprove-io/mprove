@@ -43,8 +43,9 @@ export function getBaseCommitFileContent(item: {
           e?.message?.includes('exists on disk, but not in')
         ) {
           return Result.succeed('');
+        } else {
+          throw e;
         }
-        throw e;
       }
     }
   });
