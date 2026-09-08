@@ -83,6 +83,25 @@
               </button>
             </div>
 
+            @switch (repo?.repoError) {
+              @case (repoErrorEnum.NoCommonAncestor) {
+                <div
+                  class="text-r1 ml-3 flex h-6 w-6 flex-shrink-0"
+                  tp="History mismatch: No common ancestor (git commit) found between the local and remote branches"
+                >
+                  <m-exclamation-icon></m-exclamation-icon>
+                </div>
+              }
+              @case (repoErrorEnum.ChangesToPushNotCalculated) {
+                <div
+                  class="text-r1 ml-3 flex h-6 w-6 flex-shrink-0"
+                  tp="Internal error: Could not calculate changes to push"
+                >
+                  <m-exclamation-icon></m-exclamation-icon>
+                </div>
+              }
+            }
+
             <div
               *ngIf="nav?.repoType === repoTypeEnum.Session"
               class="ml-8 flex cursor-pointer flex-row items-center"
