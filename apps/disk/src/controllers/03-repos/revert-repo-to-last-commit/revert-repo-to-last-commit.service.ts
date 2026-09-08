@@ -66,41 +66,6 @@ export class RevertRepoToLastCommitService {
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
-    // let isOrgExist = await isPathExist(orgDir);
-    // if (isOrgExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isProjectExist = await isPathExist(projectDir);
-    // if (isProjectExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isRepoExist = await isPathExist(repoDir);
-    // if (isRepoExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let isBranchExist = await isLocalBranchExist({
-    //   repoDir: repoDir,
-    //   localBranch: branch
-    // });
-    // if (isBranchExist === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-    //   });
-    // }
-
-    // let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    // await ensureDir(keyDir);
-
     let revertRepoToLastCommitResult = Result.pipe(
       Result.succeed({
         orgId: orgId,
