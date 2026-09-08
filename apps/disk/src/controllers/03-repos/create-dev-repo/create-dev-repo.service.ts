@@ -173,6 +173,7 @@ export class CreateDevRepoService {
             projectId: item.projectId,
             repoId: item.devRepoId,
             repoStatus: item.repoStatus,
+            repoError: item.devItemStatus.repoError,
             currentBranchId: item.devItemStatus.currentBranch,
             conflicts: item.devItemStatus.conflicts,
             nodes: item.itemCatalog.nodes,

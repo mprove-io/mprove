@@ -182,6 +182,7 @@ export class RenameCatalogNodeService {
             projectId: v.projectId,
             repoId: v.repoId,
             repoStatus: v.itemStatus.repoStatus,
+            repoError: v.itemStatus.repoError,
             currentBranchId: v.itemStatus.currentBranch,
             conflicts: v.itemStatus.conflicts,
             nodes: v.itemCatalog.nodes,

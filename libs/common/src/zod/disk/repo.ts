@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RepoErrorEnum } from '#common/enums/repo-error.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { zDiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
 import { zDiskFileChange } from '#common/zod/disk/disk-file-change';
@@ -11,6 +12,7 @@ export let zRepo = z
     repoId: z.string(),
     currentBranchId: z.string(),
     repoStatus: z.enum(RepoStatusEnum),
+    repoError: z.enum(RepoErrorEnum).nullish(),
     conflicts: z.array(zDiskFileLine),
     nodes: z.array(zDiskCatalogNode),
     changesToCommit: z.array(zDiskFileChange),

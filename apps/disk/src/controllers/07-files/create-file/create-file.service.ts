@@ -207,6 +207,7 @@ export class CreateFileService {
             projectId: item.projectId,
             repoId: item.repoId,
             repoStatus: item.repoStatus.repoStatus,
+            repoError: item.repoStatus.repoError,
             currentBranchId: item.repoStatus.currentBranch,
             conflicts: item.repoStatus.conflicts,
             nodes: item.itemCatalog.nodes,

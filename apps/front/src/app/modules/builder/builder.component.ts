@@ -15,6 +15,7 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
+import { RepoErrorEnum } from '#common/enums/repo-error.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -71,6 +72,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
   repoStatusNeedPull = RepoStatusEnum.NeedPull;
   repoStatusNeedPush = RepoStatusEnum.NeedPush;
   repoStatusOk = RepoStatusEnum.Ok;
+
+  repoErrorEnum = RepoErrorEnum;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(

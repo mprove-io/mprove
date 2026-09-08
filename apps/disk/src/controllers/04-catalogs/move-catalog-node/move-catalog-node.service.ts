@@ -179,6 +179,7 @@ export class MoveCatalogNodeService {
             projectId: item.projectId,
             repoId: item.repoId,
             repoStatus: item.itemStatus.repoStatus,
+            repoError: item.itemStatus.repoError,
             currentBranchId: item.itemStatus.currentBranch,
             conflicts: item.itemStatus.conflicts,
             nodes: item.itemCatalog.nodes,

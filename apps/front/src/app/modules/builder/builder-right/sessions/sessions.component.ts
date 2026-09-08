@@ -433,6 +433,7 @@ export class SessionsComponent implements OnInit {
     if (session.repoId !== currentRepoId) {
       this.repoQuery.updatePart({
         repoStatus: RepoStatusEnum.Ok,
+        repoError: undefined,
         changesToCommit: [],
         changesToPush: []
       });
