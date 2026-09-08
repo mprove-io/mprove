@@ -14,7 +14,6 @@ export async function writeToFile(item: {
     if (e.code !== 'ENOENT') {
       throw e;
     }
-    // TODO: check logic
   }
 
   if (stat?.isSymbolicLink() === true) {
