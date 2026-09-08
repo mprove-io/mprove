@@ -14,8 +14,8 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
 import { merge } from '#disk/functions/git/merge';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 import { DiskTheirBranchIsNotExistError } from './errors/disk-their-branch-is-not-exist-error';
@@ -24,7 +24,6 @@ import { DiskTheirBranchIsNotExistError } from './errors/disk-their-branch-is-no
 export class MergeRepoService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -75,9 +74,10 @@ export class MergeRepoService {
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
       }),
       Result.bind('keyDir', () =>
-        this.restoreService.checkOrgProjectRepoBranch({
+        checkRestoreOrgProjectRepoBranch({
           remoteType: remoteType,
           orgId: orgId,
+          orgPath: orgPath,
           projectId: projectId,
           projectLt: projectLt,
           repoId: repoId,

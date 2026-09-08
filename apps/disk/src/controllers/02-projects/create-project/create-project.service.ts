@@ -14,8 +14,8 @@ import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
+import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 import { checkProjectDoesNotExist } from './functions/check-project-does-not-exist';
@@ -24,7 +24,6 @@ import { checkProjectDoesNotExist } from './functions/check-project-does-not-exi
 export class CreateProjectService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -72,13 +71,9 @@ export class CreateProjectService {
         prodRepoDir: `${orgPath}/${orgId}/${projectId}/${PROD_REPO_ID}`
       }),
       Result.andThrough(() =>
-        this.restoreService.checkOrgProjectRepoBranch({
-          remoteType: remoteType,
+        checkRestoreOrg({
           orgId: orgId,
-          projectId: undefined,
-          projectLt: undefined,
-          repoId: undefined,
-          branchId: undefined
+          orgPath: orgPath
         })
       ),
       Result.andThrough(item =>

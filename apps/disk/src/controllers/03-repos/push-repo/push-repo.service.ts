@@ -16,8 +16,8 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { merge } from '#disk/functions/git/merge';
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
@@ -25,7 +25,6 @@ import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 export class PushRepoService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -75,9 +74,10 @@ export class PushRepoService {
         prodRepoDir: `${orgPath}/${orgId}/${projectId}/${PROD_REPO_ID}`
       }),
       Result.bind('keyDir', () =>
-        this.restoreService.checkOrgProjectRepoBranch({
+        checkRestoreOrgProjectRepoBranch({
           remoteType: remoteType,
           orgId: orgId,
+          orgPath: orgPath,
           projectId: projectId,
           projectLt: projectLt,
           repoId: repoId,

@@ -9,8 +9,8 @@ import type { ToDiskDeleteDevRepoResponsePayload } from '#common/zod/to-disk/03-
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
+import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
@@ -18,7 +18,6 @@ import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 export class DeleteDevRepoService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -59,13 +58,12 @@ export class DeleteDevRepoService {
         devRepoDir: `${orgPath}/${orgId}/${projectId}/${devRepoId}`
       }),
       Result.andThrough(item =>
-        this.restoreService.checkOrgProjectRepoBranch({
+        checkRestoreOrgProject({
           remoteType: baseProject.remoteType,
           orgId: item.orgId,
+          orgPath: orgPath,
           projectId: item.projectId,
-          projectLt: projectLt,
-          repoId: undefined,
-          branchId: undefined
+          projectLt: projectLt
         })
       ),
       Result.bind('isDevRepoExist', item =>

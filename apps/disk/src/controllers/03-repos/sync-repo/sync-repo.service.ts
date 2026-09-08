@@ -15,8 +15,8 @@ import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { applySyncPayload } from '#node-common/functions/apply-sync-payload';
 import { getSyncAppliedChanges } from '#node-common/functions/get-sync-applied-changes';
 import { getWorkingTreePayload } from '#node-common/functions/get-sync-files';
@@ -45,7 +45,6 @@ type WorkingTreePayload = {
 export class SyncRepoService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -110,9 +109,10 @@ export class SyncRepoService {
         repoDir: repoDir
       }),
       Result.bind('keyDir', () =>
-        this.restoreService.checkOrgProjectRepoBranch({
+        checkRestoreOrgProjectRepoBranch({
           remoteType: remoteType,
           orgId: orgId,
+          orgPath: orgPath,
           projectId: projectId,
           projectLt: projectLt,
           repoId: repoId,

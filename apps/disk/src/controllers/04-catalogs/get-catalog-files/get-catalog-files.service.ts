@@ -11,8 +11,8 @@ import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
@@ -20,7 +20,6 @@ import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 export class GetCatalogFilesService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -68,9 +67,10 @@ export class GetCatalogFilesService {
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
       }),
       Result.bind('keyDir', item =>
-        this.restoreService.checkOrgProjectRepoBranch({
+        checkRestoreOrgProjectRepoBranch({
           remoteType: remoteType,
           orgId: item.orgId,
+          orgPath: orgPath,
           projectId: item.projectId,
           projectLt: projectLt,
           repoId: item.repoId,

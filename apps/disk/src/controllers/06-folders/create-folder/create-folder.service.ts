@@ -16,8 +16,8 @@ import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
@@ -28,7 +28,6 @@ import { DiskParentPathIsNotExistError } from './errors/disk-parent-path-is-not-
 export class CreateFolderService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -102,9 +101,10 @@ export class CreateFolderService {
         return Result.succeed();
       }),
       Result.bind('keyDir', item =>
-        this.restoreService.checkOrgProjectRepoBranch({
+        checkRestoreOrgProjectRepoBranch({
           remoteType: remoteType,
           orgId: item.orgId,
+          orgPath: orgPath,
           projectId: item.projectId,
           projectLt: projectLt,
           repoId: item.repoId,

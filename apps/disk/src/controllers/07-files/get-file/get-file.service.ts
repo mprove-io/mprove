@@ -18,8 +18,8 @@ import { createGit } from '#disk/functions/git/create-git';
 import { getBaseCommitFileContent } from '#disk/functions/git/get-base-commit-file-content';
 import { getLastCommitFileContent } from '#disk/functions/git/get-last-commit-file-content';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
@@ -30,7 +30,6 @@ import { DiskFileIsNotExistError } from './errors/disk-file-is-not-exist-error';
 export class GetFileService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -93,9 +92,10 @@ export class GetFileService {
         return Result.succeed();
       }),
       Result.bind('keyDir', item =>
-        this.restoreService.checkOrgProjectRepoBranch({
+        checkRestoreOrgProjectRepoBranch({
           remoteType: item.remoteType,
           orgId: item.orgId,
+          orgPath: orgPath,
           projectId: item.projectId,
           projectLt: item.projectLt,
           repoId: item.repoId,

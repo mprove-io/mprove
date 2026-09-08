@@ -31,14 +31,11 @@ import { CloneTestRepoService } from './controllers/09-test/clone-test-repo/clon
 import { ConsumerService } from './services/consumer.service';
 import { DiskTabService } from './services/disk-tab.service';
 import { MessageService } from './services/message.service';
-import { RestoreService } from './services/restore.service';
 
 export const appServices = [
   DiskTabService,
   ConsumerService,
   MessageService,
-  RestoreService,
-
   CreateOrgService,
   DeleteOrgService,
   IsOrgExistService,

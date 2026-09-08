@@ -13,8 +13,8 @@ import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
 import { revertRepoToRemote } from '#disk/functions/git/revert-repo-to-remote';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 import { DiskRemoteBranchIsNotExistError } from './errors/disk-remote-branch-is-not-exist-error';
@@ -23,7 +23,6 @@ import { DiskRemoteBranchIsNotExistError } from './errors/disk-remote-branch-is-
 export class RevertRepoToRemoteService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -77,9 +76,10 @@ export class RevertRepoToRemoteService {
         repoDir: repoDir
       }),
       Result.bind('keyDir', () =>
-        this.restoreService.checkOrgProjectRepoBranch({
+        checkRestoreOrgProjectRepoBranch({
           remoteType: remoteType,
           orgId: orgId,
+          orgPath: orgPath,
           projectId: projectId,
           projectLt: projectLt,
           repoId: repoId,

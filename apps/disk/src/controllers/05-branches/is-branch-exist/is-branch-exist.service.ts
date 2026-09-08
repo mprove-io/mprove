@@ -13,8 +13,8 @@ import type { DiskConfig } from '#disk/config/disk-config';
 import { createGit } from '#disk/functions/git/create-git';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
+import { checkRestoreOrgProjectRepo } from '#disk/functions/restore/check-restore-org-project-repo';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
@@ -22,7 +22,6 @@ import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 export class IsBranchExistService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -70,13 +69,13 @@ export class IsBranchExistService {
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
       }),
       Result.bind('keyDir', item =>
-        this.restoreService.checkOrgProjectRepoBranch({
+        checkRestoreOrgProjectRepo({
           remoteType: remoteType,
           orgId: item.orgId,
+          orgPath: orgPath,
           projectId: item.projectId,
           projectLt: projectLt,
-          repoId: item.repoId,
-          branchId: undefined
+          repoId: item.repoId
         })
       ),
       Result.bind('git', item =>

@@ -6,8 +6,8 @@ import { zToDiskIsProjectExistRequest } from '#common/zod/to-disk/02-projects/is
 import type { ToDiskIsProjectExistResponsePayload } from '#common/zod/to-disk/02-projects/is-project-exist/is-project-exist-response-payload';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
@@ -15,7 +15,6 @@ import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 export class IsProjectExistService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -42,13 +41,9 @@ export class IsProjectExistService {
         projectDir: `${orgPath}/${orgId}/${projectId}`
       }),
       Result.andThrough(item =>
-        this.restoreService.checkOrgProjectRepoBranch({
-          remoteType: undefined,
+        checkRestoreOrg({
           orgId: item.orgId,
-          projectId: undefined,
-          projectLt: undefined,
-          repoId: undefined,
-          branchId: undefined
+          orgPath: orgPath
         })
       ),
       Result.bind('isProjectExist', item =>

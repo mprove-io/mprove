@@ -18,8 +18,8 @@ import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { RestoreService } from '#disk/services/restore.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 import { DiskBranchIsNotExistError } from './errors/disk-branch-is-not-exist-error';
@@ -28,7 +28,6 @@ import { DiskBranchIsNotExistError } from './errors/disk-branch-is-not-exist-err
 export class CreateBranchService {
   constructor(
     private diskTabService: DiskTabService,
-    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -69,6 +68,13 @@ export class CreateBranchService {
 
     let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
+    let restoreBranchId =
+      repoId === PROD_REPO_ID
+        ? fromBranch
+        : isFromRemote === false
+          ? fromBranch
+          : undefined;
+
     let createBranchResult = Result.pipe(
       Result.succeed({
         orgId: orgId,
@@ -78,18 +84,14 @@ export class CreateBranchService {
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
       }),
       Result.bind('keyDir', item =>
-        this.restoreService.checkOrgProjectRepoBranch({
+        checkRestoreOrgProjectRepoBranch({
           remoteType: remoteType,
           orgId: item.orgId,
+          orgPath: orgPath,
           projectId: item.projectId,
           projectLt: projectLt,
           repoId: item.repoId,
-          branchId:
-            item.repoId === PROD_REPO_ID
-              ? fromBranch
-              : isFromRemote === false
-                ? fromBranch
-                : undefined
+          branchId: restoreBranchId
         })
       ),
       Result.bind('git', item =>
