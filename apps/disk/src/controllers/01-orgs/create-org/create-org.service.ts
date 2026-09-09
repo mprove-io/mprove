@@ -40,9 +40,6 @@ export class CreateOrgService {
       }),
       Result.andThrough(item => checkOrgDoesNotExist({ orgDir: item.orgDir })),
       Result.andThrough(item => ensureDir({ dir: item.orgDir })),
-      // Result.bind('createOrgResponsePayload', item =>
-      //   Result.succeed(toCreateOrgResponsePayload({ orgId: item.orgId }))
-      // ),
       Result.map(
         (item): ToDiskCreateOrgResponsePayload => ({ orgId: item.orgId })
       ),
