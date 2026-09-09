@@ -1,6 +1,5 @@
 import { Result } from '@praha/byethrow';
 import type { BranchSummary, DiffResult, SimpleGit } from 'simple-git';
-import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
@@ -67,7 +66,7 @@ export function getRepoStatus(item: {
           // RETURN NeedCommit
           if (v.stagedFilesCount > 0) {
             return Result.succeed<DiskItemStatus>({
-              repoStatus: RepoStatusEnum.NeedCommit,
+              repoStatus: 'NeedCommit',
               conflicts: v.conflicts,
               currentBranch: v.currentBranchName,
               changesToCommit: v.changesToCommit,

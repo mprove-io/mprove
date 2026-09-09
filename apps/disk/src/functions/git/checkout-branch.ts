@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 
-import { RepoStatusEnum } from '#common/enums/repo-status.enum';
+import type { RepoStatusEtype } from '#common/zod/disk/repo-status.etype';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { DiskRepoIsNotCleanForCheckoutBranchError } from './errors/disk-repo-is-not-clean-for-checkout-branch-error';
 import { getRepoStatus } from './get-repo-status';
@@ -38,11 +38,7 @@ export function checkoutBranch(item: {
             return Result.succeed();
           }
 
-          let okStatuses: RepoStatusEnum[] = [
-            RepoStatusEnum.NeedPush,
-            RepoStatusEnum.NeedPull,
-            RepoStatusEnum.Ok
-          ];
+          let okStatuses: RepoStatusEtype[] = ['NeedPush', 'NeedPull', 'Ok'];
 
           if (okStatuses.indexOf(repoStatus) < 0) {
             return Result.fail(

@@ -1,12 +1,12 @@
 import { Result } from '@praha/byethrow';
 import type { DiffResult, SimpleGit } from 'simple-git';
-import { FileStatusEnum } from '#common/enums/file-status.enum';
-import { RepoErrorEnum } from '#common/enums/repo-error.enum';
-import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
+import type { FileStatusEtype } from '#common/zod/disk/file-status.etype';
+import type { RepoErrorEtype } from '#common/zod/disk/repo-error.etype';
+import type { RepoStatusEtype } from '#common/zod/disk/repo-status.etype';
 import { isRemoteBranchExist } from './is-remote-branch-exist';
 
 export function getRepoStatusWithoutStagedChanges(item: {
@@ -31,7 +31,7 @@ export function getRepoStatusWithoutStagedChanges(item: {
       // RETURN NeedPush
       if (v.isBranchExistRemote === false) {
         return Result.succeed<DiskItemStatus>({
-          repoStatus: RepoStatusEnum.NeedPush,
+          repoStatus: 'NeedPush',
           conflicts: v.conflicts,
           currentBranch: v.currentBranchName,
           changesToCommit: v.changesToCommit,
@@ -54,7 +54,7 @@ export function getRepoStatusWithoutStagedChanges(item: {
       // RETURN Ok
       if (localCommitId === remoteOriginCommitId) {
         return Result.succeed<DiskItemStatus>({
-          repoStatus: RepoStatusEnum.Ok,
+          repoStatus: 'Ok',
           conflicts: v.conflicts,
           currentBranch: v.currentBranchName,
           changesToCommit: v.changesToCommit,
@@ -73,8 +73,8 @@ export function getRepoStatusWithoutStagedChanges(item: {
       // simple-git resolves merge-base exit 1 with empty stderr as ''.
       if (baseCommitId === '') {
         return Result.succeed<DiskItemStatus>({
-          repoStatus: RepoStatusEnum.NeedPull,
-          repoError: RepoErrorEnum.NoCommonAncestor,
+          repoStatus: 'NeedPull',
+          repoError: 'NoCommonAncestor',
           conflicts: v.conflicts,
           currentBranch: v.currentBranchName,
           changesToCommit: v.changesToCommit,
@@ -82,14 +82,12 @@ export function getRepoStatusWithoutStagedChanges(item: {
         });
       }
 
-      let repoStatus: RepoStatusEnum =
-        remoteOriginCommitId === baseCommitId
-          ? RepoStatusEnum.NeedPush
-          : RepoStatusEnum.NeedPull;
+      let repoStatus: RepoStatusEtype =
+        remoteOriginCommitId === baseCommitId ? 'NeedPush' : 'NeedPull';
 
       let changesToPush: DiskFileChange[] = [];
 
-      let repoError: RepoErrorEnum;
+      let repoError: RepoErrorEtype;
 
       if (v.changesToCommit.length === 0 && baseCommitId !== localCommitId) {
         let diffFiles: DiffResult['files'] = [];
@@ -102,7 +100,7 @@ export function getRepoStatusWithoutStagedChanges(item: {
 
           diffFiles = diffSummary.files;
         } catch {
-          repoError = RepoErrorEnum.ChangesToPushNotCalculated;
+          repoError = 'ChangesToPushNotCalculated';
         }
 
         changesToPush = diffFiles.map(file => {
@@ -119,21 +117,21 @@ export function getRepoStatusWithoutStagedChanges(item: {
               ? ''
               : filePathArray.slice(0, -1).join('/');
 
-          let status: FileStatusEnum;
+          let status: FileStatusEtype;
 
           if (
             (file as any).insertions > 0 &&
             (file as any).deletions === 0 &&
             (file as any).binary === false
           ) {
-            status = FileStatusEnum.New;
+            status = 'New';
           } else if (
             (file as any).insertions === 0 &&
             (file as any).deletions > 0
           ) {
-            status = FileStatusEnum.Deleted;
+            status = 'Deleted';
           } else {
-            status = FileStatusEnum.Modified;
+            status = 'Modified';
           }
 
           return {

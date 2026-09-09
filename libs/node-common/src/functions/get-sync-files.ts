@@ -3,9 +3,9 @@ import type { StatusResult } from 'simple-git';
 
 const { forEachSeries } = pIteration;
 
-import { FileStatusEnum } from '#common/enums/file-status.enum';
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
-import type { FileWithStatusType } from '#common/zod/disk/git-file-status-type';
+import type { FileStatusEtype } from '#common/zod/disk/file-status.etype';
+import type { FileWithStatusType } from '#common/zod/disk/file-with-status-type';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getSyncFiles(item: {
@@ -60,19 +60,19 @@ export async function getWorkingTreePayload(item: {
   await forEachSeries(files, async (x: FileWithStatusType) => {
     let path = x.path;
 
-    let status: FileStatusEnum =
+    let status: FileStatusEtype =
       x.type === 'not_added' || x.type === 'created'
-        ? FileStatusEnum.New
+        ? 'New'
         : x.type === 'deleted'
-          ? FileStatusEnum.Deleted
+          ? 'Deleted'
           : x.type === 'modified'
-            ? FileStatusEnum.Modified
+            ? 'Modified'
             : x.type === 'conflicted'
-              ? FileStatusEnum.Conflicted
+              ? 'Conflicted'
               : undefined;
 
     let content: string;
-    if (status !== FileStatusEnum.Deleted) {
+    if (status !== 'Deleted') {
       let fullPath = `${repoDir}/${path}`;
 
       let { content: cont } = await readFileCheckSize({
@@ -89,7 +89,7 @@ export async function getWorkingTreePayload(item: {
       content: content
     };
 
-    if (file.status === FileStatusEnum.Deleted) {
+    if (file.status === 'Deleted') {
       deletedFiles.push(file);
     } else {
       changedFiles.push(file);

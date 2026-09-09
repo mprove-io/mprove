@@ -1,4 +1,11 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal';
+
+export type DiskFileLine = {
+  fileId: string;
+  fileName: string;
+  lineNumber: number;
+};
 
 export let zDiskFileLine = z
   .object({
@@ -8,4 +15,4 @@ export let zDiskFileLine = z
   })
   .meta({ id: 'DiskFileLine' });
 
-export type DiskFileLine = z.infer<typeof zDiskFileLine>;
+assertTypesEqual<DiskFileLine, z.infer<typeof zDiskFileLine>>({ value: true });

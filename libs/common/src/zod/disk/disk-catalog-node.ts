@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal';
+
+export type DiskCatalogNode = {
+  id: string;
+  isFolder: boolean;
+  name: string;
+  fileId?: string;
+  children?: DiskCatalogNode[];
+};
 
 export let zDiskCatalogNode = z
   .object({
@@ -12,4 +21,6 @@ export let zDiskCatalogNode = z
   })
   .meta({ id: 'DiskCatalogNode' });
 
-export type DiskCatalogNode = z.infer<typeof zDiskCatalogNode>;
+assertTypesEqual<DiskCatalogNode, z.infer<typeof zDiskCatalogNode>>({
+  value: true
+});

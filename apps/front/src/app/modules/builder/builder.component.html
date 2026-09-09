@@ -84,7 +84,7 @@
             </div>
 
             @switch (repo?.repoError) {
-              @case (repoErrorEnum.NoCommonAncestor) {
+              @case ('NoCommonAncestor') {
                 <div
                   class="text-r1 ml-3 flex h-6 w-6 flex-shrink-0"
                   tp="History mismatch: No common ancestor (git commit) found between the local and remote branches"
@@ -92,7 +92,7 @@
                   <m-exclamation-icon></m-exclamation-icon>
                 </div>
               }
-              @case (repoErrorEnum.ChangesToPushNotCalculated) {
+              @case ('ChangesToPushNotCalculated') {
                 <div
                   class="text-r1 ml-3 flex h-6 w-6 flex-shrink-0"
                   tp="Internal error: Could not calculate changes to push"
@@ -159,18 +159,14 @@
               >Need to Resolve conflicts</div
             > -->
 
-            <div
-              *ngIf="
-                needSave === false && repo.repoStatus === repoStatusNeedPull
-              "
+            <div *ngIf="needSave === false && repo.repoStatus === 'NeedPull'"
               >Need to Pull changes from Remote</div
             >
 
             <div
               *ngIf="
                 needSave === false &&
-                (repo.repoStatus === repoStatusOk ||
-                  repo.repoStatus === repoStatusNeedPush)
+                (repo.repoStatus === 'Ok' || repo.repoStatus === 'NeedPush')
               "
               >No changes to commit</div
             >
@@ -181,7 +177,7 @@
             *ngIf="isEditor === true"
             [tp]="templateCommit"
             [tpIsEnabled]="
-              repo.repoStatus !== repoStatusNeedCommit || needSave === true
+              repo.repoStatus !== 'NeedCommit' || needSave === true
             "
           >
             <button
@@ -190,14 +186,12 @@
               class="text-m0 ml-3 h-11 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
               [ngClass]="{
                 'bg-s400 cursor-default':
-                  repo.repoStatus !== repoStatusNeedCommit || needSave === true,
+                  repo.repoStatus !== 'NeedCommit' || needSave === true,
                 'bg-m600':
-                  repo.repoStatus === repoStatusNeedCommit && needSave === false
+                  repo.repoStatus === 'NeedCommit' && needSave === false
               }"
               (click)="commit()"
-              [disabled]="
-                repo.repoStatus !== repoStatusNeedCommit || needSave === true
-              "
+              [disabled]="repo.repoStatus !== 'NeedCommit' || needSave === true"
               >Commit</button
             >
           </div>
@@ -208,7 +202,7 @@
 
           <div
             class="flex-shrink-0"
-            *ngIf="isEditor === true && repo.repoStatus === repoStatusNeedPull"
+            *ngIf="isEditor === true && repo.repoStatus === 'NeedPull'"
             [tp]="templatePullFromRemote"
             [tpIsEnabled]="needSave === true"
           >
@@ -218,14 +212,11 @@
               class="text-m0 ml-3 h-11 rounded px-5 py-2 text-base font-medium focus:outline-none"
               [ngClass]="{
                 'bg-s400 cursor-default':
-                  repo.repoStatus !== repoStatusNeedPull || needSave === true,
-                'bg-m600':
-                  repo.repoStatus === repoStatusNeedPull && needSave === false
+                  repo.repoStatus !== 'NeedPull' || needSave === true,
+                'bg-m600': repo.repoStatus === 'NeedPull' && needSave === false
               }"
               (click)="pull()"
-              [disabled]="
-                repo.repoStatus !== repoStatusNeedPull || needSave === true
-              "
+              [disabled]="repo.repoStatus !== 'NeedPull' || needSave === true"
               >Pull from Remote</button
             >
           </div>
@@ -233,10 +224,7 @@
           <ng-template #templatePushToRemote>
             <div *ngIf="needSave === true">Need to Save changes</div>
 
-            <div
-              *ngIf="
-                needSave === false && repo.repoStatus === repoStatusNeedCommit
-              "
+            <div *ngIf="needSave === false && repo.repoStatus === 'NeedCommit'"
               >Need to Commit changes</div
             >
 
@@ -247,14 +235,11 @@
               >Need to Resolve conflicts</div
             > -->
 
-            <div
-              *ngIf="
-                needSave === false && repo.repoStatus === repoStatusNeedPull
-              "
+            <div *ngIf="needSave === false && repo.repoStatus === 'NeedPull'"
               >Need to Pull changes from Remote</div
             >
 
-            <div *ngIf="needSave === false && repo.repoStatus === repoStatusOk"
+            <div *ngIf="needSave === false && repo.repoStatus === 'Ok'"
               >No committed changes to Push</div
             >
 
@@ -264,7 +249,7 @@
                 nav?.repoType === repoTypeEnum.Session &&
                 repo?.changesToCommit?.length === 0 &&
                 repo?.changesToPush?.length === 0 &&
-                repo.repoStatus === repoStatusNeedPush &&
+                repo.repoStatus === 'NeedPush' &&
                 session?.archiveReason !== archiveReasonCommit
               "
               >No committed changes to Push</div
@@ -276,7 +261,7 @@
             *ngIf="isEditor === true"
             [tp]="templatePushToRemote"
             [tpIsEnabled]="
-              repo.repoStatus !== repoStatusNeedPush ||
+              repo.repoStatus !== 'NeedPush' ||
               needSave === true ||
               (nav?.repoType === repoTypeEnum.Session &&
                 repo?.changesToCommit?.length === 0 &&
@@ -297,8 +282,8 @@
                     repo?.changesToPush?.length === 0 &&
                     session?.archiveReason !== archiveReasonCommit
                   ) &&
-                  (repo.repoStatus === repoStatusNeedPush ||
-                    (repo.repoStatus === repoStatusOk &&
+                  (repo.repoStatus === 'NeedPush' ||
+                    (repo.repoStatus === 'Ok' &&
                       repo?.changesToCommit?.length === 0 &&
                       repo?.changesToPush?.length > 0)),
                 'bg-s400 cursor-default':
@@ -307,9 +292,9 @@
                     repo?.changesToCommit?.length === 0 &&
                     repo?.changesToPush?.length === 0 &&
                     session?.archiveReason !== archiveReasonCommit) ||
-                  (repo.repoStatus !== repoStatusNeedPush &&
+                  (repo.repoStatus !== 'NeedPush' &&
                     !(
-                      repo.repoStatus === repoStatusOk &&
+                      repo.repoStatus === 'Ok' &&
                       repo?.changesToCommit?.length === 0 &&
                       repo?.changesToPush?.length > 0
                     ))
@@ -321,9 +306,9 @@
                   repo?.changesToCommit?.length === 0 &&
                   repo?.changesToPush?.length === 0 &&
                   session?.archiveReason !== archiveReasonCommit) ||
-                (repo.repoStatus !== repoStatusNeedPush &&
+                (repo.repoStatus !== 'NeedPush' &&
                   !(
-                    repo.repoStatus === repoStatusOk &&
+                    repo.repoStatus === 'Ok' &&
                     repo?.changesToCommit?.length === 0 &&
                     repo?.changesToPush?.length > 0
                   ))

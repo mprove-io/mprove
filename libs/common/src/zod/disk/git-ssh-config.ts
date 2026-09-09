@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal';
+
+export type GitSshConfig = {
+  keyDir: string;
+  publicKey: string;
+  privateKeyEncrypted: string;
+  passPhrase: string;
+};
 
 export let zGitSshConfig = z
   .object({
@@ -9,4 +17,4 @@ export let zGitSshConfig = z
   })
   .meta({ id: 'GitSshConfig' });
 
-export type GitSshConfig = z.infer<typeof zGitSshConfig>;
+assertTypesEqual<GitSshConfig, z.infer<typeof zGitSshConfig>>({ value: true });

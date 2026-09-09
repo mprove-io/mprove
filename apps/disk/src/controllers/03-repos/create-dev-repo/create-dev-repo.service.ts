@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { LogResult } from 'simple-git';
 import { ErEnum } from '#common/enums/er.enum';
-import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskCreateDevRepoRequest } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-request';
@@ -152,9 +151,7 @@ export class CreateDevRepoService {
       ),
       Result.bind('repoStatus', item =>
         Result.succeed(
-          isDefined(sessionBranch)
-            ? RepoStatusEnum.NeedPush
-            : item.devItemStatus.repoStatus
+          isDefined(sessionBranch) ? 'NeedPush' : item.devItemStatus.repoStatus
         )
       ),
       Result.bind('itemCatalog', item =>

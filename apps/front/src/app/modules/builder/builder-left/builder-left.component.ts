@@ -27,7 +27,6 @@ import {
   PATH_SELECT_FILE
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -38,6 +37,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
+import type { RepoStatusEtype } from '#common/zod/disk/repo-status.etype';
 import type { FileItem } from '#common/zod/file-item';
 import type {
   ToBackendMoveCatalogNodeRequestPayload,
@@ -79,7 +79,7 @@ export class BuilderLeftComponent implements OnDestroy {
   builderLeftChangesToPush = BuilderLeftEnum.ChangesToPush;
   builderLeftInfo = BuilderLeftEnum.Info;
 
-  repoStatusNeedPush = RepoStatusEnum.NeedPush;
+  repoStatusNeedPush: RepoStatusEtype = 'NeedPush';
 
   topNodes: DiskCatalogNode[] = [];
 

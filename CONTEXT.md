@@ -216,10 +216,10 @@ For optional fields in zod schemas, use `.nullish()` (not `.optional()`). `.null
 
 ```ts
 // correct
-status: z.enum(FileStatusEnum).nullish(),
+status: zFileStatusEtype.nullish(),
 
 // wrong
-status: z.enum(FileStatusEnum).optional(),
+status: zFileStatusEtype.optional(),
 ```
 
 ### Zod schemas and native types

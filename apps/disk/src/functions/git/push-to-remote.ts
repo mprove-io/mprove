@@ -1,7 +1,6 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 
-import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { DiskRepoStatusIsNotNeedPushError } from './errors/disk-repo-status-is-not-need-push-error';
 import { getRepoStatus } from './get-repo-status';
@@ -34,7 +33,7 @@ export function pushToRemote(item: {
         Result.andThen(async item => {
           let { repoStatus } = item.diskItemStatus;
 
-          if (repoStatus !== RepoStatusEnum.NeedPush) {
+          if (repoStatus !== 'NeedPush') {
             return Result.fail(new DiskRepoStatusIsNotNeedPushError());
           }
 

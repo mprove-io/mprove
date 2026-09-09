@@ -3,11 +3,11 @@ import type { StatusResult } from 'simple-git';
 
 const { forEachSeries } = pIteration;
 
-import { FileStatusEnum } from '#common/enums/file-status.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
-import type { FileWithStatusType } from '#common/zod/disk/git-file-status-type';
+import type { FileStatusEtype } from '#common/zod/disk/file-status.etype';
+import type { FileWithStatusType } from '#common/zod/disk/file-with-status-type';
 import { createSimpleGit } from './create-simple-git';
 import { readFileCheckSize } from './read-file-check-size';
 
@@ -68,21 +68,21 @@ export async function getChangesToCommit(item: {
     let parentPath =
       pathArray.length === 1 ? '' : pathArray.slice(0, -1).join('/');
 
-    let status: FileStatusEnum =
+    let status: FileStatusEtype =
       file.type === 'not_added' || file.type === 'created'
-        ? FileStatusEnum.New
+        ? 'New'
         : file.type === 'deleted'
-          ? FileStatusEnum.Deleted
+          ? 'Deleted'
           : file.type === 'modified'
-            ? FileStatusEnum.Modified
+            ? 'Modified'
             : file.type === 'conflicted'
-              ? FileStatusEnum.Conflicted
+              ? 'Conflicted'
               : file.type === 'renamed'
-                ? FileStatusEnum.Renamed
+                ? 'Renamed'
                 : undefined;
 
     let content;
-    if (addContent === true && status !== FileStatusEnum.Deleted) {
+    if (addContent === true && status !== 'Deleted') {
       let fullPath = `${repoDir}/${path}`;
 
       let { content: cont, stat: st } = await readFileCheckSize({

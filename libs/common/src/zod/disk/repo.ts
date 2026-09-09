@@ -1,9 +1,38 @@
 import { z } from 'zod';
-import { RepoErrorEnum } from '#common/enums/repo-error.enum';
-import { RepoStatusEnum } from '#common/enums/repo-status.enum';
-import { zDiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
-import { zDiskFileChange } from '#common/zod/disk/disk-file-change';
-import { zDiskFileLine } from '#common/zod/disk/disk-file-line';
+import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import {
+  type DiskCatalogNode,
+  zDiskCatalogNode
+} from '#common/zod/disk/disk-catalog-node';
+import {
+  type DiskFileChange,
+  zDiskFileChange
+} from '#common/zod/disk/disk-file-change';
+import {
+  type DiskFileLine,
+  zDiskFileLine
+} from '#common/zod/disk/disk-file-line';
+import {
+  type RepoErrorEtype,
+  zRepoErrorEtype
+} from '#common/zod/disk/repo-error.etype';
+import {
+  type RepoStatusEtype,
+  zRepoStatusEtype
+} from '#common/zod/disk/repo-status.etype';
+
+export type Repo = {
+  orgId: string;
+  projectId: string;
+  repoId: string;
+  currentBranchId: string;
+  repoStatus: RepoStatusEtype;
+  repoError?: RepoErrorEtype;
+  conflicts: DiskFileLine[];
+  nodes: DiskCatalogNode[];
+  changesToCommit: DiskFileChange[];
+  changesToPush: DiskFileChange[];
+};
 
 export let zRepo = z
   .object({
@@ -11,8 +40,8 @@ export let zRepo = z
     projectId: z.string(),
     repoId: z.string(),
     currentBranchId: z.string(),
-    repoStatus: z.enum(RepoStatusEnum),
-    repoError: z.enum(RepoErrorEnum).nullish(),
+    repoStatus: zRepoStatusEtype,
+    repoError: zRepoErrorEtype.nullish(),
     conflicts: z.array(zDiskFileLine),
     nodes: z.array(zDiskCatalogNode),
     changesToCommit: z.array(zDiskFileChange),
@@ -20,4 +49,4 @@ export let zRepo = z
   })
   .meta({ id: 'Repo' });
 
-export type Repo = z.infer<typeof zRepo>;
+assertTypesEqual<Repo, z.infer<typeof zRepo>>({ value: true });

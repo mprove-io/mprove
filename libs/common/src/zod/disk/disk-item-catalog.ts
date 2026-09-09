@@ -1,6 +1,19 @@
 import { z } from 'zod';
-import { zDiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
-import { zDiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
+import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import {
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
+import {
+  type DiskCatalogNode,
+  zDiskCatalogNode
+} from '#common/zod/disk/disk-catalog-node';
+
+export type DiskItemCatalog = {
+  files: DiskCatalogFile[];
+  nodes: DiskCatalogNode[];
+  mproveDir: string;
+};
 
 export let zDiskItemCatalog = z
   .object({
@@ -10,4 +23,6 @@ export let zDiskItemCatalog = z
   })
   .meta({ id: 'DiskItemCatalog' });
 
-export type DiskItemCatalog = z.infer<typeof zDiskItemCatalog>;
+assertTypesEqual<DiskItemCatalog, z.infer<typeof zDiskItemCatalog>>({
+  value: true
+});

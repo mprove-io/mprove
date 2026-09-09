@@ -1,12 +1,22 @@
 import { z } from 'zod';
-import { FileStatusEnum } from '#common/enums/file-status.enum';
+import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import {
+  type FileStatusEtype,
+  zFileStatusEtype
+} from '#common/zod/disk/file-status.etype';
+
+export type DiskSyncFile = {
+  path: string;
+  status?: FileStatusEtype;
+  content?: string;
+};
 
 export let zDiskSyncFile = z
   .object({
     path: z.string(),
-    status: z.enum(FileStatusEnum).nullish(),
+    status: zFileStatusEtype.nullish(),
     content: z.string().nullish()
   })
   .meta({ id: 'DiskSyncFile' });
 
-export type DiskSyncFile = z.infer<typeof zDiskSyncFile>;
+assertTypesEqual<DiskSyncFile, z.infer<typeof zDiskSyncFile>>({ value: true });

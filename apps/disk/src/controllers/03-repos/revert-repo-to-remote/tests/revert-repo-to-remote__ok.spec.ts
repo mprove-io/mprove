@@ -3,7 +3,6 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
@@ -196,6 +195,6 @@ test('1', async t => {
     });
   }
 
-  t.is(resp1.payload.repo.repoStatus, RepoStatusEnum.Ok);
+  t.is(resp1.payload.repo.repoStatus, 'Ok');
   t.is(resp2.payload.content, content1);
 });

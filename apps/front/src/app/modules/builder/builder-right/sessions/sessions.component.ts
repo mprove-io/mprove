@@ -4,7 +4,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import { PATH_NEW_SESSION } from '#common/constants/top';
-import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
@@ -432,7 +431,7 @@ export class SessionsComponent implements OnInit {
 
     if (session.repoId !== currentRepoId) {
       this.repoQuery.updatePart({
-        repoStatus: RepoStatusEnum.Ok,
+        repoStatus: 'Ok',
         repoError: undefined,
         changesToCommit: [],
         changesToPush: []
