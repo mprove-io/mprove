@@ -12,7 +12,6 @@ dist/
 dist-test/
 node_modules/
 src/
-.DS_Store
 .swcrc
 ava.compiled.config.js
 build.mjs
@@ -57,8 +56,9 @@ src/
 │   ├── 08-seed/
 │   └── 09-test/
 ├── functions/      # File system & git helper functions
-├── services/       # Business logic services
-└── assets/         # Static files for tests
+├── seeds/
+│   └── projects/   # Demo and test project seeds selected by seedProjectId
+└── services/       # Business logic services
 ```
 
 ## Purpose
