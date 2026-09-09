@@ -5,18 +5,20 @@ import {
   zGitFileStatus
 } from '#common/zod/disk/git-file-status';
 
-export type FileWithGitStatus = {
+export type FileWithGitFileStatus = {
   path: string;
   gitFileStatus: GitFileStatus;
 };
 
-export let zFileWithGitStatus = z
+export let zFileWithGitFileStatus = z
   .object({
     path: z.string(),
     gitFileStatus: zGitFileStatus
   })
-  .meta({ id: 'FileWithGitStatus' });
+  .meta({ id: 'FileWithGitFileStatus' });
 
-assertTypesEqual<FileWithGitStatus, z.infer<typeof zFileWithGitStatus>>({
-  value: true
-});
+assertTypesEqual<FileWithGitFileStatus, z.infer<typeof zFileWithGitFileStatus>>(
+  {
+    value: true
+  }
+);

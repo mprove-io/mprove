@@ -5,7 +5,7 @@ const { forEachSeries } = pIteration;
 
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
 import type { FileStatus } from '#common/zod/disk/file-status';
-import type { FileWithGitStatus } from '#common/zod/disk/file-with-git-status';
+import type { FileWithGitFileStatus } from '#common/zod/disk/file-with-git-file-status';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getSyncFiles(item: {
@@ -29,7 +29,7 @@ export async function getWorkingTreePayload(item: {
   let changedFiles: DiskSyncFile[] = [];
   let deletedFiles: DiskSyncFile[] = [];
 
-  let allFiles: FileWithGitStatus[] = [
+  let allFiles: FileWithGitFileStatus[] = [
     ...statusResult.not_added.map(path => ({
       path: path,
       gitFileStatus: 'not_added' as const
@@ -57,7 +57,7 @@ export async function getWorkingTreePayload(item: {
   ];
 
   let uniquePaths = new Set<string>();
-  let files: FileWithGitStatus[] = [];
+  let files: FileWithGitFileStatus[] = [];
   allFiles.forEach(file => {
     if (!uniquePaths.has(file.path)) {
       uniquePaths.add(file.path);
@@ -66,7 +66,7 @@ export async function getWorkingTreePayload(item: {
   });
   files.sort((a, b) => a.path.localeCompare(b.path));
 
-  await forEachSeries(files, async (x: FileWithGitStatus) => {
+  await forEachSeries(files, async (x: FileWithGitFileStatus) => {
     let path = x.path;
 
     let status: FileStatus =

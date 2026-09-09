@@ -7,7 +7,7 @@ import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { FileStatus } from '#common/zod/disk/file-status';
-import type { FileWithGitStatus } from '#common/zod/disk/file-with-git-status';
+import type { FileWithGitFileStatus } from '#common/zod/disk/file-with-git-file-status';
 import { createSimpleGit } from './create-simple-git';
 import { readFileCheckSize } from './read-file-check-size';
 
@@ -24,7 +24,7 @@ export async function getChangesToCommit(item: {
 
   let changesToCommit: DiskFileChange[] = [];
 
-  let allFiles: FileWithGitStatus[] = [
+  let allFiles: FileWithGitFileStatus[] = [
     ...statusResult.not_added.map(path => ({
       path: path,
       gitFileStatus: 'not_added' as const
@@ -57,7 +57,7 @@ export async function getChangesToCommit(item: {
   ];
 
   let uniquePaths = new Set<string>();
-  let files: FileWithGitStatus[] = [];
+  let files: FileWithGitFileStatus[] = [];
   allFiles.forEach(file => {
     if (!uniquePaths.has(file.path)) {
       uniquePaths.add(file.path);
@@ -66,7 +66,7 @@ export async function getChangesToCommit(item: {
   });
   files.sort((a, b) => a.path.localeCompare(b.path));
 
-  await forEachSeries(files, async (file: FileWithGitStatus) => {
+  await forEachSeries(files, async (file: FileWithGitFileStatus) => {
     let path = file.path;
     let pathArray = path.split('/');
 
