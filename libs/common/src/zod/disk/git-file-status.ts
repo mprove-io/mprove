@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 
-export type GitFileStatusEtype =
+export type GitFileStatus =
   | 'not_added'
   | 'created'
   | 'deleted'
@@ -9,7 +9,7 @@ export type GitFileStatusEtype =
   | 'conflicted'
   | 'renamed';
 
-export let zGitFileStatusEtype = z
+export let zGitFileStatus = z
   .enum([
     'not_added',
     'created',
@@ -18,8 +18,8 @@ export let zGitFileStatusEtype = z
     'conflicted',
     'renamed'
   ])
-  .meta({ id: 'GitFileStatusEtype' });
+  .meta({ id: 'GitFileStatus' });
 
-assertTypesEqual<GitFileStatusEtype, z.infer<typeof zGitFileStatusEtype>>({
+assertTypesEqual<GitFileStatus, z.infer<typeof zGitFileStatus>>({
   value: true
 });

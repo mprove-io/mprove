@@ -4,8 +4,8 @@ import type { StatusResult } from 'simple-git';
 const { forEachSeries } = pIteration;
 
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
-import type { FileStatusEtype } from '#common/zod/disk/file-status.etype';
-import type { FileWithStatusType } from '#common/zod/disk/file-with-status-type';
+import type { FileStatus } from '#common/zod/disk/file-status';
+import type { FileWithGitStatus } from '#common/zod/disk/file-with-git-status';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getSyncFiles(item: {
@@ -29,26 +29,35 @@ export async function getWorkingTreePayload(item: {
   let changedFiles: DiskSyncFile[] = [];
   let deletedFiles: DiskSyncFile[] = [];
 
-  let allFiles: FileWithStatusType[] = [
+  let allFiles: FileWithGitStatus[] = [
     ...statusResult.not_added.map(path => ({
-      path,
-      type: 'not_added' as const
+      path: path,
+      gitFileStatus: 'not_added' as const
     })),
-    ...statusResult.created.map(path => ({ path, type: 'created' as const })),
-    ...statusResult.deleted.map(path => ({ path, type: 'deleted' as const })),
-    ...statusResult.modified.map(path => ({ path, type: 'modified' as const })),
+    ...statusResult.created.map(path => ({
+      path: path,
+      gitFileStatus: 'created' as const
+    })),
+    ...statusResult.deleted.map(path => ({
+      path: path,
+      gitFileStatus: 'deleted' as const
+    })),
+    ...statusResult.modified.map(path => ({
+      path: path,
+      gitFileStatus: 'modified' as const
+    })),
     ...statusResult.renamed.flatMap(r => [
-      { path: r.from, type: 'deleted' as const },
-      { path: r.to, type: 'created' as const }
+      { path: r.from, gitFileStatus: 'deleted' as const },
+      { path: r.to, gitFileStatus: 'created' as const }
     ]),
     ...statusResult.conflicted.map(path => ({
-      path,
-      type: 'conflicted' as const
+      path: path,
+      gitFileStatus: 'conflicted' as const
     }))
   ];
 
   let uniquePaths = new Set<string>();
-  let files: FileWithStatusType[] = [];
+  let files: FileWithGitStatus[] = [];
   allFiles.forEach(file => {
     if (!uniquePaths.has(file.path)) {
       uniquePaths.add(file.path);
@@ -57,17 +66,17 @@ export async function getWorkingTreePayload(item: {
   });
   files.sort((a, b) => a.path.localeCompare(b.path));
 
-  await forEachSeries(files, async (x: FileWithStatusType) => {
+  await forEachSeries(files, async (x: FileWithGitStatus) => {
     let path = x.path;
 
-    let status: FileStatusEtype =
-      x.type === 'not_added' || x.type === 'created'
+    let status: FileStatus =
+      x.gitFileStatus === 'not_added' || x.gitFileStatus === 'created'
         ? 'New'
-        : x.type === 'deleted'
+        : x.gitFileStatus === 'deleted'
           ? 'Deleted'
-          : x.type === 'modified'
+          : x.gitFileStatus === 'modified'
             ? 'Modified'
-            : x.type === 'conflicted'
+            : x.gitFileStatus === 'conflicted'
               ? 'Conflicted'
               : undefined;
 

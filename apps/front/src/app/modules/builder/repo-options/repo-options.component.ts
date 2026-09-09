@@ -9,7 +9,7 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import type { RepoStatusEtype } from '#common/zod/disk/repo-status.etype';
+import type { RepoStatus } from '#common/zod/disk/repo-status';
 import type {
   ToBackendValidateFilesRequestPayload,
   ToBackendValidateFilesResponse
@@ -48,7 +48,7 @@ export class RepoOptionsComponent {
   @Input()
   node: TreeNode;
 
-  repoStatusNeedCommit: RepoStatusEtype = 'NeedCommit';
+  repoStatusNeedCommit: RepoStatus = 'NeedCommit';
   repoTypeSession = RepoTypeEnum.Session;
 
   nav: NavState;

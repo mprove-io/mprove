@@ -25,7 +25,7 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { SessionApi } from '#common/zod/backend/session-api';
-import type { RepoStatusEtype } from '#common/zod/disk/repo-status.etype';
+import type { RepoStatus } from '#common/zod/disk/repo-status';
 import type { BranchItem } from '#common/zod/front/branch-item';
 import type {
   ToBackendGetBranchesListRequestPayload,
@@ -67,7 +67,7 @@ export class BranchSelectComponent {
   defaultBranch: string;
   prodRepoID = PROD_REPO_ID;
 
-  repoStatusNeedCommit: RepoStatusEtype = 'NeedCommit';
+  repoStatusNeedCommit: RepoStatus = 'NeedCommit';
 
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(

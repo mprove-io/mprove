@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 
-export type FileStatusEtype =
+export type FileStatus =
   | 'New'
   | 'Deleted'
   | 'Modified'
@@ -14,7 +14,7 @@ export type FileStatusEtype =
   | 'Untracked'
   | 'Unreadable';
 
-export let zFileStatusEtype = z.enum([
+export let zFileStatus = z.enum([
   'New',
   'Deleted',
   'Modified',
@@ -28,6 +28,6 @@ export let zFileStatusEtype = z.enum([
   'Unreadable'
 ]);
 
-assertTypesEqual<FileStatusEtype, z.infer<typeof zFileStatusEtype>>({
+assertTypesEqual<FileStatus, z.infer<typeof zFileStatus>>({
   value: true
 });

@@ -4,9 +4,9 @@ import { encodeFilePath } from '#common/functions/encode-file-path';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
-import type { FileStatusEtype } from '#common/zod/disk/file-status.etype';
-import type { RepoErrorEtype } from '#common/zod/disk/repo-error.etype';
-import type { RepoStatusEtype } from '#common/zod/disk/repo-status.etype';
+import type { FileStatus } from '#common/zod/disk/file-status';
+import type { RepoError } from '#common/zod/disk/repo-error';
+import type { RepoStatus } from '#common/zod/disk/repo-status';
 import { isRemoteBranchExist } from './is-remote-branch-exist';
 
 export function getRepoStatusWithoutStagedChanges(item: {
@@ -82,12 +82,12 @@ export function getRepoStatusWithoutStagedChanges(item: {
         });
       }
 
-      let repoStatus: RepoStatusEtype =
+      let repoStatus: RepoStatus =
         remoteOriginCommitId === baseCommitId ? 'NeedPush' : 'NeedPull';
 
       let changesToPush: DiskFileChange[] = [];
 
-      let repoError: RepoErrorEtype;
+      let repoError: RepoError;
 
       if (v.changesToCommit.length === 0 && baseCommitId !== localCommitId) {
         let diffFiles: DiffResult['files'] = [];
@@ -117,7 +117,7 @@ export function getRepoStatusWithoutStagedChanges(item: {
               ? ''
               : filePathArray.slice(0, -1).join('/');
 
-          let status: FileStatusEtype;
+          let status: FileStatus;
 
           if (
             (file as any).insertions > 0 &&

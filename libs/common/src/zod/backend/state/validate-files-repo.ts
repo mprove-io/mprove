@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zRepoStatusEtype } from '#common/zod/disk/repo-status.etype';
+import { zRepoStatus } from '#common/zod/disk/repo-status';
 
 export let zValidateFilesRepoConflict = z
   .object({
@@ -19,7 +19,7 @@ export let zValidateFilesRepo = z
     projectId: z.string(),
     repoId: z.string(),
     currentBranchId: z.string(),
-    repoStatus: zRepoStatusEtype,
+    repoStatus: zRepoStatus,
     conflicts: z.array(zValidateFilesRepoConflict)
   })
   .meta({ id: 'ValidateFilesRepo' });

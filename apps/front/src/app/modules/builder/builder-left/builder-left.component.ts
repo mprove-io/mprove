@@ -37,7 +37,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
-import type { RepoStatusEtype } from '#common/zod/disk/repo-status.etype';
+import type { RepoStatus } from '#common/zod/disk/repo-status';
 import type { FileItem } from '#common/zod/file-item';
 import type {
   ToBackendMoveCatalogNodeRequestPayload,
@@ -79,7 +79,7 @@ export class BuilderLeftComponent implements OnDestroy {
   builderLeftChangesToPush = BuilderLeftEnum.ChangesToPush;
   builderLeftInfo = BuilderLeftEnum.Info;
 
-  repoStatusNeedPush: RepoStatusEtype = 'NeedPush';
+  repoStatusNeedPush: RepoStatus = 'NeedPush';
 
   topNodes: DiskCatalogNode[] = [];
 

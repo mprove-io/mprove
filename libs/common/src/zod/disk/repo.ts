@@ -12,22 +12,16 @@ import {
   type DiskFileLine,
   zDiskFileLine
 } from '#common/zod/disk/disk-file-line';
-import {
-  type RepoErrorEtype,
-  zRepoErrorEtype
-} from '#common/zod/disk/repo-error.etype';
-import {
-  type RepoStatusEtype,
-  zRepoStatusEtype
-} from '#common/zod/disk/repo-status.etype';
+import { type RepoError, zRepoError } from '#common/zod/disk/repo-error';
+import { type RepoStatus, zRepoStatus } from '#common/zod/disk/repo-status';
 
 export type Repo = {
   orgId: string;
   projectId: string;
   repoId: string;
   currentBranchId: string;
-  repoStatus: RepoStatusEtype;
-  repoError?: RepoErrorEtype;
+  repoStatus: RepoStatus;
+  repoError?: RepoError;
   conflicts: DiskFileLine[];
   nodes: DiskCatalogNode[];
   changesToCommit: DiskFileChange[];
@@ -40,8 +34,8 @@ export let zRepo = z
     projectId: z.string(),
     repoId: z.string(),
     currentBranchId: z.string(),
-    repoStatus: zRepoStatusEtype,
-    repoError: zRepoErrorEtype.nullish(),
+    repoStatus: zRepoStatus,
+    repoError: zRepoError.nullish(),
     conflicts: z.array(zDiskFileLine),
     nodes: z.array(zDiskCatalogNode),
     changesToCommit: z.array(zDiskFileChange),

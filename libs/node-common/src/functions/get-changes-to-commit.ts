@@ -6,8 +6,8 @@ const { forEachSeries } = pIteration;
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
-import type { FileStatusEtype } from '#common/zod/disk/file-status.etype';
-import type { FileWithStatusType } from '#common/zod/disk/file-with-status-type';
+import type { FileStatus } from '#common/zod/disk/file-status';
+import type { FileWithGitStatus } from '#common/zod/disk/file-with-git-status';
 import { createSimpleGit } from './create-simple-git';
 import { readFileCheckSize } from './read-file-check-size';
 
@@ -24,31 +24,40 @@ export async function getChangesToCommit(item: {
 
   let changesToCommit: DiskFileChange[] = [];
 
-  let allFiles: FileWithStatusType[] = [
+  let allFiles: FileWithGitStatus[] = [
     ...statusResult.not_added.map(path => ({
-      path,
-      type: 'not_added' as const
+      path: path,
+      gitFileStatus: 'not_added' as const
     })),
-    ...statusResult.created.map(path => ({ path, type: 'created' as const })),
-    ...statusResult.deleted.map(path => ({ path, type: 'deleted' as const })),
-    ...statusResult.modified.map(path => ({ path, type: 'modified' as const })),
+    ...statusResult.created.map(path => ({
+      path: path,
+      gitFileStatus: 'created' as const
+    })),
+    ...statusResult.deleted.map(path => ({
+      path: path,
+      gitFileStatus: 'deleted' as const
+    })),
+    ...statusResult.modified.map(path => ({
+      path: path,
+      gitFileStatus: 'modified' as const
+    })),
     ...(expandRenamed === true
       ? statusResult.renamed.flatMap(r => [
-          { path: r.from, type: 'deleted' as const },
-          { path: r.to, type: 'created' as const }
+          { path: r.from, gitFileStatus: 'deleted' as const },
+          { path: r.to, gitFileStatus: 'created' as const }
         ])
       : statusResult.renamed.map(r => ({
           path: r.to,
-          type: 'renamed' as const
+          gitFileStatus: 'renamed' as const
         }))),
     ...statusResult.conflicted.map(path => ({
-      path,
-      type: 'conflicted' as const
+      path: path,
+      gitFileStatus: 'conflicted' as const
     }))
   ];
 
   let uniquePaths = new Set<string>();
-  let files: FileWithStatusType[] = [];
+  let files: FileWithGitStatus[] = [];
   allFiles.forEach(file => {
     if (!uniquePaths.has(file.path)) {
       uniquePaths.add(file.path);
@@ -57,7 +66,7 @@ export async function getChangesToCommit(item: {
   });
   files.sort((a, b) => a.path.localeCompare(b.path));
 
-  await forEachSeries(files, async (file: FileWithStatusType) => {
+  await forEachSeries(files, async (file: FileWithGitStatus) => {
     let path = file.path;
     let pathArray = path.split('/');
 
@@ -68,16 +77,16 @@ export async function getChangesToCommit(item: {
     let parentPath =
       pathArray.length === 1 ? '' : pathArray.slice(0, -1).join('/');
 
-    let status: FileStatusEtype =
-      file.type === 'not_added' || file.type === 'created'
+    let status: FileStatus =
+      file.gitFileStatus === 'not_added' || file.gitFileStatus === 'created'
         ? 'New'
-        : file.type === 'deleted'
+        : file.gitFileStatus === 'deleted'
           ? 'Deleted'
-          : file.type === 'modified'
+          : file.gitFileStatus === 'modified'
             ? 'Modified'
-            : file.type === 'conflicted'
+            : file.gitFileStatus === 'conflicted'
               ? 'Conflicted'
-              : file.type === 'renamed'
+              : file.gitFileStatus === 'renamed'
                 ? 'Renamed'
                 : undefined;
 

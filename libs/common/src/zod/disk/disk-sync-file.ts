@@ -1,20 +1,17 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import {
-  type FileStatusEtype,
-  zFileStatusEtype
-} from '#common/zod/disk/file-status.etype';
+import { type FileStatus, zFileStatus } from '#common/zod/disk/file-status';
 
 export type DiskSyncFile = {
   path: string;
-  status?: FileStatusEtype;
+  status?: FileStatus;
   content?: string;
 };
 
 export let zDiskSyncFile = z
   .object({
     path: z.string(),
-    status: zFileStatusEtype.nullish(),
+    status: zFileStatus.nullish(),
     content: z.string().nullish()
   })
   .meta({ id: 'DiskSyncFile' });
