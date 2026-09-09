@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { BRANCH_MAIN } from '#common/constants/top';
-import { SEED_PROJECTS } from '#disk/seed-paths';
+import { SEED_PROJECTS } from '#common/constants/top-disk';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
 import type { DiskFileIsSymlinkError } from '../disk/errors/disk-file-is-symlink-error';

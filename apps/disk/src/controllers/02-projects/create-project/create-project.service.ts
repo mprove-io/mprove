@@ -44,7 +44,7 @@ export class CreateProjectService {
     let {
       orgId,
       baseProject,
-      testProjectId,
+      seedProjectId,
       devRepoId,
       userAlias
     }: ToDiskCreateProjectRequestPayload = requestValid.payload;
@@ -86,7 +86,7 @@ export class CreateProjectService {
           projectId: item.projectId,
           projectName: projectName,
           projectDir: item.projectDir,
-          testProjectId: testProjectId,
+          seedProjectId: seedProjectId,
           userAlias: userAlias,
           remoteType: remoteType,
           gitUrl: gitUrl,
