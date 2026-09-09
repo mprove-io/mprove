@@ -38,7 +38,7 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let testProjectId = 't6-report-spaces';
+let seedProjectId = 't6-report-spaces';
 let projectId = makeId();
 let projectName = testId;
 
@@ -79,7 +79,7 @@ test('1', async t => {
             {
               orgId: orgId,
               projectId: projectId,
-              testProjectId: testProjectId,
+              seedProjectId: seedProjectId,
               name: projectName,
               defaultBranch: BRANCH_MAIN,
               remoteType: ProjectRemoteTypeEnum.Managed

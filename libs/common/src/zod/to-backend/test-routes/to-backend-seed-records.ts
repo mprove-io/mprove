@@ -53,7 +53,7 @@ export let zToBackendSeedRecordsRequestPayloadProjectsItem = z
   .object({
     orgId: z.string(),
     projectId: z.string().nullish(),
-    testProjectId: z.string().nullish(),
+    seedProjectId: z.string().nullish(),
     name: z.string(),
     defaultBranch: z.string(),
     remoteType: z.enum(ProjectRemoteTypeEnum),

@@ -13,7 +13,7 @@ import { initializeManagedCentralRepo } from './initialize-managed-central-repo'
 export function prepareRemoteAndProd(item: {
   projectId: string;
   projectDir: string;
-  testProjectId: string;
+  seedProjectId: string;
   projectName: string;
   userAlias: string;
   remoteType: ProjectRemoteTypeEnum;
@@ -67,7 +67,7 @@ export function prepareRemoteAndProd(item: {
                 projectId: v.projectId,
                 projectDir: v.projectDir,
                 prodDir: v.prodDir,
-                testProjectId: v.testProjectId,
+                seedProjectId: v.seedProjectId,
                 userAlias: v.userAlias,
                 projectName: v.projectName
               })

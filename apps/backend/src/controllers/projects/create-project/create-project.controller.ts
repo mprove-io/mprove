@@ -126,7 +126,7 @@ export class CreateProjectController {
       name: name,
       traceId: body.info.traceId,
       user: user,
-      testProjectId: undefined,
+      seedProjectId: undefined,
       remoteType: remoteType,
       projectId: makeId(),
       gitUrl: gitUrl,

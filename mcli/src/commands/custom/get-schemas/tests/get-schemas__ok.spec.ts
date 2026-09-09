@@ -78,7 +78,7 @@ test('1', async () => {
               orgId: orgId,
               projectId: projectId,
               name: projectName,
-              testProjectId: 't5-mcli',
+              seedProjectId: 't5-mcli',
               defaultBranch: defaultBranch,
               remoteType: ProjectRemoteTypeEnum.Managed,
               gitUrl: undefined,

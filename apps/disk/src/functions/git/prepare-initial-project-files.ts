@@ -8,14 +8,14 @@ import { writeDefaultInitialProjectFiles } from './write-default-initial-project
 export function prepareInitialProjectFiles(item: {
   prodDir: string;
   sourceDir: string;
-  testProjectId: string;
+  seedProjectId: string;
   projectName: string;
 }): Result.ResultAsync<void, DiskFileIsSymlinkError> {
   return Result.pipe(
     Result.succeed({ ...item }),
     Result.bind('isSourceExist', v => isPathExist({ path: v.sourceDir })),
     Result.andThen(v =>
-      isDefined(v.testProjectId) && v.isSourceExist === true
+      isDefined(v.seedProjectId) && v.isSourceExist === true
         ? copyPath({
             sourcePath: v.sourceDir,
             destinationPath: v.prodDir

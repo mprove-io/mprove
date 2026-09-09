@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { BRANCH_MAIN } from '#common/constants/top';
-import { TEST_PROJECTS } from '#common/constants/top-disk';
+import { SEED_PROJECTS } from '#disk/seed-paths';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
 import type { DiskFileIsSymlinkError } from '../disk/errors/disk-file-is-symlink-error';
@@ -10,7 +10,7 @@ import { prepareInitialProjectFiles } from './prepare-initial-project-files';
 export function createInitialCommitToProd(item: {
   prodDir: string;
   projectId: string;
-  testProjectId: string;
+  seedProjectId: string;
   projectName: string;
   userAlias: string;
 }): Result.ResultAsync<void, DiskFileIsSymlinkError> {
@@ -21,13 +21,13 @@ export function createInitialCommitToProd(item: {
         Result.succeed({
           ...item,
           git: createSimpleGit({ baseDir: item.prodDir }),
-          sourceDir: `${TEST_PROJECTS}/${item.testProjectId}`
+          sourceDir: `${SEED_PROJECTS}/${item.seedProjectId}`
         }),
         Result.andThrough(v =>
           prepareInitialProjectFiles({
             prodDir: v.prodDir,
             sourceDir: v.sourceDir,
-            testProjectId: v.testProjectId,
+            seedProjectId: v.seedProjectId,
             projectName: v.projectName
           })
         ),

@@ -6,7 +6,7 @@ import { zBaseProject } from '#common/zod/backend/base-project';
 export type ToDiskCreateProjectRequestPayload = {
   orgId: string;
   baseProject: BaseProject;
-  testProjectId?: string;
+  seedProjectId?: string;
   devRepoId: string;
   userAlias: string;
 };
@@ -15,7 +15,7 @@ export let zToDiskCreateProjectRequestPayload = z
   .object({
     orgId: z.string(),
     baseProject: zBaseProject,
-    testProjectId: z.string().nullish(),
+    seedProjectId: z.string().nullish(),
     devRepoId: z.string(),
     userAlias: z.string()
   })

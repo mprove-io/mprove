@@ -603,7 +603,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           user: mproveAdminUser,
           traceId: makeId(),
           projectId: demoProjectId,
-          testProjectId: 'demo-project',
+          seedProjectId: 'demo-project',
           remoteType: demoProjectRemoteType,
           gitUrl: demoProjectRemoteGitUrl,
           publicKey: publicKey,

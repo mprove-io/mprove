@@ -43,7 +43,7 @@ export class SeedProjectService {
       baseProject,
       devRepoId,
       userAlias,
-      testProjectId
+      seedProjectId
     }: ToDiskSeedProjectRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
@@ -90,7 +90,7 @@ export class SeedProjectService {
           projectId: item.projectId,
           projectName: projectName,
           projectDir: item.projectDir,
-          testProjectId: testProjectId,
+          seedProjectId: seedProjectId,
           userAlias: userAlias,
           remoteType: remoteType,
           gitUrl: gitUrl,

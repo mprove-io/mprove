@@ -430,7 +430,7 @@ export class SeedRecordsController {
             payload: {
               orgId: baseProject.orgId,
               baseProject: baseProject,
-              testProjectId: x.testProjectId,
+              seedProjectId: x.seedProjectId,
               devRepoId: users[0].userId,
               userAlias: users[0].alias
             }

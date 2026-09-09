@@ -11,7 +11,7 @@ export function initializeAndPushManagedProd(item: {
   projectId: string;
   projectDir: string;
   prodDir: string;
-  testProjectId: string;
+  seedProjectId: string;
   projectName: string;
   userAlias: string;
 }): Result.ResultAsync<
@@ -23,7 +23,7 @@ export function initializeAndPushManagedProd(item: {
     Result.andThrough(v =>
       createInitialCommitToProd({
         prodDir: v.prodDir,
-        testProjectId: v.testProjectId,
+        seedProjectId: v.seedProjectId,
         projectId: v.projectId,
         userAlias: v.userAlias,
         projectName: v.projectName

@@ -136,7 +136,7 @@ export class ProjectsService {
     privateKeyEncrypted?: string;
     passPhrase?: string;
     e2bApiKey?: string;
-    testProjectId: string;
+    seedProjectId: string;
     user: UserTab;
     evs: Ev[];
     connections: ConnectionTab[];
@@ -154,7 +154,7 @@ export class ProjectsService {
       privateKeyEncrypted,
       passPhrase,
       e2bApiKey,
-      testProjectId,
+      seedProjectId,
       user,
       evs,
       connections,
@@ -194,7 +194,7 @@ export class ProjectsService {
         baseProject: baseProject,
         devRepoId: user.userId,
         userAlias: user.alias,
-        testProjectId: testProjectId
+        seedProjectId: seedProjectId
       }
     };
 

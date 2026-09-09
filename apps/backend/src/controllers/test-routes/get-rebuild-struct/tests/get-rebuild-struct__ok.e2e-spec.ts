@@ -31,7 +31,7 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let testProjectId = 't2';
+let seedProjectId = 't2';
 let projectId = makeId();
 let projectName = testId;
 
@@ -126,7 +126,7 @@ test('1', async t => {
         payload: {
           orgId: orgId,
           baseProject: baseProject,
-          testProjectId: testProjectId,
+          seedProjectId: seedProjectId,
           devRepoId: devRepoId,
           userAlias: userAlias
         }
