@@ -9,7 +9,7 @@ import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { checkOrgDoesNotExist } from './functions/check-org-does-not-exist';
+import { checkOrgDoesNotExist } from './check-org-does-not-exist';
 
 @Injectable()
 export class CreateOrgService {

@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
-import { DiskOrgAlreadyExistsError } from '../errors/disk-org-already-exists-error';
+import { DiskOrgAlreadyExistsError } from './errors/disk-org-already-exists-error';
 
 export function checkOrgDoesNotExist(item: {
   orgDir: string;

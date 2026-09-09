@@ -27,7 +27,7 @@ import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 import { DiskFileAlreadyExistError } from './errors/disk-file-already-exist-error';
-import { getContentFromFileName } from './functions/get-content-from-file-name';
+import { getContentFromFileName } from './get-content-from-file-name';
 
 @Injectable()
 export class CreateFileService {

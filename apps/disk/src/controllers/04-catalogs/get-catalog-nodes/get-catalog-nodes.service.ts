@@ -16,7 +16,7 @@ import { DiskTabService } from '#disk/services/disk-tab.service';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { checkoutRequestedBranch } from './functions/checkout-requested-branch';
+import { checkoutRequestedBranch } from './checkout-requested-branch';
 
 @Injectable()
 export class GetCatalogNodesService {

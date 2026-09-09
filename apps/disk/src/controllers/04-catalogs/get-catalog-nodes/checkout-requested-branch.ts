@@ -4,7 +4,7 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#disk/functions/git/errors/disk-repo-is-not-clean-for-checkout-branch-error';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
-import { DiskBranchIsNotExistError } from '../errors/disk-branch-is-not-exist-error';
+import { DiskBranchIsNotExistError } from './errors/disk-branch-is-not-exist-error';
 
 export function checkoutRequestedBranch(item: {
   branch?: string;

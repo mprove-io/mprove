@@ -18,8 +18,8 @@ import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { deleteBranchFromRepositories } from './delete-branch-from-repositories';
 import { DiskDefaultBranchCannotBeDeletedError } from './errors/disk-default-branch-cannot-be-deleted-error';
-import { deleteBranchFromRepositories } from './functions/delete-branch-from-repositories';
 
 @Injectable()
 export class DeleteBranchService {

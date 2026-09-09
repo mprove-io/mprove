@@ -18,7 +18,7 @@ import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { checkProjectDoesNotExist } from './functions/check-project-does-not-exist';
+import { checkProjectDoesNotExist } from './check-project-does-not-exist';
 
 @Injectable()
 export class CreateProjectService {
