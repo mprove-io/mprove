@@ -1,9 +1,11 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 
-export type RepoStatus = 'NeedCommit' | 'NeedPull' | 'NeedPush' | 'Ok';
+const repoStatusValues = ['NeedCommit', 'NeedPull', 'NeedPush', 'Ok'] as const;
 
-export let zRepoStatus = z.enum(['NeedCommit', 'NeedPull', 'NeedPush', 'Ok']);
+export type RepoStatus = (typeof repoStatusValues)[number];
+
+export let zRepoStatus = z.enum(repoStatusValues);
 
 assertTypesEqual<RepoStatus, z.infer<typeof zRepoStatus>>({
   value: true
