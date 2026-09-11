@@ -20,10 +20,8 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToBackendGetFileResponsePayload } from '#common/zod/to-backend/files/to-backend-get-file';
-import type { ToDiskGetFileRequest } from '#common/zod/to-disk/07-files/get-file/get-file-request';
-import type { ToDiskGetFileResponse } from '#common/zod/to-disk/07-files/get-file/get-file-response';
+import type { ToDiskGetFileResponsePayload } from '#common/zod/to-disk/07-files/get-file/get-file-response';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)
@@ -78,28 +76,18 @@ export class GetFileController {
       project: project
     });
 
-    let toDiskGetFileRequest: ToDiskGetFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskGetFile,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        fileNodeId: fileNodeId,
-        builderLeft: builderLeft
-      }
-    };
-
-    let diskResponse = await this.rpcService.sendToDisk<ToDiskGetFileResponse>({
-      orgId: project.orgId,
-      projectId: projectId,
-      repoId: repoId,
-      message: toDiskGetFileRequest,
-      checkIsOk: true
-    });
+    let getFileRespPayload: ToDiskGetFileResponsePayload =
+      await this.rpcService.sendToDiskUnwrapPayload({
+        operation: 'getFile',
+        traceId: body.info.traceId,
+        input: {
+          baseProject: baseProject,
+          repoId: repoId,
+          branch: branchId,
+          fileNodeId: fileNodeId,
+          builderLeft: builderLeft
+        }
+      });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
@@ -134,15 +122,15 @@ export class GetFileController {
     });
 
     let payload: ToBackendGetFileResponsePayload = {
-      repo: diskResponse.payload.repo,
-      originalContent: diskResponse.payload.originalContent,
-      content: diskResponse.payload.content,
+      repo: getFileRespPayload.repo,
+      originalContent: getFileRespPayload.originalContent,
+      content: getFileRespPayload.content,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs
       }),
       needValidate: bridge.needValidate,
-      isExist: diskResponse.payload.isExist
+      isExist: getFileRespPayload.isExist
     };
 
     return payload;

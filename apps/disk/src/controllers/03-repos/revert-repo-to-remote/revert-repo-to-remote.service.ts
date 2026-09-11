@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
+import type { DiskRemoteBranchIsNotExistError } from '#common/zod/disk/errors/disk-remote-branch-is-not-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskRevertRepoToRemoteRequest } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-request';
 import type { ToDiskRevertRepoToRemoteRequestPayload } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-request-payload';
@@ -17,7 +18,6 @@ import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskRemoteBranchIsNotExistError } from './errors/disk-remote-branch-is-not-exist-error';
 
 @Injectable()
 export class RevertRepoToRemoteService {
@@ -116,10 +116,11 @@ export class RevertRepoToRemoteService {
           isFetch: false
         })
       ),
-      Result.andThrough(item =>
-        item.remoteBranchExists === false
-          ? Result.fail(new DiskRemoteBranchIsNotExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (item): Result.Result<void, DiskRemoteBranchIsNotExistError> =>
+          item.remoteBranchExists === false
+            ? Result.fail({ code: 'DISK_REMOTE_BRANCH_IS_NOT_EXIST' })
+            : Result.succeed()
       ),
       Result.andThrough(item =>
         revertRepoToRemote({

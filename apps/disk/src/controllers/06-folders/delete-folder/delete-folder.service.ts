@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
+import type { DiskFolderIsNotExistError } from '#common/zod/disk/errors/disk-folder-is-not-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import {
   type ToDiskDeleteFolderRequest,
@@ -22,7 +23,6 @@ import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskFolderIsNotExistError } from './errors/disk-folder-is-not-exist-error';
 
 @Injectable()
 export class DeleteFolderService {
@@ -119,10 +119,11 @@ export class DeleteFolderService {
       Result.bind('isFolderExist', item =>
         isPathExist({ path: item.folderAbsolutePath })
       ),
-      Result.andThrough(item =>
-        item.isFolderExist === false
-          ? Result.fail(new DiskFolderIsNotExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (item): Result.Result<void, DiskFolderIsNotExistError> =>
+          item.isFolderExist === false
+            ? Result.fail({ code: 'DISK_FOLDER_IS_NOT_EXIST' })
+            : Result.succeed()
       ),
       Result.andThrough(item => removePath({ path: item.folderAbsolutePath })),
       Result.andThrough(item => addChangesToStage({ repoDir: item.repoDir })),

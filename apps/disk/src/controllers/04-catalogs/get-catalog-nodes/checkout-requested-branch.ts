@@ -1,10 +1,10 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { isUndefined } from '#common/functions/is-undefined';
+import type { DiskBranchIsNotExistError } from '#common/zod/disk/errors/disk-branch-is-not-exist-error';
+import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#common/zod/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
-import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#disk/functions/git/errors/disk-repo-is-not-clean-for-checkout-branch-error';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
-import { DiskBranchIsNotExistError } from './errors/disk-branch-is-not-exist-error';
 
 export function checkoutRequestedBranch(item: {
   branch?: string;
@@ -32,7 +32,7 @@ export function checkoutRequestedBranch(item: {
         }),
         Result.andThen(isBranchExist => {
           if (isBranchExist === false) {
-            return Result.fail(new DiskBranchIsNotExistError());
+            return Result.fail({ code: 'DISK_BRANCH_IS_NOT_EXIST' });
           }
 
           return checkoutBranch({

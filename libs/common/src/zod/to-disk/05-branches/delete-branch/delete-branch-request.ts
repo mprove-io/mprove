@@ -1,31 +1,31 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskDeleteBranchRequestInfo,
-  zToDiskDeleteBranchRequestInfo
-} from './delete-branch-request-info';
-import {
-  type ToDiskDeleteBranchRequestPayload,
-  zToDiskDeleteBranchRequestPayload
-} from './delete-branch-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskDeleteBranchRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskDeleteBranchRequestInfo;
-    payload: ToDiskDeleteBranchRequestPayload;
-  }
->;
+export type ToDiskDeleteBranchRequest = {
+  operation: 'deleteBranch';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+  };
+};
 
-export let zToDiskDeleteBranchRequest = zToDiskRequest
-  .extend({
-    info: zToDiskDeleteBranchRequestInfo,
-    payload: zToDiskDeleteBranchRequestPayload
+export let zToDiskDeleteBranchRequest = z
+  .strictObject({
+    operation: z.literal('deleteBranch'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string()
+      })
+      .meta({ id: 'ToDiskDeleteBranchRequestPayload' })
   })
   .meta({ id: 'ToDiskDeleteBranchRequest' });
 

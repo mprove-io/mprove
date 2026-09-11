@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
+import type { DiskFileAlreadyExistError } from '#common/zod/disk/errors/disk-file-already-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import {
   type ToDiskCreateFileRequest,
@@ -26,7 +27,6 @@ import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskFileAlreadyExistError } from './errors/disk-file-already-exist-error';
 import { getContentFromFileName } from './get-content-from-file-name';
 
 @Injectable()
@@ -146,10 +146,11 @@ export class CreateFileService {
       }),
       Result.andThrough(item => ensureDir({ dir: item.parentPath })),
       Result.bind('isFileExist', item => isPathExist({ path: item.filePath })),
-      Result.andThrough(item =>
-        item.isFileExist === true
-          ? Result.fail(new DiskFileAlreadyExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (item): Result.Result<void, DiskFileAlreadyExistError> =>
+          item.isFileExist === true
+            ? Result.fail({ code: 'DISK_FILE_ALREADY_EXIST' })
+            : Result.succeed()
       ),
       Result.andThrough(item =>
         writeToFile({

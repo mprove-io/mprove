@@ -3,13 +3,13 @@ import {
   MPROVE_CONFIG_FILENAME,
   README_FILE_NAME
 } from '#common/constants/top';
-import type { DiskFileIsSymlinkError } from '../disk/errors/disk-file-is-symlink-error';
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
 import { writeToFile } from '../disk/write-to-file';
 
 export function writeDefaultInitialProjectFiles(item: {
   prodDir: string;
   projectName: string;
-}): Result.ResultAsync<void, DiskFileIsSymlinkError> {
+}): Result.ResultAsync<void, FileIsSymlinkError> {
   let readmeFilePath: string = `${item.prodDir}/${README_FILE_NAME}`;
 
   let readmeContent: string = `# ${item.projectName} project`;

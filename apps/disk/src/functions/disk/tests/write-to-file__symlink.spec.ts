@@ -3,7 +3,6 @@ import path from 'node:path';
 import { Result } from '@praha/byethrow';
 import test from 'ava';
 import fse from 'fs-extra';
-import { DiskFileIsSymlinkError } from '#disk/functions/disk/errors/disk-file-is-symlink-error';
 import { writeToFile } from '#disk/functions/disk/write-to-file';
 
 let workspaceDir = path.join(os.tmpdir(), 'mprove-write-to-file__symlink');
@@ -32,7 +31,7 @@ test('writeToFile rejects a symlink and does not modify its target', async t => 
     })
   );
 
-  t.true(error instanceof DiskFileIsSymlinkError);
+  t.deepEqual(error, { code: 'FILE_IS_SYMLINK' });
 
   let targetContent = await fse.readFile(secretPath, 'utf8');
 

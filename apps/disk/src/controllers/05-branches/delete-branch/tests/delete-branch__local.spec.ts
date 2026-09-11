@@ -94,12 +94,9 @@ test('1', async t => {
     };
 
     let deleteBranchRequest: ToDiskDeleteBranchRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'deleteBranch',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: 'b2'
@@ -121,5 +118,11 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.payload.deletedBranch, 'b2');
+  t.is(resp.result.type, 'Success');
+
+  if (resp.result.type !== 'Success') {
+    return;
+  }
+
+  t.is(resp.result.value.deletedBranch, 'b2');
 });

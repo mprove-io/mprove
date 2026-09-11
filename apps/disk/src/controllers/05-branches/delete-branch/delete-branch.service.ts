@@ -1,65 +1,42 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
-import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import {
-  type ToDiskDeleteBranchRequest,
-  zToDiskDeleteBranchRequest
-} from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-request';
-import type { ToDiskDeleteBranchRequestPayload } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-request-payload';
-import type { ToDiskDeleteBranchResponsePayload } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-response-payload';
+import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ProjectLt } from '#common/zod/st-lt';
+import type { ToDiskDeleteBranchResponse } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 import { deleteBranchFromRepositories } from './delete-branch-from-repositories';
-import { DiskDefaultBranchCannotBeDeletedError } from './errors/disk-default-branch-cannot-be-deleted-error';
 
 @Injectable()
 export class DeleteBranchService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskDeleteBranchResponsePayload> {
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+  }): Promise<ToDiskResultFor<'ToDiskDeleteBranch'>> {
+    let { baseProject, repoId, branch } = item;
+
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid: ToDiskDeleteBranchRequest = zodParseOrThrow({
-      schema: zToDiskDeleteBranchRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch
-    }: ToDiskDeleteBranchRequestPayload = requestValid.payload;
-
-    let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
-      encryptedString: baseProject.st
-    });
 
     let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
-
-    let { name: projectName } = projectSt;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
       projectLt;
@@ -85,7 +62,7 @@ export class DeleteBranchService {
       ),
       Result.andThrough(() =>
         branch === defaultBranch
-          ? Result.fail(new DiskDefaultBranchCannotBeDeletedError())
+          ? Result.fail({ code: 'DISK_DEFAULT_BRANCH_CANNOT_BE_DELETED' })
           : Result.succeed()
       ),
       Result.bind('git', item =>
@@ -120,7 +97,7 @@ export class DeleteBranchService {
         })
       ),
       Result.bind('repoStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -131,7 +108,7 @@ export class DeleteBranchService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -140,7 +117,12 @@ export class DeleteBranchService {
         })
       ),
       Result.map(
-        (item): ToDiskDeleteBranchResponsePayload => ({
+        (
+          item
+        ): Extract<
+          ToDiskDeleteBranchResponse['result'],
+          { type: 'Success' }
+        >['value'] => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,
@@ -155,12 +137,9 @@ export class DeleteBranchService {
           },
           deletedBranch: branch
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(deleteBranchResult);
-
-    return payload;
+    return deleteBranchResult;
   }
 }

@@ -1,11 +1,11 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
+import type { DiskBranchIsNotExistError } from '#common/zod/disk/errors/disk-branch-is-not-exist-error';
 import { deleteLocalBranch } from '#disk/functions/git/delete-local-branch';
 import { deleteRemoteBranch } from '#disk/functions/git/delete-remote-branch';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
-import { DiskBranchIsNotExistError } from './errors/disk-branch-is-not-exist-error';
 
 export function deleteBranchFromRepositories(item: {
   projectDir: string;
@@ -51,7 +51,7 @@ export function deleteBranchFromRepositories(item: {
 
       return v.isRemoteBranchExist === true
         ? Result.succeed()
-        : Result.fail(new DiskBranchIsNotExistError());
+        : Result.fail({ code: 'DISK_BRANCH_IS_NOT_EXIST' });
     })
   );
 }

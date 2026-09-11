@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { LogResult, StatusResult } from 'simple-git';
-
 import { ErEnum } from '#common/enums/er.enum';
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
+import type { DiskDevRepoCommitDoesNotMatchLocalCommitError } from '#common/zod/disk/errors/disk-dev-repo-commit-does-not-match-local-commit-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskSyncRepoRequest } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-request';
 import type { ToDiskSyncRepoRequestPayload } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-request-payload';
@@ -23,7 +23,6 @@ import { getWorkingTreePayload } from '#node-common/functions/get-sync-files';
 import { resetWorkingTreeToHead } from '#node-common/functions/reset-working-tree-to-head';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskDevRepoCommitDoesNotMatchLocalCommitError } from './errors/disk-dev-repo-commit-does-not-match-local-commit-error';
 
 type SyncData =
   | {
@@ -141,24 +140,30 @@ export class SyncRepoService {
           isFetch: false
         })
       ),
-      Result.andThrough(async item => {
-        let logResult: LogResult = await item.git.log(['-1']);
-        let diskLastCommit = logResult.latest?.hash;
+      Result.andThrough(
+        async (
+          item
+        ): Result.ResultAsync<
+          void,
+          DiskDevRepoCommitDoesNotMatchLocalCommitError
+        > => {
+          let logResult: LogResult = await item.git.log(['-1']);
+          let diskLastCommit = logResult.latest?.hash;
 
-        if (lastCommit !== diskLastCommit) {
-          return Result.fail(
-            new DiskDevRepoCommitDoesNotMatchLocalCommitError({
+          if (lastCommit !== diskLastCommit) {
+            return Result.fail({
+              code: 'DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT',
               displayData: {
                 branch: branch,
                 devLastCommit: diskLastCommit,
                 localLastCommit: lastCommit
               }
-            })
-          );
-        }
+            });
+          }
 
-        return Result.succeed();
-      }),
+          return Result.succeed();
+        }
+      ),
       Result.bind('statusResult', async item => {
         let statusResult: StatusResult = await item.git.status();
         return Result.succeed(statusResult);

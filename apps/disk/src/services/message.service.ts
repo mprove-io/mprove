@@ -1,14 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { match } from 'ts-pattern';
+import type { z } from 'zod';
 import { METHOD_RPC } from '#common/constants/top';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { MyResponse } from '#common/zod/to/my-response';
+import {
+  type ToDiskLegacyRoute,
+  zToDiskLegacyRoute
+} from '#common/zod/to-disk/to-disk-legacy-route';
 import type {
+  ToDiskLegacyPayload,
   ToDiskOperationRequest,
   ToDiskOperationResponse,
-  ToDiskResponseForRequest
+  ToDiskPilotRequest,
+  ToDiskPilotWireResponseFor,
+  ToDiskResponseForRequest,
+  ToDiskRpcResponse
 } from '#common/zod/to-disk/to-disk-operation-contract';
+import {
+  type ToDiskUnrouteableResponse,
+  zToDiskUnrouteableResponse
+} from '#common/zod/to-disk/to-disk-unrouteable-response';
 import { DiskConfig } from '#disk/config/disk-config';
 import { CreateOrgService } from '#disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '#disk/controllers/01-orgs/delete-org/delete-org.service';
@@ -45,6 +58,7 @@ import {
   type DiskResponse,
   makeOkResponseDisk
 } from '#disk/functions/make-ok-response-disk';
+import { processPilotResponse } from '#disk/functions/process-pilot-response';
 
 @Injectable()
 export class MessageService {
@@ -93,20 +107,79 @@ export class MessageService {
 
   async processMessage<TRequest extends ToDiskOperationRequest>(
     item: TRequest
-  ): Promise<ToDiskResponseForRequest<TRequest>> {
-    let body: TRequest = item;
+  ): Promise<ToDiskResponseForRequest<TRequest>>;
+  async processMessage(item: unknown): Promise<ToDiskRpcResponse>;
+  async processMessage(item: unknown): Promise<ToDiskRpcResponse> {
+    let operation: unknown =
+      typeof item === 'object' && item !== null && 'operation' in item
+        ? item.operation
+        : undefined;
+
+    if (operation === 'getFile') {
+      let response: ToDiskPilotWireResponseFor<'ToDiskGetFile'> =
+        await processPilotResponse({
+          name: 'ToDiskGetFile',
+          body: item,
+          method: METHOD_RPC,
+          process: input => this.getFileService.process(input),
+          logger: this.logger
+        });
+
+      return response;
+    }
+
+    if (operation === 'deleteBranch') {
+      let response: ToDiskPilotWireResponseFor<'ToDiskDeleteBranch'> =
+        await processPilotResponse({
+          name: 'ToDiskDeleteBranch',
+          body: item,
+          method: METHOD_RPC,
+          process: input => this.deleteBranchService.process(input),
+          logger: this.logger
+        });
+
+      return response;
+    }
+
+    let isPilotEnvelope: boolean =
+      typeof item === 'object' &&
+      item !== null &&
+      ('operation' in item || 'input' in item);
+
+    let legacyRoute: z.ZodSafeParseResult<ToDiskLegacyRoute> =
+      zToDiskLegacyRoute.safeParse(item);
+
+    if (isPilotEnvelope || !legacyRoute.success) {
+      let response: ToDiskUnrouteableResponse =
+        zToDiskUnrouteableResponse.parse({
+          result: {
+            type: 'InvalidRequest',
+            issues: [
+              {
+                path: isPilotEnvelope ? 'operation' : 'info.name',
+                message: 'Missing or unknown disk request discriminator',
+                code: 'invalid_value'
+              }
+            ]
+          }
+        });
+
+      return response;
+    }
+
+    let body: Exclude<ToDiskOperationRequest, ToDiskPilotRequest> =
+      item as Exclude<ToDiskOperationRequest, ToDiskPilotRequest>;
 
     let startTs: number = Date.now();
 
     let response: MyResponse;
 
     try {
-      let payload: ToDiskOperationResponse['payload'] =
-        await this.processSwitch(body);
+      let payload: ToDiskLegacyPayload = await this.processSwitch(body);
 
       let okResponse: DiskResponse<
-        ToDiskOperationResponse['payload'],
-        TRequest['info']['name'],
+        ToDiskLegacyPayload,
+        typeof body.info.name,
         typeof METHOD_RPC
       > = makeOkResponseDisk({
         payload: payload,
@@ -134,16 +207,16 @@ export class MessageService {
     }
 
     // Existing operation schemas describe success payloads, but runtime errors
-    // intentionally use {}. This boundary also restores the generic correlation.
-    return response as ToDiskResponseForRequest<TRequest>;
+    // intentionally use {}.
+    return response as ToDiskOperationResponse;
   }
 
   async processSwitch(
-    item: ToDiskOperationRequest
-  ): Promise<ToDiskOperationResponse['payload']> {
-    let request: ToDiskOperationRequest = item;
+    item: Exclude<ToDiskOperationRequest, ToDiskPilotRequest>
+  ): Promise<ToDiskLegacyPayload> {
+    let request: Exclude<ToDiskOperationRequest, ToDiskPilotRequest> = item;
 
-    let payload: ToDiskOperationResponse['payload'] = await match(request)
+    let payload: ToDiskLegacyPayload = await match(request)
       .with(
         { info: { name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg } },
         request => this.createOrgService.process(request)
@@ -229,10 +302,6 @@ export class MessageService {
         request => this.createBranchService.process(request)
       )
       .with(
-        { info: { name: ToDiskRequestInfoNameEnum.ToDiskDeleteBranch } },
-        request => this.deleteBranchService.process(request)
-      )
-      .with(
         { info: { name: ToDiskRequestInfoNameEnum.ToDiskIsBranchExist } },
         request => this.isBranchExistService.process(request)
       )
@@ -251,10 +320,6 @@ export class MessageService {
       .with(
         { info: { name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile } },
         request => this.deleteFileService.process(request)
-      )
-      .with(
-        { info: { name: ToDiskRequestInfoNameEnum.ToDiskGetFile } },
-        request => this.getFileService.process(request)
       )
       .with(
         { info: { name: ToDiskRequestInfoNameEnum.ToDiskSaveFile } },

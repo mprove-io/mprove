@@ -1,10 +1,10 @@
 import { Result } from '@praha/byethrow';
+import type { DiskProjectAlreadyExistError } from '#common/zod/disk/errors/disk-project-already-exist-error';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
-import { DiskProjectAlreadyExistsError } from './errors/disk-project-already-exists-error';
 
 export function checkProjectDoesNotExist(item: {
   projectDir: string;
-}): Result.ResultAsync<void, DiskProjectAlreadyExistsError> {
+}): Result.ResultAsync<void, DiskProjectAlreadyExistError> {
   return Result.pipe(
     Result.succeed({ projectDir: item.projectDir }),
     Result.bind('isProjectExist', item =>
@@ -12,7 +12,7 @@ export function checkProjectDoesNotExist(item: {
     ),
     Result.andThen(item =>
       item.isProjectExist === true
-        ? Result.fail(new DiskProjectAlreadyExistsError())
+        ? Result.fail({ code: 'DISK_PROJECT_ALREADY_EXIST' })
         : Result.succeed()
     )
   );

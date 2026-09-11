@@ -33,10 +33,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
-import type { ToDiskDeleteBranchRequest } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-request';
-import type { ToDiskDeleteBranchResponse } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-response';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)
@@ -106,27 +103,15 @@ export class DeleteBranchController {
       project: project
     });
 
-    let toDiskDeleteBranchRequest: ToDiskDeleteBranchRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
+    await this.rpcService.sendToDiskUnwrapPayload({
+      operation: 'deleteBranch',
+      traceId: body.info.traceId,
+      input: {
         baseProject: baseProject,
         repoId: repoId,
         branch: branchId
       }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskDeleteBranchResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskDeleteBranchRequest,
-        checkIsOk: true
-      });
+    });
 
     await retry(
       async () =>

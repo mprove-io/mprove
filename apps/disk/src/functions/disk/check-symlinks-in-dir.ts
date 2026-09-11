@@ -2,7 +2,7 @@ import type { Dirent } from 'node:fs';
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import pIteration from 'p-iteration';
-import { DiskSymlinksFoundError } from './errors/disk-symlinks-found-error';
+import type { DiskSymlinksFoundError } from '#common/zod/disk/errors/disk-symlinks-found-error';
 
 const { forEachSeries } = pIteration;
 
@@ -20,12 +20,13 @@ export async function checkSymlinksInDir(item: {
   await walk({ dir: item.dir, symlinks: symlinks });
 
   if (symlinks.length > 0) {
-    return Result.fail(
-      new DiskSymlinksFoundError({
+    return Result.fail({
+      code: 'DISK_SYMLINKS_FOUND',
+      displayData: {
         dir: item.dir,
         symlinks: symlinks
-      })
-    );
+      }
+    });
   }
 
   return Result.succeed();

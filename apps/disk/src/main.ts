@@ -41,7 +41,23 @@ async function bootstrap(): Promise<void> {
 
   if (config.diskIsCheckSymlinksOnStartup === true) {
     await Result.unwrap(
-      checkSymlinksInDir({ dir: config.diskOrganizationsPath })
+      Result.pipe(
+        checkSymlinksInDir({ dir: config.diskOrganizationsPath }),
+        Result.mapError(error => {
+          switch (error.code) {
+            case 'DISK_SYMLINKS_FOUND':
+              return new Error(
+                `Symlinks found under ${error.displayData.dir}. Remove them before starting disk:\n${error.displayData.symlinks.join('\n')}`
+              );
+
+            default: {
+              let unhandled: never = error.code;
+
+              throw new Error(`Unhandled startup error: ${unhandled}`);
+            }
+          }
+        })
+      )
     );
   }
 

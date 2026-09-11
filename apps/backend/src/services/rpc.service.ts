@@ -12,6 +12,17 @@ import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
 import { ServerError } from '#common/models/server-error';
 import type { RpcRequestData } from '#common/zod/rpc-request-data';
 import type { MyResponse } from '#common/zod/to/my-response';
+import {
+  getToDiskPilotOperationName,
+  getToDiskPilotWireResponseSchema,
+  type ToDiskNameForRequest,
+  type ToDiskPilotRequest,
+  type ToDiskPilotWireResponseFor
+} from '#common/zod/to-disk/to-disk-operation-contract';
+import type {
+  ToDiskPilotDomainResponse,
+  ToDiskPilotSuccessResponse
+} from '#common/zod/to-disk/to-disk-pilot-response';
 
 @Injectable()
 export class RpcService implements OnModuleDestroy {
@@ -65,7 +76,7 @@ export class RpcService implements OnModuleDestroy {
     return this.queues.get(namespace);
   }
 
-  async request<T extends MyResponse>(item: {
+  async request<T = unknown>(item: {
     namespace: string;
     orgId: string;
     projectId: string;
@@ -194,6 +205,120 @@ export class RpcService implements OnModuleDestroy {
     }
 
     return response as unknown as T;
+  }
+
+  async sendToDiskResult<TRequest extends ToDiskPilotRequest>(
+    item: TRequest
+  ): Promise<
+    ToDiskPilotDomainResponse<
+      ToDiskPilotWireResponseFor<ToDiskNameForRequest<TRequest>>
+    >
+  > {
+    let { baseProject, repoId } = item.input;
+
+    let { orgId, projectId } = baseProject;
+
+    let diskShard: string = calculateDiskShard({
+      orgId: orgId,
+      totalDiskShards: this.totalDiskShards
+    });
+
+    let rawResponse: unknown = await this.request<unknown>({
+      namespace: `${RpcNamespacesEnum.RpcDisk}-${diskShard}`,
+      orgId: orgId,
+      projectId: projectId,
+      repoId: repoId,
+      message: item,
+      timeout: this.rpcDiskTimeoutMs
+    });
+
+    let response: ToDiskPilotWireResponseFor<ToDiskNameForRequest<TRequest>>;
+
+    try {
+      response = getToDiskPilotWireResponseSchema({
+        name: getToDiskPilotOperationName({ request: item })
+      }).parse(rawResponse);
+    } catch {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RPC_INVALID_RESPONSE_FORMAT
+      });
+    }
+
+    if (response.result.type === 'InvalidRequest') {
+      throw new ServerError({
+        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
+        originalError: new ServerError({
+          message: ErEnum.DISK_WRONG_REQUEST_PARAMS,
+          displayData: response.result.issues
+        })
+      });
+    }
+
+    if (response.result.type === 'InternalFailure') {
+      throw new ServerError({
+        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
+        originalError: { incidentId: response.result.incidentId }
+      });
+    }
+
+    // The schema preserves request correlation; the guards exclude boundary results.
+    // TypeScript cannot lift nested result narrowing into a generic mapped envelope.
+    let domainResponse: ToDiskPilotDomainResponse<typeof response> =
+      response as ToDiskPilotDomainResponse<typeof response>;
+
+    return domainResponse;
+  }
+
+  async sendToDiskUnwrapResponse<TRequest extends ToDiskPilotRequest>(
+    item: TRequest
+  ): Promise<
+    ToDiskPilotSuccessResponse<
+      ToDiskPilotWireResponseFor<ToDiskNameForRequest<TRequest>>
+    >
+  > {
+    let response: ToDiskPilotDomainResponse<
+      ToDiskPilotWireResponseFor<ToDiskNameForRequest<TRequest>>
+    > = await this.sendToDiskResult(item);
+
+    if (response.result.type === 'Failure') {
+      let error: { code: string; displayData?: unknown } =
+        response.result.error;
+
+      throw new ServerError({
+        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
+        originalError: new ServerError({
+          message: error.code,
+          displayData: error.displayData
+        })
+      });
+    }
+
+    // The guard proves success, but TypeScript cannot narrow the generic envelope.
+    let successResponse: ToDiskPilotSuccessResponse<
+      ToDiskPilotWireResponseFor<ToDiskNameForRequest<TRequest>>
+    > = response as ToDiskPilotSuccessResponse<
+      ToDiskPilotWireResponseFor<ToDiskNameForRequest<TRequest>>
+    >;
+
+    return successResponse;
+  }
+
+  async sendToDiskUnwrapPayload<TRequest extends ToDiskPilotRequest>(
+    item: TRequest
+  ): Promise<
+    ToDiskPilotSuccessResponse<
+      ToDiskPilotWireResponseFor<ToDiskNameForRequest<TRequest>>
+    >['result']['value']
+  > {
+    let response: ToDiskPilotSuccessResponse<
+      ToDiskPilotWireResponseFor<ToDiskNameForRequest<TRequest>>
+    > = await this.sendToDiskUnwrapResponse(item);
+
+    let payload: ToDiskPilotSuccessResponse<
+      ToDiskPilotWireResponseFor<ToDiskNameForRequest<TRequest>>
+    >['result']['value'] = response.result.value;
+
+    return payload;
   }
 
   onModuleDestroy() {

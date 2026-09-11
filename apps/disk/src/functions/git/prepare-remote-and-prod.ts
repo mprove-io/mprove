@@ -2,11 +2,11 @@ import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import type { DiskRepoStatusIsNotNeedPushError } from '#common/zod/disk/errors/disk-repo-status-is-not-need-push-error';
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
 import { createGit } from '#disk/functions/git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { ensureDir } from '../disk/ensure-dir';
-import type { DiskFileIsSymlinkError } from '../disk/errors/disk-file-is-symlink-error';
-import type { DiskRepoStatusIsNotNeedPushError } from './errors/disk-repo-status-is-not-need-push-error';
 import { initializeAndPushManagedProd } from './initialize-and-push-managed-prod';
 import { initializeManagedCentralRepo } from './initialize-managed-central-repo';
 
@@ -24,7 +24,7 @@ export function prepareRemoteAndProd(item: {
   passPhrase: string;
 }): Result.ResultAsync<
   void,
-  DiskFileIsSymlinkError | DiskRepoStatusIsNotNeedPushError
+  FileIsSymlinkError | DiskRepoStatusIsNotNeedPushError
 > {
   return addTraceSpan({
     spanName: 'disk.git.prepareRemoteAndProd',

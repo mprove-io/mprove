@@ -1,11 +1,12 @@
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
-import { DiskFileIsSymlinkError } from './errors/disk-file-is-symlink-error';
+
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
 
 export async function writeToFile(item: {
   filePath: string;
   content: string;
-}): Result.ResultAsync<void, DiskFileIsSymlinkError> {
+}): Result.ResultAsync<void, FileIsSymlinkError> {
   let stat: fse.Stats | undefined;
 
   try {
@@ -19,7 +20,7 @@ export async function writeToFile(item: {
   }
 
   if (stat?.isSymbolicLink() === true) {
-    return Result.fail(new DiskFileIsSymlinkError());
+    return Result.fail({ code: 'FILE_IS_SYMLINK' });
   }
 
   await fse.writeFile(item.filePath, item.content);

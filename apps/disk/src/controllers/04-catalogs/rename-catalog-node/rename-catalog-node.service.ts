@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
+import type { DiskNewPathAlreadyExistError } from '#common/zod/disk/errors/disk-new-path-already-exist-error';
+import type { DiskOldPathIsNotExistError } from '#common/zod/disk/errors/disk-old-path-is-not-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskRenameCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request';
 import type { ToDiskRenameCatalogNodeRequestPayload } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request-payload';
@@ -19,8 +21,6 @@ import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskNewPathAlreadyExistError } from './errors/disk-new-path-already-exist-error';
-import { DiskOldPathIsNotExistError } from './errors/disk-old-path-is-not-exist-error';
 
 @Injectable()
 export class RenameCatalogNodeService {
@@ -137,16 +137,18 @@ export class RenameCatalogNodeService {
         })
       ),
       Result.bind('isOldPathExist', v => isPathExist({ path: v.oldPath })),
-      Result.andThrough(v =>
-        v.isOldPathExist === false
-          ? Result.fail(new DiskOldPathIsNotExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (v): Result.Result<void, DiskOldPathIsNotExistError> =>
+          v.isOldPathExist === false
+            ? Result.fail({ code: 'DISK_OLD_PATH_IS_NOT_EXIST' })
+            : Result.succeed()
       ),
       Result.bind('isNewPathExist', v => isPathExist({ path: v.newPath })),
-      Result.andThrough(v =>
-        v.isNewPathExist === true
-          ? Result.fail(new DiskNewPathAlreadyExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (v): Result.Result<void, DiskNewPathAlreadyExistError> =>
+          v.isNewPathExist === true
+            ? Result.fail({ code: 'DISK_NEW_PATH_ALREADY_EXIST' })
+            : Result.succeed()
       ),
       Result.andThrough(v =>
         renamePath({

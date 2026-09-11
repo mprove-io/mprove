@@ -1,72 +1,49 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { ErEnum } from '#common/enums/er.enum';
-import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import {
-  type ToDiskGetFileRequest,
-  zToDiskGetFileRequest
-} from '#common/zod/to-disk/07-files/get-file/get-file-request';
-import type { ToDiskGetFileRequestPayload } from '#common/zod/to-disk/07-files/get-file/get-file-request-payload';
-import type { ToDiskGetFileResponsePayload } from '#common/zod/to-disk/07-files/get-file/get-file-response-payload';
+import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ProjectLt } from '#common/zod/st-lt';
+import type { ToDiskGetFileResponsePayload } from '#common/zod/to-disk/07-files/get-file/get-file-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { readFileCheckSizeWrapped } from '#disk/functions/disk/read-file-check-size-wrapped';
+import { validatePathUnderDirWrapped } from '#disk/functions/disk/validate-path-under-dir-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getBaseCommitFileContent } from '#disk/functions/git/get-base-commit-file-content';
 import { getLastCommitFileContent } from '#disk/functions/git/get-last-commit-file-content';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskFileIsNotExistError } from './errors/disk-file-is-not-exist-error';
 
 @Injectable()
 export class GetFileService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskGetFileResponsePayload> {
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    fileNodeId: string;
+    builderLeft: BuilderLeftEnum;
+  }): Promise<ToDiskResultFor<'ToDiskGetFile'>> {
+    let { baseProject, repoId, branch, fileNodeId, builderLeft } = item;
+
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid: ToDiskGetFileRequest = zodParseOrThrow({
-      schema: zToDiskGetFileRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch,
-      fileNodeId,
-      builderLeft
-    }: ToDiskGetFileRequestPayload = requestValid.payload;
-
-    let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
-      encryptedString: baseProject.st
-    });
 
     let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
       encryptedString: baseProject.lt
     });
 
-    let { projectId } = baseProject;
-
-    let { name: projectName } = projectSt;
+    let { orgId, projectId } = baseProject;
 
     let filePathRelative: string = fileNodeId.substring(projectId.length + 1);
 
@@ -84,13 +61,12 @@ export class GetFileService {
         filePathRelative: filePathRelative,
         filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${filePathRelative}`
       }),
-      Result.andThrough(item => {
-        validatePathUnderDir({
+      Result.andThrough(item =>
+        validatePathUnderDirWrapped({
           fullPath: item.filePath,
           allowedDir: item.repoDir
-        });
-        return Result.succeed();
-      }),
+        })
+      ),
       Result.bind('keyDir', item =>
         checkRestoreOrgProjectRepoBranch({
           remoteType: item.remoteType,
@@ -125,28 +101,22 @@ export class GetFileService {
         })
       ),
       Result.bind('isExist', item => isPathExist({ path: item.filePath })),
-      Result.andThrough(item => {
-        if (
-          item.isExist === false &&
-          item.builderLeft === BuilderLeftEnum.Tree
-        ) {
-          return Result.fail(new DiskFileIsNotExistError());
-        }
-
-        return Result.succeed();
-      }),
-      Result.bind('content', async item => {
-        if (item.isExist === false) {
-          return Result.succeed('');
-        }
-
-        let { content }: { content: string } = await readFileCheckSize({
-          filePath: item.filePath,
-          getStat: false
-        });
-
-        return Result.succeed(content);
-      }),
+      Result.andThrough(item =>
+        item.isExist === false && item.builderLeft === BuilderLeftEnum.Tree
+          ? Result.fail({ code: 'DISK_FILE_IS_NOT_EXIST' })
+          : Result.succeed()
+      ),
+      Result.bind('content', item =>
+        item.isExist === false
+          ? Result.succeed('')
+          : Result.pipe(
+              readFileCheckSizeWrapped({
+                filePath: item.filePath,
+                getStat: false
+              }),
+              Result.map(file => file.content)
+            )
+      ),
       Result.bind('originalContent', item => {
         if (item.builderLeft === BuilderLeftEnum.ChangesToCommit) {
           return getLastCommitFileContent({
@@ -162,10 +132,10 @@ export class GetFileService {
           });
         }
 
-        return Result.succeed(undefined);
+        return Result.succeed('');
       }),
       Result.bind('repoStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -176,7 +146,7 @@ export class GetFileService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -198,16 +168,13 @@ export class GetFileService {
             changesToCommit: item.repoStatus.changesToCommit,
             changesToPush: item.repoStatus.changesToPush
           },
-          originalContent: item.originalContent as string,
+          originalContent: item.originalContent,
           content: item.content,
           isExist: item.isExist
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(getFileResult);
-
-    return payload;
+    return getFileResult;
   }
 }

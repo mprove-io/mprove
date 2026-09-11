@@ -160,12 +160,9 @@ test('1', async t => {
     };
 
     let getFileRequest: ToDiskGetFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskGetFile,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'getFile',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -196,5 +193,11 @@ test('1', async t => {
   }
 
   t.is(resp1.payload.repo.repoStatus, 'Ok');
-  t.is(resp2.payload.content, content1);
+  t.is(resp2.result.type, 'Success');
+
+  if (resp2.result.type !== 'Success') {
+    return;
+  }
+
+  t.is(resp2.result.value.content, content1);
 });

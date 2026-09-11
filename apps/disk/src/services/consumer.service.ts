@@ -3,9 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Queue, Worker } from 'groupmq';
 import Redis from 'ioredis';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
-import type { RpcRequestData } from '#common/zod/rpc-request-data';
-import type { MyResponse } from '#common/zod/to/my-response';
-import type { ToDiskOperationRequest } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskRpcResponse } from '#common/zod/to-disk/to-disk-operation-contract';
 import { DiskConfig } from '#disk/config/disk-config';
 import { MessageService } from './message.service';
 
@@ -49,20 +47,32 @@ export class ConsumerService {
       queue: this.queue,
       concurrency: diskConcurrency,
       handler: async job => {
-        let { message, replyTo } = job.data as RpcRequestData & {
-          message: ToDiskOperationRequest;
-        };
-
-        let response: MyResponse =
-          await this.messageService.processMessage(message);
-
-        if (replyTo) {
-          await this.redisClient.publish(replyTo, JSON.stringify(response));
-        }
+        await this.processJob({ data: job.data });
       }
     });
 
     this.worker.run();
+  }
+
+  async processJob(item: { data: unknown }): Promise<void> {
+    let { data } = item;
+
+    let message: unknown =
+      typeof data === 'object' && data !== null && 'message' in data
+        ? data.message
+        : undefined;
+
+    let replyTo: unknown =
+      typeof data === 'object' && data !== null && 'replyTo' in data
+        ? data.replyTo
+        : undefined;
+
+    let response: ToDiskRpcResponse =
+      await this.messageService.processMessage(message);
+
+    if (typeof replyTo === 'string' && replyTo.length > 0) {
+      await this.redisClient.publish(replyTo, JSON.stringify(response));
+    }
   }
 
   async onModuleDestroy() {

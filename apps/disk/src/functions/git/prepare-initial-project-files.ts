@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { isDefined } from '#common/functions/is-defined';
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
 import { copyPath } from '../disk/copy-path';
-import type { DiskFileIsSymlinkError } from '../disk/errors/disk-file-is-symlink-error';
 import { isPathExist } from '../disk/is-path-exist';
 import { writeDefaultInitialProjectFiles } from './write-default-initial-project-files';
 
@@ -10,7 +10,7 @@ export function prepareInitialProjectFiles(item: {
   sourceDir: string;
   seedProjectId: string;
   projectName: string;
-}): Result.ResultAsync<void, DiskFileIsSymlinkError> {
+}): Result.ResultAsync<void, FileIsSymlinkError> {
   return Result.pipe(
     Result.succeed({ ...item }),
     Result.bind('isSourceExist', v => isPathExist({ path: v.sourceDir })),

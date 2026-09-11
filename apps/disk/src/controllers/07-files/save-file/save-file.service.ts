@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
+import type { DiskFileIsNotExistError } from '#common/zod/disk/errors/disk-file-is-not-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import {
   type ToDiskSaveFileRequest,
@@ -25,7 +26,6 @@ import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskFileIsNotExistError } from './errors/disk-file-is-not-exist-error';
 
 @Injectable()
 export class SaveFileService {
@@ -124,10 +124,11 @@ export class SaveFileService {
         return Result.succeed();
       }),
       Result.bind('isFileExist', item => isPathExist({ path: item.filePath })),
-      Result.andThrough(item =>
-        item.isFileExist === false
-          ? Result.fail(new DiskFileIsNotExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (item): Result.Result<void, DiskFileIsNotExistError> =>
+          item.isFileExist === false
+            ? Result.fail({ code: 'DISK_FILE_IS_NOT_EXIST' })
+            : Result.succeed()
       ),
       Result.andThrough(item =>
         writeToFile({ filePath: item.filePath, content: content })

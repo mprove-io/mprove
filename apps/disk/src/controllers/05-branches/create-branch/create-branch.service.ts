@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
+import type { DiskBranchIsNotExistError } from '#common/zod/disk/errors/disk-branch-is-not-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import {
   type ToDiskCreateBranchRequest,
@@ -22,7 +23,6 @@ import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskBranchIsNotExistError } from './errors/disk-branch-is-not-exist-error';
 
 @Injectable()
 export class CreateBranchService {
@@ -118,10 +118,11 @@ export class CreateBranchService {
               localBranch: fromBranch
             })
       ),
-      Result.andThrough(item =>
-        item.isFromBranchExist === false
-          ? Result.fail(new DiskBranchIsNotExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (item): Result.Result<void, DiskBranchIsNotExistError> =>
+          item.isFromBranchExist === false
+            ? Result.fail({ code: 'DISK_BRANCH_IS_NOT_EXIST' })
+            : Result.succeed()
       ),
       Result.andThrough(item =>
         checkoutBranch({

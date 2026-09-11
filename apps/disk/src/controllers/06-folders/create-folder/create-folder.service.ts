@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
+import type { DiskFolderAlreadyExistError } from '#common/zod/disk/errors/disk-folder-already-exist-error';
+import type { DiskParentPathIsNotExistError } from '#common/zod/disk/errors/disk-parent-path-is-not-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import {
   type ToDiskCreateFolderRequest,
@@ -21,8 +23,6 @@ import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskFolderAlreadyExistError } from './errors/disk-folder-already-exist-error';
-import { DiskParentPathIsNotExistError } from './errors/disk-parent-path-is-not-exist-error';
 
 @Injectable()
 export class CreateFolderService {
@@ -136,18 +136,20 @@ export class CreateFolderService {
       Result.bind('isParentPathExist', item =>
         isPathExist({ path: item.parentPath })
       ),
-      Result.andThrough(item =>
-        item.isParentPathExist === false
-          ? Result.fail(new DiskParentPathIsNotExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (item): Result.Result<void, DiskParentPathIsNotExistError> =>
+          item.isParentPathExist === false
+            ? Result.fail({ code: 'DISK_PARENT_PATH_IS_NOT_EXIST' })
+            : Result.succeed()
       ),
       Result.bind('isFolderExist', item =>
         isPathExist({ path: item.folderAbsolutePath })
       ),
-      Result.andThrough(item =>
-        item.isFolderExist === true
-          ? Result.fail(new DiskFolderAlreadyExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (item): Result.Result<void, DiskFolderAlreadyExistError> =>
+          item.isFolderExist === true
+            ? Result.fail({ code: 'DISK_FOLDER_ALREADY_EXIST' })
+            : Result.succeed()
       ),
       Result.andThrough(item => ensureDir({ dir: item.folderAbsolutePath })),
       Result.bind('repoStatus', item =>

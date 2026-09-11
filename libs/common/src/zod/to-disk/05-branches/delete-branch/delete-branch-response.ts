@@ -1,30 +1,28 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskDeleteBranchResponseInfo,
-  zToDiskDeleteBranchResponseInfo
-} from './delete-branch-response-info';
+  makeToDiskPilotResponseSchema,
+  type ToDiskPilotResponse
+} from '#common/zod/to-disk/to-disk-pilot-response';
 import {
-  type ToDiskDeleteBranchResponsePayload,
-  zToDiskDeleteBranchResponsePayload
-} from './delete-branch-response-payload';
+  type ToDiskDeleteBranchError,
+  zToDiskDeleteBranchError
+} from './delete-branch-error';
 
-export type ToDiskDeleteBranchResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskDeleteBranchResponseInfo;
-    payload: ToDiskDeleteBranchResponsePayload;
-  }
+export type ToDiskDeleteBranchResponse = ToDiskPilotResponse<
+  'ToDiskDeleteBranch',
+  { repo: Repo; deletedBranch: string },
+  ToDiskDeleteBranchError
 >;
 
-export let zToDiskDeleteBranchResponse = zMyResponse
-  .extend({
-    info: zToDiskDeleteBranchResponseInfo,
-    payload: zToDiskDeleteBranchResponsePayload
-  })
-  .meta({ id: 'ToDiskDeleteBranchResponse' });
+export let zToDiskDeleteBranchResponse = makeToDiskPilotResponseSchema({
+  path: 'ToDiskDeleteBranch',
+  success: z
+    .object({ repo: zRepo, deletedBranch: z.string() })
+    .meta({ id: 'ToDiskDeleteBranchResponsePayload' }),
+  error: zToDiskDeleteBranchError
+});
 
 assertTypesEqual<
   ToDiskDeleteBranchResponse,

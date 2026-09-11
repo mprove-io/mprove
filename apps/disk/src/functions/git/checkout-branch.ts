@@ -1,9 +1,8 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
-
+import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#common/zod/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
 import type { RepoStatus } from '#common/zod/disk/repo-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
-import { DiskRepoIsNotCleanForCheckoutBranchError } from './errors/disk-repo-is-not-clean-for-checkout-branch-error';
 import { getRepoStatus } from './get-repo-status';
 
 export function checkoutBranch(item: {
@@ -40,14 +39,13 @@ export function checkoutBranch(item: {
 
           let okStatuses: RepoStatus[] = ['NeedPush', 'NeedPull', 'Ok'];
 
-          if (okStatuses.indexOf(repoStatus) < 0) {
-            return Result.fail(
-              new DiskRepoIsNotCleanForCheckoutBranchError({
-                displayData: {
-                  currentBranch: currentBranch
-                }
-              })
-            );
+          let isClean: boolean = okStatuses.includes(repoStatus);
+
+          if (isClean === false) {
+            return Result.fail({
+              code: 'DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH',
+              displayData: { currentBranch: currentBranch }
+            });
           }
 
           await item.git.checkout(item.branchName);

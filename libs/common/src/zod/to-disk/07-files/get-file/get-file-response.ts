@@ -1,30 +1,41 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskGetFileResponseInfo,
-  zToDiskGetFileResponseInfo
-} from './get-file-response-info';
-import {
-  type ToDiskGetFileResponsePayload,
-  zToDiskGetFileResponsePayload
-} from './get-file-response-payload';
+  makeToDiskPilotResponseSchema,
+  type ToDiskPilotResponse,
+  type ToDiskPilotSuccessResponse
+} from '#common/zod/to-disk/to-disk-pilot-response';
+import { type ToDiskGetFileError, zToDiskGetFileError } from './get-file-error';
 
-export type ToDiskGetFileResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskGetFileResponseInfo;
-    payload: ToDiskGetFileResponsePayload;
-  }
+export type ToDiskGetFileResponsePayload = {
+  repo: Repo;
+  originalContent: string;
+  content: string;
+  isExist: boolean;
+};
+
+export type ToDiskGetFileResponse = ToDiskPilotResponse<
+  'ToDiskGetFile',
+  ToDiskGetFileResponsePayload,
+  ToDiskGetFileError
 >;
 
-export let zToDiskGetFileResponse = zMyResponse
-  .extend({
-    info: zToDiskGetFileResponseInfo,
-    payload: zToDiskGetFileResponsePayload
-  })
-  .meta({ id: 'ToDiskGetFileResponse' });
+export type ToDiskGetFileSuccessResponse =
+  ToDiskPilotSuccessResponse<ToDiskGetFileResponse>;
+
+export let zToDiskGetFileResponse = makeToDiskPilotResponseSchema({
+  path: 'ToDiskGetFile',
+  success: z
+    .object({
+      repo: zRepo,
+      originalContent: z.string(),
+      content: z.string(),
+      isExist: z.boolean()
+    })
+    .meta({ id: 'ToDiskGetFileResponsePayload' }),
+  error: zToDiskGetFileError
+});
 
 assertTypesEqual<ToDiskGetFileResponse, z.infer<typeof zToDiskGetFileResponse>>(
   { value: true }

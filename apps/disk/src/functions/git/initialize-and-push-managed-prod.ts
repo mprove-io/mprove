@@ -1,10 +1,10 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
+import type { DiskRepoStatusIsNotNeedPushError } from '#common/zod/disk/errors/disk-repo-status-is-not-need-push-error';
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
-import type { DiskFileIsSymlinkError } from '../disk/errors/disk-file-is-symlink-error';
 import { createInitialCommitToProd } from './create-initial-commit-to-prod';
-import type { DiskRepoStatusIsNotNeedPushError } from './errors/disk-repo-status-is-not-need-push-error';
 import { pushToRemote } from './push-to-remote';
 
 export function initializeAndPushManagedProd(item: {
@@ -16,7 +16,7 @@ export function initializeAndPushManagedProd(item: {
   userAlias: string;
 }): Result.ResultAsync<
   void,
-  DiskFileIsSymlinkError | DiskRepoStatusIsNotNeedPushError
+  FileIsSymlinkError | DiskRepoStatusIsNotNeedPushError
 > {
   return Result.pipe(
     Result.succeed({ ...item }),

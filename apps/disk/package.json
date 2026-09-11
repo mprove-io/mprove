@@ -55,7 +55,6 @@
     "@opentelemetry/sdk-node": "catalog:",
     "@opentelemetry/semantic-conventions": "catalog:",
     "@praha/byethrow": "catalog:",
-    "@praha/error-factory": "catalog:",
     "@replit/codemirror-indentation-markers": "catalog:",
     "@vaadin/date-picker": "catalog:",
     "bcrypt": "catalog:",

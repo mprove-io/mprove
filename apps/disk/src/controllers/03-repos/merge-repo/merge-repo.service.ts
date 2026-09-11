@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
+import type { DiskTheirBranchIsNotExistError } from '#common/zod/disk/errors/disk-their-branch-is-not-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskMergeRepoRequest } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-request';
 import type { ToDiskMergeRepoRequestPayload } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-request-payload';
@@ -18,7 +19,6 @@ import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskTheirBranchIsNotExistError } from './errors/disk-their-branch-is-not-exist-error';
 
 @Injectable()
 export class MergeRepoService {
@@ -108,10 +108,11 @@ export class MergeRepoService {
               localBranch: theirBranch
             })
       ),
-      Result.andThrough(item =>
-        item.isTheirBranchExist === false
-          ? Result.fail(new DiskTheirBranchIsNotExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (item): Result.Result<void, DiskTheirBranchIsNotExistError> =>
+          item.isTheirBranchExist === false
+            ? Result.fail({ code: 'DISK_THEIR_BRANCH_IS_NOT_EXIST' })
+            : Result.succeed()
       ),
       Result.andThrough(item =>
         checkoutBranch({

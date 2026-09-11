@@ -1,8 +1,8 @@
 import { Result } from '@praha/byethrow';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
+import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#common/zod/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
 import type { ProjectLt } from '#common/zod/st-lt';
-import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#disk/functions/git/errors/disk-repo-is-not-clean-for-checkout-branch-error';
 import { checkRestoreOrgProjectRepo } from './check-restore-org-project-repo';
 import { restoreProjectGitCloneRepoBranch } from './restore-project-git-clone-repo-branch';
 

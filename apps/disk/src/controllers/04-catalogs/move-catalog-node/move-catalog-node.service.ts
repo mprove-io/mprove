@@ -3,6 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { ErEnum } from '#common/enums/er.enum';
+import type { DiskFromPathIsNotExistError } from '#common/zod/disk/errors/disk-from-path-is-not-exist-error';
+import type { DiskToPathAlreadyExistError } from '#common/zod/disk/errors/disk-to-path-already-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { zToDiskMoveCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-request';
 import type { ToDiskMoveCatalogNodeRequestPayload } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-request-payload';
@@ -21,8 +23,6 @@ import { DiskTabService } from '#disk/services/disk-tab.service';
 import { toServerError } from '#node-common/functions/to-server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
-import { DiskFromPathIsNotExistError } from './errors/disk-from-path-is-not-exist-error';
-import { DiskToPathAlreadyExistError } from './errors/disk-to-path-already-exist-error';
 
 @Injectable()
 export class MoveCatalogNodeService {
@@ -125,16 +125,18 @@ export class MoveCatalogNodeService {
       Result.bind('isFromPathExist', item =>
         isPathExist({ path: item.fromPath })
       ),
-      Result.andThrough(item =>
-        item.isFromPathExist === false
-          ? Result.fail(new DiskFromPathIsNotExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (item): Result.Result<void, DiskFromPathIsNotExistError> =>
+          item.isFromPathExist === false
+            ? Result.fail({ code: 'DISK_FROM_PATH_IS_NOT_EXIST' })
+            : Result.succeed()
       ),
       Result.bind('isToPathExist', item => isPathExist({ path: item.toPath })),
-      Result.andThrough(item =>
-        item.isToPathExist === true
-          ? Result.fail(new DiskToPathAlreadyExistError())
-          : Result.succeed()
+      Result.andThrough(
+        (item): Result.Result<void, DiskToPathAlreadyExistError> =>
+          item.isToPathExist === true
+            ? Result.fail({ code: 'DISK_TO_PATH_ALREADY_EXIST' })
+            : Result.succeed()
       ),
       Result.bind('toParentPath', item => Result.succeed(dirname(item.toPath))),
       Result.andThrough(item => {

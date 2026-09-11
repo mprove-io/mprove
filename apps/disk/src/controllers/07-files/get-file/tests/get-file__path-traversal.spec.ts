@@ -4,7 +4,6 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
@@ -12,6 +11,7 @@ import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
 import type { ToDiskGetFileRequest } from '#common/zod/to-disk/07-files/get-file/get-file-request';
+import type { ToDiskGetFileResponse } from '#common/zod/to-disk/07-files/get-file/get-file-response';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 
@@ -23,7 +23,7 @@ let projectId = makeId();
 let projectName = 'p1';
 
 test('1', async t => {
-  let resp: any;
+  let resp: ToDiskGetFileResponse;
 
   let wLogger;
   let configService;
@@ -82,12 +82,9 @@ test('1', async t => {
     };
 
     let getFileRequest: ToDiskGetFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskGetFile,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'getFile',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -109,6 +106,11 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.info.status, ResponseInfoStatusEnum.Error);
-  t.is(resp.info.error.message, ErEnum.DISK_PATH_TRAVERSAL);
+  t.is(resp.result.type, 'Failure');
+
+  if (resp.result.type !== 'Failure') {
+    return;
+  }
+
+  t.is(resp.result.error.code, ErEnum.DISK_PATH_TRAVERSAL);
 });
