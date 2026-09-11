@@ -21,11 +21,9 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendValidateFilesResponsePayload } from '#common/zod/to-backend/files/to-backend-validate-files';
-import type { ToDiskGetCatalogFilesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request';
-import type { ToDiskGetCatalogFilesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
+import type { ToDiskGetCatalogFilesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @Injectable()
 export class ValidateFilesService {
@@ -93,26 +91,17 @@ export class ValidateFilesService {
       project: project
     });
 
-    let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-        traceId: traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskGetCatalogFilesRequest,
-        checkIsOk: true
+    let diskGetCatalogFilesOutput: ToDiskGetCatalogFilesOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'getCatalogFiles',
+          traceId: traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId
+          }
+        }
       });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -133,8 +122,8 @@ export class ValidateFilesService {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskGetCatalogFilesOutput.files,
+          mproveDir: diskGetCatalogFilesOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -174,7 +163,7 @@ export class ValidateFilesService {
     });
 
     let payload: ToBackendValidateFilesResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskGetCatalogFilesOutput.repo,
       needValidate: currentBridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,

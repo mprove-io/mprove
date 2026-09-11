@@ -21,10 +21,8 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToBackendGetRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-get-repo';
-import type { ToDiskGetCatalogNodesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-request';
-import type { ToDiskGetCatalogNodesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
+import type { ToDiskGetCatalogNodesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -98,27 +96,18 @@ export class GetRepoController {
       project: project
     });
 
-    let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        isFetch: isFetch
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskGetCatalogNodesResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskGetCatalogNodesRequest,
-        checkIsOk: true
+    let diskGetCatalogNodesOutput: ToDiskGetCatalogNodesOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'getCatalogNodes',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            isFetch: isFetch
+          }
+        }
       });
 
     let struct = await this.structsService.getStructCheckExists({
@@ -142,7 +131,7 @@ export class GetRepoController {
         struct: struct,
         modelPartXs: modelPartXs
       }),
-      repo: diskResponse.payload.repo
+      repo: diskGetCatalogNodesOutput.repo
     };
 
     return payload;

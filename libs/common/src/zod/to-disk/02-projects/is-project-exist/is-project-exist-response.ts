@@ -1,30 +1,37 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskIsProjectExistResponseInfo,
-  zToDiskIsProjectExistResponseInfo
-} from './is-project-exist-response-info';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
 import {
-  type ToDiskIsProjectExistResponsePayload,
-  zToDiskIsProjectExistResponsePayload
-} from './is-project-exist-response-payload';
+  type ToDiskIsProjectExistError,
+  zToDiskIsProjectExistError
+} from './is-project-exist-error';
 
-export type ToDiskIsProjectExistResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskIsProjectExistResponseInfo;
-    payload: ToDiskIsProjectExistResponsePayload;
-  }
+export type ToDiskIsProjectExistOutput = {
+  orgId: string;
+  projectId: string;
+  isProjectExist: boolean;
+};
+
+export type ToDiskIsProjectExistResponse = ToDiskResponse<
+  'ToDiskIsProjectExist',
+  ToDiskIsProjectExistOutput,
+  ToDiskIsProjectExistError
 >;
 
-export let zToDiskIsProjectExistResponse = zMyResponse
-  .extend({
-    info: zToDiskIsProjectExistResponseInfo,
-    payload: zToDiskIsProjectExistResponsePayload
-  })
-  .meta({ id: 'ToDiskIsProjectExistResponse' });
+export let zToDiskIsProjectExistResponse = makeToDiskResponseSchema({
+  path: 'ToDiskIsProjectExist',
+  success: z
+    .object({
+      orgId: z.string(),
+      projectId: z.string(),
+      isProjectExist: z.boolean()
+    })
+    .meta({ id: 'ToDiskIsProjectExistOutput' }),
+  error: zToDiskIsProjectExistError
+});
 
 assertTypesEqual<
   ToDiskIsProjectExistResponse,

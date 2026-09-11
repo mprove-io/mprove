@@ -19,14 +19,12 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBlockmlRequestInfoNameEnum } from '#common/enums/to/to-blockml-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type {
   ToBlockmlRebuildStructRequest,
   ToBlockmlRebuildStructResponse
 } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
-import type { ToDiskGetCatalogFilesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request';
-import type { ToDiskGetCatalogFilesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
+import type { ToDiskGetCatalogFilesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @ApiTags('TestRoutes')
 // ToBackendGetRebuildStructRequest is for tests only
@@ -82,26 +80,17 @@ export class GetRebuildStructController {
       project: project
     });
 
-    let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branch
-      }
-    };
-
-    let getCatalogFilesResponse =
-      await this.rpcService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-        orgId: orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskGetCatalogFilesRequest,
-        checkIsOk: true
+    let diskGetCatalogFilesOutput: ToDiskGetCatalogFilesOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'getCatalogFiles',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branch
+          }
+        }
       });
 
     let { apiEnv, connectionsWithFallback } =
@@ -120,8 +109,8 @@ export class GetRebuildStructController {
       payload: {
         structId: structId,
         projectId: projectId,
-        mproveDir: getCatalogFilesResponse.payload.mproveDir,
-        files: diskFilesToBlockmlFiles(getCatalogFilesResponse.payload.files),
+        mproveDir: diskGetCatalogFilesOutput.mproveDir,
+        files: diskFilesToBlockmlFiles(diskGetCatalogFilesOutput.files),
         envId: envId,
         evs: apiEnv.evsWithFallback,
         baseConnections: connectionsWithFallback.map(x =>

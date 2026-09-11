@@ -1,58 +1,42 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskBranchIsNotExistError } from '#common/zod/disk/errors/disk-branch-is-not-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import {
-  type ToDiskCreateBranchRequest,
-  zToDiskCreateBranchRequest
-} from '#common/zod/to-disk/05-branches/create-branch/create-branch-request';
-import type { ToDiskCreateBranchRequestPayload } from '#common/zod/to-disk/05-branches/create-branch/create-branch-request-payload';
-import type { ToDiskCreateBranchResponsePayload } from '#common/zod/to-disk/05-branches/create-branch/create-branch-response-payload';
+import type { ToDiskCreateBranchOutput } from '#common/zod/to-disk/05-branches/create-branch/create-branch-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createBranch } from '#disk/functions/git/create-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class CreateBranchService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskCreateBranchResponsePayload> {
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    newBranch: string;
+    fromBranch: string;
+    isFromRemote: boolean;
+  }): Promise<ToDiskResultFor<'ToDiskCreateBranch'>> {
+    let { baseProject, repoId, newBranch, fromBranch, isFromRemote } = item;
+
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid: ToDiskCreateBranchRequest = zodParseOrThrow({
-      schema: zToDiskCreateBranchRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      newBranch,
-      fromBranch,
-      isFromRemote
-    }: ToDiskCreateBranchRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -62,7 +46,7 @@ export class CreateBranchService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
 
@@ -145,7 +129,7 @@ export class CreateBranchService {
         })
       ),
       Result.bind('repoStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -156,7 +140,7 @@ export class CreateBranchService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -165,7 +149,7 @@ export class CreateBranchService {
         })
       ),
       Result.map(
-        (item): ToDiskCreateBranchResponsePayload => ({
+        (item): ToDiskCreateBranchOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,
@@ -181,12 +165,9 @@ export class CreateBranchService {
           files: item.itemCatalog.files,
           mproveDir: item.itemCatalog.mproveDir
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(createBranchResult);
-
-    return payload;
+    return createBranchResult;
   }
 }

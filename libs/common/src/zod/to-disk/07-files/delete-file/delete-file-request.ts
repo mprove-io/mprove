@@ -1,31 +1,35 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskDeleteFileRequestInfo,
-  zToDiskDeleteFileRequestInfo
-} from './delete-file-request-info';
-import {
-  type ToDiskDeleteFileRequestPayload,
-  zToDiskDeleteFileRequestPayload
-} from './delete-file-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskDeleteFileRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskDeleteFileRequestInfo;
-    payload: ToDiskDeleteFileRequestPayload;
-  }
->;
+export type ToDiskDeleteFileRequest = {
+  operation: 'deleteFile';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    fileNodeId: string;
+    userAlias: string;
+  };
+};
 
-export let zToDiskDeleteFileRequest = zToDiskRequest
-  .extend({
-    info: zToDiskDeleteFileRequestInfo,
-    payload: zToDiskDeleteFileRequestPayload
+export let zToDiskDeleteFileRequest = z
+  .strictObject({
+    operation: z.literal('deleteFile'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string(),
+        fileNodeId: z.string(),
+        userAlias: z.string()
+      })
+      .meta({ id: 'ToDiskDeleteFileRequestInput' })
   })
   .meta({ id: 'ToDiskDeleteFileRequest' });
 

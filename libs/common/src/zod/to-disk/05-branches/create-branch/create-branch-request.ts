@@ -1,31 +1,35 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskCreateBranchRequestInfo,
-  zToDiskCreateBranchRequestInfo
-} from './create-branch-request-info';
-import {
-  type ToDiskCreateBranchRequestPayload,
-  zToDiskCreateBranchRequestPayload
-} from './create-branch-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskCreateBranchRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskCreateBranchRequestInfo;
-    payload: ToDiskCreateBranchRequestPayload;
-  }
->;
+export type ToDiskCreateBranchRequest = {
+  operation: 'createBranch';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    newBranch: string;
+    fromBranch: string;
+    isFromRemote: boolean;
+  };
+};
 
-export let zToDiskCreateBranchRequest = zToDiskRequest
-  .extend({
-    info: zToDiskCreateBranchRequestInfo,
-    payload: zToDiskCreateBranchRequestPayload
+export let zToDiskCreateBranchRequest = z
+  .strictObject({
+    operation: z.literal('createBranch'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        newBranch: z.string(),
+        fromBranch: z.string(),
+        isFromRemote: z.boolean()
+      })
+      .meta({ id: 'ToDiskCreateBranchRequestInput' })
   })
   .meta({ id: 'ToDiskCreateBranchRequest' });
 

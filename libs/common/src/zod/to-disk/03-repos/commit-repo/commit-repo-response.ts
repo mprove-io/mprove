@@ -1,30 +1,28 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskCommitRepoResponseInfo,
-  zToDiskCommitRepoResponseInfo
-} from './commit-repo-response-info';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
 import {
-  type ToDiskCommitRepoResponsePayload,
-  zToDiskCommitRepoResponsePayload
-} from './commit-repo-response-payload';
+  type ToDiskCommitRepoError,
+  zToDiskCommitRepoError
+} from './commit-repo-error';
 
-export type ToDiskCommitRepoResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskCommitRepoResponseInfo;
-    payload: ToDiskCommitRepoResponsePayload;
-  }
+export type ToDiskCommitRepoOutput = { repo: Repo };
+
+export type ToDiskCommitRepoResponse = ToDiskResponse<
+  'ToDiskCommitRepo',
+  ToDiskCommitRepoOutput,
+  ToDiskCommitRepoError
 >;
 
-export let zToDiskCommitRepoResponse = zMyResponse
-  .extend({
-    info: zToDiskCommitRepoResponseInfo,
-    payload: zToDiskCommitRepoResponsePayload
-  })
-  .meta({ id: 'ToDiskCommitRepoResponse' });
+export let zToDiskCommitRepoResponse = makeToDiskResponseSchema({
+  path: 'ToDiskCommitRepo',
+  success: z.object({ repo: zRepo }).meta({ id: 'ToDiskCommitRepoOutput' }),
+  error: zToDiskCommitRepoError
+});
 
 assertTypesEqual<
   ToDiskCommitRepoResponse,

@@ -42,12 +42,10 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendCreateFileResponsePayload } from '#common/zod/to-backend/files/to-backend-create-file';
-import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/create-file/create-file-request';
-import type { ToDiskCreateFileResponse } from '#common/zod/to-disk/07-files/create-file/create-file-response';
+import type { ToDiskCreateFileOutput } from '#common/zod/to-disk/07-files/create-file/create-file-response';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)
@@ -146,30 +144,21 @@ export class CreateFileController {
       project: project
     });
 
-    let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        parentNodeId: parentNodeId,
-        fileName: fileName.toLowerCase(),
-        fileText: fileText,
-        userAlias: user.alias
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskCreateFileResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskCreateFileRequest,
-        checkIsOk: true
+    let diskCreateFileOutput: ToDiskCreateFileOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'createFile',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            parentNodeId: parentNodeId,
+            fileName: fileName.toLowerCase(),
+            fileText: fileText,
+            userAlias: user.alias
+          }
+        }
       });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -190,8 +179,8 @@ export class CreateFileController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskCreateFileOutput.files,
+          mproveDir: diskCreateFileOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -234,7 +223,7 @@ export class CreateFileController {
     });
 
     let payload: ToBackendCreateFileResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskCreateFileOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs

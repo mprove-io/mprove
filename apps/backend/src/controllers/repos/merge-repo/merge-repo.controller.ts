@@ -42,12 +42,10 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendMergeRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-merge-repo';
-import type { ToDiskMergeRepoRequest } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-request';
-import type { ToDiskMergeRepoResponse } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-response';
+import type { ToDiskMergeRepoOutput } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -139,29 +137,20 @@ export class MergeRepoController {
       project: project
     });
 
-    let toDiskMergeRepoRequest: ToDiskMergeRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        theirBranch: theirBranchId,
-        isTheirBranchRemote: isTheirBranchRemote,
-        userAlias: user.alias
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskMergeRepoResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskMergeRepoRequest,
-        checkIsOk: true
+    let diskMergeRepoOutput: ToDiskMergeRepoOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'mergeRepo',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            theirBranch: theirBranchId,
+            isTheirBranchRemote: isTheirBranchRemote,
+            userAlias: user.alias
+          }
+        }
       });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -182,8 +171,8 @@ export class MergeRepoController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskMergeRepoOutput.files,
+          mproveDir: diskMergeRepoOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -226,7 +215,7 @@ export class MergeRepoController {
     });
 
     let payload: ToBackendMergeRepoResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskMergeRepoOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs

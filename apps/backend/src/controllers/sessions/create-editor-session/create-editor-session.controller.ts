@@ -57,14 +57,12 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
 import { makeSessionId } from '#common/functions/make-session-id';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendCreateEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
-import type { ToDiskCreateDevRepoRequest } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-request';
-import type { ToDiskCreateDevRepoResponse } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-response';
+import type { ToDiskCreateDevRepoOutput } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-response';
 import { buildSessionApiKey } from '#node-common/functions/api-key/build-session-api-key';
 import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 
@@ -591,34 +589,25 @@ export class CreateEditorSessionController {
       project: project
     });
 
-    let toDiskCreateDevRepoRequest: ToDiskCreateDevRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
-        traceId: traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        devRepoId: sessionId,
-        initialBranch: initialBranch,
-        sessionBranch: sessionId
-      }
-    };
-
-    let sendToDiskStart = Date.now();
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskCreateDevRepoResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: sessionId,
-        message: toDiskCreateDevRepoRequest,
-        checkIsOk: true
+    // let sendToDiskStart = Date.now();
+    let diskCreateDevRepoOutput: ToDiskCreateDevRepoOutput =
+      await this.rpcService.sendToDiskDevRepoUnwrapOutput({
+        request: {
+          operation: 'createDevRepo',
+          traceId: traceId,
+          input: {
+            baseProject: baseProject,
+            devRepoId: sessionId,
+            initialBranch: initialBranch,
+            sessionBranch: sessionId
+          }
+        }
       });
     // console.log(`sendToDisk took ${(Date.now() - sendToDiskStart) / 1000}s`);
 
     let repoId = sessionId;
     let branchId = sessionId;
-    let initialCommit = diskResponse.payload.initialCommitHash;
+    let initialCommit = diskCreateDevRepoOutput.initialCommitHash;
 
     let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
       where: and(
@@ -668,8 +657,8 @@ export class CreateEditorSessionController {
           projectId: projectId,
           repoId: sessionId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskCreateDevRepoOutput.files,
+          mproveDir: diskCreateDevRepoOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined

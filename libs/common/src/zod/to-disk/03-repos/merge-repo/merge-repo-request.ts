@@ -1,31 +1,37 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskMergeRepoRequestInfo,
-  zToDiskMergeRepoRequestInfo
-} from './merge-repo-request-info';
-import {
-  type ToDiskMergeRepoRequestPayload,
-  zToDiskMergeRepoRequestPayload
-} from './merge-repo-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskMergeRepoRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskMergeRepoRequestInfo;
-    payload: ToDiskMergeRepoRequestPayload;
-  }
->;
+export type ToDiskMergeRepoRequest = {
+  operation: 'mergeRepo';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    theirBranch: string;
+    isTheirBranchRemote: boolean;
+    userAlias: string;
+  };
+};
 
-export let zToDiskMergeRepoRequest = zToDiskRequest
-  .extend({
-    info: zToDiskMergeRepoRequestInfo,
-    payload: zToDiskMergeRepoRequestPayload
+export let zToDiskMergeRepoRequest = z
+  .strictObject({
+    operation: z.literal('mergeRepo'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string(),
+        theirBranch: z.string(),
+        isTheirBranchRemote: z.boolean(),
+        userAlias: z.string()
+      })
+      .meta({ id: 'ToDiskMergeRepoRequestInput' })
   })
   .meta({ id: 'ToDiskMergeRepoRequest' });
 

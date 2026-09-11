@@ -40,11 +40,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendMoveCatalogNodeResponsePayload } from '#common/zod/to-backend/catalogs/to-backend-move-catalog-node';
-import type { ToDiskMoveCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-request';
-import type { ToDiskMoveCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-response';
+import type { ToDiskMoveCatalogNodeOutput } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-response';
 
 @ApiTags('Catalogs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -116,28 +114,19 @@ export class MoveCatalogNodeController {
       project: project
     });
 
-    let toDiskMoveCatalogNodeRequest: ToDiskMoveCatalogNodeRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        fromNodeId: fromNodeId,
-        toNodeId: toNodeId
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskMoveCatalogNodeResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskMoveCatalogNodeRequest,
-        checkIsOk: true
+    let diskMoveCatalogNodeOutput: ToDiskMoveCatalogNodeOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'moveCatalogNode',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            fromNodeId: fromNodeId,
+            toNodeId: toNodeId
+          }
+        }
       });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -158,8 +147,8 @@ export class MoveCatalogNodeController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskMoveCatalogNodeOutput.files,
+          mproveDir: diskMoveCatalogNodeOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -202,7 +191,7 @@ export class MoveCatalogNodeController {
     });
 
     let payload: ToBackendMoveCatalogNodeResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskMoveCatalogNodeOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs

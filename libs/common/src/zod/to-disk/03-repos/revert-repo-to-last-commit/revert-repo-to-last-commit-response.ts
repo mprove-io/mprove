@@ -1,30 +1,42 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskRevertRepoToLastCommitResponseInfo,
-  zToDiskRevertRepoToLastCommitResponseInfo
-} from './revert-repo-to-last-commit-response-info';
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskRevertRepoToLastCommitResponsePayload,
-  zToDiskRevertRepoToLastCommitResponsePayload
-} from './revert-repo-to-last-commit-response-payload';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
+import {
+  type ToDiskRevertRepoToLastCommitError,
+  zToDiskRevertRepoToLastCommitError
+} from './revert-repo-to-last-commit-error';
 
-export type ToDiskRevertRepoToLastCommitResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskRevertRepoToLastCommitResponseInfo;
-    payload: ToDiskRevertRepoToLastCommitResponsePayload;
-  }
+export type ToDiskRevertRepoToLastCommitOutput = {
+  repo: Repo;
+  files: DiskCatalogFile[];
+  mproveDir: string;
+};
+
+export type ToDiskRevertRepoToLastCommitResponse = ToDiskResponse<
+  'ToDiskRevertRepoToLastCommit',
+  ToDiskRevertRepoToLastCommitOutput,
+  ToDiskRevertRepoToLastCommitError
 >;
 
-export let zToDiskRevertRepoToLastCommitResponse = zMyResponse
-  .extend({
-    info: zToDiskRevertRepoToLastCommitResponseInfo,
-    payload: zToDiskRevertRepoToLastCommitResponsePayload
-  })
-  .meta({ id: 'ToDiskRevertRepoToLastCommitResponse' });
+export let zToDiskRevertRepoToLastCommitResponse = makeToDiskResponseSchema({
+  path: 'ToDiskRevertRepoToLastCommit',
+  success: z
+    .object({
+      repo: zRepo,
+      files: z.array(zDiskCatalogFile),
+      mproveDir: z.string()
+    })
+    .meta({ id: 'ToDiskRevertRepoToLastCommitOutput' }),
+  error: zToDiskRevertRepoToLastCommitError
+});
 
 assertTypesEqual<
   ToDiskRevertRepoToLastCommitResponse,

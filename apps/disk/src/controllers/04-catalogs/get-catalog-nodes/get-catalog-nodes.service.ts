@@ -1,51 +1,38 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskGetCatalogNodesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-request';
-import type { ToDiskGetCatalogNodesRequestPayload } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-request-payload';
-import type { ToDiskGetCatalogNodesResponsePayload } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response-payload';
+import type { ToDiskGetCatalogNodesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 import { checkoutRequestedBranch } from './checkout-requested-branch';
 
 @Injectable()
 export class GetCatalogNodesService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskGetCatalogNodesResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch?: string;
+    isFetch: boolean;
+  }): Promise<ToDiskResultFor<'ToDiskGetCatalogNodes'>> {
+    let { baseProject, repoId, branch, isFetch } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskGetCatalogNodesRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch,
-      isFetch
-    }: ToDiskGetCatalogNodesRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -55,7 +42,7 @@ export class GetCatalogNodesService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
 
@@ -116,7 +103,7 @@ export class GetCatalogNodesService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -125,7 +112,7 @@ export class GetCatalogNodesService {
         })
       ),
       Result.bind('itemStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -136,7 +123,7 @@ export class GetCatalogNodesService {
         })
       ),
       Result.map(
-        (item): ToDiskGetCatalogNodesResponsePayload => ({
+        (item): ToDiskGetCatalogNodesOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,
@@ -150,12 +137,9 @@ export class GetCatalogNodesService {
             changesToPush: item.itemStatus.changesToPush
           }
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(getCatalogNodesResult);
-
-    return payload;
+    return getCatalogNodesResult;
   }
 }

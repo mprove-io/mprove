@@ -46,12 +46,10 @@ import {
 } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendPushRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-push-repo';
-import type { ToDiskPushRepoRequest } from '#common/zod/to-disk/03-repos/push-repo/push-repo-request';
-import type { ToDiskPushRepoResponse } from '#common/zod/to-disk/03-repos/push-repo/push-repo-response';
+import type { ToDiskPushRepoOutput } from '#common/zod/to-disk/03-repos/push-repo/push-repo-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -128,29 +126,19 @@ export class PushRepoController {
       project: project
     });
 
-    let toDiskPushRepoRequest: ToDiskPushRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskPushRepo,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        userAlias: user.alias
-      }
-    };
-
-    let diskResponse = await this.rpcService.sendToDisk<ToDiskPushRepoResponse>(
-      {
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskPushRepoRequest,
-        checkIsOk: true
-      }
-    );
+    let diskPushRepoOutput: ToDiskPushRepoOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'pushRepo',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            userAlias: user.alias
+          }
+        }
+      });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -211,8 +199,8 @@ export class PushRepoController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.productionFiles,
-          mproveDir: diskResponse.payload.productionMproveDir,
+          diskFiles: diskPushRepoOutput.productionFiles,
+          mproveDir: diskPushRepoOutput.productionMproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -256,7 +244,7 @@ export class PushRepoController {
     });
 
     let payload: ToBackendPushRepoResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskPushRepoOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs

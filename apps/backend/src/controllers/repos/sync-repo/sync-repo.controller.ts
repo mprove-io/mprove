@@ -40,11 +40,10 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendSyncRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-sync-repo';
 import type { ToDiskSyncRepoRequest } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-request';
-import type { ToDiskSyncRepoResponse } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-response';
+import type { ToDiskSyncRepoOutput } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -129,13 +128,10 @@ export class SyncRepoController {
 
     if (body.payload.direction === 'to-server') {
       toDiskSyncRepoRequest = {
-        info: {
-          name: ToDiskRequestInfoNameEnum.ToDiskSyncRepo,
-          traceId: body.info.traceId
-        },
-        payload: {
+        operation: 'syncRepo',
+        traceId: body.info.traceId,
+        input: {
           direction: 'to-server',
-          orgId: project.orgId,
           baseProject: baseProject,
           repoId: repoId,
           branch: branchId,
@@ -148,13 +144,10 @@ export class SyncRepoController {
       };
     } else {
       toDiskSyncRepoRequest = {
-        info: {
-          name: ToDiskRequestInfoNameEnum.ToDiskSyncRepo,
-          traceId: body.info.traceId
-        },
-        payload: {
+        operation: 'syncRepo',
+        traceId: body.info.traceId,
+        input: {
           direction: 'from-server',
-          orgId: project.orgId,
           baseProject: baseProject,
           repoId: repoId,
           branch: branchId,
@@ -165,15 +158,10 @@ export class SyncRepoController {
       };
     }
 
-    let diskResponse = await this.rpcService.sendToDisk<ToDiskSyncRepoResponse>(
-      {
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskSyncRepoRequest,
-        checkIsOk: true
-      }
-    );
+    let diskSyncRepoOutput: ToDiskSyncRepoOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: toDiskSyncRepoRequest
+      });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -193,8 +181,8 @@ export class SyncRepoController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskSyncRepoOutput.files,
+          mproveDir: diskSyncRepoOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -234,25 +222,25 @@ export class SyncRepoController {
       repoId: repoId,
       validationErrorsTotal: struct.errors.length,
       validationErrors: getErrors === true ? struct.errors : undefined,
-      devChangesToCommit: diskResponse.payload.devChangesToCommit,
-      repo: getRepo === true ? diskResponse.payload.repo : undefined,
+      devChangesToCommit: diskSyncRepoOutput.devChangesToCommit,
+      repo: getRepo === true ? diskSyncRepoOutput.repo : undefined,
       needValidate: debug === true ? currentBridge.needValidate : undefined,
       structId: debug === true ? struct.structId : undefined
     };
 
     let payload: ToBackendSyncRepoResponsePayload;
-    if (diskResponse.payload.direction === 'from-server') {
+    if (diskSyncRepoOutput.direction === 'from-server') {
       payload = {
         ...basePayload,
         direction: 'from-server',
-        changedFiles: diskResponse.payload.changedFiles,
-        deletedFiles: diskResponse.payload.deletedFiles
+        changedFiles: diskSyncRepoOutput.changedFiles,
+        deletedFiles: diskSyncRepoOutput.deletedFiles
       };
     } else {
       payload = {
         ...basePayload,
         direction: 'to-server',
-        appliedChangesOnServer: diskResponse.payload.appliedChangesOnServer
+        appliedChangesOnServer: diskSyncRepoOutput.appliedChangesOnServer
       };
     }
 

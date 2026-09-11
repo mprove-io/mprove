@@ -1,30 +1,35 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskDeleteProjectResponseInfo,
-  zToDiskDeleteProjectResponseInfo
-} from './delete-project-response-info';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
 import {
-  type ToDiskDeleteProjectResponsePayload,
-  zToDiskDeleteProjectResponsePayload
-} from './delete-project-response-payload';
+  type ToDiskDeleteProjectError,
+  zToDiskDeleteProjectError
+} from './delete-project-error';
 
-export type ToDiskDeleteProjectResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskDeleteProjectResponseInfo;
-    payload: ToDiskDeleteProjectResponsePayload;
-  }
+export type ToDiskDeleteProjectOutput = {
+  orgId: string;
+  deletedProjectId: string;
+};
+
+export type ToDiskDeleteProjectResponse = ToDiskResponse<
+  'ToDiskDeleteProject',
+  ToDiskDeleteProjectOutput,
+  ToDiskDeleteProjectError
 >;
 
-export let zToDiskDeleteProjectResponse = zMyResponse
-  .extend({
-    info: zToDiskDeleteProjectResponseInfo,
-    payload: zToDiskDeleteProjectResponsePayload
-  })
-  .meta({ id: 'ToDiskDeleteProjectResponse' });
+export let zToDiskDeleteProjectResponse = makeToDiskResponseSchema({
+  path: 'ToDiskDeleteProject',
+  success: z
+    .object({
+      orgId: z.string(),
+      deletedProjectId: z.string()
+    })
+    .meta({ id: 'ToDiskDeleteProjectOutput' }),
+  error: zToDiskDeleteProjectError
+});
 
 assertTypesEqual<
   ToDiskDeleteProjectResponse,

@@ -1,31 +1,35 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskCreateFolderRequestInfo,
-  zToDiskCreateFolderRequestInfo
-} from './create-folder-request-info';
-import {
-  type ToDiskCreateFolderRequestPayload,
-  zToDiskCreateFolderRequestPayload
-} from './create-folder-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskCreateFolderRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskCreateFolderRequestInfo;
-    payload: ToDiskCreateFolderRequestPayload;
-  }
->;
+export type ToDiskCreateFolderRequest = {
+  operation: 'createFolder';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    parentNodeId: string;
+    folderName: string;
+  };
+};
 
-export let zToDiskCreateFolderRequest = zToDiskRequest
-  .extend({
-    info: zToDiskCreateFolderRequestInfo,
-    payload: zToDiskCreateFolderRequestPayload
+export let zToDiskCreateFolderRequest = z
+  .strictObject({
+    operation: z.literal('createFolder'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string(),
+        parentNodeId: z.string(),
+        folderName: z.string()
+      })
+      .meta({ id: 'ToDiskCreateFolderRequestInput' })
   })
   .meta({ id: 'ToDiskCreateFolderRequest' });
 

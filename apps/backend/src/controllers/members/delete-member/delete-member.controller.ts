@@ -32,10 +32,7 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
-import type { ToDiskDeleteDevRepoRequest } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-request';
-import type { ToDiskDeleteDevRepoResponse } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-response';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)
@@ -93,25 +90,15 @@ export class DeleteMemberController {
       project: project
     });
 
-    let toDiskDeleteDevRepoRequest: ToDiskDeleteDevRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
-        traceId: traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        projectId: projectId,
-        baseProject: baseProject,
-        devRepoId: devRepoId
+    await this.rpcService.sendToDiskDevRepoUnwrapOutput({
+      request: {
+        operation: 'deleteDevRepo',
+        traceId: traceId,
+        input: {
+          baseProject: baseProject,
+          devRepoId: devRepoId
+        }
       }
-    };
-
-    await this.rpcService.sendToDisk<ToDiskDeleteDevRepoResponse>({
-      orgId: project.orgId,
-      projectId: projectId,
-      repoId: devRepoId,
-      message: toDiskDeleteDevRepoRequest,
-      checkIsOk: true
     });
 
     await retry(

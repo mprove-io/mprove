@@ -1,6 +1,5 @@
 import test from 'ava';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskIsOrgExistRequest } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-request';
 import type { ToDiskIsOrgExistResponse } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-response';
@@ -27,21 +26,17 @@ test('1', async t => {
     configService = cs;
 
     let createOrgRequest: ToDiskCreateOrgRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
-        traceId: traceId
-      },
-      payload: {
+      operation: 'createOrg',
+      traceId: traceId,
+      input: {
         orgId: orgId
       }
     };
 
     let isOrgExistRequest: ToDiskIsOrgExistRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskIsOrgExist,
-        traceId: traceId
-      },
-      payload: {
+      operation: 'isOrgExist',
+      traceId: traceId,
+      input: {
         orgId: orgId
       }
     };
@@ -58,5 +53,11 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.payload.isOrgExist, true);
+  t.is(resp.result.type, 'Success');
+
+  if (resp.result.type !== 'Success') {
+    return;
+  }
+
+  t.is(resp.result.value.isOrgExist, true);
 });

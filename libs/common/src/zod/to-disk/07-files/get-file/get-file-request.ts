@@ -34,7 +34,7 @@ export let zToDiskGetFileRequest = z
         fileNodeId: z.string(),
         builderLeft: z.enum(BuilderLeftEnum)
       })
-      .meta({ id: 'ToDiskGetFileRequestPayload' })
+      .meta({ id: 'ToDiskGetFileRequestInput' })
   })
   .meta({ id: 'ToDiskGetFileRequest' });
 

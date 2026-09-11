@@ -1,53 +1,40 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
-import type { ToDiskCreateProjectRequestPayload } from '#common/zod/to-disk/02-projects/create-project/create-project-request-payload';
-import type { ToDiskCreateProjectResponsePayload } from '#common/zod/to-disk/02-projects/create-project/create-project-response-payload';
+import type { ToDiskCreateProjectOutput } from '#common/zod/to-disk/02-projects/create-project/create-project-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 import { checkProjectDoesNotExist } from './check-project-does-not-exist';
 
 @Injectable()
 export class CreateProjectService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskCreateProjectResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    baseProject: BaseProject;
+    seedProjectId?: string;
+    devRepoId: string;
+    userAlias: string;
+  }): Promise<ToDiskResultFor<'ToDiskCreateProject'>> {
+    let { baseProject, seedProjectId, devRepoId, userAlias } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskCreateProjectRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      seedProjectId,
-      devRepoId,
-      userAlias
-    }: ToDiskCreateProjectRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -57,7 +44,7 @@ export class CreateProjectService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
     let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
@@ -111,7 +98,7 @@ export class CreateProjectService {
         })
       ),
       Result.bind('prodItemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: PROD_REPO_ID,
@@ -131,7 +118,7 @@ export class CreateProjectService {
         })
       ),
       Result.bind('prodItemStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: PROD_REPO_ID,
@@ -142,19 +129,16 @@ export class CreateProjectService {
         })
       ),
       Result.map(
-        (item): ToDiskCreateProjectResponsePayload => ({
+        (item): ToDiskCreateProjectOutput => ({
           orgId: item.orgId,
           projectId: item.projectId,
           defaultBranch: item.prodItemStatus.currentBranch,
           prodFiles: item.prodItemCatalog.files,
           mproveDir: item.prodItemCatalog.mproveDir
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(createProjectResult);
-
-    return payload;
+    return createProjectResult;
   }
 }

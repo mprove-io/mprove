@@ -21,7 +21,7 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { ToBackendGetFileResponsePayload } from '#common/zod/to-backend/files/to-backend-get-file';
-import type { ToDiskGetFileResponsePayload } from '#common/zod/to-disk/07-files/get-file/get-file-response';
+import type { ToDiskGetFileOutput } from '#common/zod/to-disk/07-files/get-file/get-file-response';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)
@@ -76,16 +76,18 @@ export class GetFileController {
       project: project
     });
 
-    let getFileRespPayload: ToDiskGetFileResponsePayload =
-      await this.rpcService.sendToDiskUnwrapPayload({
-        operation: 'getFile',
-        traceId: body.info.traceId,
-        input: {
-          baseProject: baseProject,
-          repoId: repoId,
-          branch: branchId,
-          fileNodeId: fileNodeId,
-          builderLeft: builderLeft
+    let diskGetFileOutput: ToDiskGetFileOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'getFile',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            fileNodeId: fileNodeId,
+            builderLeft: builderLeft
+          }
         }
       });
 
@@ -122,15 +124,15 @@ export class GetFileController {
     });
 
     let payload: ToBackendGetFileResponsePayload = {
-      repo: getFileRespPayload.repo,
-      originalContent: getFileRespPayload.originalContent,
-      content: getFileRespPayload.content,
+      repo: diskGetFileOutput.repo,
+      originalContent: diskGetFileOutput.originalContent,
+      content: diskGetFileOutput.content,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs
       }),
       needValidate: bridge.needValidate,
-      isExist: getFileRespPayload.isExist
+      isExist: diskGetFileOutput.isExist
     };
 
     return payload;

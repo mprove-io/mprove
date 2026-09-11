@@ -1,31 +1,31 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskRevertRepoToLastCommitRequestInfo,
-  zToDiskRevertRepoToLastCommitRequestInfo
-} from './revert-repo-to-last-commit-request-info';
-import {
-  type ToDiskRevertRepoToLastCommitRequestPayload,
-  zToDiskRevertRepoToLastCommitRequestPayload
-} from './revert-repo-to-last-commit-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskRevertRepoToLastCommitRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskRevertRepoToLastCommitRequestInfo;
-    payload: ToDiskRevertRepoToLastCommitRequestPayload;
-  }
->;
+export type ToDiskRevertRepoToLastCommitRequest = {
+  operation: 'revertRepoToLastCommit';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+  };
+};
 
-export let zToDiskRevertRepoToLastCommitRequest = zToDiskRequest
-  .extend({
-    info: zToDiskRevertRepoToLastCommitRequestInfo,
-    payload: zToDiskRevertRepoToLastCommitRequestPayload
+export let zToDiskRevertRepoToLastCommitRequest = z
+  .strictObject({
+    operation: z.literal('revertRepoToLastCommit'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string()
+      })
+      .meta({ id: 'ToDiskRevertRepoToLastCommitRequestInput' })
   })
   .meta({ id: 'ToDiskRevertRepoToLastCommitRequest' });
 

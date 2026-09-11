@@ -1,46 +1,29 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { DiskConfig } from '#disk/config/disk-config';
-import { makeErrorResponseDisk } from '#disk/functions/make-error-response-disk';
-import { makeOkResponseDisk } from '#disk/functions/make-ok-response-disk';
+import type { ToDiskIsProjectExistResponse } from '#common/zod/to-disk/02-projects/is-project-exist/is-project-exist-response';
+import { processResponse } from '#disk/functions/process-response';
 import { IsProjectExistService } from './is-project-exist.service';
 
 @Controller()
 export class IsProjectExistController {
   constructor(
-    private cs: ConfigService<DiskConfig>,
     private isProjectExistService: IsProjectExistService,
     private logger: Logger
   ) {}
 
   @Post(ToDiskRequestInfoNameEnum.ToDiskIsProjectExist)
-  async isProjectExist(@Req() request: any, @Body() body: any) {
-    let startTs = Date.now();
-    try {
-      let payload = await this.isProjectExistService.process(body);
+  async isProjectExist(
+    @Req() request: { method: string },
+    @Body() body: unknown
+  ): Promise<ToDiskIsProjectExistResponse> {
+    let response: ToDiskIsProjectExistResponse = await processResponse({
+      name: 'ToDiskIsProjectExist',
+      body: body,
+      method: request.method,
+      process: input => this.isProjectExistService.process(input),
+      logger: this.logger
+    });
 
-      return makeOkResponseDisk({
-        body: body,
-        payload: payload,
-        path: request.url,
-        method: request.method,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-    } catch (e) {
-      let { resp, wrappedError } = makeErrorResponseDisk({
-        body: body,
-        e: e,
-        path: request.url,
-        method: request.method,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-
-      return resp;
-    }
+    return response;
   }
 }

@@ -2,25 +2,30 @@ import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  makeToDiskPilotResponseSchema,
-  type ToDiskPilotResponse
-} from '#common/zod/to-disk/to-disk-pilot-response';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
 import {
   type ToDiskDeleteBranchError,
   zToDiskDeleteBranchError
 } from './delete-branch-error';
 
-export type ToDiskDeleteBranchResponse = ToDiskPilotResponse<
+export type ToDiskDeleteBranchOutput = {
+  repo: Repo;
+  deletedBranch: string;
+};
+
+export type ToDiskDeleteBranchResponse = ToDiskResponse<
   'ToDiskDeleteBranch',
-  { repo: Repo; deletedBranch: string },
+  ToDiskDeleteBranchOutput,
   ToDiskDeleteBranchError
 >;
 
-export let zToDiskDeleteBranchResponse = makeToDiskPilotResponseSchema({
+export let zToDiskDeleteBranchResponse = makeToDiskResponseSchema({
   path: 'ToDiskDeleteBranch',
   success: z
     .object({ repo: zRepo, deletedBranch: z.string() })
-    .meta({ id: 'ToDiskDeleteBranchResponsePayload' }),
+    .meta({ id: 'ToDiskDeleteBranchOutput' }),
   error: zToDiskDeleteBranchError
 });
 

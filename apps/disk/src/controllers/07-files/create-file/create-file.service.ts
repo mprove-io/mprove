@@ -1,77 +1,63 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskFileAlreadyExistError } from '#common/zod/disk/errors/disk-file-already-exist-error';
-import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import {
-  type ToDiskCreateFileRequest,
-  zToDiskCreateFileRequest
-} from '#common/zod/to-disk/07-files/create-file/create-file-request';
-import type { ToDiskCreateFileRequestPayload } from '#common/zod/to-disk/07-files/create-file/create-file-request-payload';
-import type { ToDiskCreateFileResponsePayload } from '#common/zod/to-disk/07-files/create-file/create-file-response-payload';
+import type { ProjectLt } from '#common/zod/st-lt';
+import type { ToDiskCreateFileOutput } from '#common/zod/to-disk/07-files/create-file/create-file-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { validatePathUnderDirWrapped } from '#disk/functions/disk/validate-path-under-dir-wrapped';
 import { writeToFile } from '#disk/functions/disk/write-to-file';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { commit } from '#disk/functions/git/commit';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 import { getContentFromFileName } from './get-content-from-file-name';
 
 @Injectable()
 export class CreateFileService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskCreateFileResponsePayload> {
-    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
-      'diskOrganizationsPath'
-    );
-
-    let requestValid: ToDiskCreateFileRequest = zodParseOrThrow({
-      schema: zToDiskCreateFileRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    userAlias: string;
+    parentNodeId: string;
+    fileName: string;
+    fileText?: string;
+  }): Promise<ToDiskResultFor<'ToDiskCreateFile'>> {
     let {
-      orgId,
       baseProject,
       repoId,
       branch,
-      fileName,
-      fileText,
+      userAlias,
       parentNodeId,
-      userAlias
-    }: ToDiskCreateFileRequestPayload = requestValid.payload;
+      fileName,
+      fileText
+    } = item;
 
-    let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
-      encryptedString: baseProject.st
-    });
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+      'diskOrganizationsPath'
+    );
 
     let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
       encryptedString: baseProject.lt
     });
 
-    let { projectId } = baseProject;
-
-    let { name: projectName } = projectSt;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let parent: string = parentNodeId.substring(projectId.length + 1);
 
@@ -87,37 +73,43 @@ export class CreateFileService {
         orgId: orgId,
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        remoteType: baseProject.remoteType,
-        projectLt: projectLt,
         repoId: repoId,
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        branch: branch,
         parentPath: `${orgPath}/${orgId}/${projectId}/${repoId}/${parent}`,
-        filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${parent}${fileName}`,
-        relativeFilePath: relativeFilePath,
-        content: content,
-        userAlias: userAlias
+        filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${parent}${fileName}`
       }),
+      Result.andThrough(item =>
+        validatePathUnderDirWrapped({
+          fullPath: item.parentPath,
+          allowedDir: item.repoDir
+        })
+      ),
+      Result.andThrough(item =>
+        validatePathUnderDirWrapped({
+          fullPath: item.filePath,
+          allowedDir: item.repoDir
+        })
+      ),
       Result.bind('keyDir', item =>
         checkRestoreOrgProjectRepoBranch({
-          remoteType: item.remoteType,
+          remoteType: remoteType,
           orgId: item.orgId,
           orgPath: orgPath,
           projectId: item.projectId,
-          projectLt: item.projectLt,
+          projectLt: projectLt,
           repoId: item.repoId,
-          branchId: item.branch
+          branchId: branch
         })
       ),
       Result.bind('git', item =>
         createGit({
           repoDir: item.repoDir,
-          remoteType: item.remoteType,
+          remoteType: remoteType,
           keyDir: item.keyDir,
-          gitUrl: item.projectLt.gitUrl,
-          privateKeyEncrypted: item.projectLt.privateKeyEncrypted,
-          publicKey: item.projectLt.publicKey,
-          passPhrase: item.projectLt.passPhrase
+          gitUrl: projectLt.gitUrl,
+          privateKeyEncrypted: projectLt.privateKeyEncrypted,
+          publicKey: projectLt.publicKey,
+          passPhrase: projectLt.passPhrase
         })
       ),
       Result.andThrough(item =>
@@ -126,24 +118,11 @@ export class CreateFileService {
           projectDir: item.projectDir,
           repoId: item.repoId,
           repoDir: item.repoDir,
-          branchName: item.branch,
+          branchName: branch,
           git: item.git,
           isFetch: false
         })
       ),
-      Result.andThrough(item => {
-        validatePathUnderDir({
-          fullPath: item.parentPath,
-          allowedDir: item.repoDir
-        });
-
-        validatePathUnderDir({
-          fullPath: item.filePath,
-          allowedDir: item.repoDir
-        });
-
-        return Result.succeed();
-      }),
       Result.andThrough(item => ensureDir({ dir: item.parentPath })),
       Result.bind('isFileExist', item => isPathExist({ path: item.filePath })),
       Result.andThrough(
@@ -153,18 +132,15 @@ export class CreateFileService {
             : Result.succeed()
       ),
       Result.andThrough(item =>
-        writeToFile({
-          filePath: item.filePath,
-          content: item.content
-        })
+        writeToFile({ filePath: item.filePath, content: content })
       ),
       Result.andThrough(item => addChangesToStage({ repoDir: item.repoDir })),
       Result.andThrough(item =>
         item.repoId === PROD_REPO_ID
           ? commit({
               repoDir: item.repoDir,
-              userAlias: item.userAlias,
-              commitMessage: `Created file ${item.relativeFilePath}`
+              userAlias: userAlias,
+              commitMessage: `Created file ${relativeFilePath}`
             })
           : Result.succeed()
       ),
@@ -175,14 +151,14 @@ export class CreateFileService {
               projectDir: item.projectDir,
               repoId: item.repoId,
               repoDir: item.repoDir,
-              branch: item.branch,
+              branch: branch,
               git: item.git,
               isFetch: true
             })
           : Result.succeed()
       ),
       Result.bind('repoStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -193,7 +169,7 @@ export class CreateFileService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -202,7 +178,7 @@ export class CreateFileService {
         })
       ),
       Result.map(
-        (item): ToDiskCreateFileResponsePayload => ({
+        (item): ToDiskCreateFileOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,
@@ -218,12 +194,9 @@ export class CreateFileService {
           files: item.itemCatalog.files,
           mproveDir: item.itemCatalog.mproveDir
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(createFileResult);
-
-    return payload;
+    return createFileResult;
   }
 }

@@ -1,31 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskCreateDevRepoRequestInfo,
-  zToDiskCreateDevRepoRequestInfo
-} from './create-dev-repo-request-info';
-import {
-  type ToDiskCreateDevRepoRequestPayload,
-  zToDiskCreateDevRepoRequestPayload
-} from './create-dev-repo-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskCreateDevRepoRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskCreateDevRepoRequestInfo;
-    payload: ToDiskCreateDevRepoRequestPayload;
-  }
->;
+export type ToDiskCreateDevRepoRequest = {
+  operation: 'createDevRepo';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    devRepoId: string;
+    initialBranch?: string;
+    sessionBranch?: string;
+  };
+};
 
-export let zToDiskCreateDevRepoRequest = zToDiskRequest
-  .extend({
-    info: zToDiskCreateDevRepoRequestInfo,
-    payload: zToDiskCreateDevRepoRequestPayload
+export let zToDiskCreateDevRepoRequest = z
+  .strictObject({
+    operation: z.literal('createDevRepo'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        devRepoId: z.string(),
+        initialBranch: z.string().nullish(),
+        sessionBranch: z.string().nullish()
+      })
+      .meta({ id: 'ToDiskCreateDevRepoRequestInput' })
   })
   .meta({ id: 'ToDiskCreateDevRepoRequest' });
 

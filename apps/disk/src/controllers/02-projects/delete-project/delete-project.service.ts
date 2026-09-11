@@ -1,39 +1,26 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
-import { zToDiskDeleteProjectRequest } from '#common/zod/to-disk/02-projects/delete-project/delete-project-request';
-import type { ToDiskDeleteProjectResponsePayload } from '#common/zod/to-disk/02-projects/delete-project/delete-project-response-payload';
+import type { ToDiskDeleteProjectOutput } from '#common/zod/to-disk/02-projects/delete-project/delete-project-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
-import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class DeleteProjectService {
-  constructor(
-    private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
-  ) {}
+  constructor(private cs: ConfigService<DiskConfig>) {}
 
-  async process(request: any): Promise<ToDiskDeleteProjectResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    orgId: string;
+    projectId: string;
+  }): Promise<ToDiskResultFor<'ToDiskDeleteProject'>> {
+    let { orgId, projectId } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskDeleteProjectRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let { orgId, projectId } = requestValid.payload;
 
     let deleteProjectResult = Result.pipe(
       Result.succeed({
@@ -56,16 +43,13 @@ export class DeleteProjectService {
           : Result.succeed()
       ),
       Result.map(
-        (item): ToDiskDeleteProjectResponsePayload => ({
+        (item): ToDiskDeleteProjectOutput => ({
           orgId: item.orgId,
           deletedProjectId: item.projectId
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(deleteProjectResult);
-
-    return payload;
+    return deleteProjectResult;
   }
 }

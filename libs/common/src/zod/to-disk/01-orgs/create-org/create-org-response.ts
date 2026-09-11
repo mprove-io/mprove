@@ -1,30 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskCreateOrgResponseInfo,
-  zToDiskCreateOrgResponseInfo
-} from './create-org-response-info';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
 import {
-  type ToDiskCreateOrgResponsePayload,
-  zToDiskCreateOrgResponsePayload
-} from './create-org-response-payload';
+  type ToDiskCreateOrgError,
+  zToDiskCreateOrgError
+} from './create-org-error';
 
-export type ToDiskCreateOrgResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskCreateOrgResponseInfo;
-    payload: ToDiskCreateOrgResponsePayload;
-  }
+export type ToDiskCreateOrgOutput = {
+  orgId: string;
+};
+
+export type ToDiskCreateOrgResponse = ToDiskResponse<
+  'ToDiskCreateOrg',
+  ToDiskCreateOrgOutput,
+  ToDiskCreateOrgError
 >;
 
-export let zToDiskCreateOrgResponse = zMyResponse
-  .extend({
-    info: zToDiskCreateOrgResponseInfo,
-    payload: zToDiskCreateOrgResponsePayload
-  })
-  .meta({ id: 'ToDiskCreateOrgResponse' });
+export let zToDiskCreateOrgResponse = makeToDiskResponseSchema({
+  path: 'ToDiskCreateOrg',
+  success: z
+    .object({
+      orgId: z.string()
+    })
+    .meta({ id: 'ToDiskCreateOrgOutput' }),
+  error: zToDiskCreateOrgError
+});
 
 assertTypesEqual<
   ToDiskCreateOrgResponse,

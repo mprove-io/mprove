@@ -20,7 +20,6 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { getChartUrl } from '#common/functions/get-chart-url';
 import { getDashboardUrl } from '#common/functions/get-dashboard-url';
@@ -28,8 +27,7 @@ import { getModelUrl } from '#common/functions/get-model-url';
 import { getReportUrl } from '#common/functions/get-report-url';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
 import type { ToBackendGetStateResponsePayload } from '#common/zod/to-backend/state/to-backend-get-state';
-import type { ToDiskGetCatalogNodesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-request';
-import type { ToDiskGetCatalogNodesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
+import type { ToDiskGetCatalogNodesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
 
 @Injectable()
 export class GetStateService {
@@ -121,35 +119,25 @@ export class GetStateService {
     });
 
     // get repo (disk RPC) - skip if not needed
-    let diskResponse: ToDiskGetCatalogNodesResponse;
+    let diskGetCatalogNodesOutput: ToDiskGetCatalogNodesOutput;
 
     if (getRepo === true) {
       let baseProject = this.tabService.projectTabToBaseProject({
         project: project
       });
 
-      let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
-        info: {
-          name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
-          traceId: traceId
-        },
-        payload: {
-          orgId: project.orgId,
-          baseProject: baseProject,
-          repoId: repoId,
-          branch: branchId,
-          isFetch: isFetch
+      diskGetCatalogNodesOutput = await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'getCatalogNodes',
+          traceId: traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            isFetch: isFetch
+          }
         }
-      };
-
-      diskResponse =
-        await this.rpcService.sendToDisk<ToDiskGetCatalogNodesResponse>({
-          orgId: project.orgId,
-          projectId: projectId,
-          repoId: repoId,
-          message: toDiskGetCatalogNodesRequest,
-          checkIsOk: true
-        });
+      });
     }
 
     // get struct
@@ -263,8 +251,8 @@ export class GetStateService {
 
     let repo: ToBackendGetStateResponsePayload['repo'];
 
-    if (getRepo === true && diskResponse) {
-      let diskRepo = diskResponse.payload.repo;
+    if (getRepo === true && diskGetCatalogNodesOutput) {
+      let diskRepo = diskGetCatalogNodesOutput.repo;
 
       delete diskRepo.changesToCommit;
       delete diskRepo.changesToPush;

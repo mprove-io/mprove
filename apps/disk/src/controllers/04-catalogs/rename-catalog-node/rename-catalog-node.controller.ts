@@ -1,46 +1,29 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { DiskConfig } from '#disk/config/disk-config';
-import { makeErrorResponseDisk } from '#disk/functions/make-error-response-disk';
-import { makeOkResponseDisk } from '#disk/functions/make-ok-response-disk';
+import type { ToDiskRenameCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response';
+import { processResponse } from '#disk/functions/process-response';
 import { RenameCatalogNodeService } from './rename-catalog-node.service';
 
 @Controller()
 export class RenameCatalogNodeController {
   constructor(
-    private cs: ConfigService<DiskConfig>,
     private renameCatalogNodeService: RenameCatalogNodeService,
     private logger: Logger
   ) {}
 
   @Post(ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode)
-  async renameCatalogNode(@Req() request: any, @Body() body: any) {
-    let startTs = Date.now();
-    try {
-      let payload = await this.renameCatalogNodeService.process(body);
+  async renameCatalogNode(
+    @Req() request: { method: string },
+    @Body() body: unknown
+  ): Promise<ToDiskRenameCatalogNodeResponse> {
+    let response: ToDiskRenameCatalogNodeResponse = await processResponse({
+      name: 'ToDiskRenameCatalogNode',
+      body: body,
+      method: request.method,
+      process: input => this.renameCatalogNodeService.process(input),
+      logger: this.logger
+    });
 
-      return makeOkResponseDisk({
-        body: body,
-        payload: payload,
-        path: request.url,
-        method: request.method,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-    } catch (e) {
-      let { resp, wrappedError } = makeErrorResponseDisk({
-        body: body,
-        e: e,
-        path: request.url,
-        method: request.method,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-
-      return resp;
-    }
+    return response;
   }
 }

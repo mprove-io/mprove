@@ -1,53 +1,40 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { LogResult } from 'simple-git';
-import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskCreateDevRepoRequest } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-request';
-import type { ToDiskCreateDevRepoRequestPayload } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-request-payload';
-import type { ToDiskCreateDevRepoResponsePayload } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-response-payload';
+import type { ToDiskCreateDevRepoOutput } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class CreateDevRepoService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskCreateDevRepoResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    baseProject: BaseProject;
+    devRepoId: string;
+    initialBranch?: string;
+    sessionBranch?: string;
+  }): Promise<ToDiskResultFor<'ToDiskCreateDevRepo'>> {
+    let { baseProject, devRepoId, initialBranch, sessionBranch } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskCreateDevRepoRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      devRepoId,
-      initialBranch,
-      sessionBranch
-    }: ToDiskCreateDevRepoRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -57,11 +44,10 @@ export class CreateDevRepoService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
     let createDevRepoResult = Result.pipe(
       Result.succeed({
@@ -128,7 +114,8 @@ export class CreateDevRepoService {
           Result.andThen(async () => {
             let logResult: LogResult = await item.devGit.log({ n: 1 });
 
-            let initialCommitHash = logResult.latest?.hash?.substring(0, 7);
+            let initialCommitHash: string | undefined =
+              logResult.latest?.hash?.substring(0, 7);
 
             if (sessionBranch) {
               await item.devGit.checkout(['-b', sessionBranch]);
@@ -139,7 +126,7 @@ export class CreateDevRepoService {
         );
       }),
       Result.bind('devItemStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.devRepoId,
@@ -155,7 +142,7 @@ export class CreateDevRepoService {
         )
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.devRepoId,
@@ -164,7 +151,7 @@ export class CreateDevRepoService {
         })
       ),
       Result.map(
-        (item): ToDiskCreateDevRepoResponsePayload => ({
+        (item): ToDiskCreateDevRepoOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,
@@ -181,12 +168,9 @@ export class CreateDevRepoService {
           mproveDir: item.itemCatalog.mproveDir,
           initialCommitHash: item.initialCommitHash
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(createDevRepoResult);
-
-    return payload;
+    return createDevRepoResult;
   }
 }

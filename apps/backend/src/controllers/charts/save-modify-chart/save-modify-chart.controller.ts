@@ -60,16 +60,12 @@ import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendSaveModifyChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-save-modify-chart';
-import type { ToDiskMoveCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-request';
-import type { ToDiskMoveCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-response';
-import type { ToDiskSaveFileRequest } from '#common/zod/to-disk/07-files/save-file/save-file-request';
-import type { ToDiskSaveFileResponse } from '#common/zod/to-disk/07-files/save-file/save-file-response';
+import type { ToDiskSaveFileOutput } from '#common/zod/to-disk/07-files/save-file/save-file-response';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -259,55 +255,36 @@ export class SaveModifyChartController {
       : existingChart.filePath;
 
     if (shouldMoveChart) {
-      let toDiskMoveCatalogNodeRequest: ToDiskMoveCatalogNodeRequest = {
-        info: {
-          name: ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
-          traceId: body.info.traceId
-        },
-        payload: {
-          orgId: project.orgId,
-          baseProject: baseProject,
-          repoId: repoId,
-          branch: branchId,
-          fromNodeId: existingChart.filePath,
-          toNodeId: targetChartFilePath
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'moveCatalogNode',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            fromNodeId: existingChart.filePath,
+            toNodeId: targetChartFilePath
+          }
         }
-      };
-
-      await this.rpcService.sendToDisk<ToDiskMoveCatalogNodeResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskMoveCatalogNodeRequest,
-        checkIsOk: true
       });
     }
 
-    let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        fileNodeId: finalChartFilePath,
-        userAlias: user.alias,
-        content: chartFileText
-      }
-    };
-
-    let diskResponse = await this.rpcService.sendToDisk<ToDiskSaveFileResponse>(
-      {
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskSaveFileRequest,
-        checkIsOk: true
-      }
-    );
+    let diskSaveFileOutput: ToDiskSaveFileOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'saveFile',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            fileNodeId: finalChartFilePath,
+            userAlias: user.alias,
+            content: chartFileText
+          }
+        }
+      });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -324,7 +301,7 @@ export class SaveModifyChartController {
       }
     });
 
-    let diskFiles = diskResponse.payload.files.filter(
+    let diskFiles = diskSaveFileOutput.files.filter(
       file => file.fileNodeId === finalChartFilePath
     );
 
@@ -333,7 +310,7 @@ export class SaveModifyChartController {
     )?.filePath;
 
     if (isDefined(selectedSpaceFilePath)) {
-      let spaceDiskFile = diskResponse.payload.files.find(
+      let spaceDiskFile = diskSaveFileOutput.files.find(
         file => file.fileNodeId === selectedSpaceFilePath
       );
 

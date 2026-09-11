@@ -1,51 +1,35 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import {
-  type ToDiskIsBranchExistRequest,
-  zToDiskIsBranchExistRequest
-} from '#common/zod/to-disk/05-branches/is-branch-exist/is-branch-exist-request';
-import type { ToDiskIsBranchExistRequestPayload } from '#common/zod/to-disk/05-branches/is-branch-exist/is-branch-exist-request-payload';
-import type { ToDiskIsBranchExistResponsePayload } from '#common/zod/to-disk/05-branches/is-branch-exist/is-branch-exist-response-payload';
+import type { ToDiskIsBranchExistOutput } from '#common/zod/to-disk/05-branches/is-branch-exist/is-branch-exist-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { createGit } from '#disk/functions/git/create-git';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
 import { checkRestoreOrgProjectRepo } from '#disk/functions/restore/check-restore-org-project-repo';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class IsBranchExistService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskIsBranchExistResponsePayload> {
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    isRemote: boolean;
+  }): Promise<ToDiskResultFor<'ToDiskIsBranchExist'>> {
+    let { baseProject, repoId, branch, isRemote } = item;
+
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid: ToDiskIsBranchExistRequest = zodParseOrThrow({
-      schema: zToDiskIsBranchExistRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch,
-      isRemote
-    }: ToDiskIsBranchExistRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -55,7 +39,7 @@ export class IsBranchExistService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
 
@@ -103,7 +87,7 @@ export class IsBranchExistService {
             })
       ),
       Result.map(
-        (item): ToDiskIsBranchExistResponsePayload => ({
+        (item): ToDiskIsBranchExistOutput => ({
           orgId: item.orgId,
           projectId: item.projectId,
           repoId: item.repoId,
@@ -111,12 +95,9 @@ export class IsBranchExistService {
           isRemote: isRemote,
           isBranchExist: item.isBranchExist
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(isBranchExistResult);
-
-    return payload;
+    return isBranchExistResult;
   }
 }

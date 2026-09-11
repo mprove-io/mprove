@@ -1,46 +1,29 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import { DiskConfig } from '#disk/config/disk-config';
-import { makeErrorResponseDisk } from '#disk/functions/make-error-response-disk';
-import { makeOkResponseDisk } from '#disk/functions/make-ok-response-disk';
+import type { ToDiskGetCatalogNodesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
+import { processResponse } from '#disk/functions/process-response';
 import { GetCatalogNodesService } from './get-catalog-nodes.service';
 
 @Controller()
 export class GetCatalogNodesController {
   constructor(
-    private cs: ConfigService<DiskConfig>,
     private getCatalogNodesService: GetCatalogNodesService,
     private logger: Logger
   ) {}
 
   @Post(ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes)
-  async getCatalogNodes(@Req() request: any, @Body() body: any) {
-    let startTs = Date.now();
-    try {
-      let payload = await this.getCatalogNodesService.process(body);
+  async getCatalogNodes(
+    @Req() request: { method: string },
+    @Body() body: unknown
+  ): Promise<ToDiskGetCatalogNodesResponse> {
+    let response: ToDiskGetCatalogNodesResponse = await processResponse({
+      name: 'ToDiskGetCatalogNodes',
+      body: body,
+      method: request.method,
+      process: input => this.getCatalogNodesService.process(input),
+      logger: this.logger
+    });
 
-      return makeOkResponseDisk({
-        body: body,
-        payload: payload,
-        path: request.url,
-        method: request.method,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-    } catch (e) {
-      let { resp, wrappedError } = makeErrorResponseDisk({
-        body: body,
-        e: e,
-        path: request.url,
-        method: request.method,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-
-      return resp;
-    }
+    return response;
   }
 }

@@ -1,30 +1,32 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskGetCatalogNodesResponseInfo,
-  zToDiskGetCatalogNodesResponseInfo
-} from './get-catalog-nodes-response-info';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
 import {
-  type ToDiskGetCatalogNodesResponsePayload,
-  zToDiskGetCatalogNodesResponsePayload
-} from './get-catalog-nodes-response-payload';
+  type ToDiskGetCatalogNodesError,
+  zToDiskGetCatalogNodesError
+} from './get-catalog-nodes-error';
 
-export type ToDiskGetCatalogNodesResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskGetCatalogNodesResponseInfo;
-    payload: ToDiskGetCatalogNodesResponsePayload;
-  }
+export type ToDiskGetCatalogNodesOutput = {
+  repo: Repo;
+};
+
+export type ToDiskGetCatalogNodesResponse = ToDiskResponse<
+  'ToDiskGetCatalogNodes',
+  ToDiskGetCatalogNodesOutput,
+  ToDiskGetCatalogNodesError
 >;
 
-export let zToDiskGetCatalogNodesResponse = zMyResponse
-  .extend({
-    info: zToDiskGetCatalogNodesResponseInfo,
-    payload: zToDiskGetCatalogNodesResponsePayload
-  })
-  .meta({ id: 'ToDiskGetCatalogNodesResponse' });
+export let zToDiskGetCatalogNodesResponse = makeToDiskResponseSchema({
+  path: 'ToDiskGetCatalogNodes',
+  success: z
+    .object({ repo: zRepo })
+    .meta({ id: 'ToDiskGetCatalogNodesOutput' }),
+  error: zToDiskGetCatalogNodesError
+});
 
 assertTypesEqual<
   ToDiskGetCatalogNodesResponse,

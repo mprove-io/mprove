@@ -2,7 +2,6 @@ import test from 'ava';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
@@ -34,11 +33,9 @@ test('1', async t => {
     configService = cs;
 
     let createOrgRequest: ToDiskCreateOrgRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
-        traceId: traceId
-      },
-      payload: {
+      operation: 'createOrg',
+      traceId: traceId,
+      input: {
         orgId: orgId
       }
     };
@@ -66,12 +63,9 @@ test('1', async t => {
     };
 
     let createProjectRequest: ToDiskCreateProjectRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'createProject',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         devRepoId: 'r1',
         userAlias: 'u1'
@@ -79,12 +73,9 @@ test('1', async t => {
     };
 
     let createFolderRequest: ToDiskCreateFolderRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'createFolder',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -94,12 +85,9 @@ test('1', async t => {
     };
 
     let moveCatalogNodeRequest: ToDiskMoveCatalogNodeRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'moveCatalogNode',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -123,8 +111,14 @@ test('1', async t => {
     });
   }
 
+  t.is(resp.result.type, 'Success');
+
+  if (resp.result.type !== 'Success') {
+    return;
+  }
+
   t.is(
-    resp.payload.repo.nodes[0].children[0].children[0].id,
+    resp.result.value.repo.nodes[0].children[0].children[0].id,
     `${projectId}/fo1/readme.md`
   );
 });

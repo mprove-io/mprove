@@ -41,11 +41,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendCreateFolderResponsePayload } from '#common/zod/to-backend/folders/to-backend-create-folder';
-import type { ToDiskCreateFolderRequest } from '#common/zod/to-disk/06-folders/create-folder/create-folder-request';
-import type { ToDiskCreateFolderResponse } from '#common/zod/to-disk/06-folders/create-folder/create-folder-response';
+import type { ToDiskCreateFolderOutput } from '#common/zod/to-disk/06-folders/create-folder/create-folder-response';
 
 @ApiTags('Folders')
 @UseGuards(ThrottlerUserIdGuard)
@@ -124,28 +122,19 @@ export class CreateFolderController {
       project: project
     });
 
-    let toDiskCreateFolderRequest: ToDiskCreateFolderRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        parentNodeId: parentNodeId,
-        folderName: folderName.toLowerCase()
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskCreateFolderResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskCreateFolderRequest,
-        checkIsOk: true
+    let diskCreateFolderOutput: ToDiskCreateFolderOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'createFolder',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            parentNodeId: parentNodeId,
+            folderName: folderName.toLowerCase()
+          }
+        }
       });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -166,8 +155,8 @@ export class CreateFolderController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskCreateFolderOutput.files,
+          mproveDir: diskCreateFolderOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -210,7 +199,7 @@ export class CreateFolderController {
     });
 
     let payload: ToBackendCreateFolderResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskCreateFolderOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs

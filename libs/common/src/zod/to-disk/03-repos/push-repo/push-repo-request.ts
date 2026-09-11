@@ -1,34 +1,38 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskPushRepoRequestInfo,
-  zToDiskPushRepoRequestInfo
-} from './push-repo-request-info';
-import {
-  type ToDiskPushRepoRequestPayload,
-  zToDiskPushRepoRequestPayload
-} from './push-repo-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskPushRepoRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskPushRepoRequestInfo;
-    payload: ToDiskPushRepoRequestPayload;
-  }
->;
+export type ToDiskPushRepoRequest = {
+  operation: 'pushRepo';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    userAlias: string;
+  };
+};
 
-export let zToDiskPushRepoRequest = zToDiskRequest
-  .extend({
-    info: zToDiskPushRepoRequestInfo,
-    payload: zToDiskPushRepoRequestPayload
+export let zToDiskPushRepoRequest = z
+  .strictObject({
+    operation: z.literal('pushRepo'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string(),
+        userAlias: z.string()
+      })
+      .meta({ id: 'ToDiskPushRepoRequestInput' })
   })
   .meta({ id: 'ToDiskPushRepoRequest' });
 
 assertTypesEqual<ToDiskPushRepoRequest, z.infer<typeof zToDiskPushRepoRequest>>(
-  { value: true }
+  {
+    value: true
+  }
 );

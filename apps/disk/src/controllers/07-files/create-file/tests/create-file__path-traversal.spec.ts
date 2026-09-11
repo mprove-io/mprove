@@ -3,14 +3,13 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
 import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/create-file/create-file-request';
+import type { ToDiskCreateFileResponse } from '#common/zod/to-disk/07-files/create-file/create-file-response';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 
@@ -22,7 +21,7 @@ let projectId = makeId();
 let projectName = 'p1';
 
 test('1', async t => {
-  let resp: any;
+  let resp: ToDiskCreateFileResponse;
 
   let wLogger;
   let configService;
@@ -36,11 +35,9 @@ test('1', async t => {
     configService = cs;
 
     let createOrgRequest: ToDiskCreateOrgRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
-        traceId: traceId
-      },
-      payload: {
+      operation: 'createOrg',
+      traceId: traceId,
+      input: {
         orgId: orgId
       }
     };
@@ -68,12 +65,9 @@ test('1', async t => {
     };
 
     let createProjectRequest: ToDiskCreateProjectRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'createProject',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         devRepoId: 'r1',
         userAlias: 'u1'
@@ -81,12 +75,9 @@ test('1', async t => {
     };
 
     let createFileRequest: ToDiskCreateFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'createFile',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -109,6 +100,11 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.info.status, ResponseInfoStatusEnum.Error);
-  t.is(resp.info.error.message, ErEnum.DISK_PATH_TRAVERSAL);
+  t.is(resp.result.type, 'Failure');
+
+  if (resp.result.type !== 'Failure') {
+    return;
+  }
+
+  t.is(resp.result.error.code, ErEnum.DISK_PATH_TRAVERSAL);
 });

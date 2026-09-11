@@ -1,71 +1,47 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskFolderIsNotExistError } from '#common/zod/disk/errors/disk-folder-is-not-exist-error';
-import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import {
-  type ToDiskDeleteFolderRequest,
-  zToDiskDeleteFolderRequest
-} from '#common/zod/to-disk/06-folders/delete-folder/delete-folder-request';
-import type { ToDiskDeleteFolderRequestPayload } from '#common/zod/to-disk/06-folders/delete-folder/delete-folder-request-payload';
-import type { ToDiskDeleteFolderResponsePayload } from '#common/zod/to-disk/06-folders/delete-folder/delete-folder-response-payload';
+import type { ProjectLt } from '#common/zod/st-lt';
+import type { ToDiskDeleteFolderOutput } from '#common/zod/to-disk/06-folders/delete-folder/delete-folder-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
+import { validatePathUnderDirWrapped } from '#disk/functions/disk/validate-path-under-dir-wrapped';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class DeleteFolderService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskDeleteFolderResponsePayload> {
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    folderNodeId: string;
+  }): Promise<ToDiskResultFor<'ToDiskDeleteFolder'>> {
+    let { baseProject, repoId, branch, folderNodeId } = item;
+
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid: ToDiskDeleteFolderRequest = zodParseOrThrow({
-      schema: zToDiskDeleteFolderRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch,
-      folderNodeId
-    }: ToDiskDeleteFolderRequestPayload = requestValid.payload;
-
-    let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
-      encryptedString: baseProject.st
-    });
 
     let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
-
-    let { name: projectName } = projectSt;
-
-    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let deleteFolderResult = Result.pipe(
       Result.succeed({
@@ -76,13 +52,12 @@ export class DeleteFolderService {
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
         folderAbsolutePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${folderNodeId.substring(projectId.length + 1)}`
       }),
-      Result.andThrough(item => {
-        validatePathUnderDir({
+      Result.andThrough(item =>
+        validatePathUnderDirWrapped({
           fullPath: item.folderAbsolutePath,
           allowedDir: item.repoDir
-        });
-        return Result.succeed();
-      }),
+        })
+      ),
       Result.bind('keyDir', item =>
         checkRestoreOrgProjectRepoBranch({
           remoteType: remoteType,
@@ -99,10 +74,10 @@ export class DeleteFolderService {
           repoDir: item.repoDir,
           remoteType: remoteType,
           keyDir: item.keyDir,
-          gitUrl: gitUrl,
-          privateKeyEncrypted: privateKeyEncrypted,
-          publicKey: publicKey,
-          passPhrase: passPhrase
+          gitUrl: projectLt.gitUrl,
+          privateKeyEncrypted: projectLt.privateKeyEncrypted,
+          publicKey: projectLt.publicKey,
+          passPhrase: projectLt.passPhrase
         })
       ),
       Result.andThrough(item =>
@@ -128,7 +103,7 @@ export class DeleteFolderService {
       Result.andThrough(item => removePath({ path: item.folderAbsolutePath })),
       Result.andThrough(item => addChangesToStage({ repoDir: item.repoDir })),
       Result.bind('repoStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -139,7 +114,7 @@ export class DeleteFolderService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -148,7 +123,7 @@ export class DeleteFolderService {
         })
       ),
       Result.map(
-        (item): ToDiskDeleteFolderResponsePayload => ({
+        (item): ToDiskDeleteFolderOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,
@@ -165,12 +140,9 @@ export class DeleteFolderService {
           files: item.itemCatalog.files,
           mproveDir: item.itemCatalog.mproveDir
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(deleteFolderResult);
-
-    return payload;
+    return deleteFolderResult;
   }
 }

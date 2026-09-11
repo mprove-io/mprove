@@ -40,11 +40,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendRevertRepoToLastCommitResponsePayload } from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
-import type { ToDiskRevertRepoToLastCommitRequest } from '#common/zod/to-disk/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
-import type { ToDiskRevertRepoToLastCommitResponse } from '#common/zod/to-disk/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
+import type { ToDiskRevertRepoToLastCommitOutput } from '#common/zod/to-disk/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -114,27 +112,17 @@ export class RevertRepoToLastCommitController {
       project: project
     });
 
-    let toDiskRevertRepoToLastCommitRequest: ToDiskRevertRepoToLastCommitRequest =
-      {
-        info: {
-          name: ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
-          traceId: body.info.traceId
-        },
-        payload: {
-          orgId: project.orgId,
-          baseProject: baseProject,
-          repoId: repoId,
-          branch: branchId
+    let diskRevertRepoToLastCommitOutput: ToDiskRevertRepoToLastCommitOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'revertRepoToLastCommit',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId
+          }
         }
-      };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskRevertRepoToLastCommitResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskRevertRepoToLastCommitRequest,
-        checkIsOk: true
       });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -155,8 +143,8 @@ export class RevertRepoToLastCommitController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskRevertRepoToLastCommitOutput.files,
+          mproveDir: diskRevertRepoToLastCommitOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -199,7 +187,7 @@ export class RevertRepoToLastCommitController {
     });
 
     let payload: ToBackendRevertRepoToLastCommitResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskRevertRepoToLastCommitOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs

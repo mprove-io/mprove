@@ -1,46 +1,32 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskDeleteDevRepoRequest } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-request';
-import type { ToDiskDeleteDevRepoRequestPayload } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-request-payload';
-import type { ToDiskDeleteDevRepoResponsePayload } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-response-payload';
+import type { ToDiskDeleteDevRepoOutput } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
 import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class DeleteDevRepoService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskDeleteDevRepoResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    baseProject: BaseProject;
+    devRepoId: string;
+  }): Promise<ToDiskResultFor<'ToDiskDeleteDevRepo'>> {
+    let { baseProject, devRepoId } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskDeleteDevRepoRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      projectId,
-      baseProject,
-      devRepoId
-    }: ToDiskDeleteDevRepoRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -49,6 +35,8 @@ export class DeleteDevRepoService {
     let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
       encryptedString: baseProject.lt
     });
+
+    let { orgId, projectId } = baseProject;
 
     let deleteDevRepoResult = Result.pipe(
       Result.succeed({
@@ -75,17 +63,14 @@ export class DeleteDevRepoService {
           : Result.succeed()
       ),
       Result.map(
-        (item): ToDiskDeleteDevRepoResponsePayload => ({
+        (item): ToDiskDeleteDevRepoOutput => ({
           orgId: item.orgId,
           projectId: item.projectId,
           deletedRepoId: item.devRepoId
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(deleteDevRepoResult);
-
-    return payload;
+    return deleteDevRepoResult;
   }
 }

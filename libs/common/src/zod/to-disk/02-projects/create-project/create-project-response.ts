@@ -1,30 +1,45 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskCreateProjectResponseInfo,
-  zToDiskCreateProjectResponseInfo
-} from './create-project-response-info';
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
 import {
-  type ToDiskCreateProjectResponsePayload,
-  zToDiskCreateProjectResponsePayload
-} from './create-project-response-payload';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
+import {
+  type ToDiskCreateProjectError,
+  zToDiskCreateProjectError
+} from './create-project-error';
 
-export type ToDiskCreateProjectResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskCreateProjectResponseInfo;
-    payload: ToDiskCreateProjectResponsePayload;
-  }
+export type ToDiskCreateProjectOutput = {
+  orgId: string;
+  projectId: string;
+  defaultBranch: string;
+  prodFiles: DiskCatalogFile[];
+  mproveDir: string;
+};
+
+export type ToDiskCreateProjectResponse = ToDiskResponse<
+  'ToDiskCreateProject',
+  ToDiskCreateProjectOutput,
+  ToDiskCreateProjectError
 >;
 
-export let zToDiskCreateProjectResponse = zMyResponse
-  .extend({
-    info: zToDiskCreateProjectResponseInfo,
-    payload: zToDiskCreateProjectResponsePayload
-  })
-  .meta({ id: 'ToDiskCreateProjectResponse' });
+export let zToDiskCreateProjectResponse = makeToDiskResponseSchema({
+  path: 'ToDiskCreateProject',
+  success: z
+    .object({
+      orgId: z.string(),
+      projectId: z.string(),
+      defaultBranch: z.string(),
+      prodFiles: z.array(zDiskCatalogFile),
+      mproveDir: z.string()
+    })
+    .meta({ id: 'ToDiskCreateProjectOutput' }),
+  error: zToDiskCreateProjectError
+});
 
 assertTypesEqual<
   ToDiskCreateProjectResponse,

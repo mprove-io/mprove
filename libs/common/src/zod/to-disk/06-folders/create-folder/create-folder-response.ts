@@ -1,30 +1,42 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskCreateFolderResponseInfo,
-  zToDiskCreateFolderResponseInfo
-} from './create-folder-response-info';
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskCreateFolderResponsePayload,
-  zToDiskCreateFolderResponsePayload
-} from './create-folder-response-payload';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
+import {
+  type ToDiskCreateFolderError,
+  zToDiskCreateFolderError
+} from './create-folder-error';
 
-export type ToDiskCreateFolderResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskCreateFolderResponseInfo;
-    payload: ToDiskCreateFolderResponsePayload;
-  }
+export type ToDiskCreateFolderOutput = {
+  repo: Repo;
+  files: DiskCatalogFile[];
+  mproveDir: string;
+};
+
+export type ToDiskCreateFolderResponse = ToDiskResponse<
+  'ToDiskCreateFolder',
+  ToDiskCreateFolderOutput,
+  ToDiskCreateFolderError
 >;
 
-export let zToDiskCreateFolderResponse = zMyResponse
-  .extend({
-    info: zToDiskCreateFolderResponseInfo,
-    payload: zToDiskCreateFolderResponsePayload
-  })
-  .meta({ id: 'ToDiskCreateFolderResponse' });
+export let zToDiskCreateFolderResponse = makeToDiskResponseSchema({
+  path: 'ToDiskCreateFolder',
+  success: z
+    .object({
+      repo: zRepo,
+      files: z.array(zDiskCatalogFile),
+      mproveDir: z.string()
+    })
+    .meta({ id: 'ToDiskCreateFolderOutput' }),
+  error: zToDiskCreateFolderError
+});
 
 assertTypesEqual<
   ToDiskCreateFolderResponse,

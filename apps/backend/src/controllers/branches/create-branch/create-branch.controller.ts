@@ -43,11 +43,9 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
-import type { ToDiskCreateBranchRequest } from '#common/zod/to-disk/05-branches/create-branch/create-branch-request';
-import type { ToDiskCreateBranchResponse } from '#common/zod/to-disk/05-branches/create-branch/create-branch-response';
+import type { ToDiskCreateBranchOutput } from '#common/zod/to-disk/05-branches/create-branch/create-branch-response';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)
@@ -121,28 +119,19 @@ export class CreateBranchController {
       project: project
     });
 
-    let toDiskCreateBranchRequest: ToDiskCreateBranchRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
-        traceId: traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        newBranch: newBranchId,
-        fromBranch: fromBranchId,
-        isFromRemote: false
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskCreateBranchResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskCreateBranchRequest,
-        checkIsOk: true
+    let diskCreateBranchOutput: ToDiskCreateBranchOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'createBranch',
+          traceId: traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            newBranch: newBranchId,
+            fromBranch: fromBranchId,
+            isFromRemote: false
+          }
+        }
       });
 
     let newBranch = this.branchesService.makeBranch({
@@ -184,8 +173,8 @@ export class CreateBranchController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskCreateBranchOutput.files,
+          mproveDir: diskCreateBranchOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined

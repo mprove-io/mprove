@@ -40,11 +40,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendSaveFileResponsePayload } from '#common/zod/to-backend/files/to-backend-save-file';
-import type { ToDiskSaveFileRequest } from '#common/zod/to-disk/07-files/save-file/save-file-request';
-import type { ToDiskSaveFileResponse } from '#common/zod/to-disk/07-files/save-file/save-file-response';
+import type { ToDiskSaveFileOutput } from '#common/zod/to-disk/07-files/save-file/save-file-response';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)
@@ -115,31 +113,21 @@ export class SaveFileController {
       project: project
     });
 
-    let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        fileNodeId: fileNodeId,
-        userAlias: user.alias,
-        content: content
-      }
-    };
-
-    let diskResponse = await this.rpcService.sendToDisk<ToDiskSaveFileResponse>(
-      {
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskSaveFileRequest,
-        checkIsOk: true
-      }
-    );
+    let diskSaveFileOutput: ToDiskSaveFileOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'saveFile',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            fileNodeId: fileNodeId,
+            userAlias: user.alias,
+            content: content
+          }
+        }
+      });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -159,8 +147,8 @@ export class SaveFileController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskSaveFileOutput.files,
+          mproveDir: diskSaveFileOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -203,7 +191,7 @@ export class SaveFileController {
     });
 
     let payload: ToBackendSaveFileResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskSaveFileOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs

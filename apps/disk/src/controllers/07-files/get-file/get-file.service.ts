@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt } from '#common/zod/st-lt';
-import type { ToDiskGetFileResponsePayload } from '#common/zod/to-disk/07-files/get-file/get-file-response';
+import type { ToDiskGetFileOutput } from '#common/zod/to-disk/07-files/get-file/get-file-response';
 import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
@@ -155,7 +155,7 @@ export class GetFileService {
         })
       ),
       Result.map(
-        (item): ToDiskGetFileResponsePayload => ({
+        (item): ToDiskGetFileOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,

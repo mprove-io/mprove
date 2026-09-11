@@ -12,6 +12,7 @@ import { PullRepoController } from './controllers/03-repos/pull-repo/pull-repo.c
 import { PushRepoController } from './controllers/03-repos/push-repo/push-repo.controller';
 import { RevertRepoToLastCommitController } from './controllers/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit.controller';
 import { RevertRepoToRemoteController } from './controllers/03-repos/revert-repo-to-remote/revert-repo-to-remote.controller';
+import { SyncRepoController } from './controllers/03-repos/sync-repo/sync-repo.controller';
 import { GetCatalogFilesController } from './controllers/04-catalogs/get-catalog-files/get-catalog-files.controller';
 import { GetCatalogNodesController } from './controllers/04-catalogs/get-catalog-nodes/get-catalog-nodes.controller';
 import { MoveCatalogNodeController } from './controllers/04-catalogs/move-catalog-node/move-catalog-node.controller';
@@ -44,6 +45,7 @@ export const appControllers = [
   PushRepoController,
   RevertRepoToLastCommitController,
   RevertRepoToRemoteController,
+  SyncRepoController,
 
   GetCatalogFilesController,
   GetCatalogNodesController,

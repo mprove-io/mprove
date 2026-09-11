@@ -1,30 +1,42 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskMergeRepoResponseInfo,
-  zToDiskMergeRepoResponseInfo
-} from './merge-repo-response-info';
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskMergeRepoResponsePayload,
-  zToDiskMergeRepoResponsePayload
-} from './merge-repo-response-payload';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
+import {
+  type ToDiskMergeRepoError,
+  zToDiskMergeRepoError
+} from './merge-repo-error';
 
-export type ToDiskMergeRepoResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskMergeRepoResponseInfo;
-    payload: ToDiskMergeRepoResponsePayload;
-  }
+export type ToDiskMergeRepoOutput = {
+  repo: Repo;
+  files: DiskCatalogFile[];
+  mproveDir: string;
+};
+
+export type ToDiskMergeRepoResponse = ToDiskResponse<
+  'ToDiskMergeRepo',
+  ToDiskMergeRepoOutput,
+  ToDiskMergeRepoError
 >;
 
-export let zToDiskMergeRepoResponse = zMyResponse
-  .extend({
-    info: zToDiskMergeRepoResponseInfo,
-    payload: zToDiskMergeRepoResponsePayload
-  })
-  .meta({ id: 'ToDiskMergeRepoResponse' });
+export let zToDiskMergeRepoResponse = makeToDiskResponseSchema({
+  path: 'ToDiskMergeRepo',
+  success: z
+    .object({
+      repo: zRepo,
+      files: z.array(zDiskCatalogFile),
+      mproveDir: z.string()
+    })
+    .meta({ id: 'ToDiskMergeRepoOutput' }),
+  error: zToDiskMergeRepoError
+});
 
 assertTypesEqual<
   ToDiskMergeRepoResponse,

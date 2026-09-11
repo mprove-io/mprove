@@ -2,7 +2,6 @@ import test from 'ava';
 import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
@@ -33,11 +32,9 @@ test('1', async t => {
     configService = cs;
 
     let createOrgRequest: ToDiskCreateOrgRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
-        traceId: traceId
-      },
-      payload: {
+      operation: 'createOrg',
+      traceId: traceId,
+      input: {
         orgId: orgId
       }
     };
@@ -65,12 +62,9 @@ test('1', async t => {
     };
 
     let createProjectRequest: ToDiskCreateProjectRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'createProject',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         devRepoId: 'r1',
         userAlias: 'u1'
@@ -78,12 +72,9 @@ test('1', async t => {
     };
 
     let saveFileRequest: ToDiskSaveFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'saveFile',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: PROD_REPO_ID,
         branch: BRANCH_MAIN,
@@ -106,5 +97,11 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.payload.repo.repoStatus, 'Ok');
+  t.is(resp.result.type, 'Success');
+
+  if (resp.result.type !== 'Success') {
+    return;
+  }
+
+  t.is(resp.result.value.repo.repoStatus, 'Ok');
 });

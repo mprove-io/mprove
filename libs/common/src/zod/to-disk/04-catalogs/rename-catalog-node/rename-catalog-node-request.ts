@@ -1,31 +1,35 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskRenameCatalogNodeRequestInfo,
-  zToDiskRenameCatalogNodeRequestInfo
-} from './rename-catalog-node-request-info';
-import {
-  type ToDiskRenameCatalogNodeRequestPayload,
-  zToDiskRenameCatalogNodeRequestPayload
-} from './rename-catalog-node-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskRenameCatalogNodeRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskRenameCatalogNodeRequestInfo;
-    payload: ToDiskRenameCatalogNodeRequestPayload;
-  }
->;
+export type ToDiskRenameCatalogNodeRequest = {
+  operation: 'renameCatalogNode';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    nodeId: string;
+    newName: string;
+  };
+};
 
-export let zToDiskRenameCatalogNodeRequest = zToDiskRequest
-  .extend({
-    info: zToDiskRenameCatalogNodeRequestInfo,
-    payload: zToDiskRenameCatalogNodeRequestPayload
+export let zToDiskRenameCatalogNodeRequest = z
+  .strictObject({
+    operation: z.literal('renameCatalogNode'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string(),
+        nodeId: z.string(),
+        newName: z.string()
+      })
+      .meta({ id: 'ToDiskRenameCatalogNodeRequestInput' })
   })
   .meta({ id: 'ToDiskRenameCatalogNodeRequest' });
 

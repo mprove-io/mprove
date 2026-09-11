@@ -36,9 +36,6 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import type { ToDiskDeleteProjectRequest } from '#common/zod/to-disk/02-projects/delete-project/delete-project-request';
-import type { ToDiskDeleteProjectResponse } from '#common/zod/to-disk/02-projects/delete-project/delete-project-response';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)
@@ -78,25 +75,16 @@ export class DeleteProjectController {
       memberId: user.userId
     });
 
-    let toDiskDeleteProjectRequest: ToDiskDeleteProjectRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskDeleteProject,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        projectId: projectId
+    await this.rpcService.sendToDiskProjectUnwrapOutput({
+      request: {
+        operation: 'deleteProject',
+        traceId: body.info.traceId,
+        input: {
+          orgId: project.orgId,
+          projectId: projectId
+        }
       }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskDeleteProjectResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: null,
-        message: toDiskDeleteProjectRequest,
-        checkIsOk: true
-      });
+    });
 
     await retry(
       async () =>

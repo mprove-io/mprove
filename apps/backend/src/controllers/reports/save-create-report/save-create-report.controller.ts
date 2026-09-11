@@ -50,15 +50,13 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { ToBackendSaveCreateReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-save-create-report';
-import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/create-file/create-file-request';
-import type { ToDiskCreateFileResponse } from '#common/zod/to-disk/07-files/create-file/create-file-response';
+import type { ToDiskCreateFileOutput } from '#common/zod/to-disk/07-files/create-file/create-file-response';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -246,30 +244,21 @@ export class SaveCreateReportController {
       project: project
     });
 
-    let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        userAlias: user.alias,
-        parentNodeId: parentNodeId,
-        fileName: fileName,
-        fileText: repFileText
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskCreateFileResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskCreateFileRequest,
-        checkIsOk: true
+    let diskCreateFileOutput: ToDiskCreateFileOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'createFile',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            userAlias: user.alias,
+            parentNodeId: parentNodeId,
+            fileName: fileName,
+            fileText: repFileText
+          }
+        }
       });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -287,7 +276,7 @@ export class SaveCreateReportController {
       }
     });
 
-    let diskFiles = diskResponse.payload.files.filter(
+    let diskFiles = diskCreateFileOutput.files.filter(
       file => file.fileNodeId === `${parentNodeId}/${fileName}`
     );
 
@@ -296,7 +285,7 @@ export class SaveCreateReportController {
     )?.filePath;
 
     if (isDefined(selectedSpaceFilePath)) {
-      let spaceDiskFile = diskResponse.payload.files.find(
+      let spaceDiskFile = diskCreateFileOutput.files.find(
         file => file.fileNodeId === selectedSpaceFilePath
       );
 

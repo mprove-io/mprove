@@ -44,10 +44,7 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
-import type { ToDiskDeleteFileRequest } from '#common/zod/to-disk/07-files/delete-file/delete-file-request';
-import type { ToDiskDeleteFileResponse } from '#common/zod/to-disk/07-files/delete-file/delete-file-response';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -158,27 +155,18 @@ export class DeleteChartController {
       project: project
     });
 
-    let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        fileNodeId: existingChart.filePath,
-        userAlias: user.alias
+    await this.rpcService.sendToDiskUnwrapOutput({
+      request: {
+        operation: 'deleteFile',
+        traceId: body.info.traceId,
+        input: {
+          baseProject: baseProject,
+          repoId: repoId,
+          branch: branchId,
+          fileNodeId: existingChart.filePath,
+          userAlias: user.alias
+        }
       }
-    };
-
-    await this.rpcService.sendToDisk<ToDiskDeleteFileResponse>({
-      orgId: project.orgId,
-      projectId: projectId,
-      repoId: repoId,
-      message: toDiskDeleteFileRequest,
-      checkIsOk: true
     });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({

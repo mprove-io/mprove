@@ -1,30 +1,42 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskCreateBranchResponseInfo,
-  zToDiskCreateBranchResponseInfo
-} from './create-branch-response-info';
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskCreateBranchResponsePayload,
-  zToDiskCreateBranchResponsePayload
-} from './create-branch-response-payload';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
+import {
+  type ToDiskCreateBranchError,
+  zToDiskCreateBranchError
+} from './create-branch-error';
 
-export type ToDiskCreateBranchResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskCreateBranchResponseInfo;
-    payload: ToDiskCreateBranchResponsePayload;
-  }
+export type ToDiskCreateBranchOutput = {
+  repo: Repo;
+  files: DiskCatalogFile[];
+  mproveDir: string;
+};
+
+export type ToDiskCreateBranchResponse = ToDiskResponse<
+  'ToDiskCreateBranch',
+  ToDiskCreateBranchOutput,
+  ToDiskCreateBranchError
 >;
 
-export let zToDiskCreateBranchResponse = zMyResponse
-  .extend({
-    info: zToDiskCreateBranchResponseInfo,
-    payload: zToDiskCreateBranchResponsePayload
-  })
-  .meta({ id: 'ToDiskCreateBranchResponse' });
+export let zToDiskCreateBranchResponse = makeToDiskResponseSchema({
+  path: 'ToDiskCreateBranch',
+  success: z
+    .object({
+      repo: zRepo,
+      files: z.array(zDiskCatalogFile),
+      mproveDir: z.string()
+    })
+    .meta({ id: 'ToDiskCreateBranchOutput' }),
+  error: zToDiskCreateBranchError
+});
 
 assertTypesEqual<
   ToDiskCreateBranchResponse,

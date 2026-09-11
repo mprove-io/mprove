@@ -1,30 +1,27 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskCloneTestRepoResponseInfo,
-  zToDiskCloneTestRepoResponseInfo
-} from './clone-test-repo-response-info';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
 import {
-  type ToDiskCloneTestRepoResponsePayload,
-  zToDiskCloneTestRepoResponsePayload
-} from './clone-test-repo-response-payload';
+  type ToDiskCloneTestRepoError,
+  zToDiskCloneTestRepoError
+} from './clone-test-repo-error';
 
-export type ToDiskCloneTestRepoResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskCloneTestRepoResponseInfo;
-    payload: ToDiskCloneTestRepoResponsePayload;
-  }
+export type ToDiskCloneTestRepoOutput = Record<string, never>;
+
+export type ToDiskCloneTestRepoResponse = ToDiskResponse<
+  'ToDiskCloneTestRepo',
+  ToDiskCloneTestRepoOutput,
+  ToDiskCloneTestRepoError
 >;
 
-export let zToDiskCloneTestRepoResponse = zMyResponse
-  .extend({
-    info: zToDiskCloneTestRepoResponseInfo,
-    payload: zToDiskCloneTestRepoResponsePayload
-  })
-  .meta({ id: 'ToDiskCloneTestRepoResponse' });
+export let zToDiskCloneTestRepoResponse = makeToDiskResponseSchema({
+  path: 'ToDiskCloneTestRepo',
+  success: z.object({}).meta({ id: 'ToDiskCloneTestRepoOutput' }),
+  error: zToDiskCloneTestRepoError
+});
 
 assertTypesEqual<
   ToDiskCloneTestRepoResponse,

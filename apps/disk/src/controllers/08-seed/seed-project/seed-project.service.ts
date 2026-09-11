@@ -1,50 +1,37 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { emptyDir, ensureDir } from 'fs-extra';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskSeedProjectRequest } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request';
-import type { ToDiskSeedProjectRequestPayload } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request-payload';
-import type { ToDiskSeedProjectResponsePayload } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response-payload';
+import type { ToDiskSeedProjectOutput } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class SeedProjectService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskSeedProjectResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    baseProject: BaseProject;
+    seedProjectId?: string;
+    devRepoId: string;
+    userAlias: string;
+  }): Promise<ToDiskResultFor<'ToDiskSeedProject'>> {
+    let { baseProject, devRepoId, userAlias, seedProjectId } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskSeedProjectRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      devRepoId,
-      userAlias,
-      seedProjectId
-    }: ToDiskSeedProjectRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -54,7 +41,7 @@ export class SeedProjectService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
     let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
@@ -115,7 +102,7 @@ export class SeedProjectService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.devRepoId,
@@ -135,7 +122,7 @@ export class SeedProjectService {
         })
       ),
       Result.bind('devItemStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.devRepoId,
@@ -146,7 +133,7 @@ export class SeedProjectService {
         })
       ),
       Result.map(
-        (item): ToDiskSeedProjectResponsePayload => ({
+        (item): ToDiskSeedProjectOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,
@@ -162,12 +149,9 @@ export class SeedProjectService {
           files: item.itemCatalog.files,
           mproveDir: item.itemCatalog.mproveDir
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(seedProjectResult);
-
-    return payload;
+    return seedProjectResult;
   }
 }

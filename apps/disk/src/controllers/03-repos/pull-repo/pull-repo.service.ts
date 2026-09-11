@@ -1,50 +1,37 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskPullRepoRequest } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-request';
-import type { ToDiskPullRepoRequestPayload } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-request-payload';
-import type { ToDiskPullRepoResponsePayload } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-response-payload';
+import type { ToDiskPullRepoOutput } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { merge } from '#disk/functions/git/merge';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class PullRepoService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskPullRepoResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    userAlias: string;
+  }): Promise<ToDiskResultFor<'ToDiskPullRepo'>> {
+    let { baseProject, repoId, branch, userAlias } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskPullRepoRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch,
-      userAlias
-    }: ToDiskPullRepoRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -54,11 +41,9 @@ export class PullRepoService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { orgId, projectId, remoteType } = baseProject;
 
-    let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
     let pullRepoResult = Result.pipe(
       Result.succeed({
@@ -115,7 +100,7 @@ export class PullRepoService {
         })
       ),
       Result.bind('repoStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -126,7 +111,7 @@ export class PullRepoService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -135,7 +120,7 @@ export class PullRepoService {
         })
       ),
       Result.map(
-        (item): ToDiskPullRepoResponsePayload => ({
+        (item): ToDiskPullRepoOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,
@@ -151,12 +136,9 @@ export class PullRepoService {
           files: item.itemCatalog.files,
           mproveDir: item.itemCatalog.mproveDir
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(pullRepoResult);
-
-    return payload;
+    return pullRepoResult;
   }
 }

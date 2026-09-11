@@ -1,31 +1,31 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskRevertRepoToRemoteRequestInfo,
-  zToDiskRevertRepoToRemoteRequestInfo
-} from './revert-repo-to-remote-request-info';
-import {
-  type ToDiskRevertRepoToRemoteRequestPayload,
-  zToDiskRevertRepoToRemoteRequestPayload
-} from './revert-repo-to-remote-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskRevertRepoToRemoteRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskRevertRepoToRemoteRequestInfo;
-    payload: ToDiskRevertRepoToRemoteRequestPayload;
-  }
->;
+export type ToDiskRevertRepoToRemoteRequest = {
+  operation: 'revertRepoToRemote';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+  };
+};
 
-export let zToDiskRevertRepoToRemoteRequest = zToDiskRequest
-  .extend({
-    info: zToDiskRevertRepoToRemoteRequestInfo,
-    payload: zToDiskRevertRepoToRemoteRequestPayload
+export let zToDiskRevertRepoToRemoteRequest = z
+  .strictObject({
+    operation: z.literal('revertRepoToRemote'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string()
+      })
+      .meta({ id: 'ToDiskRevertRepoToRemoteRequestInput' })
   })
   .meta({ id: 'ToDiskRevertRepoToRemoteRequest' });
 

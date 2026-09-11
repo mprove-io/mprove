@@ -2,7 +2,6 @@ import test from 'ava';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
@@ -36,11 +35,9 @@ test('1', async t => {
     configService = cs;
 
     let createOrgRequest: ToDiskCreateOrgRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
-        traceId: traceId
-      },
-      payload: {
+      operation: 'createOrg',
+      traceId: traceId,
+      input: {
         orgId: orgId
       }
     };
@@ -68,12 +65,9 @@ test('1', async t => {
     };
 
     let createProjectRequest: ToDiskCreateProjectRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'createProject',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         devRepoId: 'r1',
         userAlias: 'u1'
@@ -81,12 +75,9 @@ test('1', async t => {
     };
 
     let r1_createBranchRequest: ToDiskCreateBranchRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'createBranch',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         fromBranch: BRANCH_MAIN,
@@ -96,12 +87,9 @@ test('1', async t => {
     };
 
     let r1_master_saveFileRequest_1: ToDiskSaveFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'saveFile',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -112,12 +100,9 @@ test('1', async t => {
     };
 
     let r1_master_commitRepoRequest_1: ToDiskCommitRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'commitRepo',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -127,12 +112,9 @@ test('1', async t => {
     };
 
     let r1_master_saveFileRequest_2: ToDiskSaveFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'saveFile',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -143,12 +125,9 @@ test('1', async t => {
     };
 
     let r1_master_commitRepoRequest_2: ToDiskCommitRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'commitRepo',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -158,12 +137,9 @@ test('1', async t => {
     };
 
     let b2_mergeRepoRequest: ToDiskMergeRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'mergeRepo',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: 'b2',
@@ -194,5 +170,11 @@ test('1', async t => {
     });
   }
   // NeedPush because we merge with different branch
-  t.is(resp.payload.repo.repoStatus, 'NeedPush');
+  t.is(resp.result.type, 'Success');
+
+  if (resp.result.type !== 'Success') {
+    return;
+  }
+
+  t.is(resp.result.value.repo.repoStatus, 'NeedPush');
 });

@@ -1,31 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskIsBranchExistRequestInfo,
-  zToDiskIsBranchExistRequestInfo
-} from './is-branch-exist-request-info';
-import {
-  type ToDiskIsBranchExistRequestPayload,
-  zToDiskIsBranchExistRequestPayload
-} from './is-branch-exist-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskIsBranchExistRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskIsBranchExistRequestInfo;
-    payload: ToDiskIsBranchExistRequestPayload;
-  }
->;
+export type ToDiskIsBranchExistRequest = {
+  operation: 'isBranchExist';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    isRemote: boolean;
+  };
+};
 
-export let zToDiskIsBranchExistRequest = zToDiskRequest
-  .extend({
-    info: zToDiskIsBranchExistRequestInfo,
-    payload: zToDiskIsBranchExistRequestPayload
+export let zToDiskIsBranchExistRequest = z
+  .strictObject({
+    operation: z.literal('isBranchExist'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string(),
+        isRemote: z.boolean()
+      })
+      .meta({ id: 'ToDiskIsBranchExistRequestInput' })
   })
   .meta({ id: 'ToDiskIsBranchExistRequest' });
 

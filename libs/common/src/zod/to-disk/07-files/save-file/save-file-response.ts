@@ -1,30 +1,42 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskSaveFileResponseInfo,
-  zToDiskSaveFileResponseInfo
-} from './save-file-response-info';
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskSaveFileResponsePayload,
-  zToDiskSaveFileResponsePayload
-} from './save-file-response-payload';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
+import {
+  type ToDiskSaveFileError,
+  zToDiskSaveFileError
+} from './save-file-error';
 
-export type ToDiskSaveFileResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskSaveFileResponseInfo;
-    payload: ToDiskSaveFileResponsePayload;
-  }
+export type ToDiskSaveFileOutput = {
+  repo: Repo;
+  files: DiskCatalogFile[];
+  mproveDir: string;
+};
+
+export type ToDiskSaveFileResponse = ToDiskResponse<
+  'ToDiskSaveFile',
+  ToDiskSaveFileOutput,
+  ToDiskSaveFileError
 >;
 
-export let zToDiskSaveFileResponse = zMyResponse
-  .extend({
-    info: zToDiskSaveFileResponseInfo,
-    payload: zToDiskSaveFileResponsePayload
-  })
-  .meta({ id: 'ToDiskSaveFileResponse' });
+export let zToDiskSaveFileResponse = makeToDiskResponseSchema({
+  path: 'ToDiskSaveFile',
+  success: z
+    .object({
+      repo: zRepo,
+      files: z.array(zDiskCatalogFile),
+      mproveDir: z.string()
+    })
+    .meta({ id: 'ToDiskSaveFileOutput' }),
+  error: zToDiskSaveFileError
+});
 
 assertTypesEqual<
   ToDiskSaveFileResponse,

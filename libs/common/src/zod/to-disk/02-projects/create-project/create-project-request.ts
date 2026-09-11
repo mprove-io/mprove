@@ -1,31 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskCreateProjectRequestInfo,
-  zToDiskCreateProjectRequestInfo
-} from './create-project-request-info';
-import {
-  type ToDiskCreateProjectRequestPayload,
-  zToDiskCreateProjectRequestPayload
-} from './create-project-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskCreateProjectRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskCreateProjectRequestInfo;
-    payload: ToDiskCreateProjectRequestPayload;
-  }
->;
+export type ToDiskCreateProjectRequest = {
+  operation: 'createProject';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    seedProjectId?: string;
+    devRepoId: string;
+    userAlias: string;
+  };
+};
 
-export let zToDiskCreateProjectRequest = zToDiskRequest
-  .extend({
-    info: zToDiskCreateProjectRequestInfo,
-    payload: zToDiskCreateProjectRequestPayload
+export let zToDiskCreateProjectRequest = z
+  .strictObject({
+    operation: z.literal('createProject'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        seedProjectId: z.string().nullish(),
+        devRepoId: z.string(),
+        userAlias: z.string()
+      })
+      .meta({ id: 'ToDiskCreateProjectRequestInput' })
   })
   .meta({ id: 'ToDiskCreateProjectRequest' });
 

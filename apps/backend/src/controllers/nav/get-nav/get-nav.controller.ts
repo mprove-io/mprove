@@ -30,14 +30,12 @@ import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { Member } from '#common/zod/backend/member';
 import type { StructX } from '#common/zod/backend/struct-x';
 import type { Repo } from '#common/zod/disk/repo';
 import type { ToBackendGetNavResponsePayload } from '#common/zod/to-backend/nav/to-backend-get-nav';
-import type { ToDiskGetCatalogNodesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-request';
-import type { ToDiskGetCatalogNodesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
+import type { ToDiskGetCatalogNodesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
 
 @ApiTags('Nav')
 @UseGuards(ThrottlerUserIdGuard)
@@ -180,30 +178,21 @@ export class GetNavController {
         project: resultProject
       });
 
-      let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
-        info: {
-          name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
-          traceId: body.info.traceId
-        },
-        payload: {
-          orgId: resultProject.orgId,
-          baseProject: apiResultBaseProject,
-          repoId: bridge.repoId,
-          branch: bridge.branchId,
-          isFetch: false
-        }
-      };
-
-      let diskResponse =
-        await this.rpcService.sendToDisk<ToDiskGetCatalogNodesResponse>({
-          orgId: resultProject.orgId,
-          projectId: resultProject.projectId,
-          repoId: bridge.repoId,
-          message: toDiskGetCatalogNodesRequest,
-          checkIsOk: true
+      let diskGetCatalogNodesOutput: ToDiskGetCatalogNodesOutput =
+        await this.rpcService.sendToDiskUnwrapOutput({
+          request: {
+            operation: 'getCatalogNodes',
+            traceId: body.info.traceId,
+            input: {
+              baseProject: apiResultBaseProject,
+              repoId: bridge.repoId,
+              branch: bridge.branchId,
+              isFetch: false
+            }
+          }
         });
 
-      apiRepo = diskResponse?.payload.repo;
+      apiRepo = diskGetCatalogNodesOutput.repo;
     }
 
     let payload: ToBackendGetNavResponsePayload = {

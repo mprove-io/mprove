@@ -1,37 +1,23 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
-import { zToDiskIsOrgExistRequest } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-request';
-import type { ToDiskIsOrgExistResponsePayload } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-response-payload';
+import type { ToDiskIsOrgExistOutput } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
-import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class IsOrgExistService {
-  constructor(
-    private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
-  ) {}
+  constructor(private cs: ConfigService<DiskConfig>) {}
 
-  async process(request: any): Promise<ToDiskIsOrgExistResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    orgId: string;
+  }): Promise<ToDiskResultFor<'ToDiskIsOrgExist'>> {
+    let { orgId } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskIsOrgExistRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let { orgId } = requestValid.payload;
 
     let isOrgExistResult = Result.pipe(
       Result.succeed({
@@ -40,16 +26,13 @@ export class IsOrgExistService {
       }),
       Result.bind('isOrgExist', item => isPathExist({ path: item.orgDir })),
       Result.map(
-        (item): ToDiskIsOrgExistResponsePayload => ({
+        (item): ToDiskIsOrgExistOutput => ({
           orgId: item.orgId,
           isOrgExist: item.isOrgExist
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(isOrgExistResult);
-
-    return payload;
+    return isOrgExistResult;
   }
 }

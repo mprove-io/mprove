@@ -1,30 +1,44 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskDeleteFolderResponseInfo,
-  zToDiskDeleteFolderResponseInfo
-} from './delete-folder-response-info';
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskDeleteFolderResponsePayload,
-  zToDiskDeleteFolderResponsePayload
-} from './delete-folder-response-payload';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
+import {
+  type ToDiskDeleteFolderError,
+  zToDiskDeleteFolderError
+} from './delete-folder-error';
 
-export type ToDiskDeleteFolderResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskDeleteFolderResponseInfo;
-    payload: ToDiskDeleteFolderResponsePayload;
-  }
+export type ToDiskDeleteFolderOutput = {
+  repo: Repo;
+  deletedFolderNodeId: string;
+  files: DiskCatalogFile[];
+  mproveDir: string;
+};
+
+export type ToDiskDeleteFolderResponse = ToDiskResponse<
+  'ToDiskDeleteFolder',
+  ToDiskDeleteFolderOutput,
+  ToDiskDeleteFolderError
 >;
 
-export let zToDiskDeleteFolderResponse = zMyResponse
-  .extend({
-    info: zToDiskDeleteFolderResponseInfo,
-    payload: zToDiskDeleteFolderResponsePayload
-  })
-  .meta({ id: 'ToDiskDeleteFolderResponse' });
+export let zToDiskDeleteFolderResponse = makeToDiskResponseSchema({
+  path: 'ToDiskDeleteFolder',
+  success: z
+    .object({
+      repo: zRepo,
+      deletedFolderNodeId: z.string(),
+      files: z.array(zDiskCatalogFile),
+      mproveDir: z.string()
+    })
+    .meta({ id: 'ToDiskDeleteFolderOutput' }),
+  error: zToDiskDeleteFolderError
+});
 
 assertTypesEqual<
   ToDiskDeleteFolderResponse,

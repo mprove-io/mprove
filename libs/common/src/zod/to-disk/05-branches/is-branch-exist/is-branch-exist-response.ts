@@ -1,30 +1,43 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskIsBranchExistResponseInfo,
-  zToDiskIsBranchExistResponseInfo
-} from './is-branch-exist-response-info';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
 import {
-  type ToDiskIsBranchExistResponsePayload,
-  zToDiskIsBranchExistResponsePayload
-} from './is-branch-exist-response-payload';
+  type ToDiskIsBranchExistError,
+  zToDiskIsBranchExistError
+} from './is-branch-exist-error';
 
-export type ToDiskIsBranchExistResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskIsBranchExistResponseInfo;
-    payload: ToDiskIsBranchExistResponsePayload;
-  }
+export type ToDiskIsBranchExistOutput = {
+  orgId: string;
+  projectId: string;
+  repoId: string;
+  branch: string;
+  isRemote: boolean;
+  isBranchExist: boolean;
+};
+
+export type ToDiskIsBranchExistResponse = ToDiskResponse<
+  'ToDiskIsBranchExist',
+  ToDiskIsBranchExistOutput,
+  ToDiskIsBranchExistError
 >;
 
-export let zToDiskIsBranchExistResponse = zMyResponse
-  .extend({
-    info: zToDiskIsBranchExistResponseInfo,
-    payload: zToDiskIsBranchExistResponsePayload
-  })
-  .meta({ id: 'ToDiskIsBranchExistResponse' });
+export let zToDiskIsBranchExistResponse = makeToDiskResponseSchema({
+  path: 'ToDiskIsBranchExist',
+  success: z
+    .object({
+      orgId: z.string(),
+      projectId: z.string(),
+      repoId: z.string(),
+      branch: z.string(),
+      isRemote: z.boolean(),
+      isBranchExist: z.boolean()
+    })
+    .meta({ id: 'ToDiskIsBranchExistOutput' }),
+  error: zToDiskIsBranchExistError
+});
 
 assertTypesEqual<
   ToDiskIsBranchExistResponse,

@@ -40,11 +40,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendRenameCatalogNodeResponsePayload } from '#common/zod/to-backend/catalogs/to-backend-rename-catalog-node';
-import type { ToDiskRenameCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request';
-import type { ToDiskRenameCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response';
+import type { ToDiskRenameCatalogNodeOutput } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response';
 
 @ApiTags('Catalogs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -114,28 +112,19 @@ export class RenameCatalogNodeController {
       project: project
     });
 
-    let toDiskRenameCatalogNodeRequest: ToDiskRenameCatalogNodeRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        nodeId: nodeId,
-        newName: newName.toLowerCase()
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskRenameCatalogNodeResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskRenameCatalogNodeRequest,
-        checkIsOk: true
+    let diskRenameCatalogNodeOutput: ToDiskRenameCatalogNodeOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'renameCatalogNode',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            nodeId: nodeId,
+            newName: newName.toLowerCase()
+          }
+        }
       });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -156,8 +145,8 @@ export class RenameCatalogNodeController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskRenameCatalogNodeOutput.files,
+          mproveDir: diskRenameCatalogNodeOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -200,7 +189,7 @@ export class RenameCatalogNodeController {
     });
 
     let payload: ToBackendRenameCatalogNodeResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskRenameCatalogNodeOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs

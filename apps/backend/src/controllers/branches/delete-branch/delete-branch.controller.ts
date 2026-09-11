@@ -103,13 +103,15 @@ export class DeleteBranchController {
       project: project
     });
 
-    await this.rpcService.sendToDiskUnwrapPayload({
-      operation: 'deleteBranch',
-      traceId: body.info.traceId,
-      input: {
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId
+    await this.rpcService.sendToDiskUnwrapOutput({
+      request: {
+        operation: 'deleteBranch',
+        traceId: body.info.traceId,
+        input: {
+          baseProject: baseProject,
+          repoId: repoId,
+          branch: branchId
+        }
       }
     });
 

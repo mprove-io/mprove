@@ -1,30 +1,42 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskPushRepoResponseInfo,
-  zToDiskPushRepoResponseInfo
-} from './push-repo-response-info';
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskPushRepoResponsePayload,
-  zToDiskPushRepoResponsePayload
-} from './push-repo-response-payload';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
+import {
+  type ToDiskPushRepoError,
+  zToDiskPushRepoError
+} from './push-repo-error';
 
-export type ToDiskPushRepoResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskPushRepoResponseInfo;
-    payload: ToDiskPushRepoResponsePayload;
-  }
+export type ToDiskPushRepoOutput = {
+  repo: Repo;
+  productionFiles: DiskCatalogFile[];
+  productionMproveDir: string;
+};
+
+export type ToDiskPushRepoResponse = ToDiskResponse<
+  'ToDiskPushRepo',
+  ToDiskPushRepoOutput,
+  ToDiskPushRepoError
 >;
 
-export let zToDiskPushRepoResponse = zMyResponse
-  .extend({
-    info: zToDiskPushRepoResponseInfo,
-    payload: zToDiskPushRepoResponsePayload
-  })
-  .meta({ id: 'ToDiskPushRepoResponse' });
+export let zToDiskPushRepoResponse = makeToDiskResponseSchema({
+  path: 'ToDiskPushRepo',
+  success: z
+    .object({
+      repo: zRepo,
+      productionFiles: z.array(zDiskCatalogFile),
+      productionMproveDir: z.string()
+    })
+    .meta({ id: 'ToDiskPushRepoOutput' }),
+  error: zToDiskPushRepoError
+});
 
 assertTypesEqual<
   ToDiskPushRepoResponse,

@@ -51,11 +51,8 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
-import type { ToDiskDeleteDevRepoRequest } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-request';
-import type { ToDiskDeleteDevRepoResponse } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-response';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -137,25 +134,15 @@ export class DeleteSessionController {
           project: project
         });
 
-        let toDiskDeleteDevRepoRequest: ToDiskDeleteDevRepoRequest = {
-          info: {
-            name: ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
-            traceId: traceId
-          },
-          payload: {
-            orgId: project.orgId,
-            projectId: session.projectId,
-            baseProject: baseProject,
-            devRepoId: sessionId
+        await this.rpcService.sendToDiskDevRepoUnwrapOutput({
+          request: {
+            operation: 'deleteDevRepo',
+            traceId: traceId,
+            input: {
+              baseProject: baseProject,
+              devRepoId: sessionId
+            }
           }
-        };
-
-        await this.rpcService.sendToDisk<ToDiskDeleteDevRepoResponse>({
-          orgId: project.orgId,
-          projectId: session.projectId,
-          repoId: sessionId,
-          message: toDiskDeleteDevRepoRequest,
-          checkIsOk: true
         });
       }
 

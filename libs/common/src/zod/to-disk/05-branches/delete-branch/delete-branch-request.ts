@@ -25,7 +25,7 @@ export let zToDiskDeleteBranchRequest = z
         repoId: z.string(),
         branch: z.string()
       })
-      .meta({ id: 'ToDiskDeleteBranchRequestPayload' })
+      .meta({ id: 'ToDiskDeleteBranchRequestInput' })
   })
   .meta({ id: 'ToDiskDeleteBranchRequest' });
 

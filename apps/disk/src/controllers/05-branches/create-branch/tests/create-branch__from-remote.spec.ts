@@ -2,7 +2,6 @@ import test from 'ava';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
@@ -37,11 +36,9 @@ test('1', async t => {
     configService = cs;
 
     let createOrgRequest: ToDiskCreateOrgRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
-        traceId: traceId
-      },
-      payload: {
+      operation: 'createOrg',
+      traceId: traceId,
+      input: {
         orgId: orgId
       }
     };
@@ -69,12 +66,9 @@ test('1', async t => {
     };
 
     let createProjectRequest: ToDiskCreateProjectRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'createProject',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         devRepoId: 'r1',
         userAlias: 'u1'
@@ -82,12 +76,9 @@ test('1', async t => {
     };
 
     let saveFileRequest: ToDiskSaveFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'saveFile',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -98,12 +89,9 @@ test('1', async t => {
     };
 
     let commitRepoRequest: ToDiskCommitRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'commitRepo',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -113,12 +101,9 @@ test('1', async t => {
     };
 
     let pushRepoRequest: ToDiskPushRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskPushRepo,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'pushRepo',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: BRANCH_MAIN,
@@ -127,12 +112,9 @@ test('1', async t => {
     };
 
     let createBranchRequest: ToDiskCreateBranchRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'createBranch',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         newBranch: 'b2',
@@ -142,12 +124,9 @@ test('1', async t => {
     };
 
     let isBranchExistRequest: ToDiskIsBranchExistRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskIsBranchExist,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
+      operation: 'isBranchExist',
+      traceId: traceId,
+      input: {
         baseProject: baseProject,
         repoId: 'r1',
         branch: 'b2',
@@ -174,5 +153,11 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.payload.isBranchExist, true);
+  t.is(resp.result.type, 'Success');
+
+  if (resp.result.type !== 'Success') {
+    return;
+  }
+
+  t.is(resp.result.value.isBranchExist, true);
 });

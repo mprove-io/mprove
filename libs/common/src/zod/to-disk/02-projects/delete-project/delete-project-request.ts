@@ -1,31 +1,25 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskDeleteProjectRequestInfo,
-  zToDiskDeleteProjectRequestInfo
-} from './delete-project-request-info';
-import {
-  type ToDiskDeleteProjectRequestPayload,
-  zToDiskDeleteProjectRequestPayload
-} from './delete-project-request-payload';
 
-export type ToDiskDeleteProjectRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskDeleteProjectRequestInfo;
-    payload: ToDiskDeleteProjectRequestPayload;
-  }
->;
+export type ToDiskDeleteProjectRequest = {
+  operation: 'deleteProject';
+  traceId: string;
+  input: {
+    orgId: string;
+    projectId: string;
+  };
+};
 
-export let zToDiskDeleteProjectRequest = zToDiskRequest
-  .extend({
-    info: zToDiskDeleteProjectRequestInfo,
-    payload: zToDiskDeleteProjectRequestPayload
+export let zToDiskDeleteProjectRequest = z
+  .strictObject({
+    operation: z.literal('deleteProject'),
+    traceId: z.string(),
+    input: z
+      .object({
+        orgId: z.string(),
+        projectId: z.string()
+      })
+      .meta({ id: 'ToDiskDeleteProjectRequestInput' })
   })
   .meta({ id: 'ToDiskDeleteProjectRequest' });
 

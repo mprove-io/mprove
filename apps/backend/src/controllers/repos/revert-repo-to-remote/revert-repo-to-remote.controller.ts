@@ -42,12 +42,10 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendRevertRepoToRemoteResponsePayload } from '#common/zod/to-backend/repos/to-backend-revert-repo-to-remote';
-import type { ToDiskRevertRepoToRemoteRequest } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-request';
-import type { ToDiskRevertRepoToRemoteResponse } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-response';
+import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -129,26 +127,17 @@ export class RevertRepoToRemoteController {
       project: project
     });
 
-    let toDiskRevertRepoToRemoteRequest: ToDiskRevertRepoToRemoteRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskRevertRepoToRemoteResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskRevertRepoToRemoteRequest,
-        checkIsOk: true
+    let diskRevertRepoToRemoteOutput: ToDiskRevertRepoToRemoteOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'revertRepoToRemote',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId
+          }
+        }
       });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -169,8 +158,8 @@ export class RevertRepoToRemoteController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskRevertRepoToRemoteOutput.files,
+          mproveDir: diskRevertRepoToRemoteOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -213,7 +202,7 @@ export class RevertRepoToRemoteController {
     });
 
     let payload: ToBackendRevertRepoToRemoteResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskRevertRepoToRemoteOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs

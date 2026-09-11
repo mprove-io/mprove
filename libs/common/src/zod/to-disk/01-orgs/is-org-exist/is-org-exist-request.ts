@@ -1,31 +1,21 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskIsOrgExistRequestInfo,
-  zToDiskIsOrgExistRequestInfo
-} from './is-org-exist-request-info';
-import {
-  type ToDiskIsOrgExistRequestPayload,
-  zToDiskIsOrgExistRequestPayload
-} from './is-org-exist-request-payload';
 
-export type ToDiskIsOrgExistRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskIsOrgExistRequestInfo;
-    payload: ToDiskIsOrgExistRequestPayload;
-  }
->;
+export type ToDiskIsOrgExistRequest = {
+  operation: 'isOrgExist';
+  traceId: string;
+  input: {
+    orgId: string;
+  };
+};
 
-export let zToDiskIsOrgExistRequest = zToDiskRequest
-  .extend({
-    info: zToDiskIsOrgExistRequestInfo,
-    payload: zToDiskIsOrgExistRequestPayload
+export let zToDiskIsOrgExistRequest = z
+  .strictObject({
+    operation: z.literal('isOrgExist'),
+    traceId: z.string(),
+    input: z
+      .object({ orgId: z.string() })
+      .meta({ id: 'ToDiskIsOrgExistRequestInput' })
   })
   .meta({ id: 'ToDiskIsOrgExistRequest' });
 

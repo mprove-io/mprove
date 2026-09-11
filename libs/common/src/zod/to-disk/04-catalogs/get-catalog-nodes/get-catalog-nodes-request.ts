@@ -1,31 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskGetCatalogNodesRequestInfo,
-  zToDiskGetCatalogNodesRequestInfo
-} from './get-catalog-nodes-request-info';
-import {
-  type ToDiskGetCatalogNodesRequestPayload,
-  zToDiskGetCatalogNodesRequestPayload
-} from './get-catalog-nodes-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskGetCatalogNodesRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskGetCatalogNodesRequestInfo;
-    payload: ToDiskGetCatalogNodesRequestPayload;
-  }
->;
+export type ToDiskGetCatalogNodesRequest = {
+  operation: 'getCatalogNodes';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch?: string;
+    isFetch: boolean;
+  };
+};
 
-export let zToDiskGetCatalogNodesRequest = zToDiskRequest
-  .extend({
-    info: zToDiskGetCatalogNodesRequestInfo,
-    payload: zToDiskGetCatalogNodesRequestPayload
+export let zToDiskGetCatalogNodesRequest = z
+  .strictObject({
+    operation: z.literal('getCatalogNodes'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string().nullish(),
+        isFetch: z.boolean()
+      })
+      .meta({ id: 'ToDiskGetCatalogNodesRequestInput' })
   })
   .meta({ id: 'ToDiskGetCatalogNodesRequest' });
 

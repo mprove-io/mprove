@@ -1,72 +1,52 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskNewPathAlreadyExistError } from '#common/zod/disk/errors/disk-new-path-already-exist-error';
 import type { DiskOldPathIsNotExistError } from '#common/zod/disk/errors/disk-old-path-is-not-exist-error';
-import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskRenameCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request';
-import type { ToDiskRenameCatalogNodeRequestPayload } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request-payload';
-import type { ToDiskRenameCatalogNodeResponsePayload } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response-payload';
+import type { ProjectLt } from '#common/zod/st-lt';
+import type { ToDiskRenameCatalogNodeOutput } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { renamePath } from '#disk/functions/disk/rename-path';
+import { validatePathUnderDirWrapped } from '#disk/functions/disk/validate-path-under-dir-wrapped';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class RenameCatalogNodeService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskRenameCatalogNodeResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    nodeId: string;
+    newName: string;
+  }): Promise<ToDiskResultFor<'ToDiskRenameCatalogNode'>> {
+    let { baseProject, repoId, branch, nodeId, newName } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskRenameCatalogNodeRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch,
-      nodeId,
-      newName
-    }: ToDiskRenameCatalogNodeRequestPayload = requestValid.payload;
-
-    let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
-      encryptedString: baseProject.st
-    });
 
     let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
-
-    let { name: projectName } = projectSt;
-
-    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let projectDir: string = `${orgPath}/${orgId}/${projectId}`;
+
     let repoDir: string = `${projectDir}/${repoId}`;
 
     let oldPath: string =
@@ -90,116 +70,113 @@ export class RenameCatalogNodeService {
         oldPath: oldPath,
         newPath: newPath
       }),
-      Result.andThrough(v => {
-        validatePathUnderDir({
-          fullPath: v.oldPath,
-          allowedDir: v.repoDir
-        });
-
-        validatePathUnderDir({
-          fullPath: v.newPath,
-          allowedDir: v.repoDir
-        });
-
-        return Result.succeed();
-      }),
-      Result.bind('keyDir', v =>
+      Result.andThrough(item =>
+        validatePathUnderDirWrapped({
+          fullPath: item.oldPath,
+          allowedDir: item.repoDir
+        })
+      ),
+      Result.andThrough(item =>
+        validatePathUnderDirWrapped({
+          fullPath: item.newPath,
+          allowedDir: item.repoDir
+        })
+      ),
+      Result.bind('keyDir', item =>
         checkRestoreOrgProjectRepoBranch({
           remoteType: remoteType,
-          orgId: v.orgId,
+          orgId: item.orgId,
           orgPath: orgPath,
-          projectId: v.projectId,
+          projectId: item.projectId,
           projectLt: projectLt,
-          repoId: v.repoId,
+          repoId: item.repoId,
           branchId: branch
         })
       ),
-      Result.bind('git', v =>
+      Result.bind('git', item =>
         createGit({
-          repoDir: v.repoDir,
+          repoDir: item.repoDir,
           remoteType: remoteType,
-          keyDir: v.keyDir,
-          gitUrl: gitUrl,
-          privateKeyEncrypted: privateKeyEncrypted,
-          publicKey: publicKey,
-          passPhrase: passPhrase
+          keyDir: item.keyDir,
+          gitUrl: projectLt.gitUrl,
+          privateKeyEncrypted: projectLt.privateKeyEncrypted,
+          publicKey: projectLt.publicKey,
+          passPhrase: projectLt.passPhrase
         })
       ),
-      Result.andThrough(v =>
+      Result.andThrough(item =>
         checkoutBranch({
-          projectId: v.projectId,
-          projectDir: v.projectDir,
-          repoId: v.repoId,
-          repoDir: v.repoDir,
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
           branchName: branch,
-          git: v.git,
+          git: item.git,
           isFetch: false
         })
       ),
-      Result.bind('isOldPathExist', v => isPathExist({ path: v.oldPath })),
+      Result.bind('isOldPathExist', item =>
+        isPathExist({ path: item.oldPath })
+      ),
       Result.andThrough(
-        (v): Result.Result<void, DiskOldPathIsNotExistError> =>
-          v.isOldPathExist === false
+        (item): Result.Result<void, DiskOldPathIsNotExistError> =>
+          item.isOldPathExist === false
             ? Result.fail({ code: 'DISK_OLD_PATH_IS_NOT_EXIST' })
             : Result.succeed()
       ),
-      Result.bind('isNewPathExist', v => isPathExist({ path: v.newPath })),
+      Result.bind('isNewPathExist', item =>
+        isPathExist({ path: item.newPath })
+      ),
       Result.andThrough(
-        (v): Result.Result<void, DiskNewPathAlreadyExistError> =>
-          v.isNewPathExist === true
+        (item): Result.Result<void, DiskNewPathAlreadyExistError> =>
+          item.isNewPathExist === true
             ? Result.fail({ code: 'DISK_NEW_PATH_ALREADY_EXIST' })
             : Result.succeed()
       ),
-      Result.andThrough(v =>
-        renamePath({
-          oldPath: v.oldPath,
-          newPath: v.newPath
-        })
+      Result.andThrough(item =>
+        renamePath({ oldPath: item.oldPath, newPath: item.newPath })
       ),
-      Result.andThrough(v => addChangesToStage({ repoDir: v.repoDir })),
-      Result.bind('itemStatus', v =>
-        getRepoStatus({
-          projectId: v.projectId,
-          projectDir: v.projectDir,
-          repoId: v.repoId,
-          repoDir: v.repoDir,
-          git: v.git,
+      Result.andThrough(item => addChangesToStage({ repoDir: item.repoDir })),
+      Result.bind('itemStatus', item =>
+        getRepoStatusWrapped({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
+          repoDir: item.repoDir,
+          git: item.git,
           isFetch: true,
           isCheckConflicts: true
         })
       ),
-      Result.bind('itemCatalog', v =>
-        getNodesAndFiles({
-          projectId: v.projectId,
-          projectDir: v.projectDir,
-          repoId: v.repoId,
+      Result.bind('itemCatalog', item =>
+        getNodesAndFilesWrapped({
+          projectId: item.projectId,
+          projectDir: item.projectDir,
+          repoId: item.repoId,
           readFiles: true,
           isRootMproveDir: false
         })
       ),
       Result.map(
-        (v): ToDiskRenameCatalogNodeResponsePayload => ({
+        (item): ToDiskRenameCatalogNodeOutput => ({
           repo: {
-            orgId: v.orgId,
-            projectId: v.projectId,
-            repoId: v.repoId,
-            repoStatus: v.itemStatus.repoStatus,
-            repoError: v.itemStatus.repoError,
-            currentBranchId: v.itemStatus.currentBranch,
-            conflicts: v.itemStatus.conflicts,
-            nodes: v.itemCatalog.nodes,
-            changesToCommit: v.itemStatus.changesToCommit,
-            changesToPush: v.itemStatus.changesToPush
+            orgId: item.orgId,
+            projectId: item.projectId,
+            repoId: item.repoId,
+            repoStatus: item.itemStatus.repoStatus,
+            repoError: item.itemStatus.repoError,
+            currentBranchId: item.itemStatus.currentBranch,
+            conflicts: item.itemStatus.conflicts,
+            nodes: item.itemCatalog.nodes,
+            changesToCommit: item.itemStatus.changesToCommit,
+            changesToPush: item.itemStatus.changesToPush
           },
-          files: v.itemCatalog.files,
-          mproveDir: v.itemCatalog.mproveDir
+          files: item.itemCatalog.files,
+          mproveDir: item.itemCatalog.mproveDir
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(renameCatalogNodeResult);
-
-    return payload;
+    return renameCatalogNodeResult;
   }
 }

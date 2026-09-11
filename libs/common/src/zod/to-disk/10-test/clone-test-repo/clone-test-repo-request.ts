@@ -1,31 +1,23 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskCloneTestRepoRequestInfo,
-  zToDiskCloneTestRepoRequestInfo
-} from './clone-test-repo-request-info';
-import {
-  type ToDiskCloneTestRepoRequestPayload,
-  zToDiskCloneTestRepoRequestPayload
-} from './clone-test-repo-request-payload';
 
-export type ToDiskCloneTestRepoRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskCloneTestRepoRequestInfo;
-    payload: ToDiskCloneTestRepoRequestPayload;
-  }
->;
+export type ToDiskCloneTestRepoRequest = {
+  operation: 'cloneTestRepo';
+  traceId: string;
+  input: {
+    testId: string;
+  };
+};
 
-export let zToDiskCloneTestRepoRequest = zToDiskRequest
-  .extend({
-    info: zToDiskCloneTestRepoRequestInfo,
-    payload: zToDiskCloneTestRepoRequestPayload
+export let zToDiskCloneTestRepoRequest = z
+  .strictObject({
+    operation: z.literal('cloneTestRepo'),
+    traceId: z.string(),
+    input: z
+      .object({
+        testId: z.string()
+      })
+      .meta({ id: 'ToDiskCloneTestRepoRequestInput' })
   })
   .meta({ id: 'ToDiskCloneTestRepoRequest' });
 

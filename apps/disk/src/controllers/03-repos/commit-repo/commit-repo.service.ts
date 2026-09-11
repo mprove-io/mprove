@@ -1,51 +1,38 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskCommitRepoRequest } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-request';
-import type { ToDiskCommitRepoRequestPayload } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-request-payload';
-import type { ToDiskCommitRepoResponsePayload } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-response-payload';
+import type { ToDiskCommitRepoOutput } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { commit } from '#disk/functions/git/commit';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class CommitRepoService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskCommitRepoResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    userAlias: string;
+    commitMessage: string;
+  }): Promise<ToDiskResultFor<'ToDiskCommitRepo'>> {
+    let { baseProject, repoId, branch, userAlias, commitMessage } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskCommitRepoRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch,
-      userAlias,
-      commitMessage
-    }: ToDiskCommitRepoRequestPayload = requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -55,11 +42,10 @@ export class CommitRepoService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
     let commitRepoResult = Result.pipe(
       Result.succeed({
@@ -110,7 +96,7 @@ export class CommitRepoService {
         })
       ),
       Result.bind('itemStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -121,7 +107,7 @@ export class CommitRepoService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -130,7 +116,7 @@ export class CommitRepoService {
         })
       ),
       Result.map(
-        (item): ToDiskCommitRepoResponsePayload => ({
+        (item): ToDiskCommitRepoOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,
@@ -144,12 +130,9 @@ export class CommitRepoService {
             changesToPush: item.itemStatus.changesToPush
           }
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(commitRepoResult);
-
-    return payload;
+    return commitRepoResult;
   }
 }

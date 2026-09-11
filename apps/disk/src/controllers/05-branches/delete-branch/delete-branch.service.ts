@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt } from '#common/zod/st-lt';
-import type { ToDiskDeleteBranchResponse } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-response';
+import type { ToDiskDeleteBranchOutput } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-response';
 import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
@@ -117,12 +117,7 @@ export class DeleteBranchService {
         })
       ),
       Result.map(
-        (
-          item
-        ): Extract<
-          ToDiskDeleteBranchResponse['result'],
-          { type: 'Success' }
-        >['value'] => ({
+        (item): ToDiskDeleteBranchOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,

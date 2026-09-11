@@ -1,30 +1,42 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskRevertRepoToRemoteResponseInfo,
-  zToDiskRevertRepoToRemoteResponseInfo
-} from './revert-repo-to-remote-response-info';
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskRevertRepoToRemoteResponsePayload,
-  zToDiskRevertRepoToRemoteResponsePayload
-} from './revert-repo-to-remote-response-payload';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
+import {
+  type ToDiskRevertRepoToRemoteError,
+  zToDiskRevertRepoToRemoteError
+} from './revert-repo-to-remote-error';
 
-export type ToDiskRevertRepoToRemoteResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskRevertRepoToRemoteResponseInfo;
-    payload: ToDiskRevertRepoToRemoteResponsePayload;
-  }
+export type ToDiskRevertRepoToRemoteOutput = {
+  repo: Repo;
+  files: DiskCatalogFile[];
+  mproveDir: string;
+};
+
+export type ToDiskRevertRepoToRemoteResponse = ToDiskResponse<
+  'ToDiskRevertRepoToRemote',
+  ToDiskRevertRepoToRemoteOutput,
+  ToDiskRevertRepoToRemoteError
 >;
 
-export let zToDiskRevertRepoToRemoteResponse = zMyResponse
-  .extend({
-    info: zToDiskRevertRepoToRemoteResponseInfo,
-    payload: zToDiskRevertRepoToRemoteResponsePayload
-  })
-  .meta({ id: 'ToDiskRevertRepoToRemoteResponse' });
+export let zToDiskRevertRepoToRemoteResponse = makeToDiskResponseSchema({
+  path: 'ToDiskRevertRepoToRemote',
+  success: z
+    .object({
+      repo: zRepo,
+      files: z.array(zDiskCatalogFile),
+      mproveDir: z.string()
+    })
+    .meta({ id: 'ToDiskRevertRepoToRemoteOutput' }),
+  error: zToDiskRevertRepoToRemoteError
+});
 
 assertTypesEqual<
   ToDiskRevertRepoToRemoteResponse,

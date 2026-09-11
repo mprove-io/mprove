@@ -20,11 +20,9 @@ import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendCommitRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-commit-repo';
-import type { ToDiskCommitRepoRequest } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-request';
-import type { ToDiskCommitRepoResponse } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-response';
+import type { ToDiskCommitRepoOutput } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -93,32 +91,23 @@ export class CommitRepoController {
       project: project
     });
 
-    let toDiskCommitRepoRequest: ToDiskCommitRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        userAlias: user.alias,
-        commitMessage: commitMessage
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskCommitRepoResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskCommitRepoRequest,
-        checkIsOk: true
+    let diskCommitRepoOutput: ToDiskCommitRepoOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'commitRepo',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            userAlias: user.alias,
+            commitMessage: commitMessage
+          }
+        }
       });
 
     let payload: ToBackendCommitRepoResponsePayload = {
-      repo: diskResponse.payload.repo
+      repo: diskCommitRepoOutput.repo
     };
 
     if (repoType === RepoTypeEnum.Session) {

@@ -1,68 +1,49 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskPushRepoRequest } from '#common/zod/to-disk/03-repos/push-repo/push-repo-request';
-import type { ToDiskPushRepoRequestPayload } from '#common/zod/to-disk/03-repos/push-repo/push-repo-request-payload';
-import type { ToDiskPushRepoResponsePayload } from '#common/zod/to-disk/03-repos/push-repo/push-repo-response-payload';
+import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ProjectLt } from '#common/zod/st-lt';
+import type { ToDiskPushRepoOutput } from '#common/zod/to-disk/03-repos/push-repo/push-repo-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createBranch } from '#disk/functions/git/create-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { merge } from '#disk/functions/git/merge';
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class PushRepoService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskPushRepoResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+    userAlias: string;
+  }): Promise<ToDiskResultFor<'ToDiskPushRepo'>> {
+    let { baseProject, repoId, branch, userAlias } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskPushRepoRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch,
-      userAlias
-    }: ToDiskPushRepoRequestPayload = requestValid.payload;
-
-    let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
-      encryptedString: baseProject.st
-    });
 
     let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { orgId, projectId, remoteType } = baseProject;
 
-    let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
     let pushRepoResult = Result.pipe(
       Result.succeed({
@@ -162,7 +143,7 @@ export class PushRepoService {
         })
       ),
       Result.bind('repoStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -173,7 +154,7 @@ export class PushRepoService {
         })
       ),
       Result.bind('repoItemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -193,7 +174,7 @@ export class PushRepoService {
         })
       ),
       Result.bind('productionItemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: PROD_REPO_ID,
@@ -202,7 +183,7 @@ export class PushRepoService {
         })
       ),
       Result.map(
-        (item): ToDiskPushRepoResponsePayload => ({
+        (item): ToDiskPushRepoOutput => ({
           repo: {
             orgId: item.orgId,
             projectId: item.projectId,
@@ -218,12 +199,9 @@ export class PushRepoService {
           productionFiles: item.productionItemCatalog.files,
           productionMproveDir: item.productionItemCatalog.mproveDir
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(pushRepoResult);
-
-    return payload;
+    return pushRepoResult;
   }
 }

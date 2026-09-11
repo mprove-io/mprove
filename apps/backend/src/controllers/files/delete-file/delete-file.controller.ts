@@ -40,11 +40,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { ToBackendDeleteFileResponsePayload } from '#common/zod/to-backend/files/to-backend-delete-file';
-import type { ToDiskDeleteFileRequest } from '#common/zod/to-disk/07-files/delete-file/delete-file-request';
-import type { ToDiskDeleteFileResponse } from '#common/zod/to-disk/07-files/delete-file/delete-file-response';
+import type { ToDiskDeleteFileOutput } from '#common/zod/to-disk/07-files/delete-file/delete-file-response';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)
@@ -114,28 +112,19 @@ export class DeleteFileController {
       project: project
     });
 
-    let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        baseProject: baseProject,
-        repoId: repoId,
-        branch: branchId,
-        fileNodeId: fileNodeId,
-        userAlias: user.alias
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskDeleteFileResponse>({
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toDiskDeleteFileRequest,
-        checkIsOk: true
+    let diskDeleteFileOutput: ToDiskDeleteFileOutput =
+      await this.rpcService.sendToDiskUnwrapOutput({
+        request: {
+          operation: 'deleteFile',
+          traceId: body.info.traceId,
+          input: {
+            baseProject: baseProject,
+            repoId: repoId,
+            branch: branchId,
+            fileNodeId: fileNodeId,
+            userAlias: user.alias
+          }
+        }
       });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -156,8 +145,8 @@ export class DeleteFileController {
           projectId: projectId,
           repoId: repoId,
           structId: structId,
-          diskFiles: diskResponse.payload.files,
-          mproveDir: diskResponse.payload.mproveDir,
+          diskFiles: diskDeleteFileOutput.files,
+          mproveDir: diskDeleteFileOutput.mproveDir,
           envId: x.envId,
           selectedGivens: [],
           overrideTimezone: undefined
@@ -200,7 +189,7 @@ export class DeleteFileController {
     });
 
     let payload: ToBackendDeleteFileResponsePayload = {
-      repo: diskResponse.payload.repo,
+      repo: diskDeleteFileOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,
         modelPartXs: modelPartXs

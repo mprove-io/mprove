@@ -1,38 +1,24 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { ErEnum } from '#common/enums/er.enum';
-import { zToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-request';
-import type { ToDiskDeleteOrgResponsePayload } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-response-payload';
+import type { ToDiskDeleteOrgOutput } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
-import { DiskTabService } from '#disk/services/disk-tab.service';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 @Injectable()
 export class DeleteOrgService {
-  constructor(
-    private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
-  ) {}
+  constructor(private cs: ConfigService<DiskConfig>) {}
 
-  async process(request: any): Promise<ToDiskDeleteOrgResponsePayload> {
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+  async process(item: {
+    orgId: string;
+  }): Promise<ToDiskResultFor<'ToDiskDeleteOrg'>> {
+    let { orgId } = item;
+
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
-
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskDeleteOrgRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
-    let { orgId } = requestValid.payload;
 
     let deleteOrgResult = Result.pipe(
       Result.succeed({
@@ -46,15 +32,12 @@ export class DeleteOrgService {
           : Result.succeed()
       ),
       Result.map(
-        (item): ToDiskDeleteOrgResponsePayload => ({
+        (item): ToDiskDeleteOrgOutput => ({
           deletedOrgId: item.orgId
         })
-      ),
-      Result.mapError(toServerError)
+      )
     );
 
-    let payload = await Result.unwrap(deleteOrgResult);
-
-    return payload;
+    return deleteOrgResult;
   }
 }

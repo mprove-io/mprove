@@ -1,31 +1,31 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
 import {
-  type ToDiskRequest,
-  zToDiskRequest
-} from '#common/zod/to-disk/to-disk-request';
-import {
-  type ToDiskGetCatalogFilesRequestInfo,
-  zToDiskGetCatalogFilesRequestInfo
-} from './get-catalog-files-request-info';
-import {
-  type ToDiskGetCatalogFilesRequestPayload,
-  zToDiskGetCatalogFilesRequestPayload
-} from './get-catalog-files-request-payload';
+  type BaseProject,
+  zBaseProject
+} from '#common/zod/backend/base-project';
 
-export type ToDiskGetCatalogFilesRequest = Extend<
-  ToDiskRequest,
-  {
-    info: ToDiskGetCatalogFilesRequestInfo;
-    payload: ToDiskGetCatalogFilesRequestPayload;
-  }
->;
+export type ToDiskGetCatalogFilesRequest = {
+  operation: 'getCatalogFiles';
+  traceId: string;
+  input: {
+    baseProject: BaseProject;
+    repoId: string;
+    branch: string;
+  };
+};
 
-export let zToDiskGetCatalogFilesRequest = zToDiskRequest
-  .extend({
-    info: zToDiskGetCatalogFilesRequestInfo,
-    payload: zToDiskGetCatalogFilesRequestPayload
+export let zToDiskGetCatalogFilesRequest = z
+  .strictObject({
+    operation: z.literal('getCatalogFiles'),
+    traceId: z.string(),
+    input: z
+      .object({
+        baseProject: zBaseProject,
+        repoId: z.string(),
+        branch: z.string()
+      })
+      .meta({ id: 'ToDiskGetCatalogFilesRequestInput' })
   })
   .meta({ id: 'ToDiskGetCatalogFilesRequest' });
 

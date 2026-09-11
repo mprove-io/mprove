@@ -1,30 +1,42 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
-import type { Extend } from '#common/types/extend';
-import { type MyResponse, zMyResponse } from '#common/zod/to/my-response';
 import {
-  type ToDiskRenameCatalogNodeResponseInfo,
-  zToDiskRenameCatalogNodeResponseInfo
-} from './rename-catalog-node-response-info';
+  type DiskCatalogFile,
+  zDiskCatalogFile
+} from '#common/zod/disk/disk-catalog-file';
+import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
-  type ToDiskRenameCatalogNodeResponsePayload,
-  zToDiskRenameCatalogNodeResponsePayload
-} from './rename-catalog-node-response-payload';
+  makeToDiskResponseSchema,
+  type ToDiskResponse
+} from '#common/zod/to-disk/to-disk-response';
+import {
+  type ToDiskRenameCatalogNodeError,
+  zToDiskRenameCatalogNodeError
+} from './rename-catalog-node-error';
 
-export type ToDiskRenameCatalogNodeResponse = Extend<
-  MyResponse,
-  {
-    info: ToDiskRenameCatalogNodeResponseInfo;
-    payload: ToDiskRenameCatalogNodeResponsePayload;
-  }
+export type ToDiskRenameCatalogNodeOutput = {
+  repo: Repo;
+  files: DiskCatalogFile[];
+  mproveDir: string;
+};
+
+export type ToDiskRenameCatalogNodeResponse = ToDiskResponse<
+  'ToDiskRenameCatalogNode',
+  ToDiskRenameCatalogNodeOutput,
+  ToDiskRenameCatalogNodeError
 >;
 
-export let zToDiskRenameCatalogNodeResponse = zMyResponse
-  .extend({
-    info: zToDiskRenameCatalogNodeResponseInfo,
-    payload: zToDiskRenameCatalogNodeResponsePayload
-  })
-  .meta({ id: 'ToDiskRenameCatalogNodeResponse' });
+export let zToDiskRenameCatalogNodeResponse = makeToDiskResponseSchema({
+  path: 'ToDiskRenameCatalogNode',
+  success: z
+    .object({
+      repo: zRepo,
+      files: z.array(zDiskCatalogFile),
+      mproveDir: z.string()
+    })
+    .meta({ id: 'ToDiskRenameCatalogNodeOutput' }),
+  error: zToDiskRenameCatalogNodeError
+});
 
 assertTypesEqual<
   ToDiskRenameCatalogNodeResponse,
