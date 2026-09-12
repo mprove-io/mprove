@@ -6,7 +6,6 @@ import {
   type ToDiskResultFor,
   type ToDiskWireResponseFor
 } from '#common/zod/to-disk/to-disk-operation-contract';
-import type { ToDiskResponseInfo } from '#common/zod/to-disk/to-disk-response-info';
 
 export async function processValidatedRequest<
   TName extends ToDiskOperationName
@@ -24,23 +23,14 @@ export async function processValidatedRequest<
 
   let startTs: number = item.startTs ?? Date.now();
 
-  let responseInfo: ToDiskResponseInfo = {
-    path: name,
-    method: method,
-    duration: 0,
-    traceId: request.traceId
-  };
-
   try {
     let result: ToDiskResultFor<TName> = await process(request.input);
 
-    responseInfo.duration = Date.now() - startTs;
-
     let response: ToDiskWireResponseFor<TName> = {
       path: name,
-      method: responseInfo.method,
-      duration: responseInfo.duration,
-      traceId: responseInfo.traceId,
+      method: method,
+      duration: Date.now() - startTs,
+      traceId: request.traceId,
       result: result
     };
 
@@ -50,13 +40,11 @@ export async function processValidatedRequest<
 
     logger.error({ incidentId: incidentId, error: error });
 
-    responseInfo.duration = Date.now() - startTs;
-
     let response: ToDiskWireResponseFor<TName> = {
       path: name,
-      method: responseInfo.method,
-      duration: responseInfo.duration,
-      traceId: responseInfo.traceId,
+      method: method,
+      duration: Date.now() - startTs,
+      traceId: request.traceId,
       result: { type: 'InternalFailure', incidentId: incidentId }
     };
 
