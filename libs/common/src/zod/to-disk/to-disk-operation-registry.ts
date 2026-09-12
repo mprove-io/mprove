@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import { zToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskCreateOrgResponse } from '#common/zod/to-disk/01-orgs/create-org/create-org-response';
@@ -260,12 +261,7 @@ type ToDiskOperationRegistrySource = {
   };
 };
 
-export const zToDiskOperationRegistry: {
-  [TOperation in ToDiskOperation]: {
-    request: z.ZodType<ToDiskOperationRegistry[TOperation]['request']>;
-    response: z.ZodType<ToDiskOperationRegistry[TOperation]['response']>;
-  };
-} = {
+export const zToDiskOperationRegistry = {
   createOrg: {
     request: zToDiskCreateOrgRequest,
     response: zToDiskCreateOrgResponse
@@ -386,4 +382,23 @@ export const zToDiskOperationRegistry: {
     request: zToDiskCloneTestRepoRequest,
     response: zToDiskCloneTestRepoResponse
   }
+} satisfies {
+  [TOperation in ToDiskOperation]: {
+    request: z.ZodType<ToDiskOperationRegistry[TOperation]['request']>;
+    response: z.ZodType<ToDiskOperationRegistry[TOperation]['response']>;
+  };
 };
+
+assertTypesEqual<
+  ToDiskOperationRegistry,
+  {
+    [TOperation in ToDiskOperation]: {
+      request: z.infer<
+        (typeof zToDiskOperationRegistry)[TOperation]['request']
+      >;
+      response: z.infer<
+        (typeof zToDiskOperationRegistry)[TOperation]['response']
+      >;
+    };
+  }
+>({ value: true });
