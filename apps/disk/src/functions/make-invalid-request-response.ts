@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import {
-  getToDiskWireResponseSchema,
   type ToDiskOperationName,
   type ToDiskWireResponseFor
 } from '#common/zod/to-disk/to-disk-operation-contract';
@@ -20,10 +19,7 @@ export function makeInvalidRequestResponse<
     .object({ traceId: z.string() })
     .safeParse(message);
 
-  let responseSchema: z.ZodType<ToDiskWireResponseFor<TName>> =
-    getToDiskWireResponseSchema({ name: name });
-
-  let response: ToDiskWireResponseFor<TName> = responseSchema.parse({
+  let response: ToDiskWireResponseFor<TName> = {
     path: name,
     method: method,
     duration: Date.now() - startTs,
@@ -36,7 +32,7 @@ export function makeInvalidRequestResponse<
         code: issue.code
       }))
     }
-  });
+  };
 
   return response;
 }

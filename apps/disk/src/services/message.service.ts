@@ -13,6 +13,7 @@ import {
   type ToDiskRpcResponse,
   type ToDiskWireResponseFor
 } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskUnrouteableResponse } from '#common/zod/to-disk/to-disk-unrouteable-response';
 import { CreateOrgService } from '#disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '#disk/controllers/01-orgs/delete-org/delete-org.service';
 import { IsOrgExistService } from '#disk/controllers/01-orgs/is-org-exist/is-org-exist.service';
@@ -44,7 +45,6 @@ import { SaveFileService } from '#disk/controllers/07-files/save-file/save-file.
 import { SeedProjectService } from '#disk/controllers/08-seed/seed-project/seed-project.service';
 import { CloneTestRepoService } from '#disk/controllers/09-test/clone-test-repo/clone-test-repo.service';
 import { makeInvalidRequestResponse } from '#disk/functions/make-invalid-request-response';
-import { makeUnrouteableResponse } from '#disk/functions/make-unrouteable-response';
 import { processValidatedRequest } from '#disk/functions/process-validated-request';
 
 @Injectable()
@@ -122,9 +122,18 @@ export class MessageService {
     let isOperation: boolean = isToDiskOperationValue(operationItem);
 
     if (isOperation === false) {
-      let response: ToDiskRpcResponse = makeUnrouteableResponse({
-        message: message
-      });
+      let response: ToDiskUnrouteableResponse = {
+        result: {
+          type: 'InvalidRequest',
+          issues: [
+            {
+              path: 'operation',
+              message: 'Missing or unknown disk request discriminator',
+              code: 'invalid_value'
+            }
+          ]
+        }
+      };
 
       return response;
     }
