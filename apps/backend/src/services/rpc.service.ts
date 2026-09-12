@@ -21,10 +21,6 @@ import {
   type ToDiskRequest,
   type ToDiskWireResponseFor
 } from '#common/zod/to-disk/to-disk-operation-contract';
-import type {
-  ToDiskDomainResponse,
-  ToDiskSuccessResponse
-} from '#common/zod/to-disk/to-disk-response';
 
 type DiskSendItem<TRequest extends ToDiskRequest> = {
   request: TRequest;
@@ -35,15 +31,10 @@ type DiskRoute = {
   groupId: string;
 };
 
-type DiskDomainResponse<TRequest extends ToDiskRequest> = ToDiskDomainResponse<
-  ToDiskWireResponseFor<ToDiskNameForRequest<TRequest>>
->;
-
-type DiskSuccessResponse<TRequest extends ToDiskRequest> =
-  ToDiskSuccessResponse<ToDiskWireResponseFor<ToDiskNameForRequest<TRequest>>>;
-
-type DiskSuccessOutput<TRequest extends ToDiskRequest> =
-  DiskSuccessResponse<TRequest>['result']['value'];
+type DiskSuccessOutput<TRequest extends ToDiskRequest> = Extract<
+  ToDiskWireResponseFor<ToDiskNameForRequest<TRequest>>['result'],
+  { type: 'Success' }
+>['value'];
 
 @Injectable()
 export class RpcService implements OnModuleDestroy {
@@ -308,11 +299,11 @@ export class RpcService implements OnModuleDestroy {
     return exhaustiveRequest;
   }
 
-  private async sendToDiskRoutedResult<TRequest extends ToDiskRequest>(item: {
+  private async sendToDisk<TRequest extends ToDiskRequest>(item: {
     request: TRequest;
     shardKey: string;
     groupId: string;
-  }): Promise<DiskDomainResponse<TRequest>> {
+  }): Promise<ToDiskWireResponseFor<ToDiskNameForRequest<TRequest>>> {
     let { request, shardKey, groupId } = item;
 
     let name: ToDiskNameForRequest<TRequest> = getToDiskOperationName({
@@ -343,6 +334,27 @@ export class RpcService implements OnModuleDestroy {
       });
     }
 
+    return response;
+  }
+
+  async sendToDiskUnwrapOutput<TRequest extends ToDiskRequest>(
+    item: DiskSendItem<TRequest>
+  ): Promise<DiskSuccessOutput<TRequest>> {
+    let request: TRequest = this.validateDiskRequest({
+      request: item.request
+    });
+
+    let route: DiskRoute = this.getDiskRoute({
+      request: request
+    });
+
+    let response: ToDiskWireResponseFor<ToDiskNameForRequest<TRequest>> =
+      await this.sendToDisk({
+        request: request,
+        shardKey: route.shardKey,
+        groupId: route.groupId
+      });
+
     if (response.result.type === 'InvalidRequest') {
       throw new ServerError({
         message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
@@ -360,19 +372,6 @@ export class RpcService implements OnModuleDestroy {
       });
     }
 
-    // The schema preserves request correlation; the guards exclude boundary results.
-    // TypeScript cannot lift nested result narrowing into a generic mapped envelope.
-    let domainResponse: DiskDomainResponse<TRequest> =
-      response as DiskDomainResponse<TRequest>;
-
-    return domainResponse;
-  }
-
-  private unwrapDiskResponse<TRequest extends ToDiskRequest>(item: {
-    response: DiskDomainResponse<TRequest>;
-  }): DiskSuccessResponse<TRequest> {
-    let { response } = item;
-
     if (response.result.type === 'Failure') {
       let error: { code: string; displayData?: unknown } =
         response.result.error;
@@ -385,53 +384,6 @@ export class RpcService implements OnModuleDestroy {
         })
       });
     }
-
-    // The guard proves success, but TypeScript cannot narrow the generic envelope.
-    let successResponse: DiskSuccessResponse<TRequest> =
-      response as DiskSuccessResponse<TRequest>;
-
-    return successResponse;
-  }
-
-  async sendToDiskResult<TRequest extends ToDiskRequest>(
-    item: DiskSendItem<TRequest>
-  ): Promise<DiskDomainResponse<TRequest>> {
-    let request: TRequest = this.validateDiskRequest({
-      request: item.request
-    });
-
-    let route: DiskRoute = this.getDiskRoute({
-      request: request
-    });
-
-    let response: DiskDomainResponse<TRequest> =
-      await this.sendToDiskRoutedResult({
-        request: request,
-        shardKey: route.shardKey,
-        groupId: route.groupId
-      });
-
-    return response;
-  }
-
-  async sendToDiskUnwrapResponse<TRequest extends ToDiskRequest>(
-    item: DiskSendItem<TRequest>
-  ): Promise<DiskSuccessResponse<TRequest>> {
-    let domainResponse: DiskDomainResponse<TRequest> =
-      await this.sendToDiskResult<TRequest>(item);
-
-    let response: DiskSuccessResponse<TRequest> = this.unwrapDiskResponse({
-      response: domainResponse
-    });
-
-    return response;
-  }
-
-  async sendToDiskUnwrapOutput<TRequest extends ToDiskRequest>(
-    item: DiskSendItem<TRequest>
-  ): Promise<DiskSuccessOutput<TRequest>> {
-    let response: DiskSuccessResponse<TRequest> =
-      await this.sendToDiskUnwrapResponse<TRequest>(item);
 
     let output: DiskSuccessOutput<TRequest> = response.result.value;
 
