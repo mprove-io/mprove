@@ -591,7 +591,7 @@ export class CreateEditorSessionController {
 
     // let sendToDiskStart = Date.now();
     let diskCreateDevRepoOutput: ToDiskCreateDevRepoOutput =
-      await this.rpcService.sendToDiskDevRepoUnwrapOutput({
+      await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'createDevRepo',
           traceId: traceId,

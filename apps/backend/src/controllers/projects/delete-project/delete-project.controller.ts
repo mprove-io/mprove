@@ -75,7 +75,7 @@ export class DeleteProjectController {
       memberId: user.userId
     });
 
-    await this.rpcService.sendToDiskProjectUnwrapOutput({
+    await this.rpcService.sendToDiskUnwrapOutput({
       request: {
         operation: 'deleteProject',
         traceId: body.info.traceId,

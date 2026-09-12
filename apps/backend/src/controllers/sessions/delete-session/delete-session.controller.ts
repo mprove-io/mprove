@@ -134,7 +134,7 @@ export class DeleteSessionController {
           project: project
         });
 
-        await this.rpcService.sendToDiskDevRepoUnwrapOutput({
+        await this.rpcService.sendToDiskUnwrapOutput({
           request: {
             operation: 'deleteDevRepo',
             traceId: traceId,

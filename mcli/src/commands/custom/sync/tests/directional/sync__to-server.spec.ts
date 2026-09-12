@@ -40,7 +40,6 @@ test('1', async () => {
     await mreq<ToBackendCloneTestRepoResponse>({
       pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCloneTestRepo,
       payload: {
-        orgId: orgId,
         testId: testId
       },
       host: config.mproveCliHost

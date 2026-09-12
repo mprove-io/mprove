@@ -76,7 +76,6 @@ import {
 } from '#common/constants/top-backend';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
@@ -93,10 +92,7 @@ import type {
   ToBackendSeedRecordsRequestPayloadUsersItem,
   ToBackendSeedRecordsResponse
 } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
-import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
-import type { ToDiskCreateOrgResponse } from '#common/zod/to-disk/01-orgs/create-org/create-org-response';
-import type { ToDiskSeedProjectRequest } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request';
-import type { ToDiskSeedProjectResponse } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response';
+import type { ToDiskSeedProjectOutput } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response';
 import { parseApiKey } from '#node-common/functions/api-key/parse-api-key';
 
 @ApiTags('TestRoutes')
@@ -301,22 +297,14 @@ export class SeedRecordsController {
             serverTs: undefined
           };
 
-          let createOrgRequest: ToDiskCreateOrgRequest = {
-            info: {
-              name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
-              traceId: body.info.traceId
-            },
-            payload: {
-              orgId: newOrg.orgId
+          await this.rpcService.sendToDiskUnwrapOutput({
+            request: {
+              operation: 'createOrg',
+              traceId: body.info.traceId,
+              input: {
+                orgId: newOrg.orgId
+              }
             }
-          };
-
-          await this.rpcService.sendToDisk<ToDiskCreateOrgResponse>({
-            orgId: newOrg.orgId,
-            projectId: null,
-            repoId: null,
-            message: createOrgRequest,
-            checkIsOk: true
           });
 
           orgs.push(newOrg);
@@ -422,27 +410,18 @@ export class SeedRecordsController {
             evs: []
           });
 
-          let toDiskSeedProjectRequest: ToDiskSeedProjectRequest = {
-            info: {
-              name: ToDiskRequestInfoNameEnum.ToDiskSeedProject,
-              traceId: body.info.traceId
-            },
-            payload: {
-              orgId: baseProject.orgId,
-              baseProject: baseProject,
-              seedProjectId: x.seedProjectId,
-              devRepoId: users[0].userId,
-              userAlias: users[0].alias
-            }
-          };
-
-          let diskResponse =
-            await this.rpcService.sendToDisk<ToDiskSeedProjectResponse>({
-              orgId: baseProject.orgId,
-              projectId: baseProject.projectId,
-              repoId: PROD_REPO_ID,
-              message: toDiskSeedProjectRequest,
-              checkIsOk: true
+          let diskSeedProjectOutput: ToDiskSeedProjectOutput =
+            await this.rpcService.sendToDiskUnwrapOutput({
+              request: {
+                operation: 'seedProject',
+                traceId: body.info.traceId,
+                input: {
+                  baseProject: baseProject,
+                  seedProjectId: x.seedProjectId,
+                  devRepoId: users[0].userId,
+                  userAlias: users[0].alias
+                }
+              }
             });
 
           let devStructId = makeId();
@@ -468,8 +447,8 @@ export class SeedRecordsController {
             projectId: newProject.projectId,
             repoId: users[0].userId,
             structId: devStructId,
-            diskFiles: diskResponse.payload.files,
-            mproveDir: diskResponse.payload.mproveDir,
+            diskFiles: diskSeedProjectOutput.files,
+            mproveDir: diskSeedProjectOutput.mproveDir,
             envId: prodEnv.envId,
             selectedGivens: [],
             skipDb: true,
@@ -493,8 +472,8 @@ export class SeedRecordsController {
             projectId: newProject.projectId,
             repoId: PROD_REPO_ID,
             structId: prodStructId,
-            diskFiles: diskResponse.payload.files,
-            mproveDir: diskResponse.payload.mproveDir,
+            diskFiles: diskSeedProjectOutput.files,
+            mproveDir: diskSeedProjectOutput.mproveDir,
             envId: prodEnv.envId,
             selectedGivens: [],
             skipDb: true,

@@ -7,10 +7,10 @@ let SECOND_CHAR_ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // 36
 let MAX_BUCKETS = FIRST_CHAR_ALPHABET.length * SECOND_CHAR_ALPHABET.length; // 26*36 = 936;
 
 export function calculateDiskShard(item: {
-  orgId: string;
+  shardKey: string;
   totalDiskShards: number;
 }): string {
-  let { orgId, totalDiskShards } = item;
+  let { shardKey, totalDiskShards } = item;
 
   if (totalDiskShards <= 0 || totalDiskShards > MAX_BUCKETS) {
     throw new ServerError({
@@ -18,11 +18,12 @@ export function calculateDiskShard(item: {
     });
   }
 
-  if (
-    !FIRST_CHAR_ALPHABET.includes(orgId[0]) ||
-    !SECOND_CHAR_ALPHABET.includes(orgId[1])
-  ) {
-    return 'shard-0'; // orgId in tests may not match pattern - OK
+  let isFirstCharValid: boolean = FIRST_CHAR_ALPHABET.includes(shardKey[0]);
+
+  let isSecondCharValid: boolean = SECOND_CHAR_ALPHABET.includes(shardKey[1]);
+
+  if (!isFirstCharValid || !isSecondCharValid) {
+    return 'shard-0'; // shard keys in tests may not match pattern - OK
   }
 
   if (totalDiskShards === 1) {
@@ -30,8 +31,8 @@ export function calculateDiskShard(item: {
   }
 
   let idx =
-    FIRST_CHAR_ALPHABET.indexOf(orgId[0]) * 36 +
-    SECOND_CHAR_ALPHABET.indexOf(orgId[1]);
+    FIRST_CHAR_ALPHABET.indexOf(shardKey[0]) * 36 +
+    SECOND_CHAR_ALPHABET.indexOf(shardKey[1]);
 
   let step = MAX_BUCKETS / totalDiskShards;
 

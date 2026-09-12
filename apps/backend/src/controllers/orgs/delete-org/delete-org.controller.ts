@@ -36,9 +36,6 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
-import type { ToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-request';
-import type { ToDiskDeleteOrgResponse } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-response';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -75,24 +72,15 @@ export class DeleteOrgController {
       userId: user.userId
     });
 
-    let toDiskDeleteOrgRequest: ToDiskDeleteOrgRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
-        traceId: body.info.traceId
-      },
-      payload: {
-        orgId: org.orgId
+    await this.rpcService.sendToDiskUnwrapOutput({
+      request: {
+        operation: 'deleteOrg',
+        traceId: body.info.traceId,
+        input: {
+          orgId: org.orgId
+        }
       }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskDeleteOrgResponse>({
-        orgId: orgId,
-        projectId: null,
-        repoId: null,
-        message: toDiskDeleteOrgRequest,
-        checkIsOk: true
-      });
+    });
 
     let projects = await this.db.drizzle.query.projectsTable.findMany({
       where: eq(projectsTable.orgId, orgId)

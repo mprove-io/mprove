@@ -11,14 +11,12 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToBackendGetRebuildStructRequest } from '#common/zod/to-backend/test-routes/to-backend-get-rebuild-struct';
 import type { ToBlockmlRebuildStructResponse } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
 import type { ToDiskSeedProjectRequest } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request';
-import type { ToDiskSeedProjectResponse } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response';
 
 let testId = 'get-rebuild-struct__ok';
 
@@ -119,12 +117,9 @@ test('1', async t => {
       };
 
       let toDiskSeedProjectReq: ToDiskSeedProjectRequest = {
-        info: {
-          name: ToDiskRequestInfoNameEnum.ToDiskSeedProject,
-          traceId: traceId
-        },
-        payload: {
-          orgId: orgId,
+        operation: 'seedProject',
+        traceId: traceId,
+        input: {
           baseProject: baseProject,
           seedProjectId: seedProjectId,
           devRepoId: devRepoId,
@@ -132,12 +127,8 @@ test('1', async t => {
         }
       };
 
-      await prep.rpcService.sendToDisk<ToDiskSeedProjectResponse>({
-        checkIsOk: true,
-        orgId: orgId,
-        projectId: null,
-        repoId: null,
-        message: toDiskSeedProjectReq
+      await prep.rpcService.sendToDiskUnwrapOutput({
+        request: toDiskSeedProjectReq
       });
 
       // to backend

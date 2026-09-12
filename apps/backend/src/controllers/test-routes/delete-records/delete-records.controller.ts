@@ -50,11 +50,8 @@ import { HashService } from '#backend/services/hash.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { ToBackendDeleteRecordsResponse } from '#common/zod/to-backend/test-routes/to-backend-delete-records';
-import type { ToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-request';
-import type { ToDiskDeleteOrgResponse } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-response';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()
@@ -138,22 +135,14 @@ export class DeleteRecordsController {
 
     if (orgIds.length > 0) {
       await asyncPool(1, orgIds, async (x: string) => {
-        let deleteOrgRequest: ToDiskDeleteOrgRequest = {
-          info: {
-            name: ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
-            traceId: body.info.traceId
-          },
-          payload: {
-            orgId: x
+        await this.rpcService.sendToDiskUnwrapOutput({
+          request: {
+            operation: 'deleteOrg',
+            traceId: body.info.traceId,
+            input: {
+              orgId: x
+            }
           }
-        };
-
-        await this.rpcService.sendToDisk<ToDiskDeleteOrgResponse>({
-          orgId: x,
-          projectId: null,
-          repoId: null,
-          message: deleteOrgRequest,
-          checkIsOk: true
         });
       });
     }

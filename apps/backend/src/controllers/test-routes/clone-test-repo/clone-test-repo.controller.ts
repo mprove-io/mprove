@@ -9,10 +9,7 @@ import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
 import { RpcService } from '#backend/services/rpc.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToBackendCloneTestRepoResponse } from '#common/zod/to-backend/test-routes/to-backend-clone-test-repo';
-import type { ToDiskCloneTestRepoRequest } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-request';
-import type { ToDiskCloneTestRepoResponse } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-response';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()
@@ -34,24 +31,16 @@ export class CloneTestRepoController {
     type: ToBackendCloneTestRepoResponseDto
   })
   async cloneTestRepo(@Body() body: ToBackendCloneTestRepoRequestDto) {
-    let { orgId, testId } = body.payload;
+    let { testId } = body.payload;
 
-    let cloneTestRepoRequest: ToDiskCloneTestRepoRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCloneTestRepo,
-        traceId: body.info.traceId
-      },
-      payload: {
-        testId: testId
+    await this.rpcService.sendToDiskUnwrapOutput({
+      request: {
+        operation: 'cloneTestRepo',
+        traceId: body.info.traceId,
+        input: {
+          testId: testId
+        }
       }
-    };
-
-    await this.rpcService.sendToDisk<ToDiskCloneTestRepoResponse>({
-      orgId: orgId,
-      projectId: null,
-      repoId: null,
-      message: cloneTestRepoRequest,
-      checkIsOk: true
     });
 
     let payload: ToBackendCloneTestRepoResponse['payload'] = {};
