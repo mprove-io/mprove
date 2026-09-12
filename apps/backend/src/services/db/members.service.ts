@@ -26,14 +26,12 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { Member } from '#common/zod/backend/member';
-import type { ToDiskCreateDevRepoRequest } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-request';
-import type { ToDiskCreateDevRepoResponse } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-response';
+import type { ToDiskCreateDevRepoOutput } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-response';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
@@ -272,25 +270,16 @@ export class MembersService {
             project: project
           });
 
-          let toDiskCreateDevRepoRequest: ToDiskCreateDevRepoRequest = {
-            info: {
-              name: ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
-              traceId: traceId
-            },
-            payload: {
-              orgId: project.orgId,
-              baseProject: baseProject,
-              devRepoId: newMember.memberId
-            }
-          };
-
-          let diskResponse =
-            await this.rpcService.sendToDisk<ToDiskCreateDevRepoResponse>({
-              orgId: project.orgId,
-              projectId: demoProjectId,
-              repoId: user.userId,
-              message: toDiskCreateDevRepoRequest,
-              checkIsOk: true
+          let diskCreateDevRepoOutput: ToDiskCreateDevRepoOutput =
+            await this.rpcService.sendToDiskDevRepoUnwrapOutput({
+              request: {
+                operation: 'createDevRepo',
+                traceId: traceId,
+                input: {
+                  baseProject: baseProject,
+                  devRepoId: newMember.memberId
+                }
+              }
             });
 
           let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
@@ -341,8 +330,8 @@ export class MembersService {
                 projectId: demoProjectId,
                 repoId: user.userId,
                 structId,
-                diskFiles: diskResponse.payload.files,
-                mproveDir: diskResponse.payload.mproveDir,
+                diskFiles: diskCreateDevRepoOutput.files,
+                mproveDir: diskCreateDevRepoOutput.mproveDir,
                 envId: x.envId,
                 selectedGivens: [],
                 overrideTimezone: undefined

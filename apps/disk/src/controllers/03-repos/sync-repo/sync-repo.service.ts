@@ -1,28 +1,25 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { LogResult, StatusResult } from 'simple-git';
-import { ErEnum } from '#common/enums/er.enum';
+import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
 import type { DiskDevRepoCommitDoesNotMatchLocalCommitError } from '#common/zod/disk/errors/disk-dev-repo-commit-does-not-match-local-commit-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { zToDiskSyncRepoRequest } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-request';
-import type { ToDiskSyncRepoRequestPayload } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-request-payload';
-import type { ToDiskSyncRepoResponsePayload } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-response-payload';
+import type { ToDiskSyncRepoOutput } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-response';
+import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
+import { applySyncPayloadWrapped } from '#disk/functions/sync/apply-sync-payload-wrapped';
+import { getSyncAppliedChangesWrapped } from '#disk/functions/sync/get-sync-applied-changes-wrapped';
+import { getWorkingTreePayloadWrapped } from '#disk/functions/sync/get-working-tree-payload-wrapped';
+import { resetWorkingTreeToHeadWrapped } from '#disk/functions/sync/reset-working-tree-to-head-wrapped';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { applySyncPayload } from '#node-common/functions/apply-sync-payload';
-import { getSyncAppliedChanges } from '#node-common/functions/get-sync-applied-changes';
-import { getWorkingTreePayload } from '#node-common/functions/get-sync-files';
-import { resetWorkingTreeToHead } from '#node-common/functions/reset-working-tree-to-head';
-import { toServerError } from '#node-common/functions/to-server-error';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 type SyncData =
   | {
@@ -44,21 +41,33 @@ type WorkingTreePayload = {
 export class SyncRepoService {
   constructor(
     private diskTabService: DiskTabService,
-    private cs: ConfigService<DiskConfig>,
-    private logger: Logger
+    private cs: ConfigService<DiskConfig>
   ) {}
 
-  async process(request: any): Promise<ToDiskSyncRepoResponsePayload> {
-    let requestValid = zodParseOrThrow({
-      schema: zToDiskSyncRepoRequest,
-      object: request,
-      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
-      logger: this.logger
-    });
-
+  async process(
+    item:
+      | {
+          direction: 'from-server';
+          baseProject: BaseProject;
+          repoId: string;
+          branch: string;
+          lastCommit: string;
+          getRepo?: boolean;
+          getRepoNodes?: boolean;
+        }
+      | {
+          direction: 'to-server';
+          baseProject: BaseProject;
+          repoId: string;
+          branch: string;
+          lastCommit: string;
+          getRepo?: boolean;
+          getRepoNodes?: boolean;
+          changedFiles: DiskSyncFile[];
+          deletedFiles: DiskSyncFile[];
+        }
+  ): Promise<ToDiskResultFor<'ToDiskSyncRepo'>> {
     let {
-      orgId,
       baseProject,
       repoId,
       branch,
@@ -66,16 +75,12 @@ export class SyncRepoService {
       direction,
       getRepo,
       getRepoNodes
-    }: ToDiskSyncRepoRequestPayload = requestValid.payload;
+    } = item;
 
     let changedFiles: DiskSyncFile[] =
-      requestValid.payload.direction === 'to-server'
-        ? requestValid.payload.changedFiles
-        : [];
+      item.direction === 'to-server' ? item.changedFiles : [];
     let deletedFiles: DiskSyncFile[] =
-      requestValid.payload.direction === 'to-server'
-        ? requestValid.payload.deletedFiles
-        : [];
+      item.direction === 'to-server' ? item.deletedFiles : [];
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -85,13 +90,12 @@ export class SyncRepoService {
       encryptedString: baseProject.lt
     });
 
-    let { projectId, remoteType } = baseProject;
+    let { orgId, projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
-      projectLt;
+    let { gitUrl, privateKeyEncrypted, publicKey, passPhrase } = projectLt;
 
-    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
+    let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -168,52 +172,58 @@ export class SyncRepoService {
         let statusResult: StatusResult = await item.git.status();
         return Result.succeed(statusResult);
       }),
-      Result.bind('syncData', async item => {
+      Result.bind('syncData', item => {
         if (direction === 'from-server') {
-          let serverPayload: WorkingTreePayload = await getWorkingTreePayload({
-            repoDir: item.repoDir,
-            statusResult: item.statusResult
-          });
-
-          let syncData: SyncData = {
-            direction: 'from-server',
-            changedFiles: serverPayload.changedFiles,
-            deletedFiles: serverPayload.deletedFiles
-          };
-
-          return Result.succeed(syncData);
+          return Result.pipe(
+            getWorkingTreePayloadWrapped({
+              repoDir: item.repoDir,
+              statusResult: item.statusResult
+            }),
+            Result.map(
+              (serverPayload: WorkingTreePayload): SyncData => ({
+                direction: 'from-server',
+                changedFiles: serverPayload.changedFiles,
+                deletedFiles: serverPayload.deletedFiles
+              })
+            )
+          );
         }
 
-        let appliedChangesOnServer: string[] = await getSyncAppliedChanges({
-          repoDir: item.repoDir,
-          changedFiles: changedFiles,
-          deletedFiles: deletedFiles,
-          statusResult: item.statusResult
-        });
-
-        await resetWorkingTreeToHead({
-          repoDir: item.repoDir,
-          statusResult: item.statusResult
-        });
-
-        await applySyncPayload({
-          repoDir: item.repoDir,
-          changedFiles: changedFiles,
-          deletedFiles: deletedFiles
-        });
-
         return Result.pipe(
-          addChangesToStage({ repoDir: item.repoDir }),
-          Result.map(
-            (): SyncData => ({
-              direction: 'to-server',
-              appliedChangesOnServer: appliedChangesOnServer
-            })
+          getSyncAppliedChangesWrapped({
+            repoDir: item.repoDir,
+            changedFiles: changedFiles,
+            deletedFiles: deletedFiles,
+            statusResult: item.statusResult
+          }),
+          Result.andThen(appliedChangesOnServer =>
+            Result.pipe(
+              resetWorkingTreeToHeadWrapped({
+                repoDir: item.repoDir,
+                statusResult: item.statusResult
+              }),
+              Result.andThen(() =>
+                applySyncPayloadWrapped({
+                  repoDir: item.repoDir,
+                  changedFiles: changedFiles,
+                  deletedFiles: deletedFiles
+                })
+              ),
+              Result.andThen(() =>
+                addChangesToStage({ repoDir: item.repoDir })
+              ),
+              Result.map(
+                (): SyncData => ({
+                  direction: 'to-server',
+                  appliedChangesOnServer: appliedChangesOnServer
+                })
+              )
+            )
           )
         );
       }),
       Result.bind('repoStatus', item =>
-        getRepoStatus({
+        getRepoStatusWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -226,7 +236,7 @@ export class SyncRepoService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
+        getNodesAndFilesWrapped({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -234,7 +244,7 @@ export class SyncRepoService {
           isRootMproveDir: false
         })
       ),
-      Result.map((item): ToDiskSyncRepoResponsePayload => {
+      Result.map((item): ToDiskSyncRepoOutput => {
         let basePayload = {
           files: item.itemCatalog.files,
           mproveDir: item.itemCatalog.mproveDir,
@@ -257,24 +267,21 @@ export class SyncRepoService {
 
         if (item.syncData.direction === 'from-server') {
           return {
-            ...basePayload,
             direction: 'from-server',
+            ...basePayload,
             changedFiles: item.syncData.changedFiles,
             deletedFiles: item.syncData.deletedFiles
           };
         }
 
         return {
-          ...basePayload,
           direction: 'to-server',
+          ...basePayload,
           appliedChangesOnServer: item.syncData.appliedChangesOnServer
         };
-      }),
-      Result.mapError(toServerError)
+      })
     );
 
-    let payload = await Result.unwrap(syncRepoResult);
-
-    return payload;
+    return syncRepoResult;
   }
 }

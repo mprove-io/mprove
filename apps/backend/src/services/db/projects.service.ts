@@ -16,7 +16,6 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
@@ -24,8 +23,7 @@ import { ServerError } from '#common/models/server-error';
 import type { Ev } from '#common/zod/backend/ev';
 import type { Project } from '#common/zod/backend/project';
 import type { ProjectsItem } from '#common/zod/backend/projects-item';
-import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
-import type { ToDiskCreateProjectResponse } from '#common/zod/to-disk/02-projects/create-project/create-project-response';
+import type { ToDiskCreateProjectOutput } from '#common/zod/to-disk/02-projects/create-project/create-project-response';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
@@ -184,30 +182,21 @@ export class ProjectsService {
       project: newProject
     });
 
-    let toDiskCreateProjectRequest: ToDiskCreateProjectRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
-        traceId: traceId
-      },
-      payload: {
-        orgId: orgId,
-        baseProject: baseProject,
-        devRepoId: user.userId,
-        userAlias: user.alias,
-        seedProjectId: seedProjectId
-      }
-    };
-
-    let diskResponse =
-      await this.rpcService.sendToDisk<ToDiskCreateProjectResponse>({
-        orgId: orgId,
-        projectId: projectId,
-        repoId: null,
-        message: toDiskCreateProjectRequest,
-        checkIsOk: true
+    let diskCreateProjectOutput: ToDiskCreateProjectOutput =
+      await this.rpcService.sendToDiskCreateProjectUnwrapOutput({
+        request: {
+          operation: 'createProject',
+          traceId: traceId,
+          input: {
+            baseProject: baseProject,
+            devRepoId: user.userId,
+            userAlias: user.alias,
+            seedProjectId: seedProjectId
+          }
+        }
       });
 
-    newProject.defaultBranch = diskResponse.payload.defaultBranch;
+    newProject.defaultBranch = diskCreateProjectOutput.defaultBranch;
 
     let prodEnv = this.envsService.makeEnv({
       projectId: newProject.projectId,
@@ -262,8 +251,8 @@ export class ProjectsService {
       projectId: newProject.projectId,
       repoId: PROD_REPO_ID,
       structId: prodStructId,
-      diskFiles: diskResponse.payload.prodFiles,
-      mproveDir: diskResponse.payload.mproveDir,
+      diskFiles: diskCreateProjectOutput.prodFiles,
+      mproveDir: diskCreateProjectOutput.mproveDir,
       envId: PROJECT_ENV_PROD,
       selectedGivens: [],
       overrideTimezone: undefined,
@@ -277,8 +266,8 @@ export class ProjectsService {
       projectId: newProject.projectId,
       repoId: user.userId,
       structId: devStructId,
-      diskFiles: diskResponse.payload.prodFiles,
-      mproveDir: diskResponse.payload.mproveDir,
+      diskFiles: diskCreateProjectOutput.prodFiles,
+      mproveDir: diskCreateProjectOutput.mproveDir,
       envId: PROJECT_ENV_PROD,
       selectedGivens: [],
       overrideTimezone: undefined,

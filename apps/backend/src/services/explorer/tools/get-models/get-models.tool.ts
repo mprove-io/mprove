@@ -16,9 +16,8 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskGetCatalogFilesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request';
-import type { ToDiskGetCatalogFilesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
+import type { ToDiskGetCatalogFilesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @Injectable()
 export class GetModelsToolService {
@@ -105,28 +104,21 @@ export class GetModelsToolService {
         });
 
         let request: ToDiskGetCatalogFilesRequest = {
-          info: {
-            name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-            traceId: traceId
-          },
-          payload: {
-            orgId: project.orgId,
+          operation: 'getCatalogFiles',
+          traceId: traceId,
+          input: {
             baseProject: baseProject,
             repoId: repoId,
             branch: branchId
           }
         };
 
-        let response =
-          await this.rpcService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-            orgId: project.orgId,
-            projectId: projectId,
-            repoId: repoId,
-            message: request,
-            checkIsOk: true
+        let diskGetCatalogFilesOutput: ToDiskGetCatalogFilesOutput =
+          await this.rpcService.sendToDiskUnwrapOutput({
+            request: request
           });
 
-        let catalogFiles = response.payload.files.filter(file =>
+        let catalogFiles = diskGetCatalogFilesOutput.files.filter(file =>
           file.pathString.endsWith('.malloy')
         );
 

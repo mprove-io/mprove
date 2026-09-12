@@ -9,14 +9,12 @@ import type { OrgTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { Org } from '#common/zod/backend/org';
 import type { OrgsItem } from '#common/zod/backend/orgs-item';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
-import type { ToDiskCreateOrgResponse } from '#common/zod/to-disk/01-orgs/create-org/create-org-response';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
 import { TabService } from '../tab.service';
@@ -108,21 +106,16 @@ export class OrgsService {
     };
 
     let createOrgRequest: ToDiskCreateOrgRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
-        traceId: traceId
-      },
-      payload: {
+      operation: 'createOrg',
+      traceId: traceId,
+      input: {
         orgId: newOrg.orgId
       }
     };
 
-    await this.rpcService.sendToDisk<ToDiskCreateOrgResponse>({
-      orgId: newOrg.orgId,
-      projectId: undefined,
-      repoId: null,
-      message: createOrgRequest,
-      checkIsOk: true
+    await this.rpcService.sendToDiskOrgUnwrapOutput({
+      request: createOrgRequest,
+      projectGroupId: 'undefined'
     });
 
     await retry(
