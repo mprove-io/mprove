@@ -13,8 +13,7 @@ import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
 import { ServerError } from '#common/models/server-error';
 import type { RpcRequestData } from '#common/zod/rpc-request-data';
 import type { MyResponse } from '#common/zod/to/my-response';
-import { getToDiskRequestSchema } from '#common/zod/to-disk/get-to-disk-request-schema';
-import { getToDiskResponseSchema } from '#common/zod/to-disk/get-to-disk-response-schema';
+import { toDiskOperationRegistry } from '#common/zod/to-disk/to-disk-operation-registry';
 import type { ToDiskRequest } from '#common/zod/to-disk/to-disk-request';
 import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
 
@@ -185,9 +184,10 @@ export class RpcService implements OnModuleDestroy {
     let validationResult: ZodSafeParseResult<ToDiskRequest>;
 
     try {
-      validationResult = getToDiskRequestSchema({
-        operation: sourceRequest.operation
-      }).safeParse(sourceRequest);
+      validationResult =
+        toDiskOperationRegistry[sourceRequest.operation].request.safeParse(
+          sourceRequest
+        );
     } catch {
       throw new ServerError({
         message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS
@@ -313,9 +313,8 @@ export class RpcService implements OnModuleDestroy {
     let response: ToDiskResponseForOperation<TRequest['operation']>;
 
     try {
-      response = getToDiskResponseSchema<TRequest['operation']>({
-        operation: request.operation
-      }).parse(rawResponse);
+      response =
+        toDiskOperationRegistry[request.operation].response.parse(rawResponse);
     } catch {
       throw new ServerError({
         message: ErEnum.BACKEND_RPC_INVALID_RESPONSE_FORMAT

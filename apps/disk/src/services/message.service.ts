@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import type { z } from 'zod';
 import { METHOD_RPC } from '#common/constants/top';
-import { getToDiskRequestSchema } from '#common/zod/to-disk/get-to-disk-request-schema';
 import {
   type ToDiskOperation,
   zToDiskOperation
 } from '#common/zod/to-disk/to-disk-operation';
+import { toDiskOperationRegistry } from '#common/zod/to-disk/to-disk-operation-registry';
 import type { ToDiskOperationResponse } from '#common/zod/to-disk/to-disk-operation-response';
 import type { ToDiskRequest } from '#common/zod/to-disk/to-disk-request';
 import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
@@ -133,9 +133,7 @@ export class MessageService {
     let operation: ToDiskOperation = operationResult.data;
 
     let requestResult: z.ZodSafeParseResult<ToDiskRequest> =
-      getToDiskRequestSchema({
-        operation: operation
-      }).safeParse(message);
+      toDiskOperationRegistry[operation].request.safeParse(message);
 
     if (requestResult.success === false) {
       let response: ToDiskOperationResponse = makeInvalidRequestResponse({

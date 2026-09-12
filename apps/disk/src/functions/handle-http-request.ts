@@ -1,7 +1,7 @@
 import type { Logger } from '@nestjs/common';
 import { z } from 'zod';
-import { getToDiskRequestSchema } from '#common/zod/to-disk/get-to-disk-request-schema';
 import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
+import { toDiskOperationRegistry } from '#common/zod/to-disk/to-disk-operation-registry';
 import type { ToDiskRequestForOperation } from '#common/zod/to-disk/to-disk-request-for-operation';
 import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
 import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
@@ -25,7 +25,7 @@ export async function handleHttpRequest<
 
   let requestResult: z.ZodSafeParseResult<
     ToDiskRequestForOperation<TOperation>
-  > = getToDiskRequestSchema({ operation: operation }).safeParse(body);
+  > = toDiskOperationRegistry[operation].request.safeParse(body);
 
   if (requestResult.success === false) {
     let response: ToDiskResponseForOperation<TOperation> =
