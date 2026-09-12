@@ -13,7 +13,7 @@ import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
 import { ServerError } from '#common/models/server-error';
 import type { RpcRequestData } from '#common/zod/rpc-request-data';
 import type { MyResponse } from '#common/zod/to/my-response';
-import { toDiskOperationRegistry } from '#common/zod/to-disk/to-disk-operation-registry';
+import { zToDiskOperationRegistry } from '#common/zod/to-disk/to-disk-operation-registry';
 import type { ToDiskRequest } from '#common/zod/to-disk/to-disk-request';
 import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
 
@@ -185,7 +185,7 @@ export class RpcService implements OnModuleDestroy {
 
     try {
       validationResult =
-        toDiskOperationRegistry[sourceRequest.operation].request.safeParse(
+        zToDiskOperationRegistry[sourceRequest.operation].request.safeParse(
           sourceRequest
         );
     } catch {
@@ -314,7 +314,7 @@ export class RpcService implements OnModuleDestroy {
 
     try {
       response =
-        toDiskOperationRegistry[request.operation].response.parse(rawResponse);
+        zToDiskOperationRegistry[request.operation].response.parse(rawResponse);
     } catch {
       throw new ServerError({
         message: ErEnum.BACKEND_RPC_INVALID_RESPONSE_FORMAT

@@ -5,7 +5,7 @@ import {
   type ToDiskOperation,
   zToDiskOperation
 } from '#common/zod/to-disk/to-disk-operation';
-import { toDiskOperationRegistry } from '#common/zod/to-disk/to-disk-operation-registry';
+import { zToDiskOperationRegistry } from '#common/zod/to-disk/to-disk-operation-registry';
 import type { ToDiskOperationResponse } from '#common/zod/to-disk/to-disk-operation-response';
 import type { ToDiskRequest } from '#common/zod/to-disk/to-disk-request';
 import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
@@ -133,7 +133,7 @@ export class MessageService {
     let operation: ToDiskOperation = operationResult.data;
 
     let requestResult: z.ZodSafeParseResult<ToDiskRequest> =
-      toDiskOperationRegistry[operation].request.safeParse(message);
+      zToDiskOperationRegistry[operation].request.safeParse(message);
 
     if (requestResult.success === false) {
       let response: ToDiskOperationResponse = makeInvalidRequestResponse({
