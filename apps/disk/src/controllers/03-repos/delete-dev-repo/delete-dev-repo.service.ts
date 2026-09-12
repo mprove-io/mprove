@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskDeleteDevRepoOutput } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
@@ -21,7 +21,7 @@ export class DeleteDevRepoService {
   async process(item: {
     baseProject: BaseProject;
     devRepoId: string;
-  }): Promise<ToDiskResultFor<'ToDiskDeleteDevRepo'>> {
+  }): Promise<ToDiskResultForOperation<'deleteDevRepo'>> {
     let { baseProject, devRepoId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

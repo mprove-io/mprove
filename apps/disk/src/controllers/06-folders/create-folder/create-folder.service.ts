@@ -6,7 +6,7 @@ import type { DiskFolderAlreadyExistError } from '#common/zod/disk/errors/disk-f
 import type { DiskParentPathIsNotExistError } from '#common/zod/disk/errors/disk-parent-path-is-not-exist-error';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { ToDiskCreateFolderOutput } from '#common/zod/to-disk/06-folders/create-folder/create-folder-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
@@ -31,7 +31,7 @@ export class CreateFolderService {
     branch: string;
     parentNodeId: string;
     folderName: string;
-  }): Promise<ToDiskResultFor<'ToDiskCreateFolder'>> {
+  }): Promise<ToDiskResultForOperation<'createFolder'>> {
     let { baseProject, repoId, branch, parentNodeId, folderName } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

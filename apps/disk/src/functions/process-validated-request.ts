@@ -1,33 +1,33 @@
 import { randomUUID } from 'node:crypto';
 import type { Logger } from '@nestjs/common';
-import {
-  type ToDiskOperationName,
-  type ToDiskRequestFor,
-  type ToDiskResultFor,
-  type ToDiskWireResponseFor
-} from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
+import type { ToDiskRequestForOperation } from '#common/zod/to-disk/to-disk-request-for-operation';
+import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 
 export async function processValidatedRequest<
-  TName extends ToDiskOperationName
+  TOperation extends ToDiskOperation
 >(item: {
-  name: TName;
-  request: ToDiskRequestFor<TName>;
+  operation: TOperation;
+  request: ToDiskRequestForOperation<TOperation>;
   method: string;
   process: (
-    input: ToDiskRequestFor<TName>['input']
-  ) => Promise<ToDiskResultFor<TName>>;
+    input: ToDiskRequestForOperation<TOperation>['input']
+  ) => Promise<ToDiskResultForOperation<TOperation>>;
   logger: Logger;
   startTs?: number;
-}): Promise<ToDiskWireResponseFor<TName>> {
-  let { name, request, method, process, logger } = item;
+}): Promise<ToDiskResponseForOperation<TOperation>> {
+  let { operation, request, method, process, logger } = item;
 
   let startTs: number = item.startTs ?? Date.now();
 
   try {
-    let result: ToDiskResultFor<TName> = await process(request.input);
+    let result: ToDiskResultForOperation<TOperation> = await process(
+      request.input
+    );
 
-    let response: ToDiskWireResponseFor<TName> = {
-      path: name,
+    let response: ToDiskResponseForOperation<TOperation> = {
+      operation: operation,
       method: method,
       duration: Date.now() - startTs,
       traceId: request.traceId,
@@ -40,8 +40,8 @@ export async function processValidatedRequest<
 
     logger.error({ incidentId: incidentId, error: error });
 
-    let response: ToDiskWireResponseFor<TName> = {
-      path: name,
+    let response: ToDiskResponseForOperation<TOperation> = {
+      operation: operation,
       method: method,
       duration: Date.now() - startTs,
       traceId: request.traceId,

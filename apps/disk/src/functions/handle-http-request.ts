@@ -1,53 +1,54 @@
 import type { Logger } from '@nestjs/common';
 import { z } from 'zod';
-import {
-  getToDiskRequestSchema,
-  type ToDiskOperationName,
-  type ToDiskRequestFor,
-  type ToDiskResultFor,
-  type ToDiskWireResponseFor
-} from '#common/zod/to-disk/to-disk-operation-contract';
+import { getToDiskRequestSchema } from '#common/zod/to-disk/get-to-disk-request-schema';
+import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
+import type { ToDiskRequestForOperation } from '#common/zod/to-disk/to-disk-request-for-operation';
+import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import { makeInvalidRequestResponse } from '#disk/functions/make-invalid-request-response';
 import { processValidatedRequest } from '#disk/functions/process-validated-request';
 
 export async function handleHttpRequest<
-  TName extends ToDiskOperationName
+  TOperation extends ToDiskOperation
 >(item: {
-  name: TName;
+  operation: TOperation;
   body: unknown;
   method: string;
   process: (
-    input: ToDiskRequestFor<TName>['input']
-  ) => Promise<ToDiskResultFor<TName>>;
+    input: ToDiskRequestForOperation<TOperation>['input']
+  ) => Promise<ToDiskResultForOperation<TOperation>>;
   logger: Logger;
-}): Promise<ToDiskWireResponseFor<TName>> {
-  let { name, body, method, process, logger } = item;
+}): Promise<ToDiskResponseForOperation<TOperation>> {
+  let { operation, body, method, process, logger } = item;
 
   let startTs: number = Date.now();
 
-  let requestResult: z.ZodSafeParseResult<ToDiskRequestFor<TName>> =
-    getToDiskRequestSchema({ name: name }).safeParse(body);
+  let requestResult: z.ZodSafeParseResult<
+    ToDiskRequestForOperation<TOperation>
+  > = getToDiskRequestSchema({ operation: operation }).safeParse(body);
 
   if (requestResult.success === false) {
-    let response: ToDiskWireResponseFor<TName> = makeInvalidRequestResponse({
-      name: name,
-      message: body,
-      error: requestResult.error,
-      startTs: startTs,
-      method: method
-    });
+    let response: ToDiskResponseForOperation<TOperation> =
+      makeInvalidRequestResponse({
+        operation: operation,
+        message: body,
+        error: requestResult.error,
+        startTs: startTs,
+        method: method
+      });
 
     return response;
   }
 
-  let response: ToDiskWireResponseFor<TName> = await processValidatedRequest({
-    name: name,
-    request: requestResult.data,
-    method: method,
-    process: process,
-    logger: logger,
-    startTs: startTs
-  });
+  let response: ToDiskResponseForOperation<TOperation> =
+    await processValidatedRequest({
+      operation: operation,
+      request: requestResult.data,
+      method: method,
+      process: process,
+      logger: logger,
+      startTs: startTs
+    });
 
   return response;
 }

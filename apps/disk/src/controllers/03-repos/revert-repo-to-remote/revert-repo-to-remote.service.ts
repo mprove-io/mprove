@@ -5,7 +5,7 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskRemoteBranchIsNotExistError } from '#common/zod/disk/errors/disk-remote-branch-is-not-exist-error';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -27,7 +27,7 @@ export class RevertRepoToRemoteService {
     baseProject: BaseProject;
     repoId: string;
     branch: string;
-  }): Promise<ToDiskResultFor<'ToDiskRevertRepoToRemote'>> {
+  }): Promise<ToDiskResultForOperation<'revertRepoToRemote'>> {
     let { baseProject, repoId, branch } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

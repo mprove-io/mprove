@@ -5,7 +5,7 @@ import { PROD_REPO_ID } from '#common/constants/top';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { ToDiskPushRepoOutput } from '#common/zod/to-disk/03-repos/push-repo/push-repo-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -30,7 +30,7 @@ export class PushRepoService {
     repoId: string;
     branch: string;
     userAlias: string;
-  }): Promise<ToDiskResultFor<'ToDiskPushRepo'>> {
+  }): Promise<ToDiskResultForOperation<'pushRepo'>> {
     let { baseProject, repoId, branch, userAlias } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Queue, Worker } from 'groupmq';
 import Redis from 'ioredis';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
-import type { ToDiskRpcResponse } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskRpcResponse } from '#common/zod/to-disk/to-disk-rpc-response';
 import { DiskConfig } from '#disk/config/disk-config';
 import { MessageService } from './message.service';
 

@@ -14,13 +14,13 @@ export type ToDiskDeleteOrgOutput = {
 };
 
 export type ToDiskDeleteOrgResponse = ToDiskResponse<
-  'ToDiskDeleteOrg',
+  'deleteOrg',
   ToDiskDeleteOrgOutput,
   ToDiskDeleteOrgError
 >;
 
 export let zToDiskDeleteOrgResponse = makeToDiskResponseSchema({
-  path: 'ToDiskDeleteOrg',
+  operation: 'deleteOrg',
   success: z
     .object({
       deletedOrgId: z.string()

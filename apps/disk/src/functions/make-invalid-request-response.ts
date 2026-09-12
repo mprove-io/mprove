@@ -1,26 +1,24 @@
 import { z } from 'zod';
-import {
-  type ToDiskOperationName,
-  type ToDiskWireResponseFor
-} from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
+import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
 
 export function makeInvalidRequestResponse<
-  TName extends ToDiskOperationName
+  TOperation extends ToDiskOperation
 >(item: {
-  name: TName;
+  operation: TOperation;
   message: unknown;
   error: z.ZodError;
   startTs: number;
   method: string;
-}): ToDiskWireResponseFor<TName> {
-  let { name, message, error, startTs, method } = item;
+}): ToDiskResponseForOperation<TOperation> {
+  let { operation, message, error, startTs, method } = item;
 
   let metadata: z.ZodSafeParseResult<{ traceId: string }> = z
     .object({ traceId: z.string() })
     .safeParse(message);
 
-  let response: ToDiskWireResponseFor<TName> = {
-    path: name,
+  let response: ToDiskResponseForOperation<TOperation> = {
+    operation: operation,
     method: method,
     duration: Date.now() - startTs,
     traceId: metadata.success ? metadata.data.traceId : '',

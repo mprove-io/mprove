@@ -21,13 +21,13 @@ export type ToDiskPushRepoOutput = {
 };
 
 export type ToDiskPushRepoResponse = ToDiskResponse<
-  'ToDiskPushRepo',
+  'pushRepo',
   ToDiskPushRepoOutput,
   ToDiskPushRepoError
 >;
 
 export let zToDiskPushRepoResponse = makeToDiskResponseSchema({
-  path: 'ToDiskPushRepo',
+  operation: 'pushRepo',
   success: z
     .object({
       repo: zRepo,

@@ -21,13 +21,13 @@ export type ToDiskRenameCatalogNodeOutput = {
 };
 
 export type ToDiskRenameCatalogNodeResponse = ToDiskResponse<
-  'ToDiskRenameCatalogNode',
+  'renameCatalogNode',
   ToDiskRenameCatalogNodeOutput,
   ToDiskRenameCatalogNodeError
 >;
 
 export let zToDiskRenameCatalogNodeResponse = makeToDiskResponseSchema({
-  path: 'ToDiskRenameCatalogNode',
+  operation: 'renameCatalogNode',
   success: z
     .object({
       repo: zRepo,

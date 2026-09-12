@@ -5,7 +5,7 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { ToDiskGetFileOutput } from '#common/zod/to-disk/07-files/get-file/get-file-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
@@ -32,7 +32,7 @@ export class GetFileService {
     branch: string;
     fileNodeId: string;
     builderLeft: BuilderLeftEnum;
-  }): Promise<ToDiskResultFor<'ToDiskGetFile'>> {
+  }): Promise<ToDiskResultForOperation<'getFile'>> {
     let { baseProject, repoId, branch, fileNodeId, builderLeft } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

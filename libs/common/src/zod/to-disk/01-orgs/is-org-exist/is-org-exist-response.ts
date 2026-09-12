@@ -15,13 +15,13 @@ export type ToDiskIsOrgExistOutput = {
 };
 
 export type ToDiskIsOrgExistResponse = ToDiskResponse<
-  'ToDiskIsOrgExist',
+  'isOrgExist',
   ToDiskIsOrgExistOutput,
   ToDiskIsOrgExistError
 >;
 
 export let zToDiskIsOrgExistResponse = makeToDiskResponseSchema({
-  path: 'ToDiskIsOrgExist',
+  operation: 'isOrgExist',
   success: z
     .object({ orgId: z.string(), isOrgExist: z.boolean() })
     .meta({ id: 'ToDiskIsOrgExistOutput' }),

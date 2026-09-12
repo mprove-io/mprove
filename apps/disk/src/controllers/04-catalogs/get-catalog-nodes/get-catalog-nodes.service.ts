@@ -5,7 +5,7 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskGetCatalogNodesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { createGit } from '#disk/functions/git/create-git';
@@ -27,7 +27,7 @@ export class GetCatalogNodesService {
     repoId: string;
     branch?: string;
     isFetch: boolean;
-  }): Promise<ToDiskResultFor<'ToDiskGetCatalogNodes'>> {
+  }): Promise<ToDiskResultForOperation<'getCatalogNodes'>> {
     let { baseProject, repoId, branch, isFetch } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { ToDiskCreateOrgOutput } from '#common/zod/to-disk/01-orgs/create-org/create-org-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { checkOrgDoesNotExist } from './check-org-does-not-exist';
@@ -13,7 +13,7 @@ export class CreateOrgService {
 
   async process(item: {
     orgId: string;
-  }): Promise<ToDiskResultFor<'ToDiskCreateOrg'>> {
+  }): Promise<ToDiskResultForOperation<'createOrg'>> {
     let { orgId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

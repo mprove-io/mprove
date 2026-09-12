@@ -9,8 +9,8 @@ import {
   zToDiskInvalidRequest
 } from './to-disk-invalid-request';
 
-export type ToDiskResponse<TPath extends string, TSuccess, TError> = {
-  path: TPath;
+export type ToDiskResponse<TOperation extends string, TSuccess, TError> = {
+  operation: TOperation;
   method: string;
   duration: number;
   traceId: string;
@@ -22,19 +22,19 @@ export type ToDiskResponse<TPath extends string, TSuccess, TError> = {
 };
 
 export function makeToDiskResponseSchema<
-  TPath extends string,
+  TOperation extends string,
   TSuccess,
   TError
 >(item: {
-  path: TPath;
+  operation: TOperation;
   success: z.ZodType<TSuccess>;
   error: z.ZodType<TError>;
 }) {
-  let { path, success, error } = item;
+  let { operation, success, error } = item;
 
   let schema = z
     .object({
-      path: z.literal(path),
+      operation: z.literal(operation),
       method: z.string(),
       duration: z.number().nonnegative(),
       traceId: z.string(),
@@ -51,7 +51,7 @@ export function makeToDiskResponseSchema<
       ])
     })
     .transform(item => ({
-      path: item.path,
+      operation: item.operation,
       method: item.method,
       duration: item.duration,
       traceId: item.traceId,
@@ -59,7 +59,7 @@ export function makeToDiskResponseSchema<
     }));
 
   assertTypesEqual<
-    ToDiskResponse<TPath, TSuccess, TError>,
+    ToDiskResponse<TOperation, TSuccess, TError>,
     z.infer<typeof schema>
   >({ value: true });
 

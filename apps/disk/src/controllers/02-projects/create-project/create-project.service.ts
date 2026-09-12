@@ -5,7 +5,7 @@ import { PROD_REPO_ID } from '#common/constants/top';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskCreateProjectOutput } from '#common/zod/to-disk/02-projects/create-project/create-project-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
@@ -29,7 +29,7 @@ export class CreateProjectService {
     seedProjectId?: string;
     devRepoId: string;
     userAlias: string;
-  }): Promise<ToDiskResultFor<'ToDiskCreateProject'>> {
+  }): Promise<ToDiskResultForOperation<'createProject'>> {
     let { baseProject, seedProjectId, devRepoId, userAlias } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

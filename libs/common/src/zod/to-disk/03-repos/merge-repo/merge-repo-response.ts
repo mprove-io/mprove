@@ -21,13 +21,13 @@ export type ToDiskMergeRepoOutput = {
 };
 
 export type ToDiskMergeRepoResponse = ToDiskResponse<
-  'ToDiskMergeRepo',
+  'mergeRepo',
   ToDiskMergeRepoOutput,
   ToDiskMergeRepoError
 >;
 
 export let zToDiskMergeRepoResponse = makeToDiskResponseSchema({
-  path: 'ToDiskMergeRepo',
+  operation: 'mergeRepo',
   success: z
     .object({
       repo: zRepo,

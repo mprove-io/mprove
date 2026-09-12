@@ -6,7 +6,7 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskFileIsNotExistError } from '#common/zod/disk/errors/disk-file-is-not-exist-error';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { ToDiskDeleteFileOutput } from '#common/zod/to-disk/07-files/delete-file/delete-file-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
@@ -34,7 +34,7 @@ export class DeleteFileService {
     branch: string;
     fileNodeId: string;
     userAlias: string;
-  }): Promise<ToDiskResultFor<'ToDiskDeleteFile'>> {
+  }): Promise<ToDiskResultForOperation<'deleteFile'>> {
     let { baseProject, repoId, branch, fileNodeId, userAlias } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

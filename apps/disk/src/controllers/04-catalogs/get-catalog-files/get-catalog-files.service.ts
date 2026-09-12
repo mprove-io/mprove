@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskGetCatalogFilesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -24,7 +24,7 @@ export class GetCatalogFilesService {
     baseProject: BaseProject;
     repoId: string;
     branch: string;
-  }): Promise<ToDiskResultFor<'ToDiskGetCatalogFiles'>> {
+  }): Promise<ToDiskResultForOperation<'getCatalogFiles'>> {
     let { baseProject, repoId, branch } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

@@ -1,5 +1,4 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskCreateOrgResponse } from '#common/zod/to-disk/01-orgs/create-org/create-org-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { CreateOrgService } from './create-org.service';
@@ -11,13 +10,13 @@ export class CreateOrgController {
     private logger: Logger
   ) {}
 
-  @Post(ToDiskRequestInfoNameEnum.ToDiskCreateOrg)
+  @Post('createOrg')
   async createOrg(
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskCreateOrgResponse> {
     let response: ToDiskCreateOrgResponse = await handleHttpRequest({
-      name: 'ToDiskCreateOrg',
+      operation: 'createOrg',
       body: body,
       method: request.method,
       process: input => this.createOrgService.process(input),

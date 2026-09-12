@@ -16,13 +16,13 @@ export type ToDiskDeleteBranchOutput = {
 };
 
 export type ToDiskDeleteBranchResponse = ToDiskResponse<
-  'ToDiskDeleteBranch',
+  'deleteBranch',
   ToDiskDeleteBranchOutput,
   ToDiskDeleteBranchError
 >;
 
 export let zToDiskDeleteBranchResponse = makeToDiskResponseSchema({
-  path: 'ToDiskDeleteBranch',
+  operation: 'deleteBranch',
   success: z
     .object({ repo: zRepo, deletedBranch: z.string() })
     .meta({ id: 'ToDiskDeleteBranchOutput' }),

@@ -13,13 +13,13 @@ import {
 export type ToDiskCommitRepoOutput = { repo: Repo };
 
 export type ToDiskCommitRepoResponse = ToDiskResponse<
-  'ToDiskCommitRepo',
+  'commitRepo',
   ToDiskCommitRepoOutput,
   ToDiskCommitRepoError
 >;
 
 export let zToDiskCommitRepoResponse = makeToDiskResponseSchema({
-  path: 'ToDiskCommitRepo',
+  operation: 'commitRepo',
   success: z.object({ repo: zRepo }).meta({ id: 'ToDiskCommitRepoOutput' }),
   error: zToDiskCommitRepoError
 });

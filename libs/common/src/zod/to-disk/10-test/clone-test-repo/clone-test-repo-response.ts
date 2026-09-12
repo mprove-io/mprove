@@ -12,13 +12,13 @@ import {
 export type ToDiskCloneTestRepoOutput = Record<string, never>;
 
 export type ToDiskCloneTestRepoResponse = ToDiskResponse<
-  'ToDiskCloneTestRepo',
+  'cloneTestRepo',
   ToDiskCloneTestRepoOutput,
   ToDiskCloneTestRepoError
 >;
 
 export let zToDiskCloneTestRepoResponse = makeToDiskResponseSchema({
-  path: 'ToDiskCloneTestRepo',
+  operation: 'cloneTestRepo',
   success: z.object({}).meta({ id: 'ToDiskCloneTestRepoOutput' }),
   error: zToDiskCloneTestRepoError
 });

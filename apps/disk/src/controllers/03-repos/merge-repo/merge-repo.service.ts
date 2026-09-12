@@ -5,7 +5,7 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskTheirBranchIsNotExistError } from '#common/zod/disk/errors/disk-their-branch-is-not-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskMergeRepoOutput } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -31,7 +31,7 @@ export class MergeRepoService {
     theirBranch: string;
     isTheirBranchRemote: boolean;
     userAlias: string;
-  }): Promise<ToDiskResultFor<'ToDiskMergeRepo'>> {
+  }): Promise<ToDiskResultForOperation<'mergeRepo'>> {
     let {
       baseProject,
       repoId,

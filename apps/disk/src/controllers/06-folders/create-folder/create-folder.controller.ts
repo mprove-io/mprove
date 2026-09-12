@@ -1,5 +1,4 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskCreateFolderResponse } from '#common/zod/to-disk/06-folders/create-folder/create-folder-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { CreateFolderService } from './create-folder.service';
@@ -11,13 +10,13 @@ export class CreateFolderController {
     private logger: Logger
   ) {}
 
-  @Post(ToDiskRequestInfoNameEnum.ToDiskCreateFolder)
+  @Post('createFolder')
   async createFolder(
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskCreateFolderResponse> {
     let response: ToDiskCreateFolderResponse = await handleHttpRequest({
-      name: 'ToDiskCreateFolder',
+      operation: 'createFolder',
       body: body,
       method: request.method,
       process: input => this.createFolderService.process(input),

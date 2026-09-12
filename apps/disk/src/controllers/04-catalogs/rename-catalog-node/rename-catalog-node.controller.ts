@@ -1,5 +1,4 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskRenameCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { RenameCatalogNodeService } from './rename-catalog-node.service';
@@ -11,13 +10,13 @@ export class RenameCatalogNodeController {
     private logger: Logger
   ) {}
 
-  @Post(ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode)
+  @Post('renameCatalogNode')
   async renameCatalogNode(
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskRenameCatalogNodeResponse> {
     let response: ToDiskRenameCatalogNodeResponse = await handleHttpRequest({
-      name: 'ToDiskRenameCatalogNode',
+      operation: 'renameCatalogNode',
       body: body,
       method: request.method,
       process: input => this.renameCatalogNodeService.process(input),

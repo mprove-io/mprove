@@ -21,13 +21,13 @@ export type ToDiskRevertRepoToRemoteOutput = {
 };
 
 export type ToDiskRevertRepoToRemoteResponse = ToDiskResponse<
-  'ToDiskRevertRepoToRemote',
+  'revertRepoToRemote',
   ToDiskRevertRepoToRemoteOutput,
   ToDiskRevertRepoToRemoteError
 >;
 
 export let zToDiskRevertRepoToRemoteResponse = makeToDiskResponseSchema({
-  path: 'ToDiskRevertRepoToRemote',
+  operation: 'revertRepoToRemote',
   success: z
     .object({
       repo: zRepo,

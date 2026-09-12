@@ -1,5 +1,3 @@
-import type { z } from 'zod';
-import type { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import type { ToDiskCreateOrgResponse } from '#common/zod/to-disk/01-orgs/create-org/create-org-response';
 import type { ToDiskDeleteOrgRequest } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-request';
@@ -40,10 +38,8 @@ import type { ToDiskRenameCatalogNodeRequest } from '#common/zod/to-disk/04-cata
 import type { ToDiskRenameCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response';
 import type { ToDiskCreateBranchRequest } from '#common/zod/to-disk/05-branches/create-branch/create-branch-request';
 import type { ToDiskCreateBranchResponse } from '#common/zod/to-disk/05-branches/create-branch/create-branch-response';
-import {
-  type ToDiskDeleteBranchRequest,
-  zToDiskDeleteBranchRequest
-} from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-request';
+import type { ToDiskDeleteBranchRequest } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-request';
+import type { ToDiskDeleteBranchResponse } from '#common/zod/to-disk/05-branches/delete-branch/delete-branch-response';
 import type { ToDiskIsBranchExistRequest } from '#common/zod/to-disk/05-branches/is-branch-exist/is-branch-exist-request';
 import type { ToDiskIsBranchExistResponse } from '#common/zod/to-disk/05-branches/is-branch-exist/is-branch-exist-response';
 import type { ToDiskCreateFolderRequest } from '#common/zod/to-disk/06-folders/create-folder/create-folder-request';
@@ -54,280 +50,151 @@ import type { ToDiskCreateFileRequest } from '#common/zod/to-disk/07-files/creat
 import type { ToDiskCreateFileResponse } from '#common/zod/to-disk/07-files/create-file/create-file-response';
 import type { ToDiskDeleteFileRequest } from '#common/zod/to-disk/07-files/delete-file/delete-file-request';
 import type { ToDiskDeleteFileResponse } from '#common/zod/to-disk/07-files/delete-file/delete-file-response';
-import {
-  type ToDiskGetFileRequest,
-  zToDiskGetFileRequest
-} from '#common/zod/to-disk/07-files/get-file/get-file-request';
+import type { ToDiskGetFileRequest } from '#common/zod/to-disk/07-files/get-file/get-file-request';
+import type { ToDiskGetFileResponse } from '#common/zod/to-disk/07-files/get-file/get-file-response';
 import type { ToDiskSaveFileRequest } from '#common/zod/to-disk/07-files/save-file/save-file-request';
 import type { ToDiskSaveFileResponse } from '#common/zod/to-disk/07-files/save-file/save-file-response';
 import type { ToDiskSeedProjectRequest } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request';
 import type { ToDiskSeedProjectResponse } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response';
 import type { ToDiskCloneTestRepoRequest } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-request';
 import type { ToDiskCloneTestRepoResponse } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-response';
-import {
-  type ToDiskDeleteBranchResponse,
-  zToDiskDeleteBranchResponse
-} from './05-branches/delete-branch/delete-branch-response';
-import {
-  type ToDiskGetFileResponse,
-  zToDiskGetFileResponse
-} from './07-files/get-file/get-file-response';
-import type { ToDiskUnrouteableResponse } from './to-disk-unrouteable-response';
+import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
 
 type ToDiskOperationContractMap = {
-  [ToDiskRequestInfoNameEnum.ToDiskCreateOrg]: {
+  createOrg: {
     request: ToDiskCreateOrgRequest;
     response: ToDiskCreateOrgResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskDeleteOrg]: {
+  deleteOrg: {
     request: ToDiskDeleteOrgRequest;
     response: ToDiskDeleteOrgResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskIsOrgExist]: {
+  isOrgExist: {
     request: ToDiskIsOrgExistRequest;
     response: ToDiskIsOrgExistResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskCreateProject]: {
+  createProject: {
     request: ToDiskCreateProjectRequest;
     response: ToDiskCreateProjectResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskDeleteProject]: {
+  deleteProject: {
     request: ToDiskDeleteProjectRequest;
     response: ToDiskDeleteProjectResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskIsProjectExist]: {
+  isProjectExist: {
     request: ToDiskIsProjectExistRequest;
     response: ToDiskIsProjectExistResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskCommitRepo]: {
+  commitRepo: {
     request: ToDiskCommitRepoRequest;
     response: ToDiskCommitRepoResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo]: {
+  createDevRepo: {
     request: ToDiskCreateDevRepoRequest;
     response: ToDiskCreateDevRepoResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo]: {
+  deleteDevRepo: {
     request: ToDiskDeleteDevRepoRequest;
     response: ToDiskDeleteDevRepoResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskMergeRepo]: {
+  mergeRepo: {
     request: ToDiskMergeRepoRequest;
     response: ToDiskMergeRepoResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskPullRepo]: {
+  pullRepo: {
     request: ToDiskPullRepoRequest;
     response: ToDiskPullRepoResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskPushRepo]: {
+  pushRepo: {
     request: ToDiskPushRepoRequest;
     response: ToDiskPushRepoResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit]: {
+  revertRepoToLastCommit: {
     request: ToDiskRevertRepoToLastCommitRequest;
     response: ToDiskRevertRepoToLastCommitResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote]: {
+  revertRepoToRemote: {
     request: ToDiskRevertRepoToRemoteRequest;
     response: ToDiskRevertRepoToRemoteResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskSyncRepo]: {
+  syncRepo: {
     request: ToDiskSyncRepoRequest;
     response: ToDiskSyncRepoResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles]: {
+  getCatalogFiles: {
     request: ToDiskGetCatalogFilesRequest;
     response: ToDiskGetCatalogFilesResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes]: {
+  getCatalogNodes: {
     request: ToDiskGetCatalogNodesRequest;
     response: ToDiskGetCatalogNodesResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode]: {
+  moveCatalogNode: {
     request: ToDiskMoveCatalogNodeRequest;
     response: ToDiskMoveCatalogNodeResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode]: {
+  renameCatalogNode: {
     request: ToDiskRenameCatalogNodeRequest;
     response: ToDiskRenameCatalogNodeResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskCreateBranch]: {
+  createBranch: {
     request: ToDiskCreateBranchRequest;
     response: ToDiskCreateBranchResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskDeleteBranch]: {
+  deleteBranch: {
     request: ToDiskDeleteBranchRequest;
     response: ToDiskDeleteBranchResponse;
-    result: Exclude<
-      ToDiskDeleteBranchResponse['result'],
-      { type: 'InternalFailure' | 'InvalidRequest' }
-    >;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskIsBranchExist]: {
+  isBranchExist: {
     request: ToDiskIsBranchExistRequest;
     response: ToDiskIsBranchExistResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskCreateFolder]: {
+  createFolder: {
     request: ToDiskCreateFolderRequest;
     response: ToDiskCreateFolderResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskDeleteFolder]: {
+  deleteFolder: {
     request: ToDiskDeleteFolderRequest;
     response: ToDiskDeleteFolderResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskCreateFile]: {
+  createFile: {
     request: ToDiskCreateFileRequest;
     response: ToDiskCreateFileResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskDeleteFile]: {
+  deleteFile: {
     request: ToDiskDeleteFileRequest;
     response: ToDiskDeleteFileResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskGetFile]: {
-    request: ToDiskGetFileRequest;
-    response: ToDiskGetFileResponse;
-    result: Exclude<
-      ToDiskGetFileResponse['result'],
-      { type: 'InternalFailure' | 'InvalidRequest' }
-    >;
-  };
-  [ToDiskRequestInfoNameEnum.ToDiskSaveFile]: {
+  getFile: { request: ToDiskGetFileRequest; response: ToDiskGetFileResponse };
+  saveFile: {
     request: ToDiskSaveFileRequest;
     response: ToDiskSaveFileResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskSeedProject]: {
+  seedProject: {
     request: ToDiskSeedProjectRequest;
     response: ToDiskSeedProjectResponse;
   };
-  [ToDiskRequestInfoNameEnum.ToDiskCloneTestRepo]: {
+  cloneTestRepo: {
     request: ToDiskCloneTestRepoRequest;
     response: ToDiskCloneTestRepoResponse;
   };
 };
 
 type ToDiskOperationContractShape = {
-  [TName in ToDiskRequestInfoNameEnum]: {
-    request:
-      | { info: { name: `${TName}` } }
-      | { operation: string; traceId: string; input: unknown };
-    response: { info: { path: `${TName}` } };
+  [TOperation in ToDiskOperation]: {
+    request: { operation: TOperation; traceId: string; input: unknown };
+    response: {
+      operation: TOperation;
+      method: string;
+      duration: number;
+      traceId: string;
+      result: unknown;
+    };
   };
 };
 
 type ValidateOperationContract<TContract extends ToDiskOperationContractShape> =
   TContract;
 
-export type ToDiskOperationContract = {
-  [TName in keyof ToDiskOperationContractMap as `${TName}`]: ValidateOperationContract<ToDiskOperationContractMap>[TName];
-};
-
-export type ToDiskOperation = {
-  [TName in keyof ToDiskOperationContract]: {
-    name: `${TName}`;
-  } & ToDiskOperationContract[TName];
-}[keyof ToDiskOperationContract];
-
-export type ToDiskOperationName = ToDiskOperation['name'];
-
-export type ToDiskOperationRequest = ToDiskOperation['request'];
-
-export type ToDiskOperationResponse = ToDiskOperation['response'];
-
-export type ToDiskRpcResponse =
-  | ToDiskOperationResponse
-  | ToDiskUnrouteableResponse;
-
-type ToDiskOperationForRequest<TRequest extends ToDiskOperationRequest> =
-  TRequest extends { operation: infer TOperation }
-    ? Extract<ToDiskOperation, { request: { operation: TOperation } }>
-    : TRequest extends { info: { name: infer TName } }
-      ? Extract<ToDiskOperation, { request: { info: { name: TName } } }>
-      : never;
-
-export type ToDiskResponseForRequest<TRequest extends ToDiskOperationRequest> =
-  ToDiskOperationForRequest<TRequest>['response'];
-
-export type ToDiskNameForRequest<TRequest extends ToDiskOperationRequest> =
-  ToDiskOperationForRequest<TRequest>['name'];
-
-export type ToDiskLegacyPayload = Exclude<
-  ToDiskOperationResponse,
-  { result: unknown }
->['payload'];
-
-export type ToDiskPilotOperation = Extract<
-  ToDiskOperation,
-  { result: unknown }
->;
-
-export type ToDiskPilotOperationName = ToDiskPilotOperation['name'];
-
-export type ToDiskPilotRequest = ToDiskPilotOperation['request'];
-
-export type ToDiskPilotRequestFor<TName extends ToDiskPilotOperationName> =
-  ToDiskOperationContract[TName]['request'];
-
-export type ToDiskResultFor<TName extends ToDiskPilotOperationName> =
-  ToDiskOperationContract[TName]['result'];
-
-export type ToDiskPilotWireResponseFor<TName extends ToDiskPilotOperationName> =
-  ToDiskOperationContract[TName]['response'];
-
-// Runtime schema projection of the operation contract, not a separate contract map.
-const pilotSchemas: {
-  [TName in ToDiskPilotOperationName]: {
-    operation: ToDiskPilotRequestFor<TName>['operation'];
-    request: z.ZodType<ToDiskPilotRequestFor<TName>>;
-    response: z.ZodType<ToDiskPilotWireResponseFor<TName>>;
-  };
-} = {
-  ToDiskGetFile: {
-    operation: 'getFile',
-    request: zToDiskGetFileRequest,
-    response: zToDiskGetFileResponse
-  },
-  ToDiskDeleteBranch: {
-    operation: 'deleteBranch',
-    request: zToDiskDeleteBranchRequest,
-    response: zToDiskDeleteBranchResponse
-  }
-};
-
-export function getToDiskPilotOperationName<
-  TRequest extends ToDiskPilotRequest
->(item: { request: TRequest }): ToDiskNameForRequest<TRequest> {
-  let names: ToDiskPilotOperationName[] = Object.keys(
-    pilotSchemas
-  ) as ToDiskPilotOperationName[];
-
-  let name: ToDiskPilotOperationName = names.find(
-    name => pilotSchemas[name].operation === item.request.operation
-  );
-
-  if (!name) {
-    throw new Error('Unknown disk pilot operation');
-  }
-
-  let result: ToDiskNameForRequest<TRequest> =
-    name as ToDiskNameForRequest<TRequest>;
-
-  return result;
-}
-
-export function getToDiskPilotRequestSchema<
-  TName extends ToDiskPilotOperationName
->(item: { name: TName }): z.ZodType<ToDiskPilotRequestFor<TName>> {
-  let schema: z.ZodType<ToDiskPilotRequestFor<TName>> =
-    pilotSchemas[item.name].request;
-
-  return schema;
-}
-
-export function getToDiskPilotWireResponseSchema<
-  TName extends ToDiskPilotOperationName
->(item: { name: TName }): z.ZodType<ToDiskPilotWireResponseFor<TName>> {
-  let schema: z.ZodType<ToDiskPilotWireResponseFor<TName>> =
-    pilotSchemas[item.name].response;
-
-  return schema;
-}
+export type ToDiskOperationContract =
+  ValidateOperationContract<ToDiskOperationContractMap>;

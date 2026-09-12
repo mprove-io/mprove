@@ -21,13 +21,13 @@ export type ToDiskRevertRepoToLastCommitOutput = {
 };
 
 export type ToDiskRevertRepoToLastCommitResponse = ToDiskResponse<
-  'ToDiskRevertRepoToLastCommit',
+  'revertRepoToLastCommit',
   ToDiskRevertRepoToLastCommitOutput,
   ToDiskRevertRepoToLastCommitError
 >;
 
 export let zToDiskRevertRepoToLastCommitResponse = makeToDiskResponseSchema({
-  path: 'ToDiskRevertRepoToLastCommit',
+  operation: 'revertRepoToLastCommit',
   success: z
     .object({
       repo: zRepo,

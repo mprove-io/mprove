@@ -22,13 +22,13 @@ export type ToDiskDeleteFolderOutput = {
 };
 
 export type ToDiskDeleteFolderResponse = ToDiskResponse<
-  'ToDiskDeleteFolder',
+  'deleteFolder',
   ToDiskDeleteFolderOutput,
   ToDiskDeleteFolderError
 >;
 
 export let zToDiskDeleteFolderResponse = makeToDiskResponseSchema({
-  path: 'ToDiskDeleteFolder',
+  operation: 'deleteFolder',
   success: z
     .object({
       repo: zRepo,

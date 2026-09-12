@@ -13,14 +13,10 @@ import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
 import { ServerError } from '#common/models/server-error';
 import type { RpcRequestData } from '#common/zod/rpc-request-data';
 import type { MyResponse } from '#common/zod/to/my-response';
-import {
-  getToDiskOperationName,
-  getToDiskRequestSchema,
-  getToDiskWireResponseSchema,
-  type ToDiskNameForRequest,
-  type ToDiskRequest,
-  type ToDiskWireResponseFor
-} from '#common/zod/to-disk/to-disk-operation-contract';
+import { getToDiskRequestSchema } from '#common/zod/to-disk/get-to-disk-request-schema';
+import { getToDiskResponseSchema } from '#common/zod/to-disk/get-to-disk-response-schema';
+import type { ToDiskRequest } from '#common/zod/to-disk/to-disk-request';
+import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
 
 type DiskSendItem<TRequest extends ToDiskRequest> = {
   request: TRequest;
@@ -32,7 +28,7 @@ type DiskRoute = {
 };
 
 type DiskSuccessOutput<TRequest extends ToDiskRequest> = Extract<
-  ToDiskWireResponseFor<ToDiskNameForRequest<TRequest>>['result'],
+  ToDiskResponseForOperation<TRequest['operation']>['result'],
   { type: 'Success' }
 >['value'];
 
@@ -189,13 +185,9 @@ export class RpcService implements OnModuleDestroy {
     let validationResult: ZodSafeParseResult<ToDiskRequest>;
 
     try {
-      let name: ToDiskNameForRequest<TRequest> = getToDiskOperationName({
-        request: sourceRequest
-      });
-
-      validationResult = getToDiskRequestSchema({ name: name }).safeParse(
-        sourceRequest
-      );
+      validationResult = getToDiskRequestSchema({
+        operation: sourceRequest.operation
+      }).safeParse(sourceRequest);
     } catch {
       throw new ServerError({
         message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS
@@ -303,12 +295,8 @@ export class RpcService implements OnModuleDestroy {
     request: TRequest;
     shardKey: string;
     groupId: string;
-  }): Promise<ToDiskWireResponseFor<ToDiskNameForRequest<TRequest>>> {
+  }): Promise<ToDiskResponseForOperation<TRequest['operation']>> {
     let { request, shardKey, groupId } = item;
-
-    let name: ToDiskNameForRequest<TRequest> = getToDiskOperationName({
-      request: request
-    });
 
     let diskShard: string = calculateDiskShard({
       shardKey: shardKey,
@@ -322,11 +310,11 @@ export class RpcService implements OnModuleDestroy {
       timeout: this.rpcDiskTimeoutMs
     });
 
-    let response: ToDiskWireResponseFor<ToDiskNameForRequest<TRequest>>;
+    let response: ToDiskResponseForOperation<TRequest['operation']>;
 
     try {
-      response = getToDiskWireResponseSchema({
-        name: name
+      response = getToDiskResponseSchema<TRequest['operation']>({
+        operation: request.operation
       }).parse(rawResponse);
     } catch {
       throw new ServerError({
@@ -348,7 +336,7 @@ export class RpcService implements OnModuleDestroy {
       request: request
     });
 
-    let response: ToDiskWireResponseFor<ToDiskNameForRequest<TRequest>> =
+    let response: ToDiskResponseForOperation<TRequest['operation']> =
       await this.sendToDisk({
         request: request,
         shardKey: route.shardKey,

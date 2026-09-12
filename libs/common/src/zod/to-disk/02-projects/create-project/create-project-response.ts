@@ -22,13 +22,13 @@ export type ToDiskCreateProjectOutput = {
 };
 
 export type ToDiskCreateProjectResponse = ToDiskResponse<
-  'ToDiskCreateProject',
+  'createProject',
   ToDiskCreateProjectOutput,
   ToDiskCreateProjectError
 >;
 
 export let zToDiskCreateProjectResponse = makeToDiskResponseSchema({
-  path: 'ToDiskCreateProject',
+  operation: 'createProject',
   success: z
     .object({
       orgId: z.string(),

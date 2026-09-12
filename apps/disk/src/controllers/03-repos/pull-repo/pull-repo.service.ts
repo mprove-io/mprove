@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskPullRepoOutput } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -26,7 +26,7 @@ export class PullRepoService {
     repoId: string;
     branch: string;
     userAlias: string;
-  }): Promise<ToDiskResultFor<'ToDiskPullRepo'>> {
+  }): Promise<ToDiskResultForOperation<'pullRepo'>> {
     let { baseProject, repoId, branch, userAlias } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

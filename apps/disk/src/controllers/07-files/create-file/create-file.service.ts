@@ -6,7 +6,7 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskFileAlreadyExistError } from '#common/zod/disk/errors/disk-file-already-exist-error';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { ToDiskCreateFileOutput } from '#common/zod/to-disk/07-files/create-file/create-file-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
@@ -38,7 +38,7 @@ export class CreateFileService {
     parentNodeId: string;
     fileName: string;
     fileText?: string;
-  }): Promise<ToDiskResultFor<'ToDiskCreateFile'>> {
+  }): Promise<ToDiskResultForOperation<'createFile'>> {
     let {
       baseProject,
       repoId,

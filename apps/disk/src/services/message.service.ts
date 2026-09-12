@@ -1,18 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { z } from 'zod';
 import { METHOD_RPC } from '#common/constants/top';
-import {
-  getToDiskOperationNameForValue,
-  getToDiskRequestSchema,
-  isToDiskOperationValue,
-  type ToDiskOperationName,
-  type ToDiskOperationResponse,
-  type ToDiskOperationValue,
-  type ToDiskRequest,
-  type ToDiskResponseForRequest,
-  type ToDiskRpcResponse,
-  type ToDiskWireResponseFor
-} from '#common/zod/to-disk/to-disk-operation-contract';
+import { getToDiskRequestSchema } from '#common/zod/to-disk/get-to-disk-request-schema';
+import { parseToDiskOperation } from '#common/zod/to-disk/parse-to-disk-operation';
+import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
+import type { ToDiskOperationResponse } from '#common/zod/to-disk/to-disk-operation-response';
+import type { ToDiskRequest } from '#common/zod/to-disk/to-disk-request';
+import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
+import type { ToDiskResponseForRequest } from '#common/zod/to-disk/to-disk-response-for-request';
+import type { ToDiskRpcResponse } from '#common/zod/to-disk/to-disk-rpc-response';
 import type { ToDiskUnrouteableResponse } from '#common/zod/to-disk/to-disk-unrouteable-response';
 import { CreateOrgService } from '#disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '#disk/controllers/01-orgs/delete-org/delete-org.service';
@@ -95,14 +91,11 @@ export class MessageService {
   }): Promise<ToDiskResponseForRequest<TRequest>> {
     let { request } = item;
 
-    let response: ToDiskRpcResponse = await this.handleMessage({
-      message: request
+    let response: ToDiskResponseForRequest<TRequest> = await this.dispatch({
+      request: request
     });
 
-    let typedResponse: ToDiskResponseForRequest<TRequest> =
-      response as ToDiskResponseForRequest<TRequest>;
-
-    return typedResponse;
+    return response;
   }
 
   async handleMessage(item: { message: unknown }): Promise<ToDiskRpcResponse> {
@@ -115,13 +108,12 @@ export class MessageService {
         ? message.operation
         : undefined;
 
-    let operationItem: { operation: unknown } = {
-      operation: operationValue
-    };
+    let operationResult: z.ZodSafeParseResult<ToDiskOperation> =
+      parseToDiskOperation({
+        operation: operationValue
+      });
 
-    let isOperation: boolean = isToDiskOperationValue(operationItem);
-
-    if (isOperation === false) {
+    if (operationResult.success === false) {
       let response: ToDiskUnrouteableResponse = {
         result: {
           type: 'InvalidRequest',
@@ -138,20 +130,16 @@ export class MessageService {
       return response;
     }
 
-    // The registry-backed predicate above validated the discriminator.
-    let operation: ToDiskOperationValue =
-      operationItem.operation as ToDiskOperationValue;
-
-    let name: ToDiskOperationName = getToDiskOperationNameForValue({
-      operation: operation
-    });
+    let operation: ToDiskOperation = operationResult.data;
 
     let requestResult: z.ZodSafeParseResult<ToDiskRequest> =
-      getToDiskRequestSchema({ name: name }).safeParse(message);
+      getToDiskRequestSchema({
+        operation: operation
+      }).safeParse(message);
 
     if (requestResult.success === false) {
       let response: ToDiskOperationResponse = makeInvalidRequestResponse({
-        name: name,
+        operation: operation,
         message: message,
         error: requestResult.error,
         startTs: startTs,
@@ -168,6 +156,12 @@ export class MessageService {
     return response;
   }
 
+  private async dispatch<TRequest extends ToDiskRequest>(item: {
+    request: TRequest;
+  }): Promise<ToDiskResponseForRequest<TRequest>>;
+  private async dispatch(item: {
+    request: ToDiskRequest;
+  }): Promise<ToDiskOperationResponse>;
   private async dispatch(item: {
     request: ToDiskRequest;
   }): Promise<ToDiskOperationResponse> {
@@ -175,9 +169,9 @@ export class MessageService {
 
     switch (request.operation) {
       case 'createOrg': {
-        let response: ToDiskWireResponseFor<'ToDiskCreateOrg'> =
+        let response: ToDiskResponseForOperation<'createOrg'> =
           await processValidatedRequest({
-            name: 'ToDiskCreateOrg',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.createOrgService.process(input),
@@ -187,9 +181,9 @@ export class MessageService {
         return response;
       }
       case 'deleteOrg': {
-        let response: ToDiskWireResponseFor<'ToDiskDeleteOrg'> =
+        let response: ToDiskResponseForOperation<'deleteOrg'> =
           await processValidatedRequest({
-            name: 'ToDiskDeleteOrg',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.deleteOrgService.process(input),
@@ -199,9 +193,9 @@ export class MessageService {
         return response;
       }
       case 'isOrgExist': {
-        let response: ToDiskWireResponseFor<'ToDiskIsOrgExist'> =
+        let response: ToDiskResponseForOperation<'isOrgExist'> =
           await processValidatedRequest({
-            name: 'ToDiskIsOrgExist',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.isOrgExistService.process(input),
@@ -211,9 +205,9 @@ export class MessageService {
         return response;
       }
       case 'createProject': {
-        let response: ToDiskWireResponseFor<'ToDiskCreateProject'> =
+        let response: ToDiskResponseForOperation<'createProject'> =
           await processValidatedRequest({
-            name: 'ToDiskCreateProject',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.createProjectService.process(input),
@@ -223,9 +217,9 @@ export class MessageService {
         return response;
       }
       case 'deleteProject': {
-        let response: ToDiskWireResponseFor<'ToDiskDeleteProject'> =
+        let response: ToDiskResponseForOperation<'deleteProject'> =
           await processValidatedRequest({
-            name: 'ToDiskDeleteProject',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.deleteProjectService.process(input),
@@ -235,9 +229,9 @@ export class MessageService {
         return response;
       }
       case 'isProjectExist': {
-        let response: ToDiskWireResponseFor<'ToDiskIsProjectExist'> =
+        let response: ToDiskResponseForOperation<'isProjectExist'> =
           await processValidatedRequest({
-            name: 'ToDiskIsProjectExist',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.isProjectExistService.process(input),
@@ -247,9 +241,9 @@ export class MessageService {
         return response;
       }
       case 'commitRepo': {
-        let response: ToDiskWireResponseFor<'ToDiskCommitRepo'> =
+        let response: ToDiskResponseForOperation<'commitRepo'> =
           await processValidatedRequest({
-            name: 'ToDiskCommitRepo',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.commitRepoService.process(input),
@@ -259,9 +253,9 @@ export class MessageService {
         return response;
       }
       case 'createDevRepo': {
-        let response: ToDiskWireResponseFor<'ToDiskCreateDevRepo'> =
+        let response: ToDiskResponseForOperation<'createDevRepo'> =
           await processValidatedRequest({
-            name: 'ToDiskCreateDevRepo',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.createDevRepoService.process(input),
@@ -271,9 +265,9 @@ export class MessageService {
         return response;
       }
       case 'deleteDevRepo': {
-        let response: ToDiskWireResponseFor<'ToDiskDeleteDevRepo'> =
+        let response: ToDiskResponseForOperation<'deleteDevRepo'> =
           await processValidatedRequest({
-            name: 'ToDiskDeleteDevRepo',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.deleteDevRepoService.process(input),
@@ -283,9 +277,9 @@ export class MessageService {
         return response;
       }
       case 'mergeRepo': {
-        let response: ToDiskWireResponseFor<'ToDiskMergeRepo'> =
+        let response: ToDiskResponseForOperation<'mergeRepo'> =
           await processValidatedRequest({
-            name: 'ToDiskMergeRepo',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.mergeRepoService.process(input),
@@ -295,9 +289,9 @@ export class MessageService {
         return response;
       }
       case 'pullRepo': {
-        let response: ToDiskWireResponseFor<'ToDiskPullRepo'> =
+        let response: ToDiskResponseForOperation<'pullRepo'> =
           await processValidatedRequest({
-            name: 'ToDiskPullRepo',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.pullRepoService.process(input),
@@ -307,9 +301,9 @@ export class MessageService {
         return response;
       }
       case 'pushRepo': {
-        let response: ToDiskWireResponseFor<'ToDiskPushRepo'> =
+        let response: ToDiskResponseForOperation<'pushRepo'> =
           await processValidatedRequest({
-            name: 'ToDiskPushRepo',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.pushRepoService.process(input),
@@ -319,9 +313,9 @@ export class MessageService {
         return response;
       }
       case 'revertRepoToLastCommit': {
-        let response: ToDiskWireResponseFor<'ToDiskRevertRepoToLastCommit'> =
+        let response: ToDiskResponseForOperation<'revertRepoToLastCommit'> =
           await processValidatedRequest({
-            name: 'ToDiskRevertRepoToLastCommit',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.revertRepoToLastCommitService.process(input),
@@ -331,9 +325,9 @@ export class MessageService {
         return response;
       }
       case 'revertRepoToRemote': {
-        let response: ToDiskWireResponseFor<'ToDiskRevertRepoToRemote'> =
+        let response: ToDiskResponseForOperation<'revertRepoToRemote'> =
           await processValidatedRequest({
-            name: 'ToDiskRevertRepoToRemote',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.revertRepoToRemoteService.process(input),
@@ -343,9 +337,9 @@ export class MessageService {
         return response;
       }
       case 'syncRepo': {
-        let response: ToDiskWireResponseFor<'ToDiskSyncRepo'> =
+        let response: ToDiskResponseForOperation<'syncRepo'> =
           await processValidatedRequest({
-            name: 'ToDiskSyncRepo',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.syncRepoService.process(input),
@@ -355,9 +349,9 @@ export class MessageService {
         return response;
       }
       case 'getCatalogFiles': {
-        let response: ToDiskWireResponseFor<'ToDiskGetCatalogFiles'> =
+        let response: ToDiskResponseForOperation<'getCatalogFiles'> =
           await processValidatedRequest({
-            name: 'ToDiskGetCatalogFiles',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.getCatalogFilesService.process(input),
@@ -367,9 +361,9 @@ export class MessageService {
         return response;
       }
       case 'getCatalogNodes': {
-        let response: ToDiskWireResponseFor<'ToDiskGetCatalogNodes'> =
+        let response: ToDiskResponseForOperation<'getCatalogNodes'> =
           await processValidatedRequest({
-            name: 'ToDiskGetCatalogNodes',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.getCatalogNodesService.process(input),
@@ -379,9 +373,9 @@ export class MessageService {
         return response;
       }
       case 'moveCatalogNode': {
-        let response: ToDiskWireResponseFor<'ToDiskMoveCatalogNode'> =
+        let response: ToDiskResponseForOperation<'moveCatalogNode'> =
           await processValidatedRequest({
-            name: 'ToDiskMoveCatalogNode',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.moveCatalogNodeService.process(input),
@@ -391,9 +385,9 @@ export class MessageService {
         return response;
       }
       case 'renameCatalogNode': {
-        let response: ToDiskWireResponseFor<'ToDiskRenameCatalogNode'> =
+        let response: ToDiskResponseForOperation<'renameCatalogNode'> =
           await processValidatedRequest({
-            name: 'ToDiskRenameCatalogNode',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.renameCatalogNodeService.process(input),
@@ -403,9 +397,9 @@ export class MessageService {
         return response;
       }
       case 'createBranch': {
-        let response: ToDiskWireResponseFor<'ToDiskCreateBranch'> =
+        let response: ToDiskResponseForOperation<'createBranch'> =
           await processValidatedRequest({
-            name: 'ToDiskCreateBranch',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.createBranchService.process(input),
@@ -415,9 +409,9 @@ export class MessageService {
         return response;
       }
       case 'deleteBranch': {
-        let response: ToDiskWireResponseFor<'ToDiskDeleteBranch'> =
+        let response: ToDiskResponseForOperation<'deleteBranch'> =
           await processValidatedRequest({
-            name: 'ToDiskDeleteBranch',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.deleteBranchService.process(input),
@@ -427,9 +421,9 @@ export class MessageService {
         return response;
       }
       case 'isBranchExist': {
-        let response: ToDiskWireResponseFor<'ToDiskIsBranchExist'> =
+        let response: ToDiskResponseForOperation<'isBranchExist'> =
           await processValidatedRequest({
-            name: 'ToDiskIsBranchExist',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.isBranchExistService.process(input),
@@ -439,9 +433,9 @@ export class MessageService {
         return response;
       }
       case 'createFolder': {
-        let response: ToDiskWireResponseFor<'ToDiskCreateFolder'> =
+        let response: ToDiskResponseForOperation<'createFolder'> =
           await processValidatedRequest({
-            name: 'ToDiskCreateFolder',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.createFolderService.process(input),
@@ -451,9 +445,9 @@ export class MessageService {
         return response;
       }
       case 'deleteFolder': {
-        let response: ToDiskWireResponseFor<'ToDiskDeleteFolder'> =
+        let response: ToDiskResponseForOperation<'deleteFolder'> =
           await processValidatedRequest({
-            name: 'ToDiskDeleteFolder',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.deleteFolderService.process(input),
@@ -463,9 +457,9 @@ export class MessageService {
         return response;
       }
       case 'createFile': {
-        let response: ToDiskWireResponseFor<'ToDiskCreateFile'> =
+        let response: ToDiskResponseForOperation<'createFile'> =
           await processValidatedRequest({
-            name: 'ToDiskCreateFile',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.createFileService.process(input),
@@ -475,9 +469,9 @@ export class MessageService {
         return response;
       }
       case 'deleteFile': {
-        let response: ToDiskWireResponseFor<'ToDiskDeleteFile'> =
+        let response: ToDiskResponseForOperation<'deleteFile'> =
           await processValidatedRequest({
-            name: 'ToDiskDeleteFile',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.deleteFileService.process(input),
@@ -487,9 +481,9 @@ export class MessageService {
         return response;
       }
       case 'getFile': {
-        let response: ToDiskWireResponseFor<'ToDiskGetFile'> =
+        let response: ToDiskResponseForOperation<'getFile'> =
           await processValidatedRequest({
-            name: 'ToDiskGetFile',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.getFileService.process(input),
@@ -499,9 +493,9 @@ export class MessageService {
         return response;
       }
       case 'saveFile': {
-        let response: ToDiskWireResponseFor<'ToDiskSaveFile'> =
+        let response: ToDiskResponseForOperation<'saveFile'> =
           await processValidatedRequest({
-            name: 'ToDiskSaveFile',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.saveFileService.process(input),
@@ -511,9 +505,9 @@ export class MessageService {
         return response;
       }
       case 'seedProject': {
-        let response: ToDiskWireResponseFor<'ToDiskSeedProject'> =
+        let response: ToDiskResponseForOperation<'seedProject'> =
           await processValidatedRequest({
-            name: 'ToDiskSeedProject',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.seedProjectService.process(input),
@@ -523,9 +517,9 @@ export class MessageService {
         return response;
       }
       case 'cloneTestRepo': {
-        let response: ToDiskWireResponseFor<'ToDiskCloneTestRepo'> =
+        let response: ToDiskResponseForOperation<'cloneTestRepo'> =
           await processValidatedRequest({
-            name: 'ToDiskCloneTestRepo',
+            operation: request.operation,
             request: request,
             method: METHOD_RPC,
             process: input => this.cloneTestRepoService.process(input),

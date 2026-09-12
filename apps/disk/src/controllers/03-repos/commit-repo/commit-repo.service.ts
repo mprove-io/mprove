@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskCommitRepoOutput } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -27,7 +27,7 @@ export class CommitRepoService {
     branch: string;
     userAlias: string;
     commitMessage: string;
-  }): Promise<ToDiskResultFor<'ToDiskCommitRepo'>> {
+  }): Promise<ToDiskResultForOperation<'commitRepo'>> {
     let { baseProject, repoId, branch, userAlias, commitMessage } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

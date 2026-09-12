@@ -1,5 +1,4 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskGetFileResponse } from '#common/zod/to-disk/07-files/get-file/get-file-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { GetFileService } from './get-file.service';
@@ -11,13 +10,13 @@ export class GetFileController {
     private logger: Logger
   ) {}
 
-  @Post(ToDiskRequestInfoNameEnum.ToDiskGetFile)
+  @Post('getFile')
   async getFile(
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskGetFileResponse> {
     let response: ToDiskGetFileResponse = await handleHttpRequest({
-      name: 'ToDiskGetFile',
+      operation: 'getFile',
       body: body,
       method: request.method,
       process: input => this.getFileService.process(input),

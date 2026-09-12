@@ -42,13 +42,13 @@ export type ToDiskSyncRepoOutput =
     };
 
 export type ToDiskSyncRepoResponse = ToDiskResponse<
-  'ToDiskSyncRepo',
+  'syncRepo',
   ToDiskSyncRepoOutput,
   ToDiskSyncRepoError
 >;
 
 export let zToDiskSyncRepoResponse = makeToDiskResponseSchema({
-  path: 'ToDiskSyncRepo',
+  operation: 'syncRepo',
   success: z
     .discriminatedUnion('direction', [
       z.object({

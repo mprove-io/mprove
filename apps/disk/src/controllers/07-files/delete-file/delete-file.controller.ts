@@ -1,5 +1,4 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskDeleteFileResponse } from '#common/zod/to-disk/07-files/delete-file/delete-file-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { DeleteFileService } from './delete-file.service';
@@ -11,13 +10,13 @@ export class DeleteFileController {
     private logger: Logger
   ) {}
 
-  @Post(ToDiskRequestInfoNameEnum.ToDiskDeleteFile)
+  @Post('deleteFile')
   async deleteFile(
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskDeleteFileResponse> {
     let response: ToDiskDeleteFileResponse = await handleHttpRequest({
-      name: 'ToDiskDeleteFile',
+      operation: 'deleteFile',
       body: body,
       method: request.method,
       process: input => this.deleteFileService.process(input),

@@ -21,13 +21,13 @@ export type ToDiskSeedProjectOutput = {
 };
 
 export type ToDiskSeedProjectResponse = ToDiskResponse<
-  'ToDiskSeedProject',
+  'seedProject',
   ToDiskSeedProjectOutput,
   ToDiskSeedProjectError
 >;
 
 export let zToDiskSeedProjectResponse = makeToDiskResponseSchema({
-  path: 'ToDiskSeedProject',
+  operation: 'seedProject',
   success: z
     .object({
       repo: zRepo,

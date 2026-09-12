@@ -14,13 +14,13 @@ export type ToDiskCreateOrgOutput = {
 };
 
 export type ToDiskCreateOrgResponse = ToDiskResponse<
-  'ToDiskCreateOrg',
+  'createOrg',
   ToDiskCreateOrgOutput,
   ToDiskCreateOrgError
 >;
 
 export let zToDiskCreateOrgResponse = makeToDiskResponseSchema({
-  path: 'ToDiskCreateOrg',
+  operation: 'createOrg',
   success: z
     .object({
       orgId: z.string()

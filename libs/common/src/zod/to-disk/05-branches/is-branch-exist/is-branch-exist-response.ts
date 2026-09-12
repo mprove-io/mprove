@@ -19,13 +19,13 @@ export type ToDiskIsBranchExistOutput = {
 };
 
 export type ToDiskIsBranchExistResponse = ToDiskResponse<
-  'ToDiskIsBranchExist',
+  'isBranchExist',
   ToDiskIsBranchExistOutput,
   ToDiskIsBranchExistError
 >;
 
 export let zToDiskIsBranchExistResponse = makeToDiskResponseSchema({
-  path: 'ToDiskIsBranchExist',
+  operation: 'isBranchExist',
   success: z
     .object({
       orgId: z.string(),

@@ -1,5 +1,4 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskPushRepoResponse } from '#common/zod/to-disk/03-repos/push-repo/push-repo-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { PushRepoService } from './push-repo.service';
@@ -11,13 +10,13 @@ export class PushRepoController {
     private logger: Logger
   ) {}
 
-  @Post(ToDiskRequestInfoNameEnum.ToDiskPushRepo)
+  @Post('pushRepo')
   async pushRepo(
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskPushRepoResponse> {
     let response: ToDiskPushRepoResponse = await handleHttpRequest({
-      name: 'ToDiskPushRepo',
+      operation: 'pushRepo',
       body: body,
       method: request.method,
       process: input => this.pushRepoService.process(input),

@@ -1,5 +1,4 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskMoveCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { MoveCatalogNodeService } from './move-catalog-node.service';
@@ -11,13 +10,13 @@ export class MoveCatalogNodeController {
     private logger: Logger
   ) {}
 
-  @Post(ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode)
+  @Post('moveCatalogNode')
   async moveCatalogNode(
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskMoveCatalogNodeResponse> {
     let response: ToDiskMoveCatalogNodeResponse = await handleHttpRequest({
-      name: 'ToDiskMoveCatalogNode',
+      operation: 'moveCatalogNode',
       body: body,
       method: request.method,
       process: input => this.moveCatalogNodeService.process(input),

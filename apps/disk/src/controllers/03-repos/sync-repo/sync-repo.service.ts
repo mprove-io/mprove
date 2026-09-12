@@ -7,7 +7,7 @@ import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
 import type { DiskDevRepoCommitDoesNotMatchLocalCommitError } from '#common/zod/disk/errors/disk-dev-repo-commit-does-not-match-local-commit-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskSyncRepoOutput } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
@@ -66,7 +66,7 @@ export class SyncRepoService {
           changedFiles: DiskSyncFile[];
           deletedFiles: DiskSyncFile[];
         }
-  ): Promise<ToDiskResultFor<'ToDiskSyncRepo'>> {
+  ): Promise<ToDiskResultForOperation<'syncRepo'>> {
     let {
       baseProject,
       repoId,

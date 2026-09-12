@@ -15,13 +15,13 @@ export type ToDiskGetFileOutput = {
 };
 
 export type ToDiskGetFileResponse = ToDiskResponse<
-  'ToDiskGetFile',
+  'getFile',
   ToDiskGetFileOutput,
   ToDiskGetFileError
 >;
 
 export let zToDiskGetFileResponse = makeToDiskResponseSchema({
-  path: 'ToDiskGetFile',
+  operation: 'getFile',
   success: z
     .object({
       repo: zRepo,

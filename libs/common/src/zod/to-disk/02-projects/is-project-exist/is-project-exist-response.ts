@@ -16,13 +16,13 @@ export type ToDiskIsProjectExistOutput = {
 };
 
 export type ToDiskIsProjectExistResponse = ToDiskResponse<
-  'ToDiskIsProjectExist',
+  'isProjectExist',
   ToDiskIsProjectExistOutput,
   ToDiskIsProjectExistError
 >;
 
 export let zToDiskIsProjectExistResponse = makeToDiskResponseSchema({
-  path: 'ToDiskIsProjectExist',
+  operation: 'isProjectExist',
   success: z
     .object({
       orgId: z.string(),

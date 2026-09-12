@@ -7,7 +7,7 @@ import type { DiskFromPathIsNotExistError } from '#common/zod/disk/errors/disk-f
 import type { DiskToPathAlreadyExistError } from '#common/zod/disk/errors/disk-to-path-already-exist-error';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { ToDiskMoveCatalogNodeOutput } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
@@ -34,7 +34,7 @@ export class MoveCatalogNodeService {
     branch: string;
     fromNodeId: string;
     toNodeId: string;
-  }): Promise<ToDiskResultFor<'ToDiskMoveCatalogNode'>> {
+  }): Promise<ToDiskResultForOperation<'moveCatalogNode'>> {
     let { baseProject, repoId, branch, fromNodeId, toNodeId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

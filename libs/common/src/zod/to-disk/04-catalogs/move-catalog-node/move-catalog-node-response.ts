@@ -21,13 +21,13 @@ export type ToDiskMoveCatalogNodeOutput = {
 };
 
 export type ToDiskMoveCatalogNodeResponse = ToDiskResponse<
-  'ToDiskMoveCatalogNode',
+  'moveCatalogNode',
   ToDiskMoveCatalogNodeOutput,
   ToDiskMoveCatalogNodeError
 >;
 
 export let zToDiskMoveCatalogNodeResponse = makeToDiskResponseSchema({
-  path: 'ToDiskMoveCatalogNode',
+  operation: 'moveCatalogNode',
   success: z
     .object({
       repo: zRepo,

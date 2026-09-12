@@ -1,5 +1,4 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskCommitRepoResponse } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { CommitRepoService } from './commit-repo.service';
@@ -11,13 +10,13 @@ export class CommitRepoController {
     private logger: Logger
   ) {}
 
-  @Post(ToDiskRequestInfoNameEnum.ToDiskCommitRepo)
+  @Post('commitRepo')
   async commitRepo(
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskCommitRepoResponse> {
     let response: ToDiskCommitRepoResponse = await handleHttpRequest({
-      name: 'ToDiskCommitRepo',
+      operation: 'commitRepo',
       body: body,
       method: request.method,
       process: input => this.commitRepoService.process(input),

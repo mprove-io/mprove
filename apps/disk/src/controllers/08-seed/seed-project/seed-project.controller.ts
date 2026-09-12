@@ -1,5 +1,4 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskSeedProjectResponse } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { SeedProjectService } from './seed-project.service';
@@ -11,13 +10,13 @@ export class SeedProjectController {
     private logger: Logger
   ) {}
 
-  @Post(ToDiskRequestInfoNameEnum.ToDiskSeedProject)
+  @Post('seedProject')
   async seedProject(
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskSeedProjectResponse> {
     let response: ToDiskSeedProjectResponse = await handleHttpRequest({
-      name: 'ToDiskSeedProject',
+      operation: 'seedProject',
       body: body,
       method: request.method,
       process: input => this.seedProjectService.process(input),

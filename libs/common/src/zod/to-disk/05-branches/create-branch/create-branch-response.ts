@@ -21,13 +21,13 @@ export type ToDiskCreateBranchOutput = {
 };
 
 export type ToDiskCreateBranchResponse = ToDiskResponse<
-  'ToDiskCreateBranch',
+  'createBranch',
   ToDiskCreateBranchOutput,
   ToDiskCreateBranchError
 >;
 
 export let zToDiskCreateBranchResponse = makeToDiskResponseSchema({
-  path: 'ToDiskCreateBranch',
+  operation: 'createBranch',
   success: z
     .object({
       repo: zRepo,

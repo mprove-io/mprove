@@ -15,13 +15,13 @@ export type ToDiskGetCatalogNodesOutput = {
 };
 
 export type ToDiskGetCatalogNodesResponse = ToDiskResponse<
-  'ToDiskGetCatalogNodes',
+  'getCatalogNodes',
   ToDiskGetCatalogNodesOutput,
   ToDiskGetCatalogNodesError
 >;
 
 export let zToDiskGetCatalogNodesResponse = makeToDiskResponseSchema({
-  path: 'ToDiskGetCatalogNodes',
+  operation: 'getCatalogNodes',
   success: z
     .object({ repo: zRepo })
     .meta({ id: 'ToDiskGetCatalogNodesOutput' }),

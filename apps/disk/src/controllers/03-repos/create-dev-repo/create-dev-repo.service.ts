@@ -6,7 +6,7 @@ import { isDefined } from '#common/functions/is-defined';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskCreateDevRepoOutput } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
@@ -29,7 +29,7 @@ export class CreateDevRepoService {
     devRepoId: string;
     initialBranch?: string;
     sessionBranch?: string;
-  }): Promise<ToDiskResultFor<'ToDiskCreateDevRepo'>> {
+  }): Promise<ToDiskResultForOperation<'createDevRepo'>> {
     let { baseProject, devRepoId, initialBranch, sessionBranch } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

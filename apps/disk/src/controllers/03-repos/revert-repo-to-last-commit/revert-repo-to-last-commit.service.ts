@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { ToDiskRevertRepoToLastCommitOutput } from '#common/zod/to-disk/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -25,7 +25,7 @@ export class RevertRepoToLastCommitService {
     baseProject: BaseProject;
     repoId: string;
     branch: string;
-  }): Promise<ToDiskResultFor<'ToDiskRevertRepoToLastCommit'>> {
+  }): Promise<ToDiskResultForOperation<'revertRepoToLastCommit'>> {
     let { baseProject, repoId, branch } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

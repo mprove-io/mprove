@@ -6,7 +6,7 @@ import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskBranchIsNotExistError } from '#common/zod/disk/errors/disk-branch-is-not-exist-error';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskCreateBranchOutput } from '#common/zod/to-disk/05-branches/create-branch/create-branch-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -31,7 +31,7 @@ export class CreateBranchService {
     newBranch: string;
     fromBranch: string;
     isFromRemote: boolean;
-  }): Promise<ToDiskResultFor<'ToDiskCreateBranch'>> {
+  }): Promise<ToDiskResultForOperation<'createBranch'>> {
     let { baseProject, repoId, newBranch, fromBranch, isFromRemote } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

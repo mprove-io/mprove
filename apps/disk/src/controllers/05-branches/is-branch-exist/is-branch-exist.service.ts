@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskIsBranchExistOutput } from '#common/zod/to-disk/05-branches/is-branch-exist/is-branch-exist-response';
-import type { ToDiskResultFor } from '#common/zod/to-disk/to-disk-operation-contract';
+import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { createGit } from '#disk/functions/git/create-git';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
@@ -24,7 +24,7 @@ export class IsBranchExistService {
     repoId: string;
     branch: string;
     isRemote: boolean;
-  }): Promise<ToDiskResultFor<'ToDiskIsBranchExist'>> {
+  }): Promise<ToDiskResultForOperation<'isBranchExist'>> {
     let { baseProject, repoId, branch, isRemote } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

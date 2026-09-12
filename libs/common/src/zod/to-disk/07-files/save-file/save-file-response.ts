@@ -21,13 +21,13 @@ export type ToDiskSaveFileOutput = {
 };
 
 export type ToDiskSaveFileResponse = ToDiskResponse<
-  'ToDiskSaveFile',
+  'saveFile',
   ToDiskSaveFileOutput,
   ToDiskSaveFileError
 >;
 
 export let zToDiskSaveFileResponse = makeToDiskResponseSchema({
-  path: 'ToDiskSaveFile',
+  operation: 'saveFile',
   success: z
     .object({
       repo: zRepo,

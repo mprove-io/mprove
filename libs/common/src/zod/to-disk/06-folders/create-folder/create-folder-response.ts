@@ -21,13 +21,13 @@ export type ToDiskCreateFolderOutput = {
 };
 
 export type ToDiskCreateFolderResponse = ToDiskResponse<
-  'ToDiskCreateFolder',
+  'createFolder',
   ToDiskCreateFolderOutput,
   ToDiskCreateFolderError
 >;
 
 export let zToDiskCreateFolderResponse = makeToDiskResponseSchema({
-  path: 'ToDiskCreateFolder',
+  operation: 'createFolder',
   success: z
     .object({
       repo: zRepo,

@@ -21,13 +21,13 @@ export type ToDiskGetCatalogFilesOutput = {
 };
 
 export type ToDiskGetCatalogFilesResponse = ToDiskResponse<
-  'ToDiskGetCatalogFiles',
+  'getCatalogFiles',
   ToDiskGetCatalogFilesOutput,
   ToDiskGetCatalogFilesError
 >;
 
 export let zToDiskGetCatalogFilesResponse = makeToDiskResponseSchema({
-  path: 'ToDiskGetCatalogFiles',
+  operation: 'getCatalogFiles',
   success: z
     .object({
       repo: zRepo,
