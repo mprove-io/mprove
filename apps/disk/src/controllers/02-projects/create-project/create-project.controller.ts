@@ -1,7 +1,7 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskCreateProjectResponse } from '#common/zod/to-disk/02-projects/create-project/create-project-response';
-import { processResponse } from '#disk/functions/process-response';
+import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { CreateProjectService } from './create-project.service';
 
 @Controller()
@@ -16,7 +16,7 @@ export class CreateProjectController {
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskCreateProjectResponse> {
-    let response: ToDiskCreateProjectResponse = await processResponse({
+    let response: ToDiskCreateProjectResponse = await handleHttpRequest({
       name: 'ToDiskCreateProject',
       body: body,
       method: request.method,

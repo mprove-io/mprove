@@ -1,7 +1,7 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskIsBranchExistResponse } from '#common/zod/to-disk/05-branches/is-branch-exist/is-branch-exist-response';
-import { processResponse } from '#disk/functions/process-response';
+import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { IsBranchExistService } from './is-branch-exist.service';
 
 @Controller()
@@ -16,7 +16,7 @@ export class IsBranchExistController {
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskIsBranchExistResponse> {
-    let response: ToDiskIsBranchExistResponse = await processResponse({
+    let response: ToDiskIsBranchExistResponse = await handleHttpRequest({
       name: 'ToDiskIsBranchExist',
       body: body,
       method: request.method,

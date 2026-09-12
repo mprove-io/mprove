@@ -108,13 +108,15 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
 
-    await messageService.processMessage(createFolderRequest_1);
-    await messageService.processMessage(createFolderRequest_2);
+    await messageService.processRequest({ request: createFolderRequest_1 });
+    await messageService.processRequest({ request: createFolderRequest_2 });
 
-    resp = await messageService.processMessage(moveCatalogNodeRequest);
+    resp = await messageService.processRequest({
+      request: moveCatalogNodeRequest
+    });
   } catch (e) {
     logToConsoleDisk({
       log: e,

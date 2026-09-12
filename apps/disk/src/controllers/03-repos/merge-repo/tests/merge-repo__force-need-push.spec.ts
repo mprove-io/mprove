@@ -150,18 +150,22 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
 
-    await messageService.processMessage(createBranchRequest);
+    await messageService.processRequest({ request: createBranchRequest });
 
-    await messageService.processMessage(r1_master_saveFileRequest);
-    await messageService.processMessage(r1_master_commitRepoRequest1);
+    await messageService.processRequest({ request: r1_master_saveFileRequest });
+    await messageService.processRequest({
+      request: r1_master_commitRepoRequest1
+    });
 
-    await messageService.processMessage(r1_b2_createFileRequest);
-    await messageService.processMessage(r1_b2_commitRepoRequest);
+    await messageService.processRequest({ request: r1_b2_createFileRequest });
+    await messageService.processRequest({ request: r1_b2_commitRepoRequest });
 
-    resp = await messageService.processMessage(r1_b2_mergeRepoRequest);
+    resp = await messageService.processRequest({
+      request: r1_b2_mergeRepoRequest
+    });
   } catch (e) {
     logToConsoleDisk({
       log: e,

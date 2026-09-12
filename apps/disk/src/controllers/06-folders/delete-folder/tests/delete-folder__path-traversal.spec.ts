@@ -85,10 +85,12 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
 
-    resp = await messageService.processMessage(deleteFolderRequest);
+    resp = await messageService.processRequest({
+      request: deleteFolderRequest
+    });
   } catch (e) {
     logToConsoleDisk({
       log: e,

@@ -118,13 +118,21 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
 
-    resp1 = await messageService.processMessage(isBranchExistRequest_1);
-    resp2 = await messageService.processMessage(isBranchExistRequest_2);
-    resp3 = await messageService.processMessage(isBranchExistRequest_3);
-    resp4 = await messageService.processMessage(isBranchExistRequest_4);
+    resp1 = await messageService.processRequest({
+      request: isBranchExistRequest_1
+    });
+    resp2 = await messageService.processRequest({
+      request: isBranchExistRequest_2
+    });
+    resp3 = await messageService.processRequest({
+      request: isBranchExistRequest_3
+    });
+    resp4 = await messageService.processRequest({
+      request: isBranchExistRequest_4
+    });
   } catch (e) {
     logToConsoleDisk({
       log: e,

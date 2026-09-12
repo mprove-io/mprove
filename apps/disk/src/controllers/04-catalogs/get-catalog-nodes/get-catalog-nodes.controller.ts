@@ -1,7 +1,7 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskGetCatalogNodesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
-import { processResponse } from '#disk/functions/process-response';
+import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { GetCatalogNodesService } from './get-catalog-nodes.service';
 
 @Controller()
@@ -16,7 +16,7 @@ export class GetCatalogNodesController {
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskGetCatalogNodesResponse> {
-    let response: ToDiskGetCatalogNodesResponse = await processResponse({
+    let response: ToDiskGetCatalogNodesResponse = await handleHttpRequest({
       name: 'ToDiskGetCatalogNodes',
       body: body,
       method: request.method,

@@ -48,10 +48,14 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
+    await messageService.processRequest({ request: createOrgRequest });
 
-    resp1 = await messageService.processMessage(isOrgExistRequest_1);
-    resp2 = await messageService.processMessage(isOrgExistRequest_2);
+    resp1 = await messageService.processRequest({
+      request: isOrgExistRequest_1
+    });
+    resp2 = await messageService.processRequest({
+      request: isOrgExistRequest_2
+    });
   } catch (e) {
     logToConsoleDisk({
       log: e,

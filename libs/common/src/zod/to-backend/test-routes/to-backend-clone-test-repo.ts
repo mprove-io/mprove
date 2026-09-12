@@ -7,7 +7,6 @@ import { zToBackendRequestInfo } from '#common/zod/to-backend/to-backend-request
 
 export let zToBackendCloneTestRepoRequestPayload = z
   .object({
-    orgId: z.string(),
     testId: z.string()
   })
   .meta({ id: 'ToBackendCloneTestRepoRequestPayload' });

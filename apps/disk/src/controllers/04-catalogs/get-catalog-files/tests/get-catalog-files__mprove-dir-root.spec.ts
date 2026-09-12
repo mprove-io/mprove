@@ -134,14 +134,20 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
-    await messageService.processMessage(createDataFolderRequest);
-    await messageService.processMessage(createDataExtFolderRequest);
-    await messageService.processMessage(createFileInDataRequest);
-    await messageService.processMessage(createFileInDataExtRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
+    await messageService.processRequest({ request: createDataFolderRequest });
+    await messageService.processRequest({
+      request: createDataExtFolderRequest
+    });
+    await messageService.processRequest({ request: createFileInDataRequest });
+    await messageService.processRequest({
+      request: createFileInDataExtRequest
+    });
 
-    resp = await messageService.processMessage(getCatalogFilesRequest);
+    resp = await messageService.processRequest({
+      request: getCatalogFilesRequest
+    });
   } catch (e) {
     logToConsoleDisk({
       log: e,

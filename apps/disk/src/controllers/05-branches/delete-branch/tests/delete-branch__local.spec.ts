@@ -94,12 +94,14 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
 
-    await messageService.processMessage(createBranchRequest);
+    await messageService.processRequest({ request: createBranchRequest });
 
-    resp = await messageService.processMessage(deleteBranchRequest);
+    resp = await messageService.processRequest({
+      request: deleteBranchRequest
+    });
   } catch (e) {
     logToConsoleDisk({
       log: e,

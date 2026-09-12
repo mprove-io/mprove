@@ -150,18 +150,26 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
 
-    await messageService.processMessage(r1_master_saveFileRequest_1);
-    await messageService.processMessage(r1_master_commitRepoRequest_1);
-    await messageService.processMessage(r1_master_pushRepoRequest);
+    await messageService.processRequest({
+      request: r1_master_saveFileRequest_1
+    });
+    await messageService.processRequest({
+      request: r1_master_commitRepoRequest_1
+    });
+    await messageService.processRequest({ request: r1_master_pushRepoRequest });
 
-    await messageService.processMessage(r1_master_saveFileRequest_2);
+    await messageService.processRequest({
+      request: r1_master_saveFileRequest_2
+    });
 
-    resp1 = await messageService.processMessage(revertRepoToRemoteRequest);
+    resp1 = await messageService.processRequest({
+      request: revertRepoToRemoteRequest
+    });
 
-    resp2 = await messageService.processMessage(getFileRequest);
+    resp2 = await messageService.processRequest({ request: getFileRequest });
   } catch (e) {
     logToConsoleDisk({
       log: e,

@@ -90,11 +90,15 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
 
-    resp1 = await messageService.processMessage(isProjectExistRequest_1);
-    resp2 = await messageService.processMessage(isProjectExistRequest_2);
+    resp1 = await messageService.processRequest({
+      request: isProjectExistRequest_1
+    });
+    resp2 = await messageService.processRequest({
+      request: isProjectExistRequest_2
+    });
   } catch (e) {
     logToConsoleDisk({
       log: e,

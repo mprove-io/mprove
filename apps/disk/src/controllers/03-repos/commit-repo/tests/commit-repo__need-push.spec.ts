@@ -97,12 +97,12 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
 
-    await messageService.processMessage(saveFileRequest);
+    await messageService.processRequest({ request: saveFileRequest });
 
-    resp = await messageService.processMessage(commitRepoRequest);
+    resp = await messageService.processRequest({ request: commitRepoRequest });
   } catch (e) {
     logToConsoleDisk({
       log: e,

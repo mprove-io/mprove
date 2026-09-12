@@ -134,16 +134,18 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
 
-    await messageService.processMessage(saveFileRequest);
-    await messageService.processMessage(commitRepoRequest);
-    await messageService.processMessage(pushRepoRequest);
+    await messageService.processRequest({ request: saveFileRequest });
+    await messageService.processRequest({ request: commitRepoRequest });
+    await messageService.processRequest({ request: pushRepoRequest });
 
-    await messageService.processMessage(createBranchRequest);
+    await messageService.processRequest({ request: createBranchRequest });
 
-    resp = await messageService.processMessage(isBranchExistRequest);
+    resp = await messageService.processRequest({
+      request: isBranchExistRequest
+    });
   } catch (e) {
     logToConsoleDisk({
       log: e,

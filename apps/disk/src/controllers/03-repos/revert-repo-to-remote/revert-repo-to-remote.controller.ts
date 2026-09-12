@@ -1,7 +1,7 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskRevertRepoToRemoteResponse } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-response';
-import { processResponse } from '#disk/functions/process-response';
+import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { RevertRepoToRemoteService } from './revert-repo-to-remote.service';
 
 @Controller()
@@ -16,7 +16,7 @@ export class RevertRepoToRemoteController {
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskRevertRepoToRemoteResponse> {
-    let response: ToDiskRevertRepoToRemoteResponse = await processResponse({
+    let response: ToDiskRevertRepoToRemoteResponse = await handleHttpRequest({
       name: 'ToDiskRevertRepoToRemote',
       body: body,
       method: request.method,

@@ -87,8 +87,8 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
 
     let orgPath = cs.get('diskOrganizationsPath');
     let orgDir = `${orgPath}/${orgId}`;
@@ -111,7 +111,7 @@ test('1', async t => {
       }
     };
 
-    resp = await messageService.processMessage(getFileRequest);
+    resp = await messageService.processRequest({ request: getFileRequest });
   } catch (e) {
     logToConsoleDisk({
       log: e,

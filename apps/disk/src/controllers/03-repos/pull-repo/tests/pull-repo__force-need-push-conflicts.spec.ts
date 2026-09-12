@@ -181,20 +181,32 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
-    await messageService.processMessage(createProjectRequest);
-    await messageService.processMessage(createDevRepoRequest);
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
+    await messageService.processRequest({ request: createDevRepoRequest });
 
-    await messageService.processMessage(r1_master_saveFileRequest_1);
-    await messageService.processMessage(r1_master_commitRepoRequest_1);
-    await messageService.processMessage(r1_master_saveFileRequest_2);
-    await messageService.processMessage(r1_master_commitRepoRequest_2);
-    await messageService.processMessage(r1_master_pushRepoRequest);
+    await messageService.processRequest({
+      request: r1_master_saveFileRequest_1
+    });
+    await messageService.processRequest({
+      request: r1_master_commitRepoRequest_1
+    });
+    await messageService.processRequest({
+      request: r1_master_saveFileRequest_2
+    });
+    await messageService.processRequest({
+      request: r1_master_commitRepoRequest_2
+    });
+    await messageService.processRequest({ request: r1_master_pushRepoRequest });
 
-    await messageService.processMessage(r2_master_saveFileRequest);
-    await messageService.processMessage(r2_master_commitRepoRequest);
+    await messageService.processRequest({ request: r2_master_saveFileRequest });
+    await messageService.processRequest({
+      request: r2_master_commitRepoRequest
+    });
 
-    resp = await messageService.processMessage(r2_master_pullRepoRequest);
+    resp = await messageService.processRequest({
+      request: r2_master_pullRepoRequest
+    });
   } catch (e) {
     logToConsoleDisk({
       log: e,

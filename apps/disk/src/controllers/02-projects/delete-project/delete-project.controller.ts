@@ -1,7 +1,7 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskDeleteProjectResponse } from '#common/zod/to-disk/02-projects/delete-project/delete-project-response';
-import { processResponse } from '#disk/functions/process-response';
+import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { DeleteProjectService } from './delete-project.service';
 
 @Controller()
@@ -16,7 +16,7 @@ export class DeleteProjectController {
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskDeleteProjectResponse> {
-    let response: ToDiskDeleteProjectResponse = await processResponse({
+    let response: ToDiskDeleteProjectResponse = await handleHttpRequest({
       name: 'ToDiskDeleteProject',
       body: body,
       method: request.method,

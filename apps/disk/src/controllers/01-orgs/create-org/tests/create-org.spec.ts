@@ -41,9 +41,9 @@ test('1', async t => {
       }
     };
 
-    await messageService.processMessage(createOrgRequest);
+    await messageService.processRequest({ request: createOrgRequest });
 
-    resp = await messageService.processMessage(isOrgExistRequest);
+    resp = await messageService.processRequest({ request: isOrgExistRequest });
   } catch (e) {
     logToConsoleDisk({
       log: e,

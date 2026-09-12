@@ -67,8 +67,9 @@ export class ConsumerService {
         ? data.replyTo
         : undefined;
 
-    let response: ToDiskRpcResponse =
-      await this.messageService.processMessage(message);
+    let response: ToDiskRpcResponse = await this.messageService.handleMessage({
+      message: message
+    });
 
     if (typeof replyTo === 'string' && replyTo.length > 0) {
       await this.redisClient.publish(replyTo, JSON.stringify(response));

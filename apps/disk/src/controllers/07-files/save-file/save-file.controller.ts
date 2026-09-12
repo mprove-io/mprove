@@ -1,7 +1,7 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import type { ToDiskSaveFileResponse } from '#common/zod/to-disk/07-files/save-file/save-file-response';
-import { processResponse } from '#disk/functions/process-response';
+import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { SaveFileService } from './save-file.service';
 
 @Controller()
@@ -16,7 +16,7 @@ export class SaveFileController {
     @Req() request: { method: string },
     @Body() body: unknown
   ): Promise<ToDiskSaveFileResponse> {
-    let response: ToDiskSaveFileResponse = await processResponse({
+    let response: ToDiskSaveFileResponse = await handleHttpRequest({
       name: 'ToDiskSaveFile',
       body: body,
       method: request.method,
