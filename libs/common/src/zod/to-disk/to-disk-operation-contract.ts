@@ -60,6 +60,25 @@ import type { ToDiskCloneTestRepoRequest } from '#common/zod/to-disk/10-test/clo
 import type { ToDiskCloneTestRepoResponse } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-response';
 import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
 
+export type ToDiskOperationContract =
+  ValidateOperationContract<ToDiskOperationContractMap>;
+
+type ValidateOperationContract<TContract extends ToDiskOperationContractShape> =
+  TContract;
+
+type ToDiskOperationContractShape = {
+  [TOperation in ToDiskOperation]: {
+    request: { operation: TOperation; traceId: string; input: unknown };
+    response: {
+      operation: TOperation;
+      method: string;
+      duration: number;
+      traceId: string;
+      result: unknown;
+    };
+  };
+};
+
 type ToDiskOperationContractMap = {
   createOrg: {
     request: ToDiskCreateOrgRequest;
@@ -179,22 +198,3 @@ type ToDiskOperationContractMap = {
     response: ToDiskCloneTestRepoResponse;
   };
 };
-
-type ToDiskOperationContractShape = {
-  [TOperation in ToDiskOperation]: {
-    request: { operation: TOperation; traceId: string; input: unknown };
-    response: {
-      operation: TOperation;
-      method: string;
-      duration: number;
-      traceId: string;
-      result: unknown;
-    };
-  };
-};
-
-type ValidateOperationContract<TContract extends ToDiskOperationContractShape> =
-  TContract;
-
-export type ToDiskOperationContract =
-  ValidateOperationContract<ToDiskOperationContractMap>;
