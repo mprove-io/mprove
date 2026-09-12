@@ -36,9 +36,7 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id';
@@ -47,8 +45,7 @@ import type {
   BridgeItem,
   ToBackendSpecialRebuildStructsResponsePayload
 } from '#common/zod/to-backend/special/to-backend-special-rebuild-structs';
-import type { ToDiskGetCatalogFilesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request';
-import type { ToDiskGetCatalogFilesResponse } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
+import type { ToDiskGetCatalogFilesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @ApiTags('Special')
 @SkipJwtCheck()
@@ -163,30 +160,32 @@ export class SpecialRebuildStructsController {
           project: project
         });
 
-        let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
-          info: {
-            name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-            traceId: body.info.traceId
-          },
-          payload: {
-            orgId: project.orgId,
-            baseProject: baseProject,
-            repoId: bridge.repoId,
-            branch: bridge.branchId
+        let diskGetCatalogFilesOutput: ToDiskGetCatalogFilesOutput;
+
+        try {
+          diskGetCatalogFilesOutput =
+            await this.rpcService.sendToDiskUnwrapOutput({
+              request: {
+                operation: 'getCatalogFiles',
+                traceId: body.info.traceId,
+                input: {
+                  baseProject: baseProject,
+                  repoId: bridge.repoId,
+                  branch: bridge.branchId
+                }
+              }
+            });
+        } catch (error: unknown) {
+          if (!(error instanceof ServerError)) {
+            throw error;
           }
-        };
 
-        let getCatalogFilesResponse =
-          await this.rpcService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-            orgId: project.orgId,
-            projectId: project.projectId,
-            repoId: bridge.repoId,
-            message: toDiskGetCatalogFilesRequest,
-            checkIsOk: false
-          });
+          let diskErrorCode: string =
+            error.originalError instanceof ServerError
+              ? error.originalError.message
+              : error.message;
 
-        if (getCatalogFilesResponse.info.status !== ResponseInfoStatusEnum.Ok) {
-          bridgeItem.errorMessage = getCatalogFilesResponse.info.error.message;
+          bridgeItem.errorMessage = diskErrorCode;
           errorGetCatalogBridgeItems.push(bridgeItem);
           return;
         }
@@ -199,8 +198,8 @@ export class SpecialRebuildStructsController {
           projectId: project.projectId,
           repoId: bridge.repoId,
           structId: structId,
-          diskFiles: getCatalogFilesResponse.payload.files,
-          mproveDir: getCatalogFilesResponse.payload.mproveDir,
+          diskFiles: diskGetCatalogFilesOutput.files,
+          mproveDir: diskGetCatalogFilesOutput.mproveDir,
           envId: bridge.envId,
           selectedGivens: [],
           overrideTimezone: overrideTimezone
