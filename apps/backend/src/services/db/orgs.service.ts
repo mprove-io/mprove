@@ -14,7 +14,6 @@ import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { Org } from '#common/zod/backend/org';
 import type { OrgsItem } from '#common/zod/backend/orgs-item';
-import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
 import { TabService } from '../tab.service';
@@ -105,17 +104,14 @@ export class OrgsService {
       serverTs: undefined
     };
 
-    let createOrgRequest: ToDiskCreateOrgRequest = {
-      operation: 'createOrg',
-      traceId: traceId,
-      input: {
-        orgId: newOrg.orgId
+    await this.rpcService.sendToDiskUnwrapOutput({
+      request: {
+        operation: 'createOrg',
+        traceId: traceId,
+        input: {
+          orgId: newOrg.orgId
+        }
       }
-    };
-
-    await this.rpcService.sendToDiskOrgUnwrapOutput({
-      request: createOrgRequest,
-      projectGroupId: 'undefined'
     });
 
     await retry(

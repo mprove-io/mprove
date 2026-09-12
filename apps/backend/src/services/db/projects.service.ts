@@ -183,7 +183,7 @@ export class ProjectsService {
     });
 
     let diskCreateProjectOutput: ToDiskCreateProjectOutput =
-      await this.rpcService.sendToDiskCreateProjectUnwrapOutput({
+      await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'createProject',
           traceId: traceId,
