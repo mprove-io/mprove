@@ -1,7 +1,7 @@
 import test from 'ava';
 import fse from 'fs-extra';
-import { prepareTest } from '#blockml/functions/extra/prepare-test';
 import { readLog } from '#blockml/functions/extra/read-log';
+import { prepareTest } from '#blockml/functions/prepare-test';
 import type { BmError } from '#blockml/models/bm-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { CallerEnum } from '#common/enums/special/caller.enum';

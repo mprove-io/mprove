@@ -17,7 +17,7 @@ import { getConfig } from './config/get.config';
 import { makeLineNumbers } from './functions/build-yaml/make-line-numbers';
 import { yamlToObjects } from './functions/build-yaml/yaml-to-objects';
 import { collectFiles } from './functions/extra/collect-files';
-import { logToConsoleBlockml } from './functions/extra/log-to-console-blockml';
+import { logToConsoleBlockml } from './functions/log-to-console-blockml';
 import { BmError } from './models/bm-error';
 import { PresetsService } from './services/presets.service';
 

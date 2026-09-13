@@ -1,8 +1,8 @@
 import test from 'ava';
 import fse from 'fs-extra';
-import { logToConsoleBlockml } from '#blockml/functions/extra/log-to-console-blockml';
-import { prepareTest } from '#blockml/functions/extra/prepare-test';
 import { readLog } from '#blockml/functions/extra/read-log';
+import { logToConsoleBlockml } from '#blockml/functions/log-to-console-blockml';
+import { prepareTest } from '#blockml/functions/prepare-test';
 import { BmError } from '#blockml/models/bm-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
