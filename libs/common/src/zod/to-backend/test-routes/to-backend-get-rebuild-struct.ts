@@ -3,11 +3,11 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { zMproveConfig } from '#common/zod/backend/mprove-config';
 import { zModel } from '#common/zod/blockml/model';
 import { zModelMetric } from '#common/zod/blockml/model-metric';
+import { zToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
 import { zMyResponse } from '#common/zod/to/my-response';
 import { zResponseInfo } from '#common/zod/to/response-info';
 import { zToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 import { zToBackendRequestInfo } from '#common/zod/to-backend/to-backend-request-info';
-import { zToBlockmlRebuildStructResponsePayload } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
 
 export let zToBackendGetRebuildStructRequestPayload = z
   .object({
@@ -38,7 +38,7 @@ export let zToBackendGetRebuildStructRequest = zToBackendRequest
   .meta({ id: 'ToBackendGetRebuildStructRequest' });
 
 export let zToBackendGetRebuildStructResponsePayload =
-  zToBlockmlRebuildStructResponsePayload;
+  zToBlockmlRebuildStructOutput;
 
 export let zToBackendGetRebuildStructResponseInfo = zResponseInfo
   .extend({

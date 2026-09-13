@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import pIteration from 'p-iteration';
 import path from 'path';
@@ -51,7 +52,6 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import { ToBlockmlRequestInfoNameEnum } from '#common/enums/to/to-blockml-request-info-name.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
 import { decodeFilePath } from '#common/functions/decode-file-path';
 import { isDefined } from '#common/functions/is-defined';
@@ -60,6 +60,7 @@ import { makeId } from '#common/functions/make-id';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
 import { MyRegex } from '#common/models/my-regex';
 import { ServerError } from '#common/models/server-error';
+import type { BaseConnection } from '#common/zod/backend/base-connection';
 import type {
   ExtraSchema,
   ExtraSchemaColumn,
@@ -71,6 +72,7 @@ import type { MproveConfig } from '#common/zod/backend/mprove-config';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { SelectedGiven } from '#common/zod/backend/selected-given';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
+import type { BlockmlInternalError } from '#common/zod/blockml/errors/blockml-internal-error';
 import type { FileChart } from '#common/zod/blockml/internal/file-chart';
 import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
@@ -83,17 +85,16 @@ import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { Preset } from '#common/zod/blockml/preset';
+import type { ToBlockmlResponseResultForOperation } from '#common/zod/blockml/response/to-blockml-response-result-for-operation';
+import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
 import type { Space } from '#common/zod/blockml/space';
 import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
-import type { ToBlockmlRebuildStructResponsePayload } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
-import { zToBlockmlRebuildStructRequest } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
 import { getMproveDir } from '#node-common/functions/get-mprove-dir';
 import {
   type MalloyConnection,
   makeMalloyConnections
 } from '#node-common/functions/make-malloy-connections';
 import { prePopulateMalloySchemaCache } from '#node-common/functions/schema-parse/pre-populate-malloy-schema-cache';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
 
 interface RebuildStructPrep {
   errors: BmError[];
@@ -119,26 +120,21 @@ export class RebuildStructService {
     private logger: Logger
   ) {}
 
-  async rebuild(item: { body: any }) {
-    let { body } = item;
-
-    if (
-      body.info?.name !== ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct
-    ) {
-      throw new ServerError({
-        message: ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
-      });
-    }
-
-    let reqValid = zodParseOrThrow({
-      schema: zToBlockmlRebuildStructRequest,
-      object: body,
-      errorMessage: ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
-      logIsJson:
-        this.cs.get<BlockmlConfig['blockmlLogIsJson']>('blockmlLogIsJson'),
-      logger: this.logger
-    });
-
+  async rebuild(item: {
+    projectId: string;
+    envId: string;
+    evs: Ev[];
+    structId: string;
+    mproveDir?: string;
+    files: BmlFile[];
+    baseConnections: BaseConnection[];
+    selectedGivens: SelectedGiven[];
+    overrideTimezone?: string;
+    isUseCache: boolean;
+    cachedMproveConfig?: MproveConfig;
+    cachedModels: Model[];
+    cachedMetrics: ModelMetric[];
+  }): Promise<ToBlockmlResponseResultForOperation<'rebuildStruct'>> {
     let {
       structId,
       projectId,
@@ -153,102 +149,112 @@ export class RebuildStructService {
       cachedModels,
       cachedMetrics,
       selectedGivens
-    } = reqValid.payload;
+    } = item;
 
-    let projectConnections: ProjectConnection[] = [];
+    let rebuildResult = await Result.try({
+      try: async (): Promise<ToBlockmlRebuildStructOutput> => {
+        let projectConnections: ProjectConnection[] = [];
 
-    baseConnections.forEach(baseConnection => {
-      let connectionSt = this.blockmlTabService.decrypt<ConnectionSt>({
-        encryptedString: baseConnection.st
-      });
+        baseConnections.forEach(baseConnection => {
+          let connectionSt = this.blockmlTabService.decrypt<ConnectionSt>({
+            encryptedString: baseConnection.st
+          });
 
-      let connectionLt = this.blockmlTabService.decrypt<ConnectionLt>({
-        encryptedString: baseConnection.lt
-      });
+          let connectionLt = this.blockmlTabService.decrypt<ConnectionLt>({
+            encryptedString: baseConnection.lt
+          });
 
-      let projectConnection: ProjectConnection = {
-        projectId: baseConnection.projectId,
-        connectionId: baseConnection.connectionId,
-        envId: baseConnection.envId,
-        type: baseConnection.type,
-        options: connectionSt.options,
-        rawSchema: connectionLt.rawSchema
-      };
+          let projectConnection: ProjectConnection = {
+            projectId: baseConnection.projectId,
+            connectionId: baseConnection.connectionId,
+            envId: baseConnection.envId,
+            type: baseConnection.type,
+            options: connectionSt.options,
+            rawSchema: connectionLt.rawSchema
+          };
 
-      projectConnections.push(projectConnection);
+          projectConnections.push(projectConnection);
+        });
+
+        let prep: RebuildStructPrep = await this.rebuildStructStateless({
+          files: files,
+          structId: structId,
+          envId: envId,
+          evs: evs,
+          projectConnections: projectConnections,
+          mproveDir: mproveDir,
+          overrideTimezone: overrideTimezone,
+          projectId: projectId,
+          isUseCache: isUseCache,
+          cachedMproveConfig: cachedMproveConfig,
+          cachedModels: cachedModels,
+          cachedMetrics: cachedMetrics,
+          selectedGivens: selectedGivens,
+          isTest: false
+        });
+
+        let apiErrors = wrapErrors({ errors: prep.errors });
+
+        let apiReports = wrapReports({
+          projectId: projectId,
+          structId: structId,
+          reports: prep.reports,
+          metrics: prep.metrics,
+          models: prep.apiModels,
+          formatNumber: prep.mproveConfig.formatNumber,
+          currencyPrefix: prep.mproveConfig.currencyPrefix,
+          currencySuffix: prep.mproveConfig.currencySuffix
+        });
+
+        let { apiDashboards, dashMconfigs, dashQueries } = wrapDashboards({
+          structId: structId,
+          projectId: projectId,
+          apiModels: prep.apiModels,
+          stores: prep.stores,
+          dashboards: prep.dashboards,
+          envId: envId,
+          timezone: prep.mproveConfig.defaultTimezone
+        });
+
+        let { apiCharts, chartMconfigs, chartQueries } = wrapCharts({
+          structId: structId,
+          projectId: projectId,
+          apiModels: prep.apiModels,
+          stores: prep.stores,
+          charts: prep.charts,
+          envId: envId,
+          timezone: prep.mproveConfig.defaultTimezone
+        });
+
+        let queries = [...dashQueries, ...chartQueries];
+        let mconfigs = [...dashMconfigs, ...chartMconfigs];
+
+        let output: ToBlockmlRebuildStructOutput = {
+          errors: apiErrors,
+          models: prep.apiModels,
+          dashboards: apiDashboards,
+          reports: apiReports,
+          charts: apiCharts,
+          metrics: prep.metrics,
+          presets: prep.presets,
+          spaces: prep.spaces,
+          mproveExplorer: prep.mproveExplorer,
+          mconfigs: mconfigs,
+          queries: queries,
+          extraSchemas: prep.extraSchemas,
+          mproveConfig: prep.mproveConfig
+        };
+
+        return output;
+      },
+      catch: (error): BlockmlInternalError => {
+        this.logger.error(error);
+
+        return { code: 'BLOCKML_INTERNAL' };
+      }
     });
 
-    let prep: RebuildStructPrep = await this.rebuildStructStateless({
-      traceId: reqValid.info.traceId,
-      files: files,
-      structId: structId,
-      envId: envId,
-      evs: evs,
-      projectConnections: projectConnections,
-      mproveDir: mproveDir,
-      overrideTimezone: overrideTimezone,
-      projectId: projectId,
-      isUseCache: isUseCache,
-      cachedMproveConfig: cachedMproveConfig,
-      cachedModels: cachedModels,
-      cachedMetrics: cachedMetrics,
-      selectedGivens: selectedGivens,
-      isTest: false
-    });
-
-    let apiErrors = wrapErrors({ errors: prep.errors });
-
-    let apiReports = wrapReports({
-      projectId: projectId,
-      structId: structId,
-      reports: prep.reports,
-      metrics: prep.metrics,
-      models: prep.apiModels,
-      formatNumber: prep.mproveConfig.formatNumber,
-      currencyPrefix: prep.mproveConfig.currencyPrefix,
-      currencySuffix: prep.mproveConfig.currencySuffix
-    });
-
-    let { apiDashboards, dashMconfigs, dashQueries } = wrapDashboards({
-      structId: structId,
-      projectId: projectId,
-      apiModels: prep.apiModels,
-      stores: prep.stores,
-      dashboards: prep.dashboards,
-      envId: envId,
-      timezone: prep.mproveConfig.defaultTimezone
-    });
-
-    let { apiCharts, chartMconfigs, chartQueries } = wrapCharts({
-      structId: structId,
-      projectId: projectId,
-      apiModels: prep.apiModels,
-      stores: prep.stores,
-      charts: prep.charts,
-      envId: envId,
-      timezone: prep.mproveConfig.defaultTimezone
-    });
-
-    let queries = [...dashQueries, ...chartQueries];
-    let mconfigs = [...dashMconfigs, ...chartMconfigs];
-
-    let payload: ToBlockmlRebuildStructResponsePayload = {
-      errors: apiErrors,
-      models: prep.apiModels,
-      dashboards: apiDashboards,
-      reports: apiReports,
-      charts: apiCharts,
-      metrics: prep.metrics,
-      presets: prep.presets,
-      spaces: prep.spaces,
-      mproveExplorer: prep.mproveExplorer,
-      mconfigs: mconfigs,
-      queries: queries,
-      extraSchemas: prep.extraSchemas,
-      mproveConfig: prep.mproveConfig
-    };
-
-    return payload;
+    return rebuildResult;
   }
 
   async rebuildStruct(item: {
@@ -292,7 +298,6 @@ export class RebuildStructService {
     }
 
     let prep: RebuildStructPrep = await this.rebuildStructStateless({
-      traceId: item.traceId,
       files: files,
       structId: item.structId,
       envId: item.envId,
@@ -313,7 +318,6 @@ export class RebuildStructService {
   }
 
   async rebuildStructStateless(item: {
-    traceId: string;
     files: BmlFile[];
     structId: string;
     envId: string;
@@ -641,7 +645,6 @@ export class RebuildStructService {
 
     dashboards = await buildTile(
       {
-        traceId: item.traceId,
         projectId: item.projectId,
         envId: item.envId,
         entities: dashboards,
@@ -665,7 +668,6 @@ export class RebuildStructService {
 
     charts = await buildTile(
       {
-        traceId: item.traceId,
         projectId: item.projectId,
         envId: item.envId,
         entities: charts,

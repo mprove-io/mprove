@@ -18,13 +18,10 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBlockmlRequestInfoNameEnum } from '#common/enums/to/to-blockml-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import type { ToBlockmlRebuildStructRequest } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-request';
+import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
 import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/04-catalogs/get-catalog-files/get-catalog-files-response';
-import type {
-  ToBlockmlRebuildStructRequest,
-  ToBlockmlRebuildStructResponse
-} from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
 
 @ApiTags('TestRoutes')
 // ToBackendGetRebuildStructRequest is for tests only
@@ -102,11 +99,9 @@ export class GetRebuildStructController {
     // to blockml
 
     let rebuildStructRequest: ToBlockmlRebuildStructRequest = {
-      info: {
-        name: ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
-        traceId: body.info.traceId
-      },
-      payload: {
+      operation: 'rebuildStruct',
+      traceId: body.info.traceId,
+      input: {
         structId: structId,
         projectId: projectId,
         mproveDir: diskGetCatalogFilesOutput.mproveDir,
@@ -125,17 +120,13 @@ export class GetRebuildStructController {
       }
     };
 
-    let rebuildStructResponse =
-      await this.rpcService.sendToBlockml<ToBlockmlRebuildStructResponse>({
+    let output: ToBlockmlRebuildStructOutput =
+      await this.rpcService.sendToBlockmlUnwrapOutput({
+        request: rebuildStructRequest,
         orgId: orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: rebuildStructRequest,
-        checkIsOk: true
+        repoId: repoId
       });
 
-    let payload = rebuildStructResponse.payload;
-
-    return payload;
+    return output;
   }
 }

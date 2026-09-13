@@ -32,7 +32,6 @@ let func = FuncEnum.FetchSql;
 
 export async function fetchSql<T extends dcType>(
   item: {
-    traceId: string;
     envId: string;
     projectId: string;
     entities: T[];

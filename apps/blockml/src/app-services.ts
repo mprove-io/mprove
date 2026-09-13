@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { RebuildStructService } from './controllers/rebuild-struct/rebuild-struct.service';
 import { BlockmlTabService } from './services/blockml-tab.service';
-import { ConsumerMainService } from './services/consumer-main.service';
+import { ConsumerService } from './services/consumer.service';
+import { MessageService } from './services/message.service';
 import { PresetsService } from './services/presets.service';
 
 export const appServices = [
@@ -18,15 +19,15 @@ export const appServices = [
       logger: Logger
     ) =>
       new RebuildStructService(blockmlTabService, presetsService, cs, logger),
-    inject: [BlockmlTabService, PresetsService, ConfigService]
+    inject: [BlockmlTabService, PresetsService, ConfigService, Logger]
   },
+  MessageService,
   {
-    provide: ConsumerMainService,
+    provide: ConsumerService,
     useFactory: (
-      structService: RebuildStructService,
-      cs: ConfigService<BlockmlConfig>,
-      logger: Logger
-    ) => new ConsumerMainService(structService, cs, logger),
-    inject: [RebuildStructService, ConfigService]
+      messageService: MessageService,
+      cs: ConfigService<BlockmlConfig>
+    ) => new ConsumerService(messageService, cs),
+    inject: [MessageService, ConfigService]
   }
 ];

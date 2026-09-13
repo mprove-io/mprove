@@ -21,7 +21,6 @@ import { fetchSql } from './fetch-sql';
 
 export async function buildTile<T extends dcType>(
   item: {
-    traceId: string;
     envId: string;
     projectId: string;
     entities: T[];
@@ -122,7 +121,6 @@ export async function buildTile<T extends dcType>(
 
   entities = await fetchSql(
     {
-      traceId: item.traceId,
       entities: entities,
       mconfigParentType: item.mconfigParentType,
       apiModels: item.apiModels,

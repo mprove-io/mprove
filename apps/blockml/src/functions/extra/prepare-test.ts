@@ -7,7 +7,7 @@ import { appServices } from '#blockml/app-services';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { getConfig } from '#blockml/config/get.config';
 import { RebuildStructService } from '#blockml/controllers/rebuild-struct/rebuild-struct.service';
-import { ConsumerMainService } from '#blockml/services/consumer-main.service';
+import { ConsumerService } from '#blockml/services/consumer.service';
 import { APP_NAME_BLOCKML, SRC_PATH } from '#common/constants/top-blockml';
 import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -55,7 +55,7 @@ export async function prepareTest(
   })
     .overrideProvider(ConfigService)
     .useValue({ get: (key: any) => mockConfig[key as keyof BlockmlConfig] })
-    .overrideProvider(ConsumerMainService)
+    .overrideProvider(ConsumerService)
     .useValue({})
     .compile();
 

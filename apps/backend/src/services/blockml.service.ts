@@ -14,7 +14,6 @@ import { buildModelFieldLeafs } from '#backend/functions/build-model-field-leafs
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { processRowIds } from '#backend/functions/process-row-ids';
-import { ToBlockmlRequestInfoNameEnum } from '#common/enums/to/to-blockml-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { Ev } from '#common/zod/backend/ev';
@@ -22,11 +21,9 @@ import type { MproveConfig } from '#common/zod/backend/mprove-config';
 import type { SelectedGiven } from '#common/zod/backend/selected-given';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
+import type { ToBlockmlRebuildStructRequest } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-request';
+import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
-import type {
-  ToBlockmlRebuildStructRequest,
-  ToBlockmlRebuildStructResponse
-} from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
 import { ChartsService } from './db/charts.service';
 import { ConnectionsService } from './db/connections.service';
 import { DashboardsService } from './db/dashboards.service';
@@ -129,11 +126,9 @@ export class BlockmlService {
     );
 
     let toBlockmlRebuildStructRequest: ToBlockmlRebuildStructRequest = {
-      info: {
-        name: ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
-        traceId: traceId
-      },
-      payload: {
+      operation: 'rebuildStruct',
+      traceId: traceId,
+      input: {
         structId: structId,
         projectId: projectId,
         mproveDir: mproveDir,
@@ -150,16 +145,12 @@ export class BlockmlService {
       }
     };
 
-    let blockmlRebuildStructResponse =
-      await this.rpcService.sendToBlockml<ToBlockmlRebuildStructResponse>({
+    let rs: ToBlockmlRebuildStructOutput =
+      await this.rpcService.sendToBlockmlUnwrapOutput({
+        request: toBlockmlRebuildStructRequest,
         orgId: orgId,
-        projectId: projectId,
-        repoId: repoId,
-        message: toBlockmlRebuildStructRequest,
-        checkIsOk: true
+        repoId: repoId
       });
-
-    let rs = blockmlRebuildStructResponse.payload;
 
     let struct: StructTab = {
       projectId: projectId,

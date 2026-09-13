@@ -8,14 +8,26 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { calculateDiskShard } from '#backend/functions/calculate-disk-shard';
 import { CHANNEL_RPC_REPLY } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
 import { ServerError } from '#common/models/server-error';
+import { zToBlockmlOperationRegistry } from '#common/zod/blockml/request/to-blockml-operation-registry';
+import type { ToBlockmlRequest } from '#common/zod/blockml/request/to-blockml-request';
+import type { ToBlockmlResponseForOperation } from '#common/zod/blockml/response/to-blockml-response-for-operation';
 import { zToDiskOperationRegistry } from '#common/zod/disk/request/to-disk-operation-registry';
 import type { ToDiskRequest } from '#common/zod/disk/request/to-disk-request';
 import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
 import type { RpcRequestData } from '#common/zod/rpc-request-data';
-import type { MyResponse } from '#common/zod/to/my-response';
+
+type BlockmlSendItem<TRequest extends ToBlockmlRequest> = {
+  request: TRequest;
+  orgId: string;
+  repoId: string;
+};
+
+type BlockmlSuccessOutput<TRequest extends ToBlockmlRequest> = Extract<
+  ToBlockmlResponseForOperation<TRequest['operation']>['result'],
+  { type: 'Success' }
+>['value'];
 
 type DiskSendItem<TRequest extends ToDiskRequest> = {
   request: TRequest;
@@ -145,35 +157,83 @@ export class RpcService implements OnModuleDestroy {
     });
   }
 
-  async sendToBlockml<T>(item: {
-    orgId: string;
-    projectId: string;
-    repoId: string;
-    message: any;
-    checkIsOk?: boolean;
-  }): Promise<T> {
-    let { message, orgId, projectId, repoId, checkIsOk } = item;
+  private validateBlockmlRequest<TRequest extends ToBlockmlRequest>(item: {
+    request: TRequest;
+  }): TRequest {
+    let { request: sourceRequest } = item;
 
-    let groupId: string = `repo:${repoId}-${projectId}-${orgId}`;
+    let validationResult: ZodSafeParseResult<ToBlockmlRequest>;
 
-    let response: MyResponse = await this.request<MyResponse>({
-      namespace: RpcNamespacesEnum.RpcBlockml.toString(),
-      groupId: groupId,
-      message: message,
-      timeout: this.rpcBlockmlTimeoutMs
-    });
-
-    if (
-      checkIsOk === true &&
-      response.info?.status !== ResponseInfoStatusEnum.Ok
-    ) {
+    try {
+      validationResult =
+        zToBlockmlOperationRegistry[sourceRequest.operation].request.safeParse(
+          sourceRequest
+        );
+    } catch {
       throw new ServerError({
-        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
-        originalError: response.info?.error
+        message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS
       });
     }
 
-    return response as unknown as T;
+    if (validationResult.success === false) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+      });
+    }
+
+    return sourceRequest;
+  }
+
+  private async sendToBlockml<TRequest extends ToBlockmlRequest>(item: {
+    request: TRequest;
+    orgId: string;
+    repoId: string;
+  }): Promise<ToBlockmlResponseForOperation<TRequest['operation']>> {
+    let { request, orgId, repoId } = item;
+
+    let groupId: string = `repo:${repoId}-${request.input.projectId}-${orgId}`;
+
+    let response: ToBlockmlResponseForOperation<TRequest['operation']> =
+      await this.request<ToBlockmlResponseForOperation<TRequest['operation']>>({
+        namespace: RpcNamespacesEnum.RpcBlockml.toString(),
+        groupId: groupId,
+        message: request,
+        timeout: this.rpcBlockmlTimeoutMs
+      });
+
+    return response;
+  }
+
+  async sendToBlockmlUnwrapOutput<TRequest extends ToBlockmlRequest>(
+    item: BlockmlSendItem<TRequest>
+  ): Promise<BlockmlSuccessOutput<TRequest>> {
+    let request: TRequest = this.validateBlockmlRequest({
+      request: item.request
+    });
+
+    let response: ToBlockmlResponseForOperation<TRequest['operation']> =
+      await this.sendToBlockml({
+        request: request,
+        orgId: item.orgId,
+        repoId: item.repoId
+      });
+
+    if (response.result.type === 'Failure') {
+      let error: { code: string; displayData?: unknown } =
+        response.result.error;
+
+      throw new ServerError({
+        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
+        originalError: new ServerError({
+          message: error.code,
+          displayData: error.displayData
+        })
+      });
+    }
+
+    let output: BlockmlSuccessOutput<TRequest> = response.result.value;
+
+    return output;
   }
 
   private validateDiskRequest<TRequest extends ToDiskRequest>(item: {
@@ -303,23 +363,13 @@ export class RpcService implements OnModuleDestroy {
       totalDiskShards: this.totalDiskShards
     });
 
-    let rawResponse: unknown = await this.request<unknown>({
-      namespace: `${RpcNamespacesEnum.RpcDisk}-${diskShard}`,
-      groupId: groupId,
-      message: request,
-      timeout: this.rpcDiskTimeoutMs
-    });
-
-    let response: ToDiskResponseForOperation<TRequest['operation']>;
-
-    try {
-      response =
-        zToDiskOperationRegistry[request.operation].response.parse(rawResponse);
-    } catch {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RPC_INVALID_RESPONSE_FORMAT
+    let response: ToDiskResponseForOperation<TRequest['operation']> =
+      await this.request<ToDiskResponseForOperation<TRequest['operation']>>({
+        namespace: `${RpcNamespacesEnum.RpcDisk}-${diskShard}`,
+        groupId: groupId,
+        message: request,
+        timeout: this.rpcDiskTimeoutMs
       });
-    }
 
     return response;
   }

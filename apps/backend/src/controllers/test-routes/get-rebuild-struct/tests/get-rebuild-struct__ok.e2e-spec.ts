@@ -15,8 +15,10 @@ import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ToDiskSeedProjectRequest } from '#common/zod/disk/routes/08-seed/seed-project/seed-project-request';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import type { ToBackendGetRebuildStructRequest } from '#common/zod/to-backend/test-routes/to-backend-get-rebuild-struct';
-import type { ToBlockmlRebuildStructResponse } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
+import type {
+  ToBackendGetRebuildStructRequest,
+  ToBackendGetRebuildStructResponse
+} from '#common/zod/to-backend/test-routes/to-backend-get-rebuild-struct';
 
 let testId = 'get-rebuild-struct__ok';
 
@@ -43,7 +45,7 @@ test('1', async t => {
   let prep: Prep;
 
   await retry(async (bail: any) => {
-    let resp: ToBlockmlRebuildStructResponse;
+    let resp: ToBackendGetRebuildStructResponse;
 
     try {
       prep = await prepareTestAndSeed({
@@ -152,7 +154,7 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBlockmlRebuildStructResponse>({
+      resp = await sendToBackend<ToBackendGetRebuildStructResponse>({
         httpServer: prep.httpServer,
         req: getRebuildStructReq
       });
