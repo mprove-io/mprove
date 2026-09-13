@@ -4,12 +4,12 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/01-orgs/create-org/create-org-request';
+import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/02-projects/create-project/create-project-request';
+import type { ToDiskRenameCatalogNodeRequest } from '#common/zod/disk/routes/04-catalogs/rename-catalog-node/rename-catalog-node-request';
+import type { ToDiskRenameCatalogNodeResponse } from '#common/zod/disk/routes/04-catalogs/rename-catalog-node/rename-catalog-node-response';
+import type { ToDiskCreateFolderRequest } from '#common/zod/disk/routes/06-folders/create-folder/create-folder-request';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
-import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
-import type { ToDiskRenameCatalogNodeRequest } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-request';
-import type { ToDiskRenameCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response';
-import type { ToDiskCreateFolderRequest } from '#common/zod/to-disk/06-folders/create-folder/create-folder-request';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 

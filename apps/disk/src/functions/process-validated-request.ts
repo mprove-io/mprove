@@ -1,8 +1,8 @@
 import type { Logger } from '@nestjs/common';
-import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
-import type { ToDiskRequestForOperation } from '#common/zod/to-disk/to-disk-request-for-operation';
-import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
-import type { ToDiskResponseResultForOperation } from '#common/zod/to-disk/to-disk-response-result-for-operation';
+import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
+import type { ToDiskRequestForOperation } from '#common/zod/disk/request/to-disk-request-for-operation';
+import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
+import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 
 export async function processValidatedRequest<
   TOperation extends ToDiskOperation

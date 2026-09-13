@@ -42,8 +42,8 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import type { ToDiskCreateFolderOutput } from '#common/zod/disk/routes/06-folders/create-folder/create-folder-response';
 import type { ToBackendCreateFolderResponsePayload } from '#common/zod/to-backend/folders/to-backend-create-folder';
-import type { ToDiskCreateFolderOutput } from '#common/zod/to-disk/06-folders/create-folder/create-folder-response';
 
 @ApiTags('Folders')
 @UseGuards(ThrottlerUserIdGuard)

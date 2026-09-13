@@ -1,0 +1,20 @@
+import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
+import type { ToDiskOperationRegistry } from '#common/zod/disk/request/to-disk-operation-registry';
+import type { ToDiskResponse } from '#common/zod/disk/response/to-disk-response';
+
+export type ToDiskResponseForOperation<TOperation extends ToDiskOperation> =
+  ToDiskResponse<
+    TOperation,
+    ToDiskSuccessForOperation<TOperation>,
+    ToDiskErrorForOperation<TOperation>
+  >;
+
+type ToDiskSuccessForOperation<TOperation extends ToDiskOperation> = Extract<
+  ToDiskOperationRegistry[TOperation]['response']['result'],
+  { type: 'Success' }
+>['value'];
+
+type ToDiskErrorForOperation<TOperation extends ToDiskOperation> = Extract<
+  ToDiskOperationRegistry[TOperation]['response']['result'],
+  { type: 'Failure' }
+>['error'];

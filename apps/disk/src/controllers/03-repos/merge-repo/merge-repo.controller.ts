@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskMergeRepoResponse } from '#common/zod/to-disk/03-repos/merge-repo/merge-repo-response';
+import type { ToDiskMergeRepoResponse } from '#common/zod/disk/routes/03-repos/merge-repo/merge-repo-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { MergeRepoService } from './merge-repo.service';
 

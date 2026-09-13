@@ -41,11 +41,11 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
+import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/04-catalogs/get-catalog-files/get-catalog-files-response';
 import type {
   BridgeItem,
   ToBackendSpecialRebuildStructsResponsePayload
 } from '#common/zod/to-backend/special/to-backend-special-rebuild-structs';
-import type { ToDiskGetCatalogFilesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @ApiTags('Special')
 @SkipJwtCheck()

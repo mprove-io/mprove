@@ -21,8 +21,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ServerError } from '#common/models/server-error';
+import type { ToDiskCommitRepoOutput } from '#common/zod/disk/routes/03-repos/commit-repo/commit-repo-response';
 import type { ToBackendCommitRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-commit-repo';
-import type { ToDiskCommitRepoOutput } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

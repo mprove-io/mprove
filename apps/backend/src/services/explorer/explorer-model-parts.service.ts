@@ -13,8 +13,8 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import type { ToDiskGetCatalogFilesRequest } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-request';
-import type { ToDiskGetCatalogFilesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
+import type { ToDiskGetCatalogFilesRequest } from '#common/zod/disk/routes/04-catalogs/get-catalog-files/get-catalog-files-request';
+import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/04-catalogs/get-catalog-files/get-catalog-files-response';
 import type { ExplorerModelPart } from './types/explorer-model-part';
 
 @Injectable()

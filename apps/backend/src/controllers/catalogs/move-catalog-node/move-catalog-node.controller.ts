@@ -41,8 +41,8 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import type { ToDiskMoveCatalogNodeOutput } from '#common/zod/disk/routes/04-catalogs/move-catalog-node/move-catalog-node-response';
 import type { ToBackendMoveCatalogNodeResponsePayload } from '#common/zod/to-backend/catalogs/to-backend-move-catalog-node';
-import type { ToDiskMoveCatalogNodeOutput } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-response';
 
 @ApiTags('Catalogs')
 @UseGuards(ThrottlerUserIdGuard)

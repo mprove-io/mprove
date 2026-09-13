@@ -44,8 +44,8 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
+import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/disk/routes/03-repos/revert-repo-to-remote/revert-repo-to-remote-response';
 import type { ToBackendRevertRepoToRemoteResponsePayload } from '#common/zod/to-backend/repos/to-backend-revert-repo-to-remote';
-import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/to-disk/03-repos/revert-repo-to-remote/revert-repo-to-remote-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

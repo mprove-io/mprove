@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskCreateFolderResponse } from '#common/zod/to-disk/06-folders/create-folder/create-folder-response';
+import type { ToDiskCreateFolderResponse } from '#common/zod/disk/routes/06-folders/create-folder/create-folder-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { CreateFolderService } from './create-folder.service';
 

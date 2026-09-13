@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import type { z } from 'zod';
 import { METHOD_RPC } from '#common/constants/top';
-import type { ToDiskInvalidRequestErrorResponse } from '#common/zod/to-disk/to-disk-invalid-request-error-response';
 import {
   type ToDiskOperation,
   zToDiskOperation
-} from '#common/zod/to-disk/to-disk-operation';
-import { zToDiskOperationRegistry } from '#common/zod/to-disk/to-disk-operation-registry';
-import type { ToDiskOperationResponse } from '#common/zod/to-disk/to-disk-operation-response';
-import type { ToDiskRequest } from '#common/zod/to-disk/to-disk-request';
-import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
-import type { ToDiskResponseForRequest } from '#common/zod/to-disk/to-disk-response-for-request';
+} from '#common/zod/disk/request/to-disk-operation';
+import { zToDiskOperationRegistry } from '#common/zod/disk/request/to-disk-operation-registry';
+import type { ToDiskRequest } from '#common/zod/disk/request/to-disk-request';
+import type { ToDiskInvalidRequestErrorResponse } from '#common/zod/disk/response/to-disk-invalid-request-error-response';
+import type { ToDiskOperationResponse } from '#common/zod/disk/response/to-disk-operation-response';
+import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
+import type { ToDiskResponseForRequest } from '#common/zod/disk/response/to-disk-response-for-request';
 import { CreateOrgService } from '#disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '#disk/controllers/01-orgs/delete-org/delete-org.service';
 import { IsOrgExistService } from '#disk/controllers/01-orgs/is-org-exist/is-org-exist.service';

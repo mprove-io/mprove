@@ -20,11 +20,11 @@ import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBlockmlRequestInfoNameEnum } from '#common/enums/to/to-blockml-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/04-catalogs/get-catalog-files/get-catalog-files-response';
 import type {
   ToBlockmlRebuildStructRequest,
   ToBlockmlRebuildStructResponse
 } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
-import type { ToDiskGetCatalogFilesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @ApiTags('TestRoutes')
 // ToBackendGetRebuildStructRequest is for tests only

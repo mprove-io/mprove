@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskCommitRepoResponse } from '#common/zod/to-disk/03-repos/commit-repo/commit-repo-response';
+import type { ToDiskCommitRepoResponse } from '#common/zod/disk/routes/03-repos/commit-repo/commit-repo-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { CommitRepoService } from './commit-repo.service';
 

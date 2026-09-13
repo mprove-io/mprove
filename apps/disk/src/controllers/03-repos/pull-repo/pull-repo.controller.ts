@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskPullRepoResponse } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-response';
+import type { ToDiskPullRepoResponse } from '#common/zod/disk/routes/03-repos/pull-repo/pull-repo-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { PullRepoService } from './pull-repo.service';
 

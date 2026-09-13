@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskDeleteDevRepoResponse } from '#common/zod/to-disk/03-repos/delete-dev-repo/delete-dev-repo-response';
+import type { ToDiskDeleteDevRepoResponse } from '#common/zod/disk/routes/03-repos/delete-dev-repo/delete-dev-repo-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { DeleteDevRepoService } from './delete-dev-repo.service';
 

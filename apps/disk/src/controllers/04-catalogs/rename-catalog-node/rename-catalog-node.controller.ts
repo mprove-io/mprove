@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskRenameCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response';
+import type { ToDiskRenameCatalogNodeResponse } from '#common/zod/disk/routes/04-catalogs/rename-catalog-node/rename-catalog-node-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { RenameCatalogNodeService } from './rename-catalog-node.service';
 

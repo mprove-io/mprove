@@ -8,11 +8,11 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/01-orgs/create-org/create-org-request';
+import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/02-projects/create-project/create-project-request';
+import type { ToDiskGetFileRequest } from '#common/zod/disk/routes/07-files/get-file/get-file-request';
+import type { ToDiskGetFileResponse } from '#common/zod/disk/routes/07-files/get-file/get-file-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import type { ToDiskCreateOrgRequest } from '#common/zod/to-disk/01-orgs/create-org/create-org-request';
-import type { ToDiskCreateProjectRequest } from '#common/zod/to-disk/02-projects/create-project/create-project-request';
-import type { ToDiskGetFileRequest } from '#common/zod/to-disk/07-files/get-file/get-file-request';
-import type { ToDiskGetFileResponse } from '#common/zod/to-disk/07-files/get-file/get-file-response';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 

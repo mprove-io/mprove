@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskMoveCatalogNodeResponse } from '#common/zod/to-disk/04-catalogs/move-catalog-node/move-catalog-node-response';
+import type { ToDiskMoveCatalogNodeResponse } from '#common/zod/disk/routes/04-catalogs/move-catalog-node/move-catalog-node-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { MoveCatalogNodeService } from './move-catalog-node.service';
 

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { ensureDir, remove } from 'fs-extra';
-import type { ToDiskCloneTestRepoOutput } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-response';
-import type { ToDiskResponseResultForOperation } from '#common/zod/to-disk/to-disk-response-result-for-operation';
+import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
+import type { ToDiskCloneTestRepoOutput } from '#common/zod/disk/routes/10-test/clone-test-repo/clone-test-repo-response';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
 

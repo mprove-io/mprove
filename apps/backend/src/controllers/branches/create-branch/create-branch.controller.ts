@@ -45,7 +45,7 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
-import type { ToDiskCreateBranchOutput } from '#common/zod/to-disk/05-branches/create-branch/create-branch-response';
+import type { ToDiskCreateBranchOutput } from '#common/zod/disk/routes/05-branches/create-branch/create-branch-response';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)

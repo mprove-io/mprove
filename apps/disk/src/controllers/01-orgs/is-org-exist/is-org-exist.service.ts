@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { ToDiskIsOrgExistOutput } from '#common/zod/to-disk/01-orgs/is-org-exist/is-org-exist-response';
-import type { ToDiskResponseResultForOperation } from '#common/zod/to-disk/to-disk-response-result-for-operation';
+import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
+import type { ToDiskIsOrgExistOutput } from '#common/zod/disk/routes/01-orgs/is-org-exist/is-org-exist-response';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 

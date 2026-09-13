@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskDeleteOrgResponse } from '#common/zod/to-disk/01-orgs/delete-org/delete-org-response';
+import type { ToDiskDeleteOrgResponse } from '#common/zod/disk/routes/01-orgs/delete-org/delete-org-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { DeleteOrgService } from './delete-org.service';
 

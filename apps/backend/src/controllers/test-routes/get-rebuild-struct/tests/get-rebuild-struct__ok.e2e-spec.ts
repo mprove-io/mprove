@@ -13,10 +13,10 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ToDiskSeedProjectRequest } from '#common/zod/disk/routes/08-seed/seed-project/seed-project-request';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToBackendGetRebuildStructRequest } from '#common/zod/to-backend/test-routes/to-backend-get-rebuild-struct';
 import type { ToBlockmlRebuildStructResponse } from '#common/zod/to-blockml/api/to-blockml-rebuild-struct';
-import type { ToDiskSeedProjectRequest } from '#common/zod/to-disk/08-seed/seed-project/seed-project-request';
 
 let testId = 'get-rebuild-struct__ok';
 

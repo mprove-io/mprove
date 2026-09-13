@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskCreateBranchResponse } from '#common/zod/to-disk/05-branches/create-branch/create-branch-response';
+import type { ToDiskCreateBranchResponse } from '#common/zod/disk/routes/05-branches/create-branch/create-branch-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { CreateBranchService } from './create-branch.service';
 

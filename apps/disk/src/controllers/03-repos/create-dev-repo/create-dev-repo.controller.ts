@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskCreateDevRepoResponse } from '#common/zod/to-disk/03-repos/create-dev-repo/create-dev-repo-response';
+import type { ToDiskCreateDevRepoResponse } from '#common/zod/disk/routes/03-repos/create-dev-repo/create-dev-repo-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { CreateDevRepoService } from './create-dev-repo.service';
 

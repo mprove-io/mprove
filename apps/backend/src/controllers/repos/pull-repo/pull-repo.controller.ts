@@ -41,8 +41,8 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import type { ToDiskPullRepoOutput } from '#common/zod/disk/routes/03-repos/pull-repo/pull-repo-response';
 import type { ToBackendPullRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-pull-repo';
-import type { ToDiskPullRepoOutput } from '#common/zod/to-disk/03-repos/pull-repo/pull-repo-response';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

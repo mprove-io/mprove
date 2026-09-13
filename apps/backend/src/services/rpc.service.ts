@@ -11,11 +11,11 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
 import { ServerError } from '#common/models/server-error';
+import { zToDiskOperationRegistry } from '#common/zod/disk/request/to-disk-operation-registry';
+import type { ToDiskRequest } from '#common/zod/disk/request/to-disk-request';
+import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
 import type { RpcRequestData } from '#common/zod/rpc-request-data';
 import type { MyResponse } from '#common/zod/to/my-response';
-import { zToDiskOperationRegistry } from '#common/zod/to-disk/to-disk-operation-registry';
-import type { ToDiskRequest } from '#common/zod/to-disk/to-disk-request';
-import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
 
 type DiskSendItem<TRequest extends ToDiskRequest> = {
   request: TRequest;

@@ -56,8 +56,8 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { TileX } from '#common/zod/backend/tile-x';
+import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/07-files/create-file/create-file-response';
 import type { ToBackendSaveCreateDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-save-create-dashboard';
-import type { ToDiskCreateFileOutput } from '#common/zod/to-disk/07-files/create-file/create-file-response';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)

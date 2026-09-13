@@ -22,8 +22,8 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { makeId } from '#common/functions/make-id';
+import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/04-catalogs/get-catalog-files/get-catalog-files-response';
 import type { ToBackendValidateFilesResponsePayload } from '#common/zod/to-backend/files/to-backend-validate-files';
-import type { ToDiskGetCatalogFilesOutput } from '#common/zod/to-disk/04-catalogs/get-catalog-files/get-catalog-files-response';
 
 @Injectable()
 export class ValidateFilesService {

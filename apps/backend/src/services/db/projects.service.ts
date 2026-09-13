@@ -23,7 +23,7 @@ import { ServerError } from '#common/models/server-error';
 import type { Ev } from '#common/zod/backend/ev';
 import type { Project } from '#common/zod/backend/project';
 import type { ProjectsItem } from '#common/zod/backend/projects-item';
-import type { ToDiskCreateProjectOutput } from '#common/zod/to-disk/02-projects/create-project/create-project-response';
+import type { ToDiskCreateProjectOutput } from '#common/zod/disk/routes/02-projects/create-project/create-project-response';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';

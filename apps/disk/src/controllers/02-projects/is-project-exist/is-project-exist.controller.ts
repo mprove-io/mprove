@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskIsProjectExistResponse } from '#common/zod/to-disk/02-projects/is-project-exist/is-project-exist-response';
+import type { ToDiskIsProjectExistResponse } from '#common/zod/disk/routes/02-projects/is-project-exist/is-project-exist-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { IsProjectExistService } from './is-project-exist.service';
 

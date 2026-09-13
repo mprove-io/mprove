@@ -41,8 +41,8 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import type { ToDiskDeleteFileOutput } from '#common/zod/disk/routes/07-files/delete-file/delete-file-response';
 import type { ToBackendDeleteFileResponsePayload } from '#common/zod/to-backend/files/to-backend-delete-file';
-import type { ToDiskDeleteFileOutput } from '#common/zod/to-disk/07-files/delete-file/delete-file-response';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)

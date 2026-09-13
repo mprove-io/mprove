@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
-import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
+import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
+import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
 
 export function makeInvalidRequestResponse<
   TOperation extends ToDiskOperation

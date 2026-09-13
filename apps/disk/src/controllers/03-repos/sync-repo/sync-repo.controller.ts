@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskSyncRepoResponse } from '#common/zod/to-disk/03-repos/sync-repo/sync-repo-response';
+import type { ToDiskSyncRepoResponse } from '#common/zod/disk/routes/03-repos/sync-repo/sync-repo-response';
 import { handleHttpRequest } from '#disk/functions/handle-http-request';
 import { SyncRepoService } from './sync-repo.service';
 
