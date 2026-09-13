@@ -122,26 +122,22 @@ import type { ToDiskCloneTestRepoResponse } from '#common/zod/to-disk/10-test/cl
 import { zToDiskCloneTestRepoResponse } from '#common/zod/to-disk/10-test/clone-test-repo/clone-test-repo-response';
 import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
 
-export type ToDiskOperationRegistry =
-  ValidateOperationRegistry<ToDiskOperationRegistrySource>;
-
-type ValidateOperationRegistry<TRegistry extends ToDiskOperationRegistryShape> =
-  TRegistry;
-
-type ToDiskOperationRegistryShape = {
-  [TOperation in ToDiskOperation]: {
-    request: { operation: TOperation; traceId: string; input: unknown };
-    response: {
-      operation: TOperation;
-      method: string;
-      duration: number;
-      traceId: string;
-      result: unknown;
+type ValidateOperationRegistry<
+  TRegistry extends {
+    [TOperation in ToDiskOperation]: {
+      request: { operation: TOperation; traceId: string; input: unknown };
+      response: {
+        operation: TOperation;
+        method: string;
+        duration: number;
+        traceId: string;
+        result: unknown;
+      };
     };
-  };
-};
+  }
+> = TRegistry;
 
-type ToDiskOperationRegistrySource = {
+export type ToDiskOperationRegistry = ValidateOperationRegistry<{
   createOrg: {
     request: ToDiskCreateOrgRequest;
     response: ToDiskCreateOrgResponse;
@@ -259,7 +255,7 @@ type ToDiskOperationRegistrySource = {
     request: ToDiskCloneTestRepoRequest;
     response: ToDiskCloneTestRepoResponse;
   };
-};
+}>;
 
 export const zToDiskOperationRegistry = {
   createOrg: {
