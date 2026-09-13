@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import type { Logger } from '@nestjs/common';
 import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
 import type { ToDiskRequestForOperation } from '#common/zod/to-disk/to-disk-request-for-operation';
@@ -36,16 +35,14 @@ export async function processValidatedRequest<
 
     return response;
   } catch (error) {
-    let incidentId: string = randomUUID();
-
-    logger.error({ incidentId: incidentId, error: error });
+    logger.error(error);
 
     let response: ToDiskResponseForOperation<TOperation> = {
       operation: operation,
       method: method,
       duration: Date.now() - startTs,
       traceId: request.traceId,
-      result: { type: 'InternalFailure', incidentId: incidentId }
+      result: { type: 'Failure', error: { code: 'DISK_INTERNAL' } }
     };
 
     return response;

@@ -23,12 +23,15 @@ export function makeInvalidRequestResponse<
     duration: Date.now() - startTs,
     traceId: metadata.success ? metadata.data.traceId : '',
     result: {
-      type: 'InvalidRequest',
-      issues: error.issues.map(issue => ({
-        path: issue.path.join('.'),
-        message: issue.message,
-        code: issue.code
-      }))
+      type: 'Failure',
+      error: {
+        code: 'DISK_INVALID_REQUEST',
+        displayData: error.issues.map(issue => ({
+          path: issue.path.join('.'),
+          message: issue.message,
+          code: issue.code
+        }))
+      }
     }
   };
 

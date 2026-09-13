@@ -116,14 +116,17 @@ export class MessageService {
     if (operationResult.success === false) {
       let response: ToDiskUnrouteableResponse = {
         result: {
-          type: 'InvalidRequest',
-          issues: [
-            {
-              path: 'operation',
-              message: 'Missing or unknown disk request discriminator',
-              code: 'invalid_value'
-            }
-          ]
+          type: 'Failure',
+          error: {
+            code: 'DISK_INVALID_REQUEST',
+            displayData: [
+              {
+                path: 'operation',
+                message: 'Missing or unknown disk request discriminator',
+                code: 'invalid_value'
+              }
+            ]
+          }
         }
       };
 

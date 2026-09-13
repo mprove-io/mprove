@@ -342,23 +342,6 @@ export class RpcService implements OnModuleDestroy {
         groupId: route.groupId
       });
 
-    if (response.result.type === 'InvalidRequest') {
-      throw new ServerError({
-        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
-        originalError: new ServerError({
-          message: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-          displayData: response.result.issues
-        })
-      });
-    }
-
-    if (response.result.type === 'InternalFailure') {
-      throw new ServerError({
-        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
-        originalError: { incidentId: response.result.incidentId }
-      });
-    }
-
     if (response.result.type === 'Failure') {
       let error: { code: string; displayData?: unknown } =
         response.result.error;

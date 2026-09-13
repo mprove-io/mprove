@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import {
-  type ToDiskInternalFailure,
-  zToDiskInternalFailure
-} from './to-disk-internal-failure';
+  type DiskInternalError,
+  zDiskInternalError
+} from '#common/zod/disk/errors/disk-internal-error';
 import {
-  type ToDiskInvalidRequest,
-  zToDiskInvalidRequest
-} from './to-disk-invalid-request';
+  type DiskInvalidRequestError,
+  zDiskInvalidRequestError
+} from '#common/zod/disk/errors/disk-invalid-request-error';
 
 export type ToDiskResponse<TOperation extends string, TSuccess, TError> = {
   operation: TOperation;
@@ -16,9 +16,10 @@ export type ToDiskResponse<TOperation extends string, TSuccess, TError> = {
   traceId: string;
   result:
     | { type: 'Success'; value: TSuccess }
-    | { type: 'Failure'; error: TError }
-    | ToDiskInternalFailure
-    | ToDiskInvalidRequest;
+    | {
+        type: 'Failure';
+        error: TError | DiskInternalError | DiskInvalidRequestError;
+      };
 };
 
 export function makeToDiskResponseSchema<
@@ -44,10 +45,15 @@ export function makeToDiskResponseSchema<
           .object({ type: z.literal('Success'), value: success })
           .transform(item => ({ type: item.type, value: item.value })),
         z
-          .object({ type: z.literal('Failure'), error: error })
-          .transform(item => ({ type: item.type, error: item.error })),
-        zToDiskInternalFailure,
-        zToDiskInvalidRequest
+          .object({
+            type: z.literal('Failure'),
+            error: z.union([
+              error,
+              zDiskInternalError,
+              zDiskInvalidRequestError
+            ])
+          })
+          .transform(item => ({ type: item.type, error: item.error }))
       ])
     })
     .transform(item => ({

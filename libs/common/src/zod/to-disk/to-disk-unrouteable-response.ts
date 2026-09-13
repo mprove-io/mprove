@@ -1,17 +1,20 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import {
-  type ToDiskInvalidRequest,
-  zToDiskInvalidRequest
-} from './to-disk-invalid-request';
+  type DiskInvalidRequestError,
+  zDiskInvalidRequestError
+} from '#common/zod/disk/errors/disk-invalid-request-error';
 
 // No operation metadata can be claimed when the request cannot be routed.
 export type ToDiskUnrouteableResponse = {
-  result: ToDiskInvalidRequest;
+  result: { type: 'Failure'; error: DiskInvalidRequestError };
 };
 
 export let zToDiskUnrouteableResponse = z.object({
-  result: zToDiskInvalidRequest
+  result: z.object({
+    type: z.literal('Failure'),
+    error: zDiskInvalidRequestError
+  })
 });
 
 assertTypesEqual<
