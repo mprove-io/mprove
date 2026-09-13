@@ -159,13 +159,7 @@ export class MessageService {
 
   private async dispatch<TRequest extends ToDiskRequest>(item: {
     request: TRequest;
-  }): Promise<ToDiskResponseForRequest<TRequest>>;
-  private async dispatch(item: {
-    request: ToDiskRequest;
-  }): Promise<ToDiskOperationResponse>;
-  private async dispatch(item: {
-    request: ToDiskRequest;
-  }): Promise<ToDiskOperationResponse> {
+  }): Promise<ToDiskResponseForRequest<TRequest>> {
     let { request } = item;
 
     switch (request.operation) {
