@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import type { z } from 'zod';
 import { METHOD_RPC } from '#common/constants/top';
+import type { ToDiskInvalidRequestErrorResponse } from '#common/zod/to-disk/to-disk-invalid-request-error-response';
 import {
   type ToDiskOperation,
   zToDiskOperation
@@ -11,7 +12,6 @@ import type { ToDiskRequest } from '#common/zod/to-disk/to-disk-request';
 import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
 import type { ToDiskResponseForRequest } from '#common/zod/to-disk/to-disk-response-for-request';
 import type { ToDiskRpcResponse } from '#common/zod/to-disk/to-disk-rpc-response';
-import type { ToDiskUnrouteableResponse } from '#common/zod/to-disk/to-disk-unrouteable-response';
 import { CreateOrgService } from '#disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '#disk/controllers/01-orgs/delete-org/delete-org.service';
 import { IsOrgExistService } from '#disk/controllers/01-orgs/is-org-exist/is-org-exist.service';
@@ -114,7 +114,16 @@ export class MessageService {
       zToDiskOperation.safeParse(operationValue);
 
     if (operationResult.success === false) {
-      let response: ToDiskUnrouteableResponse = {
+      let traceIdValue: unknown =
+        typeof message === 'object' && message !== null && 'traceId' in message
+          ? message.traceId
+          : undefined;
+
+      let response: ToDiskInvalidRequestErrorResponse = {
+        operation: typeof operationValue === 'string' ? operationValue : '',
+        method: METHOD_RPC,
+        duration: Date.now() - startTs,
+        traceId: typeof traceIdValue === 'string' ? traceIdValue : '',
         result: {
           type: 'Failure',
           error: {

@@ -5,7 +5,7 @@ import { emptyDir, ensureDir } from 'fs-extra';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { ToDiskSeedProjectOutput } from '#common/zod/to-disk/08-seed/seed-project/seed-project-response';
-import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
+import type { ToDiskResponseResultForOperation } from '#common/zod/to-disk/to-disk-response-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
@@ -26,7 +26,7 @@ export class SeedProjectService {
     seedProjectId?: string;
     devRepoId: string;
     userAlias: string;
-  }): Promise<ToDiskResultForOperation<'seedProject'>> {
+  }): Promise<ToDiskResponseResultForOperation<'seedProject'>> {
     let { baseProject, devRepoId, userAlias, seedProjectId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

@@ -6,7 +6,7 @@ import type { DiskNewPathAlreadyExistError } from '#common/zod/disk/errors/disk-
 import type { DiskOldPathIsNotExistError } from '#common/zod/disk/errors/disk-old-path-is-not-exist-error';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { ToDiskRenameCatalogNodeOutput } from '#common/zod/to-disk/04-catalogs/rename-catalog-node/rename-catalog-node-response';
-import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
+import type { ToDiskResponseResultForOperation } from '#common/zod/to-disk/to-disk-response-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
@@ -32,7 +32,7 @@ export class RenameCatalogNodeService {
     branch: string;
     nodeId: string;
     newName: string;
-  }): Promise<ToDiskResultForOperation<'renameCatalogNode'>> {
+  }): Promise<ToDiskResponseResultForOperation<'renameCatalogNode'>> {
     let { baseProject, repoId, branch, nodeId, newName } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

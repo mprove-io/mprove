@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { ToDiskDeleteProjectOutput } from '#common/zod/to-disk/02-projects/delete-project/delete-project-response';
-import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
+import type { ToDiskResponseResultForOperation } from '#common/zod/to-disk/to-disk-response-result-for-operation';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
@@ -15,7 +15,7 @@ export class DeleteProjectService {
   async process(item: {
     orgId: string;
     projectId: string;
-  }): Promise<ToDiskResultForOperation<'deleteProject'>> {
+  }): Promise<ToDiskResponseResultForOperation<'deleteProject'>> {
     let { orgId, projectId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

@@ -2,7 +2,7 @@ import type { Logger } from '@nestjs/common';
 import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
 import type { ToDiskRequestForOperation } from '#common/zod/to-disk/to-disk-request-for-operation';
 import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
-import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
+import type { ToDiskResponseResultForOperation } from '#common/zod/to-disk/to-disk-response-result-for-operation';
 
 export async function processValidatedRequest<
   TOperation extends ToDiskOperation
@@ -12,7 +12,7 @@ export async function processValidatedRequest<
   method: string;
   process: (
     input: ToDiskRequestForOperation<TOperation>['input']
-  ) => Promise<ToDiskResultForOperation<TOperation>>;
+  ) => Promise<ToDiskResponseResultForOperation<TOperation>>;
   logger: Logger;
   startTs?: number;
 }): Promise<ToDiskResponseForOperation<TOperation>> {
@@ -21,7 +21,7 @@ export async function processValidatedRequest<
   let startTs: number = item.startTs ?? Date.now();
 
   try {
-    let result: ToDiskResultForOperation<TOperation> = await process(
+    let result: ToDiskResponseResultForOperation<TOperation> = await process(
       request.input
     );
 

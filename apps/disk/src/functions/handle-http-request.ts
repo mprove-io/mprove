@@ -4,7 +4,7 @@ import type { ToDiskOperation } from '#common/zod/to-disk/to-disk-operation';
 import { zToDiskOperationRegistry } from '#common/zod/to-disk/to-disk-operation-registry';
 import type { ToDiskRequestForOperation } from '#common/zod/to-disk/to-disk-request-for-operation';
 import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
-import type { ToDiskResultForOperation } from '#common/zod/to-disk/to-disk-result-for-operation';
+import type { ToDiskResponseResultForOperation } from '#common/zod/to-disk/to-disk-response-result-for-operation';
 import { makeInvalidRequestResponse } from '#disk/functions/make-invalid-request-response';
 import { processValidatedRequest } from '#disk/functions/process-validated-request';
 
@@ -16,7 +16,7 @@ export async function handleHttpRequest<
   method: string;
   process: (
     input: ToDiskRequestForOperation<TOperation>['input']
-  ) => Promise<ToDiskResultForOperation<TOperation>>;
+  ) => Promise<ToDiskResponseResultForOperation<TOperation>>;
   logger: Logger;
 }): Promise<ToDiskResponseForOperation<TOperation>> {
   let { operation, body, method, process, logger } = item;
