@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { Queue, Worker } from 'groupmq';
 import Redis from 'ioredis';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
-import type { ToDiskRpcResponse } from '#common/zod/to-disk/to-disk-rpc-response';
+import { ToDiskInvalidRequestErrorResponse } from '#common/zod/to-disk/to-disk-invalid-request-error-response';
+import { ToDiskOperationResponse } from '#common/zod/to-disk/to-disk-operation-response';
 import { DiskConfig } from '#disk/config/disk-config';
 import { MessageService } from './message.service';
 
@@ -67,9 +68,10 @@ export class ConsumerService {
         ? data.replyTo
         : undefined;
 
-    let response: ToDiskRpcResponse = await this.messageService.handleMessage({
-      message: message
-    });
+    let response: ToDiskOperationResponse | ToDiskInvalidRequestErrorResponse =
+      await this.messageService.handleMessage({
+        message: message
+      });
 
     if (typeof replyTo === 'string' && replyTo.length > 0) {
       await this.redisClient.publish(replyTo, JSON.stringify(response));

@@ -11,7 +11,6 @@ import type { ToDiskOperationResponse } from '#common/zod/to-disk/to-disk-operat
 import type { ToDiskRequest } from '#common/zod/to-disk/to-disk-request';
 import type { ToDiskResponseForOperation } from '#common/zod/to-disk/to-disk-response-for-operation';
 import type { ToDiskResponseForRequest } from '#common/zod/to-disk/to-disk-response-for-request';
-import type { ToDiskRpcResponse } from '#common/zod/to-disk/to-disk-rpc-response';
 import { CreateOrgService } from '#disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '#disk/controllers/01-orgs/delete-org/delete-org.service';
 import { IsOrgExistService } from '#disk/controllers/01-orgs/is-org-exist/is-org-exist.service';
@@ -100,7 +99,9 @@ export class MessageService {
     return response;
   }
 
-  async handleMessage(item: { message: unknown }): Promise<ToDiskRpcResponse> {
+  async handleMessage(item: {
+    message: unknown;
+  }): Promise<ToDiskOperationResponse | ToDiskInvalidRequestErrorResponse> {
     let { message } = item;
 
     let startTs: number = Date.now();
