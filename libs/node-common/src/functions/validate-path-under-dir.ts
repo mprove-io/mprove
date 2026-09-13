@@ -1,5 +1,4 @@
 import path from 'node:path';
-import { ErEnum } from '#common/enums/er.enum';
 import { ServerError } from '#common/models/server-error';
 
 export function validatePathUnderDir(item: {
@@ -18,7 +17,7 @@ export function validatePathUnderDir(item: {
 
   if (isInsideDir === false) {
     throw new ServerError({
-      message: ErEnum.DISK_PATH_TRAVERSAL,
+      message: 'DISK_PATH_TRAVERSAL',
       displayData:
         displayPath === undefined
           ? undefined

@@ -1,5 +1,4 @@
 import test from 'ava';
-import { ErEnum } from '#common/enums/er.enum';
 import { ServerError } from '#common/models/server-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
 
@@ -58,7 +57,7 @@ test('rejects path traversal with ../', t => {
     },
     { instanceOf: ServerError }
   );
-  t.is(error.message, ErEnum.DISK_PATH_TRAVERSAL);
+  t.is(error.message, 'DISK_PATH_TRAVERSAL');
 });
 
 test('rejects path traversal in middle segment', t => {
@@ -71,7 +70,7 @@ test('rejects path traversal in middle segment', t => {
     },
     { instanceOf: ServerError }
   );
-  t.is(error.message, ErEnum.DISK_PATH_TRAVERSAL);
+  t.is(error.message, 'DISK_PATH_TRAVERSAL');
 });
 
 test('rejects path with directory name prefix collision', t => {
@@ -84,7 +83,7 @@ test('rejects path with directory name prefix collision', t => {
     },
     { instanceOf: ServerError }
   );
-  t.is(error.message, ErEnum.DISK_PATH_TRAVERSAL);
+  t.is(error.message, 'DISK_PATH_TRAVERSAL');
 });
 
 test('rejects absolute path outside allowed directory', t => {
@@ -97,7 +96,7 @@ test('rejects absolute path outside allowed directory', t => {
     },
     { instanceOf: ServerError }
   );
-  t.is(error.message, ErEnum.DISK_PATH_TRAVERSAL);
+  t.is(error.message, 'DISK_PATH_TRAVERSAL');
 });
 
 test('rejects deep path traversal', t => {
@@ -110,5 +109,5 @@ test('rejects deep path traversal', t => {
     },
     { instanceOf: ServerError }
   );
-  t.is(error.message, ErEnum.DISK_PATH_TRAVERSAL);
+  t.is(error.message, 'DISK_PATH_TRAVERSAL');
 });

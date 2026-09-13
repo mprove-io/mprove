@@ -1,6 +1,5 @@
 import test from 'ava';
 import { BRANCH_MAIN } from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id';
@@ -107,5 +106,5 @@ test('1', async t => {
     return;
   }
 
-  t.is(resp.result.error.code, ErEnum.DISK_PATH_TRAVERSAL);
+  t.is(resp.result.error.code, 'DISK_PATH_TRAVERSAL');
 });

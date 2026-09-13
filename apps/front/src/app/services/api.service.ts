@@ -181,7 +181,7 @@ export class ApiService {
       if (
         infoErrorMessage === ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK &&
         errorData.response.body.info.error.originalError?.message ===
-          ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
+          'DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH'
       ) {
         let errorCurrentBranch =
           errorData.response.body?.info?.error?.originalError?.displayData
