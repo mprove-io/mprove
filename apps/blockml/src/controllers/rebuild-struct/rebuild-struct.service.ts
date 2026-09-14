@@ -90,11 +90,11 @@ import type { ToBlockmlResponseResultForOperation } from '#common/zod/blockml/re
 import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
 import type { Space } from '#common/zod/blockml/space';
 import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
-import { getMproveDir } from '#node-common/functions/get-mprove-dir';
 import {
   type MalloyConnection,
   makeMalloyConnections
 } from '#node-common/functions/make-malloy-connections';
+import { getMproveDir } from '#node-common/functions-result/get-mprove-dir';
 
 interface RebuildStructPrep {
   errors: BmError[];
@@ -269,10 +269,15 @@ export class RebuildStructService {
   }): Promise<RebuildStructPrep> {
     let configPath = item.dir + '/' + MPROVE_CONFIG_FILENAME;
 
-    let mproveDir = await getMproveDir({
-      dir: item.dir,
-      configPath: configPath
-    });
+    let mproveDir = await Result.unwrap(
+      Result.pipe(
+        getMproveDir({
+          dir: item.dir,
+          configPath: configPath
+        }),
+        Result.mapError(error => new ServerError({ message: error.code }))
+      )
+    );
 
     let files: BmlFile[] = [];
 

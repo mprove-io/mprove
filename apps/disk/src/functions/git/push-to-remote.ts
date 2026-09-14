@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import type { DiskRepoStatusIsNotNeedPushError } from '#common/zod/disk/errors/disk-repo-status-is-not-need-push-error';
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { getRepoStatus } from './get-repo-status';
 
@@ -12,7 +14,10 @@ export function pushToRemote(item: {
   branch: string;
   git: SimpleGit;
   isFetch: boolean;
-}): Result.ResultAsync<void, DiskRepoStatusIsNotNeedPushError> {
+}): Result.ResultAsync<
+  void,
+  DiskRepoStatusIsNotNeedPushError | FileIsSymlinkError | FileSizeIsTooBigError
+> {
   return addTraceSpan({
     spanName: 'disk.git.pushToRemote',
     fn: () =>

@@ -2,18 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BaseProject } from '#common/zod/backend/base-project';
-import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/04-catalogs/get-catalog-nodes/get-catalog-nodes-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
 import { checkoutRequestedBranch } from './checkout-requested-branch';
+import { getEffectiveIsFetch } from './get-effective-is-fetch';
 
 @Injectable()
 export class GetCatalogNodesService {
@@ -78,19 +77,12 @@ export class GetCatalogNodesService {
           passPhrase: passPhrase
         })
       ),
-      Result.bind('effectiveIsFetch', async item => {
-        if (isFetch === false) {
-          return Result.succeed(false);
-        }
-
-        let changesToCommitEarly: DiskFileChange[] = await getChangesToCommit({
+      Result.bind('effectiveIsFetch', item =>
+        getEffectiveIsFetch({
+          isFetch: isFetch,
           repoDir: item.repoDir
-        });
-
-        let repoHasChanges: boolean = changesToCommitEarly.length > 0;
-
-        return Result.succeed(repoHasChanges === true ? false : isFetch);
-      }),
+        })
+      ),
       Result.bind('isFetched', item =>
         checkoutRequestedBranch({
           branch: branch,
@@ -103,7 +95,7 @@ export class GetCatalogNodesService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFilesWrapped({
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -112,7 +104,7 @@ export class GetCatalogNodesService {
         })
       ),
       Result.bind('itemStatus', item =>
-        getRepoStatusWrapped({
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,

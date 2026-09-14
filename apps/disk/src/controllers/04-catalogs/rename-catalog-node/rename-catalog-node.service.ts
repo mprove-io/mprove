@@ -8,13 +8,13 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskRenameCatalogNodeOutput } from '#common/zod/disk/routes/04-catalogs/rename-catalog-node/rename-catalog-node-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { renamePath } from '#disk/functions/disk/rename-path';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
@@ -138,7 +138,7 @@ export class RenameCatalogNodeService {
       ),
       Result.andThrough(item => addChangesToStage({ repoDir: item.repoDir })),
       Result.bind('itemStatus', item =>
-        getRepoStatusWrapped({
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -149,7 +149,7 @@ export class RenameCatalogNodeService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFilesWrapped({
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,

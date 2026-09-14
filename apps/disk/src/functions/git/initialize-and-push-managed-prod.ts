@@ -3,6 +3,7 @@ import type { SimpleGit } from 'simple-git';
 import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import type { DiskRepoStatusIsNotNeedPushError } from '#common/zod/disk/errors/disk-repo-status-is-not-need-push-error';
 import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
 import { createInitialCommitToProd } from './create-initial-commit-to-prod';
 import { pushToRemote } from './push-to-remote';
@@ -16,7 +17,7 @@ export function initializeAndPushManagedProd(item: {
   userAlias: string;
 }): Result.ResultAsync<
   void,
-  FileIsSymlinkError | DiskRepoStatusIsNotNeedPushError
+  FileIsSymlinkError | FileSizeIsTooBigError | DiskRepoStatusIsNotNeedPushError
 > {
   return Result.pipe(
     Result.succeed({ ...item }),

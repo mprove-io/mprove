@@ -8,10 +8,10 @@ import type { ToDiskCreateProjectOutput } from '#common/zod/disk/routes/02-proje
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
-import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
 import { DiskTabService } from '#disk/services/disk-tab.service';
@@ -98,7 +98,7 @@ export class CreateProjectService {
         })
       ),
       Result.bind('prodItemCatalog', item =>
-        getNodesAndFilesWrapped({
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: PROD_REPO_ID,
@@ -118,7 +118,7 @@ export class CreateProjectService {
         })
       ),
       Result.bind('prodItemStatus', item =>
-        getRepoStatusWrapped({
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: PROD_REPO_ID,

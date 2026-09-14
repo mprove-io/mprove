@@ -4,6 +4,7 @@ import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import type { DiskRepoStatusIsNotNeedPushError } from '#common/zod/disk/errors/disk-repo-status-is-not-need-push-error';
 import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
 import { createGit } from '#disk/functions/git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { ensureDir } from '../disk/ensure-dir';
@@ -24,7 +25,7 @@ export function prepareRemoteAndProd(item: {
   passPhrase: string;
 }): Result.ResultAsync<
   void,
-  FileIsSymlinkError | DiskRepoStatusIsNotNeedPushError
+  FileIsSymlinkError | FileSizeIsTooBigError | DiskRepoStatusIsNotNeedPushError
 > {
   return addTraceSpan({
     spanName: 'disk.git.prepareRemoteAndProd',

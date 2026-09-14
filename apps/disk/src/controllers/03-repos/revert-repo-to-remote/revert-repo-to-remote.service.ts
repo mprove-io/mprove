@@ -7,10 +7,10 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/disk/routes/03-repos/revert-repo-to-remote/revert-repo-to-remote-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
 import { revertRepoToRemote } from '#disk/functions/git/revert-repo-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
@@ -109,7 +109,7 @@ export class RevertRepoToRemoteService {
         })
       ),
       Result.bind('repoStatus', item =>
-        getRepoStatusWrapped({
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -120,7 +120,7 @@ export class RevertRepoToRemoteService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFilesWrapped({
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,

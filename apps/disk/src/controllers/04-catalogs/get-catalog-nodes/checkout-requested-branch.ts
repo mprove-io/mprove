@@ -3,6 +3,8 @@ import type { SimpleGit } from 'simple-git';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { DiskBranchIsNotExistError } from '#common/zod/disk/errors/disk-branch-is-not-exist-error';
 import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#common/zod/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 
@@ -16,7 +18,10 @@ export function checkoutRequestedBranch(item: {
   isFetch: boolean;
 }): Result.ResultAsync<
   boolean,
-  DiskBranchIsNotExistError | DiskRepoIsNotCleanForCheckoutBranchError
+  | DiskBranchIsNotExistError
+  | DiskRepoIsNotCleanForCheckoutBranchError
+  | FileIsSymlinkError
+  | FileSizeIsTooBigError
 > {
   return Result.pipe(
     Result.succeed({ ...item }),

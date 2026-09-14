@@ -8,14 +8,14 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskDeleteFileOutput } from '#common/zod/disk/routes/07-files/delete-file/delete-file-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { commit } from '#disk/functions/git/commit';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
@@ -129,7 +129,7 @@ export class DeleteFileService {
           : Result.succeed()
       ),
       Result.bind('repoStatus', item =>
-        getRepoStatusWrapped({
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -140,7 +140,7 @@ export class DeleteFileService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFilesWrapped({
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,

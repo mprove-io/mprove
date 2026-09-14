@@ -7,11 +7,11 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskPushRepoOutput } from '#common/zod/disk/routes/03-repos/push-repo/push-repo-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createBranch } from '#disk/functions/git/create-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { merge } from '#disk/functions/git/merge';
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
@@ -143,7 +143,7 @@ export class PushRepoService {
         })
       ),
       Result.bind('repoStatus', item =>
-        getRepoStatusWrapped({
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -154,7 +154,7 @@ export class PushRepoService {
         })
       ),
       Result.bind('repoItemCatalog', item =>
-        getNodesAndFilesWrapped({
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -174,7 +174,7 @@ export class PushRepoService {
         })
       ),
       Result.bind('productionItemCatalog', item =>
-        getNodesAndFilesWrapped({
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: PROD_REPO_ID,

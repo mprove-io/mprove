@@ -8,20 +8,29 @@ import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { MyRegex } from '#common/models/my-regex';
-import { ServerError } from '#common/models/server-error';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import { getMproveDir } from '#node-common/functions/get-mprove-dir';
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
+import { getMproveDir } from '#node-common/functions-result/get-mprove-dir';
 import { readFileCheckSize } from '#node-common/functions-result/read-file-check-size';
 
-export async function getNodesAndFiles(item: {
+type NodesAndFilesPayload = {
+  nodes: DiskCatalogNode[];
+  files: DiskCatalogFile[];
+};
+
+export function getNodesAndFiles(item: {
   projectId: string;
   projectDir: string;
   repoId: string;
   readFiles: boolean;
   isRootMproveDir: boolean;
-}): Result.ResultAsync<DiskItemCatalog, never> {
+}): Result.ResultAsync<
+  DiskItemCatalog,
+  FileIsSymlinkError | FileSizeIsTooBigError
+> {
   let topNode: DiskCatalogNode = {
     id: item.projectId,
     name: item.projectId,
@@ -35,163 +44,195 @@ export async function getNodesAndFiles(item: {
 
   let configPath = repoDir + '/' + MPROVE_CONFIG_FILENAME;
 
-  let mproveDir =
-    item.isRootMproveDir === true
-      ? repoDir
-      : await getMproveDir({
-          dir: repoDir,
-          configPath: configPath
-        });
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind('mproveDir', v =>
+      v.isRootMproveDir === true
+        ? Result.succeed(repoDir)
+        : getMproveDir({
+            dir: repoDir,
+            configPath: configPath
+          })
+    ),
+    Result.bind('nodesAndFilesPayload', v =>
+      getNodesAndFilesPayloadRecursive({
+        dir: repoDir,
+        projectId: v.projectId,
+        repoId: v.repoId,
+        repoDirPathLength: repoDirPathLength,
+        readFiles: v.readFiles,
+        mproveDir: v.mproveDir,
+        repoDir: repoDir
+      })
+    ),
+    Result.map(v => {
+      topNode.children = v.nodesAndFilesPayload.nodes;
 
-  let itemDir = <DiskItemCatalog>await getDirCatalogNodesAndFilesRecursive({
-    dir: repoDir,
-    projectId: item.projectId,
-    repoId: item.repoId,
-    repoDirPathLength: repoDirPathLength,
-    readFiles: item.readFiles,
-    mproveDir: mproveDir,
-    repoDir: repoDir
-  });
+      let nodes: DiskCatalogNode[] = [topNode];
 
-  topNode.children = itemDir.nodes;
+      let files: DiskCatalogFile[] = v.nodesAndFilesPayload.files;
 
-  let nodes = [topNode];
+      let diskItemCatalog: DiskItemCatalog = {
+        nodes: nodes,
+        files: files,
+        mproveDir: v.mproveDir
+      };
 
-  let files = itemDir.files;
-
-  let diskItemCatalog: DiskItemCatalog = {
-    nodes: nodes,
-    files: files,
-    mproveDir: mproveDir
-  };
-
-  return Result.succeed(diskItemCatalog);
+      return diskItemCatalog;
+    })
+  );
 }
 
-async function getDirCatalogNodesAndFilesRecursive(item: {
+function getNodesAndFilesPayloadRecursive(item: {
   dir: string;
   projectId: string;
   repoId: string;
   repoDirPathLength: number;
   readFiles: boolean;
-  mproveDir: string;
+  mproveDir?: string;
   repoDir: string;
-}) {
-  let files: DiskCatalogFile[] = [];
+}): Result.ResultAsync<
+  NodesAndFilesPayload,
+  FileIsSymlinkError | FileSizeIsTooBigError
+> {
+  return Result.try({
+    try: async (): Promise<NodesAndFilesPayload> => {
+      let files: DiskCatalogFile[] = [];
 
-  let nodes: DiskCatalogNode[] = [];
+      let nodes: DiskCatalogNode[] = [];
 
-  let folderNodes: DiskCatalogNode[] = [];
-  let otherNodes: DiskCatalogNode[] = [];
+      let folderNodes: DiskCatalogNode[] = [];
+      let otherNodes: DiskCatalogNode[] = [];
 
-  let dirents: Dirent[] = <Dirent[]>await fse.readdir(item.dir, {
-    withFileTypes: true
-  });
+      let dirents: Dirent[] = <Dirent[]>await fse.readdir(item.dir, {
+        withFileTypes: true
+      });
 
-  await forEachSeries(dirents, async dirent => {
-    if (dirent.isSymbolicLink() === true) {
-      return;
-    }
-
-    if (!dirent.name.match(MyRegex.IGNORED_FILE_NAMES())) {
-      let fileAbsolutePath = item.dir + '/' + dirent.name;
-
-      let nodeId =
-        item.projectId + fileAbsolutePath.substring(item.repoDirPathLength);
-
-      if (dirent.isDirectory() === true) {
-        let itemDir = <DiskItemCatalog>(
-          await getDirCatalogNodesAndFilesRecursive({
-            dir: fileAbsolutePath,
-            projectId: item.projectId,
-            repoId: item.repoId,
-            repoDirPathLength: item.repoDirPathLength,
-            readFiles: item.readFiles,
-            mproveDir: item.mproveDir,
-            repoDir: item.repoDir
-          })
-        );
-
-        files = [...files, ...itemDir.files];
-
-        let node: DiskCatalogNode = {
-          id: nodeId,
-          name: dirent.name,
-          isFolder: true,
-          children: itemDir.nodes
-        };
-
-        folderNodes.push(node);
-      } else {
-        let fileRelativePath = fileAbsolutePath.substring(
-          item.repoDirPathLength + 1
-        );
-        let fileId = encodeFilePath({ filePath: fileRelativePath });
-
-        let node = {
-          id: nodeId,
-          name: dirent.name,
-          isFolder: false,
-          fileId: fileId
-        };
-
-        let reg = MyRegex.CAPTURE_EXT();
-        let r = reg.exec(dirent.name.toLowerCase());
-
-        let ext: any = r ? r[1] : '';
-
-        switch (ext) {
-          default:
-            otherNodes.push(node);
+      await forEachSeries(dirents, async dirent => {
+        if (dirent.isSymbolicLink() === true) {
+          return;
         }
 
-        let mproveDirRelative =
-          isDefined(item.mproveDir) && item.mproveDir !== item.repoDir
-            ? item.mproveDir.substr(item.repoDir.length + 1)
-            : undefined;
+        if (!dirent.name.match(MyRegex.IGNORED_FILE_NAMES())) {
+          let fileAbsolutePath: string = item.dir + '/' + dirent.name;
 
-        let isPass =
-          nodeId === `${item.projectId}/${MPROVE_CONFIG_FILENAME}`
-            ? true
-            : isDefined(item.mproveDir)
-              ? item.mproveDir === item.repoDir
+          let nodeId: string =
+            item.projectId + fileAbsolutePath.substring(item.repoDirPathLength);
+
+          if (dirent.isDirectory() === true) {
+            let itemDir: NodesAndFilesPayload = await Result.unwrap(
+              getNodesAndFilesPayloadRecursive({
+                dir: fileAbsolutePath,
+                projectId: item.projectId,
+                repoId: item.repoId,
+                repoDirPathLength: item.repoDirPathLength,
+                readFiles: item.readFiles,
+                mproveDir: item.mproveDir,
+                repoDir: item.repoDir
+              })
+            );
+
+            files = [...files, ...itemDir.files];
+
+            let node: DiskCatalogNode = {
+              id: nodeId,
+              name: dirent.name,
+              isFolder: true,
+              children: itemDir.nodes
+            };
+
+            folderNodes.push(node);
+          } else {
+            let fileRelativePath: string = fileAbsolutePath.substring(
+              item.repoDirPathLength + 1
+            );
+            let fileId: string = encodeFilePath({ filePath: fileRelativePath });
+
+            let node: DiskCatalogNode = {
+              id: nodeId,
+              name: dirent.name,
+              isFolder: false,
+              fileId: fileId
+            };
+
+            let reg: RegExp = MyRegex.CAPTURE_EXT();
+            let r: RegExpExecArray | null = reg.exec(dirent.name.toLowerCase());
+
+            let ext: any = r ? r[1] : '';
+
+            switch (ext) {
+              default:
+                otherNodes.push(node);
+            }
+
+            let mproveDirRelative =
+              isDefined(item.mproveDir) && item.mproveDir !== item.repoDir
+                ? item.mproveDir.substr(item.repoDir.length + 1)
+                : undefined;
+
+            let isPass: boolean =
+              nodeId === `${item.projectId}/${MPROVE_CONFIG_FILENAME}`
                 ? true
-                : nodeId.startsWith(`${item.projectId}/${mproveDirRelative}/`)
-              : false;
+                : isDefined(item.mproveDir)
+                  ? item.mproveDir === item.repoDir
+                    ? true
+                    : nodeId.startsWith(
+                        `${item.projectId}/${mproveDirRelative}/`
+                      )
+                  : false;
 
-        if (item.readFiles === true && isPass === true) {
-          let path = JSON.stringify(nodeId.split('/'));
+            if (item.readFiles === true && isPass === true) {
+              let path: string = JSON.stringify(nodeId.split('/'));
 
-          let { content } = await Result.unwrap(
-            Result.pipe(
-              readFileCheckSize({
-                filePath: fileAbsolutePath,
-                getStat: false
-              }),
-              Result.mapError(error => new ServerError({ message: error.code }))
-            )
-          );
+              let { content } = await Result.unwrap(
+                readFileCheckSize({
+                  filePath: fileAbsolutePath,
+                  getStat: false
+                })
+              );
 
-          let file: DiskCatalogFile = {
-            projectId: item.projectId,
-            repoId: item.repoId,
-            fileId: fileId,
-            pathString: path,
-            fileNodeId: nodeId,
-            name: dirent.name,
-            content: content
-          };
+              let file: DiskCatalogFile = {
+                projectId: item.projectId,
+                repoId: item.repoId,
+                fileId: fileId,
+                pathString: path,
+                fileNodeId: nodeId,
+                name: dirent.name,
+                content: content
+              };
 
-          files.push(file);
+              files.push(file);
+            }
+          }
         }
+      });
+
+      const sortNodes = (elements: DiskCatalogNode[]): DiskCatalogNode[] =>
+        elements.sort((a, b) =>
+          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+        );
+
+      nodes = [...sortNodes(folderNodes), ...sortNodes(otherNodes)];
+
+      let nodesAndFilesPayload: NodesAndFilesPayload = {
+        nodes: nodes,
+        files: files
+      };
+
+      return nodesAndFilesPayload;
+    },
+    catch: (error: unknown): FileIsSymlinkError | FileSizeIsTooBigError => {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        (error.code === 'FILE_IS_SYMLINK' ||
+          error.code === 'FILE_SIZE_IS_TOO_BIG')
+      ) {
+        return error as FileIsSymlinkError | FileSizeIsTooBigError;
       }
+
+      throw error;
     }
   });
-
-  const sortNodes = (elements: DiskCatalogNode[]) =>
-    elements.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
-
-  nodes = [...sortNodes(folderNodes), ...sortNodes(otherNodes)];
-
-  return { nodes: nodes, files: files };
 }

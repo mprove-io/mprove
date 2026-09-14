@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#common/zod/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
 import type { RepoStatus } from '#common/zod/disk/repo-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { getRepoStatus } from './get-repo-status';
@@ -13,7 +15,12 @@ export function checkoutBranch(item: {
   branchName: string;
   git: SimpleGit;
   isFetch: boolean;
-}): Result.ResultAsync<void, DiskRepoIsNotCleanForCheckoutBranchError> {
+}): Result.ResultAsync<
+  void,
+  | DiskRepoIsNotCleanForCheckoutBranchError
+  | FileIsSymlinkError
+  | FileSizeIsTooBigError
+> {
   return addTraceSpan({
     spanName: 'disk.git.checkoutBranch',
     fn: () =>

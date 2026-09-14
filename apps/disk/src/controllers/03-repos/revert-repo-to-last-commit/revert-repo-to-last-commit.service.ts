@@ -6,10 +6,10 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskRevertRepoToLastCommitOutput } from '#common/zod/disk/routes/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { revertRepoToLastCommit } from '#disk/functions/git/revert-repo-to-last-commit';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
@@ -91,7 +91,7 @@ export class RevertRepoToLastCommitService {
         })
       ),
       Result.bind('repoStatus', item =>
-        getRepoStatusWrapped({
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,
@@ -102,7 +102,7 @@ export class RevertRepoToLastCommitService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFilesWrapped({
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.repoId,

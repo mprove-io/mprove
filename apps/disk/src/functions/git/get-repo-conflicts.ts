@@ -1,6 +1,8 @@
 import { Result } from '@praha/byethrow';
 import { MyRegex } from '#common/models/my-regex';
 import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
 import { getNodesAndFiles } from '../disk/get-nodes-and-files';
 
 export function getRepoConflicts(item: {
@@ -8,7 +10,10 @@ export function getRepoConflicts(item: {
   projectDir: string;
   repoId: string;
   isCheckConflicts: boolean;
-}): Result.ResultMaybeAsync<DiskFileLine[], never> {
+}): Result.ResultMaybeAsync<
+  DiskFileLine[],
+  FileIsSymlinkError | FileSizeIsTooBigError
+> {
   let conflicts: DiskFileLine[] = [];
 
   if (item.isCheckConflicts === true) {

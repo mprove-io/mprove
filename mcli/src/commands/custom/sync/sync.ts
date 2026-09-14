@@ -19,8 +19,8 @@ import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
-import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
 import { applySyncPayload } from '#node-common/functions-result/apply-sync-payload';
+import { getChangesToCommit } from '#node-common/functions-result/get-changes-to-commit';
 import { getSyncAppliedChanges } from '#node-common/functions-result/get-sync-applied-changes';
 import { getSyncFilesPayload } from '#node-common/functions-result/get-sync-files-payload';
 import { resetWorkingTreeToHead } from '#node-common/functions-result/reset-working-tree-to-head';
@@ -232,11 +232,16 @@ export class SyncCommand extends CustomCommand {
 
     //
 
-    let localChangesToCommit = await getChangesToCommit({
-      repoDir: repoDir,
-      addContent: true,
-      expandRenamed: true
-    });
+    let localChangesToCommit = await Result.unwrap(
+      Result.pipe(
+        getChangesToCommit({
+          repoDir: repoDir,
+          addContent: true,
+          expandRenamed: true
+        }),
+        Result.mapError(error => new ServerError({ message: error.code }))
+      )
+    );
 
     let devChangesToCommit = syncRepoResp.payload.devChangesToCommit;
     let syncSuccess = deepEqual(localChangesToCommit, devChangesToCommit);

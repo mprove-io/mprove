@@ -7,10 +7,10 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskSeedProjectOutput } from '#common/zod/disk/routes/08-seed/seed-project/seed-project-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 
@@ -102,7 +102,7 @@ export class SeedProjectService {
         })
       ),
       Result.bind('itemCatalog', item =>
-        getNodesAndFilesWrapped({
+        getNodesAndFiles({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.devRepoId,
@@ -122,7 +122,7 @@ export class SeedProjectService {
         })
       ),
       Result.bind('devItemStatus', item =>
-        getRepoStatusWrapped({
+        getRepoStatus({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: item.devRepoId,

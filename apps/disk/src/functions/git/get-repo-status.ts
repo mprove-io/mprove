@@ -1,9 +1,10 @@
 import { Result } from '@praha/byethrow';
 import type { BranchSummary, DiffResult, SimpleGit } from 'simple-git';
-import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
+import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
-import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
+import { getChangesToCommit } from '#node-common/functions-result/get-changes-to-commit';
 import { getRepoConflicts } from './get-repo-conflicts';
 import { getRepoStatusWithoutStagedChanges } from './get-repo-status-without-staged-changes';
 
@@ -17,10 +18,13 @@ export function getRepoStatus(item: {
   isCheckConflicts: boolean;
   addContent?: boolean;
   expandRenamed?: boolean;
-}): Result.ResultAsync<DiskItemStatus, never> {
+}): Result.ResultAsync<
+  DiskItemStatus,
+  FileIsSymlinkError | FileSizeIsTooBigError
+> {
   return addTraceSpan({
     spanName: 'disk.git.getRepoStatus',
-    fn: async () => {
+    fn: () => {
       // priorities order:
       // NeedSave (frontend only)
       // NeedStage (no need because auto add file after each save)
@@ -31,28 +35,31 @@ export function getRepoStatus(item: {
 
       let git: SimpleGit = item.git;
 
-      let changesToCommit: DiskFileChange[] = await getChangesToCommit({
-        repoDir: item.repoDir,
-        addContent: item.addContent,
-        expandRenamed: item.expandRenamed
-      });
-
-      let branchSummary: BranchSummary = await git.branch();
-
-      let currentBranchName: string = branchSummary.current;
-
-      // Use git diff --cached to detect ALL staged changes including deletions
-      // (statusResult.staged doesn't reliably include staged deletions)
-      let stagedDiff: DiffResult = await git.diffSummary(['--cached']);
-
-      let stagedFilesCount: number = stagedDiff.files.length;
-
       return Result.pipe(
-        Result.succeed({
-          ...item,
-          currentBranchName: currentBranchName,
-          changesToCommit: changesToCommit,
-          stagedFilesCount: stagedFilesCount
+        Result.succeed(item),
+        Result.bind('changesToCommit', v =>
+          getChangesToCommit({
+            repoDir: v.repoDir,
+            addContent: v.addContent,
+            expandRenamed: v.expandRenamed
+          })
+        ),
+        Result.andThen(async v => {
+          let branchSummary: BranchSummary = await git.branch();
+
+          let currentBranchName: string = branchSummary.current;
+
+          // Use git diff --cached to detect ALL staged changes including deletions
+          // (statusResult.staged doesn't reliably include staged deletions)
+          let stagedDiff: DiffResult = await git.diffSummary(['--cached']);
+
+          let stagedFilesCount: number = stagedDiff.files.length;
+
+          return Result.succeed({
+            ...v,
+            currentBranchName: currentBranchName,
+            stagedFilesCount: stagedFilesCount
+          });
         }),
         Result.bind('conflicts', v =>
           getRepoConflicts({
