@@ -12,14 +12,14 @@ import {
   TableSourceDef,
   TrinoDialect
 } from '@malloydata/malloy';
+import { BigQueryTypeParser } from '#blockml/functions/schema-parse/parse-bigquery-type';
+import { DatabricksTypeParser } from '#blockml/functions/schema-parse/parse-databricks-type';
+import { TrinoPrestoSchemaParser } from '#blockml/functions/schema-parse/parse-trino-type';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { RawSchemaColumn } from '#common/zod/backend/connection-schemas/raw-schema';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import { MalloyConnection } from '#node-common/functions/make-malloy-connections';
-import { BigQueryTypeParser } from '#node-common/functions/schema-parse/parse-bigquery-type';
-import { DatabricksTypeParser } from '#node-common/functions/schema-parse/parse-databricks-type';
-import { TrinoPrestoSchemaParser } from '#node-common/functions/schema-parse/parse-trino-type';
 
 function getDialect(item: {
   connectionType: ConnectionTypeEnum;

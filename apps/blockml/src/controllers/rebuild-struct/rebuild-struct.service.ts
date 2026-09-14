@@ -27,6 +27,7 @@ import { collectFiles } from '#blockml/functions/extra/collect-files';
 import { getMproveConfigFile } from '#blockml/functions/extra/get-mprove-config-file';
 import { logStruct } from '#blockml/functions/extra/log-struct';
 import { logToConsoleBlockml } from '#blockml/functions/log-to-console-blockml';
+import { prePopulateMalloySchemaCache } from '#blockml/functions/schema-parse/pre-populate-malloy-schema-cache';
 import { wrapCharts } from '#blockml/functions/wrap/wrap-charts';
 import { wrapDashboards } from '#blockml/functions/wrap/wrap-dashboards';
 import { wrapErrors } from '#blockml/functions/wrap/wrap-errors';
@@ -94,7 +95,6 @@ import {
   type MalloyConnection,
   makeMalloyConnections
 } from '#node-common/functions/make-malloy-connections';
-import { prePopulateMalloySchemaCache } from '#node-common/functions/schema-parse/pre-populate-malloy-schema-cache';
 
 interface RebuildStructPrep {
   errors: BmError[];

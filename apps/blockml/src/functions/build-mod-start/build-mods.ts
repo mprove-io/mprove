@@ -17,6 +17,8 @@ import pIteration from 'p-iteration';
 const { forEachSeries } = pIteration;
 
 import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { errorToWrapResult } from '#blockml/functions/error-to-wrap-result';
+import { getWrapResult } from '#blockml/functions/get-wrap-result';
 import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
@@ -27,8 +29,6 @@ import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 import type { WrapResult } from '#common/zod/wrap-result';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
-import { errorToWrapResult } from '#node-common/functions/error-to-wrap-result';
-import { getWrapResult } from '#node-common/functions/get-wrap-result';
 import { MalloyConnection } from '#node-common/functions/make-malloy-connections';
 import { log } from '../extra/log';
 
