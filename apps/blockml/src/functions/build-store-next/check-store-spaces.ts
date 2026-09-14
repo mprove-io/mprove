@@ -7,7 +7,7 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { makeAccessRolesCombined } from '#common/functions/space/make-access-roles-combined';
+import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { log } from '../extra/log';
