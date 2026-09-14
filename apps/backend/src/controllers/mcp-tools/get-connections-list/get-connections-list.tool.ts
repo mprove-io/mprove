@@ -5,14 +5,14 @@ import type { Request } from 'express';
 import { GetConnectionsListService } from '#backend/controllers/connections/get-connections-list/get-connections-list.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
+import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
 import { ToolService } from '#backend/services/tool.service';
 import {
   MCP_TOOL_GET_CONNECTIONS_LIST,
   MCP_TOOL_GET_CONNECTIONS_LIST_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
-import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import type { ToBackendGetConnectionsListResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connections-list';
 import {
   type McpToolGetConnectionsListInput,

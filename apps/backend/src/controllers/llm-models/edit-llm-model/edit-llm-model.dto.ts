@@ -1,5 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
-import { zodStripCustom } from '#common/functions/zod-strip-custom';
+import { zodStripCustom } from '#backend/functions/zod-strip-custom';
 import { zToBackendEditLlmModelRequest } from '#common/zod/to-backend/llm-models/edit-llm-model/edit-llm-model-request';
 import { zToBackendEditLlmModelResponse } from '#common/zod/to-backend/llm-models/edit-llm-model/edit-llm-model-response';
 

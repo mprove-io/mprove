@@ -5,6 +5,8 @@ import type { Request } from 'express';
 import { GetQueryInfoService } from '#backend/controllers/queries/get-query-info/get-query-info.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
+import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
 import { ToolService } from '#backend/services/tool.service';
 import {
   MCP_TOOL_GET_QUERY_INFO,
@@ -12,8 +14,6 @@ import {
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
-import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
-import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoInput,

@@ -7,6 +7,8 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import { ValidateFilesService } from '#backend/controllers/files/validate-files/validate-files.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
+import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
 import { ToolService } from '#backend/services/tool.service';
 import {
   MCP_TOOL_VALIDATE,
@@ -14,8 +16,6 @@ import {
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id';
-import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
-import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolValidateFilesInput,
   zMcpToolValidateFilesInput,

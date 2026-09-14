@@ -1,5 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
-import { zodStripCustom } from '#common/functions/zod-strip-custom';
+import { zodStripCustom } from '#backend/functions/zod-strip-custom';
 import { zToBackendEditProviderRequest } from '#common/zod/to-backend/providers/edit-provider/edit-provider-request';
 import { zToBackendEditProviderResponse } from '#common/zod/to-backend/providers/edit-provider/edit-provider-response';
 

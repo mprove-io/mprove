@@ -5,14 +5,14 @@ import type { Request } from 'express';
 import { GetConnectionSchemasService } from '#backend/controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
+import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
+import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
 import { ToolService } from '#backend/services/tool.service';
 import {
   MCP_TOOL_GET_SCHEMAS,
   MCP_TOOL_GET_SCHEMAS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { zodDeepNullish } from '#common/functions/zod-deep-nullish';
-import { zodStripMcpSchemaId } from '#common/functions/zod-strip-mcp-schema-id';
 import {
   type McpToolGetSchemasInput,
   zMcpToolGetSchemasInput,
