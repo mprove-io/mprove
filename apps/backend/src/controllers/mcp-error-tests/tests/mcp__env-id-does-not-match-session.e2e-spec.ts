@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import test from 'ava';
+import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key';
+import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeSessionId } from '#backend/functions/make-session-id';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
@@ -15,8 +17,6 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { makeId } from '#common/functions/make-id';
-import { buildSessionApiKey } from '#node-common/functions/api-key/build-session-api-key';
-import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 
 let testId = 'backend-mcp__env-id-does-not-match-session';
 

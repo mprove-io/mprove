@@ -29,6 +29,8 @@ import type {
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key';
+import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeSessionId } from '#backend/functions/make-session-id';
@@ -63,8 +65,6 @@ import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/03-repos/create-dev-repo/create-dev-repo-response';
 import type { ToBackendCreateEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
-import { buildSessionApiKey } from '#node-common/functions/api-key/build-session-api-key';
-import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 
 const { forEachSeries } = pIteration;
 

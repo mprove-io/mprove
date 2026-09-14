@@ -16,14 +16,14 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { buildUserApiKey } from '#backend/functions/api-key/build-user-api-key';
+import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { ToBackendGenerateUserApiKeyResponsePayload } from '#common/zod/to-backend/users/to-backend-generate-user-api-key';
-import { buildUserApiKey } from '#node-common/functions/api-key/build-user-api-key';
-import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

@@ -42,6 +42,7 @@ import type {
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { parseApiKey } from '#backend/functions/api-key/parse-api-key';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now';
 import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
@@ -93,7 +94,6 @@ import type {
   ToBackendSeedRecordsRequestPayloadUsersItem,
   ToBackendSeedRecordsResponse
 } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
-import { parseApiKey } from '#node-common/functions/api-key/parse-api-key';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()

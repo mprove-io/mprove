@@ -24,6 +24,8 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key';
+import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex.service';
@@ -52,8 +54,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendSendMessageToEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-send-message-to-editor-session';
-import { buildSessionApiKey } from '#node-common/functions/api-key/build-session-api-key';
-import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

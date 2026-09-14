@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import type { MyResponse } from '#common/zod/to/my-response';
-import { logToConsole } from './log-to-console';
+import { logToConsole } from '#node-common/functions/log-to-console';
 
 export function makeOkResponse(item: {
   body: any;

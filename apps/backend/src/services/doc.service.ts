@@ -12,6 +12,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { KitTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTs } from '#backend/functions/make-ts';
+import { nodeFormatTsUnix } from '#backend/functions/node-format-ts-unix';
 import {
   DOUBLE_UNDERSCORE,
   SOME_ROWS_HAVE_FORMULA_ERRORS
@@ -32,7 +33,6 @@ import type { Fraction } from '#common/zod/blockml/fraction';
 import type { Row } from '#common/zod/blockml/row';
 import type { RowRecord } from '#common/zod/blockml/row-record';
 import { CycleGraph } from '#node-common/classes/cycle-graph';
-import { nodeFormatTsUnix } from '#node-common/functions/node-format-ts-unix';
 
 @Injectable()
 export class DocService implements OnModuleDestroy {

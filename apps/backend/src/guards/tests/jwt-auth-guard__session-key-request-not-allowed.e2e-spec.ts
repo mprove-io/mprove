@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import test from 'ava';
+import { buildSessionApiKey } from '#backend/functions/api-key/build-session-api-key';
+import { generateApiKeyParts } from '#backend/functions/api-key/generate-api-key-parts';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeSessionId } from '#backend/functions/make-session-id';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
@@ -20,8 +22,6 @@ import type {
   ToBackendCommitRepoRequest,
   ToBackendCommitRepoResponse
 } from '#common/zod/to-backend/repos/to-backend-commit-repo';
-import { buildSessionApiKey } from '#node-common/functions/api-key/build-session-api-key';
-import { generateApiKeyParts } from '#node-common/functions/api-key/generate-api-key-parts';
 
 let testId = 'backend-jwt-auth-guard__session-key-request-not-allowed';
 
