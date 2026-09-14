@@ -11,7 +11,6 @@ import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
-import { validatePathUnderDirWrapped } from '#disk/functions/disk/validate-path-under-dir-wrapped';
 import { writeToFile } from '#disk/functions/disk/write-to-file';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
@@ -21,6 +20,7 @@ import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrappe
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
+import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
 import { getContentFromFileName } from './get-content-from-file-name';
 
 @Injectable()
@@ -79,13 +79,13 @@ export class CreateFileService {
         filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${parent}${fileName}`
       }),
       Result.andThrough(item =>
-        validatePathUnderDirWrapped({
+        validatePathUnderDir({
           fullPath: item.parentPath,
           allowedDir: item.repoDir
         })
       ),
       Result.andThrough(item =>
-        validatePathUnderDirWrapped({
+        validatePathUnderDir({
           fullPath: item.filePath,
           allowedDir: item.repoDir
         })

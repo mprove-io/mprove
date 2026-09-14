@@ -13,13 +13,13 @@ import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { movePath } from '#disk/functions/disk/move-path';
-import { validatePathUnderDirWrapped } from '#disk/functions/disk/validate-path-under-dir-wrapped';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
+import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
 
 @Injectable()
 export class MoveCatalogNodeService {
@@ -67,19 +67,19 @@ export class MoveCatalogNodeService {
         toParentPath: toParentPath
       }),
       Result.andThrough(item =>
-        validatePathUnderDirWrapped({
+        validatePathUnderDir({
           fullPath: item.fromPath,
           allowedDir: item.repoDir
         })
       ),
       Result.andThrough(item =>
-        validatePathUnderDirWrapped({
+        validatePathUnderDir({
           fullPath: item.toPath,
           allowedDir: item.repoDir
         })
       ),
       Result.andThrough(item =>
-        validatePathUnderDirWrapped({
+        validatePathUnderDir({
           fullPath: item.toParentPath,
           allowedDir: item.repoDir
         })

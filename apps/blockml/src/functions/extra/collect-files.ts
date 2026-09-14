@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import walk from 'walk';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -6,8 +7,9 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { MyRegex } from '#common/models/my-regex';
+import { ServerError } from '#common/models/server-error';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
-import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
+import { readFileCheckSize } from '#node-common/functions-result/read-file-check-size';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CollectFiles;
@@ -48,10 +50,15 @@ export async function collectFiles(
         let relativePath = path;
         let absolutePath = item.dir + '/' + relativePath;
 
-        let { content } = await readFileCheckSize({
-          filePath: absolutePath,
-          getStat: false
-        });
+        let { content } = await Result.unwrap(
+          Result.pipe(
+            readFileCheckSize({
+              filePath: absolutePath,
+              getStat: false
+            }),
+            Result.mapError(error => new ServerError({ message: error.code }))
+          )
+        );
 
         files.push({
           name: stat.name.toLowerCase(),

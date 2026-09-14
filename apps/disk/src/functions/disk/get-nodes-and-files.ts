@@ -8,11 +8,12 @@ import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { MyRegex } from '#common/models/my-regex';
+import { ServerError } from '#common/models/server-error';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import { getMproveDir } from '#node-common/functions/get-mprove-dir';
-import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
+import { readFileCheckSize } from '#node-common/functions-result/read-file-check-size';
 
 export async function getNodesAndFiles(item: {
   projectId: string;
@@ -161,10 +162,15 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         if (item.readFiles === true && isPass === true) {
           let path = JSON.stringify(nodeId.split('/'));
 
-          let { content } = await readFileCheckSize({
-            filePath: fileAbsolutePath,
-            getStat: false
-          });
+          let { content } = await Result.unwrap(
+            Result.pipe(
+              readFileCheckSize({
+                filePath: fileAbsolutePath,
+                getStat: false
+              }),
+              Result.mapError(error => new ServerError({ message: error.code }))
+            )
+          );
 
           let file: DiskCatalogFile = {
             projectId: item.projectId,

@@ -1,5 +1,5 @@
+import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
-
 import deepEqual from 'fast-deep-equal';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -18,12 +18,12 @@ import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
-import { applySyncPayload } from '#node-common/functions/apply-sync-payload';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit';
-import { getSyncAppliedChanges } from '#node-common/functions/get-sync-applied-changes';
-import { getWorkingTreePayload } from '#node-common/functions/get-sync-files';
-import { resetWorkingTreeToHead } from '#node-common/functions/reset-working-tree-to-head';
+import { applySyncPayload } from '#node-common/functions-result/apply-sync-payload';
+import { getSyncAppliedChanges } from '#node-common/functions-result/get-sync-applied-changes';
+import { getSyncFilesPayload } from '#node-common/functions-result/get-sync-files-payload';
+import { resetWorkingTreeToHead } from '#node-common/functions-result/reset-working-tree-to-head';
 
 export class SyncCommand extends CustomCommand {
   static paths = [['sync']];
@@ -113,10 +113,15 @@ export class SyncCommand extends CustomCommand {
     let localPayload =
       this.fromServer === true
         ? { changedFiles: [], deletedFiles: [] }
-        : await getWorkingTreePayload({
-            repoDir: repoDir,
-            statusResult: statusResult
-          });
+        : await Result.unwrap(
+            Result.pipe(
+              getSyncFilesPayload({
+                repoDir: repoDir,
+                statusResult: statusResult
+              }),
+              Result.mapError(error => new ServerError({ message: error.code }))
+            )
+          );
 
     let changedFiles = localPayload.changedFiles;
     let deletedFiles = localPayload.deletedFiles;
@@ -169,23 +174,58 @@ export class SyncCommand extends CustomCommand {
     let appliedChangesOnServer: string[] = [];
 
     if (syncRepoResp.payload.direction === 'from-server') {
-      appliedChangesOnLocal = await getSyncAppliedChanges({
-        repoDir: repoDir,
-        changedFiles: syncRepoResp.payload.changedFiles,
-        deletedFiles: syncRepoResp.payload.deletedFiles,
-        statusResult: statusResult
-      });
+      appliedChangesOnLocal = await Result.unwrap(
+        Result.pipe(
+          getSyncAppliedChanges({
+            repoDir: repoDir,
+            changedFiles: syncRepoResp.payload.changedFiles,
+            deletedFiles: syncRepoResp.payload.deletedFiles,
+            statusResult: statusResult
+          }),
+          Result.mapError(
+            error =>
+              new ServerError({
+                message: error.code,
+                displayData:
+                  'displayData' in error ? error.displayData : undefined
+              })
+          )
+        )
+      );
 
-      await resetWorkingTreeToHead({
-        repoDir: repoDir,
-        statusResult: statusResult
-      });
+      await Result.unwrap(
+        Result.pipe(
+          resetWorkingTreeToHead({
+            repoDir: repoDir,
+            statusResult: statusResult
+          }),
+          Result.mapError(
+            error =>
+              new ServerError({
+                message: error.code,
+                displayData: error.displayData
+              })
+          )
+        )
+      );
 
-      await applySyncPayload({
-        repoDir: repoDir,
-        changedFiles: syncRepoResp.payload.changedFiles,
-        deletedFiles: syncRepoResp.payload.deletedFiles
-      });
+      await Result.unwrap(
+        Result.pipe(
+          applySyncPayload({
+            repoDir: repoDir,
+            changedFiles: syncRepoResp.payload.changedFiles,
+            deletedFiles: syncRepoResp.payload.deletedFiles
+          }),
+          Result.mapError(
+            error =>
+              new ServerError({
+                message: error.code,
+                displayData:
+                  'displayData' in error ? error.displayData : undefined
+              })
+          )
+        )
+      );
     } else {
       appliedChangesOnServer = syncRepoResp.payload.appliedChangesOnServer;
     }

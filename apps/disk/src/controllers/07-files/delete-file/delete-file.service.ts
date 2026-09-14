@@ -11,7 +11,6 @@ import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
-import { validatePathUnderDirWrapped } from '#disk/functions/disk/validate-path-under-dir-wrapped';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { commit } from '#disk/functions/git/commit';
@@ -20,6 +19,7 @@ import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrappe
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
+import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
 
 @Injectable()
 export class DeleteFileService {
@@ -59,7 +59,7 @@ export class DeleteFileService {
         filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${relativeFilePath}`
       }),
       Result.andThrough(item =>
-        validatePathUnderDirWrapped({
+        validatePathUnderDir({
           fullPath: item.filePath,
           allowedDir: item.repoDir
         })

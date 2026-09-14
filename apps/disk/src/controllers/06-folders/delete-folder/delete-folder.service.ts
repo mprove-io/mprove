@@ -10,13 +10,13 @@ import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
-import { validatePathUnderDirWrapped } from '#disk/functions/disk/validate-path-under-dir-wrapped';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
+import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
 
 @Injectable()
 export class DeleteFolderService {
@@ -53,7 +53,7 @@ export class DeleteFolderService {
         folderAbsolutePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${folderNodeId.substring(projectId.length + 1)}`
       }),
       Result.andThrough(item =>
-        validatePathUnderDirWrapped({
+        validatePathUnderDir({
           fullPath: item.folderAbsolutePath,
           allowedDir: item.repoDir
         })

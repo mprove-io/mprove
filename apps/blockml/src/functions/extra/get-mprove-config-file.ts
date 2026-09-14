@@ -1,7 +1,9 @@
+import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
+import { ServerError } from '#common/models/server-error';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
-import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
+import { readFileCheckSize } from '#node-common/functions-result/read-file-check-size';
 
 export async function getMproveConfigFile(configPath: string) {
   let isPathExist = await fse.pathExists(configPath);
@@ -15,10 +17,15 @@ export async function getMproveConfigFile(configPath: string) {
     return undefined;
   }
 
-  let { content } = await readFileCheckSize({
-    filePath: configPath,
-    getStat: false
-  });
+  let { content } = await Result.unwrap(
+    Result.pipe(
+      readFileCheckSize({
+        filePath: configPath,
+        getStat: false
+      }),
+      Result.mapError(error => new ServerError({ message: error.code }))
+    )
+  );
 
   let file: BmlFile = {
     name: MPROVE_CONFIG_FILENAME,

@@ -1936,6 +1936,9 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: 1.38.0
         version: 1.38.0
+      '@praha/byethrow':
+        specifier: 0.12.0
+        version: 0.12.0(typescript@5.9.2)
       bcrypt:
         specifier: 5.1.1
         version: 5.1.1(encoding@0.1.13)

@@ -15,11 +15,11 @@ import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
-import { applySyncPayloadWrapped } from '#disk/functions/sync/apply-sync-payload-wrapped';
-import { getSyncAppliedChangesWrapped } from '#disk/functions/sync/get-sync-applied-changes-wrapped';
-import { getWorkingTreePayloadWrapped } from '#disk/functions/sync/get-working-tree-payload-wrapped';
-import { resetWorkingTreeToHeadWrapped } from '#disk/functions/sync/reset-working-tree-to-head-wrapped';
 import { DiskTabService } from '#disk/services/disk-tab.service';
+import { applySyncPayload } from '#node-common/functions-result/apply-sync-payload';
+import { getSyncAppliedChanges } from '#node-common/functions-result/get-sync-applied-changes';
+import { getSyncFilesPayload } from '#node-common/functions-result/get-sync-files-payload';
+import { resetWorkingTreeToHead } from '#node-common/functions-result/reset-working-tree-to-head';
 
 type SyncData =
   | {
@@ -32,7 +32,7 @@ type SyncData =
       appliedChangesOnServer: string[];
     };
 
-type WorkingTreePayload = {
+type SyncFilesPayload = {
   changedFiles: DiskSyncFile[];
   deletedFiles: DiskSyncFile[];
 };
@@ -172,25 +172,25 @@ export class SyncRepoService {
         let statusResult: StatusResult = await item.git.status();
         return Result.succeed(statusResult);
       }),
-      Result.bind('syncData', item => {
+      Result.bind('syncFilesPayload', item => {
         if (direction === 'from-server') {
           return Result.pipe(
-            getWorkingTreePayloadWrapped({
+            getSyncFilesPayload({
               repoDir: item.repoDir,
               statusResult: item.statusResult
             }),
             Result.map(
-              (serverPayload: WorkingTreePayload): SyncData => ({
+              (item2: SyncFilesPayload): SyncData => ({
                 direction: 'from-server',
-                changedFiles: serverPayload.changedFiles,
-                deletedFiles: serverPayload.deletedFiles
+                changedFiles: item2.changedFiles,
+                deletedFiles: item2.deletedFiles
               })
             )
           );
         }
 
         return Result.pipe(
-          getSyncAppliedChangesWrapped({
+          getSyncAppliedChanges({
             repoDir: item.repoDir,
             changedFiles: changedFiles,
             deletedFiles: deletedFiles,
@@ -198,12 +198,12 @@ export class SyncRepoService {
           }),
           Result.andThen(appliedChangesOnServer =>
             Result.pipe(
-              resetWorkingTreeToHeadWrapped({
+              resetWorkingTreeToHead({
                 repoDir: item.repoDir,
                 statusResult: item.statusResult
               }),
               Result.andThen(() =>
-                applySyncPayloadWrapped({
+                applySyncPayload({
                   repoDir: item.repoDir,
                   changedFiles: changedFiles,
                   deletedFiles: deletedFiles
@@ -265,19 +265,19 @@ export class SyncRepoService {
               : undefined
         };
 
-        if (item.syncData.direction === 'from-server') {
+        if (item.syncFilesPayload.direction === 'from-server') {
           return {
             direction: 'from-server',
             ...basePayload,
-            changedFiles: item.syncData.changedFiles,
-            deletedFiles: item.syncData.deletedFiles
+            changedFiles: item.syncFilesPayload.changedFiles,
+            deletedFiles: item.syncFilesPayload.deletedFiles
           };
         }
 
         return {
           direction: 'to-server',
           ...basePayload,
-          appliedChangesOnServer: item.syncData.appliedChangesOnServer
+          appliedChangesOnServer: item.syncFilesPayload.appliedChangesOnServer
         };
       })
     );

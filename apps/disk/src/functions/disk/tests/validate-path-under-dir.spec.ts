@@ -1,113 +1,113 @@
+import { Result } from '@praha/byethrow';
 import test from 'ava';
-import { ServerError } from '#common/models/server-error';
-import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir';
+import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
 
 test('allows path within directory', t => {
-  t.notThrows(() => {
+  let resolvedPath: string = Result.unwrap(
     validatePathUnderDir({
       fullPath: '/repo/subdir/file.txt',
       allowedDir: '/repo'
-    });
-  });
+    })
+  );
+
+  t.is(resolvedPath, '/repo/subdir/file.txt');
 });
 
 test('allows path that is the directory itself', t => {
-  t.notThrows(() => {
+  let resolvedPath: string = Result.unwrap(
     validatePathUnderDir({
       fullPath: '/repo',
       allowedDir: '/repo'
-    });
-  });
+    })
+  );
+
+  t.is(resolvedPath, '/repo');
 });
 
 test('allows nested path within directory', t => {
-  t.notThrows(() => {
+  let resolvedPath: string = Result.unwrap(
     validatePathUnderDir({
       fullPath: '/repo/a/b/c/file.txt',
       allowedDir: '/repo'
-    });
-  });
+    })
+  );
+
+  t.is(resolvedPath, '/repo/a/b/c/file.txt');
 });
 
 test('allows path with dot segments that resolves inside', t => {
-  t.notThrows(() => {
+  let resolvedPath: string = Result.unwrap(
     validatePathUnderDir({
       fullPath: '/repo/./subdir/./file.txt',
       allowedDir: '/repo'
-    });
-  });
+    })
+  );
+
+  t.is(resolvedPath, '/repo/subdir/file.txt');
 });
 
 test('allows path with redundant slashes that resolves inside', t => {
-  t.notThrows(() => {
+  let resolvedPath: string = Result.unwrap(
     validatePathUnderDir({
       fullPath: '/repo//subdir///file.txt',
       allowedDir: '/repo'
-    });
-  });
+    })
+  );
+
+  t.is(resolvedPath, '/repo/subdir/file.txt');
 });
 
 test('rejects path traversal with ../', t => {
-  let error = t.throws(
-    () => {
-      validatePathUnderDir({
-        fullPath: '/repo/../etc/passwd',
-        allowedDir: '/repo'
-      });
-    },
-    { instanceOf: ServerError }
+  let error = Result.unwrapError(
+    validatePathUnderDir({
+      fullPath: '/repo/../etc/passwd',
+      allowedDir: '/repo'
+    })
   );
-  t.is(error.message, 'DISK_PATH_TRAVERSAL');
+
+  t.is(error.code, 'DISK_PATH_TRAVERSAL');
 });
 
 test('rejects path traversal in middle segment', t => {
-  let error = t.throws(
-    () => {
-      validatePathUnderDir({
-        fullPath: '/repo/subdir/../../etc/passwd',
-        allowedDir: '/repo'
-      });
-    },
-    { instanceOf: ServerError }
+  let error = Result.unwrapError(
+    validatePathUnderDir({
+      fullPath: '/repo/subdir/../../etc/passwd',
+      allowedDir: '/repo'
+    })
   );
-  t.is(error.message, 'DISK_PATH_TRAVERSAL');
+
+  t.is(error.code, 'DISK_PATH_TRAVERSAL');
 });
 
 test('rejects path with directory name prefix collision', t => {
-  let error = t.throws(
-    () => {
-      validatePathUnderDir({
-        fullPath: '/repo-part/file.txt',
-        allowedDir: '/repo'
-      });
-    },
-    { instanceOf: ServerError }
+  let error = Result.unwrapError(
+    validatePathUnderDir({
+      fullPath: '/repo-part/file.txt',
+      allowedDir: '/repo'
+    })
   );
-  t.is(error.message, 'DISK_PATH_TRAVERSAL');
+
+  t.is(error.code, 'DISK_PATH_TRAVERSAL');
 });
 
 test('rejects absolute path outside allowed directory', t => {
-  let error = t.throws(
-    () => {
-      validatePathUnderDir({
-        fullPath: '/tmp/file.txt',
-        allowedDir: '/repo'
-      });
-    },
-    { instanceOf: ServerError }
+  let error = Result.unwrapError(
+    validatePathUnderDir({
+      fullPath: '/tmp/file.txt',
+      allowedDir: '/repo'
+    })
   );
-  t.is(error.message, 'DISK_PATH_TRAVERSAL');
+
+  t.is(error.code, 'DISK_PATH_TRAVERSAL');
 });
 
 test('rejects deep path traversal', t => {
-  let error = t.throws(
-    () => {
-      validatePathUnderDir({
-        fullPath: '/repo/a/b/../../../etc/shadow',
-        allowedDir: '/repo'
-      });
-    },
-    { instanceOf: ServerError }
+  let error = Result.unwrapError(
+    validatePathUnderDir({
+      fullPath: '/repo/a/b/../../../etc/shadow',
+      allowedDir: '/repo'
+    })
   );
-  t.is(error.message, 'DISK_PATH_TRAVERSAL');
+
+  t.is(error.code, 'DISK_PATH_TRAVERSAL');
 });

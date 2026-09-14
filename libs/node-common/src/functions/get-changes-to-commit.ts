@@ -1,3 +1,4 @@
+import { Result } from '@praha/byethrow';
 import pIteration from 'p-iteration';
 import type { StatusResult } from 'simple-git';
 
@@ -5,11 +6,12 @@ const { forEachSeries } = pIteration;
 
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isUndefined } from '#common/functions/is-undefined';
+import { ServerError } from '#common/models/server-error';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { FileStatus } from '#common/zod/disk/file-status';
 import type { FileWithGitFileStatus } from '#common/zod/disk/file-with-git-file-status';
+import { readFileCheckSize } from '../functions-result/read-file-check-size';
 import { createSimpleGit } from './create-simple-git';
-import { readFileCheckSize } from './read-file-check-size';
 
 export async function getChangesToCommit(item: {
   repoDir: string;
@@ -94,10 +96,15 @@ export async function getChangesToCommit(item: {
     if (addContent === true && status !== 'Deleted') {
       let fullPath = `${repoDir}/${path}`;
 
-      let { content: cont, stat: st } = await readFileCheckSize({
-        filePath: fullPath,
-        getStat: true
-      });
+      let { content: cont } = await Result.unwrap(
+        Result.pipe(
+          readFileCheckSize({
+            filePath: fullPath,
+            getStat: true
+          }),
+          Result.mapError(error => new ServerError({ message: error.code }))
+        )
+      );
 
       content = cont;
     }

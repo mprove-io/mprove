@@ -1,9 +1,11 @@
+import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import { load } from 'js-yaml';
 import { MPROVE_CONFIG_DIR_DOT_SLASH } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined';
 import { MyRegex } from '#common/models/my-regex';
-import { readFileCheckSize } from './read-file-check-size';
+import { ServerError } from '#common/models/server-error';
+import { readFileCheckSize } from '../functions-result/read-file-check-size';
 
 export async function getMproveDir(item: { dir: string; configPath: string }) {
   let isConfigPathExist = await fse.pathExists(item.configPath);
@@ -16,10 +18,15 @@ export async function getMproveDir(item: { dir: string; configPath: string }) {
     return undefined;
   }
 
-  let { content } = await readFileCheckSize({
-    filePath: item.configPath,
-    getStat: false
-  });
+  let { content } = await Result.unwrap(
+    Result.pipe(
+      readFileCheckSize({
+        filePath: item.configPath,
+        getStat: false
+      }),
+      Result.mapError(error => new ServerError({ message: error.code }))
+    )
+  );
 
   let parsedYaml: any;
   let breakOnYamlParsing: boolean;

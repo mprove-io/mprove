@@ -36,6 +36,7 @@
     "@opentelemetry/resources": "2.2.0",
     "@opentelemetry/sdk-node": "0.208.0",
     "@opentelemetry/semantic-conventions": "1.38.0",
+    "@praha/byethrow": "0.12.0",
     "bcrypt": "5.1.1",
     "date-fns": "4.1.0",
     "date-fns-tz": "3.2.0",

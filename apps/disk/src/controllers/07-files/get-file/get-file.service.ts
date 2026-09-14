@@ -9,8 +9,6 @@ import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFilesWrapped } from '#disk/functions/disk/get-nodes-and-files-wrapped';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
-import { readFileCheckSizeWrapped } from '#disk/functions/disk/read-file-check-size-wrapped';
-import { validatePathUnderDirWrapped } from '#disk/functions/disk/validate-path-under-dir-wrapped';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getBaseCommitFileContent } from '#disk/functions/git/get-base-commit-file-content';
@@ -18,6 +16,8 @@ import { getLastCommitFileContent } from '#disk/functions/git/get-last-commit-fi
 import { getRepoStatusWrapped } from '#disk/functions/git/get-repo-status-wrapped';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
+import { readFileCheckSize } from '#node-common/functions-result/read-file-check-size';
+import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
 
 @Injectable()
 export class GetFileService {
@@ -62,7 +62,7 @@ export class GetFileService {
         filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${filePathRelative}`
       }),
       Result.andThrough(item =>
-        validatePathUnderDirWrapped({
+        validatePathUnderDir({
           fullPath: item.filePath,
           allowedDir: item.repoDir
         })
@@ -110,7 +110,7 @@ export class GetFileService {
         item.isExist === false
           ? Result.succeed('')
           : Result.pipe(
-              readFileCheckSizeWrapped({
+              readFileCheckSize({
                 filePath: item.filePath,
                 getStat: false
               }),

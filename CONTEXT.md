@@ -102,6 +102,7 @@ src/
 ├── constants/      # Shared constants
 ├── enums/          # Enumerations
 ├── functions/      # Pure utility functions
+├── functions-result/ # Pure utilities returning byethrow Result
 ├── interfaces/     # TypeScript interfaces
 │   ├── backend/    # Backend-specific interfaces
 │   ├── blockml/    # BlockML interfaces
@@ -143,7 +144,8 @@ NodeJS-specific utilities shared across services (backend, blockml, disk) and mc
 src/
 ├── classes/        # Utility classes (e.g., CycleGraph)
 ├── decorators/     # NestJS method decorators
-└── functions/      # Node.js utility functions
+├── functions/      # Node.js utility functions
+└── functions-result/ # Node.js utilities returning byethrow Result
 ```
 
 ## Instructions
