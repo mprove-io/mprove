@@ -4,7 +4,6 @@ import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { getFractionTypeForAny } from '#common/functions/get-fraction-type-for-any';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { ReportX } from '#common/zod/backend/report-x';
@@ -13,6 +12,7 @@ import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
 import type { ReportField } from '#common/zod/blockml/report-field';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
+import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { ModelsQuery } from '#front/app/queries/models.query';
 import { ReportService } from '#front/app/services/report.service';
 

@@ -25,7 +25,6 @@ import { ModelNodeLabelEnum } from '#common/enums/model-node-label.enum';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import { getFractionTypeForAny } from '#common/functions/get-fraction-type-for-any';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
@@ -43,6 +42,7 @@ import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-typ
 import type { ModelField } from '#common/zod/blockml/model-field';
 import type { ModelNode } from '#common/zod/blockml/model-node';
 import type { ModelNodeExtra } from '#common/zod/front/model-node-extra';
+import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ModelQuery, ModelState } from '#front/app/queries/model.query';
 import { UiQuery } from '#front/app/queries/ui.query';

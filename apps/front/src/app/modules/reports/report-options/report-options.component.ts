@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import { spaceUnitToReportUnit } from '#common/functions/space/space-unit-to-report-unit';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
+import { spaceUnitToReportUnit } from '#front/app/functions/space/space-unit-to-report-unit';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { UiQuery } from '#front/app/queries/ui.query';

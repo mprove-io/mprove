@@ -19,7 +19,6 @@ import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.e
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { getFractionTypeForAny } from '#common/functions/get-fraction-type-for-any';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
@@ -32,6 +31,7 @@ import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-typ
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelField } from '#common/zod/blockml/model-field';
 import type { ModelFieldY } from '#common/zod/blockml/model-field-y';
+import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { ApiService } from '#front/app/services/api.service';
 import { ChartService } from '#front/app/services/chart.service';
 import { StructService } from '#front/app/services/struct.service';

@@ -7,7 +7,6 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy';
-import { makeTrackChangeId } from '#common/functions/make-track-change-id';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { DashboardField } from '#common/zod/blockml/dashboard-field';
 import type {
@@ -22,6 +21,7 @@ import type {
   ToBackendEditDraftDashboardRequestPayload,
   ToBackendEditDraftDashboardResponse
 } from '#common/zod/to-backend/dashboards/to-backend-edit-draft-dashboard';
+import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
 import { DashboardQuery } from '../queries/dashboard.query';
 import { DashboardUnitsQuery } from '../queries/dashboard-units.query';
 import { NavQuery, NavState } from '../queries/nav.query';

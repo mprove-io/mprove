@@ -7,7 +7,6 @@ import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.e
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { getFractionTypeForAny } from '#common/functions/get-fraction-type-for-any';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { ChartX } from '#common/zod/backend/chart-x';
@@ -19,6 +18,7 @@ import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
+import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartService } from '#front/app/services/chart.service';
 import { MconfigService } from '#front/app/services/mconfig.service';

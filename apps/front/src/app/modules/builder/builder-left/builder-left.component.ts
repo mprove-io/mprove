@@ -32,7 +32,6 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import { getFileItems } from '#common/functions/get-file-items';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
@@ -43,6 +42,7 @@ import type {
   ToBackendMoveCatalogNodeRequestPayload,
   ToBackendMoveCatalogNodeResponse
 } from '#common/zod/to-backend/catalogs/to-backend-move-catalog-node';
+import { getFileItems } from '#front/app/functions/get-file-items';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';

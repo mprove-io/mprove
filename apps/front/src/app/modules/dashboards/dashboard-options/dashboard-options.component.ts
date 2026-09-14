@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import { spaceUnitToDashboardUnit } from '#common/functions/space/space-unit-to-dashboard-unit';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
+import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';

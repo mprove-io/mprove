@@ -5,11 +5,11 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path';
-import { getFileIds } from '#common/functions/get-file-ids';
 import type {
   ToBackendGetFileRequestPayload,
   ToBackendGetFileResponse
 } from '#common/zod/to-backend/files/to-backend-get-file';
+import { getFileIds } from '#front/app/functions/get-file-ids';
 import { FileQuery, FileState } from '../queries/file.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { RepoQuery, RepoState } from '../queries/repo.query';

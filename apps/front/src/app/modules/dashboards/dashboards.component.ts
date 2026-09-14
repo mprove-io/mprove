@@ -33,9 +33,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
-import { makeTrackChangeId } from '#common/functions/make-track-change-id';
 import { makeSpaceUnits } from '#common/functions/space/make-space-units';
-import { spaceUnitToDashboardUnit } from '#common/functions/space/space-unit-to-dashboard-unit';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Member } from '#common/zod/backend/member';
@@ -55,6 +53,8 @@ import type {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
 } from '#common/zod/to-backend/queries/to-backend-run-queries';
+import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
+import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
 import { DashboardUnitsFilteredQuery } from '#front/app/queries/dashboard-units-filtered.query';

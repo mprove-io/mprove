@@ -34,7 +34,6 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { StoreFilterForEnum } from '#common/enums/store-filter-for.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { getFractionTypeForAny } from '#common/functions/get-fraction-type-for-any';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
@@ -60,6 +59,7 @@ import type {
   ToBackendGetSuggestFieldsRequestPayload,
   ToBackendGetSuggestFieldsResponse
 } from '#common/zod/to-backend/suggest-fields/to-backend-get-suggest-fields';
+import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';

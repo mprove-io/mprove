@@ -3,7 +3,6 @@ import { TRIPLE_UNDERSCORE } from '#common/constants/top';
 import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { getFractionTypeForAny } from '#common/functions/get-fraction-type-for-any';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
@@ -13,6 +12,7 @@ import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
+import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { DashboardService } from '#front/app/services/dashboard.service';
 

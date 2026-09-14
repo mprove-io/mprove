@@ -24,7 +24,6 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { TimeframeEnum } from '#common/enums/timeframe.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { getFractionTypeForAny } from '#common/functions/get-fraction-type-for-any';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
@@ -41,6 +40,7 @@ import type {
   ToBackendGetModelRequestPayload,
   ToBackendGetModelResponse
 } from '#common/zod/to-backend/models/to-backend-get-model';
+import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { StructQuery } from '#front/app/queries/struct.query';

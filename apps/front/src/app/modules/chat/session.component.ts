@@ -20,7 +20,6 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { splitModelExtraId } from '#common/functions/split-model-extra-id';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
@@ -32,6 +31,7 @@ import type {
   ToBackendSendMessageToExplorerSessionRequestPayload,
   ToBackendSendMessageToExplorerSessionResponse
 } from '#common/zod/to-backend/sessions/to-backend-send-message-to-explorer-session';
+import { splitModelExtraId } from '#front/app/functions/split-model-extra-id';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
   SessionBundleQuery,

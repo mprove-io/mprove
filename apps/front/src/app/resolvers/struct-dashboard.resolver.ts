@@ -18,11 +18,11 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { makeTrackChangeId } from '#common/functions/make-track-change-id';
 import type {
   ToBackendGetDashboardRequestPayload,
   ToBackendGetDashboardResponse
 } from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
+import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardQuery } from '../queries/dashboard.query';
 import { MemberQuery } from '../queries/member.query';

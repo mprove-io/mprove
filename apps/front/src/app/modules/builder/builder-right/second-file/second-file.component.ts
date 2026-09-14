@@ -26,7 +26,6 @@ import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import { getFileItems } from '#common/functions/get-file-items';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { ModelX } from '#common/zod/backend/model-x';
@@ -42,6 +41,7 @@ import type {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
 } from '#common/zod/to-backend/models/to-backend-get-models';
+import { getFileItems } from '#front/app/functions/get-file-items';
 import { FileQuery } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

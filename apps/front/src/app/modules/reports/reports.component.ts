@@ -58,7 +58,6 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeSpaceUnits } from '#common/functions/space/make-space-units';
-import { spaceUnitToReportUnit } from '#common/functions/space/space-unit-to-report-unit';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { SpaceNode } from '#common/zod/backend/space-node';
@@ -84,6 +83,7 @@ import type {
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '#front/app/functions/make-query-params';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { spaceUnitToReportUnit } from '#front/app/functions/space/space-unit-to-report-unit';
 import { FilteredReportsQuery } from '#front/app/queries/filtered-reports.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';

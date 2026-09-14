@@ -10,7 +10,6 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { splitModelExtraId } from '#common/functions/split-model-extra-id';
 import type { EnvsItem } from '#common/zod/backend/envs-item';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type {
@@ -31,6 +30,7 @@ import type {
 } from '#common/zod/to-backend/sessions/to-backend-create-explorer-session';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
+import { splitModelExtraId } from '#front/app/functions/split-model-extra-id';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';

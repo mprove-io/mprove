@@ -35,7 +35,6 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
 import { makeSpaceUnits } from '#common/functions/space/make-space-units';
-import { spaceUnitToDashboardUnit } from '#common/functions/space/space-unit-to-dashboard-unit';
 import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
@@ -67,6 +66,7 @@ import type {
 } from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';
 import { ChartsQuery } from '#front/app/queries/charts.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
