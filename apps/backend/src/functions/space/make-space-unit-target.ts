@@ -7,9 +7,9 @@ import {
   UNCATEGORIZED_SPACE_ID,
   UNCATEGORIZED_SPACE_TITLE
 } from '#common/constants/top';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined';
 import type { Member } from '#common/zod/backend/member';
-import { isDefinedAndNotEmpty } from '../is-defined-and-not-empty';
-import { isUndefined } from '../is-undefined';
 
 export type SpaceUnitTarget = {
   space: string;

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import retry from 'async-retry';
 import test from 'ava';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { makeSessionId } from '#backend/functions/make-session-id';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
@@ -15,7 +16,6 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import { makeSessionId } from '#common/functions/make-session-id';
 import type {
   ToBackendCommitRepoRequest,
   ToBackendCommitRepoResponse

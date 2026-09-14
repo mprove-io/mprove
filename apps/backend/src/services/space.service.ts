@@ -1,4 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { makeSpaceFolder } from '#backend/functions/space/make-space-folder';
+import { makeSpaceUnitTarget } from '#backend/functions/space/make-space-unit-target';
+import { makeSpaceUnitWithSpace } from '#backend/functions/space/make-space-unit-with-space';
+import { makeSyntheticSpaceFolder } from '#backend/functions/space/make-synthetic-space-folder';
+import { sortSpaceNodes } from '#backend/functions/space/sort-space-nodes';
 import {
   MY_SPACE_ID,
   PERSONAL_SPACE_ID,
@@ -8,11 +13,6 @@ import {
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
-import { makeSpaceFolder } from '#common/functions/space/make-space-folder';
-import { makeSpaceUnitTarget } from '#common/functions/space/make-space-unit-target';
-import { makeSpaceUnitWithSpace } from '#common/functions/space/make-space-unit-with-space';
-import { makeSyntheticSpaceFolder } from '#common/functions/space/make-synthetic-space-folder';
-import { sortSpaceNodes } from '#common/functions/space/sort-space-nodes';
 import type { Member } from '#common/zod/backend/member';
 import type { SpaceFolder } from '#common/zod/backend/space-folder';
 import type { SpaceNode } from '#common/zod/backend/space-node';

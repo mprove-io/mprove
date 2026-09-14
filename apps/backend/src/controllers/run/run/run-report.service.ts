@@ -8,10 +8,10 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access';
+import { getReportUrl } from '#backend/functions/get-report-url';
 import { TabService } from '#backend/services/tab.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { getReportUrl } from '#common/functions/get-report-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';

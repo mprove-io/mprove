@@ -12,6 +12,7 @@ import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { makeTilesX } from '#backend/functions/make-tiles-x';
+import { sortSpaceNodes } from '#backend/functions/space/sort-space-nodes';
 import {
   MPROVE_USERS_FOLDER,
   MY_CHARTS_SPACE_TITLE
@@ -21,7 +22,6 @@ import { ErEnum } from '#common/enums/er.enum';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { sortSpaceNodes } from '#common/functions/space/sort-space-nodes';
 import { ServerError } from '#common/models/server-error';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { ChartX } from '#common/zod/backend/chart-x';

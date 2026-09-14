@@ -26,6 +26,7 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { makeSessionId } from '#backend/functions/make-session-id';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex.service';
 import { BranchesService } from '#backend/services/db/branches.service';
@@ -45,7 +46,6 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { makeSessionId } from '#common/functions/make-session-id';
 import { ServerError } from '#common/models/server-error';
 import type { ToBackendCreateExplorerSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-explorer-session';
 

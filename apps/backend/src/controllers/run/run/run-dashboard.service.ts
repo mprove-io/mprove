@@ -3,11 +3,11 @@ import type {
   MemberTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { getDashboardUrl } from '#backend/functions/get-dashboard-url';
 import { DashboardsService } from '#backend/services/db/dashboards.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { getDashboardUrl } from '#common/functions/get-dashboard-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';

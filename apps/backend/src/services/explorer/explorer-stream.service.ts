@@ -14,6 +14,7 @@ import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { makeAscendingIdAfter } from '#backend/functions/make-ascending-id';
 import { EMPTY_ASSISTANT_RESPONSE_MESSAGE } from '#common/constants/top';
 import {
   CHANNEL_AI_INTERACT_REPLY,
@@ -26,7 +27,6 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { makeAscendingIdAfter } from '#common/functions/make-ascending-id';
 import { makeId } from '#common/functions/make-id';
 import { ServerError } from '#common/models/server-error';
 import { CodexService } from '../codex.service';
