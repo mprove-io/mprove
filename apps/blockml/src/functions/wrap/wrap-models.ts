@@ -1,5 +1,6 @@
 import type { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import type { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
+import { parseTags } from '#blockml/functions/extra/parse-tags';
 import { MF, UNCATEGORIZED_SPACE_TITLE } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
@@ -11,7 +12,6 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { parseTags } from '#common/functions/parse-tags';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';

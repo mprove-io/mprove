@@ -1,4 +1,5 @@
 import type { AtomicType } from '@malloydata/malloy-interfaces';
+import { parseTags } from '#blockml/functions/extra/parse-tags';
 import {
   DOUBLE_UNDERSCORE,
   MPROVE_TAG_FIELD_GROUP,
@@ -9,7 +10,6 @@ import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined';
-import { parseTags } from '#common/functions/parse-tags';
 import type { FlatMalloyFieldItem } from '#common/zod/blockml/internal/flat-malloy-field-item';
 import type { ModelField } from '#common/zod/blockml/model-field';
 import type { ModelNode } from '#common/zod/blockml/model-node';
