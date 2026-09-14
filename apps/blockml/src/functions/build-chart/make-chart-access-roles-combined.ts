@@ -4,7 +4,7 @@ import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { makeAccessRolesCombined } from '#common/functions/space/make-access-roles-combined';
+import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined';
 import type { FileChart } from '#common/zod/blockml/internal/file-chart';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import { getSpaceFromFilePath } from '../extra/get-space-from-file-path';
