@@ -8,18 +8,6 @@ import type { FileStatus } from '#common/zod/disk/file-status';
 import type { FileWithGitFileStatus } from '#common/zod/disk/file-with-git-file-status';
 import { readFileCheckSize } from './read-file-check-size';
 
-export async function getSyncFiles(item: {
-  statusResult: StatusResult;
-  repoDir: string;
-}) {
-  let { statusResult, repoDir } = item;
-
-  return await getWorkingTreePayload({
-    statusResult: statusResult,
-    repoDir: repoDir
-  });
-}
-
 export async function getWorkingTreePayload(item: {
   statusResult: StatusResult;
   repoDir: string;

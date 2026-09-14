@@ -212,11 +212,6 @@ export async function buildMods(
 
     let modelInfo: MalloyModelInfo = modelDefToModelInfo(malloyModelDef);
 
-    // let modelInfo: MalloyModelInfo = addTraceSpanSync({
-    //   spanName: 'backend.malloy.modelDefToModelInfo',
-    //   fn: () => modelDefToModelInfo(malloyModelDef)
-    // });
-
     let projectConnection = item.connections.find(
       c => c.connectionId === sourceDef.connection
     );
