@@ -26,6 +26,7 @@ import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { makeDashboardFiltersX } from '#backend/functions/make-dashboard-filters-x';
 import { makeTilesX } from '#backend/functions/make-tiles-x';
+import { ServerError } from '#common/classes/server-error';
 import {
   EMPTY_QUERY_ID,
   MPROVE_USERS_FOLDER,
@@ -39,7 +40,6 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import type { DashboardPart } from '#common/zod/backend/dashboard-part';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';

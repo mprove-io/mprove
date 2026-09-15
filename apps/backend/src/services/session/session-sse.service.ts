@@ -8,11 +8,11 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { ServerError } from '#common/classes/server-error';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ServerError } from '#common/models/server-error';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 import { TabService } from '../tab.service';
 

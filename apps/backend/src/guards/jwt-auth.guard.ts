@@ -9,6 +9,7 @@ import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { parseApiKey } from '#backend/functions/api-key/parse-api-key';
 import { validateApiKeySecret } from '#backend/functions/api-key/validate-api-key-secret';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { MCLI_SESSION_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-session-allowed-request-names';
 import { MCLI_USER_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-user-allowed-request-names';
 import { PROD_REPO_ID } from '#common/constants/top';
@@ -16,7 +17,6 @@ import { SKIP_JWT } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ServerError } from '#common/models/server-error';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {

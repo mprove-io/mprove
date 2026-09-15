@@ -11,10 +11,10 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { ExplorerChartRebuildService } from '#backend/services/explorer/explorer-chart-rebuild.service';
 import { ExplorerEventsMakerService } from '#backend/services/explorer/explorer-events-maker.service';
 import { SessionDrainService } from '#backend/services/session/session-drain.service';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import type { ToBackendProduceExplorerChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-produce-explorer-chart';
 
 export const CHART_ID_PLACEHOLDER = '<chart-id-placeholder>';

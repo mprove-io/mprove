@@ -15,6 +15,7 @@ import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeAscendingIdAfter } from '#backend/functions/make-ascending-id';
+import { ServerError } from '#common/classes/server-error';
 import { EMPTY_ASSISTANT_RESPONSE_MESSAGE } from '#common/constants/top';
 import {
   CHANNEL_AI_INTERACT_REPLY,
@@ -28,7 +29,6 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import { CodexService } from '../codex.service';
 import { ProjectsService } from '../db/projects.service';
 import { ProvidersService } from '../db/providers.service';

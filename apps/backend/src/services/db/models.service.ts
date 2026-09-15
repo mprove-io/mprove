@@ -8,10 +8,10 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ModelEnt, modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelPart } from '#common/zod/backend/model-part';
 import type { ModelPartX } from '#common/zod/backend/model-part-x';

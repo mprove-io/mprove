@@ -18,10 +18,10 @@ import { QueriesService } from '#backend/services/db/queries.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ServerError } from '#common/models/server-error';
 import type { ToBackendGetQueryResponsePayload } from '#common/zod/to-backend/queries/to-backend-get-query';
 
 @ApiTags('Queries')

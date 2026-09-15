@@ -8,11 +8,11 @@ import type {
   ModelTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import { ChartsService } from './db/charts.service';
 import { DashboardsService } from './db/dashboards.service';
 import { MconfigsService } from './db/mconfigs.service';

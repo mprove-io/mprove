@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
+import { ServerError } from '#common/classes/server-error';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
-import { ServerError } from '#common/models/server-error';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
 import { readFileCheckSize } from '#node-common/functions-result/read-file-check-size';
 

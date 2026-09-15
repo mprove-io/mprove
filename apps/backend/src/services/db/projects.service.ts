@@ -13,13 +13,13 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { ServerError } from '#common/classes/server-error';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import type { Ev } from '#common/zod/backend/ev';
 import type { Project } from '#common/zod/backend/project';
 import type { ProjectsItem } from '#common/zod/backend/projects-item';

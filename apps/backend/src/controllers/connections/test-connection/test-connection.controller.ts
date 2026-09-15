@@ -32,6 +32,7 @@ import { SnowFlakeService } from '#backend/services/dwh/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino.service';
 import { StoreService } from '#backend/services/store.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -39,7 +40,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { getMotherduckDatabaseWrongChars } from '#common/functions/check-motherduck-database-name';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { ToBackendTestConnectionResponsePayload } from '#common/zod/to-backend/connections/to-backend-test-connection';
 
 @ApiTags('Connections')

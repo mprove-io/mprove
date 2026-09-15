@@ -44,6 +44,7 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { HashService } from '#backend/services/hash.service';
 import { MalloyService } from '#backend/services/malloy.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
@@ -51,7 +52,6 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import type { Tile } from '#common/zod/blockml/tile';
 import type { ToBackendEditDraftChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-edit-draft-chart';
 

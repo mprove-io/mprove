@@ -2,6 +2,7 @@ import type {
   ModelTab,
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { MyRegex } from '#common/classes/my-regex';
 import {
   REPORT_FIELD_DEFAULT_HIDDEN,
   REPORT_ROW_DEFAULT_SHOW_CHART
@@ -15,7 +16,6 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
 import { toFileChartOptions } from '#common/functions/to-file-chart-options';
 import { toYaml } from '#common/functions/to-yaml';
-import { MyRegex } from '#common/models/my-regex';
 import type { FileFraction } from '#common/zod/blockml/internal/file-fraction';
 import type { FileFractionControl } from '#common/zod/blockml/internal/file-fraction-control';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';

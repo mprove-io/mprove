@@ -33,12 +33,12 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { UrlService } from '#backend/services/url.service';
+import { ServerError } from '#common/classes/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/check-motherduck-database-name';
 import { isDefined } from '#common/functions/is-defined';
-import { ServerError } from '#common/models/server-error';
 import type { ToBackendCreateConnectionResponsePayload } from '#common/zod/to-backend/connections/to-backend-create-connection';
 
 @ApiTags('Connections')

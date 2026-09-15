@@ -17,11 +17,11 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { ServerError } from '#common/classes/server-error';
 import { THROTTLE_TELEMETRY } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ServerError } from '#common/models/server-error';
 
 @ApiTags('Telemetry')
 @UseGuards(ThrottlerUserIdGuard)

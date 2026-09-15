@@ -1,6 +1,6 @@
+import { MyRegex } from '#common/classes/my-regex';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { MyRegex } from '#common/models/my-regex';
 
 export function getContentFromFileName(item: { fileName: string }): string {
   let { fileName } = item;

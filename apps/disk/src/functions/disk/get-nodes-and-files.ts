@@ -4,10 +4,10 @@ import pIteration from 'p-iteration';
 
 const { forEachSeries } = pIteration;
 
+import { MyRegex } from '#common/classes/my-regex';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
-import { MyRegex } from '#common/models/my-regex';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';

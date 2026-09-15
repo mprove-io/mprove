@@ -1,5 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
-import { ServerError } from '#common/models/server-error';
+import { ServerError } from '#common/classes/server-error';
 
 @Catch()
 export class McpExceptionFilter implements ExceptionFilter {

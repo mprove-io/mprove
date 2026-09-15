@@ -8,11 +8,11 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { getChartUrl } from '#backend/functions/get-chart-url';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { RunChart } from '#common/zod/backend/run/run-chart';
 import type { RunQuery } from '#common/zod/backend/run/run-query';
 

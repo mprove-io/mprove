@@ -9,12 +9,12 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { UsersService } from '#backend/services/db/users.service';
+import { ServerError } from '#common/classes/server-error';
 import { CodexDeviceAuthStatusEnum } from '#common/enums/codex-device-auth-status.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { CodexAuthOpenai } from '#common/zod/backend/codex-auth';
 import { type CodexModel, zCodexModel } from '#common/zod/backend/codex-model';
 

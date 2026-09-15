@@ -12,12 +12,12 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
+import { ServerError } from '#common/classes/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ServerError } from '#common/models/server-error';
 import type { ToBackendPauseEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-pause-editor-session';
 
 @ApiTags('Sessions')

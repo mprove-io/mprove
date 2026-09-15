@@ -27,6 +27,7 @@ import { OrgsService } from '#backend/services/db/orgs.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -34,7 +35,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import type { ToBackendCreateProjectResponsePayload } from '#common/zod/to-backend/projects/to-backend-create-project';
 
 @ApiTags('Projects')

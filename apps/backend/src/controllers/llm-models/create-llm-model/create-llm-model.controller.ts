@@ -28,6 +28,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { LlmModelService } from '#backend/services/llm-model.service';
+import { ServerError } from '#common/classes/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
@@ -35,7 +36,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
-import { ServerError } from '#common/models/server-error';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ToBackendCreateLlmModelRequestPayload } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-request-payload';

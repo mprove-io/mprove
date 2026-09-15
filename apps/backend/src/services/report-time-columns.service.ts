@@ -29,6 +29,7 @@ import {
 } from 'date-fns';
 import { BackendConfig } from '#backend/config/backend-config';
 import { nodeFormatTsUnix } from '#backend/functions/node-format-ts-unix';
+import { ServerError } from '#common/classes/server-error';
 import { TIME_COLUMNS_LIMIT } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
@@ -37,7 +38,6 @@ import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { Column } from '#common/zod/blockml/column';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';

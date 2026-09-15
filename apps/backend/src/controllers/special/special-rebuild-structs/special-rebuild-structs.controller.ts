@@ -33,6 +33,7 @@ import { BlockmlService } from '#backend/services/blockml.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -40,7 +41,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isUndefined } from '#common/functions/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/04-catalogs/get-catalog-files/get-catalog-files-response';
 import type {
   BridgeItem,

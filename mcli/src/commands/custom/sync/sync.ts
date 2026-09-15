@@ -1,6 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { Command, Option } from 'clipanion';
 import deepEqual from 'fast-deep-equal';
+import { ServerError } from '#common/classes/server-error';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -9,7 +10,6 @@ import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
-import { ServerError } from '#common/models/server-error';
 import type {
   ToBackendSyncRepoRequestPayload,
   ToBackendSyncRepoResponse

@@ -7,8 +7,8 @@ import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { RedisService } from '#backend/services/redis.service';
 import { SessionSseService } from '#backend/services/session/session-sse.service';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 
 export const SSE_SESSION_EVENTS_PATH = 'api/sse/session-events';
 

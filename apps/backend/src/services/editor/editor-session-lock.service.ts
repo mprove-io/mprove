@@ -3,9 +3,9 @@ import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
 import type { BackendConfig } from '#backend/config/backend-config';
+import { ServerError } from '#common/classes/server-error';
 import { KEY_EDITOR_SESSION_LOCK } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 
 @Injectable()
 export class EditorSessionLockService implements OnModuleDestroy {

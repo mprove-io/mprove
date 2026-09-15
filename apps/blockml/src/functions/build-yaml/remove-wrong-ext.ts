@@ -1,11 +1,11 @@
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
+import { MyRegex } from '#common/classes/my-regex';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { MyRegex } from '#common/models/my-regex';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
 import type { File2 } from '#common/zod/blockml/internal/file-2';
 import { log } from '../extra/log';

@@ -23,6 +23,7 @@ import {
   ASTSegmentViewDefinition,
   ASTViewOperation
 } from '@malloydata/malloy-query-builder';
+import { ServerError } from '#common/classes/server-error';
 // import { FieldBase } from '@malloydata/malloy/dist/model/malloy_types';
 import { DOUBLE_UNDERSCORE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
@@ -38,7 +39,6 @@ import { makeId } from '#common/functions/make-id';
 import { replaceChartField } from '#common/functions/replace-chart-field';
 import { setChartFields } from '#common/functions/set-chart-fields';
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change';
-import { ServerError } from '#common/models/server-error';
 import type { QueryOperation } from '#common/zod/backend/query-operation';
 import type { SelectedGiven } from '#common/zod/backend/selected-given';
 import type { SelectedGivenValue } from '#common/zod/backend/selected-given-value';

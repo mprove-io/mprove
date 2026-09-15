@@ -12,6 +12,7 @@ import type {
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access';
 import { makeReportFiltersX } from '#backend/functions/make-report-filters-x';
+import { ServerError } from '#common/classes/server-error';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import {
   EMPTY_REPORT_ID,
@@ -26,7 +27,6 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined';
 import { makeCopy } from '#common/functions/make-copy';
-import { ServerError } from '#common/models/server-error';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelX } from '#common/zod/backend/model-x';
 import type { ReportUnit } from '#common/zod/backend/report-unit';

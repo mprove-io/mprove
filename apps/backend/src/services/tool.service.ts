@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import type { Request } from 'express';
+import { ServerError } from '#common/classes/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 
 @Injectable()
 export class ToolService {

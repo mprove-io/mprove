@@ -37,13 +37,13 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/disk/routes/03-repos/revert-repo-to-remote/revert-repo-to-remote-response';
 import type { ToBackendRevertRepoToRemoteResponsePayload } from '#common/zod/to-backend/repos/to-backend-revert-repo-to-remote';
 

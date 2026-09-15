@@ -8,11 +8,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
+import { ServerError } from '#common/classes/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ServerError } from '#common/models/server-error';
 import type { ToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
 import { logResponseBackend } from './functions/log-response-backend';

@@ -11,12 +11,12 @@ import {
   SessionEnt,
   sessionsTable
 } from '#backend/drizzle/postgres/schema/sessions';
+import { ServerError } from '#common/classes/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ServerError } from '#common/models/server-error';
 import type { OcSessionApi } from '#common/zod/backend/oc-session-api';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import { TabService } from '../tab.service';

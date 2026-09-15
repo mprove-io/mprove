@@ -1,9 +1,9 @@
 import axios from 'axios';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import type { MyResponse } from '#common/zod/to/my-response';
 import type { ToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 

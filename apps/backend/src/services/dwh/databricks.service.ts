@@ -13,12 +13,12 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
+import { ServerError } from '#common/classes/server-error';
 import { DatabricksAuthTypeEnum } from '#common/enums/databricks-auth-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ServerError } from '#common/models/server-error';
 import type {
   ConnectionRawSchema,
   RawSchemaColumn,

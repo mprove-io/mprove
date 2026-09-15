@@ -45,6 +45,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { ReportDataService } from '#backend/services/report-data.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -53,7 +54,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/07-files/create-file/create-file-response';
 import type { ToBackendSaveCreateReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-save-create-report';

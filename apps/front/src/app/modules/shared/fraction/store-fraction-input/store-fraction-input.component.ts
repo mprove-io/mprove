@@ -21,6 +21,7 @@ import {
   take,
   tap
 } from 'rxjs';
+import { MyRegex } from '#common/classes/my-regex';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -28,7 +29,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy';
-import { MyRegex } from '#common/models/my-regex';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';

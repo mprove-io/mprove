@@ -1,9 +1,9 @@
 import { promises as dnsPromises, LookupAddress } from 'dns';
 import ipaddr from 'ipaddr.js';
 import * as neoip from 'neoip';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ServerError } from '#common/models/server-error';
 
 // Non-public IPv4 CIDRs (IANA special-purpose)
 let NON_PUBLIC_IPV4_CIDRS: readonly string[] = [

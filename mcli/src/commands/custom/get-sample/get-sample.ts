@@ -1,10 +1,10 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type {
   ToBackendGetConnectionSampleRequestPayload,
   ToBackendGetConnectionSampleResponse

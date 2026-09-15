@@ -41,6 +41,7 @@ import {
 import { EditorSandboxService } from '#backend/services/editor/editor-sandbox.service';
 import { EditorSessionLockService } from '#backend/services/editor/editor-session-lock.service';
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
+import { ServerError } from '#common/classes/server-error';
 import { CODEX_PROVIDER_ID } from '#common/constants/providers';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
@@ -52,7 +53,6 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ServerError } from '#common/models/server-error';
 import type { ToBackendSendMessageToEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-send-message-to-editor-session';
 
 @ApiTags('Sessions')

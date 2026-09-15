@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
+import { MyRegex } from '#common/classes/my-regex';
 import { CHART_TYPE_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
@@ -11,7 +12,6 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
-import { MyRegex } from '#common/models/my-regex';
 import { drcType } from '#common/types/drc-type';
 import type { FileChartOptionsSeriesElement } from '#common/zod/blockml/internal/file-chart-options-series';
 import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';

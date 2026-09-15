@@ -27,11 +27,11 @@ import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { ToBackendSetOrgOwnerResponsePayload } from '#common/zod/to-backend/orgs/to-backend-set-org-owner';
 
 @ApiTags('Orgs')

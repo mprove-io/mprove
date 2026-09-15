@@ -8,10 +8,10 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ServerError } from '#common/models/server-error';
 import type { QueryOperation } from '#common/zod/backend/query-operation';
 import type { Model } from '#common/zod/blockml/model';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';

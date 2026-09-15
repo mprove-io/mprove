@@ -41,6 +41,7 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
@@ -53,7 +54,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import type { ToBackendCreateDraftDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-create-draft-dashboard';

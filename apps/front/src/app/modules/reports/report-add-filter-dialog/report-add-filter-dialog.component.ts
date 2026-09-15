@@ -22,6 +22,7 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { MyRegex } from '#common/classes/my-regex';
 import { MALLOY_FILTER_ANY, TRIPLE_UNDERSCORE } from '#common/constants/top';
 import { EMPTY_MCONFIG_FIELD, RESULTS_LIST } from '#common/constants/top-front';
 import { ChangeTypeEnum } from '#common/enums/change-type.enum';
@@ -38,7 +39,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
-import { MyRegex } from '#common/models/my-regex';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { SuggestField } from '#common/zod/backend/suggest-field';
 import type { Fraction } from '#common/zod/blockml/fraction';

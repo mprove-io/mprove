@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BmError } from '#blockml/models/bm-error';
+import { MyRegex } from '#common/classes/my-regex';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -9,7 +10,6 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { MyRegex } from '#common/models/my-regex';
 import { sdrType } from '#common/types/sdr-type';
 import type { FieldAny } from '#common/zod/blockml/internal/field-any';
 import type { Model } from '#common/zod/blockml/model';

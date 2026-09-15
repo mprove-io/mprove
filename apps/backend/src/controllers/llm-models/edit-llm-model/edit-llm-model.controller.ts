@@ -31,6 +31,7 @@ import {
   type LlmModelPartsResult,
   LlmModelService
 } from '#backend/services/llm-model.service';
+import { ServerError } from '#common/classes/server-error';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -39,7 +40,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
-import { ServerError } from '#common/models/server-error';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { Provider } from '#common/zod/backend/provider';

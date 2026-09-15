@@ -21,6 +21,7 @@ import {
   take,
   tap
 } from 'rxjs';
+import { MyRegex } from '#common/classes/my-regex';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
@@ -29,7 +30,6 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { MyRegex } from '#common/models/my-regex';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
 import type {

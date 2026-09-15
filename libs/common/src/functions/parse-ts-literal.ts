@@ -1,5 +1,5 @@
 import type { TemporalUnit } from '@malloydata/malloy-filter';
-import { MyRegex } from '#common/models/my-regex';
+import { MyRegex } from '#common/classes/my-regex';
 import { isDefined } from './is-defined';
 import { isUndefined } from './is-undefined';
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
+import { MyRegex } from '#common/classes/my-regex';
 import { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { MyRegex } from '#common/models/my-regex';
 import { zGiven } from '#common/zod/backend/given';
 import { zMember } from '#common/zod/backend/member';
 import { zMyResponse } from '#common/zod/to/my-response';

@@ -1,6 +1,6 @@
+import { ServerError } from '#common/classes/server-error';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { ServerError } from '#common/models/server-error';
 
 export function parseApiKey(item: { fullKey: string }) {
   let { fullKey } = item;

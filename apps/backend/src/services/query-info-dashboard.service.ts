@@ -20,6 +20,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
@@ -32,7 +33,6 @@ import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
-import { ServerError } from '#common/models/server-error';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import type { ToBackendGetDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
 import { UsersService } from './db/users.service';

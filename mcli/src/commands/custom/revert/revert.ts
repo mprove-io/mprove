@@ -1,5 +1,6 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
+import { ServerError } from '#common/classes/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -9,7 +10,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { getBuilderUrl } from '#common/functions/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
-import { ServerError } from '#common/models/server-error';
 import type {
   ToBackendRevertRepoToLastCommitRequestPayload,
   ToBackendRevertRepoToLastCommitResponse

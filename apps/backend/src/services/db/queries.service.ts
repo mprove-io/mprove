@@ -16,6 +16,7 @@ import {
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
+import { ServerError } from '#common/classes/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -24,7 +25,6 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { StoreMethodEnum } from '#common/enums/store-method.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { Query } from '#common/zod/blockml/query';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';

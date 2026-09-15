@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import { MyRegex } from '#common/models/my-regex';
+import { MyRegex } from '#common/classes/my-regex';
 import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
 import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
 import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';

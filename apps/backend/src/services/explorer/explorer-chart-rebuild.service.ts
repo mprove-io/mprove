@@ -19,6 +19,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { QueriesService } from '#backend/services/db/queries.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
+import { ServerError } from '#common/classes/server-error';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER
@@ -26,7 +27,6 @@ import {
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { BmlError } from '#common/zod/blockml/bml-error';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 

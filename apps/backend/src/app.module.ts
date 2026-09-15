@@ -31,6 +31,7 @@ const { Client } = pg;
 
 import { backendPackageJson } from '#backend/backend-package-json';
 import { BackendConfig } from '#backend/config/backend-config';
+import { ServerError } from '#common/classes/server-error';
 import {
   DEMO_ORG_NAME,
   PROJECT_ENV_PROD,
@@ -46,7 +47,6 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import type { Ev } from '#common/zod/backend/ev';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { appControllers } from './app-controllers';

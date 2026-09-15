@@ -5,13 +5,13 @@ import type { ThrottlerModuleOptions } from '@nestjs/throttler';
 import { ThrottlerGuard, ThrottlerStorage } from '@nestjs/throttler';
 import { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { ServerError } from '#common/classes/server-error';
 import { RESTRICTED_USER_EMAIL } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 
 @Injectable()
 export class ThrottlerUserIdGuard extends ThrottlerGuard {

@@ -4,6 +4,7 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ProviderTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
+import { ServerError } from '#common/classes/server-error';
 import {
   ANTHROPIC_PROVIDER_ID,
   CODEX_PROVIDER_ID,
@@ -17,7 +18,6 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
-import { ServerError } from '#common/models/server-error';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 import type { Provider } from '#common/zod/backend/provider';

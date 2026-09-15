@@ -34,6 +34,7 @@ import { ProvidersService } from '#backend/services/db/providers.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
@@ -44,7 +45,6 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold';
 import { isDefined } from '#common/functions/is-defined';
-import { ServerError } from '#common/models/server-error';
 import type { ToBackendSendMessageToExplorerSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-send-message-to-explorer-session';
 
 @ApiTags('Sessions')

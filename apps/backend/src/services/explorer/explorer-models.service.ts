@@ -16,10 +16,10 @@ import {
   isOpenAiGpt5Family,
   isOpenAiGpt5Pro
 } from '#backend/functions/openai-model-variants';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ServerError } from '#common/models/server-error';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 
 @Injectable()

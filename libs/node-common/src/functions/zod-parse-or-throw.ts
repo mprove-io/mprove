@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { z } from 'zod';
+import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { ServerError } from '#common/models/server-error';
 import { logToConsole } from './log-to-console';
 
 export function zodParseOrThrow<T extends z.ZodType>(item: {

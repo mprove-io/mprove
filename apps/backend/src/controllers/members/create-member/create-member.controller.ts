@@ -47,6 +47,7 @@ import { EmailService } from '#backend/services/email.service';
 import { HashService } from '#backend/services/hash.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
+import { ServerError } from '#common/classes/server-error';
 import {
   EMPTY_REPORT_ID,
   EMPTY_STRUCT_ID,
@@ -72,7 +73,6 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { ServerError } from '#common/models/server-error';
 import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/03-repos/create-dev-repo/create-dev-repo-response';
 import type { ToBackendCreateMemberResponsePayload } from '#common/zod/to-backend/members/to-backend-create-member';
 
