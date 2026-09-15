@@ -95,45 +95,6 @@ All apps use native ESM with the following configuration:
 
 Shared types, interfaces, enums, and constants used by all apps (frontend and backend).
 
-**Directory Structure:**
-
-```
-src/
-├── constants/      # Shared constants
-├── enums/          # Enumerations
-├── functions/      # Pure utility functions
-├── functions-result/ # Pure utilities returning byethrow Result
-├── interfaces/     # TypeScript interfaces
-│   ├── backend/    # Backend-specific interfaces
-│   ├── blockml/    # BlockML interfaces
-│   ├── disk/       # Disk service interfaces
-│   ├── front/      # Frontend interfaces
-│   ├── mcli/       # CLI interfaces
-│   ├── to/         # Shared request/response types
-│   ├── to-backend/ # Frontend->Backend DTOs
-│   ├── to-blockml/ # Backend->BlockML DTOs
-│   └── to-disk/    # Backend->Disk DTOs
-├── models/         # Shared models (ServerError, MyRegex)
-├── types/          # TypeScript types
-└── zod/            # Zod validation schemas
-```
-
-**Key Enums:**
-
-- `er.enum.ts` — error codes (`ErEnum`) used across all apps
-
-**Interface Organization:**
-
-- `to-backend/` — request/response interfaces for frontend->backend HTTP calls
-- `to-blockml/` — request/response interfaces for backend->blockml RPC
-- `to-disk/` — request/response interfaces for backend->disk RPC
-- Each subdirectory mirrors the controller structure of its target app
-
-**Patterns:**
-
-- DTOs define both request body and response shape
-- Enums are used for type-safe constants across the full stack
-
 ### libs/node-common
 
 NodeJS-specific utilities shared across services (backend, blockml, disk) and mcli. Not used by frontend.
@@ -436,68 +397,6 @@ Source code for the [OpenCode](https://github.com/anomalyco/opencode).
 ## Commit and PR Guidelines
 
 Do not include AI attribution (e.g., "Generated with Claude Code", "Co-Authored-By: Claude") in commits or pull requests.
-
-## Files Tree
-
-Generated with `./scripts/dev/list-context-files-tree.sh .`
-
-```
-_nogit/
-.claude/
-.devcontainer/
-.git/
-.github/
-.husky/
-.pnpm-store/
-.turbo/
-.vscode/
-apps/
-external/
-libs/
-mcli/
-mprove_data/
-node_modules/
-notes/
-plans/
-scripts/
-secrets/
-sandbox/
-setup-docker/
-tmp/
-.dockerignore
-.DS_Store
-.env
-.envrc
-.gitattributes
-.gitignore
-.prettierignore
-.prettierrc.js
-biome.jsonc
-CLAUDE.md
-CONTEXT.md
-docker-compose.yml
-LICENSE
-package.json
-pnpm-lock.yaml
-pnpm-workspace.yaml
-README.md
-tsconfig.base.json
-tsconfig.check.json
-tsconfig.json
-turbo.json
-```
-
-The "Files Tree" section in each CONTEXT.md must be generated using the `list-context-files-tree.sh` script:
-
-```bash
-# Single directory
-./scripts/dev/list-context-files-tree.sh <directory>
-
-# Multiple directories (outputs with headers)
-./scripts/dev/list-context-files-tree.sh . apps/backend apps/blockml apps/disk apps/front mcli
-```
-
-The script ensures consistent ordering: folders first (sorted by `_`, `.`, then alphabetically case-insensitive), then files (same order).
 
 ## Subsystem Context
 

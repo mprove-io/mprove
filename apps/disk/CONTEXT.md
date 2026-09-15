@@ -2,65 +2,6 @@
 
 File system and git repository management service. Manages project file storage and git operations.
 
-## Files Tree
-
-Generated with `./scripts/dev/list-context-files-tree.sh apps/disk`
-
-```
-.turbo/
-dist/
-dist-test/
-node_modules/
-src/
-.swcrc
-ava.compiled.config.js
-build.mjs
-compile-test.mjs
-CONTEXT.md
-loader-compiled.mjs
-loader-register.mjs
-package.json
-tsconfig.app.json
-```
-
-## Scripts
-
-| Script      | Command                                                                                                            |
-| ----------- | ------------------------------------------------------------------------------------------------------------------ |
-| check       | `pnpm typecheck && pnpm lint`                                                                                      |
-| typecheck   | `tsc --noEmit`                                                                                                     |
-| lint        | `biome lint src`                                                                                                   |
-| circular    | `madge --circular .`                                                                                               |
-| build       | `swc src -d dist --source-maps && node build.mjs`                                                                  |
-| node-serve  | `dotenv -e ../../.env -- node --enable-source-maps dist/main.js`                                                   |
-| start       | `dotenv -e ../../.env -- node --import @swc-node/register/esm-register --watch src/main.ts`                        |
-| debug       | `dotenv -e ../../.env -- node --import @swc-node/register/esm-register --inspect=0.0.0.0:9230 --watch src/main.ts` |
-| test        | `dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=4`                                        |
-| clean-node  | `rimraf --glob "node_modules/*" "node_modules/.[!.]*"`                                                             |
-| clean-dist  | `rimraf --glob "dist/*" "dist/.[!.]*"`                                                                             |
-| clean-turbo | `rimraf --glob ".turbo/*" ".turbo/.[!.]*"`                                                                         |
-
-## Directory Structure
-
-```
-src/
-├── config/         # App configuration
-├── controllers/    # RPC request handlers (ordered by domain)
-│   ├── 01-orgs/
-│   ├── 02-projects/
-│   ├── 03-repos/
-│   ├── 04-catalogs/
-│   ├── 05-branches/
-│   ├── 06-folders/
-│   ├── 07-files/
-│   ├── 08-seed/
-│   └── 09-test/
-├── functions/      # File system & git helper functions
-├── seeds/
-│   └── projects/   # Demo and test project seeds selected by seedProjectId
-└── services/       # Business logic services
-```
-
 ## Purpose
 
 Manages the file system layer for Mprove projects:
