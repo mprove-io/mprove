@@ -19,6 +19,7 @@
     "deps-write": "bash scripts/dev/deps-write.sh",
     "deps-check": "bash scripts/dev/deps-check.sh",
     "get-shards": "pnpm exec tsx scripts/dev/get-shards.ts",
+    "composer": "pnpm exec tsx scripts/dev/composer/composer.ts",
     "create-light-plus-ext": "pnpm exec tsx scripts/dev/create-light-plus-ext.ts",
     "fetch:anthropic-model-fixture": "pnpm exec tsx scripts/dev/fetch-anthropic-model-fixture.ts",
     "fetch:openai-model-fixture": "pnpm exec tsx scripts/dev/fetch-openai-model-fixture.ts",
@@ -155,6 +156,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
+    "@praha/byethrow": "catalog:",
     "@swc-node/register": "catalog:",
     "@swc/core": "catalog:",
     "@types/js-yaml": "catalog:",
