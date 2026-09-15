@@ -20,9 +20,15 @@ export function createMarkdown(item: {
 
     let filePath: string = resolve(sourceDirectory, relativePath);
 
+    let nestingLevel: number = relativePath.split('/').length - 1;
+
+    let headingPrefix: string = '#'.repeat(nestingLevel);
+
     sectionsResult = Result.andThen((currentSections: string[]) =>
       Result.map((content: string) => {
-        let section: string = content.replace(/\s+$/u, '');
+        let section: string = content
+          .replace(/^(?=#{1,6}(?: |$))/gmu, headingPrefix)
+          .replace(/\s+$/u, '');
 
         currentSections.push(section);
 
