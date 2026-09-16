@@ -139,6 +139,108 @@ src/
 └── functions-result/ # Node.js utilities returning byethrow Result
 ```
 
+# Blockml
+
+Malloy/BlockML model compilation service. Receives compilation requests from
+backend via Valkey (Redis) RPC and returns compiled struct.
+
+## Purpose
+
+Compiles BlockML model definitions (YAML-based) into executable query
+structures. The compilation pipeline:
+
+1. Receives file tree from backend
+2. Parses Malloy/BlockML model definitions
+3. Validates model structure
+4. Produces compiled struct
+
+## Communication
+
+- Listens for Valkey (Redis) RPC messages from backend
+- Returns compiled structures or compilation errors
+
+# Disk
+
+File system and git repository management service. Manages project file storage
+and git operations.
+
+## Purpose
+
+Manages the file system layer for Mprove projects:
+
+- Git repository operations (clone, pull, push, commit, branch, merge)
+- File operations within repositories
+- Folder management
+- Organization/project/git-repo files tree structure
+- Seed data initialization
+
+## Communication
+
+- Receives Valkey (Redis) RPC messages from backend
+- Operates on local filesystem (`mprove_data/` directory)
+- Uses SimpleGit for git operations
+
+## Patterns
+
+- Each controller group handles a specific domain entity
+
+# Backend
+
+Core API server handling authentication, database operations, and data warehouse
+queries.
+
+## Database
+
+- ORM: Drizzle
+- Schema: `src/drizzle/postgres/schema/`
+- Migrations: `src/drizzle/postgres/migrations/`
+- Entities: avatars, branches, bridges, charts, connections, dashboards,
+  dconfigs, envs, kits, mconfigs, members, models, notes, orgs, projects,
+  queries, reports, structs, users
+
+## Patterns
+
+- Controllers validate DTOs with `class-validator`
+- Custom `ServerError` with `ErEnum` error codes for all error responses
+
+## E2E Tests
+
+- Test files: `src/**/*.e2e-spec.ts`
+- Run: `pnpm e2e:backend`
+- Tests use `prepareTestAndSeed()` to create a fresh NestJS app per test
+- Tests must call `await prep.app.close()` to properly close connections
+- Services implement `OnModuleDestroy` to close Redis/PostgreSQL connections on
+  shutdown
+
+# Front
+
+Angular 21 web application providing the Mprove user interface.
+
+## Patterns
+
+- Standalone components and NgModules
+- Feature modules organized by domain
+- HTTP communication with backend via JWT-authenticated calls
+- Route guards for auth protection
+- Route resolvers for data pre-fetching
+
+# Mcli
+
+Command-line interface for Mprove, built with Clipanion.
+
+## Package Management
+
+mcli uses **bun** as package manager (independent from turbo/pnpm workspace).
+
+Dependency versions are centrally managed in `pnpm-workspace.yaml` catalog. Run
+`pnpm catalog-write` from project root to sync catalog versions to
+`package.json`.
+
+## Communication
+
+- Communicates with backend via HTTP API
+- Uses same DTOs/interfaces as the frontend
+
 # external
 
 Treat top level "external" directory as a read-only reference. Do not modify it.

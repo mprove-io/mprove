@@ -1,6 +1,7 @@
-# apps/disk/CONTEXT.md
+# Disk
 
-File system and git repository management service. Manages project file storage and git operations.
+File system and git repository management service. Manages project file storage
+and git operations.
 
 ## Purpose
 

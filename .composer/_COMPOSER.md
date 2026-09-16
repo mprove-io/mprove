@@ -10,6 +10,12 @@ main-package-json-scripts.md
 esm-configuration.md
 shared-libraries.md
 
+blockml.md
+disk.md
+backend.md
+front.md
+mcli.md
+
 external.md
 
 rules.md

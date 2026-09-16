@@ -1,10 +1,12 @@
-# apps/blockml/CONTEXT.md
+# Blockml
 
-Malloy/BlockML model compilation service. Receives compilation requests from backend via Valkey (Redis) RPC and returns compiled struct.
+Malloy/BlockML model compilation service. Receives compilation requests from
+backend via Valkey (Redis) RPC and returns compiled struct.
 
 ## Purpose
 
-Compiles BlockML model definitions (YAML-based) into executable query structures. The compilation pipeline:
+Compiles BlockML model definitions (YAML-based) into executable query
+structures. The compilation pipeline:
 
 1. Receives file tree from backend
 2. Parses Malloy/BlockML model definitions

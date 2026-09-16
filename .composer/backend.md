@@ -1,13 +1,16 @@
-# apps/backend/CONTEXT.md
+# Backend
 
-Core API server handling authentication, database operations, and data warehouse queries.
+Core API server handling authentication, database operations, and data warehouse
+queries.
 
 ## Database
 
 - ORM: Drizzle
 - Schema: `src/drizzle/postgres/schema/`
 - Migrations: `src/drizzle/postgres/migrations/`
-- Entities: avatars, branches, bridges, charts, connections, dashboards, dconfigs, envs, kits, mconfigs, members, models, notes, orgs, projects, queries, reports, structs, users
+- Entities: avatars, branches, bridges, charts, connections, dashboards,
+  dconfigs, envs, kits, mconfigs, members, models, notes, orgs, projects,
+  queries, reports, structs, users
 
 ## Patterns
 
@@ -20,4 +23,5 @@ Core API server handling authentication, database operations, and data warehouse
 - Run: `pnpm e2e:backend`
 - Tests use `prepareTestAndSeed()` to create a fresh NestJS app per test
 - Tests must call `await prep.app.close()` to properly close connections
-- Services implement `OnModuleDestroy` to close Redis/PostgreSQL connections on shutdown
+- Services implement `OnModuleDestroy` to close Redis/PostgreSQL connections on
+  shutdown
