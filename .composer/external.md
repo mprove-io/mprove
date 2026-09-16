@@ -16,3 +16,7 @@ When working with byethrow `Result` APIs, consult:
 ## external/opencode
 
 Source code for the [OpenCode](https://github.com/anomalyco/opencode).
+
+## external/ai
+
+Source code for @ai-sdk

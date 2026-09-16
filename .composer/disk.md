@@ -7,7 +7,7 @@ and git operations.
 
 Manages the file system layer for Mprove projects:
 
-- Git repository operations (clone, pull, push, commit, branch, merge)
+- Git repository operations
 - File operations within repositories
 - Folder management
 - Organization/project/git-repo files tree structure
@@ -18,7 +18,3 @@ Manages the file system layer for Mprove projects:
 - Receives Valkey (Redis) RPC messages from backend
 - Operates on local filesystem (`mprove_data/` directory)
 - Uses SimpleGit for git operations
-
-## Patterns
-
-- Each controller group handles a specific domain entity

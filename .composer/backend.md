@@ -8,14 +8,6 @@ queries.
 - ORM: Drizzle
 - Schema: `src/drizzle/postgres/schema/`
 - Migrations: `src/drizzle/postgres/migrations/`
-- Entities: avatars, branches, bridges, charts, connections, dashboards,
-  dconfigs, envs, kits, mconfigs, members, models, notes, orgs, projects,
-  queries, reports, structs, users
-
-## Patterns
-
-- Controllers validate DTOs with `class-validator`
-- Custom `ServerError` with `ErEnum` error codes for all error responses
 
 ## E2E Tests
 

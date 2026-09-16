@@ -1,6 +1,6 @@
 # Front
 
-Angular 21 web application providing the Mprove user interface.
+Angular web application providing the Mprove user interface.
 
 ## Patterns
 

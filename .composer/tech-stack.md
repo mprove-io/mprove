@@ -5,7 +5,7 @@
 | Package manager                            | pnpm                                            |
 | Build orchestration                        | Turborepo                                       |
 | Backend framework                          | NestJS                                          |
-| Frontend framework                         | Angular 21                                      |
+| Frontend framework                         | Angular                                         |
 | Database                                   | PostgreSQL + Drizzle ORM                        |
 | Database for simple stateless calculations | PostgreSQL                                      |
 | Message broker                             | Valkey (Redis) pub/sub                          |

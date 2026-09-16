@@ -33,7 +33,7 @@ Mprove is Open Source Business Intelligence with Malloy Semantic Layer.
 | Package manager                            | pnpm                                            |
 | Build orchestration                        | Turborepo                                       |
 | Backend framework                          | NestJS                                          |
-| Frontend framework                         | Angular 21                                      |
+| Frontend framework                         | Angular                                         |
 | Database                                   | PostgreSQL + Drizzle ORM                        |
 | Database for simple stateless calculations | PostgreSQL                                      |
 | Message broker                             | Valkey (Redis) pub/sub                          |
@@ -44,24 +44,22 @@ Mprove is Open Source Business Intelligence with Malloy Semantic Layer.
 
 # Application Services
 
-| App     | Purpose                                     | Framework |
-| ------- | ------------------------------------------- | --------- |
-| backend | Core API, auth, DB, DWH queries             | NestJS    |
-| blockml | Malloy and BlockML (YAML) model compilation | NestJS    |
-| disk    | File system & git repo management           | NestJS    |
-| front   | Web UI                                      | Angular   |
-| mcli    | Command-line interface                      | Clipanion |
+| App     | Purpose                                     |
+| ------- | ------------------------------------------- |
+| backend | Core API, auth, DB, DWH queries             |
+| blockml | Malloy and BlockML (YAML) model compilation |
+| disk    | File system & git repo management           |
+| front   | Web UI                                      |
+| mcli    | Command-line interface                      |
 
 # Architecture
 
-Monorepo managed with **Turborepo** and **pnpm**.
-
 Apps communicate:
 
-- frontend to backend - using HTTP API
-- mcli to backend - using HTTP API
-- backend to blockml - using RPC using Groupmq and Valkey (Redis) pub/sub
-- backend to disk - using RPC using Groupmq and Valkey (Redis) pub/sub
+- frontend to backend - HTTP API
+- mcli to backend - HTTP API
+- backend to blockml - RPC using Groupmq and Valkey (Redis) pub/sub
+- backend to disk - RPC using Groupmq and Valkey (Redis) pub/sub
 
 # Dependencies Version Management
 
@@ -114,30 +112,10 @@ All apps use native ESM with the following configuration:
 
 # Shared Libraries
 
-| Library     | Used By           | Purpose                                    |
-| ----------- | ----------------- | ------------------------------------------ |
-| common      | All apps          | Shared interfaces, types, enums, constants |
-| node-common | Backend apps only | Node.js utilities, telemetry, decorators   |
-
-## libs/common
-
-Shared types, interfaces, enums, and constants used by all apps (frontend and
-backend).
-
-## libs/node-common
-
-NodeJS-specific utilities shared across services (backend, blockml, disk) and
-mcli. Not used by frontend.
-
-**Directory Structure:**
-
-```
-src/
-├── classes/        # Utility classes (e.g., CycleGraph)
-├── decorators/     # NestJS method decorators
-├── functions/      # Node.js utility functions
-└── functions-result/ # Node.js utilities returning byethrow Result
-```
+| Library     | Used By                             |
+| ----------- | ----------------------------------- |
+| common      | front, backend, blockml, disk, mcli |
+| node-common | backend, blockml, disk, mcli        |
 
 # Blockml
 
@@ -168,7 +146,7 @@ and git operations.
 
 Manages the file system layer for Mprove projects:
 
-- Git repository operations (clone, pull, push, commit, branch, merge)
+- Git repository operations
 - File operations within repositories
 - Folder management
 - Organization/project/git-repo files tree structure
@@ -180,10 +158,6 @@ Manages the file system layer for Mprove projects:
 - Operates on local filesystem (`mprove_data/` directory)
 - Uses SimpleGit for git operations
 
-## Patterns
-
-- Each controller group handles a specific domain entity
-
 # Backend
 
 Core API server handling authentication, database operations, and data warehouse
@@ -194,14 +168,6 @@ queries.
 - ORM: Drizzle
 - Schema: `src/drizzle/postgres/schema/`
 - Migrations: `src/drizzle/postgres/migrations/`
-- Entities: avatars, branches, bridges, charts, connections, dashboards,
-  dconfigs, envs, kits, mconfigs, members, models, notes, orgs, projects,
-  queries, reports, structs, users
-
-## Patterns
-
-- Controllers validate DTOs with `class-validator`
-- Custom `ServerError` with `ErEnum` error codes for all error responses
 
 ## E2E Tests
 
@@ -214,7 +180,7 @@ queries.
 
 # Front
 
-Angular 21 web application providing the Mprove user interface.
+Angular web application providing the Mprove user interface.
 
 ## Patterns
 
@@ -226,15 +192,11 @@ Angular 21 web application providing the Mprove user interface.
 
 # Mcli
 
-Command-line interface for Mprove, built with Clipanion.
+Command-line interface for Mprove
 
 ## Package Management
 
 mcli uses **bun** as package manager (independent from turbo/pnpm workspace).
-
-Dependency versions are centrally managed in `pnpm-workspace.yaml` catalog. Run
-`pnpm catalog-write` from project root to sync catalog versions to
-`package.json`.
 
 ## Communication
 
@@ -259,6 +221,10 @@ When working with byethrow `Result` APIs, consult:
 ## external/opencode
 
 Source code for the [OpenCode](https://github.com/anomalyco/opencode).
+
+## external/ai
+
+Source code for @ai-sdk
 
 # rules
 
