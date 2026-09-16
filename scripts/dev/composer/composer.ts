@@ -2,6 +2,7 @@ import { basename, dirname, isAbsolute, relative, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
 import { createMarkdown } from './functions/create-markdown';
 import { loadManifest } from './functions/load-manifest';
+import { validateDirectorySectionFiles } from './functions/validate-directory-section-files';
 import { validateSourceDirectory } from './functions/validate-source-directory';
 import { writeOutput } from './functions/write-output';
 import type { ScriptError } from './types/errors/script-error';
@@ -53,6 +54,10 @@ function main(item: { argv: string[] }): Result.Result<void, ScriptError> {
     Result.andThrough(
       (path: string): Result.Result<void, ScriptError> =>
         validateSourceDirectory({ sourceDirectory: path })
+    ),
+    Result.andThrough(
+      (path: string): Result.Result<void, ScriptError> =>
+        validateDirectorySectionFiles({ sourceDirectory: path })
     ),
     Result.andThen(
       (path: string): Result.Result<SourceManifest, ScriptError> =>

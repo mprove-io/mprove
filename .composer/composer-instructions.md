@@ -9,12 +9,15 @@ When asked to add or change a rule or section in `AGENTS.md`:
 - Use `.composer/<section-slug>.md` for a top-level section and
   `.composer/<section-slug>/<rule-slug>.md` for a rule nested under that
   section.
+- Every directory inside `.composer/` must have a sibling Markdown file with the
+  same name. For example, `.composer/rules/` requires `.composer/rules.md`.
 - Source filename stems may contain only lowercase letters (`a-z`), digits
   (`0-9`), and hyphens (`-`).
 - Start every source file with an H1 whose slug matches the filename
   case-insensitively. Hyphens in the filename may be replaced with spaces in the
   H1.
-- List every Markdown source file exactly once in `.composer/COMPOSER.md`. The
+- List every Markdown source file exactly once in `.composer/_COMPOSER.md`. The
   manifest order controls output order, and directory depth controls heading
   depth.
-- Run `pnpm composer .composer/COMPOSER.md AGENTS.md` to regenerate `AGENTS.md`.
+- Run `pnpm composer .composer/_COMPOSER.md AGENTS.md` to regenerate
+  `AGENTS.md`.
