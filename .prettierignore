@@ -1,4 +1,5 @@
 .angular/
+.composer/COMPOSER.md
 .pnpm-store/
 .turbo/
 apps/backend/src/drizzle/postgres/migrations/
@@ -9,4 +10,3 @@ tmp/
 setup-docker/data/
 package.docker.json
 external/
-

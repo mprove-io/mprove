@@ -1,1 +1,1 @@
-# one-function-per-file
+# one function per file

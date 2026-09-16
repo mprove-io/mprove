@@ -1,3 +1,5 @@
+project-context.md
+composer-instructions.md
 byethrow.md
 byethrow-rules/one-function-per-file.md
 byethrow-rules/no-nested-pipes-in-a-single-function.md

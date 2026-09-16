@@ -1,7 +1,3 @@
-# Project Context
-
-Always read the project root `CONTEXT.md` file.
-
 # Composer Instructions
 
 `AGENTS.md` is generated from the Markdown source files in `.composer/`.Do not
@@ -22,11 +18,3 @@ When asked to add or change a rule or section in `AGENTS.md`:
   manifest order controls output order, and directory depth controls heading
   depth.
 - Run `pnpm composer .composer/COMPOSER.md AGENTS.md` to regenerate `AGENTS.md`.
-
-# byethrow
-
-## one function per file
-
-## no nested pipes in a single function
-
-## pipe should start with result succeed

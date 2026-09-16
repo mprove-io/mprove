@@ -7,7 +7,7 @@ module.exports = {
   // jsxSingleQuote: false,
   // parser: babylon,
   printWidth: 80,
-  proseWrap: 'preserve',
+  proseWrap: 'always',
   semi: true,
   singleQuote: true,
   tabWidth: 2,

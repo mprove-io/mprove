@@ -12,6 +12,20 @@ export function validateMarkdownTitle(item: {
 
   let filePath: string = resolve(sourceDirectory, relativePath);
 
+  let actualFileName: string = posix.basename(relativePath);
+
+  let fileNameStem: string = posix.basename(relativePath, '.md');
+
+  let fileNameIsValid: boolean = /^[a-z0-9-]+$/u.test(fileNameStem);
+
+  if (!fileNameIsValid) {
+    return Result.fail({
+      code: 'SCRIPT_INVALID_SOURCE_FILE_NAME_ERROR',
+      message: `${filePath} filename may contain only lowercase a-z, 0-9, and hyphens`,
+      filePath: filePath
+    });
+  }
+
   return Result.pipe(
     Result.succeed(filePath),
     Result.andThen(path => readTextFile({ filePath: path })),
@@ -28,9 +42,15 @@ export function validateMarkdownTitle(item: {
 
       let expectedFileName: string = `${toTitleSlug({ title: title })}.md`;
 
-      let actualFileName: string = posix.basename(relativePath);
+      let normalizedExpectedFileName: string = expectedFileName.toLowerCase();
 
-      return title.length > 0 && actualFileName === expectedFileName
+      let normalizedActualFileName: string = actualFileName.toLowerCase();
+
+      let titleMatchesFileName: boolean =
+        title.length > 0 &&
+        normalizedActualFileName === normalizedExpectedFileName;
+
+      return titleMatchesFileName
         ? Result.succeed()
         : Result.fail({
             code: 'SCRIPT_TITLE_MISMATCH_ERROR',

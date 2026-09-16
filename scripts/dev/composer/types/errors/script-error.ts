@@ -20,6 +20,11 @@ export type ScriptError =
       filePath: string;
     }
   | {
+      code: 'SCRIPT_INVALID_SOURCE_FILE_NAME_ERROR';
+      message: string;
+      filePath: string;
+    }
+  | {
       code: 'SCRIPT_MARKDOWN_REFERENCE_ERROR';
       message: string;
       path: string;

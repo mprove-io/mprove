@@ -1,1 +1,1 @@
-# pipe-should-start-with-result-succeed
+# pipe should start with result succeed

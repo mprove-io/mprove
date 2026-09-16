@@ -1,1 +1,1 @@
-# no-nested-pipes-in-a-single-function
+# no nested pipes in a single function
