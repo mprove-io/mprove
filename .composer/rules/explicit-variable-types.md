@@ -37,57 +37,6 @@ let modelIndex: number = provider.models.findIndex(
 );
 ```
 
-Exception: byethrow `Result` pipelines should preserve their compositional
-style.
-
-Within `Result.pipe`:
-
-- Callbacks passed to `Result.map`, `Result.mapError`, `Result.andThen`,
-  `Result.andThrough`, `Result.bind`, `Result.inspect`, and
-  `Result.inspectError` may return expressions directly without explicit
-  callback return types or intermediate variables.
-- Variables assigned directly from `Result.pipe` or `Result.unwrap` may rely on
-  inferred types when the enclosing function or method has an explicit return
-  type.
-- Return a `ResultAsync` helper directly instead of wrapping it in redundant
-  `async`/`await`.
-- Continue using explicit parameter and return types on standalone
-  Result-producing functions.
-
-Use the combinator matching the operation:
-
-- `map` transforms a successful value without introducing an anticipated error.
-- `mapError` transforms an anticipated error.
-- `andThen` replaces the successful value with another Result-producing
-  computation.
-- `andThrough` runs a validation or side effect and preserves the successful
-  value.
-- `bind` retains a successful computation under a semantic property name when
-  later steps need it. Do not bind `void` results or final projections.
-
-Use `Result` failures for anticipated domain errors. Unexpected infrastructure
-errors may throw unless they are intentionally converted using `Result.try` or
-`Result.fn`.
-
-For local object projections, prefer a named handwritten type over `Pick`. Use
-explicit mapping when the runtime object must contain only the projected fields.
-
-```ts
-// correct
-type ResponseModelPart = {
-  modelId: string;
-  name: string;
-};
-
-let responseModelParts: ResponseModelPart[] = models.map(model => ({
-  modelId: model.modelId,
-  name: model.name
-}));
-
-// wrong
-type ResponseModelPart = Pick<LlmModel, 'modelId' | 'name'>;
-```
-
 ```ts
 // correct
 let modelParts: LlmModelPart[] = await this.llmModelService.getModelParts({

@@ -11,8 +11,8 @@ return Result.pipe(
 );
 ```
 
-When additional or derived values are needed, use an explicit object containing
-the complete initial pipeline state.
+When the initial pipeline state differs from `item`, pass it as an explicit
+object rather than passing an individual property or derived value directly.
 
 ```ts
 return Result.pipe(

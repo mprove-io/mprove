@@ -241,11 +241,21 @@ Always use top `pnpm check` for typecheck or lint.
 
 ## Function and method args
 
-Functions and methods must use a single object argument named `item` with an
-inline type. Destructure `item` inside the function body when individual
-properties are needed outside a `Result.pipe` pipeline.
+Named functions and methods must use a single object argument named `item` with
+an inline type. This rule does not apply to callbacks.
 
 Example:
+
+```ts
+export function doSomething(item: { orgId: string; projectId: string }) {
+  // ...
+}
+```
+
+## Item destructuring
+
+Destructure `item` inside a named function or method when individual properties
+are needed outside a `Result.pipe` pipeline.
 
 ```ts
 export function doSomething(item: { orgId: string; projectId: string }) {
@@ -374,37 +384,25 @@ let modelIndex: number = provider.models.findIndex(
 );
 ```
 
-Exception: byethrow `Result` pipelines should preserve their compositional
-style.
+```ts
+// correct
+let modelParts: LlmModelPart[] = await this.llmModelService.getModelParts({
+  providerType: providerType
+});
 
-Within `Result.pipe`:
+let devModels: DevModel[] = models.map(model => toDevModel(model));
 
-- Callbacks passed to `Result.map`, `Result.mapError`, `Result.andThen`,
-  `Result.andThrough`, `Result.bind`, `Result.inspect`, and
-  `Result.inspectError` may return expressions directly without explicit
-  callback return types or intermediate variables.
-- Variables assigned directly from `Result.pipe` or `Result.unwrap` may rely on
-  inferred types when the enclosing function or method has an explicit return
-  type.
-- Return a `ResultAsync` helper directly instead of wrapping it in redundant
-  `async`/`await`.
-- Continue using explicit parameter and return types on standalone
-  Result-producing functions.
+return devModels;
 
-Use the combinator matching the operation:
+// wrong
+let modelParts = await this.llmModelService.getModelParts({
+  providerType: providerType
+});
 
-- `map` transforms a successful value without introducing an anticipated error.
-- `mapError` transforms an anticipated error.
-- `andThen` replaces the successful value with another Result-producing
-  computation.
-- `andThrough` runs a validation or side effect and preserves the successful
-  value.
-- `bind` retains a successful computation under a semantic property name when
-  later steps need it. Do not bind `void` results or final projections.
+return models.map(model => toDevModel(model));
+```
 
-Use `Result` failures for anticipated domain errors. Unexpected infrastructure
-errors may throw unless they are intentionally converted using `Result.try` or
-`Result.fn`.
+## Local object projections
 
 For local object projections, prefer a named handwritten type over `Pick`. Use
 explicit mapping when the runtime object must contain only the projected fields.
@@ -425,24 +423,6 @@ let responseModelParts: ResponseModelPart[] = models.map(model => ({
 type ResponseModelPart = Pick<LlmModel, 'modelId' | 'name'>;
 ```
 
-```ts
-// correct
-let modelParts: LlmModelPart[] = await this.llmModelService.getModelParts({
-  providerType: providerType
-});
-
-let devModels: DevModel[] = models.map(model => toDevModel(model));
-
-return devModels;
-
-// wrong
-let modelParts = await this.llmModelService.getModelParts({
-  providerType: providerType
-});
-
-return models.map(model => toDevModel(model));
-```
-
 ## Empty lines between statements
 
 Add an empty line between code statements. Do not add empty lines within a
@@ -453,8 +433,8 @@ before `return` may be omitted when the callback body contains exactly one
 preceding statement.
 
 ```ts
-Result.andThrough(async item => {
-  await ensureDir(item.orgDir);
+Result.andThrough(async v => {
+  await ensureDir(v.orgDir);
   return Result.succeed();
 });
 ```
@@ -484,8 +464,6 @@ Do not explicitly add `| null` or `| undefined` to TypeScript types.
 - For optional properties and arguments, use `name?: string`.
 - For variables that may be absent, restructure initialization instead of
   declaring an explicit `| null` or `| undefined` union.
-- Corresponding Zod schemas should still use `.nullish()` when runtime input may
-  contain `null` or `undefined`.
 
 ```ts
 // correct
@@ -527,21 +505,52 @@ if (!this.membersService.getMember(memberId)) {
 ## Maintain function folder call trees
 
 When a function is already organized according to the opt-in "Function folders
-call tree" rule, maintain that structure whenever changing the root function or
-any function in its tree. The user does not need to ask again.
-
-- Re-evaluate the root's recursive call tree after changing function calls.
-- Add, remove, move, or renumber child directories as required by the original
-  rule.
-- Update affected imports and move colocated tests with their functions.
-- Do not restructure functions that are not already part of an established
-  function folder call tree unless the user explicitly asks.
+call tree" rule, reapply that rule whenever changing the root function or any
+function in its tree. The user does not need to ask again. Do not apply it to a
+function that is not already part of an established function folder call tree
+unless the user explicitly asks.
 
 # byethrow rules
 
 ## one function per file
 
 ## no nested pipes in a single function
+
+## Result type inference
+
+Byethrow `Result` pipelines are exempt from the general explicit variable type
+rule in these cases:
+
+- Callbacks passed to `Result.map`, `Result.mapError`, `Result.andThen`,
+  `Result.andThrough`, `Result.bind`, `Result.inspect`, and
+  `Result.inspectError` may return expressions directly without explicit
+  callback return types or intermediate variables.
+- Variables assigned directly from `Result.pipe` or `Result.unwrap` may rely on
+  inferred types when the enclosing function or method has an explicit return
+  type.
+- Return a `ResultAsync` helper directly instead of wrapping it in redundant
+  `async`/`await`.
+
+Standalone Result-producing functions must retain explicit return types.
+
+## Combinator selection
+
+Use the combinator matching the operation:
+
+- `map` transforms a successful value without introducing an anticipated error.
+- `mapError` transforms an anticipated error.
+- `andThen` replaces the successful value with another Result-producing
+  computation.
+- `andThrough` runs a validation or side effect and preserves the successful
+  value.
+- `bind` retains a successful computation under a semantic property name when
+  later steps need it. Do not bind `void` results or final projections.
+
+## Error policy
+
+Use `Result` failures for anticipated domain errors. Unexpected infrastructure
+errors may throw unless they are intentionally converted using `Result.try` or
+`Result.fn`.
 
 ## pipe should start with result succeed
 
@@ -560,8 +569,8 @@ return Result.pipe(
 );
 ```
 
-When additional or derived values are needed, use an explicit object containing
-the complete initial pipeline state.
+When the initial pipeline state differs from `item`, pass it as an explicit
+object rather than passing an individual property or derived value directly.
 
 ```ts
 return Result.pipe(
@@ -586,8 +595,10 @@ not reference `item`, destructured item properties, or variables declared before
 
 # rules when asked
 
-Rules in this section are opt-in. Apply a rule only when the user explicitly
-asks for it. Do not infer or apply these rules automatically.
+Rules in this section are opt-in for initial application. Do not apply one to
+code that is not already organized according to that rule unless the user
+explicitly asks. An always-active rule may require maintaining an existing
+opt-in structure.
 
 ## Function folders call tree
 

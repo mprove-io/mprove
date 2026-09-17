@@ -8,8 +8,8 @@ before `return` may be omitted when the callback body contains exactly one
 preceding statement.
 
 ```ts
-Result.andThrough(async item => {
-  await ensureDir(item.orgDir);
+Result.andThrough(async v => {
+  await ensureDir(v.orgDir);
   return Result.succeed();
 });
 ```
