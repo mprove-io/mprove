@@ -1,10 +1,11 @@
 import { Result } from '@praha/byethrow';
-import type { ComposerError } from '../../../types/errors/composer-error';
+import type { ComposerMarkdownFileScanFailedError } from '../../../types/errors/composer-markdown-file-scan-failed-error';
+import type { GetMarkdownFilePathsError } from '../../../types/function-errors/get-markdown-file-paths-error';
 import { collectMarkdownFilePathsRecursive } from './01-collect-markdown-file-paths-recursive/collect-markdown-file-paths-recursive';
 
 export function getMarkdownFilePaths(item: {
   sourceDirectory: string;
-}): Result.Result<string[], ComposerError> {
+}): Result.Result<string[], GetMarkdownFilePathsError> {
   let { sourceDirectory } = item;
 
   let scanState: { currentDirectory: string } = {
@@ -17,7 +18,7 @@ export function getMarkdownFilePaths(item: {
       sourceDirectory: sourceDirectory
     }),
     Result.andThen(
-      (v): Result.Result<string[], ComposerError> =>
+      (v): Result.Result<string[], ComposerMarkdownFileScanFailedError> =>
         Result.try({
           try: (): string[] =>
             collectMarkdownFilePathsRecursive({
@@ -25,7 +26,7 @@ export function getMarkdownFilePaths(item: {
               relativeDirectory: '',
               scanState: v.scanState
             }),
-          catch: (error: unknown): ComposerError => ({
+          catch: (error: unknown): ComposerMarkdownFileScanFailedError => ({
             code: 'COMPOSER_MARKDOWN_FILE_SCAN_FAILED',
             message: `Unable to scan ${v.scanState.currentDirectory}`,
             path: v.scanState.currentDirectory,

@@ -1,13 +1,15 @@
 import { posix, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
 import { readTextFile } from '../../../shared/read-text-file/read-text-file';
-import type { ComposerError } from '../../../types/errors/composer-error';
+import type { ComposerMarkdownTitleMismatchError } from '../../../types/errors/composer-markdown-title-mismatch-error';
+import type { ReadTextFileError } from '../../../types/function-errors/read-text-file-error';
+import type { ValidateMarkdownTitleError } from '../../../types/function-errors/validate-markdown-title-error';
 import { toTitleSlug } from './02-to-title-slug/to-title-slug';
 
 export function validateMarkdownTitle(item: {
   relativePath: string;
   sourceDirectory: string;
-}): Result.Result<void, ComposerError> {
+}): Result.Result<void, ValidateMarkdownTitleError> {
   let { relativePath, sourceDirectory } = item;
 
   let filePath: string = resolve(sourceDirectory, relativePath);
@@ -33,32 +35,34 @@ export function validateMarkdownTitle(item: {
     }),
     Result.bind(
       'content',
-      (v): Result.Result<string, ComposerError> =>
+      (v): Result.Result<string, ReadTextFileError> =>
         readTextFile({ filePath: v.filePath })
     ),
-    Result.andThen((v): Result.Result<void, ComposerError> => {
-      let lines: string[] = v.content.split(/\r?\n/u);
+    Result.andThen(
+      (v): Result.Result<void, ComposerMarkdownTitleMismatchError> => {
+        let lines: string[] = v.content.split(/\r?\n/u);
 
-      let firstLine: string = lines[0] ?? '';
+        let firstLine: string = lines[0] ?? '';
 
-      let firstLineIsH1: boolean = /^# [^#].*$/u.test(firstLine);
+        let firstLineIsH1: boolean = /^# [^#].*$/u.test(firstLine);
 
-      let title: string = firstLineIsH1 ? firstLine.slice(2).trim() : '';
+        let title: string = firstLineIsH1 ? firstLine.slice(2).trim() : '';
 
-      let expectedFileName: string = `${toTitleSlug({ title: title })}.md`;
+        let expectedFileName: string = `${toTitleSlug({ title: title })}.md`;
 
-      let normalizedActualFileName: string = v.actualFileName.toLowerCase();
+        let normalizedActualFileName: string = v.actualFileName.toLowerCase();
 
-      let titleMatchesFileName: boolean =
-        title.length > 0 && normalizedActualFileName === expectedFileName;
+        let titleMatchesFileName: boolean =
+          title.length > 0 && normalizedActualFileName === expectedFileName;
 
-      return titleMatchesFileName
-        ? Result.succeed()
-        : Result.fail({
-            code: 'COMPOSER_MARKDOWN_TITLE_MISMATCH',
-            message: `${v.filePath} first H1 must match filename ${v.actualFileName}`,
-            filePath: v.filePath
-          });
-    })
+        return titleMatchesFileName
+          ? Result.succeed()
+          : Result.fail({
+              code: 'COMPOSER_MARKDOWN_TITLE_MISMATCH',
+              message: `${v.filePath} first H1 must match filename ${v.actualFileName}`,
+              filePath: v.filePath
+            });
+      }
+    )
   );
 }

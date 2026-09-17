@@ -1,12 +1,12 @@
 import { posix } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ComposerError } from '../../types/errors/composer-error';
+import type { ParseManifestError } from '../../types/function-errors/parse-manifest-error';
 import type { Manifest } from '../../types/manifest';
 
 export function parseManifest(item: {
   content: string;
   manifestPath: string;
-}): Result.Result<Manifest, ComposerError> {
+}): Result.Result<Manifest, ParseManifestError> {
   let { content, manifestPath } = item;
 
   let lines: string[] = content.split(/\r?\n/u);

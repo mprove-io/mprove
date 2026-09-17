@@ -2,12 +2,13 @@ import { randomUUID } from 'node:crypto';
 import { renameSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ComposerError } from '../types/errors/composer-error';
+import type { ComposerOutputWriteFailedError } from '../types/errors/composer-output-write-failed-error';
+import type { WriteOutputError } from '../types/function-errors/write-output-error';
 
 export function writeOutput(item: {
   markdown: string;
   outputPath: string;
-}): Result.Result<void, ComposerError> {
+}): Result.Result<void, WriteOutputError> {
   let { markdown, outputPath } = item;
 
   let outputDirectory: string = dirname(outputPath);
@@ -25,21 +26,21 @@ export function writeOutput(item: {
 
       renameSync(temporaryOutputPath, outputPath);
     },
-    catch: (error: unknown): ComposerError => {
+    catch: (error: unknown): ComposerOutputWriteFailedError => {
       try {
         rmSync(temporaryOutputPath, { force: true });
       } catch (cleanupError: unknown) {
         void cleanupError;
       }
 
-      let composerError: ComposerError = {
+      let writeOutputError: ComposerOutputWriteFailedError = {
         code: 'COMPOSER_OUTPUT_WRITE_FAILED',
         message: `Unable to write ${outputPath}`,
         outputPath: outputPath,
         originalError: error
       };
 
-      return composerError;
+      return writeOutputError;
     }
   });
 }

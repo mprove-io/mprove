@@ -1,5 +1,7 @@
 import { Result } from '@praha/byethrow';
-import type { ComposerError } from '../../types/errors/composer-error';
+import type { GetMarkdownFilePathsError } from '../../types/function-errors/get-markdown-file-paths-error';
+import type { ValidateManifestError } from '../../types/function-errors/validate-manifest-error';
+import type { ValidateMarkdownTitleError } from '../../types/function-errors/validate-markdown-title-error';
 import type { Manifest } from '../../types/manifest';
 import { getMarkdownFilePaths } from './01-get-markdown-file-paths/get-markdown-file-paths';
 import { validateMarkdownTitle } from './02-validate-markdown-title/validate-markdown-title';
@@ -8,12 +10,12 @@ export function validateManifest(item: {
   ignoredRelativePaths: string[];
   manifest: Manifest;
   sourceDirectory: string;
-}): Result.Result<void, ComposerError> {
+}): Result.Result<void, ValidateManifestError> {
   return Result.pipe(
     Result.succeed(item),
     Result.bind(
       'markdownPaths',
-      (v): Result.Result<string[], ComposerError> =>
+      (v): Result.Result<string[], GetMarkdownFilePathsError> =>
         getMarkdownFilePaths({ sourceDirectory: v.sourceDirectory })
     ),
     Result.andThrough(v => {
@@ -74,7 +76,7 @@ export function validateManifest(item: {
       return Result.succeed();
     }),
     Result.andThen(
-      (v): Result.Result<void[], ComposerError> =>
+      (v): Result.Result<void[], ValidateMarkdownTitleError> =>
         Result.sequence(v.manifest.relativePaths, relativePath =>
           validateMarkdownTitle({
             relativePath: relativePath,

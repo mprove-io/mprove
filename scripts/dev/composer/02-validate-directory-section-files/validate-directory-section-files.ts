@@ -1,16 +1,18 @@
 import { type Dirent, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ComposerError } from '../types/errors/composer-error';
+import type { ComposerDirectorySectionFileMissingError } from '../types/errors/composer-directory-section-file-missing-error';
+import type { ComposerDirectorySectionScanFailedError } from '../types/errors/composer-directory-section-scan-failed-error';
+import type { ValidateDirectorySectionFilesError } from '../types/function-errors/validate-directory-section-files-error';
 
 export function validateDirectorySectionFiles(item: {
   sourceDirectory: string;
-}): Result.Result<void, ComposerError> {
+}): Result.Result<void, ValidateDirectorySectionFilesError> {
   return Result.pipe(
     Result.succeed(item),
     Result.bind(
       'missingSectionFilePaths',
-      (v): Result.Result<string[], ComposerError> => {
+      (v): Result.Result<string[], ComposerDirectorySectionScanFailedError> => {
         let scannedDirectoryPath: string = v.sourceDirectory;
 
         return Result.try({
@@ -61,7 +63,7 @@ export function validateDirectorySectionFiles(item: {
 
             return missingSectionFilePaths;
           },
-          catch: (error: unknown): ComposerError => ({
+          catch: (error: unknown): ComposerDirectorySectionScanFailedError => ({
             code: 'COMPOSER_DIRECTORY_SECTION_SCAN_FAILED',
             message: `Unable to scan ${scannedDirectoryPath}`,
             path: scannedDirectoryPath,
@@ -70,16 +72,19 @@ export function validateDirectorySectionFiles(item: {
         });
       }
     ),
-    Result.andThen((v): Result.Result<void, ComposerError> => {
-      let hasMissingSectionFile: boolean = v.missingSectionFilePaths.length > 0;
+    Result.andThen(
+      (v): Result.Result<void, ComposerDirectorySectionFileMissingError> => {
+        let hasMissingSectionFile: boolean =
+          v.missingSectionFilePaths.length > 0;
 
-      return hasMissingSectionFile
-        ? Result.fail({
-            code: 'COMPOSER_DIRECTORY_SECTION_FILE_MISSING',
-            message: `Directory requires section file ${v.missingSectionFilePaths[0]}`,
-            path: v.missingSectionFilePaths[0]
-          })
-        : Result.succeed();
-    })
+        return hasMissingSectionFile
+          ? Result.fail({
+              code: 'COMPOSER_DIRECTORY_SECTION_FILE_MISSING',
+              message: `Directory requires section file ${v.missingSectionFilePaths[0]}`,
+              path: v.missingSectionFilePaths[0]
+            })
+          : Result.succeed();
+      }
+    )
   );
 }

@@ -12,10 +12,12 @@ import { validateDirectorySectionFiles } from './02-validate-directory-section-f
 import { loadManifest } from './03-load-manifest/load-manifest';
 import { createMarkdown } from './04-create-markdown/create-markdown';
 import { writeOutput } from './05-write-output/write-output';
-import type { ComposerError } from './types/errors/composer-error';
+import type { ComposeError } from './types/function-errors/compose-error';
+import type { CreateMarkdownError } from './types/function-errors/create-markdown-error';
+import type { LoadManifestError } from './types/function-errors/load-manifest-error';
 import type { Manifest } from './types/manifest';
 
-function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
+function compose(item: { argv: string[] }): Result.Result<void, ComposeError> {
   let { argv } = item;
 
   if (argv.length !== 2) {
@@ -73,7 +75,7 @@ function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
     ),
     Result.bind(
       'manifest',
-      (v): Result.Result<Manifest, ComposerError> =>
+      (v): Result.Result<Manifest, LoadManifestError> =>
         loadManifest({
           ignoredRelativePaths: v.ignoredRelativePaths,
           manifestPath: v.manifestPath,
@@ -82,7 +84,7 @@ function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
     ),
     Result.bind(
       'markdown',
-      (v): Result.Result<string, ComposerError> =>
+      (v): Result.Result<string, CreateMarkdownError> =>
         createMarkdown({
           manifest: v.manifest,
           sourceDirectory: v.sourceDirectory
@@ -99,7 +101,7 @@ function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
 
 let argv: string[] = process.argv.slice(2);
 
-let result: Result.Result<void, ComposerError> = main({ argv: argv });
+let result: Result.Result<void, ComposeError> = compose({ argv: argv });
 
 if (result.type === 'Failure') {
   console.error(result.error);
