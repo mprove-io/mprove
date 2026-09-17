@@ -242,7 +242,8 @@ Always use top `pnpm check` for typecheck or lint.
 ## Function and method args
 
 Functions and methods must use a single object argument named `item` with an
-inline type. Destructure `item` inside the function body.
+inline type. Destructure `item` inside the function body when individual
+properties are needed outside a `Result.pipe` pipeline.
 
 Example:
 
@@ -546,12 +547,11 @@ any function in its tree. The user does not need to ask again.
 
 Every `Result.pipe` must start with `Result.succeed`.
 
-- When the pipeline needs only the function's original `item` argument, start
-  with `Result.succeed(item)`.
-- When the pipeline needs additional or derived values, start with
-  `Result.succeed({ ... })` and explicitly include the complete state passed
-  through the pipeline so the full object is visible at the entry point.
-- Name the argument passed to each subsequent pipeline step `v`.
+## pipe initial state
+
+Use the function's original `item` argument directly as the initial pipeline
+state when no additional or derived values are needed. Do not destructure `item`
+before the pipeline in this case.
 
 ```ts
 return Result.pipe(
@@ -559,6 +559,9 @@ return Result.pipe(
   Result.andThen(v => doSomething(v))
 );
 ```
+
+When additional or derived values are needed, use an explicit object containing
+the complete initial pipeline state.
 
 ```ts
 return Result.pipe(
@@ -570,6 +573,16 @@ return Result.pipe(
   Result.andThen(v => doSomething(v))
 );
 ```
+
+## pipe step argument name
+
+Name the argument passed to every pipeline step `v`.
+
+## pipe state access
+
+After the initial `Result.succeed`, access pipeline data only through `v`. Do
+not reference `item`, destructured item properties, or variables declared before
+`Result.pipe`. Carry all required data through the pipeline state.
 
 # rules when asked
 

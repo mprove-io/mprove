@@ -6,11 +6,9 @@ import type { ComposerError } from '../types/errors/composer-error';
 export function validateDirectorySectionFiles(item: {
   sourceDirectory: string;
 }): Result.Result<void, ComposerError> {
-  let { sourceDirectory } = item;
-
   return Result.pipe(
     Result.succeed(item),
-    Result.andThen(v => {
+    Result.bind('missingSectionFilePaths', v => {
       let scannedDirectoryPath: string = v.sourceDirectory;
 
       return Result.try({
@@ -70,13 +68,13 @@ export function validateDirectorySectionFiles(item: {
       });
     }),
     Result.andThen(v => {
-      let hasMissingSectionFile: boolean = v.length > 0;
+      let hasMissingSectionFile: boolean = v.missingSectionFilePaths.length > 0;
 
       return hasMissingSectionFile
         ? Result.fail({
             code: 'COMPOSER_DIRECTORY_SECTION_FILE_MISSING',
-            message: `Directory requires section file ${v[0]}`,
-            path: v[0]
+            message: `Directory requires section file ${v.missingSectionFilePaths[0]}`,
+            path: v.missingSectionFilePaths[0]
           })
         : Result.succeed();
     })

@@ -31,9 +31,9 @@ export function validateMarkdownTitle(item: {
       actualFileName: actualFileName,
       filePath: filePath
     }),
-    Result.andThen(v => readTextFile({ filePath: v.filePath })),
+    Result.bind('content', v => readTextFile({ filePath: v.filePath })),
     Result.andThen(v => {
-      let lines: string[] = v.split(/\r?\n/u);
+      let lines: string[] = v.content.split(/\r?\n/u);
 
       let firstLine: string = lines[0] ?? '';
 
@@ -43,7 +43,7 @@ export function validateMarkdownTitle(item: {
 
       let expectedFileName: string = `${toTitleSlug({ title: title })}.md`;
 
-      let normalizedActualFileName: string = actualFileName.toLowerCase();
+      let normalizedActualFileName: string = v.actualFileName.toLowerCase();
 
       let titleMatchesFileName: boolean =
         title.length > 0 && normalizedActualFileName === expectedFileName;
@@ -52,8 +52,8 @@ export function validateMarkdownTitle(item: {
         ? Result.succeed()
         : Result.fail({
             code: 'COMPOSER_MARKDOWN_TITLE_MISMATCH',
-            message: `${filePath} first H1 must match filename ${actualFileName}`,
-            filePath: filePath
+            message: `${v.filePath} first H1 must match filename ${v.actualFileName}`,
+            filePath: v.filePath
           });
     })
   );

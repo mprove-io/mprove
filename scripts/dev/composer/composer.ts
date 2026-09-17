@@ -13,12 +13,6 @@ import { loadManifest } from './03-load-manifest/load-manifest';
 import { createMarkdown } from './04-create-markdown/create-markdown';
 import { writeOutput } from './05-write-output/write-output';
 import type { ComposerError } from './types/errors/composer-error';
-import type { Manifest } from './types/manifest';
-
-type SourceManifest = {
-  manifest: Manifest;
-  sourceDirectory: string;
-};
 
 function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
   let { argv } = item;
@@ -78,44 +72,28 @@ function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
       (v): Result.Result<void, ComposerError> =>
         validateDirectorySectionFiles({ sourceDirectory: v.sourceDirectory })
     ),
-    Result.andThen((v): Result.Result<SourceManifest, ComposerError> => {
-      let ignoredPaths: string[] = v.ignoredRelativePaths;
-
-      let sourceManifestPath: string = v.manifestPath;
-
-      let sourcePath: string = v.sourceDirectory;
-
-      return Result.map(
-        (v: Manifest): SourceManifest => ({
-          manifest: v,
-          sourceDirectory: sourcePath
-        })
-      )(
-        loadManifest({
-          ignoredRelativePaths: ignoredPaths,
-          manifestPath: sourceManifestPath,
-          sourceDirectory: sourcePath
-        })
-      );
-    }),
-    Result.andThen(
-      (v: SourceManifest): Result.Result<string, ComposerError> =>
-        createMarkdown({
-          manifest: v.manifest,
-          sourceDirectory: v.sourceDirectory
-        })
+    Result.bind('manifest', v =>
+      loadManifest({
+        ignoredRelativePaths: v.ignoredRelativePaths,
+        manifestPath: v.manifestPath,
+        sourceDirectory: v.sourceDirectory
+      })
     ),
-    Result.andThen(
-      (v: string): Result.Result<void, ComposerError> =>
+    Result.bind('markdown', v =>
+      createMarkdown({
+        manifest: v.manifest,
+        sourceDirectory: v.sourceDirectory
+      })
+    ),
+    Result.andThrough(
+      (v): Result.Result<void, ComposerError> =>
         writeOutput({
-          markdown: v,
-          outputPath: outputPath
+          markdown: v.markdown,
+          outputPath: v.outputPath
         })
     ),
-    Result.map((v: void): void => {
-      void v;
-
-      console.log(`Wrote ${outputPath}`);
+    Result.map((v): void => {
+      console.log(`Wrote ${v.outputPath}`);
     })
   );
 }

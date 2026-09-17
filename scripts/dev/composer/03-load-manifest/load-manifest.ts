@@ -10,23 +10,22 @@ export function loadManifest(item: {
   manifestPath: string;
   sourceDirectory: string;
 }): Result.Result<Manifest, ComposerError> {
-  let { ignoredRelativePaths, manifestPath, sourceDirectory } = item;
-
   return Result.pipe(
     Result.succeed(item),
-    Result.andThen(v => readTextFile({ filePath: v.manifestPath })),
-    Result.andThen(v =>
+    Result.bind('content', v => readTextFile({ filePath: v.manifestPath })),
+    Result.bind('manifest', v =>
       parseManifest({
-        content: v,
-        manifestPath: manifestPath
+        content: v.content,
+        manifestPath: v.manifestPath
       })
     ),
     Result.andThrough(v =>
       validateManifest({
-        ignoredRelativePaths: ignoredRelativePaths,
-        manifest: v,
-        sourceDirectory: sourceDirectory
+        ignoredRelativePaths: v.ignoredRelativePaths,
+        manifest: v.manifest,
+        sourceDirectory: v.sourceDirectory
       })
-    )
+    ),
+    Result.map(v => v.manifest)
   );
 }

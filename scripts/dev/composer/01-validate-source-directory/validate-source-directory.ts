@@ -5,11 +5,9 @@ import type { ComposerError } from '../types/errors/composer-error';
 export function validateSourceDirectory(item: {
   sourceDirectory: string;
 }): Result.Result<void, ComposerError> {
-  let { sourceDirectory } = item;
-
   return Result.pipe(
     Result.succeed(item),
-    Result.andThen(v =>
+    Result.bind('sourceStats', v =>
       Result.try({
         try: (): Stats => statSync(v.sourceDirectory),
         catch: (error: unknown): ComposerError => ({
@@ -21,14 +19,14 @@ export function validateSourceDirectory(item: {
       })
     ),
     Result.andThen(v => {
-      let sourceIsDirectory: boolean = v.isDirectory();
+      let sourceIsDirectory: boolean = v.sourceStats.isDirectory();
 
       return sourceIsDirectory
         ? Result.succeed()
         : Result.fail({
             code: 'COMPOSER_SOURCE_PATH_NOT_DIRECTORY',
-            message: `Source path is not a directory: ${sourceDirectory}`,
-            path: sourceDirectory
+            message: `Source path is not a directory: ${v.sourceDirectory}`,
+            path: v.sourceDirectory
           });
     })
   );

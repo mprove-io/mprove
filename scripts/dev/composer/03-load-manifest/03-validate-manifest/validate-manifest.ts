@@ -9,29 +9,26 @@ export function validateManifest(item: {
   manifest: Manifest;
   sourceDirectory: string;
 }): Result.Result<void, ComposerError> {
-  let { ignoredRelativePaths, manifest, sourceDirectory } = item;
-
   return Result.pipe(
     Result.succeed(item),
-    Result.andThen(
-      (v): Result.Result<string[], ComposerError> =>
-        getMarkdownFilePaths({ sourceDirectory: v.sourceDirectory })
+    Result.bind('markdownPaths', v =>
+      getMarkdownFilePaths({ sourceDirectory: v.sourceDirectory })
     ),
-    Result.andThen((v: string[]): Result.Result<void, ComposerError> => {
-      let ignoredPaths: Set<string> = new Set<string>(ignoredRelativePaths);
+    Result.andThen((v): Result.Result<void, ComposerError> => {
+      let ignoredPaths: Set<string> = new Set<string>(v.ignoredRelativePaths);
 
-      let sourceMarkdownPaths: string[] = v.filter(
+      let sourceMarkdownPaths: string[] = v.markdownPaths.filter(
         markdownPath => !ignoredPaths.has(markdownPath)
       );
 
       let referencedPaths: Set<string> = new Set<string>(
-        manifest.relativePaths
+        v.manifest.relativePaths
       );
 
       let sourcePaths: Set<string> = new Set<string>(sourceMarkdownPaths);
 
-      for (let i = 0; i < ignoredRelativePaths.length; i++) {
-        let ignoredPath: string = ignoredRelativePaths[i];
+      for (let i = 0; i < v.ignoredRelativePaths.length; i++) {
+        let ignoredPath: string = v.ignoredRelativePaths[i];
 
         let isReferenced: boolean = referencedPaths.has(ignoredPath);
 
@@ -58,7 +55,7 @@ export function validateManifest(item: {
         }
       }
 
-      let missingPaths: string[] = manifest.relativePaths.filter(
+      let missingPaths: string[] = v.manifest.relativePaths.filter(
         relativePath => !sourcePaths.has(relativePath)
       );
 
@@ -72,25 +69,32 @@ export function validateManifest(item: {
         });
       }
 
-      let titleValidationResult: Result.Result<void, ComposerError> =
-        Result.succeed();
+      let titleValidationResult: Result.Result<
+        { relativePaths: string[]; sourceDirectory: string },
+        ComposerError
+      > = Result.succeed({
+        relativePaths: v.manifest.relativePaths,
+        sourceDirectory: v.sourceDirectory
+      });
 
-      for (let i = 0; i < manifest.relativePaths.length; i++) {
-        let relativePath: string = manifest.relativePaths[i];
-
-        titleValidationResult = Result.andThen(
-          (v: void): Result.Result<void, ComposerError> => {
-            void v;
-
-            return validateMarkdownTitle({
-              relativePath: relativePath,
-              sourceDirectory: sourceDirectory
-            });
-          }
+      for (let i = 0; i < v.manifest.relativePaths.length; i++) {
+        titleValidationResult = Result.andThrough(
+          (v: {
+            relativePaths: string[];
+            sourceDirectory: string;
+          }): Result.Result<void, ComposerError> =>
+            validateMarkdownTitle({
+              relativePath: v.relativePaths[i],
+              sourceDirectory: v.sourceDirectory
+            })
         )(titleValidationResult);
       }
 
-      return titleValidationResult;
+      return Result.map(
+        (v: { relativePaths: string[]; sourceDirectory: string }): void => {
+          void v;
+        }
+      )(titleValidationResult);
     })
   );
 }
