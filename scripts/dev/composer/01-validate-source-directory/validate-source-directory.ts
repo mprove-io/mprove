@@ -1,10 +1,10 @@
 import { type Stats, statSync } from 'node:fs';
 import { Result } from '@praha/byethrow';
-import type { ScriptError } from '../types/errors/script-error';
+import type { ComposerError } from '../types/errors/composer-error';
 
 export function validateSourceDirectory(item: {
   sourceDirectory: string;
-}): Result.Result<void, ScriptError> {
+}): Result.Result<void, ComposerError> {
   let { sourceDirectory } = item;
 
   return Result.pipe(
@@ -12,8 +12,8 @@ export function validateSourceDirectory(item: {
     Result.andThen(path =>
       Result.try({
         try: (): Stats => statSync(path),
-        catch: (error: unknown): ScriptError => ({
-          code: 'SCRIPT_SOURCE_ERROR',
+        catch: (error: unknown): ComposerError => ({
+          code: 'COMPOSER_SOURCE_DIRECTORY_ACCESS_FAILED',
           message: `Unable to access ${path}`,
           path: path,
           originalError: error
@@ -24,7 +24,7 @@ export function validateSourceDirectory(item: {
       return sourceStats.isDirectory()
         ? Result.succeed()
         : Result.fail({
-            code: 'SCRIPT_SOURCE_ERROR',
+            code: 'COMPOSER_SOURCE_PATH_NOT_DIRECTORY',
             message: `Source path is not a directory: ${sourceDirectory}`,
             path: sourceDirectory
           });

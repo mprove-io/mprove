@@ -1,7 +1,7 @@
 import { type Dirent, readdirSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ScriptError } from '../../../types/errors/script-error';
+import type { ComposerError } from '../../../types/errors/composer-error';
 
 function collectMarkdownFilePaths(item: {
   currentDirectory: string;
@@ -50,7 +50,7 @@ function collectMarkdownFilePaths(item: {
 
 export function getMarkdownFilePaths(item: {
   sourceDirectory: string;
-}): Result.Result<string[], ScriptError> {
+}): Result.Result<string[], ComposerError> {
   let { sourceDirectory } = item;
 
   return Result.pipe(
@@ -62,8 +62,8 @@ export function getMarkdownFilePaths(item: {
             currentDirectory: path,
             relativeDirectory: ''
           }),
-        catch: (error: unknown): ScriptError => ({
-          code: 'SCRIPT_SOURCE_ERROR',
+        catch: (error: unknown): ComposerError => ({
+          code: 'COMPOSER_MARKDOWN_FILE_SCAN_FAILED',
           message: `Unable to scan ${path}`,
           path: path,
           originalError: error

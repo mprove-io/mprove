@@ -1,18 +1,18 @@
 import { resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
 import { readTextFile } from '../shared/read-text-file/read-text-file';
-import type { ScriptError } from '../types/errors/script-error';
+import type { ComposerError } from '../types/errors/composer-error';
 import type { Manifest } from '../types/manifest';
 
 export function createMarkdown(item: {
   manifest: Manifest;
   sourceDirectory: string;
-}): Result.Result<string, ScriptError> {
+}): Result.Result<string, ComposerError> {
   let { manifest, sourceDirectory } = item;
 
   let sections: string[] = [];
 
-  let sectionsResult: Result.Result<string[], ScriptError> =
+  let sectionsResult: Result.Result<string[], ComposerError> =
     Result.succeed(sections);
 
   for (let i = 0; i < manifest.relativePaths.length; i++) {

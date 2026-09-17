@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { ScriptError } from '../../types/errors/script-error';
+import type { ComposerError } from '../../types/errors/composer-error';
 import type { Manifest } from '../../types/manifest';
 import { validateMarkdownTitle } from './01-validate-markdown-title/validate-markdown-title';
 import { getMarkdownFilePaths } from './02-get-markdown-file-paths/get-markdown-file-paths';
@@ -8,10 +8,10 @@ export function validateManifest(item: {
   ignoredRelativePaths: string[];
   manifest: Manifest;
   sourceDirectory: string;
-}): Result.Result<void, ScriptError> {
+}): Result.Result<void, ComposerError> {
   let { ignoredRelativePaths, manifest, sourceDirectory } = item;
 
-  let validationResult: Result.Result<void, ScriptError> = Result.succeed();
+  let validationResult: Result.Result<void, ComposerError> = Result.succeed();
 
   for (let i = 0; i < manifest.relativePaths.length; i++) {
     let relativePath: string = manifest.relativePaths[i];
@@ -20,11 +20,11 @@ export function validateManifest(item: {
       Result.succeed(validationResult),
       Result.andThen(
         (
-          currentResult: Result.Result<void, ScriptError>
-        ): Result.Result<void, ScriptError> => currentResult
+          currentResult: Result.Result<void, ComposerError>
+        ): Result.Result<void, ComposerError> => currentResult
       ),
       Result.andThen(
-        (): Result.Result<void, ScriptError> =>
+        (): Result.Result<void, ComposerError> =>
           validateMarkdownTitle({
             relativePath: relativePath,
             sourceDirectory: sourceDirectory
@@ -33,15 +33,15 @@ export function validateManifest(item: {
     );
   }
 
-  let markdownPathsResult: Result.Result<string[], ScriptError> = Result.pipe(
+  let markdownPathsResult: Result.Result<string[], ComposerError> = Result.pipe(
     Result.succeed(validationResult),
     Result.andThen(
       (
-        currentResult: Result.Result<void, ScriptError>
-      ): Result.Result<void, ScriptError> => currentResult
+        currentResult: Result.Result<void, ComposerError>
+      ): Result.Result<void, ComposerError> => currentResult
     ),
     Result.andThen(
-      (): Result.Result<string[], ScriptError> =>
+      (): Result.Result<string[], ComposerError> =>
         getMarkdownFilePaths({ sourceDirectory: sourceDirectory })
     )
   );
@@ -50,11 +50,11 @@ export function validateManifest(item: {
     Result.succeed(markdownPathsResult),
     Result.andThen(
       (
-        currentResult: Result.Result<string[], ScriptError>
-      ): Result.Result<string[], ScriptError> => currentResult
+        currentResult: Result.Result<string[], ComposerError>
+      ): Result.Result<string[], ComposerError> => currentResult
     ),
     Result.andThen(
-      (markdownPaths: string[]): Result.Result<void, ScriptError> => {
+      (markdownPaths: string[]): Result.Result<void, ComposerError> => {
         let ignoredPaths: Set<string> = new Set<string>(ignoredRelativePaths);
 
         let sourceMarkdownPaths: string[] = markdownPaths.filter(
@@ -72,7 +72,7 @@ export function validateManifest(item: {
 
           if (isReferenced) {
             return Result.fail({
-              code: 'SCRIPT_MARKDOWN_REFERENCE_ERROR',
+              code: 'COMPOSER_IGNORED_PATH_REFERENCED',
               message: `${ignoredPath} cannot be referenced in the manifest`,
               path: ignoredPath
             });
@@ -86,7 +86,7 @@ export function validateManifest(item: {
 
           if (!isReferenced) {
             return Result.fail({
-              code: 'SCRIPT_MARKDOWN_REFERENCE_ERROR',
+              code: 'COMPOSER_MARKDOWN_FILE_UNREFERENCED',
               message: `${markdownPath} is not referenced in the manifest`,
               path: markdownPath
             });
@@ -95,7 +95,7 @@ export function validateManifest(item: {
 
         if (referencedPaths.size !== sourceMarkdownPaths.length) {
           return Result.fail({
-            code: 'SCRIPT_MARKDOWN_REFERENCE_ERROR',
+            code: 'COMPOSER_MANIFEST_REFERENCES_MISSING_FILE',
             message: 'The manifest references a missing Markdown file',
             path: sourceDirectory
           });

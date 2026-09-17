@@ -1,13 +1,13 @@
 import { posix, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
 import { readTextFile } from '../../../shared/read-text-file/read-text-file';
-import type { ScriptError } from '../../../types/errors/script-error';
+import type { ComposerError } from '../../../types/errors/composer-error';
 import { toTitleSlug } from './02-to-title-slug/to-title-slug';
 
 export function validateMarkdownTitle(item: {
   relativePath: string;
   sourceDirectory: string;
-}): Result.Result<void, ScriptError> {
+}): Result.Result<void, ComposerError> {
   let { relativePath, sourceDirectory } = item;
 
   let filePath: string = resolve(sourceDirectory, relativePath);
@@ -20,7 +20,7 @@ export function validateMarkdownTitle(item: {
 
   if (!fileNameIsValid) {
     return Result.fail({
-      code: 'SCRIPT_INVALID_SOURCE_FILE_NAME_ERROR',
+      code: 'COMPOSER_SOURCE_FILE_NAME_INVALID',
       message: `${filePath} filename may contain only lowercase a-z, 0-9, and hyphens`,
       filePath: filePath
     });
@@ -53,7 +53,7 @@ export function validateMarkdownTitle(item: {
       return titleMatchesFileName
         ? Result.succeed()
         : Result.fail({
-            code: 'SCRIPT_TITLE_MISMATCH_ERROR',
+            code: 'COMPOSER_MARKDOWN_TITLE_MISMATCH',
             message: `${filePath} first H1 must match filename ${actualFileName}`,
             filePath: filePath
           });

@@ -1,12 +1,12 @@
 import { posix } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ScriptError } from '../../types/errors/script-error';
+import type { ComposerError } from '../../types/errors/composer-error';
 import type { Manifest } from '../../types/manifest';
 
 export function parseManifest(item: {
   content: string;
   manifestPath: string;
-}): Result.Result<Manifest, ScriptError> {
+}): Result.Result<Manifest, ComposerError> {
   let { content, manifestPath } = item;
 
   let lines: string[] = content.split(/\r?\n/u);
@@ -33,7 +33,7 @@ export function parseManifest(item: {
 
     if (!pathIsSafe) {
       return Result.fail({
-        code: 'SCRIPT_INVALID_MANIFEST_ERROR',
+        code: 'COMPOSER_MANIFEST_PATH_INVALID',
         message: `${manifestPath}:${i + 1} must contain a safe relative .md path`,
         manifestPath: manifestPath
       });
@@ -43,7 +43,7 @@ export function parseManifest(item: {
 
     if (isDuplicate) {
       return Result.fail({
-        code: 'SCRIPT_MARKDOWN_REFERENCE_ERROR',
+        code: 'COMPOSER_MANIFEST_PATH_DUPLICATE',
         message: `${manifestPath}:${i + 1} references ${relativePath} more than once`,
         path: relativePath
       });

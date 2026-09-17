@@ -5,7 +5,7 @@ import { validateDirectorySectionFiles } from './02-validate-directory-section-f
 import { loadManifest } from './03-load-manifest/load-manifest';
 import { createMarkdown } from './04-create-markdown/create-markdown';
 import { writeOutput } from './05-write-output/write-output';
-import type { ScriptError } from './types/errors/script-error';
+import type { ComposerError } from './types/errors/composer-error';
 import type { Manifest } from './types/manifest';
 
 type SourceManifest = {
@@ -13,12 +13,12 @@ type SourceManifest = {
   sourceDirectory: string;
 };
 
-function main(item: { argv: string[] }): Result.Result<void, ScriptError> {
+function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
   let { argv } = item;
 
   if (argv.length !== 2) {
     return Result.fail({
-      code: 'SCRIPT_USAGE_ERROR',
+      code: 'COMPOSER_ARGUMENT_COUNT_INVALID',
       message: 'Usage: pnpm build-agents-next <manifest-path> <output-file>'
     });
   }
@@ -29,7 +29,7 @@ function main(item: { argv: string[] }): Result.Result<void, ScriptError> {
 
   if (manifestPath === outputPath) {
     return Result.fail({
-      code: 'SCRIPT_USAGE_ERROR',
+      code: 'COMPOSER_MANIFEST_OUTPUT_PATH_CONFLICT',
       message: 'The manifest and output paths must be different'
     });
   }
@@ -52,15 +52,15 @@ function main(item: { argv: string[] }): Result.Result<void, ScriptError> {
   return Result.pipe(
     Result.succeed(sourceDirectory),
     Result.andThrough(
-      (path: string): Result.Result<void, ScriptError> =>
+      (path: string): Result.Result<void, ComposerError> =>
         validateSourceDirectory({ sourceDirectory: path })
     ),
     Result.andThrough(
-      (path: string): Result.Result<void, ScriptError> =>
+      (path: string): Result.Result<void, ComposerError> =>
         validateDirectorySectionFiles({ sourceDirectory: path })
     ),
     Result.andThen(
-      (path: string): Result.Result<SourceManifest, ScriptError> =>
+      (path: string): Result.Result<SourceManifest, ComposerError> =>
         Result.map(
           (manifest: Manifest): SourceManifest => ({
             manifest: manifest,
@@ -75,14 +75,14 @@ function main(item: { argv: string[] }): Result.Result<void, ScriptError> {
         )
     ),
     Result.andThen(
-      (value: SourceManifest): Result.Result<string, ScriptError> =>
+      (value: SourceManifest): Result.Result<string, ComposerError> =>
         createMarkdown({
           manifest: value.manifest,
           sourceDirectory: value.sourceDirectory
         })
     ),
     Result.andThen(
-      (markdown: string): Result.Result<void, ScriptError> =>
+      (markdown: string): Result.Result<void, ComposerError> =>
         writeOutput({
           markdown: markdown,
           outputPath: outputPath
@@ -96,7 +96,7 @@ function main(item: { argv: string[] }): Result.Result<void, ScriptError> {
 
 let argv: string[] = process.argv.slice(2);
 
-let result: Result.Result<void, ScriptError> = main({ argv: argv });
+let result: Result.Result<void, ComposerError> = main({ argv: argv });
 
 if (result.type === 'Failure') {
   console.error(result.error.message);
