@@ -1,9 +1,9 @@
 import { Result } from '@praha/byethrow';
+import { readTextFile } from '../shared/read-text-file/read-text-file';
 import type { ScriptError } from '../types/errors/script-error';
 import type { Manifest } from '../types/manifest';
-import { parseManifest } from './load/parse-manifest';
-import { validateManifest } from './load/validate-manifest';
-import { readTextFile } from './parts/read-text-file';
+import { parseManifest } from './02-parse-manifest/parse-manifest';
+import { validateManifest } from './03-validate-manifest/validate-manifest';
 
 export function loadManifest(item: {
   ignoredRelativePaths: string[];

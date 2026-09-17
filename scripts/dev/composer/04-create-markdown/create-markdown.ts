@@ -1,8 +1,8 @@
 import { resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
+import { readTextFile } from '../shared/read-text-file/read-text-file';
 import type { ScriptError } from '../types/errors/script-error';
 import type { Manifest } from '../types/manifest';
-import { readTextFile } from './parts/read-text-file';
 
 export function createMarkdown(item: {
   manifest: Manifest;

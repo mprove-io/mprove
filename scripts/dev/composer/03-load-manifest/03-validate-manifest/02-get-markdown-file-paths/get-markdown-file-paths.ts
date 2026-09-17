@@ -1,7 +1,7 @@
 import { type Dirent, readdirSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ScriptError } from '../../types/errors/script-error';
+import type { ScriptError } from '../../../types/errors/script-error';
 
 function collectMarkdownFilePaths(item: {
   currentDirectory: string;

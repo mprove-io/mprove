@@ -1,10 +1,10 @@
 import { basename, dirname, isAbsolute, relative, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import { createMarkdown } from './functions/create-markdown';
-import { loadManifest } from './functions/load-manifest';
-import { validateDirectorySectionFiles } from './functions/validate-directory-section-files';
-import { validateSourceDirectory } from './functions/validate-source-directory';
-import { writeOutput } from './functions/write-output';
+import { validateSourceDirectory } from './01-validate-source-directory/validate-source-directory';
+import { validateDirectorySectionFiles } from './02-validate-directory-section-files/validate-directory-section-files';
+import { loadManifest } from './03-load-manifest/load-manifest';
+import { createMarkdown } from './04-create-markdown/create-markdown';
+import { writeOutput } from './05-write-output/write-output';
 import type { ScriptError } from './types/errors/script-error';
 import type { Manifest } from './types/manifest';
 

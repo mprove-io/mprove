@@ -1,8 +1,8 @@
 import { Result } from '@praha/byethrow';
 import type { ScriptError } from '../../types/errors/script-error';
 import type { Manifest } from '../../types/manifest';
-import { getMarkdownFilePaths } from './get-markdown-file-paths';
-import { validateMarkdownTitle } from './validate-markdown-title';
+import { validateMarkdownTitle } from './01-validate-markdown-title/validate-markdown-title';
+import { getMarkdownFilePaths } from './02-get-markdown-file-paths/get-markdown-file-paths';
 
 export function validateManifest(item: {
   ignoredRelativePaths: string[];

@@ -1,8 +1,8 @@
 import { posix, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ScriptError } from '../../types/errors/script-error';
-import { readTextFile } from '../parts/read-text-file';
-import { toTitleSlug } from '../parts/to-title-slug';
+import { readTextFile } from '../../../shared/read-text-file/read-text-file';
+import type { ScriptError } from '../../../types/errors/script-error';
+import { toTitleSlug } from './02-to-title-slug/to-title-slug';
 
 export function validateMarkdownTitle(item: {
   relativePath: string;
