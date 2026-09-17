@@ -23,8 +23,12 @@ export function createMarkdown(item: {
 
     let nestingLevel: number = relativePath.split('/').length - 1;
 
-    sectionsResult = Result.andThen((currentSections: string[]) =>
-      Result.map((content: string) => {
+    sectionsResult = Result.andThen((v: string[]) => {
+      let currentSections: string[] = v;
+
+      return Result.map((v: string) => {
+        let content: string = v;
+
         let adjustedContent: string = adjustMarkdownHeadings({
           content: content,
           nestingLevel: nestingLevel
@@ -35,11 +39,9 @@ export function createMarkdown(item: {
         currentSections.push(section);
 
         return currentSections;
-      })(readTextFile({ filePath: filePath }))
-    )(sectionsResult);
+      })(readTextFile({ filePath: filePath }));
+    })(sectionsResult);
   }
 
-  return Result.map((currentSections: string[]) =>
-    currentSections.join('\n\n')
-  )(sectionsResult);
+  return Result.map((v: string[]) => v.join('\n\n'))(sectionsResult);
 }

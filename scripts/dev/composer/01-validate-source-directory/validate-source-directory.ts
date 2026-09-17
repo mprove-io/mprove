@@ -8,20 +8,20 @@ export function validateSourceDirectory(item: {
   let { sourceDirectory } = item;
 
   return Result.pipe(
-    Result.succeed(sourceDirectory),
-    Result.andThen(path =>
+    Result.succeed(item),
+    Result.andThen(v =>
       Result.try({
-        try: (): Stats => statSync(path),
+        try: (): Stats => statSync(v.sourceDirectory),
         catch: (error: unknown): ComposerError => ({
           code: 'COMPOSER_SOURCE_DIRECTORY_ACCESS_FAILED',
-          message: `Unable to access ${path}`,
-          path: path,
+          message: `Unable to access ${v.sourceDirectory}`,
+          path: v.sourceDirectory,
           originalError: error
         })
       })
     ),
-    Result.andThen(sourceStats => {
-      let sourceIsDirectory: boolean = sourceStats.isDirectory();
+    Result.andThen(v => {
+      let sourceIsDirectory: boolean = v.isDirectory();
 
       return sourceIsDirectory
         ? Result.succeed()

@@ -64,45 +64,57 @@ function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
   }
 
   return Result.pipe(
-    Result.succeed(sourceDirectory),
+    Result.succeed({
+      ignoredRelativePaths: ignoredRelativePaths,
+      manifestPath: manifestPath,
+      outputPath: outputPath,
+      sourceDirectory: sourceDirectory
+    }),
     Result.andThrough(
-      (path: string): Result.Result<void, ComposerError> =>
-        validateSourceDirectory({ sourceDirectory: path })
+      (v): Result.Result<void, ComposerError> =>
+        validateSourceDirectory({ sourceDirectory: v.sourceDirectory })
     ),
     Result.andThrough(
-      (path: string): Result.Result<void, ComposerError> =>
-        validateDirectorySectionFiles({ sourceDirectory: path })
+      (v): Result.Result<void, ComposerError> =>
+        validateDirectorySectionFiles({ sourceDirectory: v.sourceDirectory })
     ),
+    Result.andThen((v): Result.Result<SourceManifest, ComposerError> => {
+      let ignoredPaths: string[] = v.ignoredRelativePaths;
+
+      let sourceManifestPath: string = v.manifestPath;
+
+      let sourcePath: string = v.sourceDirectory;
+
+      return Result.map(
+        (v: Manifest): SourceManifest => ({
+          manifest: v,
+          sourceDirectory: sourcePath
+        })
+      )(
+        loadManifest({
+          ignoredRelativePaths: ignoredPaths,
+          manifestPath: sourceManifestPath,
+          sourceDirectory: sourcePath
+        })
+      );
+    }),
     Result.andThen(
-      (path: string): Result.Result<SourceManifest, ComposerError> =>
-        Result.map(
-          (manifest: Manifest): SourceManifest => ({
-            manifest: manifest,
-            sourceDirectory: path
-          })
-        )(
-          loadManifest({
-            ignoredRelativePaths: ignoredRelativePaths,
-            manifestPath: manifestPath,
-            sourceDirectory: path
-          })
-        )
-    ),
-    Result.andThen(
-      (value: SourceManifest): Result.Result<string, ComposerError> =>
+      (v: SourceManifest): Result.Result<string, ComposerError> =>
         createMarkdown({
-          manifest: value.manifest,
-          sourceDirectory: value.sourceDirectory
+          manifest: v.manifest,
+          sourceDirectory: v.sourceDirectory
         })
     ),
     Result.andThen(
-      (markdown: string): Result.Result<void, ComposerError> =>
+      (v: string): Result.Result<void, ComposerError> =>
         writeOutput({
-          markdown: markdown,
+          markdown: v,
           outputPath: outputPath
         })
     ),
-    Result.map((): void => {
+    Result.map((v: void): void => {
+      void v;
+
       console.log(`Wrote ${outputPath}`);
     })
   );

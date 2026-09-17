@@ -27,10 +27,13 @@ export function validateMarkdownTitle(item: {
   }
 
   return Result.pipe(
-    Result.succeed(filePath),
-    Result.andThen(path => readTextFile({ filePath: path })),
-    Result.andThen(content => {
-      let lines: string[] = content.split(/\r?\n/u);
+    Result.succeed({
+      actualFileName: actualFileName,
+      filePath: filePath
+    }),
+    Result.andThen(v => readTextFile({ filePath: v.filePath })),
+    Result.andThen(v => {
+      let lines: string[] = v.split(/\r?\n/u);
 
       let firstLine: string = lines[0] ?? '';
 

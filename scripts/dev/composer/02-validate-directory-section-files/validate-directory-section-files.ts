@@ -9,13 +9,13 @@ export function validateDirectorySectionFiles(item: {
   let { sourceDirectory } = item;
 
   return Result.pipe(
-    Result.succeed(sourceDirectory),
-    Result.andThen(path => {
-      let scannedDirectoryPath: string = path;
+    Result.succeed(item),
+    Result.andThen(v => {
+      let scannedDirectoryPath: string = v.sourceDirectory;
 
       return Result.try({
         try: (): string[] => {
-          let pendingDirectoryPaths: string[] = [path];
+          let pendingDirectoryPaths: string[] = [v.sourceDirectory];
 
           let missingSectionFilePaths: string[] = [];
 
@@ -69,14 +69,14 @@ export function validateDirectorySectionFiles(item: {
         })
       });
     }),
-    Result.andThen(missingSectionFilePaths => {
-      let hasMissingSectionFile: boolean = missingSectionFilePaths.length > 0;
+    Result.andThen(v => {
+      let hasMissingSectionFile: boolean = v.length > 0;
 
       return hasMissingSectionFile
         ? Result.fail({
             code: 'COMPOSER_DIRECTORY_SECTION_FILE_MISSING',
-            message: `Directory requires section file ${missingSectionFilePaths[0]}`,
-            path: missingSectionFilePaths[0]
+            message: `Directory requires section file ${v[0]}`,
+            path: v[0]
           })
         : Result.succeed();
     })

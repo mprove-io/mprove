@@ -12,19 +12,22 @@ export function getMarkdownFilePaths(item: {
   };
 
   return Result.pipe(
-    Result.succeed(sourceDirectory),
-    Result.andThen(path =>
+    Result.succeed({
+      scanState: scanState,
+      sourceDirectory: sourceDirectory
+    }),
+    Result.andThen(v =>
       Result.try({
         try: (): string[] =>
           collectMarkdownFilePathsRecursive({
-            currentDirectory: path,
+            currentDirectory: v.sourceDirectory,
             relativeDirectory: '',
-            scanState: scanState
+            scanState: v.scanState
           }),
         catch: (error: unknown): ComposerError => ({
           code: 'COMPOSER_MARKDOWN_FILE_SCAN_FAILED',
-          message: `Unable to scan ${scanState.currentDirectory}`,
-          path: scanState.currentDirectory,
+          message: `Unable to scan ${v.scanState.currentDirectory}`,
+          path: v.scanState.currentDirectory,
           originalError: error
         })
       })

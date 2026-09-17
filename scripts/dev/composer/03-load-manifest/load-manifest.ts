@@ -13,18 +13,18 @@ export function loadManifest(item: {
   let { ignoredRelativePaths, manifestPath, sourceDirectory } = item;
 
   return Result.pipe(
-    Result.succeed(manifestPath),
-    Result.andThen(path => readTextFile({ filePath: path })),
-    Result.andThen(content =>
+    Result.succeed(item),
+    Result.andThen(v => readTextFile({ filePath: v.manifestPath })),
+    Result.andThen(v =>
       parseManifest({
-        content: content,
+        content: v,
         manifestPath: manifestPath
       })
     ),
-    Result.andThrough(manifest =>
+    Result.andThrough(v =>
       validateManifest({
         ignoredRelativePaths: ignoredRelativePaths,
-        manifest: manifest,
+        manifest: v,
         sourceDirectory: sourceDirectory
       })
     )
