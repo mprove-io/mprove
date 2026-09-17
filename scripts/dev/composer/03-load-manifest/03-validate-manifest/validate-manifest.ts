@@ -1,8 +1,8 @@
 import { Result } from '@praha/byethrow';
 import type { ComposerError } from '../../types/errors/composer-error';
 import type { Manifest } from '../../types/manifest';
-import { validateMarkdownTitle } from './01-validate-markdown-title/validate-markdown-title';
-import { getMarkdownFilePaths } from './02-get-markdown-file-paths/get-markdown-file-paths';
+import { getMarkdownFilePaths } from './01-get-markdown-file-paths/get-markdown-file-paths';
+import { validateMarkdownTitle } from './02-validate-markdown-title/validate-markdown-title';
 
 export function validateManifest(item: {
   ignoredRelativePaths: string[];
@@ -11,47 +11,11 @@ export function validateManifest(item: {
 }): Result.Result<void, ComposerError> {
   let { ignoredRelativePaths, manifest, sourceDirectory } = item;
 
-  let validationResult: Result.Result<void, ComposerError> = Result.succeed();
-
-  for (let i = 0; i < manifest.relativePaths.length; i++) {
-    let relativePath: string = manifest.relativePaths[i];
-
-    validationResult = Result.pipe(
-      Result.succeed(validationResult),
-      Result.andThen(
-        (
-          currentResult: Result.Result<void, ComposerError>
-        ): Result.Result<void, ComposerError> => currentResult
-      ),
-      Result.andThen(
-        (): Result.Result<void, ComposerError> =>
-          validateMarkdownTitle({
-            relativePath: relativePath,
-            sourceDirectory: sourceDirectory
-          })
-      )
-    );
-  }
-
-  let markdownPathsResult: Result.Result<string[], ComposerError> = Result.pipe(
-    Result.succeed(validationResult),
-    Result.andThen(
-      (
-        currentResult: Result.Result<void, ComposerError>
-      ): Result.Result<void, ComposerError> => currentResult
-    ),
-    Result.andThen(
-      (): Result.Result<string[], ComposerError> =>
-        getMarkdownFilePaths({ sourceDirectory: sourceDirectory })
-    )
-  );
-
   return Result.pipe(
-    Result.succeed(markdownPathsResult),
+    Result.succeed(sourceDirectory),
     Result.andThen(
-      (
-        currentResult: Result.Result<string[], ComposerError>
-      ): Result.Result<string[], ComposerError> => currentResult
+      (path: string): Result.Result<string[], ComposerError> =>
+        getMarkdownFilePaths({ sourceDirectory: path })
     ),
     Result.andThen(
       (markdownPaths: string[]): Result.Result<void, ComposerError> => {
@@ -64,6 +28,8 @@ export function validateManifest(item: {
         let referencedPaths: Set<string> = new Set<string>(
           manifest.relativePaths
         );
+
+        let sourcePaths: Set<string> = new Set<string>(sourceMarkdownPaths);
 
         for (let i = 0; i < ignoredRelativePaths.length; i++) {
           let ignoredPath: string = ignoredRelativePaths[i];
@@ -93,15 +59,36 @@ export function validateManifest(item: {
           }
         }
 
-        if (referencedPaths.size !== sourceMarkdownPaths.length) {
+        let missingPaths: string[] = manifest.relativePaths.filter(
+          relativePath => !sourcePaths.has(relativePath)
+        );
+
+        let hasMissingPath: boolean = missingPaths.length > 0;
+
+        if (hasMissingPath) {
           return Result.fail({
             code: 'COMPOSER_MANIFEST_REFERENCES_MISSING_FILE',
-            message: 'The manifest references a missing Markdown file',
-            path: sourceDirectory
+            message: `The manifest references missing Markdown file ${missingPaths[0]}`,
+            path: missingPaths[0]
           });
         }
 
-        return Result.succeed();
+        let titleValidationResult: Result.Result<void, ComposerError> =
+          Result.succeed();
+
+        for (let i = 0; i < manifest.relativePaths.length; i++) {
+          let relativePath: string = manifest.relativePaths[i];
+
+          titleValidationResult = Result.andThen(
+            (_value: void): Result.Result<void, ComposerError> =>
+              validateMarkdownTitle({
+                relativePath: relativePath,
+                sourceDirectory: sourceDirectory
+              })
+          )(titleValidationResult);
+        }
+
+        return titleValidationResult;
       }
     )
   );

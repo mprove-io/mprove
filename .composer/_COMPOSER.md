@@ -23,6 +23,7 @@ rules/git-operations.md
 rules/do-not-run-tests-unless-asked.md
 rules/typecheck-and-lint.md
 rules/function-and-method-args.md
+rules/recursive-function-names.md
 rules/object-properties.md
 rules/no-for-let-of-and-for-let-in.md
 rules/type-only-imports.md

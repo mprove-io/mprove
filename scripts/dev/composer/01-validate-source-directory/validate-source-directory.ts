@@ -21,7 +21,9 @@ export function validateSourceDirectory(item: {
       })
     ),
     Result.andThen(sourceStats => {
-      return sourceStats.isDirectory()
+      let sourceIsDirectory: boolean = sourceStats.isDirectory();
+
+      return sourceIsDirectory
         ? Result.succeed()
         : Result.fail({
             code: 'COMPOSER_SOURCE_PATH_NOT_DIRECTORY',

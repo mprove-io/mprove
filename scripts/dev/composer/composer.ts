@@ -1,4 +1,11 @@
-import { basename, dirname, isAbsolute, relative, resolve } from 'node:path';
+import {
+  basename,
+  dirname,
+  isAbsolute,
+  relative,
+  resolve,
+  sep
+} from 'node:path';
 import { Result } from '@praha/byethrow';
 import { validateSourceDirectory } from './01-validate-source-directory/validate-source-directory';
 import { validateDirectorySectionFiles } from './02-validate-directory-section-files/validate-directory-section-files';
@@ -19,7 +26,7 @@ function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
   if (argv.length !== 2) {
     return Result.fail({
       code: 'COMPOSER_ARGUMENT_COUNT_INVALID',
-      message: 'Usage: pnpm build-agents-next <manifest-path> <output-file>'
+      message: 'Usage: pnpm composer <manifest-path> <output-file>'
     });
   }
 
@@ -40,13 +47,20 @@ function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
 
   let relativeOutputPath: string = relative(sourceDirectory, outputPath);
 
+  let outputIsInParent: boolean =
+    relativeOutputPath === '..' || relativeOutputPath.startsWith(`..${sep}`);
+
+  let outputIsAbsolute: boolean = isAbsolute(relativeOutputPath);
+
   let outputIsInSource: boolean =
-    relativeOutputPath.length > 0 &&
-    !relativeOutputPath.startsWith('..') &&
-    !isAbsolute(relativeOutputPath);
+    relativeOutputPath.length > 0 && !outputIsInParent && !outputIsAbsolute;
 
   if (outputIsInSource) {
-    ignoredRelativePaths.push(relativeOutputPath);
+    let normalizedRelativeOutputPath: string = relativeOutputPath
+      .split(sep)
+      .join('/');
+
+    ignoredRelativePaths.push(normalizedRelativeOutputPath);
   }
 
   return Result.pipe(
@@ -99,7 +113,7 @@ let argv: string[] = process.argv.slice(2);
 let result: Result.Result<void, ComposerError> = main({ argv: argv });
 
 if (result.type === 'Failure') {
-  console.error(result.error.message);
+  console.error(result.error);
 
   process.exitCode = 1;
 }

@@ -32,23 +32,18 @@ export function validateMarkdownTitle(item: {
     Result.andThen(content => {
       let lines: string[] = content.split(/\r?\n/u);
 
-      let firstContentLine: string =
-        lines.find(line => line.trim().length > 0) ?? '';
+      let firstLine: string = lines[0] ?? '';
 
-      let titleMatch: RegExpMatchArray | null =
-        firstContentLine.match(/^# ([^#].*)$/u);
+      let firstLineIsH1: boolean = /^# [^#].*$/u.test(firstLine);
 
-      let title: string = titleMatch === null ? '' : titleMatch[1].trim();
+      let title: string = firstLineIsH1 ? firstLine.slice(2).trim() : '';
 
       let expectedFileName: string = `${toTitleSlug({ title: title })}.md`;
-
-      let normalizedExpectedFileName: string = expectedFileName.toLowerCase();
 
       let normalizedActualFileName: string = actualFileName.toLowerCase();
 
       let titleMatchesFileName: boolean =
-        title.length > 0 &&
-        normalizedActualFileName === normalizedExpectedFileName;
+        title.length > 0 && normalizedActualFileName === expectedFileName;
 
       return titleMatchesFileName
         ? Result.succeed()

@@ -3,6 +3,7 @@ import { Result } from '@praha/byethrow';
 import { readTextFile } from '../shared/read-text-file/read-text-file';
 import type { ComposerError } from '../types/errors/composer-error';
 import type { Manifest } from '../types/manifest';
+import { adjustMarkdownHeadings } from './02-adjust-markdown-headings/adjust-markdown-headings';
 
 export function createMarkdown(item: {
   manifest: Manifest;
@@ -22,13 +23,14 @@ export function createMarkdown(item: {
 
     let nestingLevel: number = relativePath.split('/').length - 1;
 
-    let headingPrefix: string = '#'.repeat(nestingLevel);
-
     sectionsResult = Result.andThen((currentSections: string[]) =>
       Result.map((content: string) => {
-        let section: string = content
-          .replace(/^(?=#{1,6}(?: |$))/gmu, headingPrefix)
-          .replace(/\s+$/u, '');
+        let adjustedContent: string = adjustMarkdownHeadings({
+          content: content,
+          nestingLevel: nestingLevel
+        });
+
+        let section: string = adjustedContent.replace(/\s+$/u, '');
 
         currentSections.push(section);
 

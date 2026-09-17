@@ -1,13 +1,14 @@
 import { type Dirent, readdirSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
-import { Result } from '@praha/byethrow';
-import type { ComposerError } from '../../../types/errors/composer-error';
 
-function collectMarkdownFilePaths(item: {
+export function collectMarkdownFilePathsRecursive(item: {
   currentDirectory: string;
   relativeDirectory: string;
+  scanState: { currentDirectory: string };
 }): string[] {
-  let { currentDirectory, relativeDirectory } = item;
+  let { currentDirectory, relativeDirectory, scanState } = item;
+
+  scanState.currentDirectory = currentDirectory;
 
   let entries: Dirent[] = readdirSync(currentDirectory, {
     withFileTypes: true
@@ -27,9 +28,10 @@ function collectMarkdownFilePaths(item: {
     let isDirectory: boolean = entry.isDirectory();
 
     if (isDirectory) {
-      let childPaths: string[] = collectMarkdownFilePaths({
+      let childPaths: string[] = collectMarkdownFilePathsRecursive({
         currentDirectory: absolutePath,
-        relativeDirectory: relativePath
+        relativeDirectory: relativePath,
+        scanState: scanState
       });
 
       markdownFilePaths.push(...childPaths);
@@ -46,29 +48,4 @@ function collectMarkdownFilePaths(item: {
   }
 
   return markdownFilePaths;
-}
-
-export function getMarkdownFilePaths(item: {
-  sourceDirectory: string;
-}): Result.Result<string[], ComposerError> {
-  let { sourceDirectory } = item;
-
-  return Result.pipe(
-    Result.succeed(sourceDirectory),
-    Result.andThen(path =>
-      Result.try({
-        try: (): string[] =>
-          collectMarkdownFilePaths({
-            currentDirectory: path,
-            relativeDirectory: ''
-          }),
-        catch: (error: unknown): ComposerError => ({
-          code: 'COMPOSER_MARKDOWN_FILE_SCAN_FAILED',
-          message: `Unable to scan ${path}`,
-          path: path,
-          originalError: error
-        })
-      })
-    )
-  );
 }

@@ -10,8 +10,10 @@ export function validateDirectorySectionFiles(item: {
 
   return Result.pipe(
     Result.succeed(sourceDirectory),
-    Result.andThen(path =>
-      Result.try({
+    Result.andThen(path => {
+      let scannedDirectoryPath: string = path;
+
+      return Result.try({
         try: (): string[] => {
           let pendingDirectoryPaths: string[] = [path];
 
@@ -19,6 +21,8 @@ export function validateDirectorySectionFiles(item: {
 
           for (let i = 0; i < pendingDirectoryPaths.length; i++) {
             let directoryPath: string = pendingDirectoryPaths[i];
+
+            scannedDirectoryPath = directoryPath;
 
             let entries: Dirent[] = readdirSync(directoryPath, {
               withFileTypes: true
@@ -59,12 +63,12 @@ export function validateDirectorySectionFiles(item: {
         },
         catch: (error: unknown): ComposerError => ({
           code: 'COMPOSER_DIRECTORY_SECTION_SCAN_FAILED',
-          message: `Unable to scan ${path}`,
-          path: path,
+          message: `Unable to scan ${scannedDirectoryPath}`,
+          path: scannedDirectoryPath,
           originalError: error
         })
-      })
-    ),
+      });
+    }),
     Result.andThen(missingSectionFilePaths => {
       let hasMissingSectionFile: boolean = missingSectionFilePaths.length > 0;
 
