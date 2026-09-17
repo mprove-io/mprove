@@ -12,12 +12,18 @@ export function loadManifest(item: {
 }): Result.Result<Manifest, ComposerError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind('content', v => readTextFile({ filePath: v.manifestPath })),
-    Result.bind('manifest', v =>
-      parseManifest({
-        content: v.content,
-        manifestPath: v.manifestPath
-      })
+    Result.bind(
+      'content',
+      (v): Result.Result<string, ComposerError> =>
+        readTextFile({ filePath: v.manifestPath })
+    ),
+    Result.bind(
+      'manifest',
+      (v): Result.Result<Manifest, ComposerError> =>
+        parseManifest({
+          content: v.content,
+          manifestPath: v.manifestPath
+        })
     ),
     Result.andThrough(v =>
       validateManifest({
@@ -26,6 +32,6 @@ export function loadManifest(item: {
         sourceDirectory: v.sourceDirectory
       })
     ),
-    Result.map(v => v.manifest)
+    Result.map((v): Manifest => v.manifest)
   );
 }

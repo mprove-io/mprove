@@ -13,6 +13,7 @@ import { loadManifest } from './03-load-manifest/load-manifest';
 import { createMarkdown } from './04-create-markdown/create-markdown';
 import { writeOutput } from './05-write-output/write-output';
 import type { ComposerError } from './types/errors/composer-error';
+import type { Manifest } from './types/manifest';
 
 function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
   let { argv } = item;
@@ -64,33 +65,31 @@ function main(item: { argv: string[] }): Result.Result<void, ComposerError> {
       outputPath: outputPath,
       sourceDirectory: sourceDirectory
     }),
-    Result.andThrough(
-      (v): Result.Result<void, ComposerError> =>
-        validateSourceDirectory({ sourceDirectory: v.sourceDirectory })
+    Result.andThrough(v =>
+      validateSourceDirectory({ sourceDirectory: v.sourceDirectory })
     ),
-    Result.andThrough(
-      (v): Result.Result<void, ComposerError> =>
-        validateDirectorySectionFiles({ sourceDirectory: v.sourceDirectory })
+    Result.andThrough(v =>
+      validateDirectorySectionFiles({ sourceDirectory: v.sourceDirectory })
     ),
-    Result.bind('manifest', v =>
-      loadManifest({
-        ignoredRelativePaths: v.ignoredRelativePaths,
-        manifestPath: v.manifestPath,
-        sourceDirectory: v.sourceDirectory
-      })
-    ),
-    Result.bind('markdown', v =>
-      createMarkdown({
-        manifest: v.manifest,
-        sourceDirectory: v.sourceDirectory
-      })
-    ),
-    Result.andThrough(
-      (v): Result.Result<void, ComposerError> =>
-        writeOutput({
-          markdown: v.markdown,
-          outputPath: v.outputPath
+    Result.bind(
+      'manifest',
+      (v): Result.Result<Manifest, ComposerError> =>
+        loadManifest({
+          ignoredRelativePaths: v.ignoredRelativePaths,
+          manifestPath: v.manifestPath,
+          sourceDirectory: v.sourceDirectory
         })
+    ),
+    Result.bind(
+      'markdown',
+      (v): Result.Result<string, ComposerError> =>
+        createMarkdown({
+          manifest: v.manifest,
+          sourceDirectory: v.sourceDirectory
+        })
+    ),
+    Result.andThrough(v =>
+      writeOutput({ markdown: v.markdown, outputPath: v.outputPath })
     ),
     Result.map((v): void => {
       console.log(`Wrote ${v.outputPath}`);

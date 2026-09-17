@@ -31,8 +31,12 @@ export function validateMarkdownTitle(item: {
       actualFileName: actualFileName,
       filePath: filePath
     }),
-    Result.bind('content', v => readTextFile({ filePath: v.filePath })),
-    Result.andThen(v => {
+    Result.bind(
+      'content',
+      (v): Result.Result<string, ComposerError> =>
+        readTextFile({ filePath: v.filePath })
+    ),
+    Result.andThen((v): Result.Result<void, ComposerError> => {
       let lines: string[] = v.content.split(/\r?\n/u);
 
       let firstLine: string = lines[0] ?? '';

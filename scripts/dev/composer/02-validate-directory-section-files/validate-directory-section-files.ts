@@ -8,66 +8,69 @@ export function validateDirectorySectionFiles(item: {
 }): Result.Result<void, ComposerError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind('missingSectionFilePaths', v => {
-      let scannedDirectoryPath: string = v.sourceDirectory;
+    Result.bind(
+      'missingSectionFilePaths',
+      (v): Result.Result<string[], ComposerError> => {
+        let scannedDirectoryPath: string = v.sourceDirectory;
 
-      return Result.try({
-        try: (): string[] => {
-          let pendingDirectoryPaths: string[] = [v.sourceDirectory];
+        return Result.try({
+          try: (): string[] => {
+            let pendingDirectoryPaths: string[] = [v.sourceDirectory];
 
-          let missingSectionFilePaths: string[] = [];
+            let missingSectionFilePaths: string[] = [];
 
-          for (let i = 0; i < pendingDirectoryPaths.length; i++) {
-            let directoryPath: string = pendingDirectoryPaths[i];
+            for (let i = 0; i < pendingDirectoryPaths.length; i++) {
+              let directoryPath: string = pendingDirectoryPaths[i];
 
-            scannedDirectoryPath = directoryPath;
+              scannedDirectoryPath = directoryPath;
 
-            let entries: Dirent[] = readdirSync(directoryPath, {
-              withFileTypes: true
-            });
+              let entries: Dirent[] = readdirSync(directoryPath, {
+                withFileTypes: true
+              });
 
-            let fileNames: Set<string> = new Set<string>(
-              entries.filter(entry => entry.isFile()).map(entry => entry.name)
-            );
-
-            let childDirectories: Dirent[] = entries.filter(entry =>
-              entry.isDirectory()
-            );
-
-            childDirectories.forEach(entry => {
-              let childDirectoryPath: string = resolve(
-                directoryPath,
-                entry.name
+              let fileNames: Set<string> = new Set<string>(
+                entries.filter(entry => entry.isFile()).map(entry => entry.name)
               );
 
-              let sectionFileName: string = `${entry.name}.md`;
+              let childDirectories: Dirent[] = entries.filter(entry =>
+                entry.isDirectory()
+              );
 
-              let hasSectionFile: boolean = fileNames.has(sectionFileName);
-
-              if (!hasSectionFile) {
-                let sectionFilePath: string = resolve(
+              childDirectories.forEach(entry => {
+                let childDirectoryPath: string = resolve(
                   directoryPath,
-                  sectionFileName
+                  entry.name
                 );
 
-                missingSectionFilePaths.push(sectionFilePath);
-              }
+                let sectionFileName: string = `${entry.name}.md`;
 
-              pendingDirectoryPaths.push(childDirectoryPath);
-            });
-          }
+                let hasSectionFile: boolean = fileNames.has(sectionFileName);
 
-          return missingSectionFilePaths;
-        },
-        catch: (error: unknown): ComposerError => ({
-          code: 'COMPOSER_DIRECTORY_SECTION_SCAN_FAILED',
-          message: `Unable to scan ${scannedDirectoryPath}`,
-          path: scannedDirectoryPath,
-          originalError: error
-        })
-      });
-    }),
-    Result.andThen(v => {
+                if (!hasSectionFile) {
+                  let sectionFilePath: string = resolve(
+                    directoryPath,
+                    sectionFileName
+                  );
+
+                  missingSectionFilePaths.push(sectionFilePath);
+                }
+
+                pendingDirectoryPaths.push(childDirectoryPath);
+              });
+            }
+
+            return missingSectionFilePaths;
+          },
+          catch: (error: unknown): ComposerError => ({
+            code: 'COMPOSER_DIRECTORY_SECTION_SCAN_FAILED',
+            message: `Unable to scan ${scannedDirectoryPath}`,
+            path: scannedDirectoryPath,
+            originalError: error
+          })
+        });
+      }
+    ),
+    Result.andThen((v): Result.Result<void, ComposerError> => {
       let hasMissingSectionFile: boolean = v.missingSectionFilePaths.length > 0;
 
       return hasMissingSectionFile

@@ -521,10 +521,8 @@ unless the user explicitly asks.
 Byethrow `Result` pipelines are exempt from the general explicit variable type
 rule in these cases:
 
-- Callbacks passed to `Result.map`, `Result.mapError`, `Result.andThen`,
-  `Result.andThrough`, `Result.bind`, `Result.inspect`, and
-  `Result.inspectError` may return expressions directly without explicit
-  callback return types or intermediate variables.
+- Callbacks passed to Result combinators may return expressions directly without
+  intermediate variables.
 - Variables assigned directly from `Result.pipe` or `Result.unwrap` may rely on
   inferred types when the enclosing function or method has an explicit return
   type.
@@ -532,6 +530,35 @@ rule in these cases:
   `async`/`await`.
 
 Standalone Result-producing functions must retain explicit return types.
+
+## Result callback return types
+
+Callbacks passed to `Result.bind` and `Result.andThen` must declare an explicit
+`Result.Result<Success, Error>` return type.
+
+```ts
+Result.bind(
+  'manifest',
+  (v): Result.Result<Manifest, ComposerError> =>
+    loadManifest({
+      manifestPath: v.manifestPath
+    })
+);
+```
+
+Callbacks passed to `Result.map` must declare an explicit success-value return
+type.
+
+```ts
+Result.map(
+  (v): SomeType => ({
+    modelId: v.modelId,
+    name: v.name
+  })
+);
+```
+
+Callbacks passed to `Result.andThrough` do not require an explicit return type.
 
 ## Combinator selection
 
@@ -545,6 +572,20 @@ Use the combinator matching the operation:
   value.
 - `bind` retains a successful computation under a semantic property name when
   later steps need it. Do not bind `void` results or final projections.
+
+## Combinator application
+
+Pass Result combinators as steps to `Result.pipe`. Do not directly invoke the
+curried function returned by a combinator, such as
+`Result.map(callback)(result)`. If using `Result.pipe` would create a nested
+pipe in the same function, extract the operation into a standalone function in
+its own file.
+
+## sequence Result collections
+
+Use `Result.sequence` when applying a Result-producing operation to every item
+in a collection and processing should stop at the first failure. Do not manually
+accumulate the collection result by repeatedly applying a curried combinator.
 
 ## Error policy
 
@@ -586,6 +627,11 @@ return Result.pipe(
 ## pipe step argument name
 
 Name the argument passed to every pipeline step `v`.
+
+## pipe step argument types
+
+Do not annotate the type of `v` in callbacks passed directly as `Result.pipe`
+steps. Rely on contextual inference from the preceding pipeline state.
 
 ## pipe state access
 

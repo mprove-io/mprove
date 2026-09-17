@@ -42,11 +42,15 @@ byethrow-rules.md
 byethrow-rules/one-function-per-file.md
 byethrow-rules/no-nested-pipes-in-a-single-function.md
 byethrow-rules/result-type-inference.md
+byethrow-rules/result-callback-return-types.md
 byethrow-rules/combinator-selection.md
+byethrow-rules/combinator-application.md
+byethrow-rules/sequence-result-collections.md
 byethrow-rules/error-policy.md
 byethrow-rules/pipe-should-start-with-result-succeed.md
 byethrow-rules/pipe-initial-state.md
 byethrow-rules/pipe-step-argument-name.md
+byethrow-rules/pipe-step-argument-types.md
 byethrow-rules/pipe-state-access.md
 
 rules-when-asked.md

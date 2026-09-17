@@ -11,10 +11,12 @@ export function validateManifest(item: {
 }): Result.Result<void, ComposerError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind('markdownPaths', v =>
-      getMarkdownFilePaths({ sourceDirectory: v.sourceDirectory })
+    Result.bind(
+      'markdownPaths',
+      (v): Result.Result<string[], ComposerError> =>
+        getMarkdownFilePaths({ sourceDirectory: v.sourceDirectory })
     ),
-    Result.andThen((v): Result.Result<void, ComposerError> => {
+    Result.andThrough(v => {
       let ignoredPaths: Set<string> = new Set<string>(v.ignoredRelativePaths);
 
       let sourceMarkdownPaths: string[] = v.markdownPaths.filter(
@@ -69,32 +71,19 @@ export function validateManifest(item: {
         });
       }
 
-      let titleValidationResult: Result.Result<
-        { relativePaths: string[]; sourceDirectory: string },
-        ComposerError
-      > = Result.succeed({
-        relativePaths: v.manifest.relativePaths,
-        sourceDirectory: v.sourceDirectory
-      });
-
-      for (let i = 0; i < v.manifest.relativePaths.length; i++) {
-        titleValidationResult = Result.andThrough(
-          (v: {
-            relativePaths: string[];
-            sourceDirectory: string;
-          }): Result.Result<void, ComposerError> =>
-            validateMarkdownTitle({
-              relativePath: v.relativePaths[i],
-              sourceDirectory: v.sourceDirectory
-            })
-        )(titleValidationResult);
-      }
-
-      return Result.map(
-        (v: { relativePaths: string[]; sourceDirectory: string }): void => {
-          void v;
-        }
-      )(titleValidationResult);
+      return Result.succeed();
+    }),
+    Result.andThen(
+      (v): Result.Result<void[], ComposerError> =>
+        Result.sequence(v.manifest.relativePaths, relativePath =>
+          validateMarkdownTitle({
+            relativePath: relativePath,
+            sourceDirectory: v.sourceDirectory
+          })
+        )
+    ),
+    Result.map((v): void => {
+      void v;
     })
   );
 }

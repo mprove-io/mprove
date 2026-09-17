@@ -7,18 +7,20 @@ export function validateSourceDirectory(item: {
 }): Result.Result<void, ComposerError> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind('sourceStats', v =>
-      Result.try({
-        try: (): Stats => statSync(v.sourceDirectory),
-        catch: (error: unknown): ComposerError => ({
-          code: 'COMPOSER_SOURCE_DIRECTORY_ACCESS_FAILED',
-          message: `Unable to access ${v.sourceDirectory}`,
-          path: v.sourceDirectory,
-          originalError: error
+    Result.bind(
+      'sourceStats',
+      (v): Result.Result<Stats, ComposerError> =>
+        Result.try({
+          try: (): Stats => statSync(v.sourceDirectory),
+          catch: (error: unknown): ComposerError => ({
+            code: 'COMPOSER_SOURCE_DIRECTORY_ACCESS_FAILED',
+            message: `Unable to access ${v.sourceDirectory}`,
+            path: v.sourceDirectory,
+            originalError: error
+          })
         })
-      })
     ),
-    Result.andThen(v => {
+    Result.andThen((v): Result.Result<void, ComposerError> => {
       let sourceIsDirectory: boolean = v.sourceStats.isDirectory();
 
       return sourceIsDirectory
