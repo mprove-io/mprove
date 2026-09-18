@@ -1,6 +1,6 @@
 import type { ComposerDirectorySectionFileMissingError } from '../errors/composer-directory-section-file-missing-error';
-import type { ComposerDirectorySectionScanFailedError } from '../errors/composer-directory-section-scan-failed-error';
+import type { GetMissingDirectorySectionFilePathsError } from './get-missing-directory-section-file-paths-error';
 
 export type ValidateDirectorySectionFilesError =
-  | ComposerDirectorySectionScanFailedError
+  | GetMissingDirectorySectionFilePathsError
   | ComposerDirectorySectionFileMissingError;

@@ -1,72 +1,24 @@
-import {
-  basename,
-  dirname,
-  isAbsolute,
-  relative,
-  resolve,
-  sep
-} from 'node:path';
 import { Result } from '@praha/byethrow';
-import { validateSourceDirectory } from './01-validate-source-directory/validate-source-directory';
-import { validateDirectorySectionFiles } from './02-validate-directory-section-files/validate-directory-section-files';
-import { loadManifest } from './03-load-manifest/load-manifest';
-import { createMarkdown } from './04-create-markdown/create-markdown';
-import { writeOutput } from './05-write-output/write-output';
+import { resolveComposeInput } from './01-resolve-compose-input/resolve-compose-input';
+import { validateSourceDirectory } from './02-validate-source-directory/validate-source-directory';
+import { validateDirectorySectionFiles } from './03-validate-directory-section-files/validate-directory-section-files';
+import { loadManifest } from './04-load-manifest/load-manifest';
+import { createMarkdown } from './05-create-markdown/create-markdown';
+import { writeOutput } from './06-write-output/write-output';
 import type { ComposeError } from './types/function-errors/compose-error';
 import type { CreateMarkdownError } from './types/function-errors/create-markdown-error';
 import type { LoadManifestError } from './types/function-errors/load-manifest-error';
+import type { ResolveComposeInputError } from './types/function-errors/resolve-compose-input-error';
 import type { Manifest } from './types/manifest';
+import type { ResolvedComposeInput } from './types/resolved-compose-input';
 
 function compose(item: { argv: string[] }): Result.Result<void, ComposeError> {
-  let { argv } = item;
-
-  if (argv.length !== 2) {
-    return Result.fail({
-      code: 'COMPOSER_ARGUMENT_COUNT_INVALID',
-      message: 'Usage: pnpm composer <manifest-path> <output-file>'
-    });
-  }
-
-  let manifestPath: string = resolve(process.cwd(), argv[0]);
-
-  let outputPath: string = resolve(process.cwd(), argv[1]);
-
-  if (manifestPath === outputPath) {
-    return Result.fail({
-      code: 'COMPOSER_MANIFEST_OUTPUT_PATH_CONFLICT',
-      message: 'The manifest and output paths must be different'
-    });
-  }
-
-  let sourceDirectory: string = dirname(manifestPath);
-
-  let ignoredRelativePaths: string[] = [basename(manifestPath)];
-
-  let relativeOutputPath: string = relative(sourceDirectory, outputPath);
-
-  let outputIsInParent: boolean =
-    relativeOutputPath === '..' || relativeOutputPath.startsWith(`..${sep}`);
-
-  let outputIsAbsolute: boolean = isAbsolute(relativeOutputPath);
-
-  let outputIsInSource: boolean =
-    relativeOutputPath.length > 0 && !outputIsInParent && !outputIsAbsolute;
-
-  if (outputIsInSource) {
-    let normalizedRelativeOutputPath: string = relativeOutputPath
-      .split(sep)
-      .join('/');
-
-    ignoredRelativePaths.push(normalizedRelativeOutputPath);
-  }
-
   return Result.pipe(
-    Result.succeed({
-      ignoredRelativePaths: ignoredRelativePaths,
-      manifestPath: manifestPath,
-      outputPath: outputPath,
-      sourceDirectory: sourceDirectory
-    }),
+    Result.succeed(item),
+    Result.andThen(
+      (v): Result.Result<ResolvedComposeInput, ResolveComposeInputError> =>
+        resolveComposeInput({ argv: v.argv })
+    ),
     Result.andThrough(v =>
       validateSourceDirectory({ sourceDirectory: v.sourceDirectory })
     ),

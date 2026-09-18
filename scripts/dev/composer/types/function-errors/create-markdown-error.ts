@@ -1,3 +1,3 @@
-import type { CreateMarkdownSectionError } from './create-markdown-section-error';
+import type { ReadTextFileError } from './read-text-file-error';
 
-export type CreateMarkdownError = CreateMarkdownSectionError;
+export type CreateMarkdownError = ReadTextFileError;
