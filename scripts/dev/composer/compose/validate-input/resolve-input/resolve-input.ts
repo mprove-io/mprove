@@ -1,7 +1,10 @@
 import { resolve } from 'node:path';
+import { Result } from '@praha/byethrow';
 import type { ComposeInput } from '../../../types/compose-input';
 
-export function resolveInput(item: { argv: string[] }): ComposeInput {
+export function resolveInput(item: {
+  argv: string[];
+}): Result.Result<ComposeInput, never> {
   let { argv } = item;
 
   let composeInput: ComposeInput = {
@@ -10,5 +13,5 @@ export function resolveInput(item: { argv: string[] }): ComposeInput {
     outputPath: resolve(process.cwd(), argv[2])
   };
 
-  return composeInput;
+  return Result.succeed(composeInput);
 }

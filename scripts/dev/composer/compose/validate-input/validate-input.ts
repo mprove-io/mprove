@@ -17,7 +17,9 @@ export function validateInput(item: {
   return Result.pipe(
     Result.succeed(item),
     Result.andThrough(v => validateArgumentCount({ argv: v.argv })),
-    Result.map((v): ComposeInput => resolveInput({ argv: v.argv })),
+    Result.andThen(
+      (v): Result.Result<ComposeInput, never> => resolveInput({ argv: v.argv })
+    ),
     Result.andThrough(v =>
       validateManifestOutputPathConflict({
         manifestPath: v.manifestPath,
