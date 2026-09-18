@@ -5,7 +5,7 @@ import type { ValidateDirectorySectionFilesError } from '../../types/function-er
 import { getMissingDirectorySectionFilePaths } from './get-missing-directory-section-file-paths/get-missing-directory-section-file-paths';
 
 export function validateDirectorySectionFiles(item: {
-  sourceDirectory: string;
+  contentDirectory: string;
 }): Result.Result<void, ValidateDirectorySectionFilesError> {
   return Result.pipe(
     Result.succeed(item),
@@ -13,22 +13,18 @@ export function validateDirectorySectionFiles(item: {
       'missingSectionFilePaths',
       (v): Result.Result<string[], GetMissingDirectorySectionFilePathsError> =>
         getMissingDirectorySectionFilePaths({
-          sourceDirectory: v.sourceDirectory
+          contentDirectory: v.contentDirectory
         })
     ),
     Result.andThen(
-      (v): Result.Result<void, ComposerDirectorySectionFileMissingError> => {
-        let hasMissingSectionFile: boolean =
-          v.missingSectionFilePaths.length > 0;
-
-        return hasMissingSectionFile
+      (v): Result.Result<void, ComposerDirectorySectionFileMissingError> =>
+        v.missingSectionFilePaths.length > 0
           ? Result.fail({
               code: 'COMPOSER_DIRECTORY_SECTION_FILE_MISSING',
               message: `Directory requires section file ${v.missingSectionFilePaths[0]}`,
               path: v.missingSectionFilePaths[0]
             })
-          : Result.succeed();
-      }
+          : Result.succeed()
     )
   );
 }

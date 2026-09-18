@@ -10,8 +10,8 @@ import {
   type ResolvedComposeInput,
   resolveComposeInput
 } from './resolve-compose-input/resolve-compose-input';
+import { validateContentDirectory } from './validate-content-directory/validate-content-directory';
 import { validateDirectorySectionFiles } from './validate-directory-section-files/validate-directory-section-files';
-import { validateSourceDirectory } from './validate-source-directory/validate-source-directory';
 import { writeOutput } from './write-output/write-output';
 
 export function compose(item: {
@@ -24,26 +24,25 @@ export function compose(item: {
         resolveComposeInput({ argv: v.argv })
     ),
     Result.andThrough(v =>
-      validateSourceDirectory({ sourceDirectory: v.sourceDirectory })
+      validateContentDirectory({ contentDirectory: v.contentDirectory })
     ),
     Result.andThrough(v =>
-      validateDirectorySectionFiles({ sourceDirectory: v.sourceDirectory })
+      validateDirectorySectionFiles({ contentDirectory: v.contentDirectory })
     ),
     Result.bind(
       'manifest',
       (v): Result.Result<Manifest, LoadManifestError> =>
         loadManifest({
-          ignoredRelativePaths: v.ignoredRelativePaths,
-          manifestPath: v.manifestPath,
-          sourceDirectory: v.sourceDirectory
+          contentDirectory: v.contentDirectory,
+          manifestPath: v.manifestPath
         })
     ),
     Result.bind(
       'markdown',
       (v): Result.Result<string, CreateMarkdownError> =>
         createMarkdown({
-          manifest: v.manifest,
-          sourceDirectory: v.sourceDirectory
+          contentDirectory: v.contentDirectory,
+          manifest: v.manifest
         })
     ),
     Result.andThrough(v =>

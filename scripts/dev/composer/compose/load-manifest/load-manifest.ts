@@ -14,9 +14,8 @@ import { validateManifestPaths } from './validate-manifest-paths/validate-manife
 import { validateMarkdownTitles } from './validate-markdown-titles/validate-markdown-titles';
 
 export function loadManifest(item: {
-  ignoredRelativePaths: string[];
+  contentDirectory: string;
   manifestPath: string;
-  sourceDirectory: string;
 }): Result.Result<Manifest, LoadManifestError> {
   return Result.pipe(
     Result.succeed(item),
@@ -36,12 +35,11 @@ export function loadManifest(item: {
     Result.bind(
       'markdownPaths',
       (v): Result.Result<string[], GetMarkdownFilePathsError> =>
-        getMarkdownFilePaths({ sourceDirectory: v.sourceDirectory })
+        getMarkdownFilePaths({ contentDirectory: v.contentDirectory })
     ),
     Result.andThrough(
       (v): Result.Result<void, ValidateManifestPathsError> =>
         validateManifestPaths({
-          ignoredRelativePaths: v.ignoredRelativePaths,
           manifestRelativePaths: v.manifest.relativePaths,
           markdownPaths: v.markdownPaths
         })
@@ -50,7 +48,7 @@ export function loadManifest(item: {
       'markdownContents',
       (v): Result.Result<string[], ReadTextFileError> =>
         Result.sequence(v.manifest.relativePaths, relativePath => {
-          let filePath: string = resolve(v.sourceDirectory, relativePath);
+          let filePath: string = resolve(v.contentDirectory, relativePath);
 
           return readTextFile({ filePath: filePath });
         })
@@ -58,9 +56,9 @@ export function loadManifest(item: {
     Result.andThrough(
       (v): Result.Result<void, ValidateMarkdownTitlesError> =>
         validateMarkdownTitles({
+          contentDirectory: v.contentDirectory,
           contents: v.markdownContents,
-          relativePaths: v.manifest.relativePaths,
-          sourceDirectory: v.sourceDirectory
+          relativePaths: v.manifest.relativePaths
         })
     ),
     Result.map((v): Manifest => v.manifest)

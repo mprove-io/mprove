@@ -11,18 +11,18 @@ type PendingPath = {
 };
 
 export function getMarkdownFilePaths(item: {
-  sourceDirectory: string;
+  contentDirectory: string;
 }): Result.Result<string[], GetMarkdownFilePathsError> {
-  let { sourceDirectory } = item;
+  let { contentDirectory } = item;
 
-  let scannedDirectoryPath: string = sourceDirectory;
+  let scannedDirectoryPath: string = contentDirectory;
 
   let result: Result.Result<string[], GetMarkdownFilePathsError> = Result.try({
     try: (): string[] => {
       let pendingPaths: PendingPath[] = [
         {
           type: 'directory',
-          absolutePath: sourceDirectory,
+          absolutePath: contentDirectory,
           relativePath: ''
         }
       ];

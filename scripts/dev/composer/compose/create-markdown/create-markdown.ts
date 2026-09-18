@@ -7,8 +7,8 @@ import type { Manifest } from '../../types/manifest';
 import { adjustMarkdownHeadings } from './adjust-markdown-headings/adjust-markdown-headings';
 
 export function createMarkdown(item: {
+  contentDirectory: string;
   manifest: Manifest;
-  sourceDirectory: string;
 }): Result.Result<string, CreateMarkdownError> {
   return Result.pipe(
     Result.succeed(item),
@@ -16,7 +16,7 @@ export function createMarkdown(item: {
       'contents',
       (v): Result.Result<string[], ReadTextFileError> =>
         Result.sequence(v.manifest.relativePaths, relativePath => {
-          let filePath: string = resolve(v.sourceDirectory, relativePath);
+          let filePath: string = resolve(v.contentDirectory, relativePath);
 
           let contentResult: Result.Result<string, ReadTextFileError> =
             readTextFile({ filePath: filePath });

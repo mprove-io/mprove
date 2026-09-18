@@ -3,16 +3,16 @@ import { Result } from '@praha/byethrow';
 import type { ValidateMarkdownTitlesError } from '../../../types/function-errors/validate-markdown-titles-error';
 
 export function validateMarkdownTitles(item: {
+  contentDirectory: string;
   contents: string[];
   relativePaths: string[];
-  sourceDirectory: string;
 }): Result.Result<void, ValidateMarkdownTitlesError> {
-  let { contents, relativePaths, sourceDirectory } = item;
+  let { contentDirectory, contents, relativePaths } = item;
 
   for (let i = 0; i < relativePaths.length; i++) {
     let relativePath: string = relativePaths[i];
 
-    let filePath: string = resolve(sourceDirectory, relativePath);
+    let filePath: string = resolve(contentDirectory, relativePath);
 
     let actualFileName: string = posix.basename(relativePath);
 

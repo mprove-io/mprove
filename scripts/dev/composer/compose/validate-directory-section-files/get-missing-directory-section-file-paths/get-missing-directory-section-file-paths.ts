@@ -5,18 +5,18 @@ import type { ComposerDirectorySectionScanFailedError } from '../../../types/err
 import type { GetMissingDirectorySectionFilePathsError } from '../../../types/function-errors/get-missing-directory-section-file-paths-error';
 
 export function getMissingDirectorySectionFilePaths(item: {
-  sourceDirectory: string;
+  contentDirectory: string;
 }): Result.Result<string[], GetMissingDirectorySectionFilePathsError> {
-  let { sourceDirectory } = item;
+  let { contentDirectory } = item;
 
-  let scannedDirectoryPath: string = sourceDirectory;
+  let scannedDirectoryPath: string = contentDirectory;
 
   let result: Result.Result<
     string[],
     GetMissingDirectorySectionFilePathsError
   > = Result.try({
     try: (): string[] => {
-      let pendingDirectoryPaths: string[] = [sourceDirectory];
+      let pendingDirectoryPaths: string[] = [contentDirectory];
 
       let missingSectionFilePaths: string[] = [];
 
