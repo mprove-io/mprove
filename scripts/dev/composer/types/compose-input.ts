@@ -1,4 +1,4 @@
-export type ResolvedComposeInput = {
+export type ComposeInput = {
   contentDirectory: string;
   manifestPath: string;
   outputPath: string;

@@ -1,12 +1,12 @@
 import type { Stats } from 'node:fs';
 import { Result } from '@praha/byethrow';
+import type { ComposeInput } from '../../types/compose-input';
 import type { GetContentStatsError } from '../../types/function-errors/get-content-stats-error';
 import type { GetMissingDirectorySectionFilePathsError } from '../../types/function-errors/get-missing-directory-section-file-paths-error';
 import type { ValidateInputError } from '../../types/function-errors/validate-input-error';
-import type { ResolvedComposeInput } from '../../types/resolved-compose-input';
 import { getContentStats } from './get-content-stats/get-content-stats';
 import { getMissingDirectorySectionFilePaths } from './get-missing-directory-section-file-paths/get-missing-directory-section-file-paths';
-import { resolveComposePaths } from './resolve-compose-paths/resolve-compose-paths';
+import { resolveInput } from './resolve-input/resolve-input';
 import { validateArgumentCount } from './validate-argument-count/validate-argument-count';
 import { validateContentPathIsDirectory } from './validate-content-path-is-directory/validate-content-path-is-directory';
 import { validateDirectorySectionFilesExist } from './validate-directory-section-files-exist/validate-directory-section-files-exist';
@@ -16,13 +16,11 @@ import { validateOutputPathOutsideContentDirectory } from './validate-output-pat
 
 export function validateInput(item: {
   argv: string[];
-}): Result.Result<ResolvedComposeInput, ValidateInputError> {
+}): Result.Result<ComposeInput, ValidateInputError> {
   return Result.pipe(
     Result.succeed(item),
     Result.andThrough(v => validateArgumentCount({ argv: v.argv })),
-    Result.map(
-      (v): ResolvedComposeInput => resolveComposePaths({ argv: v.argv })
-    ),
+    Result.map((v): ComposeInput => resolveInput({ argv: v.argv })),
     Result.andThrough(v =>
       validateManifestOutputPathConflict({
         manifestPath: v.manifestPath,
@@ -65,7 +63,7 @@ export function validateInput(item: {
       })
     ),
     Result.map(
-      (v): ResolvedComposeInput => ({
+      (v): ComposeInput => ({
         contentDirectory: v.contentDirectory,
         manifestPath: v.manifestPath,
         outputPath: v.outputPath
