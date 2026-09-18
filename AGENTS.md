@@ -477,24 +477,42 @@ In every member of a discriminated union, declare the discriminator property
 first. In corresponding object literals, also place the discriminator property
 first.
 
-## No calls in conditions
+## Condition expressions
 
-Do not call functions or methods inside `if` conditions. Extract the result to a
-variable first.
+Inline a boolean expression in a condition when a variable would only store the
+expression for that single condition. This includes function and method calls
+that return a boolean.
 
-These existing functions can be called in conditions:
+When a function or method call returns a non-boolean value, assign its result to
+an explicitly typed variable before evaluating that value in a condition.
 
-- isDefined
-- isDefinedAndNotEmpty
-- isUndefiend
-- isUndefinedOrEmpty
+Start boolean variable names with `is`. In particular, use `isOutputInParent`,
+not `outputIsInParent`.
 
 ```ts
-// correct
-let member = this.membersService.getMember(memberId);
+// correct: single-use boolean expression
+if (manifestPath === outputPath) {
+
+// correct: call returns a boolean
+if (isDefined(member)) {
+
+// correct: call returns a non-boolean value
+let member: unknown = this.membersService.getMember(memberId);
+
 if (!member) {
 
-// wrong
+// wrong: unnecessary single-use boolean variable
+let pathsConflict: boolean = manifestPath === outputPath;
+
+if (pathsConflict) {
+
+// correct: boolean variable starts with is
+let isOutputInParent: boolean = relativeOutputPath === '..';
+
+// wrong: is is in the middle
+let outputIsInParent: boolean = relativeOutputPath === '..';
+
+// wrong: call returns a non-boolean value
 if (!this.membersService.getMember(memberId)) {
 ```
 

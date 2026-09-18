@@ -35,7 +35,7 @@ rules/local-object-projections.md
 rules/empty-lines-between-statements.md
 rules/optional-typescript-properties.md
 rules/discriminator-property-should-be-first.md
-rules/no-calls-in-conditions.md
+rules/condition-expressions.md
 rules/maintain-function-folder-call-trees.md
 
 byethrow-rules.md

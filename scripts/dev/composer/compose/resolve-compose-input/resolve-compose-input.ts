@@ -16,57 +16,68 @@ export type ResolvedComposeInput = {
   sourceDirectory: string;
 };
 
+type ResolvedPaths = {
+  manifestPath: string;
+  outputPath: string;
+};
+
 export function resolveComposeInput(item: {
   argv: string[];
 }): Result.Result<ResolvedComposeInput, ResolveComposeInputError> {
-  let { argv } = item;
+  return Result.pipe(
+    Result.succeed(item),
+    Result.andThrough(v => {
+      if (v.argv.length !== 2) {
+        return Result.fail({
+          code: 'COMPOSER_ARGUMENT_COUNT_INVALID',
+          message: 'Usage: pnpm composer <manifest-path> <output-file>'
+        });
+      }
 
-  if (argv.length !== 2) {
-    return Result.fail({
-      code: 'COMPOSER_ARGUMENT_COUNT_INVALID',
-      message: 'Usage: pnpm composer <manifest-path> <output-file>'
-    });
-  }
+      return Result.succeed();
+    }),
+    Result.map(
+      (v): ResolvedPaths => ({
+        manifestPath: resolve(process.cwd(), v.argv[0]),
+        outputPath: resolve(process.cwd(), v.argv[1])
+      })
+    ),
+    Result.andThrough(v => {
+      if (v.manifestPath === v.outputPath) {
+        return Result.fail({
+          code: 'COMPOSER_MANIFEST_OUTPUT_PATH_CONFLICT',
+          message: 'The manifest and output paths must be different'
+        });
+      }
 
-  let manifestPath: string = resolve(process.cwd(), argv[0]);
+      return Result.succeed();
+    }),
+    Result.map((v): ResolvedComposeInput => {
+      let sourceDirectory: string = dirname(v.manifestPath);
 
-  let outputPath: string = resolve(process.cwd(), argv[1]);
+      let ignoredRelativePaths: string[] = [basename(v.manifestPath)];
 
-  if (manifestPath === outputPath) {
-    return Result.fail({
-      code: 'COMPOSER_MANIFEST_OUTPUT_PATH_CONFLICT',
-      message: 'The manifest and output paths must be different'
-    });
-  }
+      let relativeOutputPath: string = relative(sourceDirectory, v.outputPath);
 
-  let sourceDirectory: string = dirname(manifestPath);
+      if (
+        relativeOutputPath.length > 0 &&
+        relativeOutputPath !== '..' &&
+        !relativeOutputPath.startsWith(`..${sep}`) &&
+        !isAbsolute(relativeOutputPath)
+      ) {
+        let normalizedRelativeOutputPath: string = relativeOutputPath
+          .split(sep)
+          .join('/');
 
-  let ignoredRelativePaths: string[] = [basename(manifestPath)];
+        ignoredRelativePaths.push(normalizedRelativeOutputPath);
+      }
 
-  let relativeOutputPath: string = relative(sourceDirectory, outputPath);
-
-  let outputIsInParent: boolean =
-    relativeOutputPath === '..' || relativeOutputPath.startsWith(`..${sep}`);
-
-  let outputIsAbsolute: boolean = isAbsolute(relativeOutputPath);
-
-  let outputIsInSource: boolean =
-    relativeOutputPath.length > 0 && !outputIsInParent && !outputIsAbsolute;
-
-  if (outputIsInSource) {
-    let normalizedRelativeOutputPath: string = relativeOutputPath
-      .split(sep)
-      .join('/');
-
-    ignoredRelativePaths.push(normalizedRelativeOutputPath);
-  }
-
-  let resolvedComposeInput: ResolvedComposeInput = {
-    ignoredRelativePaths: ignoredRelativePaths,
-    manifestPath: manifestPath,
-    outputPath: outputPath,
-    sourceDirectory: sourceDirectory
-  };
-
-  return Result.succeed(resolvedComposeInput);
+      return {
+        ignoredRelativePaths: ignoredRelativePaths,
+        manifestPath: v.manifestPath,
+        outputPath: v.outputPath,
+        sourceDirectory: sourceDirectory
+      };
+    })
+  );
 }
