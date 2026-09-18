@@ -17,8 +17,8 @@ When asked to add or change a rule or section in `AGENTS.md`:
 - Start every source file with an H1 whose slug matches the filename
   case-insensitively. Hyphens in the filename may be replaced with spaces in the
   H1.
-- List every Markdown source file exactly once in `.composer/COMPOSER.md`. The
-  manifest order controls output order, and directory depth controls heading
-  depth.
+- List every Markdown source file exactly once in `.composer/COMPOSER.md`, with
+  one path per line. The manifest order controls output order, and directory
+  depth controls heading depth.
 - Run `pnpm composer .composer/COMPOSER.md .composer/content AGENTS.md` to
   regenerate `AGENTS.md`.

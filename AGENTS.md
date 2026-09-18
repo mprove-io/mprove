@@ -17,9 +17,9 @@ When asked to add or change a rule or section in `AGENTS.md`:
 - Start every source file with an H1 whose slug matches the filename
   case-insensitively. Hyphens in the filename may be replaced with spaces in the
   H1.
-- List every Markdown source file exactly once in `.composer/COMPOSER.md`. The
-  manifest order controls output order, and directory depth controls heading
-  depth.
+- List every Markdown source file exactly once in `.composer/COMPOSER.md`, with
+  one path per line. The manifest order controls output order, and directory
+  depth controls heading depth.
 - Run `pnpm composer .composer/COMPOSER.md .composer/content AGENTS.md` to
   regenerate `AGENTS.md`.
 
@@ -731,6 +731,7 @@ Apply this rule to the specific function named by the user.
   in `<function-name>/<function-name>.ts`.
 - When moving a function, move its `tests/` directory or `.spec.ts` file with
   it.
+- Remove any empty directories left behind after moving files.
 - Apply the same process recursively to every moved function.
 - Keep functions with multiple non-test callers outside the single-caller tree.
   Use an appropriate shared `functions/` location in the app, `node-common`, or

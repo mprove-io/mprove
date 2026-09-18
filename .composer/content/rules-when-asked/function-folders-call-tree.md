@@ -13,6 +13,7 @@ Apply this rule to the specific function named by the user.
   in `<function-name>/<function-name>.ts`.
 - When moving a function, move its `tests/` directory or `.spec.ts` file with
   it.
+- Remove any empty directories left behind after moving files.
 - Apply the same process recursively to every moved function.
 - Keep functions with multiple non-test callers outside the single-caller tree.
   Use an appropriate shared `functions/` location in the app, `node-common`, or
