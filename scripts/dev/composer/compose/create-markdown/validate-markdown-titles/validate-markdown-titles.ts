@@ -18,9 +18,9 @@ export function validateMarkdownTitles(item: {
 
     let fileNameStem: string = posix.basename(relativePath, '.md');
 
-    let fileNameIsValid: boolean = /^[a-z0-9-]+$/u.test(fileNameStem);
+    let isFileNameValid: boolean = /^[a-z0-9-]+$/u.test(fileNameStem);
 
-    if (!fileNameIsValid) {
+    if (!isFileNameValid) {
       return Result.fail({
         code: 'COMPOSER_SOURCE_FILE_NAME_INVALID',
         message: `${filePath} filename may contain only lowercase a-z, 0-9, and hyphens`,
@@ -32,9 +32,9 @@ export function validateMarkdownTitles(item: {
 
     let firstLine: string = lines[0] ?? '';
 
-    let firstLineIsH1: boolean = /^# [^#].*$/u.test(firstLine);
+    let isFirstLineH1: boolean = /^# [^#].*$/u.test(firstLine);
 
-    let title: string = firstLineIsH1 ? firstLine.slice(2).trim() : '';
+    let title: string = isFirstLineH1 ? firstLine.slice(2).trim() : '';
 
     let titleSlug: string = title
       .trim()
@@ -46,10 +46,10 @@ export function validateMarkdownTitles(item: {
 
     let normalizedActualFileName: string = actualFileName.toLowerCase();
 
-    let titleMatchesFileName: boolean =
+    let isTitleMatchingFileName: boolean =
       title.length > 0 && normalizedActualFileName === expectedFileName;
 
-    if (!titleMatchesFileName) {
+    if (!isTitleMatchingFileName) {
       return Result.fail({
         code: 'COMPOSER_MARKDOWN_TITLE_MISMATCH',
         message: `${filePath} first H1 must match filename ${actualFileName}`,

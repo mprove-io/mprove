@@ -1,17 +1,18 @@
-import { resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
 import { readTextFile } from '../../shared/read-text-file/read-text-file';
-import type { GetMarkdownFilePathsError } from '../../types/function-errors/get-markdown-file-paths-error';
+import type { ContentPaths } from '../../types/content-paths';
+import type { GetContentPathsError } from '../../types/function-errors/get-content-paths-error';
 import type { LoadManifestError } from '../../types/function-errors/load-manifest-error';
 import type { ParseManifestError } from '../../types/function-errors/parse-manifest-error';
 import type { ReadTextFileError } from '../../types/function-errors/read-text-file-error';
-import type { ValidateManifestPathsError } from '../../types/function-errors/validate-manifest-paths-error';
-import type { ValidateMarkdownTitlesError } from '../../types/function-errors/validate-markdown-titles-error';
+import type { ValidateManifestFilesExistError } from '../../types/function-errors/validate-manifest-files-exist-error';
+import type { ValidateMarkdownFilesReferencedError } from '../../types/function-errors/validate-markdown-files-referenced-error';
 import type { Manifest } from '../../types/manifest';
-import { getMarkdownFilePaths } from './get-markdown-file-paths/get-markdown-file-paths';
+import { getContentPaths } from './get-content-paths/get-content-paths';
 import { parseManifest } from './parse-manifest/parse-manifest';
-import { validateManifestPaths } from './validate-manifest-paths/validate-manifest-paths';
-import { validateMarkdownTitles } from './validate-markdown-titles/validate-markdown-titles';
+import { validateDirectorySectionFilesExist } from './validate-directory-section-files-exist/validate-directory-section-files-exist';
+import { validateManifestFilesExist } from './validate-manifest-files-exist/validate-manifest-files-exist';
+import { validateMarkdownFilesReferenced } from './validate-markdown-files-referenced/validate-markdown-files-referenced';
 
 export function loadManifest(item: {
   contentDirectory: string;
@@ -33,32 +34,29 @@ export function loadManifest(item: {
         })
     ),
     Result.bind(
-      'markdownPaths',
-      (v): Result.Result<string[], GetMarkdownFilePathsError> =>
-        getMarkdownFilePaths({ contentDirectory: v.contentDirectory })
+      'contentPaths',
+      (v): Result.Result<ContentPaths, GetContentPathsError> =>
+        getContentPaths({ contentDirectory: v.contentDirectory })
+    ),
+    Result.andThrough(v =>
+      validateDirectorySectionFilesExist({
+        contentDirectory: v.contentDirectory,
+        directoryRelativePaths: v.contentPaths.directoryRelativePaths,
+        markdownRelativePaths: v.contentPaths.markdownRelativePaths
+      })
     ),
     Result.andThrough(
-      (v): Result.Result<void, ValidateManifestPathsError> =>
-        validateManifestPaths({
+      (v): Result.Result<void, ValidateManifestFilesExistError> =>
+        validateManifestFilesExist({
           manifestRelativePaths: v.manifest.relativePaths,
-          markdownPaths: v.markdownPaths
-        })
-    ),
-    Result.bind(
-      'markdownContents',
-      (v): Result.Result<string[], ReadTextFileError> =>
-        Result.sequence(v.manifest.relativePaths, relativePath => {
-          let filePath: string = resolve(v.contentDirectory, relativePath);
-
-          return readTextFile({ filePath: filePath });
+          markdownRelativePaths: v.contentPaths.markdownRelativePaths
         })
     ),
     Result.andThrough(
-      (v): Result.Result<void, ValidateMarkdownTitlesError> =>
-        validateMarkdownTitles({
-          contentDirectory: v.contentDirectory,
-          contents: v.markdownContents,
-          relativePaths: v.manifest.relativePaths
+      (v): Result.Result<void, ValidateMarkdownFilesReferencedError> =>
+        validateMarkdownFilesReferenced({
+          manifestRelativePaths: v.manifest.relativePaths,
+          markdownRelativePaths: v.contentPaths.markdownRelativePaths
         })
     ),
     Result.map((v): Manifest => v.manifest)

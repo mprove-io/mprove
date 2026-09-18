@@ -1,8 +1,9 @@
 import { type Dirent, readdirSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
+import type { ContentPaths } from '../../../types/content-paths';
 import type { ComposerMarkdownFileScanFailedError } from '../../../types/errors/composer-markdown-file-scan-failed-error';
-import type { GetMarkdownFilePathsError } from '../../../types/function-errors/get-markdown-file-paths-error';
+import type { GetContentPathsError } from '../../../types/function-errors/get-content-paths-error';
 
 type PendingPath = {
   type: 'directory' | 'file';
@@ -10,15 +11,15 @@ type PendingPath = {
   relativePath: string;
 };
 
-export function getMarkdownFilePaths(item: {
+export function getContentPaths(item: {
   contentDirectory: string;
-}): Result.Result<string[], GetMarkdownFilePathsError> {
+}): Result.Result<ContentPaths, GetContentPathsError> {
   let { contentDirectory } = item;
 
   let scannedDirectoryPath: string = contentDirectory;
 
-  let result: Result.Result<string[], GetMarkdownFilePathsError> = Result.try({
-    try: (): string[] => {
+  let result: Result.Result<ContentPaths, GetContentPathsError> = Result.try({
+    try: (): ContentPaths => {
       let pendingPaths: PendingPath[] = [
         {
           type: 'directory',
@@ -27,23 +28,26 @@ export function getMarkdownFilePaths(item: {
         }
       ];
 
-      let markdownFilePaths: string[] = [];
+      let directoryRelativePaths: string[] = [];
+
+      let markdownRelativePaths: string[] = [];
 
       while (pendingPaths.length > 0) {
         let pendingPath: PendingPath = pendingPaths.pop();
 
         if (pendingPath.type === 'file') {
-          let isMarkdownFile: boolean =
-            posix.extname(pendingPath.relativePath) === '.md';
-
-          if (isMarkdownFile) {
-            markdownFilePaths.push(pendingPath.relativePath);
+          if (posix.extname(pendingPath.relativePath) === '.md') {
+            markdownRelativePaths.push(pendingPath.relativePath);
           }
 
           continue;
         }
 
         scannedDirectoryPath = pendingPath.absolutePath;
+
+        if (pendingPath.relativePath) {
+          directoryRelativePaths.push(pendingPath.relativePath);
+        }
 
         let entries: Dirent[] = readdirSync(pendingPath.absolutePath, {
           withFileTypes: true
@@ -74,7 +78,10 @@ export function getMarkdownFilePaths(item: {
         }
       }
 
-      return markdownFilePaths;
+      return {
+        directoryRelativePaths: directoryRelativePaths,
+        markdownRelativePaths: markdownRelativePaths
+      };
     },
     catch: (error: unknown): ComposerMarkdownFileScanFailedError => ({
       code: 'COMPOSER_MARKDOWN_FILE_SCAN_FAILED',

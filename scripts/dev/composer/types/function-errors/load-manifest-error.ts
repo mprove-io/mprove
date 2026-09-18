@@ -1,12 +1,14 @@
-import type { GetMarkdownFilePathsError } from './get-markdown-file-paths-error';
+import type { GetContentPathsError } from './get-content-paths-error';
 import type { ParseManifestError } from './parse-manifest-error';
 import type { ReadTextFileError } from './read-text-file-error';
-import type { ValidateManifestPathsError } from './validate-manifest-paths-error';
-import type { ValidateMarkdownTitlesError } from './validate-markdown-titles-error';
+import type { ValidateDirectorySectionFilesExistError } from './validate-directory-section-files-exist-error';
+import type { ValidateManifestFilesExistError } from './validate-manifest-files-exist-error';
+import type { ValidateMarkdownFilesReferencedError } from './validate-markdown-files-referenced-error';
 
 export type LoadManifestError =
   | ReadTextFileError
   | ParseManifestError
-  | GetMarkdownFilePathsError
-  | ValidateManifestPathsError
-  | ValidateMarkdownTitlesError;
+  | GetContentPathsError
+  | ValidateDirectorySectionFilesExistError
+  | ValidateManifestFilesExistError
+  | ValidateMarkdownFilesReferencedError;

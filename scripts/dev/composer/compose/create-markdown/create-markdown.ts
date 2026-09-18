@@ -5,6 +5,7 @@ import type { CreateMarkdownError } from '../../types/function-errors/create-mar
 import type { ReadTextFileError } from '../../types/function-errors/read-text-file-error';
 import type { Manifest } from '../../types/manifest';
 import { adjustMarkdownHeadings } from './adjust-markdown-headings/adjust-markdown-headings';
+import { validateMarkdownTitles } from './validate-markdown-titles/validate-markdown-titles';
 
 export function createMarkdown(item: {
   contentDirectory: string;
@@ -23,6 +24,13 @@ export function createMarkdown(item: {
 
           return contentResult;
         })
+    ),
+    Result.andThrough(v =>
+      validateMarkdownTitles({
+        contentDirectory: v.contentDirectory,
+        contents: v.contents,
+        relativePaths: v.manifest.relativePaths
+      })
     ),
     Result.map((v): string => {
       let sections: string[] = v.contents.map((content, index) => {
