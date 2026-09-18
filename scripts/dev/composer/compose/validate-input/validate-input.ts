@@ -7,7 +7,6 @@ import type { ResolvedComposeInput } from '../../types/resolved-compose-input';
 import { getContentStats } from './get-content-stats/get-content-stats';
 import { getMissingDirectorySectionFilePaths } from './get-missing-directory-section-file-paths/get-missing-directory-section-file-paths';
 import { resolveComposePaths } from './resolve-compose-paths/resolve-compose-paths';
-import { toResolvedComposeInput } from './to-resolved-compose-input/to-resolved-compose-input';
 import { validateArgumentCount } from './validate-argument-count/validate-argument-count';
 import { validateContentPathIsDirectory } from './validate-content-path-is-directory/validate-content-path-is-directory';
 import { validateDirectorySectionFilesExist } from './validate-directory-section-files-exist/validate-directory-section-files-exist';
@@ -66,12 +65,11 @@ export function validateInput(item: {
       })
     ),
     Result.map(
-      (v): ResolvedComposeInput =>
-        toResolvedComposeInput({
-          contentDirectory: v.contentDirectory,
-          manifestPath: v.manifestPath,
-          outputPath: v.outputPath
-        })
+      (v): ResolvedComposeInput => ({
+        contentDirectory: v.contentDirectory,
+        manifestPath: v.manifestPath,
+        outputPath: v.outputPath
+      })
     )
   );
 }

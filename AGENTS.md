@@ -566,6 +566,9 @@ Result.bind(
 Callbacks passed to `Result.map` must declare an explicit success-value return
 type.
 
+Keep a one-off final projection inline in the `Result.map` callback. Do not
+extract it into a named function used only by that final projection.
+
 ```ts
 Result.map(
   (v): SomeType => ({
