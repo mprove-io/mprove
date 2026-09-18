@@ -1,5 +1,3 @@
-import { Result } from '@praha/byethrow';
-
 export type MarkdownAdjustmentState = {
   openFenceCharacter: string;
   openFenceLength: number;
@@ -9,7 +7,7 @@ export function adjustMarkdownLine(item: {
   line: string;
   nestingLevel: number;
   state: MarkdownAdjustmentState;
-}): Result.Result<string, never> {
+}): string {
   let { line, nestingLevel, state } = item;
 
   let indentationLength: number = 0;
@@ -64,7 +62,7 @@ export function adjustMarkdownLine(item: {
       state.openFenceLength = 0;
     }
 
-    return Result.succeed(line);
+    return line;
   }
 
   if (isBeginningFence) {
@@ -72,7 +70,7 @@ export function adjustMarkdownLine(item: {
 
     state.openFenceLength = fenceLength;
 
-    return Result.succeed(line);
+    return line;
   }
 
   let headingMatch: RegExpMatchArray | null =
@@ -96,8 +94,8 @@ export function adjustMarkdownLine(item: {
 
     let adjustedLine: string = `${headingIndentation}${adjustedHeadingPrefix}${headingContent}`;
 
-    return Result.succeed(adjustedLine);
+    return adjustedLine;
   }
 
-  return Result.succeed(line);
+  return line;
 }

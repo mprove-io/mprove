@@ -1,6 +1,6 @@
 import { posix, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ValidateMarkdownTitlesError } from '../../types/function-errors/validate-markdown-titles-error';
+import type { ValidateMarkdownTitlesError } from '../../../types/function-errors/validate-markdown-titles-error';
 
 export function validateMarkdownTitles(item: {
   contentDirectory: string;

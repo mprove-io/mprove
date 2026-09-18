@@ -1,4 +1,3 @@
-import { Result } from '@praha/byethrow';
 import test from 'ava';
 import {
   adjustMarkdownLine,
@@ -22,23 +21,20 @@ test('adjusts ATX headings while preserving fenced and Setext content', t => {
     openFenceLength: 0
   };
 
-  let result: Result.Result<string[], never> = Result.sequence(lines, line =>
+  let adjustedLines: string[] = lines.map(line =>
     adjustMarkdownLine({ line: line, nestingLevel: 1, state: state })
   );
 
-  t.deepEqual(result, {
-    type: 'Success',
-    value: [
-      '## Top',
-      '',
-      '```md',
-      '# Code heading',
-      '```',
-      '',
-      'Nested title',
-      '------------'
-    ]
-  });
+  t.deepEqual(adjustedLines, [
+    '## Top',
+    '',
+    '```md',
+    '# Code heading',
+    '```',
+    '',
+    'Nested title',
+    '------------'
+  ]);
 });
 
 test('preserves Setext headings at nested levels', t => {
@@ -49,12 +45,9 @@ test('preserves Setext headings at nested levels', t => {
     openFenceLength: 0
   };
 
-  let result: Result.Result<string[], never> = Result.sequence(lines, line =>
+  let adjustedLines: string[] = lines.map(line =>
     adjustMarkdownLine({ line: line, nestingLevel: 2, state: state })
   );
 
-  t.deepEqual(result, {
-    type: 'Success',
-    value: lines
-  });
+  t.deepEqual(adjustedLines, lines);
 });
