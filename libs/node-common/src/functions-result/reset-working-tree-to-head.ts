@@ -29,7 +29,7 @@ export function resetWorkingTreeToHead(item: {
       await v.git.reset(['--hard', 'HEAD']);
       return Result.succeed();
     }),
-    Result.andThen(v =>
+    Result.andThrough(v =>
       Result.sequence(v.untrackedPaths, (untrackedPath: string) =>
         removePathUnderDir({
           fullPath: path.resolve(v.repoDir, untrackedPath),
