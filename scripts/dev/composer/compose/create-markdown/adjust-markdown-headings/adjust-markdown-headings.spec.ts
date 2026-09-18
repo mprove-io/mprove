@@ -1,5 +1,5 @@
 import test from 'ava';
-import { adjustMarkdownHeadings } from '../adjust-markdown-headings';
+import { adjustMarkdownHeadings } from './adjust-markdown-headings';
 
 test('adjusts ATX and Setext headings while preserving fenced content', t => {
   let content: string = [

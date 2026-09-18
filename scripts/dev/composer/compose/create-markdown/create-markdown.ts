@@ -1,10 +1,10 @@
 import { resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import { readTextFile } from '../shared/read-text-file/read-text-file';
-import type { CreateMarkdownError } from '../types/function-errors/create-markdown-error';
-import type { ReadTextFileError } from '../types/function-errors/read-text-file-error';
-import type { Manifest } from '../types/manifest';
-import { adjustMarkdownHeadings } from './002-adjust-markdown-headings/adjust-markdown-headings';
+import { readTextFile } from '../../shared/read-text-file/read-text-file';
+import type { CreateMarkdownError } from '../../types/function-errors/create-markdown-error';
+import type { ReadTextFileError } from '../../types/function-errors/read-text-file-error';
+import type { Manifest } from '../../types/manifest';
+import { adjustMarkdownHeadings } from './adjust-markdown-headings/adjust-markdown-headings';
 
 export function createMarkdown(item: {
   manifest: Manifest;

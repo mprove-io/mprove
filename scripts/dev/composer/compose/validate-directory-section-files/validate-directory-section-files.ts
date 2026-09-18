@@ -1,8 +1,8 @@
 import { Result } from '@praha/byethrow';
-import type { ComposerDirectorySectionFileMissingError } from '../types/errors/composer-directory-section-file-missing-error';
-import type { GetMissingDirectorySectionFilePathsError } from '../types/function-errors/get-missing-directory-section-file-paths-error';
-import type { ValidateDirectorySectionFilesError } from '../types/function-errors/validate-directory-section-files-error';
-import { getMissingDirectorySectionFilePaths } from './001-get-missing-directory-section-file-paths/get-missing-directory-section-file-paths';
+import type { ComposerDirectorySectionFileMissingError } from '../../types/errors/composer-directory-section-file-missing-error';
+import type { GetMissingDirectorySectionFilePathsError } from '../../types/function-errors/get-missing-directory-section-file-paths-error';
+import type { ValidateDirectorySectionFilesError } from '../../types/function-errors/validate-directory-section-files-error';
+import { getMissingDirectorySectionFilePaths } from './get-missing-directory-section-file-paths/get-missing-directory-section-file-paths';
 
 export function validateDirectorySectionFiles(item: {
   sourceDirectory: string;

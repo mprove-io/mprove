@@ -7,8 +7,14 @@ import {
   sep
 } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ResolveComposeInputError } from '../types/function-errors/resolve-compose-input-error';
-import type { ResolvedComposeInput } from '../types/resolved-compose-input';
+import type { ResolveComposeInputError } from '../../types/function-errors/resolve-compose-input-error';
+
+export type ResolvedComposeInput = {
+  ignoredRelativePaths: string[];
+  manifestPath: string;
+  outputPath: string;
+  sourceDirectory: string;
+};
 
 export function resolveComposeInput(item: {
   argv: string[];

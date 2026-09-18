@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { ValidateManifestPathsError } from '../../types/function-errors/validate-manifest-paths-error';
+import type { ValidateManifestPathsError } from '../../../types/function-errors/validate-manifest-paths-error';
 
 export function validateManifestPaths(item: {
   ignoredRelativePaths: string[];

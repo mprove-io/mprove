@@ -2,8 +2,8 @@ import { randomUUID } from 'node:crypto';
 import { renameSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ComposerOutputWriteFailedError } from '../types/errors/composer-output-write-failed-error';
-import type { WriteOutputError } from '../types/function-errors/write-output-error';
+import type { ComposerOutputWriteFailedError } from '../../types/errors/composer-output-write-failed-error';
+import type { WriteOutputError } from '../../types/function-errors/write-output-error';
 
 export function writeOutput(item: {
   markdown: string;

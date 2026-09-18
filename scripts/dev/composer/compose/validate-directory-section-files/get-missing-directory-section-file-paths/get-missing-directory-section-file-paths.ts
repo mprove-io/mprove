@@ -1,8 +1,8 @@
 import { type Dirent, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ComposerDirectorySectionScanFailedError } from '../../types/errors/composer-directory-section-scan-failed-error';
-import type { GetMissingDirectorySectionFilePathsError } from '../../types/function-errors/get-missing-directory-section-file-paths-error';
+import type { ComposerDirectorySectionScanFailedError } from '../../../types/errors/composer-directory-section-scan-failed-error';
+import type { GetMissingDirectorySectionFilePathsError } from '../../../types/function-errors/get-missing-directory-section-file-paths-error';
 
 export function getMissingDirectorySectionFilePaths(item: {
   sourceDirectory: string;

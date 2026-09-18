@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import test from 'ava';
 import type { ValidateManifestPathsError } from '../../../types/function-errors/validate-manifest-paths-error';
-import { validateManifestPaths } from '../validate-manifest-paths';
+import { validateManifestPaths } from './validate-manifest-paths';
 
 test('accepts matching source and manifest paths', t => {
   let result: Result.Result<void, ValidateManifestPathsError> =

@@ -1,8 +1,8 @@
 import { type Dirent, readdirSync } from 'node:fs';
 import { posix, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ComposerMarkdownFileScanFailedError } from '../../types/errors/composer-markdown-file-scan-failed-error';
-import type { GetMarkdownFilePathsError } from '../../types/function-errors/get-markdown-file-paths-error';
+import type { ComposerMarkdownFileScanFailedError } from '../../../types/errors/composer-markdown-file-scan-failed-error';
+import type { GetMarkdownFilePathsError } from '../../../types/function-errors/get-markdown-file-paths-error';
 
 type PendingPath = {
   type: 'directory' | 'file';

@@ -1,7 +1,7 @@
 import { posix } from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ParseManifestError } from '../../types/function-errors/parse-manifest-error';
-import type { Manifest } from '../../types/manifest';
+import type { ParseManifestError } from '../../../types/function-errors/parse-manifest-error';
+import type { Manifest } from '../../../types/manifest';
 
 export function parseManifest(item: {
   content: string;
