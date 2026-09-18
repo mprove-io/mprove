@@ -3,6 +3,7 @@ import { renameSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
 import type { ComposerOutputWriteFailedError } from '../../types/errors/composer-output-write-failed-error';
+import type { ComposerTemporaryOutputCleanupFailedError } from '../../types/errors/composer-temporary-output-cleanup-failed-error';
 import type { WriteOutputError } from '../../types/function-errors/write-output-error';
 
 export function writeOutput(item: {
@@ -20,27 +21,51 @@ export function writeOutput(item: {
     `.${outputFileName}.${randomUUID()}.tmp`
   );
 
-  return Result.try({
-    try: (): void => {
-      writeFileSync(temporaryOutputPath, `${markdown}\n`, 'utf8');
+  return Result.pipe(
+    Result.succeed({
+      markdown: markdown,
+      outputPath: outputPath,
+      temporaryOutputPath: temporaryOutputPath
+    }),
+    Result.andThrough(v =>
+      Result.try({
+        try: (): void => {
+          writeFileSync(v.temporaryOutputPath, `${v.markdown}\n`, 'utf8');
 
-      renameSync(temporaryOutputPath, outputPath);
-    },
-    catch: (error: unknown): ComposerOutputWriteFailedError => {
-      try {
-        rmSync(temporaryOutputPath, { force: true });
-      } catch (cleanupError: unknown) {
-        void cleanupError;
-      }
+          renameSync(v.temporaryOutputPath, v.outputPath);
+        },
+        catch: (error: unknown): ComposerOutputWriteFailedError => {
+          let writeOutputError: ComposerOutputWriteFailedError = {
+            code: 'COMPOSER_OUTPUT_WRITE_FAILED',
+            message: `Unable to write ${v.outputPath}`,
+            outputPath: v.outputPath,
+            temporaryOutputPath: v.temporaryOutputPath,
+            originalError: error
+          };
 
-      let writeOutputError: ComposerOutputWriteFailedError = {
-        code: 'COMPOSER_OUTPUT_WRITE_FAILED',
-        message: `Unable to write ${outputPath}`,
-        outputPath: outputPath,
-        originalError: error
-      };
+          return writeOutputError;
+        }
+      })
+    ),
+    Result.orThrough(v =>
+      Result.try({
+        try: (): void => {
+          rmSync(v.temporaryOutputPath, { force: true });
+        },
+        catch: (error: unknown): ComposerTemporaryOutputCleanupFailedError => {
+          let cleanupOutputError: ComposerTemporaryOutputCleanupFailedError = {
+            code: 'COMPOSER_TEMPORARY_OUTPUT_CLEANUP_FAILED',
+            message: `Unable to remove temporary output ${v.temporaryOutputPath} after failing to write ${v.outputPath}`,
+            outputPath: v.outputPath,
+            temporaryOutputPath: v.temporaryOutputPath,
+            writeError: v,
+            originalError: error
+          };
 
-      return writeOutputError;
-    }
-  });
+          return cleanupOutputError;
+        }
+      })
+    ),
+    Result.map((): void => {})
+  );
 }
