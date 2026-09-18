@@ -1,5 +1,4 @@
 .angular/
-.composer/_COMPOSER.md
 .pnpm-store/
 .turbo/
 apps/backend/src/drizzle/postgres/migrations/
