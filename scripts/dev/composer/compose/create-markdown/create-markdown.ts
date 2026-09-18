@@ -32,17 +32,27 @@ export function createMarkdown(item: {
         relativePaths: v.manifest.relativePaths
       })
     ),
+    Result.bind(
+      'adjustedContents',
+      (v): Result.Result<string[], never> =>
+        Result.sequence(
+          v.contents.map((content, index) => {
+            let relativePath: string = v.manifest.relativePaths[index];
+
+            let nestingLevel: number = relativePath.split('/').length - 1;
+
+            let adjustedContentResult: Result.Result<string, never> =
+              adjustMarkdownHeadings({
+                content: content,
+                nestingLevel: nestingLevel
+              });
+
+            return adjustedContentResult;
+          })
+        )
+    ),
     Result.map((v): string => {
-      let sections: string[] = v.contents.map((content, index) => {
-        let relativePath: string = v.manifest.relativePaths[index];
-
-        let nestingLevel: number = relativePath.split('/').length - 1;
-
-        let adjustedContent: string = adjustMarkdownHeadings({
-          content: content,
-          nestingLevel: nestingLevel
-        });
-
+      let sections: string[] = v.adjustedContents.map(adjustedContent => {
         let section: string = adjustedContent.replace(/\s+$/u, '');
 
         return section;

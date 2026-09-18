@@ -1,7 +1,8 @@
+import { Result } from '@praha/byethrow';
 import test from 'ava';
 import { adjustMarkdownHeadings } from './adjust-markdown-headings';
 
-test('adjusts ATX and Setext headings while preserving fenced content', t => {
+test('adjusts ATX headings while preserving fenced and Setext content', t => {
   let content: string = [
     '# Top',
     '',
@@ -13,7 +14,7 @@ test('adjusts ATX and Setext headings while preserving fenced content', t => {
     '------------'
   ].join('\n');
 
-  let adjustedContent: string = adjustMarkdownHeadings({
+  let result: Result.Result<string, never> = adjustMarkdownHeadings({
     content: content,
     nestingLevel: 1
   });
@@ -25,19 +26,26 @@ test('adjusts ATX and Setext headings while preserving fenced content', t => {
     '# Code heading',
     '```',
     '',
-    '### Nested title'
+    'Nested title',
+    '------------'
   ].join('\n');
 
-  t.is(adjustedContent, expectedContent);
+  t.deepEqual(result, {
+    type: 'Success',
+    value: expectedContent
+  });
 });
 
-test('preserves Setext headings at the root nesting level', t => {
+test('preserves Setext headings at nested levels', t => {
   let content: string = ['Root title', '=========='].join('\n');
 
-  let adjustedContent: string = adjustMarkdownHeadings({
+  let result: Result.Result<string, never> = adjustMarkdownHeadings({
     content: content,
-    nestingLevel: 0
+    nestingLevel: 2
   });
 
-  t.is(adjustedContent, content);
+  t.deepEqual(result, {
+    type: 'Success',
+    value: content
+  });
 });

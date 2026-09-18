@@ -1,200 +1,140 @@
+import { Result } from '@praha/byethrow';
+
 export function adjustMarkdownHeadings(item: {
   content: string;
   nestingLevel: number;
-}): string {
-  let { content, nestingLevel } = item;
+}): Result.Result<string, never> {
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind(
+      'lines',
+      (v): Result.Result<string[], never> =>
+        Result.succeed(v.content.split(/\r?\n/u))
+    ),
+    Result.bind(
+      'adjustedLines',
+      (v): Result.Result<string[], never> => Result.succeed(v.lines.slice(0, 0))
+    ),
+    Result.bind(
+      'openFenceCharacter',
+      (v): Result.Result<string, never> =>
+        Result.succeed(v.adjustedLines.join(''))
+    ),
+    Result.bind(
+      'openFenceLength',
+      (v): Result.Result<number, never> =>
+        Result.succeed(v.adjustedLines.length)
+    ),
+    Result.andThrough(v =>
+      Result.sequence(v.lines, (line): Result.Result<void, never> => {
+        let indentationLength: number = 0;
 
-  let lines: string[] = content.split(/\r?\n/u);
+        let indentationColumns: number = 0;
 
-  let adjustedLines: string[] = [];
+        while (indentationLength < line.length) {
+          let indentationCharacter: string = line[indentationLength];
 
-  let openFenceCharacter: string = '';
+          let isSpace: boolean = indentationCharacter === ' ';
 
-  let openFenceLength: number = 0;
+          let isTab: boolean = indentationCharacter === '\t';
 
-  for (let i = 0; i < lines.length; i++) {
-    let line: string = lines[i];
+          let isIndentation: boolean = isSpace || isTab;
 
-    let indentationLength: number = 0;
+          if (!isIndentation) {
+            break;
+          }
 
-    let indentationColumns: number = 0;
+          indentationLength++;
 
-    while (indentationLength < line.length) {
-      let indentationCharacter: string = line[indentationLength];
-
-      let isSpace: boolean = indentationCharacter === ' ';
-
-      let isTab: boolean = indentationCharacter === '\t';
-
-      let isIndentation: boolean = isSpace || isTab;
-
-      if (!isIndentation) {
-        break;
-      }
-
-      indentationLength++;
-
-      indentationColumns = isTab
-        ? indentationColumns + (4 - (indentationColumns % 4))
-        : indentationColumns + 1;
-    }
-
-    let leftTrimmedLine: string = line.slice(indentationLength);
-
-    let fenceCharacter: string = leftTrimmedLine[0] ?? '';
-
-    let fenceLength: number = 0;
-
-    while (leftTrimmedLine[fenceLength] === fenceCharacter) {
-      fenceLength++;
-    }
-
-    let fenceRemainder: string = leftTrimmedLine.slice(fenceLength);
-
-    let isFenceCharacter: boolean =
-      fenceCharacter === '`' || fenceCharacter === '~';
-
-    let backtickInfoContainsBacktick: boolean =
-      fenceCharacter === '`' && fenceRemainder.includes('`');
-
-    let beginsFence: boolean =
-      indentationColumns <= 3 &&
-      isFenceCharacter &&
-      fenceLength >= 3 &&
-      !backtickInfoContainsBacktick;
-
-    let isInsideFence: boolean = openFenceLength > 0;
-
-    if (isInsideFence) {
-      adjustedLines.push(line);
-
-      let trimmedFenceRemainder: string = fenceRemainder.trim();
-
-      let closesFence: boolean =
-        beginsFence &&
-        fenceCharacter === openFenceCharacter &&
-        fenceLength >= openFenceLength &&
-        trimmedFenceRemainder.length === 0;
-
-      if (closesFence) {
-        openFenceCharacter = '';
-
-        openFenceLength = 0;
-      }
-
-      continue;
-    }
-
-    if (beginsFence) {
-      openFenceCharacter = fenceCharacter;
-
-      openFenceLength = fenceLength;
-
-      adjustedLines.push(line);
-
-      continue;
-    }
-
-    let isSetextH1: boolean = /^ {0,3}=+\s*$/u.test(line);
-
-    let isSetextH2: boolean = /^ {0,3}-+\s*$/u.test(line);
-
-    let isSetextHeading: boolean = isSetextH1 || isSetextH2;
-
-    let shouldAdjustSetextHeading: boolean =
-      isSetextHeading && nestingLevel > 0;
-
-    if (shouldAdjustSetextHeading) {
-      let paragraphStartIndex: number = adjustedLines.length;
-
-      for (let j = adjustedLines.length - 1; j >= 0; j--) {
-        let candidateLine: string = adjustedLines[j];
-
-        let trimmedCandidateLine: string = candidateLine.trim();
-
-        let isBlankLine: boolean = trimmedCandidateLine.length === 0;
-
-        let beginsBlock: boolean =
-          /^ {0,3}(?:#{1,6}(?:[ \t]|$)|>|[-+*][ \t]+|\d+[.)][ \t]+|`{3,}|~{3,}|<)/u.test(
-            candidateLine
-          ) || /^ {4}/u.test(candidateLine);
-
-        let isParagraphLine: boolean = !isBlankLine && !beginsBlock;
-
-        if (!isParagraphLine) {
-          break;
+          indentationColumns = isTab
+            ? indentationColumns + (4 - (indentationColumns % 4))
+            : indentationColumns + 1;
         }
 
-        paragraphStartIndex = j;
-      }
+        let leftTrimmedLine: string = line.slice(indentationLength);
 
-      let hasParagraph: boolean = paragraphStartIndex < adjustedLines.length;
+        let fenceMatch: RegExpMatchArray | null =
+          leftTrimmedLine.match(/^(`{3,}|~{3,})(.*)$/u);
 
-      if (hasParagraph) {
-        let paragraphLines: string[] = adjustedLines.slice(paragraphStartIndex);
+        let fenceMarker: string = fenceMatch?.[1] ?? '';
 
-        let title: string = paragraphLines.map(value => value.trim()).join(' ');
+        let fenceCharacter: string = fenceMarker[0] ?? '';
 
-        let baseLevel: number = isSetextH1 ? 1 : 2;
+        let fenceLength: number = fenceMarker.length;
 
-        let headingLevel: number = Math.min(6, baseLevel + nestingLevel);
+        let fenceRemainder: string = fenceMatch?.[2] ?? '';
 
-        let headingPrefix: string = '#'.repeat(headingLevel);
+        let isBacktickInfoContainingBacktick: boolean =
+          fenceCharacter === '`' && fenceRemainder.includes('`');
 
-        adjustedLines.splice(
-          paragraphStartIndex,
-          paragraphLines.length,
-          `${headingPrefix} ${title}`
-        );
+        let isBeginningFence: boolean =
+          indentationColumns <= 3 &&
+          fenceMatch !== null &&
+          !isBacktickInfoContainingBacktick;
 
-        continue;
-      }
-    }
+        let isInsideFence: boolean = v.openFenceLength > 0;
 
-    let headingLength: number = 0;
+        if (isInsideFence) {
+          v.adjustedLines.push(line);
 
-    while (
-      headingLength < leftTrimmedLine.length &&
-      leftTrimmedLine[headingLength] === '#'
-    ) {
-      headingLength++;
-    }
+          let trimmedFenceRemainder: string = fenceRemainder.trim();
 
-    let characterAfterHeading: string = leftTrimmedLine[headingLength] ?? '';
+          let isClosingFence: boolean =
+            isBeginningFence &&
+            fenceCharacter === v.openFenceCharacter &&
+            fenceLength >= v.openFenceLength &&
+            trimmedFenceRemainder.length === 0;
 
-    let hasValidHeadingIndentation: boolean = indentationColumns <= 3;
+          if (isClosingFence) {
+            v.openFenceCharacter = '';
 
-    let isAtxHeading: boolean =
-      hasValidHeadingIndentation &&
-      headingLength > 0 &&
-      headingLength <= 6 &&
-      (characterAfterHeading === '' ||
-        characterAfterHeading === ' ' ||
-        characterAfterHeading === '\t');
+            v.openFenceLength = 0;
+          }
 
-    if (isAtxHeading) {
-      let adjustedHeadingLength: number = Math.min(
-        6,
-        headingLength + nestingLevel
-      );
+          return Result.succeed();
+        }
 
-      let adjustedHeadingPrefix: string = '#'.repeat(adjustedHeadingLength);
+        if (isBeginningFence) {
+          v.openFenceCharacter = fenceCharacter;
 
-      let headingIndentation: string = line.slice(0, indentationLength);
+          v.openFenceLength = fenceLength;
 
-      let headingContent: string = leftTrimmedLine.slice(headingLength);
+          v.adjustedLines.push(line);
 
-      adjustedLines.push(
-        `${headingIndentation}${adjustedHeadingPrefix}${headingContent}`
-      );
+          return Result.succeed();
+        }
 
-      continue;
-    }
+        let headingMatch: RegExpMatchArray | null =
+          leftTrimmedLine.match(/^(#{1,6})(?=$|[ \t])/u);
 
-    adjustedLines.push(line);
-  }
+        if (indentationColumns <= 3 && headingMatch !== null) {
+          let headingMarker: string = headingMatch[1];
 
-  let adjustedContent: string = adjustedLines.join('\n');
+          let headingLength: number = headingMarker.length;
 
-  return adjustedContent;
+          let adjustedHeadingLength: number = Math.min(
+            6,
+            headingLength + v.nestingLevel
+          );
+
+          let adjustedHeadingPrefix: string = '#'.repeat(adjustedHeadingLength);
+
+          let headingIndentation: string = line.slice(0, indentationLength);
+
+          let headingContent: string = leftTrimmedLine.slice(headingLength);
+
+          v.adjustedLines.push(
+            `${headingIndentation}${adjustedHeadingPrefix}${headingContent}`
+          );
+
+          return Result.succeed();
+        }
+
+        v.adjustedLines.push(line);
+
+        return Result.succeed();
+      })
+    ),
+    Result.map((v): string => v.adjustedLines.join('\n'))
+  );
 }
