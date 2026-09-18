@@ -42,9 +42,7 @@ export function getMissingDirectorySectionFilePaths(item: {
 
           let sectionFileName: string = `${entry.name}.md`;
 
-          let hasSectionFile: boolean = fileNames.has(sectionFileName);
-
-          if (!hasSectionFile) {
+          if (!fileNames.has(sectionFileName)) {
             let sectionFilePath: string = resolve(
               directoryPath,
               sectionFileName

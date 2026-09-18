@@ -16,32 +16,40 @@ export function parseManifest(item: {
   let referencedPaths: Set<string> = new Set<string>();
 
   for (let i = 0; i < lines.length; i++) {
-    let relativePath: string = lines[i].trim();
+    let line: string = lines[i].trim();
 
-    if (relativePath.length === 0) {
+    if (line.length === 0) {
       continue;
     }
 
-    let normalizedPath: string = posix.normalize(relativePath);
-
-    let pathIsSafe: boolean =
-      relativePath === normalizedPath &&
-      !relativePath.startsWith('/') &&
-      !relativePath.startsWith('../') &&
-      !relativePath.includes('\\') &&
-      posix.extname(relativePath) === '.md';
-
-    if (!pathIsSafe) {
+    if (!line.startsWith('- ')) {
       return Result.fail({
         code: 'COMPOSER_MANIFEST_PATH_INVALID',
-        message: `${manifestPath}:${i + 1} must contain a safe relative .md path`,
+        message: `${manifestPath}:${i + 1} must contain a Markdown list item`,
         manifestPath: manifestPath
       });
     }
 
-    let isDuplicate: boolean = referencedPaths.has(relativePath);
+    let relativePath: string = line.slice(2).trim();
 
-    if (isDuplicate) {
+    let normalizedPath: string = posix.normalize(relativePath);
+
+    if (
+      /\s/u.test(relativePath) ||
+      relativePath !== normalizedPath ||
+      relativePath.startsWith('/') ||
+      relativePath.startsWith('../') ||
+      relativePath.includes('\\') ||
+      posix.extname(relativePath) !== '.md'
+    ) {
+      return Result.fail({
+        code: 'COMPOSER_MANIFEST_PATH_INVALID',
+        message: `${manifestPath}:${i + 1} must contain a safe relative .md path as a Markdown list item`,
+        manifestPath: manifestPath
+      });
+    }
+
+    if (referencedPaths.has(relativePath)) {
       return Result.fail({
         code: 'COMPOSER_MANIFEST_PATH_DUPLICATE',
         message: `${manifestPath}:${i + 1} references ${relativePath} more than once`,

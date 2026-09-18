@@ -50,7 +50,7 @@
 - byethrow-rules/error-policy.md
 - byethrow-rules/pipe-should-start-with-result-succeed.md
 - byethrow-rules/pipe-initial-state.md
-- byethrow-rules/pipe-step-argument-name.md
+- byethrow-rules/pipe-step-callbacks.md
 - byethrow-rules/pipe-step-argument-types.md
 - byethrow-rules/pipe-state-access.md
 

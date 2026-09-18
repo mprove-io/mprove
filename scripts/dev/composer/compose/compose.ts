@@ -2,16 +2,12 @@ import { Result } from '@praha/byethrow';
 import type { ComposeError } from '../types/function-errors/compose-error';
 import type { CreateMarkdownError } from '../types/function-errors/create-markdown-error';
 import type { LoadManifestError } from '../types/function-errors/load-manifest-error';
-import type { ResolveComposeInputError } from '../types/function-errors/resolve-compose-input-error';
+import type { ValidateInputError } from '../types/function-errors/validate-input-error';
 import type { Manifest } from '../types/manifest';
+import type { ResolvedComposeInput } from '../types/resolved-compose-input';
 import { createMarkdown } from './create-markdown/create-markdown';
 import { loadManifest } from './load-manifest/load-manifest';
-import {
-  type ResolvedComposeInput,
-  resolveComposeInput
-} from './resolve-compose-input/resolve-compose-input';
-import { validateContentDirectory } from './validate-content-directory/validate-content-directory';
-import { validateDirectorySectionFiles } from './validate-directory-section-files/validate-directory-section-files';
+import { validateInput } from './validate-input/validate-input';
 import { writeOutput } from './write-output/write-output';
 
 export function compose(item: {
@@ -20,14 +16,8 @@ export function compose(item: {
   return Result.pipe(
     Result.succeed(item),
     Result.andThen(
-      (v): Result.Result<ResolvedComposeInput, ResolveComposeInputError> =>
-        resolveComposeInput({ argv: v.argv })
-    ),
-    Result.andThrough(v =>
-      validateContentDirectory({ contentDirectory: v.contentDirectory })
-    ),
-    Result.andThrough(v =>
-      validateDirectorySectionFiles({ contentDirectory: v.contentDirectory })
+      (v): Result.Result<ResolvedComposeInput, ValidateInputError> =>
+        validateInput({ argv: v.argv })
     ),
     Result.bind(
       'manifest',
