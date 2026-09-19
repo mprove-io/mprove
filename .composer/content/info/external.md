@@ -1,4 +1,4 @@
-# external
+# External
 
 Treat top level "external" directory as a read-only reference. Do not modify it.
 

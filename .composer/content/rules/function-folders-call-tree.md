@@ -1,7 +1,5 @@
 # Function folders call tree
 
-Apply this rule to the specific function named by the user.
-
 - Treat the specified function as the root of the call tree.
 - Inspect project-local functions called directly by the root.
 - Count distinct non-test callers across the codebase. Multiple calls from the

@@ -1,1 +1,0 @@
-# byethrow rules

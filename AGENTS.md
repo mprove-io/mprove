@@ -29,7 +29,121 @@ When asked to add or change a rule or section in `AGENTS.md`:
 
 Mprove is Open Source Business Intelligence with Malloy Semantic Layer.
 
-# Tech Stack
+# Architecture
+
+Parts:
+
+| App     | Purpose                                     |
+| ------- | ------------------------------------------- |
+| backend | Core API, auth, DB, DWH queries             |
+| blockml | Malloy and BlockML (YAML) model compilation |
+| disk    | File system & git repo management           |
+| front   | Web UI                                      |
+| mcli    | Command-line interface                      |
+
+Communication:
+
+- frontend to backend - HTTP API
+- mcli to backend - HTTP API
+- backend to blockml - RPC using Groupmq and Valkey (Redis) pub/sub
+- backend to disk - RPC using Groupmq and Valkey (Redis) pub/sub
+
+## Blockml
+
+Malloy/BlockML model compilation service. Receives compilation requests from
+backend via Valkey (Redis) RPC and returns compiled struct.
+
+### Purpose
+
+Compiles BlockML model definitions (YAML-based) into executable query
+structures. The compilation pipeline:
+
+1. Receives file tree from backend
+2. Parses Malloy/BlockML model definitions
+3. Validates model structure
+4. Produces compiled struct
+
+### Communication
+
+- Listens for Valkey (Redis) RPC messages from backend
+- Returns compiled structures or compilation errors
+
+## Disk
+
+File system and git repository management service. Manages project file storage
+and git operations.
+
+### Purpose
+
+Manages the file system layer for Mprove projects:
+
+- Git repository operations
+- File operations within repositories
+- Folder management
+- Organization/project/git-repo files tree structure
+- Seed data initialization
+
+### Communication
+
+- Receives Valkey (Redis) RPC messages from backend
+- Operates on local filesystem (`mprove_data/` directory)
+- Uses SimpleGit for git operations
+
+## Backend
+
+Core API server handling authentication, database operations, and data warehouse
+queries.
+
+### Database
+
+- ORM: Drizzle
+- Schema: `src/drizzle/postgres/schema/`
+- Migrations: `src/drizzle/postgres/migrations/`
+
+### E2E Tests
+
+- Test files: `src/**/*.e2e-spec.ts`
+- Run: `pnpm e2e:backend`
+- Tests use `prepareTestAndSeed()` to create a fresh NestJS app per test
+- Tests must call `await prep.app.close()` to properly close connections
+- Services implement `OnModuleDestroy` to close Redis/PostgreSQL connections on
+  shutdown
+
+## Front
+
+Angular web application providing the Mprove user interface.
+
+### Patterns
+
+- Standalone components and NgModules
+- Feature modules organized by domain
+- HTTP communication with backend via JWT-authenticated calls
+- Route guards for auth protection
+- Route resolvers for data pre-fetching
+
+## Mcli
+
+Command-line interface for Mprove
+
+### Package Management
+
+mcli uses **bun** as package manager (independent from turbo/pnpm workspace).
+
+### Communication
+
+- Communicates with backend via HTTP API
+- Uses same DTOs/interfaces as the frontend
+
+## Shared Libraries
+
+| Library     | Used By                             |
+| ----------- | ----------------------------------- |
+| common      | front, backend, blockml, disk, mcli |
+| node-common | backend, blockml, disk, mcli        |
+
+# Info
+
+## Tech Stack
 
 | Layer                                      | Technology                                      |
 | ------------------------------------------ | ----------------------------------------------- |
@@ -45,26 +159,7 @@ Mprove is Open Source Business Intelligence with Malloy Semantic Layer.
 | Linter/Formatter                           | Biome (ts/js/css), Prettier (html/scss/json/md) |
 | Telemetry                                  | OpenTelemetry                                   |
 
-# Application Services
-
-| App     | Purpose                                     |
-| ------- | ------------------------------------------- |
-| backend | Core API, auth, DB, DWH queries             |
-| blockml | Malloy and BlockML (YAML) model compilation |
-| disk    | File system & git repo management           |
-| front   | Web UI                                      |
-| mcli    | Command-line interface                      |
-
-# Architecture
-
-Apps communicate:
-
-- frontend to backend - HTTP API
-- mcli to backend - HTTP API
-- backend to blockml - RPC using Groupmq and Valkey (Redis) pub/sub
-- backend to disk - RPC using Groupmq and Valkey (Redis) pub/sub
-
-# Dependencies Version Management
+## Dependencies Version Management
 
 All dependency versions are centrally defined in `pnpm-workspace.yaml` catalog.
 
@@ -77,7 +172,7 @@ All dependency versions are centrally defined in `pnpm-workspace.yaml` catalog.
 Run `pnpm catalog-write` to sync catalog versions to `libs/common`,
 `libs/node-common`, and `mcli` package.json files.
 
-# Main package json scripts
+## Main package json scripts
 
 | Script     | Command                                                                 |
 | ---------- | ----------------------------------------------------------------------- |
@@ -99,7 +194,7 @@ for specific package.
 **Filters:** `backend`, `blockml`, `disk`, `front`, `common`, `node-common`,
 `mcli`
 
-# ESM Configuration
+## ESM Configuration
 
 All apps use native ESM with the following configuration:
 
@@ -113,104 +208,11 @@ All apps use native ESM with the following configuration:
 | `.swcrc`        | `"target": "es2022"`, `"module": { "type": "nodenext" }`                     |
 | `ava.config.js` | Direct TS execution with `@swc-node/register/esm-register`                   |
 
-# Shared Libraries
-
-| Library     | Used By                             |
-| ----------- | ----------------------------------- |
-| common      | front, backend, blockml, disk, mcli |
-| node-common | backend, blockml, disk, mcli        |
-
-# Blockml
-
-Malloy/BlockML model compilation service. Receives compilation requests from
-backend via Valkey (Redis) RPC and returns compiled struct.
-
-## Purpose
-
-Compiles BlockML model definitions (YAML-based) into executable query
-structures. The compilation pipeline:
-
-1. Receives file tree from backend
-2. Parses Malloy/BlockML model definitions
-3. Validates model structure
-4. Produces compiled struct
-
-## Communication
-
-- Listens for Valkey (Redis) RPC messages from backend
-- Returns compiled structures or compilation errors
-
-# Disk
-
-File system and git repository management service. Manages project file storage
-and git operations.
-
-## Purpose
-
-Manages the file system layer for Mprove projects:
-
-- Git repository operations
-- File operations within repositories
-- Folder management
-- Organization/project/git-repo files tree structure
-- Seed data initialization
-
-## Communication
-
-- Receives Valkey (Redis) RPC messages from backend
-- Operates on local filesystem (`mprove_data/` directory)
-- Uses SimpleGit for git operations
-
-# Backend
-
-Core API server handling authentication, database operations, and data warehouse
-queries.
-
-## Database
-
-- ORM: Drizzle
-- Schema: `src/drizzle/postgres/schema/`
-- Migrations: `src/drizzle/postgres/migrations/`
-
-## E2E Tests
-
-- Test files: `src/**/*.e2e-spec.ts`
-- Run: `pnpm e2e:backend`
-- Tests use `prepareTestAndSeed()` to create a fresh NestJS app per test
-- Tests must call `await prep.app.close()` to properly close connections
-- Services implement `OnModuleDestroy` to close Redis/PostgreSQL connections on
-  shutdown
-
-# Front
-
-Angular web application providing the Mprove user interface.
-
-## Patterns
-
-- Standalone components and NgModules
-- Feature modules organized by domain
-- HTTP communication with backend via JWT-authenticated calls
-- Route guards for auth protection
-- Route resolvers for data pre-fetching
-
-# Mcli
-
-Command-line interface for Mprove
-
-## Package Management
-
-mcli uses **bun** as package manager (independent from turbo/pnpm workspace).
-
-## Communication
-
-- Communicates with backend via HTTP API
-- Uses same DTOs/interfaces as the frontend
-
-# external
+## External
 
 Treat top level "external" directory as a read-only reference. Do not modify it.
 
-## external/byethrow
+### external/byethrow
 
 Source code and documentation for `@praha/byethrow`.
 
@@ -221,15 +223,15 @@ When working with byethrow `Result` APIs, consult:
 - Tests and type tests for exact behavior:
   `external/byethrow/packages/byethrow/src/functions/`
 
-## external/opencode
+### external/opencode
 
 Source code for the [OpenCode](https://github.com/anomalyco/opencode).
 
-## external/ai
+### external/ai
 
 Source code for @ai-sdk
 
-# rules
+# Rules
 
 ## Git operations
 
@@ -519,6 +521,30 @@ let outputIsInParent: boolean = relativeOutputPath === '..';
 if (!this.membersService.getMember(memberId)) {
 ```
 
+## Function folders call tree
+
+- Treat the specified function as the root of the call tree.
+- Inspect project-local functions called directly by the root.
+- Count distinct non-test callers across the codebase. Multiple calls from the
+  same function count as one caller.
+- Tests do not count as callers.
+- Move a called function into the tree only when it has exactly one non-test
+  caller.
+- Create a plain `<function-name>` child directory and place the called function
+  in `<function-name>/<function-name>.ts`.
+- When moving a function, move its `tests/` directory or `.spec.ts` files with
+  it.
+- Remove any empty directories left behind after moving files.
+- Apply the same process recursively to every moved function.
+- Keep functions with multiple non-test callers outside the single-caller tree.
+  Use an appropriate shared `functions/` location in the app, `node-common`, or
+  `common`.
+- Import multi-caller functions from their actual implementation paths.
+- If a type is used only by a caller and its callee, define it in the callee's
+  file.
+- Prefer flat pipes. Before adding another directory level, check whether the
+  operation can be another step in the existing linear pipeline.
+
 ## Maintain function folder call trees
 
 When a function is already organized according to the opt-in "Function folders
@@ -527,13 +553,13 @@ function in its tree. The user does not need to ask again. Do not apply it to a
 function that is not already part of an established function folder call tree
 unless the user explicitly asks.
 
-# byethrow rules
+## Byethrow
 
-## one function per file
+### One function per file
 
-## no nested pipes in a single function
+### No nested pipes in a single function
 
-## Result type inference
+### Result type inference
 
 Byethrow `Result` pipelines are exempt from the general explicit variable type
 rule in these cases:
@@ -550,7 +576,7 @@ rule in these cases:
 
 Standalone Result-producing functions must retain explicit return types.
 
-## Result callback return types
+### Result callback return types
 
 Callbacks passed to `Result.bind` and `Result.andThen` must declare an explicit
 `Result.Result<Success, Error>` return type.
@@ -582,7 +608,7 @@ Result.map(
 
 Callbacks passed to `Result.andThrough` do not require an explicit return type.
 
-## Function error types
+### Function error types
 
 For every Result-producing function with anticipated errors, define a named
 `<FunctionName>Error` type in `types/function-errors/<function-name>-error.ts`.
@@ -594,11 +620,11 @@ lower-level function error types instead of repeating their leaf error members.
 Define single-member and pass-through aliases as function error types too, so
 every fallible function has its own error contract.
 
-## Byethrow function selection
+### Byethrow function selection
 
 Use the Byethrow function matching the operation.
 
-### Creating results
+#### Creating results
 
 - `succeed` creates a successful result.
 - `fail` creates a failed result.
@@ -608,7 +634,7 @@ Use the Byethrow function matching the operation.
 - `fn` wraps a possibly throwing function and returns a reusable
   Result-producing function.
 
-### Composing and transforming
+#### Composing and transforming
 
 - `pipe` applies functions from left to right.
 - `map` transforms a success value without introducing an anticipated error.
@@ -626,7 +652,7 @@ Use the Byethrow function matching the operation.
 - `inspectError` runs an infallible side effect on a failure without changing
   the result.
 
-### Combining and validating
+#### Combining and validating
 
 - `sequence` combines results, stopping at the first failure.
 - `collect` combines results, processing all inputs and collecting every
@@ -634,7 +660,7 @@ Use the Byethrow function matching the operation.
 - `parse` validates a value with a synchronous Standard Schema and returns
   validation issues as a failure.
 
-### Checking and asserting
+#### Checking and asserting
 
 - `isResult` checks whether an unknown value has a Result shape.
 - `isSuccess` narrows a result to a success.
@@ -642,13 +668,13 @@ Use the Byethrow function matching the operation.
 - `assertSuccess` asserts that a result with error type `never` is successful.
 - `assertFailure` asserts that a result with success type `never` is failed.
 
-### Extracting values
+#### Extracting values
 
 - `unwrap` extracts the success value, using a default or throwing the failure.
 - `unwrapError` extracts the failure value, using a default or throwing the
   success value.
 
-## Combinator application
+### Combinator application
 
 Pass Result combinators as steps to `Result.pipe`. Do not directly invoke the
 curried function returned by a combinator, such as
@@ -656,23 +682,23 @@ curried function returned by a combinator, such as
 pipe in the same function, extract the operation into a standalone function in
 its own file.
 
-## sequence Result collections
+### Sequence Result collections
 
 Use `Result.sequence` when applying a Result-producing operation to every item
 in a collection and processing should stop at the first failure. Do not manually
 accumulate the collection result by repeatedly applying a curried combinator.
 
-## Error policy
+### Error policy
 
 Use `Result` failures for anticipated domain errors. Unexpected infrastructure
 errors may throw unless they are intentionally converted using `Result.try` or
 `Result.fn`.
 
-## pipe should start with result succeed
+### Pipe should start with result succeed
 
 Every `Result.pipe` must start with `Result.succeed`.
 
-## pipe initial state
+### Pipe initial state
 
 Use the function's original `item` argument directly as the initial pipeline
 state when no additional or derived values are needed. Do not destructure `item`
@@ -699,7 +725,7 @@ return Result.pipe(
 );
 ```
 
-## Pipe step callbacks
+### Pipe step callbacks
 
 Pass an inline callback to every Result combinator used as a `Result.pipe` step.
 Name the callback argument `v`. Do not pass a named function directly as the
@@ -719,46 +745,13 @@ Result.andThrough(v =>
 Result.andThrough(validateModel);
 ```
 
-## pipe step argument types
+### Pipe step argument types
 
 Do not annotate the type of `v` in callbacks passed directly as `Result.pipe`
 steps. Rely on contextual inference from the preceding pipeline state.
 
-## pipe state access
+### Pipe state access
 
 After the initial `Result.succeed`, access pipeline data only through `v`. Do
 not reference `item`, destructured item properties, or variables declared before
 `Result.pipe`. Carry all required data through the pipeline state.
-
-# rules when asked
-
-Rules in this section are opt-in for initial application. Do not apply one to
-code that is not already organized according to that rule unless the user
-explicitly asks. An always-active rule may require maintaining an existing
-opt-in structure.
-
-## Function folders call tree
-
-Apply this rule to the specific function named by the user.
-
-- Treat the specified function as the root of the call tree.
-- Inspect project-local functions called directly by the root.
-- Count distinct non-test callers across the codebase. Multiple calls from the
-  same function count as one caller.
-- Tests do not count as callers.
-- Move a called function into the tree only when it has exactly one non-test
-  caller.
-- Create a plain `<function-name>` child directory and place the called function
-  in `<function-name>/<function-name>.ts`.
-- When moving a function, move its `tests/` directory or `.spec.ts` files with
-  it.
-- Remove any empty directories left behind after moving files.
-- Apply the same process recursively to every moved function.
-- Keep functions with multiple non-test callers outside the single-caller tree.
-  Use an appropriate shared `functions/` location in the app, `node-common`, or
-  `common`.
-- Import multi-caller functions from their actual implementation paths.
-- If a type is used only by a caller and its callee, define it in the callee's
-  file.
-- Prefer flat pipes. Before adding another directory level, check whether the
-  operation can be another step in the existing linear pipeline.

@@ -2,21 +2,20 @@
 
 - mprove.md
 
-- tech-stack.md
-- application-services.md
 - architecture.md
-- dependencies-version-management.md
-- main-package-json-scripts.md
-- esm-configuration.md
-- shared-libraries.md
+- architecture/blockml.md
+- architecture/disk.md
+- architecture/backend.md
+- architecture/front.md
+- architecture/mcli.md
+- architecture/shared-libraries.md
 
-- blockml.md
-- disk.md
-- backend.md
-- front.md
-- mcli.md
-
-- external.md
+- info.md
+- info/tech-stack.md
+- info/dependencies-version-management.md
+- info/main-package-json-scripts.md
+- info/esm-configuration.md
+- info/external.md
 
 - rules.md
 - rules/git-operations.md
@@ -36,23 +35,21 @@
 - rules/optional-typescript-properties.md
 - rules/discriminator-property-should-be-first.md
 - rules/condition-expressions.md
+- rules/function-folders-call-tree.md
 - rules/maintain-function-folder-call-trees.md
 
-- byethrow-rules.md
-- byethrow-rules/one-function-per-file.md
-- byethrow-rules/no-nested-pipes-in-a-single-function.md
-- byethrow-rules/result-type-inference.md
-- byethrow-rules/result-callback-return-types.md
-- byethrow-rules/function-error-types.md
-- byethrow-rules/byethrow-function-selection.md
-- byethrow-rules/combinator-application.md
-- byethrow-rules/sequence-result-collections.md
-- byethrow-rules/error-policy.md
-- byethrow-rules/pipe-should-start-with-result-succeed.md
-- byethrow-rules/pipe-initial-state.md
-- byethrow-rules/pipe-step-callbacks.md
-- byethrow-rules/pipe-step-argument-types.md
-- byethrow-rules/pipe-state-access.md
-
-- rules-when-asked.md
-- rules-when-asked/function-folders-call-tree.md
+- rules/byethrow.md
+- rules/byethrow/one-function-per-file.md
+- rules/byethrow/no-nested-pipes-in-a-single-function.md
+- rules/byethrow/result-type-inference.md
+- rules/byethrow/result-callback-return-types.md
+- rules/byethrow/function-error-types.md
+- rules/byethrow/byethrow-function-selection.md
+- rules/byethrow/combinator-application.md
+- rules/byethrow/sequence-result-collections.md
+- rules/byethrow/error-policy.md
+- rules/byethrow/pipe-should-start-with-result-succeed.md
+- rules/byethrow/pipe-initial-state.md
+- rules/byethrow/pipe-step-callbacks.md
+- rules/byethrow/pipe-step-argument-types.md
+- rules/byethrow/pipe-state-access.md

@@ -1,4 +1,4 @@
-# pipe initial state
+# Pipe initial state
 
 Use the function's original `item` argument directly as the initial pipeline
 state when no additional or derived values are needed. Do not destructure `item`
