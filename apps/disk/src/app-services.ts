@@ -1,6 +1,3 @@
-import { CreateOrgService } from './controllers/01-orgs/create-org/create-org.service';
-import { DeleteOrgService } from './controllers/01-orgs/delete-org/delete-org.service';
-import { IsOrgExistService } from './controllers/01-orgs/is-org-exist/is-org-exist.service';
 import { CreateProjectService } from './controllers/02-projects/create-project/create-project.service';
 import { DeleteProjectService } from './controllers/02-projects/delete-project/delete-project.service';
 import { IsProjectExistService } from './controllers/02-projects/is-project-exist/is-project-exist.service';
@@ -28,6 +25,9 @@ import { GetFileService } from './controllers/07-files/get-file/get-file.service
 import { SaveFileService } from './controllers/07-files/save-file/save-file.service';
 import { SeedProjectService } from './controllers/08-seed/seed-project/seed-project.service';
 import { CloneTestRepoService } from './controllers/09-test/clone-test-repo/clone-test-repo.service';
+import { CreateOrgService } from './controllers/orgs/create-org/create-org.service';
+import { DeleteOrgService } from './controllers/orgs/delete-org/delete-org.service';
+import { IsOrgExistService } from './controllers/orgs/is-org-exist/is-org-exist.service';
 import { ConsumerService } from './services/consumer.service';
 import { DiskTabService } from './services/disk-tab.service';
 import { MessageService } from './services/message.service';

@@ -1,13 +1,12 @@
 import test from 'ava';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/01-orgs/create-org/create-org-request';
-import type { ToDiskDeleteOrgRequest } from '#common/zod/disk/routes/01-orgs/delete-org/delete-org-request';
-import type { ToDiskIsOrgExistRequest } from '#common/zod/disk/routes/01-orgs/is-org-exist/is-org-exist-request';
-import type { ToDiskIsOrgExistResponse } from '#common/zod/disk/routes/01-orgs/is-org-exist/is-org-exist-response';
+import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/orgs/create-org/create-org-request';
+import type { ToDiskIsOrgExistRequest } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-request';
+import type { ToDiskIsOrgExistResponse } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-response';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 
-let testId = 'disk-delete-org';
+let testId = 'disk-create-org';
 
 let traceId = testId;
 let orgId = testId;
@@ -24,16 +23,10 @@ test('1', async t => {
     wLogger = logger;
     configService = cs;
 
+    configService = cs;
+
     let createOrgRequest: ToDiskCreateOrgRequest = {
       operation: 'createOrg',
-      traceId: traceId,
-      input: {
-        orgId: orgId
-      }
-    };
-
-    let deleteOrgRequest: ToDiskDeleteOrgRequest = {
-      operation: 'deleteOrg',
       traceId: traceId,
       input: {
         orgId: orgId
@@ -49,7 +42,6 @@ test('1', async t => {
     };
 
     await messageService.processRequest({ request: createOrgRequest });
-    await messageService.processRequest({ request: deleteOrgRequest });
 
     resp = await messageService.processRequest({ request: isOrgExistRequest });
   } catch (e) {
@@ -60,11 +52,12 @@ test('1', async t => {
       cs: configService
     });
   }
+
   t.is(resp.result.type, 'Success');
 
   if (resp.result.type !== 'Success') {
     return;
   }
 
-  t.is(resp.result.value.isOrgExist, false);
+  t.is(resp.result.value.isOrgExist, true);
 });

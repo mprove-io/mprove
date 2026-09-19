@@ -1,18 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
-import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/01-orgs/create-org/create-org-request';
-import { zToDiskCreateOrgRequest } from '#common/zod/disk/routes/01-orgs/create-org/create-org-request';
-import type { ToDiskCreateOrgResponse } from '#common/zod/disk/routes/01-orgs/create-org/create-org-response';
-import { zToDiskCreateOrgResponse } from '#common/zod/disk/routes/01-orgs/create-org/create-org-response';
-import type { ToDiskDeleteOrgRequest } from '#common/zod/disk/routes/01-orgs/delete-org/delete-org-request';
-import { zToDiskDeleteOrgRequest } from '#common/zod/disk/routes/01-orgs/delete-org/delete-org-request';
-import type { ToDiskDeleteOrgResponse } from '#common/zod/disk/routes/01-orgs/delete-org/delete-org-response';
-import { zToDiskDeleteOrgResponse } from '#common/zod/disk/routes/01-orgs/delete-org/delete-org-response';
-import type { ToDiskIsOrgExistRequest } from '#common/zod/disk/routes/01-orgs/is-org-exist/is-org-exist-request';
-import { zToDiskIsOrgExistRequest } from '#common/zod/disk/routes/01-orgs/is-org-exist/is-org-exist-request';
-import type { ToDiskIsOrgExistResponse } from '#common/zod/disk/routes/01-orgs/is-org-exist/is-org-exist-response';
-import { zToDiskIsOrgExistResponse } from '#common/zod/disk/routes/01-orgs/is-org-exist/is-org-exist-response';
 import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/02-projects/create-project/create-project-request';
 import { zToDiskCreateProjectRequest } from '#common/zod/disk/routes/02-projects/create-project/create-project-request';
 import type { ToDiskCreateProjectResponse } from '#common/zod/disk/routes/02-projects/create-project/create-project-response';
@@ -121,6 +109,18 @@ import type { ToDiskCloneTestRepoRequest } from '#common/zod/disk/routes/10-test
 import { zToDiskCloneTestRepoRequest } from '#common/zod/disk/routes/10-test/clone-test-repo/clone-test-repo-request';
 import type { ToDiskCloneTestRepoResponse } from '#common/zod/disk/routes/10-test/clone-test-repo/clone-test-repo-response';
 import { zToDiskCloneTestRepoResponse } from '#common/zod/disk/routes/10-test/clone-test-repo/clone-test-repo-response';
+import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/orgs/create-org/create-org-request';
+import { zToDiskCreateOrgRequest } from '#common/zod/disk/routes/orgs/create-org/create-org-request';
+import type { ToDiskCreateOrgResponse } from '#common/zod/disk/routes/orgs/create-org/create-org-response';
+import { zToDiskCreateOrgResponse } from '#common/zod/disk/routes/orgs/create-org/create-org-response';
+import type { ToDiskDeleteOrgRequest } from '#common/zod/disk/routes/orgs/delete-org/delete-org-request';
+import { zToDiskDeleteOrgRequest } from '#common/zod/disk/routes/orgs/delete-org/delete-org-request';
+import type { ToDiskDeleteOrgResponse } from '#common/zod/disk/routes/orgs/delete-org/delete-org-response';
+import { zToDiskDeleteOrgResponse } from '#common/zod/disk/routes/orgs/delete-org/delete-org-response';
+import type { ToDiskIsOrgExistRequest } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-request';
+import { zToDiskIsOrgExistRequest } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-request';
+import type { ToDiskIsOrgExistResponse } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-response';
+import { zToDiskIsOrgExistResponse } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-response';
 
 type ValidateOperationRegistry<
   TRegistry extends {

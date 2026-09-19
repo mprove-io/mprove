@@ -1,6 +1,3 @@
-import { CreateOrgController } from './controllers/01-orgs/create-org/create-org.controller';
-import { DeleteOrgController } from './controllers/01-orgs/delete-org/delete-org.controller';
-import { IsOrgExistController } from './controllers/01-orgs/is-org-exist/is-org-exist.controller';
 import { CreateProjectController } from './controllers/02-projects/create-project/create-project.controller';
 import { DeleteProjectController } from './controllers/02-projects/delete-project/delete-project.controller';
 import { IsProjectExistController } from './controllers/02-projects/is-project-exist/is-project-exist.controller';
@@ -27,6 +24,9 @@ import { DeleteFileController } from './controllers/07-files/delete-file/delete-
 import { GetFileController } from './controllers/07-files/get-file/get-file.controller';
 import { SaveFileController } from './controllers/07-files/save-file/save-file.controller';
 import { SeedProjectController } from './controllers/08-seed/seed-project/seed-project.controller';
+import { CreateOrgController } from './controllers/orgs/create-org/create-org.controller';
+import { DeleteOrgController } from './controllers/orgs/delete-org/delete-org.controller';
+import { IsOrgExistController } from './controllers/orgs/is-org-exist/is-org-exist.controller';
 
 export const appControllers = [
   CreateOrgController,

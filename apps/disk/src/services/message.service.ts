@@ -11,9 +11,6 @@ import type { ToDiskInvalidRequestErrorResponse } from '#common/zod/disk/respons
 import type { ToDiskOperationResponse } from '#common/zod/disk/response/to-disk-operation-response';
 import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
 import type { ToDiskResponseForRequest } from '#common/zod/disk/response/to-disk-response-for-request';
-import { CreateOrgService } from '#disk/controllers/01-orgs/create-org/create-org.service';
-import { DeleteOrgService } from '#disk/controllers/01-orgs/delete-org/delete-org.service';
-import { IsOrgExistService } from '#disk/controllers/01-orgs/is-org-exist/is-org-exist.service';
 import { CreateProjectService } from '#disk/controllers/02-projects/create-project/create-project.service';
 import { DeleteProjectService } from '#disk/controllers/02-projects/delete-project/delete-project.service';
 import { IsProjectExistService } from '#disk/controllers/02-projects/is-project-exist/is-project-exist.service';
@@ -41,6 +38,9 @@ import { GetFileService } from '#disk/controllers/07-files/get-file/get-file.ser
 import { SaveFileService } from '#disk/controllers/07-files/save-file/save-file.service';
 import { SeedProjectService } from '#disk/controllers/08-seed/seed-project/seed-project.service';
 import { CloneTestRepoService } from '#disk/controllers/09-test/clone-test-repo/clone-test-repo.service';
+import { CreateOrgService } from '#disk/controllers/orgs/create-org/create-org.service';
+import { DeleteOrgService } from '#disk/controllers/orgs/delete-org/delete-org.service';
+import { IsOrgExistService } from '#disk/controllers/orgs/is-org-exist/is-org-exist.service';
 import { makeInvalidRequestResponse } from '#disk/functions/make-invalid-request-response';
 import { processValidatedRequest } from '#disk/functions/process-validated-request';
 
