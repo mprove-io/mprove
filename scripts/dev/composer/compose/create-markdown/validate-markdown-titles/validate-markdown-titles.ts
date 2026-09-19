@@ -22,7 +22,15 @@ export function validateMarkdownTitles(item: {
 
     let isFirstLineH1: boolean = /^# [^#].*$/u.test(firstLine);
 
-    let title: string = isFirstLineH1 ? firstLine.slice(2).trim() : '';
+    if (!isFirstLineH1) {
+      return Result.fail({
+        code: 'COMPOSER_MARKDOWN_H1_MISSING',
+        message: `${filePath} must start with an H1 title`,
+        filePath: filePath
+      });
+    }
+
+    let title: string = firstLine.slice(2).trim();
 
     let titleSlug: string = title
       .trim()
