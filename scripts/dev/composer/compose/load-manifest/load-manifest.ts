@@ -1,18 +1,26 @@
 import { Result } from '@praha/byethrow';
 import { readTextFile } from '../../shared/read-text-file/read-text-file';
-import type { ContentPaths } from '../../types/content-paths';
-import type { GetContentPathsError } from '../../types/function-errors/get-content-paths-error';
+import type { DiscoverPathsPayload } from '../../types/discover-paths-payload';
+import type { DiscoverPathsError } from '../../types/function-errors/discover-paths-error';
 import type { LoadManifestError } from '../../types/function-errors/load-manifest-error';
-import type { ParseManifestError } from '../../types/function-errors/parse-manifest-error';
+import type { ParseListedPathError } from '../../types/function-errors/parse-listed-path-error';
 import type { ReadTextFileError } from '../../types/function-errors/read-text-file-error';
-import type { ValidateManifestFilesExistError } from '../../types/function-errors/validate-manifest-files-exist-error';
-import type { ValidateMarkdownFilesReferencedError } from '../../types/function-errors/validate-markdown-files-referenced-error';
+import type { ValidateDiscoveredFilesAreListedError } from '../../types/function-errors/validate-discovered-files-are-listed-error';
+import type { ValidateListedPathsAreDiscoveredError } from '../../types/function-errors/validate-listed-paths-are-discovered-error';
 import type { Manifest } from '../../types/manifest';
-import { getContentPaths } from './get-content-paths/get-content-paths';
-import { parseManifest } from './parse-manifest/parse-manifest';
+import type { ManifestLine } from '../../types/manifest-line';
+import { discoverPaths } from './discover-paths/discover-paths';
+import { parseListedPath } from './parse-listed-path/parse-listed-path';
 import { validateDirectorySectionFilesExist } from './validate-directory-section-files-exist/validate-directory-section-files-exist';
-import { validateManifestFilesExist } from './validate-manifest-files-exist/validate-manifest-files-exist';
-import { validateMarkdownFilesReferenced } from './validate-markdown-files-referenced/validate-markdown-files-referenced';
+import { validateDiscoveredFilesAreListed } from './validate-discovered-files-are-listed/validate-discovered-files-are-listed';
+import { validateListedPath } from './validate-listed-path/validate-listed-path';
+import { validateListedPathsAreDiscovered } from './validate-listed-paths-are-discovered/validate-listed-paths-are-discovered';
+import { validateManifestPathsUnique } from './validate-manifest-paths-unique/validate-manifest-paths-unique';
+
+type ManifestParsedLine = {
+  listedPath: string;
+  manifestLine: ManifestLine;
+};
 
 export function loadManifest(item: {
   contentDirectory: string;
@@ -21,44 +29,89 @@ export function loadManifest(item: {
   return Result.pipe(
     Result.succeed(item),
     Result.bind(
-      'content',
+      'manifestText',
       (v): Result.Result<string, ReadTextFileError> =>
         readTextFile({ filePath: v.manifestPath })
     ),
+    Result.bind('manifestLines', (v): Result.Result<ManifestLine[], never> => {
+      let manifestLines: ManifestLine[] = v.manifestText
+        .split(/\r?\n/u)
+        .map((line, index) => ({
+          line: line.trim(),
+          lineNumber: index + 1
+        }))
+        .filter(manifestLine => manifestLine.line.length > 0);
+
+      return Result.succeed(manifestLines);
+    }),
     Result.bind(
-      'manifest',
-      (v): Result.Result<Manifest, ParseManifestError> =>
-        parseManifest({
-          content: v.content,
-          manifestPath: v.manifestPath
-        })
+      'listedPaths',
+      (v): Result.Result<string[], ParseListedPathError> =>
+        Result.sequence(v.manifestLines, manifestLine =>
+          parseListedPath({
+            manifestLine: manifestLine,
+            manifestPath: v.manifestPath
+          })
+        )
     ),
     Result.bind(
-      'contentPaths',
-      (v): Result.Result<ContentPaths, GetContentPathsError> =>
-        getContentPaths({ contentDirectory: v.contentDirectory })
+      'manifestParsedLines',
+      (v): Result.Result<ManifestParsedLine[], never> => {
+        let manifestParsedLines: ManifestParsedLine[] = v.manifestLines.map(
+          (manifestLine, index) => ({
+            listedPath: v.listedPaths[index],
+            manifestLine: manifestLine
+          })
+        );
+
+        return Result.succeed(manifestParsedLines);
+      }
+    ),
+    Result.andThrough(v =>
+      Result.sequence(v.manifestParsedLines, manifestParsedLine =>
+        validateListedPath({
+          listedPath: manifestParsedLine.listedPath,
+          manifestLine: manifestParsedLine.manifestLine,
+          manifestPath: v.manifestPath
+        })
+      )
+    ),
+    Result.andThrough(v =>
+      validateManifestPathsUnique({
+        listedPaths: v.listedPaths,
+        manifestLines: v.manifestLines,
+        manifestPath: v.manifestPath
+      })
+    ),
+    Result.bind(
+      'discoverPathsPayload',
+      (v): Result.Result<DiscoverPathsPayload, DiscoverPathsError> =>
+        discoverPaths({ contentDirectory: v.contentDirectory })
     ),
     Result.andThrough(v =>
       validateDirectorySectionFilesExist({
         contentDirectory: v.contentDirectory,
-        directoryRelativePaths: v.contentPaths.directoryRelativePaths,
-        markdownRelativePaths: v.contentPaths.markdownRelativePaths
+        discoverPathsPayload: v.discoverPathsPayload
       })
     ),
     Result.andThrough(
-      (v): Result.Result<void, ValidateManifestFilesExistError> =>
-        validateManifestFilesExist({
-          manifestRelativePaths: v.manifest.relativePaths,
-          markdownRelativePaths: v.contentPaths.markdownRelativePaths
+      (v): Result.Result<void, ValidateListedPathsAreDiscoveredError> =>
+        validateListedPathsAreDiscovered({
+          discoverPathsPayload: v.discoverPathsPayload,
+          listedPaths: v.listedPaths
         })
     ),
     Result.andThrough(
-      (v): Result.Result<void, ValidateMarkdownFilesReferencedError> =>
-        validateMarkdownFilesReferenced({
-          manifestRelativePaths: v.manifest.relativePaths,
-          markdownRelativePaths: v.contentPaths.markdownRelativePaths
+      (v): Result.Result<void, ValidateDiscoveredFilesAreListedError> =>
+        validateDiscoveredFilesAreListed({
+          discoverPathsPayload: v.discoverPathsPayload,
+          listedPaths: v.listedPaths
         })
     ),
-    Result.map((v): Manifest => v.manifest)
+    Result.map(
+      (v): Manifest => ({
+        relativePaths: v.listedPaths
+      })
+    )
   );
 }

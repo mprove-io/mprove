@@ -1,3 +1,3 @@
 import type { ComposerMarkdownFileScanFailedError } from '../errors/composer-markdown-file-scan-failed-error';
 
-export type GetContentPathsError = ComposerMarkdownFileScanFailedError;
+export type DiscoverPathsError = ComposerMarkdownFileScanFailedError;

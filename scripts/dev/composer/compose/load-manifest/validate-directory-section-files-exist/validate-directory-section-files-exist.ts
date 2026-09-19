@@ -1,23 +1,25 @@
 import { resolve } from 'node:path';
 import { Result } from '@praha/byethrow';
+import type { DiscoverPathsPayload } from '../../../types/discover-paths-payload';
 import type { ValidateDirectorySectionFilesExistError } from '../../../types/function-errors/validate-directory-section-files-exist-error';
 
 export function validateDirectorySectionFilesExist(item: {
   contentDirectory: string;
-  directoryRelativePaths: string[];
-  markdownRelativePaths: string[];
+  discoverPathsPayload: DiscoverPathsPayload;
 }): Result.Result<void, ValidateDirectorySectionFilesExistError> {
-  let markdownRelativePaths: Set<string> = new Set<string>(
-    item.markdownRelativePaths
+  let { contentDirectory, discoverPathsPayload } = item;
+
+  let discoveredFiles: Set<string> = new Set<string>(
+    discoverPathsPayload.files
   );
 
-  let missingSectionRelativePaths: string[] = item.directoryRelativePaths
+  let missingSectionRelativePaths: string[] = discoverPathsPayload.directories
     .map(relativePath => `${relativePath}.md`)
-    .filter(relativePath => !markdownRelativePaths.has(relativePath));
+    .filter(relativePath => !discoveredFiles.has(relativePath));
 
   if (missingSectionRelativePaths.length > 0) {
     let sectionFilePath: string = resolve(
-      item.contentDirectory,
+      contentDirectory,
       missingSectionRelativePaths[0]
     );
 
