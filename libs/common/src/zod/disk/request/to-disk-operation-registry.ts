@@ -1,18 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
-import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/02-projects/create-project/create-project-request';
-import { zToDiskCreateProjectRequest } from '#common/zod/disk/routes/02-projects/create-project/create-project-request';
-import type { ToDiskCreateProjectResponse } from '#common/zod/disk/routes/02-projects/create-project/create-project-response';
-import { zToDiskCreateProjectResponse } from '#common/zod/disk/routes/02-projects/create-project/create-project-response';
-import type { ToDiskDeleteProjectRequest } from '#common/zod/disk/routes/02-projects/delete-project/delete-project-request';
-import { zToDiskDeleteProjectRequest } from '#common/zod/disk/routes/02-projects/delete-project/delete-project-request';
-import type { ToDiskDeleteProjectResponse } from '#common/zod/disk/routes/02-projects/delete-project/delete-project-response';
-import { zToDiskDeleteProjectResponse } from '#common/zod/disk/routes/02-projects/delete-project/delete-project-response';
-import type { ToDiskIsProjectExistRequest } from '#common/zod/disk/routes/02-projects/is-project-exist/is-project-exist-request';
-import { zToDiskIsProjectExistRequest } from '#common/zod/disk/routes/02-projects/is-project-exist/is-project-exist-request';
-import type { ToDiskIsProjectExistResponse } from '#common/zod/disk/routes/02-projects/is-project-exist/is-project-exist-response';
-import { zToDiskIsProjectExistResponse } from '#common/zod/disk/routes/02-projects/is-project-exist/is-project-exist-response';
 import type { ToDiskCommitRepoRequest } from '#common/zod/disk/routes/03-repos/commit-repo/commit-repo-request';
 import { zToDiskCommitRepoRequest } from '#common/zod/disk/routes/03-repos/commit-repo/commit-repo-request';
 import type { ToDiskCommitRepoResponse } from '#common/zod/disk/routes/03-repos/commit-repo/commit-repo-response';
@@ -121,6 +109,18 @@ import type { ToDiskIsOrgExistRequest } from '#common/zod/disk/routes/orgs/is-or
 import { zToDiskIsOrgExistRequest } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-request';
 import type { ToDiskIsOrgExistResponse } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-response';
 import { zToDiskIsOrgExistResponse } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-response';
+import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/projects/create-project/create-project-request';
+import { zToDiskCreateProjectRequest } from '#common/zod/disk/routes/projects/create-project/create-project-request';
+import type { ToDiskCreateProjectResponse } from '#common/zod/disk/routes/projects/create-project/create-project-response';
+import { zToDiskCreateProjectResponse } from '#common/zod/disk/routes/projects/create-project/create-project-response';
+import type { ToDiskDeleteProjectRequest } from '#common/zod/disk/routes/projects/delete-project/delete-project-request';
+import { zToDiskDeleteProjectRequest } from '#common/zod/disk/routes/projects/delete-project/delete-project-request';
+import type { ToDiskDeleteProjectResponse } from '#common/zod/disk/routes/projects/delete-project/delete-project-response';
+import { zToDiskDeleteProjectResponse } from '#common/zod/disk/routes/projects/delete-project/delete-project-response';
+import type { ToDiskIsProjectExistRequest } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-request';
+import { zToDiskIsProjectExistRequest } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-request';
+import type { ToDiskIsProjectExistResponse } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-response';
+import { zToDiskIsProjectExistResponse } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-response';
 
 type ValidateOperationRegistry<
   TRegistry extends {

@@ -23,7 +23,7 @@ import { makeId } from '#common/functions/make-id';
 import type { Ev } from '#common/zod/backend/ev';
 import type { Project } from '#common/zod/backend/project';
 import type { ProjectsItem } from '#common/zod/backend/projects-item';
-import type { ToDiskCreateProjectOutput } from '#common/zod/disk/routes/02-projects/create-project/create-project-response';
+import type { ToDiskCreateProjectOutput } from '#common/zod/disk/routes/projects/create-project/create-project-response';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';

@@ -4,15 +4,15 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
-import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/02-projects/create-project/create-project-request';
-import type { ToDiskIsProjectExistRequest } from '#common/zod/disk/routes/02-projects/is-project-exist/is-project-exist-request';
-import type { ToDiskIsProjectExistResponse } from '#common/zod/disk/routes/02-projects/is-project-exist/is-project-exist-response';
 import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/orgs/create-org/create-org-request';
+import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/projects/create-project/create-project-request';
+import type { ToDiskIsProjectExistRequest } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-request';
+import type { ToDiskIsProjectExistResponse } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 
-let testId = 'disk-create-project';
+let testId = 'disk-is-project-exist';
 
 let traceId = testId;
 let orgId = testId;
@@ -20,7 +20,8 @@ let projectId = makeId();
 let projectName = 'p1';
 
 test('1', async t => {
-  let resp: ToDiskIsProjectExistResponse;
+  let resp1: ToDiskIsProjectExistResponse;
+  let resp2: ToDiskIsProjectExistResponse;
 
   let wLogger;
   let configService;
@@ -71,7 +72,7 @@ test('1', async t => {
       }
     };
 
-    let isProjectExistRequest: ToDiskIsProjectExistRequest = {
+    let isProjectExistRequest_1: ToDiskIsProjectExistRequest = {
       operation: 'isProjectExist',
       traceId: traceId,
       input: {
@@ -80,11 +81,23 @@ test('1', async t => {
       }
     };
 
+    let isProjectExistRequest_2: ToDiskIsProjectExistRequest = {
+      operation: 'isProjectExist',
+      traceId: traceId,
+      input: {
+        orgId: orgId,
+        projectId: 'unknown_project'
+      }
+    };
+
     await messageService.processRequest({ request: createOrgRequest });
     await messageService.processRequest({ request: createProjectRequest });
 
-    resp = await messageService.processRequest({
-      request: isProjectExistRequest
+    resp1 = await messageService.processRequest({
+      request: isProjectExistRequest_1
+    });
+    resp2 = await messageService.processRequest({
+      request: isProjectExistRequest_2
     });
   } catch (e) {
     logToConsoleDisk({
@@ -95,11 +108,18 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.result.type, 'Success');
+  t.is(resp1.result.type, 'Success');
 
-  if (resp.result.type !== 'Success') {
+  if (resp1.result.type !== 'Success') {
     return;
   }
 
-  t.is(resp.result.value.isProjectExist, true);
+  t.is(resp2.result.type, 'Success');
+
+  if (resp2.result.type !== 'Success') {
+    return;
+  }
+
+  t.is(resp1.result.value.isProjectExist, true);
+  t.is(resp2.result.value.isProjectExist, false);
 });

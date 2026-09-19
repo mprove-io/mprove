@@ -1,6 +1,3 @@
-import { CreateProjectController } from './controllers/02-projects/create-project/create-project.controller';
-import { DeleteProjectController } from './controllers/02-projects/delete-project/delete-project.controller';
-import { IsProjectExistController } from './controllers/02-projects/is-project-exist/is-project-exist.controller';
 import { CommitRepoController } from './controllers/03-repos/commit-repo/commit-repo.controller';
 import { CreateDevRepoController } from './controllers/03-repos/create-dev-repo/create-dev-repo.controller';
 import { DeleteDevRepoController } from './controllers/03-repos/delete-dev-repo/delete-dev-repo.controller';
@@ -27,6 +24,9 @@ import { SeedProjectController } from './controllers/08-seed/seed-project/seed-p
 import { CreateOrgController } from './controllers/orgs/create-org/create-org.controller';
 import { DeleteOrgController } from './controllers/orgs/delete-org/delete-org.controller';
 import { IsOrgExistController } from './controllers/orgs/is-org-exist/is-org-exist.controller';
+import { CreateProjectController } from './controllers/projects/create-project/create-project.controller';
+import { DeleteProjectController } from './controllers/projects/delete-project/delete-project.controller';
+import { IsProjectExistController } from './controllers/projects/is-project-exist/is-project-exist.controller';
 
 export const appControllers = [
   CreateOrgController,

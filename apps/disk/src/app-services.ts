@@ -1,6 +1,3 @@
-import { CreateProjectService } from './controllers/02-projects/create-project/create-project.service';
-import { DeleteProjectService } from './controllers/02-projects/delete-project/delete-project.service';
-import { IsProjectExistService } from './controllers/02-projects/is-project-exist/is-project-exist.service';
 import { CommitRepoService } from './controllers/03-repos/commit-repo/commit-repo.service';
 import { CreateDevRepoService } from './controllers/03-repos/create-dev-repo/create-dev-repo.service';
 import { DeleteDevRepoService } from './controllers/03-repos/delete-dev-repo/delete-dev-repo.service';
@@ -28,6 +25,9 @@ import { CloneTestRepoService } from './controllers/09-test/clone-test-repo/clon
 import { CreateOrgService } from './controllers/orgs/create-org/create-org.service';
 import { DeleteOrgService } from './controllers/orgs/delete-org/delete-org.service';
 import { IsOrgExistService } from './controllers/orgs/is-org-exist/is-org-exist.service';
+import { CreateProjectService } from './controllers/projects/create-project/create-project.service';
+import { DeleteProjectService } from './controllers/projects/delete-project/delete-project.service';
+import { IsProjectExistService } from './controllers/projects/is-project-exist/is-project-exist.service';
 import { ConsumerService } from './services/consumer.service';
 import { DiskTabService } from './services/disk-tab.service';
 import { MessageService } from './services/message.service';
