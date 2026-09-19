@@ -20,6 +20,7 @@
 - rules.md
 - rules/git-operations.md
 - rules/do-not-run-tests-unless-asked.md
+- rules/do-not-write-tests-unless-asked.md
 - rules/typecheck-and-lint.md
 - rules/function-and-method-args.md
 - rules/item-destructuring.md
