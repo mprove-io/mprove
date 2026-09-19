@@ -82,7 +82,7 @@ import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
-import type { ToDiskSeedProjectOutput } from '#common/zod/disk/routes/08-seed/seed-project/seed-project-response';
+import type { ToDiskSeedProjectOutput } from '#common/zod/disk/routes/seed/seed-project/seed-project-response';
 import type {
   ToBackendSeedRecordsRequestPayloadCachedColumnsItem,
   ToBackendSeedRecordsRequestPayloadCachedPartsItem,

@@ -1,10 +1,3 @@
-import { CreateFolderController } from './controllers/06-folders/create-folder/create-folder.controller';
-import { DeleteFolderController } from './controllers/06-folders/delete-folder/delete-folder.controller';
-import { CreateFileController } from './controllers/07-files/create-file/create-file.controller';
-import { DeleteFileController } from './controllers/07-files/delete-file/delete-file.controller';
-import { GetFileController } from './controllers/07-files/get-file/get-file.controller';
-import { SaveFileController } from './controllers/07-files/save-file/save-file.controller';
-import { SeedProjectController } from './controllers/08-seed/seed-project/seed-project.controller';
 import { CreateBranchController } from './controllers/branches/create-branch/create-branch.controller';
 import { DeleteBranchController } from './controllers/branches/delete-branch/delete-branch.controller';
 import { IsBranchExistController } from './controllers/branches/is-branch-exist/is-branch-exist.controller';
@@ -12,6 +5,12 @@ import { GetCatalogFilesController } from './controllers/catalogs/get-catalog-fi
 import { GetCatalogNodesController } from './controllers/catalogs/get-catalog-nodes/get-catalog-nodes.controller';
 import { MoveCatalogNodeController } from './controllers/catalogs/move-catalog-node/move-catalog-node.controller';
 import { RenameCatalogNodeController } from './controllers/catalogs/rename-catalog-node/rename-catalog-node.controller';
+import { CreateFileController } from './controllers/files/create-file/create-file.controller';
+import { DeleteFileController } from './controllers/files/delete-file/delete-file.controller';
+import { GetFileController } from './controllers/files/get-file/get-file.controller';
+import { SaveFileController } from './controllers/files/save-file/save-file.controller';
+import { CreateFolderController } from './controllers/folders/create-folder/create-folder.controller';
+import { DeleteFolderController } from './controllers/folders/delete-folder/delete-folder.controller';
 import { CreateOrgController } from './controllers/orgs/create-org/create-org.controller';
 import { DeleteOrgController } from './controllers/orgs/delete-org/delete-org.controller';
 import { IsOrgExistController } from './controllers/orgs/is-org-exist/is-org-exist.controller';
@@ -27,6 +26,7 @@ import { PushRepoController } from './controllers/repos/push-repo/push-repo.cont
 import { RevertRepoToLastCommitController } from './controllers/repos/revert-repo-to-last-commit/revert-repo-to-last-commit.controller';
 import { RevertRepoToRemoteController } from './controllers/repos/revert-repo-to-remote/revert-repo-to-remote.controller';
 import { SyncRepoController } from './controllers/repos/sync-repo/sync-repo.controller';
+import { SeedProjectController } from './controllers/seed/seed-project/seed-project.controller';
 
 export const appControllers = [
   CreateOrgController,

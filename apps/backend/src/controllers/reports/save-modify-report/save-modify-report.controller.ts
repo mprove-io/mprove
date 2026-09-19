@@ -56,7 +56,7 @@ import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
-import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/07-files/save-file/save-file-response';
+import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-response';
 import type { ToBackendSaveModifyReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-save-modify-report';
 
 @ApiTags('Reports')

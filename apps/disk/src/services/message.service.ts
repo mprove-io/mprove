@@ -11,13 +11,6 @@ import type { ToDiskInvalidRequestErrorResponse } from '#common/zod/disk/respons
 import type { ToDiskOperationResponse } from '#common/zod/disk/response/to-disk-operation-response';
 import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
 import type { ToDiskResponseForRequest } from '#common/zod/disk/response/to-disk-response-for-request';
-import { CreateFolderService } from '#disk/controllers/06-folders/create-folder/create-folder.service';
-import { DeleteFolderService } from '#disk/controllers/06-folders/delete-folder/delete-folder.service';
-import { CreateFileService } from '#disk/controllers/07-files/create-file/create-file.service';
-import { DeleteFileService } from '#disk/controllers/07-files/delete-file/delete-file.service';
-import { GetFileService } from '#disk/controllers/07-files/get-file/get-file.service';
-import { SaveFileService } from '#disk/controllers/07-files/save-file/save-file.service';
-import { SeedProjectService } from '#disk/controllers/08-seed/seed-project/seed-project.service';
 import { CloneTestRepoService } from '#disk/controllers/09-test/clone-test-repo/clone-test-repo.service';
 import { CreateBranchService } from '#disk/controllers/branches/create-branch/create-branch.service';
 import { DeleteBranchService } from '#disk/controllers/branches/delete-branch/delete-branch.service';
@@ -26,6 +19,12 @@ import { GetCatalogFilesService } from '#disk/controllers/catalogs/get-catalog-f
 import { GetCatalogNodesService } from '#disk/controllers/catalogs/get-catalog-nodes/get-catalog-nodes.service';
 import { MoveCatalogNodeService } from '#disk/controllers/catalogs/move-catalog-node/move-catalog-node.service';
 import { RenameCatalogNodeService } from '#disk/controllers/catalogs/rename-catalog-node/rename-catalog-node.service';
+import { CreateFileService } from '#disk/controllers/files/create-file/create-file.service';
+import { DeleteFileService } from '#disk/controllers/files/delete-file/delete-file.service';
+import { GetFileService } from '#disk/controllers/files/get-file/get-file.service';
+import { SaveFileService } from '#disk/controllers/files/save-file/save-file.service';
+import { CreateFolderService } from '#disk/controllers/folders/create-folder/create-folder.service';
+import { DeleteFolderService } from '#disk/controllers/folders/delete-folder/delete-folder.service';
 import { CreateOrgService } from '#disk/controllers/orgs/create-org/create-org.service';
 import { DeleteOrgService } from '#disk/controllers/orgs/delete-org/delete-org.service';
 import { IsOrgExistService } from '#disk/controllers/orgs/is-org-exist/is-org-exist.service';
@@ -41,6 +40,7 @@ import { PushRepoService } from '#disk/controllers/repos/push-repo/push-repo.ser
 import { RevertRepoToLastCommitService } from '#disk/controllers/repos/revert-repo-to-last-commit/revert-repo-to-last-commit.service';
 import { RevertRepoToRemoteService } from '#disk/controllers/repos/revert-repo-to-remote/revert-repo-to-remote.service';
 import { SyncRepoService } from '#disk/controllers/repos/sync-repo/sync-repo.service';
+import { SeedProjectService } from '#disk/controllers/seed/seed-project/seed-project.service';
 import { makeInvalidRequestResponse } from '#disk/functions/make-invalid-request-response';
 import { processValidatedRequest } from '#disk/functions/process-validated-request';
 

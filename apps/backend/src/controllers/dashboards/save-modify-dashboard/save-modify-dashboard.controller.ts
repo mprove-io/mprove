@@ -57,7 +57,7 @@ import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { TileX } from '#common/zod/backend/tile-x';
-import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/07-files/save-file/save-file-response';
+import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-response';
 import type { ToBackendSaveModifyDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
 
 @ApiTags('Dashboards')

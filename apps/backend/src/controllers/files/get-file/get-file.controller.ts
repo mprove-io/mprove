@@ -20,7 +20,7 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToDiskGetFileOutput } from '#common/zod/disk/routes/07-files/get-file/get-file-response';
+import type { ToDiskGetFileOutput } from '#common/zod/disk/routes/files/get-file/get-file-response';
 import type { ToBackendGetFileResponsePayload } from '#common/zod/to-backend/files/to-backend-get-file';
 
 @ApiTags('Files')
