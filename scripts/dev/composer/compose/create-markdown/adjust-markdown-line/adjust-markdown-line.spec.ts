@@ -32,3 +32,29 @@ test('preserves Setext headings at nested levels', t => {
 
   t.deepEqual(adjustedLines, lines);
 });
+
+test('caps adjusted headings at H6', t => {
+  let adjustedLines: string[] = ['##### Five', '###### Six'].map(line =>
+    adjustMarkdownLine({ line: line, nestingLevel: 3 })
+  );
+
+  t.deepEqual(adjustedLines, ['###### Five', '###### Six']);
+});
+
+test('adjusts a heading followed by a tab and preserves its content', t => {
+  let adjustedLine: string = adjustMarkdownLine({
+    line: '#\tTabbed',
+    nestingLevel: 1
+  });
+
+  t.is(adjustedLine, '##\tTabbed');
+});
+
+test('preserves a hash prefix without heading whitespace', t => {
+  let adjustedLine: string = adjustMarkdownLine({
+    line: '#Not-A-Heading',
+    nestingLevel: 2
+  });
+
+  t.is(adjustedLine, '#Not-A-Heading');
+});
