@@ -750,7 +750,7 @@ Apply this rule to the specific function named by the user.
   caller.
 - Create a plain `<function-name>` child directory and place the called function
   in `<function-name>/<function-name>.ts`.
-- When moving a function, move its `tests/` directory or `.spec.ts` file with
+- When moving a function, move its `tests/` directory or `.spec.ts` files with
   it.
 - Remove any empty directories left behind after moving files.
 - Apply the same process recursively to every moved function.
