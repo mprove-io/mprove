@@ -32,7 +32,7 @@ export function compose(item: {
       (v): Result.Result<string, CreateMarkdownError> =>
         createMarkdown({
           contentDirectory: v.contentDirectory,
-          relativePaths: v.manifest.relativePaths
+          listedPaths: v.manifest.listedPaths
         })
     ),
     Result.andThrough(v =>

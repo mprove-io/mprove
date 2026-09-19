@@ -110,7 +110,7 @@ export function loadManifest(item: {
     ),
     Result.map(
       (v): Manifest => ({
-        relativePaths: v.listedPaths
+        listedPaths: v.listedPaths
       })
     )
   );

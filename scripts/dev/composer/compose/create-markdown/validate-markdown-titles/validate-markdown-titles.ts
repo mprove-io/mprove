@@ -5,18 +5,18 @@ import type { ValidateMarkdownTitlesError } from '../../../types/function-errors
 export function validateMarkdownTitles(item: {
   contentDirectory: string;
   contents: string[];
-  relativePaths: string[];
+  listedPaths: string[];
 }): Result.Result<void, ValidateMarkdownTitlesError> {
-  let { contentDirectory, contents, relativePaths } = item;
+  let { contentDirectory, contents, listedPaths } = item;
 
-  for (let i = 0; i < relativePaths.length; i++) {
-    let relativePath: string = relativePaths[i];
+  for (let i = 0; i < listedPaths.length; i++) {
+    let listedPath: string = listedPaths[i];
 
-    let filePath: string = resolve(contentDirectory, relativePath);
+    let filePath: string = resolve(contentDirectory, listedPath);
 
-    let actualFileName: string = posix.basename(relativePath);
+    let actualFileName: string = posix.basename(listedPath);
 
-    let fileNameStem: string = posix.basename(relativePath, '.md');
+    let fileNameStem: string = posix.basename(listedPath, '.md');
 
     let isFileNameValid: boolean = /^[a-z0-9-]+$/u.test(fileNameStem);
 

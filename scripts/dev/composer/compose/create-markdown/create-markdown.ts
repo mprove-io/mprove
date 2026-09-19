@@ -20,16 +20,16 @@ type MarkdownPart = {
 
 export function createMarkdown(item: {
   contentDirectory: string;
-  relativePaths: string[];
+  listedPaths: string[];
 }): Result.Result<string, CreateMarkdownError> {
   return Result.pipe(
     Result.succeed(item),
     Result.bind(
       'contents',
       (v): Result.Result<string[], ReadTextFileError> =>
-        Result.sequence(v.relativePaths, relativePath =>
+        Result.sequence(v.listedPaths, listedPath =>
           readTextFile({
-            filePath: resolve(v.contentDirectory, relativePath)
+            filePath: resolve(v.contentDirectory, listedPath)
           })
         )
     ),
@@ -38,13 +38,13 @@ export function createMarkdown(item: {
         validateMarkdownTitles({
           contentDirectory: v.contentDirectory,
           contents: v.contents,
-          relativePaths: v.relativePaths
+          listedPaths: v.listedPaths
         })
     ),
     Result.map((v): MarkdownPart[] =>
       v.contents.map((content, index) => ({
         lines: content.split(/\r?\n/u),
-        nestingLevel: v.relativePaths[index].split('/').length - 1,
+        nestingLevel: v.listedPaths[index].split('/').length - 1,
         state: {
           openFenceCharacter: '',
           openFenceLength: 0

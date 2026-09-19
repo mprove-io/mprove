@@ -1,4 +1,4 @@
-import { posix } from 'node:path';
+import { posix, win32 } from 'node:path';
 import { Result } from '@praha/byethrow';
 import type { ValidateListedPathError } from '../../../types/function-errors/validate-listed-path-error';
 import type { ManifestLine } from '../../../types/manifest-line';
@@ -15,7 +15,8 @@ export function validateListedPath(item: {
   if (
     /\s/u.test(listedPath) ||
     listedPath !== normalizedPath ||
-    listedPath.startsWith('/') ||
+    posix.isAbsolute(listedPath) ||
+    win32.isAbsolute(listedPath) ||
     listedPath.startsWith('../') ||
     listedPath.includes('\\') ||
     posix.extname(listedPath) !== '.md'
