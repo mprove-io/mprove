@@ -41,7 +41,7 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type { ToDiskRevertRepoToLastCommitOutput } from '#common/zod/disk/routes/03-repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
+import type { ToDiskRevertRepoToLastCommitOutput } from '#common/zod/disk/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
 import type { ToBackendRevertRepoToLastCommitResponsePayload } from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
 
 @ApiTags('Repos')

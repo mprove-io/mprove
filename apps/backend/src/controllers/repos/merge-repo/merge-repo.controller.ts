@@ -44,7 +44,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type { ToDiskMergeRepoOutput } from '#common/zod/disk/routes/03-repos/merge-repo/merge-repo-response';
+import type { ToDiskMergeRepoOutput } from '#common/zod/disk/routes/repos/merge-repo/merge-repo-response';
 import type { ToBackendMergeRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-merge-repo';
 
 @ApiTags('Repos')

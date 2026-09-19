@@ -1,0 +1,135 @@
+import test from 'ava';
+import { BRANCH_MAIN } from '#common/constants/top';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { makeId } from '#common/functions/make-id';
+import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ToDiskSaveFileRequest } from '#common/zod/disk/routes/07-files/save-file/save-file-request';
+import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/orgs/create-org/create-org-request';
+import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/projects/create-project/create-project-request';
+import type { ToDiskCommitRepoRequest } from '#common/zod/disk/routes/repos/commit-repo/commit-repo-request';
+import type { ToDiskPushRepoRequest } from '#common/zod/disk/routes/repos/push-repo/push-repo-request';
+import type { ToDiskPushRepoResponse } from '#common/zod/disk/routes/repos/push-repo/push-repo-response';
+import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
+
+let testId = 'disk-push-repo';
+
+let traceId = testId;
+let orgId = testId;
+let projectId = makeId();
+let projectName = 'p1';
+
+test('1', async t => {
+  let resp: ToDiskPushRepoResponse;
+
+  let wLogger;
+  let configService;
+
+  try {
+    let { messageService, diskTabService, logger, cs } =
+      await prepareTest(orgId);
+    wLogger = logger;
+    configService = cs;
+
+    let createOrgRequest: ToDiskCreateOrgRequest = {
+      operation: 'createOrg',
+      traceId: traceId,
+      input: {
+        orgId: orgId
+      }
+    };
+
+    let projectSt: ProjectSt = {
+      name: projectName
+    };
+
+    let projectLt: ProjectLt = {
+      defaultBranch: BRANCH_MAIN,
+      gitUrl: undefined,
+      publicKey: undefined,
+      privateKey: undefined,
+      publicKeyEncrypted: undefined,
+      privateKeyEncrypted: undefined,
+      passPhrase: undefined
+    };
+
+    let baseProject: BaseProject = {
+      orgId: orgId,
+      projectId: projectId,
+      remoteType: ProjectRemoteTypeEnum.Managed,
+      st: diskTabService.encrypt({ data: projectSt }),
+      lt: diskTabService.encrypt({ data: projectLt })
+    };
+
+    let createProjectRequest: ToDiskCreateProjectRequest = {
+      operation: 'createProject',
+      traceId: traceId,
+      input: {
+        baseProject: baseProject,
+        devRepoId: 'r1',
+        userAlias: 'u1'
+      }
+    };
+
+    let saveFileRequest: ToDiskSaveFileRequest = {
+      operation: 'saveFile',
+      traceId: traceId,
+      input: {
+        baseProject: baseProject,
+        repoId: 'r1',
+        branch: BRANCH_MAIN,
+        fileNodeId: `${projectId}/readme.md`,
+        content: '1',
+        userAlias: 'u1'
+      }
+    };
+
+    let commitRepoRequest: ToDiskCommitRepoRequest = {
+      operation: 'commitRepo',
+      traceId: traceId,
+      input: {
+        baseProject: baseProject,
+        repoId: 'r1',
+        branch: BRANCH_MAIN,
+        userAlias: 'u1',
+        commitMessage: 'r1-commitMessage'
+      }
+    };
+
+    let pushRepoRequest: ToDiskPushRepoRequest = {
+      operation: 'pushRepo',
+      traceId: traceId,
+      input: {
+        baseProject: baseProject,
+        repoId: 'r1',
+        branch: BRANCH_MAIN,
+        userAlias: 'u1'
+      }
+    };
+
+    await messageService.processRequest({ request: createOrgRequest });
+    await messageService.processRequest({ request: createProjectRequest });
+
+    await messageService.processRequest({ request: saveFileRequest });
+    await messageService.processRequest({ request: commitRepoRequest });
+
+    resp = await messageService.processRequest({ request: pushRepoRequest });
+  } catch (e) {
+    logToConsoleDisk({
+      log: e,
+      logLevel: LogLevelEnum.Error,
+      logger: wLogger,
+      cs: configService
+    });
+  }
+
+  t.is(resp.result.type, 'Success');
+
+  if (resp.result.type !== 'Success') {
+    return;
+  }
+
+  t.is(resp.result.value.repo.repoStatus, 'Ok');
+});

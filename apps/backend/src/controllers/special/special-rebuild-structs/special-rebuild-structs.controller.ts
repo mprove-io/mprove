@@ -41,7 +41,7 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isUndefined } from '#common/functions/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id';
-import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/04-catalogs/get-catalog-files/get-catalog-files-response';
+import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-files/get-catalog-files-response';
 import type {
   BridgeItem,
   ToBackendSpecialRebuildStructsResponsePayload

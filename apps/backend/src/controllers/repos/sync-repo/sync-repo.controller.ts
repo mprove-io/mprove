@@ -41,8 +41,8 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
-import type { ToDiskSyncRepoRequest } from '#common/zod/disk/routes/03-repos/sync-repo/sync-repo-request';
-import type { ToDiskSyncRepoOutput } from '#common/zod/disk/routes/03-repos/sync-repo/sync-repo-response';
+import type { ToDiskSyncRepoRequest } from '#common/zod/disk/routes/repos/sync-repo/sync-repo-request';
+import type { ToDiskSyncRepoOutput } from '#common/zod/disk/routes/repos/sync-repo/sync-repo-response';
 import type { ToBackendSyncRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-sync-repo';
 
 @ApiTags('Repos')

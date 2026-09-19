@@ -21,7 +21,7 @@ import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToDiskCommitRepoOutput } from '#common/zod/disk/routes/03-repos/commit-repo/commit-repo-response';
+import type { ToDiskCommitRepoOutput } from '#common/zod/disk/routes/repos/commit-repo/commit-repo-response';
 import type { ToBackendCommitRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-commit-repo';
 
 @ApiTags('Repos')

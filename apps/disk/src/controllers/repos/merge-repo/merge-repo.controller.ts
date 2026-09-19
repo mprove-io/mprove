@@ -1,0 +1,28 @@
+import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
+import type { ToDiskMergeRepoResponse } from '#common/zod/disk/routes/repos/merge-repo/merge-repo-response';
+import { handleHttpRequest } from '#disk/functions/handle-http-request';
+import { MergeRepoService } from './merge-repo.service';
+
+@Controller()
+export class MergeRepoController {
+  constructor(
+    private mergeRepoService: MergeRepoService,
+    private logger: Logger
+  ) {}
+
+  @Post('mergeRepo')
+  async mergeRepo(
+    @Req() request: { method: string },
+    @Body() body: unknown
+  ): Promise<ToDiskMergeRepoResponse> {
+    let response: ToDiskMergeRepoResponse = await handleHttpRequest({
+      operation: 'mergeRepo',
+      body: body,
+      method: request.method,
+      process: input => this.mergeRepoService.process(input),
+      logger: this.logger
+    });
+
+    return response;
+  }
+}

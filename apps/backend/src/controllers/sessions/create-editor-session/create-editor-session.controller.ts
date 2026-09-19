@@ -63,7 +63,7 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/03-repos/create-dev-repo/create-dev-repo-response';
+import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
 import type { ToBackendCreateEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
 
 const { forEachSeries } = pIteration;
