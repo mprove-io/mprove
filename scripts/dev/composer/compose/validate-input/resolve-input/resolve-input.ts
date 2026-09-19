@@ -8,8 +8,8 @@ export function resolveInput(item: {
   let { argv } = item;
 
   let composeInput: ComposeInput = {
-    contentDirectory: resolve(process.cwd(), argv[1]),
     manifestPath: resolve(process.cwd(), argv[0]),
+    contentDirectory: resolve(process.cwd(), argv[1]),
     outputPath: resolve(process.cwd(), argv[2])
   };
 

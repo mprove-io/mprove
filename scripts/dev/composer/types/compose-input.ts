@@ -1,5 +1,5 @@
 export type ComposeInput = {
-  contentDirectory: string;
   manifestPath: string;
+  contentDirectory: string;
   outputPath: string;
 };

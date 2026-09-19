@@ -1,4 +1,4 @@
 import type { ComposerManifestOutputPathConflictError } from '../errors/composer-manifest-output-path-conflict-error';
 
-export type ValidateManifestOutputPathConflictError =
+export type ValidateManifestAndOutputPathsDifferentError =
   ComposerManifestOutputPathConflictError;

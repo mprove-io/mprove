@@ -1,10 +1,10 @@
 import { Result } from '@praha/byethrow';
-import type { ValidateManifestOutputPathConflictError } from '../../../types/function-errors/validate-manifest-output-path-conflict-error';
+import type { ValidateManifestAndOutputPathsDifferentError } from '../../../types/function-errors/validate-manifest-and-output-paths-different-error';
 
-export function validateManifestOutputPathConflict(item: {
+export function validateManifestAndOutputPathsDifferent(item: {
   manifestPath: string;
   outputPath: string;
-}): Result.Result<void, ValidateManifestOutputPathConflictError> {
+}): Result.Result<void, ValidateManifestAndOutputPathsDifferentError> {
   return item.manifestPath === item.outputPath
     ? Result.fail({
         code: 'COMPOSER_MANIFEST_OUTPUT_PATH_CONFLICT',

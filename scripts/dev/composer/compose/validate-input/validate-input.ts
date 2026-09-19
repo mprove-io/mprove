@@ -7,7 +7,7 @@ import { getContentStats } from './get-content-stats/get-content-stats';
 import { resolveInput } from './resolve-input/resolve-input';
 import { validateArgumentCount } from './validate-argument-count/validate-argument-count';
 import { validateContentPathIsDirectory } from './validate-content-path-is-directory/validate-content-path-is-directory';
-import { validateManifestOutputPathConflict } from './validate-manifest-output-path-conflict/validate-manifest-output-path-conflict';
+import { validateManifestAndOutputPathsDifferent } from './validate-manifest-and-output-paths-different/validate-manifest-and-output-paths-different';
 import { validateManifestPathOutsideContentDirectory } from './validate-manifest-path-outside-content-directory/validate-manifest-path-outside-content-directory';
 import { validateOutputPathOutsideContentDirectory } from './validate-output-path-outside-content-directory/validate-output-path-outside-content-directory';
 
@@ -21,7 +21,7 @@ export function validateInput(item: {
       (v): Result.Result<ComposeInput, never> => resolveInput({ argv: v.argv })
     ),
     Result.andThrough(v =>
-      validateManifestOutputPathConflict({
+      validateManifestAndOutputPathsDifferent({
         manifestPath: v.manifestPath,
         outputPath: v.outputPath
       })
