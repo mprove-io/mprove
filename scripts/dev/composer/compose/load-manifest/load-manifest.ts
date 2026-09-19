@@ -6,6 +6,7 @@ import type { LoadManifestError } from '../../types/function-errors/load-manifes
 import type { ParseListedPathError } from '../../types/function-errors/parse-listed-path-error';
 import type { ReadTextFileError } from '../../types/function-errors/read-text-file-error';
 import type { ValidateDiscoveredFilesAreListedError } from '../../types/function-errors/validate-discovered-files-are-listed-error';
+import type { ValidateListedFileNamesError } from '../../types/function-errors/validate-listed-file-names-error';
 import type { ValidateListedPathsAreDiscoveredError } from '../../types/function-errors/validate-listed-paths-are-discovered-error';
 import type { Manifest } from '../../types/manifest';
 import type { ManifestLine } from '../../types/manifest-line';
@@ -13,6 +14,7 @@ import { discoverPaths } from './discover-paths/discover-paths';
 import { parseListedPath } from './parse-listed-path/parse-listed-path';
 import { validateDirectorySectionFilesExist } from './validate-directory-section-files-exist/validate-directory-section-files-exist';
 import { validateDiscoveredFilesAreListed } from './validate-discovered-files-are-listed/validate-discovered-files-are-listed';
+import { validateListedFileNames } from './validate-listed-file-names/validate-listed-file-names';
 import { validateListedPath } from './validate-listed-path/validate-listed-path';
 import { validateListedPathsAreDiscovered } from './validate-listed-paths-are-discovered/validate-listed-paths-are-discovered';
 import { validateManifestPathsUnique } from './validate-manifest-paths-unique/validate-manifest-paths-unique';
@@ -75,6 +77,13 @@ export function loadManifest(item: {
           manifestPath: v.manifestPath
         })
       )
+    ),
+    Result.andThrough(
+      (v): Result.Result<void, ValidateListedFileNamesError> =>
+        validateListedFileNames({
+          contentDirectory: v.contentDirectory,
+          listedPaths: v.listedPaths
+        })
     ),
     Result.andThrough(v =>
       validateManifestPathsUnique({

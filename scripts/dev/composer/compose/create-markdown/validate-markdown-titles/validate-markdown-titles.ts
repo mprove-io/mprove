@@ -16,18 +16,6 @@ export function validateMarkdownTitles(item: {
 
     let actualFileName: string = posix.basename(listedPath);
 
-    let fileNameStem: string = posix.basename(listedPath, '.md');
-
-    let isFileNameValid: boolean = /^[a-z0-9-]+$/u.test(fileNameStem);
-
-    if (!isFileNameValid) {
-      return Result.fail({
-        code: 'COMPOSER_SOURCE_FILE_NAME_INVALID',
-        message: `${filePath} filename may contain only lowercase a-z, 0-9, and hyphens`,
-        filePath: filePath
-      });
-    }
-
     let lines: string[] = contents[i].split(/\r?\n/u);
 
     let firstLine: string = lines[0] ?? '';
