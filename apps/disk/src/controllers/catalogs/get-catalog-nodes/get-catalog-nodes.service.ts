@@ -11,8 +11,8 @@ import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { checkoutRequestedBranch } from './checkout-requested-branch';
-import { getEffectiveIsFetch } from './get-effective-is-fetch';
+import { checkoutRequestedBranch } from './checkout-requested-branch/checkout-requested-branch';
+import { getEffectiveIsFetch } from './get-effective-is-fetch/get-effective-is-fetch';
 
 @Injectable()
 export class GetCatalogNodesService {

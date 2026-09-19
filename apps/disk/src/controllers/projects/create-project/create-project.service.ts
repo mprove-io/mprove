@@ -15,7 +15,7 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { checkProjectDoesNotExist } from './check-project-does-not-exist';
+import { checkProjectDoesNotExist } from './check-project-does-not-exist/check-project-does-not-exist';
 
 @Injectable()
 export class CreateProjectService {

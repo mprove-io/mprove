@@ -21,7 +21,7 @@ import { pushToRemote } from '#disk/functions/git/push-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
-import { getContentFromFileName } from './get-content-from-file-name';
+import { getContentFromFileName } from './get-content-from-file-name/get-content-from-file-name';
 
 @Injectable()
 export class CreateFileService {

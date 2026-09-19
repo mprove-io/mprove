@@ -12,7 +12,7 @@ import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { deleteBranchFromRepositories } from './delete-branch-from-repositories';
+import { deleteBranchFromRepositories } from './delete-branch-from-repositories/delete-branch-from-repositories';
 
 @Injectable()
 export class DeleteBranchService {
