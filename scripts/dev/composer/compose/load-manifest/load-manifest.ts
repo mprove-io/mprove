@@ -18,6 +18,7 @@ import { validateListedFileNames } from './validate-listed-file-names/validate-l
 import { validateListedPath } from './validate-listed-path/validate-listed-path';
 import { validateListedPathsAreDiscovered } from './validate-listed-paths-are-discovered/validate-listed-paths-are-discovered';
 import { validateManifestPathsUnique } from './validate-manifest-paths-unique/validate-manifest-paths-unique';
+import { validateNoEmptyDirectories } from './validate-no-empty-directories/validate-no-empty-directories';
 
 type ManifestParsedLine = {
   listedPath: string;
@@ -96,6 +97,12 @@ export function loadManifest(item: {
       'discoverPathsPayload',
       (v): Result.Result<DiscoverPathsPayload, DiscoverPathsError> =>
         discoverPaths({ contentDirectory: v.contentDirectory })
+    ),
+    Result.andThrough(v =>
+      validateNoEmptyDirectories({
+        contentDirectory: v.contentDirectory,
+        discoverPathsPayload: v.discoverPathsPayload
+      })
     ),
     Result.andThrough(v =>
       validateDirectorySectionFilesExist({

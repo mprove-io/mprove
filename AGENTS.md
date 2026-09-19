@@ -17,6 +17,8 @@ When asked to add or change a rule or section in `AGENTS.md`:
 - Start every source file with an H1 whose slug matches the filename
   case-insensitively. Hyphens in the filename may be replaced with spaces in the
   H1.
+- Every directory inside `.composer/content/` must contain at least one file or
+  subdirectory; Composer rejects empty directories.
 - List every Markdown source file exactly once in `.composer/COMPOSER.md` as a
   Markdown list with one path per list item. The manifest order controls output
   order, and directory depth controls heading depth.

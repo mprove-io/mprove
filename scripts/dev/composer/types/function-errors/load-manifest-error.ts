@@ -7,6 +7,7 @@ import type { ValidateListedFileNamesError } from './validate-listed-file-names-
 import type { ValidateListedPathError } from './validate-listed-path-error';
 import type { ValidateListedPathsAreDiscoveredError } from './validate-listed-paths-are-discovered-error';
 import type { ValidateManifestPathsUniqueError } from './validate-manifest-paths-unique-error';
+import type { ValidateNoEmptyDirectoriesError } from './validate-no-empty-directories-error';
 
 export type LoadManifestError =
   | ReadTextFileError
@@ -15,6 +16,7 @@ export type LoadManifestError =
   | ValidateListedFileNamesError
   | ValidateManifestPathsUniqueError
   | DiscoverPathsError
+  | ValidateNoEmptyDirectoriesError
   | ValidateDirectorySectionFilesExistError
   | ValidateListedPathsAreDiscoveredError
   | ValidateDiscoveredFilesAreListedError;

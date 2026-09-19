@@ -8,6 +8,7 @@ test('accepts manifest paths that exist', t => {
     validateListedPathsAreDiscovered({
       discoverPathsPayload: {
         directories: [],
+        emptyDirectories: [],
         files: ['intro.md', 'rules.md']
       },
       listedPaths: ['intro.md', 'rules.md']
@@ -21,6 +22,7 @@ test('rejects a manifest path missing from the content directory', t => {
     validateListedPathsAreDiscovered({
       discoverPathsPayload: {
         directories: [],
+        emptyDirectories: [],
         files: ['intro.md']
       },
       listedPaths: ['intro.md', 'missing.md']

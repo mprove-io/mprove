@@ -8,6 +8,7 @@ test('accepts Markdown files referenced by the manifest', t => {
     validateDiscoveredFilesAreListed({
       discoverPathsPayload: {
         directories: [],
+        emptyDirectories: [],
         files: ['intro.md', 'rules.md']
       },
       listedPaths: ['intro.md', 'rules.md']
@@ -21,6 +22,7 @@ test('rejects an unreferenced Markdown file', t => {
     validateDiscoveredFilesAreListed({
       discoverPathsPayload: {
         directories: [],
+        emptyDirectories: [],
         files: ['intro.md', 'rules.md']
       },
       listedPaths: ['intro.md']

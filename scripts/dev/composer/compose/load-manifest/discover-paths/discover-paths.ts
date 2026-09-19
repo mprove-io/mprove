@@ -31,6 +31,7 @@ export function discoverPaths(item: {
 
         let discoverPathsPayload: DiscoverPathsPayload = {
           directories: [],
+          emptyDirectories: [],
           files: []
         };
 
@@ -54,6 +55,12 @@ export function discoverPaths(item: {
           let entries: Dirent[] = readdirSync(pendingPath.absolutePath, {
             withFileTypes: true
           });
+
+          if (pendingPath.relativePath && entries.length === 0) {
+            discoverPathsPayload.emptyDirectories.push(
+              pendingPath.relativePath
+            );
+          }
 
           for (let i = entries.length - 1; i >= 0; i--) {
             let entry: Dirent = entries[i];
