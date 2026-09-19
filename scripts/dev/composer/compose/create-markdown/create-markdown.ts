@@ -5,18 +5,9 @@ import type { CreateMarkdownError } from '../../types/function-errors/create-mar
 import type { ReadTextFileError } from '../../types/function-errors/read-text-file-error';
 import type { ValidateMarkdownTitlesError } from '../../types/function-errors/validate-markdown-titles-error';
 import type { MarkdownSection } from '../../types/markdown-section';
-import {
-  adjustMarkdownLine,
-  type MarkdownAdjustmentState
-} from './adjust-markdown-line/adjust-markdown-line';
+import { adjustMarkdownLine } from './adjust-markdown-line/adjust-markdown-line';
 import { joinMarkdownSections } from './join-markdown-sections/join-markdown-sections';
 import { validateMarkdownTitles } from './validate-markdown-titles/validate-markdown-titles';
-
-type MarkdownPart = {
-  lines: string[];
-  nestingLevel: number;
-  state: MarkdownAdjustmentState;
-};
 
 export function createMarkdown(item: {
   contentDirectory: string;
@@ -41,23 +32,12 @@ export function createMarkdown(item: {
           listedPaths: v.listedPaths
         })
     ),
-    Result.map((v): MarkdownPart[] =>
-      v.contents.map((content, index) => ({
-        lines: content.split(/\r?\n/u),
-        nestingLevel: v.listedPaths[index].split('/').length - 1,
-        state: {
-          openFenceCharacter: '',
-          openFenceLength: 0
-        }
-      }))
-    ),
     Result.map((v): MarkdownSection[] =>
-      v.map(markdownPart => ({
-        lines: markdownPart.lines.map(line =>
+      v.contents.map((content, index) => ({
+        lines: content.split(/\r?\n/u).map(line =>
           adjustMarkdownLine({
             line: line,
-            nestingLevel: markdownPart.nestingLevel,
-            state: markdownPart.state
+            nestingLevel: v.listedPaths[index].split('/').length - 1
           })
         )
       }))
