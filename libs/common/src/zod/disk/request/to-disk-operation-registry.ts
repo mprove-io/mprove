@@ -1,10 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
-import type { ToDiskCloneTestRepoRequest } from '#common/zod/disk/routes/10-test/clone-test-repo/clone-test-repo-request';
-import { zToDiskCloneTestRepoRequest } from '#common/zod/disk/routes/10-test/clone-test-repo/clone-test-repo-request';
-import type { ToDiskCloneTestRepoResponse } from '#common/zod/disk/routes/10-test/clone-test-repo/clone-test-repo-response';
-import { zToDiskCloneTestRepoResponse } from '#common/zod/disk/routes/10-test/clone-test-repo/clone-test-repo-response';
 import type { ToDiskCreateBranchRequest } from '#common/zod/disk/routes/branches/create-branch/create-branch-request';
 import { zToDiskCreateBranchRequest } from '#common/zod/disk/routes/branches/create-branch/create-branch-request';
 import type { ToDiskCreateBranchResponse } from '#common/zod/disk/routes/branches/create-branch/create-branch-response';
@@ -121,6 +117,10 @@ import type { ToDiskSeedProjectRequest } from '#common/zod/disk/routes/seed/seed
 import { zToDiskSeedProjectRequest } from '#common/zod/disk/routes/seed/seed-project/seed-project-request';
 import type { ToDiskSeedProjectResponse } from '#common/zod/disk/routes/seed/seed-project/seed-project-response';
 import { zToDiskSeedProjectResponse } from '#common/zod/disk/routes/seed/seed-project/seed-project-response';
+import type { ToDiskCloneTestRepoRequest } from '#common/zod/disk/routes/test-repos/clone-test-repo/clone-test-repo-request';
+import { zToDiskCloneTestRepoRequest } from '#common/zod/disk/routes/test-repos/clone-test-repo/clone-test-repo-request';
+import type { ToDiskCloneTestRepoResponse } from '#common/zod/disk/routes/test-repos/clone-test-repo/clone-test-repo-response';
+import { zToDiskCloneTestRepoResponse } from '#common/zod/disk/routes/test-repos/clone-test-repo/clone-test-repo-response';
 
 type ValidateOperationRegistry<
   TRegistry extends {

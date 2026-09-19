@@ -1,4 +1,3 @@
-import { CloneTestRepoService } from './controllers/09-test/clone-test-repo/clone-test-repo.service';
 import { CreateBranchService } from './controllers/branches/create-branch/create-branch.service';
 import { DeleteBranchService } from './controllers/branches/delete-branch/delete-branch.service';
 import { IsBranchExistService } from './controllers/branches/is-branch-exist/is-branch-exist.service';
@@ -28,6 +27,7 @@ import { RevertRepoToLastCommitService } from './controllers/repos/revert-repo-t
 import { RevertRepoToRemoteService } from './controllers/repos/revert-repo-to-remote/revert-repo-to-remote.service';
 import { SyncRepoService } from './controllers/repos/sync-repo/sync-repo.service';
 import { SeedProjectService } from './controllers/seed/seed-project/seed-project.service';
+import { CloneTestRepoService } from './controllers/test-repos/clone-test-repo/clone-test-repo.service';
 import { ConsumerService } from './services/consumer.service';
 import { DiskTabService } from './services/disk-tab.service';
 import { MessageService } from './services/message.service';

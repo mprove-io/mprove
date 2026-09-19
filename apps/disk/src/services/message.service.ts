@@ -11,7 +11,6 @@ import type { ToDiskInvalidRequestErrorResponse } from '#common/zod/disk/respons
 import type { ToDiskOperationResponse } from '#common/zod/disk/response/to-disk-operation-response';
 import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
 import type { ToDiskResponseForRequest } from '#common/zod/disk/response/to-disk-response-for-request';
-import { CloneTestRepoService } from '#disk/controllers/09-test/clone-test-repo/clone-test-repo.service';
 import { CreateBranchService } from '#disk/controllers/branches/create-branch/create-branch.service';
 import { DeleteBranchService } from '#disk/controllers/branches/delete-branch/delete-branch.service';
 import { IsBranchExistService } from '#disk/controllers/branches/is-branch-exist/is-branch-exist.service';
@@ -41,6 +40,7 @@ import { RevertRepoToLastCommitService } from '#disk/controllers/repos/revert-re
 import { RevertRepoToRemoteService } from '#disk/controllers/repos/revert-repo-to-remote/revert-repo-to-remote.service';
 import { SyncRepoService } from '#disk/controllers/repos/sync-repo/sync-repo.service';
 import { SeedProjectService } from '#disk/controllers/seed/seed-project/seed-project.service';
+import { CloneTestRepoService } from '#disk/controllers/test-repos/clone-test-repo/clone-test-repo.service';
 import { makeInvalidRequestResponse } from '#disk/functions/make-invalid-request-response';
 import { processValidatedRequest } from '#disk/functions/process-validated-request';
 
