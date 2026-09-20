@@ -3,6 +3,7 @@ fpath=(~/.zsh/completion $fpath)
 autoload -Uz compinit && compinit -i
 
 export PATH="./node_modules/.bin:$PATH"
+export PATH="/root/.opencode/bin:$PATH"
 
 # History settings
 HISTSIZE=10000
