@@ -1,7 +1,7 @@
-import { Logger, Module, OnModuleInit } from '@nestjs/common';
+import { Logger, Module, type OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { appServices } from './app-services';
 import { getConfig } from './config/get.config';

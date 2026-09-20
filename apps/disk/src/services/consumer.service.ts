@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { Queue, Worker } from 'groupmq';
 import Redis from 'ioredis';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
-import { ToDiskInvalidRequestErrorResponse } from '#common/zod/disk/response/to-disk-invalid-request-error-response';
-import { ToDiskOperationResponse } from '#common/zod/disk/response/to-disk-operation-response';
-import { DiskConfig } from '#disk/config/disk-config';
+import type { ToDiskInvalidRequestErrorResponse } from '#common/zod/disk/response/to-disk-invalid-request-error-response';
+import type { ToDiskOperationResponse } from '#common/zod/disk/response/to-disk-operation-response';
+import type { DiskConfig } from '#disk/config/disk-config';
 import { MessageService } from './message.service';
 
 @Injectable()
