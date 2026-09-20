@@ -4,8 +4,8 @@ import { Result } from '@praha/byethrow';
 import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskDeleteProjectOutput } from '#common/zod/disk/routes/projects/delete-project/delete-project-response';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
-import { removePath } from '#disk/functions/disk/remove-path';
+import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
+import { removePath } from '#disk/functions/disk/remove-path/remove-path';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
 
 @Injectable()

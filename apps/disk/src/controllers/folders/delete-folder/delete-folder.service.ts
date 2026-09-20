@@ -7,9 +7,9 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskDeleteFolderOutput } from '#common/zod/disk/routes/folders/delete-folder/delete-folder-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
-import { removePath } from '#disk/functions/disk/remove-path';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
+import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
+import { removePath } from '#disk/functions/disk/remove-path/remove-path';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';

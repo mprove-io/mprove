@@ -3,7 +3,7 @@ import { MyRegex } from '#common/classes/my-regex';
 import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
 import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
 import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
-import { getNodesAndFiles } from '../disk/get-nodes-and-files';
+import { getNodesAndFiles } from '../disk/get-nodes-and-files/get-nodes-and-files';
 
 export function getRepoConflicts(item: {
   projectId: string;

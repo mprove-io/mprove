@@ -8,8 +8,8 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
+import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';

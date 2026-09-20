@@ -1,8 +1,8 @@
 import { Result } from '@praha/byethrow';
 import { isDefined } from '#common/functions/is-defined';
 import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import { copyPath } from '../disk/copy-path';
-import { isPathExist } from '../disk/is-path-exist';
+import { copyPath } from '../disk/copy-path/copy-path';
+import { isPathExist } from '../disk/is-path-exist/is-path-exist';
 import { writeDefaultInitialProjectFiles } from './write-default-initial-project-files';
 
 export function prepareInitialProjectFiles(item: {

@@ -7,8 +7,8 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskCreateProjectOutput } from '#common/zod/disk/routes/projects/create-project/create-project-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { ensureDir } from '#disk/functions/disk/ensure-dir';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';

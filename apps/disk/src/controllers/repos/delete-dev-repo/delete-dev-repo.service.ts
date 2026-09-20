@@ -6,8 +6,8 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskDeleteDevRepoOutput } from '#common/zod/disk/routes/repos/delete-dev-repo/delete-dev-repo-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
-import { removePath } from '#disk/functions/disk/remove-path';
+import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
+import { removePath } from '#disk/functions/disk/remove-path/remove-path';
 import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 

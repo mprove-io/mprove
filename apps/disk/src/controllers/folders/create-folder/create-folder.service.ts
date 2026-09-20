@@ -8,9 +8,9 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskCreateFolderOutput } from '#common/zod/disk/routes/folders/create-folder/create-folder-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { ensureDir } from '#disk/functions/disk/ensure-dir';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
+import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';

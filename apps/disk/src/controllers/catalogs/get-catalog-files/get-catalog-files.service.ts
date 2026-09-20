@@ -6,7 +6,7 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-files/get-catalog-files-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';

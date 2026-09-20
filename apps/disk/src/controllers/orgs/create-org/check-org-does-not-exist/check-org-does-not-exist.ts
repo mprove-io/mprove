@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import type { DiskOrgAlreadyExistError } from '#common/zod/disk/errors/disk-org-already-exist-error';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 
 export function checkOrgDoesNotExist(item: {
   orgDir: string;

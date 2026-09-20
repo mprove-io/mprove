@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import type { DiskProjectAlreadyExistError } from '#common/zod/disk/errors/disk-project-already-exist-error';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 
 export function checkProjectDoesNotExist(item: {
   projectDir: string;

@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
 import type { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import type { ProjectLt } from '#common/zod/st-lt';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { cloneRemote } from '#disk/functions/git/clone-remote';
 
 export function restoreProjectGitCloneRepo(item: {

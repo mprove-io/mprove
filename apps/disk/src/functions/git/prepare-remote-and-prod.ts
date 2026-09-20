@@ -7,7 +7,7 @@ import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink
 import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
 import { createGit } from '#disk/functions/git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
-import { ensureDir } from '../disk/ensure-dir';
+import { ensureDir } from '../disk/ensure-dir/ensure-dir';
 import { initializeAndPushManagedProd } from './initialize-and-push-managed-prod';
 import { initializeManagedCentralRepo } from './initialize-managed-central-repo';
 

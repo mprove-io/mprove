@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import type { ProjectLt } from '#common/zod/st-lt';
-import { ensureDir } from '#disk/functions/disk/ensure-dir';
+import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import { restoreProjectGitClone } from './restore-project-git-clone';
 
 export function restoreProject(item: {

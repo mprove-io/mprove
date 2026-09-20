@@ -3,7 +3,7 @@ import path from 'node:path';
 import { Result } from '@praha/byethrow';
 import test from 'ava';
 import fse from 'fs-extra';
-import { writeToFile } from '#disk/functions/disk/write-to-file';
+import { writeToFile } from '#disk/functions/disk/write-to-file/write-to-file';
 
 let workspaceDir = path.join(os.tmpdir(), 'mprove-write-to-file__symlink');
 

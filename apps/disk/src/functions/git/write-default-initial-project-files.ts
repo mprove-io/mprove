@@ -4,7 +4,7 @@ import {
   README_FILE_NAME
 } from '#common/constants/top';
 import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import { writeToFile } from '../disk/write-to-file';
+import { writeToFile } from '../disk/write-to-file/write-to-file';
 
 export function writeDefaultInitialProjectFiles(item: {
   prodDir: string;

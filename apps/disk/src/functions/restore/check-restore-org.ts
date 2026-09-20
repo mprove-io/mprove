@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
-import { ensureDir } from '#disk/functions/disk/ensure-dir';
-import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
+import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 
 export function checkRestoreOrg(item: {
   orgId: string;
