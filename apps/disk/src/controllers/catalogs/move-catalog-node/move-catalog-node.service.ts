@@ -13,11 +13,11 @@ import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { movePath } from '#disk/functions/disk/move-path/move-path';
-import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
-import { checkoutBranch } from '#disk/functions/git/checkout-branch';
-import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
+import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage/add-changes-to-stage';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
+import { createGit } from '#disk/functions/git/create-git/create-git';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
 

@@ -8,10 +8,10 @@ import type { ToDiskSeedProjectOutput } from '#common/zod/disk/routes/seed/seed-
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
-import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
-import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
+import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev/clone-remote-to-dev';
+import { createGit } from '#disk/functions/git/create-git/create-git';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
+import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod/prepare-remote-and-prod';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 
 @Injectable()

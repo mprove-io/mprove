@@ -5,7 +5,7 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskIsProjectExistOutput } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-response';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
-import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
+import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org/check-restore-org';
 
 @Injectable()
 export class IsProjectExistService {

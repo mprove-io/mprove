@@ -6,10 +6,10 @@ import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response
 import type { ToDiskIsBranchExistOutput } from '#common/zod/disk/routes/branches/is-branch-exist/is-branch-exist-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { createGit } from '#disk/functions/git/create-git';
-import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
-import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
-import { checkRestoreOrgProjectRepo } from '#disk/functions/restore/check-restore-org-project-repo';
+import { createGit } from '#disk/functions/git/create-git/create-git';
+import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
+import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
+import { checkRestoreOrgProjectRepo } from '#disk/functions/restore/check-restore-org-project-repo/check-restore-org-project-repo';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 
 @Injectable()

@@ -7,11 +7,11 @@ import type { ToDiskRevertRepoToLastCommitOutput } from '#common/zod/disk/routes
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
-import { checkoutBranch } from '#disk/functions/git/checkout-branch';
-import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { revertRepoToLastCommit } from '#disk/functions/git/revert-repo-to-last-commit';
-import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
+import { createGit } from '#disk/functions/git/create-git/create-git';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
+import { revertRepoToLastCommit } from '#disk/functions/git/revert-repo-to-last-commit/revert-repo-to-last-commit';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 
 @Injectable()

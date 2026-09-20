@@ -10,11 +10,11 @@ import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
-import { checkoutBranch } from '#disk/functions/git/checkout-branch';
-import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
-import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
+import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev/clone-remote-to-dev';
+import { createGit } from '#disk/functions/git/create-git/create-git';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
+import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project/check-restore-org-project';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 
 @Injectable()

@@ -8,14 +8,14 @@ import type { ToDiskPushRepoOutput } from '#common/zod/disk/routes/repos/push-re
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
-import { checkoutBranch } from '#disk/functions/git/checkout-branch';
-import { createBranch } from '#disk/functions/git/create-branch';
-import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
-import { merge } from '#disk/functions/git/merge';
-import { pushToRemote } from '#disk/functions/git/push-to-remote';
-import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
+import { createBranch } from '#disk/functions/git/create-branch/create-branch';
+import { createGit } from '#disk/functions/git/create-git/create-git';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
+import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
+import { merge } from '#disk/functions/git/merge/merge';
+import { pushToRemote } from '#disk/functions/git/push-to-remote/push-to-remote';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 
 @Injectable()

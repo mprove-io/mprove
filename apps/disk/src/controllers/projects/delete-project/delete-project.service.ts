@@ -6,7 +6,7 @@ import type { ToDiskDeleteProjectOutput } from '#common/zod/disk/routes/projects
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path/remove-path';
-import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
+import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org/check-restore-org';
 
 @Injectable()
 export class DeleteProjectService {

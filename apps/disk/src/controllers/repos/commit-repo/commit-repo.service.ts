@@ -7,11 +7,11 @@ import type { ToDiskCommitRepoOutput } from '#common/zod/disk/routes/repos/commi
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
-import { checkoutBranch } from '#disk/functions/git/checkout-branch';
-import { commit } from '#disk/functions/git/commit';
-import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
+import { commit } from '#disk/functions/git/commit/commit';
+import { createGit } from '#disk/functions/git/create-git/create-git';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 
 @Injectable()

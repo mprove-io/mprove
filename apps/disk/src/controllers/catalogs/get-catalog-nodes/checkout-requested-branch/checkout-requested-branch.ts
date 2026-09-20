@@ -5,8 +5,8 @@ import type { DiskBranchIsNotExistError } from '#common/zod/disk/errors/disk-bra
 import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#common/zod/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
 import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
 import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
-import { checkoutBranch } from '#disk/functions/git/checkout-branch';
-import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
+import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
 
 export function checkoutRequestedBranch(item: {
   branch?: string;

@@ -8,12 +8,12 @@ import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/disk/routes/rep
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
-import { checkoutBranch } from '#disk/functions/git/checkout-branch';
-import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
-import { revertRepoToRemote } from '#disk/functions/git/revert-repo-to-remote';
-import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
+import { createGit } from '#disk/functions/git/create-git/create-git';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
+import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
+import { revertRepoToRemote } from '#disk/functions/git/revert-repo-to-remote/revert-repo-to-remote';
+import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 
 @Injectable()

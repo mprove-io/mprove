@@ -9,11 +9,11 @@ import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
-import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
-import { createGit } from '#disk/functions/git/create-git';
-import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
-import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org';
+import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev/clone-remote-to-dev';
+import { createGit } from '#disk/functions/git/create-git/create-git';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
+import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod/prepare-remote-and-prod';
+import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org/check-restore-org';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { checkProjectDoesNotExist } from './check-project-does-not-exist/check-project-does-not-exist';
 
