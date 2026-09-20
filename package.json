@@ -114,6 +114,8 @@
     "test:turbo": "turbo run test",
     "test:disk": "turbo run test --filter=@mprove/disk --log-prefix=none",
     "test:blockml": "turbo run test --filter=@mprove/blockml --log-prefix=none",
+    "test:common": "turbo run test --filter=@mprove/common --log-prefix=none",
+    "test:node-common": "turbo run test --filter=@mprove/node-common --log-prefix=none",
     "compile-test:blockml": "node apps/blockml/compile-test.mjs",
     "compile-test:disk": "node apps/disk/compile-test.mjs",
     "e2e:turbo": "turbo run e2e",

@@ -13,6 +13,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "lint": "biome lint src",
     "circular": "madge --circular .",
+    "compile-test": "rimraf dist-test && node compile-test.mjs",
+    "test": "pnpm compile-test && ava --config ava.compiled.config.js --concurrency=6",
     "clean-node": "rimraf --glob \"node_modules/*\" \"node_modules/.[!.]*\"",
     "clean-turbo": "rimraf --glob \".turbo/*\" \".turbo/.[!.]*\""
   },
@@ -38,7 +40,10 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@swc/cli": "0.7.10",
+    "@swc/core": "1.15.11",
     "@swc/helpers": "0.5.18",
-    "@types/js-yaml": "4.0.9"
+    "@types/js-yaml": "4.0.9",
+    "ava": "7.0.0"
   }
 }
