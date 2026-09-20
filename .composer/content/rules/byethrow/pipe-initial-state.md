@@ -7,7 +7,9 @@ before the pipeline in this case.
 ```ts
 return Result.pipe(
   Result.succeed(item),
-  Result.andThen(v => doSomething(v))
+  Result.andThen(
+    (v): Result.Result<Something, DoSomethingError> => doSomething(v)
+  )
 );
 ```
 
@@ -21,6 +23,8 @@ return Result.pipe(
     projectId: projectId,
     model: model
   }),
-  Result.andThen(v => doSomething(v))
+  Result.andThen(
+    (v): Result.Result<Something, DoSomethingError> => doSomething(v)
+  )
 );
 ```

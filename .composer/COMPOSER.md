@@ -22,6 +22,7 @@
 - rules/do-not-run-tests-unless-asked.md
 - rules/do-not-write-tests-unless-asked.md
 - rules/typecheck-and-lint.md
+- rules/one-function-per-file.md
 - rules/function-and-method-args.md
 - rules/item-destructuring.md
 - rules/recursive-function-names.md
@@ -40,7 +41,6 @@
 - rules/maintain-function-folder-call-trees.md
 
 - rules/byethrow.md
-- rules/byethrow/one-function-per-file.md
 - rules/byethrow/no-nested-pipes-in-a-single-function.md
 - rules/byethrow/result-type-inference.md
 - rules/byethrow/result-callback-return-types.md

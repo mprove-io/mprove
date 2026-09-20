@@ -246,6 +246,18 @@ Use read-only operations if needed (like status, diff, etc)
 
 Always use top `pnpm check` for typecheck or lint.
 
+## One function per file
+
+Each non-test file may define at most one standalone named function
+implementation.
+
+This rule applies to function declarations and function-valued variables at
+module scope. It does not apply to callbacks, class or object methods,
+constructors, getters, or setters.
+
+Types, schemas, constants, and other non-function declarations may coexist with
+the function in the same file.
+
 ## Function and method args
 
 Named functions and methods must use a single object argument named `item` with
@@ -293,7 +305,9 @@ doSomething({ sessionId });
 
 ## No "for (let ... of ..." and "for (let ... in ..."
 
-Use `forEach`, `forEachSeries` for async.
+Use `forEach` for synchronous iteration.
+
+Use `forEachSeries` when an asynchronous callback must be awaited sequentially.
 
 Exception: `for (let i = 0; i < ...; i++)` index loops are allowed.
 
@@ -525,23 +539,19 @@ if (!this.membersService.getMember(memberId)) {
 
 ## Function folders call tree
 
-- Treat the specified function as the root of the call tree.
-- Inspect project-local functions called directly by the root.
-- Count distinct non-test callers across the codebase. Multiple calls from the
-  same function count as one caller.
-- Tests do not count as callers.
-- Move a called function into the tree only when it has exactly one non-test
-  caller.
-- Create a plain `<function-name>` child directory and place the called function
-  in `<function-name>/<function-name>.ts`.
-- When moving a function, move its `tests/` directory or `.spec.ts` files with
-  it.
-- Remove any empty directories left behind after moving files.
-- Apply the same process recursively to every moved function.
-- Keep functions with multiple non-test callers outside the single-caller tree.
-  Use an appropriate shared `functions/` location in the app, `node-common`, or
-  `common`.
-- Import multi-caller functions from their actual implementation paths.
+- A caller is a non-test file that directly imports and uses a standalone named
+  project-local function. The imported function is the callee. Count each caller
+  once per callee.
+- Treat the specified standalone named project-local function as the root.
+- For each function in the tree, inspect the callees imported by its file and
+  used by the function.
+- When a callee has one caller, move it to `<function-name>/<function-name>.ts`
+  under the current function's directory and apply these rules to it
+  recursively.
+- When a callee has multiple callers, keep it in an appropriate shared
+  `functions/` location in the app, `node-common`, or `common`. Callers must
+  import it directly from its implementation path.
+- Move tests with their function and remove directories left empty by a move.
 - If a type is used only by a caller and its callee, define it in the callee's
   file.
 - Prefer flat pipes. Before adding another directory level, check whether the
@@ -555,8 +565,6 @@ function in its tree. Do not apply it to a function that is not already part of
 an established function folder call tree unless the user explicitly asks.
 
 ## Byethrow
-
-### One function per file
 
 ### No nested pipes in a single function
 
@@ -589,6 +597,12 @@ Result.bind(
     loadManifest({
       manifestPath: v.manifestPath
     })
+);
+```
+
+```ts
+Result.andThen(
+  (v): Result.Result<Something, DoSomethingError> => doSomething(v)
 );
 ```
 
@@ -708,7 +722,9 @@ before the pipeline in this case.
 ```ts
 return Result.pipe(
   Result.succeed(item),
-  Result.andThen(v => doSomething(v))
+  Result.andThen(
+    (v): Result.Result<Something, DoSomethingError> => doSomething(v)
+  )
 );
 ```
 
@@ -722,7 +738,9 @@ return Result.pipe(
     projectId: projectId,
     model: model
   }),
-  Result.andThen(v => doSomething(v))
+  Result.andThen(
+    (v): Result.Result<Something, DoSomethingError> => doSomething(v)
+  )
 );
 ```
 

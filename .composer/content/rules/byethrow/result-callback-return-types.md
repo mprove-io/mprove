@@ -13,6 +13,12 @@ Result.bind(
 );
 ```
 
+```ts
+Result.andThen(
+  (v): Result.Result<Something, DoSomethingError> => doSomething(v)
+);
+```
+
 Callbacks passed to `Result.map` must declare an explicit success-value return
 type.
 
