@@ -2,9 +2,7 @@ import { Result } from '@praha/byethrow';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import type { DiskRepoStatusIsNotNeedPushError } from '#common/zod/disk/errors/disk-repo-status-is-not-need-push-error';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
+import type { DiskPrepareRemoteAndProdError } from '#common/zod/disk/function-errors/disk-prepare-remote-and-prod-error';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import { createGit } from '#disk/functions/git/create-git/create-git';
 import { initializeAndPushManagedProd } from '#disk/functions/git/prepare-remote-and-prod/initialize-and-push-managed-prod/initialize-and-push-managed-prod';
@@ -23,10 +21,7 @@ export function prepareRemoteAndProd(item: {
   privateKeyEncrypted: string;
   publicKey: string;
   passPhrase: string;
-}): Result.ResultAsync<
-  void,
-  FileIsSymlinkError | FileSizeIsTooBigError | DiskRepoStatusIsNotNeedPushError
-> {
+}): Result.ResultAsync<void, DiskPrepareRemoteAndProdError> {
   return addTraceSpan({
     spanName: 'disk.git.prepareRemoteAndProd',
     fn: () =>

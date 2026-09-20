@@ -1,15 +1,13 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import {
-  type DiskOrgAlreadyExistError,
-  zDiskOrgAlreadyExistError
-} from '#common/zod/disk/errors/disk-org-already-exist-error';
+  type DiskCheckOrgDoesNotExistError,
+  zDiskCheckOrgDoesNotExistError
+} from '#common/zod/disk/function-errors/disk-check-org-does-not-exist-error';
 
-export type ToDiskCreateOrgError = DiskOrgAlreadyExistError;
+export type ToDiskCreateOrgError = DiskCheckOrgDoesNotExistError;
 
-export let zToDiskCreateOrgError = z.discriminatedUnion('code', [
-  zDiskOrgAlreadyExistError
-]);
+export let zToDiskCreateOrgError = zDiskCheckOrgDoesNotExistError;
 
 assertTypesEqual<ToDiskCreateOrgError, z.infer<typeof zToDiskCreateOrgError>>({
   value: true

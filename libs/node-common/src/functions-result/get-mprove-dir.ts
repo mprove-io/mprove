@@ -4,8 +4,8 @@ import { load } from 'js-yaml';
 import { MyRegex } from '#common/classes/my-regex';
 import { MPROVE_CONFIG_DIR_DOT_SLASH } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
+import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getMproveDir(item: {

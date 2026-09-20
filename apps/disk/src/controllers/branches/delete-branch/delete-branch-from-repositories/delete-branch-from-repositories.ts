@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
-import type { DiskBranchIsNotExistError } from '#common/zod/disk/errors/disk-branch-is-not-exist-error';
+import type { DiskDeleteBranchFromRepositoriesError } from '#common/zod/disk/function-errors/disk-delete-branch-from-repositories-error';
 import { deleteLocalBranch } from '#disk/functions/git/delete-local-branch/delete-local-branch';
 import { deleteRemoteBranch } from '#disk/functions/git/delete-remote-branch/delete-remote-branch';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
@@ -13,7 +13,7 @@ export function deleteBranchFromRepositories(item: {
   repoDir: string;
   branch: string;
   git: SimpleGit;
-}): Result.ResultAsync<void, DiskBranchIsNotExistError> {
+}): Result.ResultAsync<void, DiskDeleteBranchFromRepositoriesError> {
   return Result.pipe(
     Result.succeed({ ...item }),
     Result.bind('isRemoteBranchExist', v =>

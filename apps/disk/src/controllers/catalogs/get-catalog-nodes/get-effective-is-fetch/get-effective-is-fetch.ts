@@ -1,15 +1,11 @@
 import { Result } from '@praha/byethrow';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
+import type { DiskGetEffectiveIsFetchError } from '#common/zod/disk/function-errors/disk-get-effective-is-fetch-error';
 import { getChangesToCommit } from '#node-common/functions-result/get-changes-to-commit';
 
 export function getEffectiveIsFetch(item: {
   isFetch: boolean;
   repoDir: string;
-}): Result.ResultMaybeAsync<
-  boolean,
-  FileIsSymlinkError | FileSizeIsTooBigError
-> {
+}): Result.ResultMaybeAsync<boolean, DiskGetEffectiveIsFetchError> {
   if (item.isFetch === false) {
     return Result.succeed(false);
   }

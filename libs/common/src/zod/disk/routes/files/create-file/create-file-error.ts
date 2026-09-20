@@ -19,11 +19,11 @@ import {
 import {
   type FileIsSymlinkError,
   zFileIsSymlinkError
-} from '#common/zod/disk/errors/file-is-symlink-error';
+} from '#common/zod/node-common/errors/file-is-symlink-error';
 import {
   type FileSizeIsTooBigError,
   zFileSizeIsTooBigError
-} from '#common/zod/disk/errors/file-size-is-too-big-error';
+} from '#common/zod/node-common/errors/file-size-is-too-big-error';
 
 export type ToDiskCreateFileError =
   | DiskFileAlreadyExistError

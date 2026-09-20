@@ -4,10 +4,10 @@ import type { StatusResult } from 'simple-git';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
 import type { FileStatus } from '#common/zod/disk/file-status';
 import type { FileWithGitFileStatus } from '#common/zod/disk/file-with-git-file-status';
+import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
 import { createSimpleGit } from '../functions/create-simple-git';
 import { readFileCheckSize } from './read-file-check-size';
 

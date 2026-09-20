@@ -1,34 +1,13 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import {
-  type DiskBranchIsNotExistError,
-  zDiskBranchIsNotExistError
-} from '#common/zod/disk/errors/disk-branch-is-not-exist-error';
-import {
-  type DiskRepoIsNotCleanForCheckoutBranchError,
-  zDiskRepoIsNotCleanForCheckoutBranchError
-} from '#common/zod/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
-import {
-  type FileIsSymlinkError,
-  zFileIsSymlinkError
-} from '#common/zod/disk/errors/file-is-symlink-error';
-import {
-  type FileSizeIsTooBigError,
-  zFileSizeIsTooBigError
-} from '#common/zod/disk/errors/file-size-is-too-big-error';
+  type DiskCheckoutRequestedBranchError,
+  zDiskCheckoutRequestedBranchError
+} from '#common/zod/disk/function-errors/disk-checkout-requested-branch-error';
 
-export type ToDiskGetCatalogNodesError =
-  | DiskBranchIsNotExistError
-  | DiskRepoIsNotCleanForCheckoutBranchError
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError;
+export type ToDiskGetCatalogNodesError = DiskCheckoutRequestedBranchError;
 
-export let zToDiskGetCatalogNodesError = z.discriminatedUnion('code', [
-  zDiskBranchIsNotExistError,
-  zDiskRepoIsNotCleanForCheckoutBranchError,
-  zFileIsSymlinkError,
-  zFileSizeIsTooBigError
-]);
+export let zToDiskGetCatalogNodesError = zDiskCheckoutRequestedBranchError;
 
 assertTypesEqual<
   ToDiskGetCatalogNodesError,

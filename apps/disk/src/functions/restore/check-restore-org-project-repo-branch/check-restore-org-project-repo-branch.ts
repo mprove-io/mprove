@@ -1,9 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#common/zod/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
+import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { ProjectLt } from '#common/zod/st-lt';
 import { checkRestoreOrgProjectRepo } from '#disk/functions/restore/check-restore-org-project-repo/check-restore-org-project-repo';
 import { restoreProjectGitCloneRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/restore-project-git-clone-repo-branch/restore-project-git-clone-repo-branch';
@@ -16,12 +14,7 @@ export function checkRestoreOrgProjectRepoBranch(item: {
   projectLt: ProjectLt;
   repoId: string;
   branchId?: string;
-}): Result.ResultAsync<
-  string,
-  | DiskRepoIsNotCleanForCheckoutBranchError
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError
-> {
+}): Result.ResultAsync<string, DiskCheckRestoreOrgProjectRepoBranchError> {
   let { remoteType, orgId, orgPath, projectId, projectLt, repoId, branchId } =
     item;
 

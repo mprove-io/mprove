@@ -2,10 +2,10 @@ import { Result } from '@praha/byethrow';
 import pIteration from 'p-iteration';
 import type { StatusResult } from 'simple-git';
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
 import type { FileStatus } from '#common/zod/disk/file-status';
 import type { FileWithGitFileStatus } from '#common/zod/disk/file-with-git-file-status';
+import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
 import { readFileCheckSize } from './read-file-check-size';
 
 const { forEachSeries } = pIteration;

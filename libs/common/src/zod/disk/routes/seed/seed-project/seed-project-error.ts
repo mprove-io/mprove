@@ -1,28 +1,13 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import {
-  type DiskRepoStatusIsNotNeedPushError,
-  zDiskRepoStatusIsNotNeedPushError
-} from '#common/zod/disk/errors/disk-repo-status-is-not-need-push-error';
-import {
-  type FileIsSymlinkError,
-  zFileIsSymlinkError
-} from '#common/zod/disk/errors/file-is-symlink-error';
-import {
-  type FileSizeIsTooBigError,
-  zFileSizeIsTooBigError
-} from '#common/zod/disk/errors/file-size-is-too-big-error';
+  type DiskPrepareRemoteAndProdError,
+  zDiskPrepareRemoteAndProdError
+} from '#common/zod/disk/function-errors/disk-prepare-remote-and-prod-error';
 
-export type ToDiskSeedProjectError =
-  | DiskRepoStatusIsNotNeedPushError
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError;
+export type ToDiskSeedProjectError = DiskPrepareRemoteAndProdError;
 
-export let zToDiskSeedProjectError = z.discriminatedUnion('code', [
-  zDiskRepoStatusIsNotNeedPushError,
-  zFileIsSymlinkError,
-  zFileSizeIsTooBigError
-]);
+export let zToDiskSeedProjectError = zDiskPrepareRemoteAndProdError;
 
 assertTypesEqual<
   ToDiskSeedProjectError,

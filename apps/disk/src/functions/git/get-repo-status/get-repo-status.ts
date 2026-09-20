@@ -1,8 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { BranchSummary, DiffResult, SimpleGit } from 'simple-git';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
+import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
 import { getRepoConflicts } from '#disk/functions/git/get-repo-status/get-repo-conflicts/get-repo-conflicts';
 import { getRepoStatusWithoutStagedChanges } from '#disk/functions/git/get-repo-status/get-repo-status-without-staged-changes/get-repo-status-without-staged-changes';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
@@ -18,10 +17,7 @@ export function getRepoStatus(item: {
   isCheckConflicts: boolean;
   addContent?: boolean;
   expandRenamed?: boolean;
-}): Result.ResultAsync<
-  DiskItemStatus,
-  FileIsSymlinkError | FileSizeIsTooBigError
-> {
+}): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> {
   return addTraceSpan({
     spanName: 'disk.git.getRepoStatus',
     fn: () => {

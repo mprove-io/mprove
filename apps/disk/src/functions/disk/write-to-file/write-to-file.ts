@@ -1,12 +1,12 @@
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { DiskWriteToFileError } from '#common/zod/disk/function-errors/disk-write-to-file-error';
 
 export async function writeToFile(item: {
   filePath: string;
   content: string;
-}): Result.ResultAsync<void, FileIsSymlinkError> {
+}): Result.ResultAsync<void, DiskWriteToFileError> {
   let stat: fse.Stats | undefined;
 
   try {

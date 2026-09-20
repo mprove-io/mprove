@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { SEED_PROJECTS } from '#common/constants/top-disk';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { DiskCreateInitialCommitToProdError } from '#common/zod/disk/function-errors/disk-create-initial-commit-to-prod-error';
 import { prepareInitialProjectFiles } from '#disk/functions/git/prepare-remote-and-prod/initialize-and-push-managed-prod/create-initial-commit-to-prod/prepare-initial-project-files/prepare-initial-project-files';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { createSimpleGit } from '#node-common/functions/create-simple-git';
@@ -13,7 +13,7 @@ export function createInitialCommitToProd(item: {
   seedProjectId: string;
   projectName: string;
   userAlias: string;
-}): Result.ResultAsync<void, FileIsSymlinkError> {
+}): Result.ResultAsync<void, DiskCreateInitialCommitToProdError> {
   return addTraceSpan({
     spanName: 'disk.git.createInitialCommitToProd',
     fn: () =>

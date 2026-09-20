@@ -1,39 +1,27 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import {
-  type DiskBranchIsNotExistError,
-  zDiskBranchIsNotExistError
-} from '#common/zod/disk/errors/disk-branch-is-not-exist-error';
-import {
   type DiskDefaultBranchCannotBeDeletedError,
   zDiskDefaultBranchCannotBeDeletedError
 } from '#common/zod/disk/errors/disk-default-branch-cannot-be-deleted-error';
 import {
-  type DiskRepoIsNotCleanForCheckoutBranchError,
-  zDiskRepoIsNotCleanForCheckoutBranchError
-} from '#common/zod/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
+  type DiskCheckRestoreOrgProjectRepoBranchError,
+  zDiskCheckRestoreOrgProjectRepoBranchError
+} from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import {
-  type FileIsSymlinkError,
-  zFileIsSymlinkError
-} from '#common/zod/disk/errors/file-is-symlink-error';
-import {
-  type FileSizeIsTooBigError,
-  zFileSizeIsTooBigError
-} from '#common/zod/disk/errors/file-size-is-too-big-error';
+  type DiskDeleteBranchFromRepositoriesError,
+  zDiskDeleteBranchFromRepositoriesError
+} from '#common/zod/disk/function-errors/disk-delete-branch-from-repositories-error';
 
 export type ToDiskDeleteBranchError =
   | DiskDefaultBranchCannotBeDeletedError
-  | DiskBranchIsNotExistError
-  | DiskRepoIsNotCleanForCheckoutBranchError
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError;
+  | DiskCheckRestoreOrgProjectRepoBranchError
+  | DiskDeleteBranchFromRepositoriesError;
 
-export let zToDiskDeleteBranchError = z.discriminatedUnion('code', [
+export let zToDiskDeleteBranchError = z.union([
   zDiskDefaultBranchCannotBeDeletedError,
-  zDiskBranchIsNotExistError,
-  zDiskRepoIsNotCleanForCheckoutBranchError,
-  zFileIsSymlinkError,
-  zFileSizeIsTooBigError
+  zDiskCheckRestoreOrgProjectRepoBranchError,
+  zDiskDeleteBranchFromRepositoriesError
 ]);
 
 assertTypesEqual<

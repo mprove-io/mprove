@@ -5,8 +5,8 @@ import pIteration from 'p-iteration';
 import type { StatusResult } from 'simple-git';
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
 import type { DiskPathTraversalError } from '#common/zod/disk/errors/disk-path-traversal-error';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
+import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
 import { readFileCheckSize } from './read-file-check-size';
 import { validatePathUnderDir } from './validate-path-under-dir';
 

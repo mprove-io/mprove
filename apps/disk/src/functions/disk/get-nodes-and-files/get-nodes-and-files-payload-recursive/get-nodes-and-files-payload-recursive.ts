@@ -10,8 +10,9 @@ import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
+import type { DiskGetNodesAndFilesPayloadRecursiveError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-payload-recursive-error';
+import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
 import { readFileCheckSize } from '#node-common/functions-result/read-file-check-size';
 
 type NodesAndFilesPayload = {
@@ -29,7 +30,7 @@ export function getNodesAndFilesPayloadRecursive(item: {
   repoDir: string;
 }): Result.ResultAsync<
   NodesAndFilesPayload,
-  FileIsSymlinkError | FileSizeIsTooBigError
+  DiskGetNodesAndFilesPayloadRecursiveError
 > {
   return Result.try({
     try: async (): Promise<NodesAndFilesPayload> => {

@@ -4,7 +4,7 @@ import fse from 'fs-extra';
 import pIteration from 'p-iteration';
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
 import type { DiskPathTraversalError } from '#common/zod/disk/errors/disk-path-traversal-error';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
+import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
 import { validatePathUnderDir } from './validate-path-under-dir';
 
 const { forEachSeries } = pIteration;

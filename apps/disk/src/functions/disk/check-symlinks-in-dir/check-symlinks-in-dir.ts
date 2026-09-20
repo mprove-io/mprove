@@ -1,11 +1,11 @@
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
-import type { DiskSymlinksFoundError } from '#common/zod/disk/errors/disk-symlinks-found-error';
+import type { DiskCheckSymlinksInDirError } from '#common/zod/disk/function-errors/disk-check-symlinks-in-dir-error';
 import { walkRecursive } from './walk-recursive/walk-recursive';
 
 export async function checkSymlinksInDir(item: {
   dir: string;
-}): Result.ResultAsync<void, DiskSymlinksFoundError> {
+}): Result.ResultAsync<void, DiskCheckSymlinksInDirError> {
   let dirExists: boolean = await fse.pathExists(item.dir);
 
   if (dirExists === false) {

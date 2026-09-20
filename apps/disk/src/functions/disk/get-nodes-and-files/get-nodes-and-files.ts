@@ -3,8 +3,7 @@ import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { FileIsSymlinkError } from '#common/zod/disk/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/disk/errors/file-size-is-too-big-error';
+import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import { getMproveDir } from '#node-common/functions-result/get-mprove-dir';
 import { getNodesAndFilesPayloadRecursive } from './get-nodes-and-files-payload-recursive/get-nodes-and-files-payload-recursive';
 
@@ -14,10 +13,7 @@ export function getNodesAndFiles(item: {
   repoId: string;
   readFiles: boolean;
   isRootMproveDir: boolean;
-}): Result.ResultAsync<
-  DiskItemCatalog,
-  FileIsSymlinkError | FileSizeIsTooBigError
-> {
+}): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> {
   let topNode: DiskCatalogNode = {
     id: item.projectId,
     name: item.projectId,

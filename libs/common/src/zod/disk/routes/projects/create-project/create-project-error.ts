@@ -1,33 +1,21 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import {
-  type DiskProjectAlreadyExistError,
-  zDiskProjectAlreadyExistError
-} from '#common/zod/disk/errors/disk-project-already-exist-error';
+  type DiskCheckProjectDoesNotExistError,
+  zDiskCheckProjectDoesNotExistError
+} from '#common/zod/disk/function-errors/disk-check-project-does-not-exist-error';
 import {
-  type DiskRepoStatusIsNotNeedPushError,
-  zDiskRepoStatusIsNotNeedPushError
-} from '#common/zod/disk/errors/disk-repo-status-is-not-need-push-error';
-import {
-  type FileIsSymlinkError,
-  zFileIsSymlinkError
-} from '#common/zod/disk/errors/file-is-symlink-error';
-import {
-  type FileSizeIsTooBigError,
-  zFileSizeIsTooBigError
-} from '#common/zod/disk/errors/file-size-is-too-big-error';
+  type DiskPrepareRemoteAndProdError,
+  zDiskPrepareRemoteAndProdError
+} from '#common/zod/disk/function-errors/disk-prepare-remote-and-prod-error';
 
 export type ToDiskCreateProjectError =
-  | DiskProjectAlreadyExistError
-  | DiskRepoStatusIsNotNeedPushError
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError;
+  | DiskCheckProjectDoesNotExistError
+  | DiskPrepareRemoteAndProdError;
 
-export let zToDiskCreateProjectError = z.discriminatedUnion('code', [
-  zDiskProjectAlreadyExistError,
-  zDiskRepoStatusIsNotNeedPushError,
-  zFileIsSymlinkError,
-  zFileSizeIsTooBigError
+export let zToDiskCreateProjectError = z.union([
+  zDiskCheckProjectDoesNotExistError,
+  zDiskPrepareRemoteAndProdError
 ]);
 
 assertTypesEqual<
