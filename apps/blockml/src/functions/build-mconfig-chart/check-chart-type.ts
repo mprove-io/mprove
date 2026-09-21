@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BmError } from '#blockml/models/bm-error';
 import { CHART_TYPE_VALUES } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';

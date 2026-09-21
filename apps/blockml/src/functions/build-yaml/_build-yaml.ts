@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BmError } from '#blockml/models/bm-error';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';

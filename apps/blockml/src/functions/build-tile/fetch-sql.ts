@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BmError } from '#blockml/models/bm-error';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';

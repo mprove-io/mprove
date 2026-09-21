@@ -7,6 +7,7 @@ import path from 'path';
 
 const { forEachSeries } = pIteration;
 
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { buildChart } from '#blockml/functions/build-chart/_build-chart';
 import { makeChartAccessRolesCombined } from '#blockml/functions/build-chart/make-chart-access-roles-combined';
@@ -33,7 +34,6 @@ import { wrapDashboards } from '#blockml/functions/wrap/wrap-dashboards';
 import { wrapErrors } from '#blockml/functions/wrap/wrap-errors';
 import { wrapModels } from '#blockml/functions/wrap/wrap-models';
 import { wrapReports } from '#blockml/functions/wrap/wrap-reports';
-import { BmError } from '#blockml/models/bm-error';
 import { BlockmlTabService } from '#blockml/services/blockml-tab.service';
 import { PresetsService } from '#blockml/services/presets.service';
 import { MyRegex } from '#common/classes/my-regex';

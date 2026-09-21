@@ -1,4 +1,4 @@
-import { BmError } from '#blockml/models/bm-error';
+import { BmError } from '#blockml/classes/bm-error';
 import type { BmlError } from '#common/zod/blockml/bml-error';
 import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
 export function wrapErrors(item: { errors: BmError[] }) {

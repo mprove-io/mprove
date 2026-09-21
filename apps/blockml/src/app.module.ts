@@ -13,12 +13,12 @@ import type { File3 } from '#common/zod/blockml/internal/file-3';
 import type { Preset } from '#common/zod/blockml/preset';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { appServices } from './app-services';
+import { BmError } from './classes/bm-error';
 import { getConfig } from './config/get.config';
 import { makeLineNumbers } from './functions/build-yaml/make-line-numbers';
 import { yamlToObjects } from './functions/build-yaml/yaml-to-objects';
 import { collectFiles } from './functions/extra/collect-files';
 import { logToConsoleBlockml } from './functions/log-to-console-blockml';
-import { BmError } from './models/bm-error';
 import { PresetsService } from './services/presets.service';
 
 let devConfig = getConfig(); // check error once

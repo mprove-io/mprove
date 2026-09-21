@@ -1,6 +1,6 @@
 import type { ConfigService } from '@nestjs/config';
+import { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BmError } from '#blockml/models/bm-error';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';

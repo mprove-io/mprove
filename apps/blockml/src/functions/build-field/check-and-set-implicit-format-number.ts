@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { formatSpecifier } from 'd3-format';
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BmError } from '#blockml/models/bm-error';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';

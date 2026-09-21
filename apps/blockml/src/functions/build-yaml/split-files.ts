@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BmError } from '#blockml/models/bm-error';
 import {
   MPROVE_CONFIG_FILENAME,
   MPROVE_CONFIG_NAME,

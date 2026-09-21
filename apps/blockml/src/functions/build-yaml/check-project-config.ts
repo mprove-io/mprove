@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { formatSpecifier } from 'd3-format';
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BmError } from '#blockml/models/bm-error';
 import { MyRegex } from '#common/classes/my-regex';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,

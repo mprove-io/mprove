@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { load } from 'js-yaml';
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BmError } from '#blockml/models/bm-error';
 import { MyRegex } from '#common/classes/my-regex';
 import { LINE_NUM_END, LINE_NUM_START } from '#common/constants/top-blockml';
 import { CallerEnum } from '#common/enums/special/caller.enum';

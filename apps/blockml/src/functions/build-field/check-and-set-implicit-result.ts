@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BmError } from '#blockml/models/bm-error';
 import { MyRegex } from '#common/classes/my-regex';
 import { FILTER_RESULT_VALUES } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';

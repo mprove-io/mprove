@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { sdrType } from '#common/types/sdr-type';
 import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';

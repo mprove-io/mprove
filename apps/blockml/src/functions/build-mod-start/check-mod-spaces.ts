@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
+import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { parseTags } from '#blockml/functions/extra/parse-tags';
-import { BmError } from '#blockml/models/bm-error';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';

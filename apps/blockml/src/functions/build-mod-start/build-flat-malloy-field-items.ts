@@ -7,8 +7,8 @@ import type {
   ModelEntryValueWithSource
 } from '@malloydata/malloy-interfaces';
 import type { ConfigService } from '@nestjs/config';
+import type { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import type { BmError } from '#blockml/models/bm-error';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
