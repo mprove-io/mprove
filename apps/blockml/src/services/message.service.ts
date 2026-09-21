@@ -113,7 +113,7 @@ export class MessageService {
         operation: request.operation,
         request: request,
         method: METHOD_RPC,
-        process: input => this.rebuildStructService.rebuild(input),
+        process: input => this.rebuildStructService.process(input),
         logger: this.logger
       });
 

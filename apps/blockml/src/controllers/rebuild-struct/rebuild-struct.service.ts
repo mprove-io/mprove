@@ -120,7 +120,7 @@ export class RebuildStructService {
     private logger: Logger
   ) {}
 
-  async rebuild(item: {
+  async process(item: {
     projectId: string;
     envId: string;
     evs: Ev[];

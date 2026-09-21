@@ -19,7 +19,7 @@ export class RebuildStructController {
       operation: 'rebuildStruct',
       body: body,
       method: request.method,
-      process: input => this.structService.rebuild(input),
+      process: input => this.structService.process(input),
       logger: this.logger
     });
 
