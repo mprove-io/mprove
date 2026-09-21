@@ -67,7 +67,7 @@ test('1', async t => {
       }
     };
 
-    await structService.rebuildStruct({
+    await structService.rebuildStructFromDir({
       traceId: traceId,
       dir: dataDir,
       structId: structId,

@@ -23,7 +23,7 @@ test('1', async t => {
     type: ConnectionTypeEnum.PostgreSQL
   };
 
-  let prep = await structService.rebuildStruct({
+  let prep = await structService.rebuildStructFromDir({
     traceId: traceId,
     dir: dataDir,
     structId: structId,

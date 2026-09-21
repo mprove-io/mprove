@@ -47,7 +47,7 @@ test('1', async t => {
       type: ConnectionTypeEnum.Api
     };
 
-    await structService.rebuildStruct({
+    await structService.rebuildStructFromDir({
       traceId: traceId,
       dir: dataDir,
       structId: structId,

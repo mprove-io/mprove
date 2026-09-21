@@ -37,7 +37,7 @@ test('1', async t => {
 
     wLogger = logger;
 
-    await structService.rebuildStruct({
+    await structService.rebuildStructFromDir({
       traceId: traceId,
       dir: dataDir,
       structId: structId,

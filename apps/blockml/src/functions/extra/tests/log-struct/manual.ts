@@ -21,7 +21,7 @@ async function run() {
     type: ConnectionTypeEnum.PostgreSQL
   };
 
-  await structService.rebuildStruct({
+  await structService.rebuildStructFromDir({
     traceId: traceId,
     dir: dataDir,
     structId: structId,

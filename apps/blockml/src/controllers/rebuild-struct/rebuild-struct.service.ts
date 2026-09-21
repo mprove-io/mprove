@@ -257,7 +257,7 @@ export class RebuildStructService {
     return rebuildResult;
   }
 
-  async rebuildStruct(item: {
+  async rebuildStructFromDir(item: {
     traceId: string;
     dir: string;
     structId: string;
