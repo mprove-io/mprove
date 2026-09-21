@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import type { BaseProject } from '#common/zod/backend/base-project';
+import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { DiskRemoteBranchIsNotExistError } from '#common/zod/disk/errors/disk-remote-branch-is-not-exist-error';
+import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
+import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
+import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
 import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/disk/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
 import type { ProjectLt } from '#common/zod/st-lt';
@@ -52,98 +58,121 @@ export class RevertRepoToRemoteService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
-        repoDir: repoDir
+        repoDir: repoDir,
+        passPhrase: passPhrase,
+        publicKey: publicKey,
+        privateKeyEncrypted: privateKeyEncrypted,
+        gitUrl: gitUrl,
+        branch: branch,
+        projectLt: projectLt,
+        orgPath: orgPath,
+        remoteType: remoteType
       }),
-      Result.bind('keyDir', () =>
-        checkRestoreOrgProjectRepoBranch({
-          remoteType: remoteType,
-          orgId: orgId,
-          orgPath: orgPath,
-          projectId: projectId,
-          projectLt: projectLt,
-          repoId: repoId,
-          branchId: branch
-        })
+      Result.bind(
+        'keyDir',
+        (
+          v
+        ): Result.ResultAsync<
+          string,
+          DiskCheckRestoreOrgProjectRepoBranchError
+        > =>
+          checkRestoreOrgProjectRepoBranch({
+            remoteType: v.remoteType,
+            orgId: v.orgId,
+            orgPath: v.orgPath,
+            projectId: v.projectId,
+            projectLt: v.projectLt,
+            repoId: v.repoId,
+            branchId: v.branch
+          })
       ),
-      Result.bind('git', item =>
-        createGit({
-          repoDir: item.repoDir,
-          remoteType: remoteType,
-          keyDir: item.keyDir,
-          gitUrl: gitUrl,
-          privateKeyEncrypted: privateKeyEncrypted,
-          publicKey: publicKey,
-          passPhrase: passPhrase
-        })
+      Result.bind(
+        'git',
+        (v): Result.ResultAsync<SimpleGit, never> =>
+          createGit({
+            repoDir: v.repoDir,
+            remoteType: v.remoteType,
+            keyDir: v.keyDir,
+            gitUrl: v.gitUrl,
+            privateKeyEncrypted: v.privateKeyEncrypted,
+            publicKey: v.publicKey,
+            passPhrase: v.passPhrase
+          })
       ),
-      Result.andThrough(item =>
+      Result.andThrough(v =>
         checkoutBranch({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
-          branchName: branch,
-          git: item.git,
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          repoDir: v.repoDir,
+          branchName: v.branch,
+          git: v.git,
           isFetch: true
         })
       ),
-      Result.bind('remoteBranchExists', item =>
-        isRemoteBranchExist({
-          repoDir: item.repoDir,
-          remoteBranch: branch,
-          git: item.git,
-          isFetch: false
-        })
+      Result.bind(
+        'remoteBranchExists',
+        (v): Result.ResultAsync<boolean, never> =>
+          isRemoteBranchExist({
+            repoDir: v.repoDir,
+            remoteBranch: v.branch,
+            git: v.git,
+            isFetch: false
+          })
       ),
       Result.andThrough(
-        (item): Result.Result<void, DiskRemoteBranchIsNotExistError> =>
-          item.remoteBranchExists === false
+        (v): Result.Result<void, DiskRemoteBranchIsNotExistError> =>
+          v.remoteBranchExists === false
             ? Result.fail({ code: 'DISK_REMOTE_BRANCH_IS_NOT_EXIST' })
             : Result.succeed()
       ),
-      Result.andThrough(item =>
+      Result.andThrough(v =>
         revertRepoToRemote({
-          repoDir: item.repoDir,
-          remoteBranch: branch,
-          git: item.git
+          repoDir: v.repoDir,
+          remoteBranch: v.branch,
+          git: v.git
         })
       ),
-      Result.bind('repoStatus', item =>
-        getRepoStatus({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
-          git: item.git,
-          isFetch: false,
-          isCheckConflicts: true
-        })
+      Result.bind(
+        'repoStatus',
+        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
+          getRepoStatus({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            repoDir: v.repoDir,
+            git: v.git,
+            isFetch: false,
+            isCheckConflicts: true
+          })
       ),
-      Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          readFiles: true,
-          isRootMproveDir: false
-        })
+      Result.bind(
+        'itemCatalog',
+        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
+          getNodesAndFiles({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            readFiles: true,
+            isRootMproveDir: false
+          })
       ),
       Result.map(
-        (item): ToDiskRevertRepoToRemoteOutput => ({
+        (v): ToDiskRevertRepoToRemoteOutput => ({
           repo: {
-            orgId: item.orgId,
-            projectId: item.projectId,
-            repoId: item.repoId,
-            repoStatus: item.repoStatus.repoStatus,
-            repoError: item.repoStatus.repoError,
-            currentBranchId: item.repoStatus.currentBranch,
-            conflicts: item.repoStatus.conflicts,
-            nodes: item.itemCatalog.nodes,
-            changesToCommit: item.repoStatus.changesToCommit,
-            changesToPush: item.repoStatus.changesToPush
+            orgId: v.orgId,
+            projectId: v.projectId,
+            repoId: v.repoId,
+            repoStatus: v.repoStatus.repoStatus,
+            repoError: v.repoStatus.repoError,
+            currentBranchId: v.repoStatus.currentBranch,
+            conflicts: v.repoStatus.conflicts,
+            nodes: v.itemCatalog.nodes,
+            changesToCommit: v.repoStatus.changesToCommit,
+            changesToPush: v.repoStatus.changesToPush
           },
-          files: item.itemCatalog.files,
-          mproveDir: item.itemCatalog.mproveDir
+          files: v.itemCatalog.files,
+          mproveDir: v.itemCatalog.mproveDir
         })
       )
     );

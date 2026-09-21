@@ -1,4 +1,5 @@
 import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import type { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { DiskRestoreProjectGitCloneRepoBranchError } from '#common/zod/disk/function-errors/disk-restore-project-git-clone-repo-branch-error';
@@ -20,25 +21,29 @@ export function restoreProjectGitCloneRepoBranch(item: {
   keyDir: string;
 }): Result.ResultAsync<string, DiskRestoreProjectGitCloneRepoBranchError> {
   return Result.pipe(
-    Result.succeed({ ...item }),
-    Result.bind('isLocalBranchExist', v =>
-      isLocalBranchExist({
-        repoDir: v.repoDir,
-        localBranch: v.branchId
-      })
+    Result.succeed(item),
+    Result.bind(
+      'isLocalBranchExist',
+      (v): Result.ResultAsync<boolean, never> =>
+        isLocalBranchExist({
+          repoDir: v.repoDir,
+          localBranch: v.branchId
+        })
     ),
-    Result.bind('repoGit', v =>
-      v.isLocalBranchExist === true
-        ? Result.succeed(undefined)
-        : createGit({
-            repoDir: v.repoDir,
-            remoteType: v.remoteType,
-            keyDir: v.keyDir,
-            gitUrl: v.projectLt.gitUrl,
-            privateKeyEncrypted: v.projectLt.privateKeyEncrypted,
-            publicKey: v.projectLt.publicKey,
-            passPhrase: v.projectLt.passPhrase
-          })
+    Result.bind(
+      'repoGit',
+      async (v): Result.ResultAsync<SimpleGit | undefined, never> =>
+        v.isLocalBranchExist === true
+          ? Result.succeed(undefined)
+          : createGit({
+              repoDir: v.repoDir,
+              remoteType: v.remoteType,
+              keyDir: v.keyDir,
+              gitUrl: v.projectLt.gitUrl,
+              privateKeyEncrypted: v.projectLt.privateKeyEncrypted,
+              publicKey: v.projectLt.publicKey,
+              passPhrase: v.projectLt.passPhrase
+            })
     ),
     Result.andThrough(v =>
       isUndefined(v.repoGit)
@@ -53,15 +58,17 @@ export function restoreProjectGitCloneRepoBranch(item: {
             isFetch: false
           })
     ),
-    Result.bind('isRemoteBranchExist', v =>
-      isUndefined(v.repoGit)
-        ? Result.succeed(false)
-        : isRemoteBranchExist({
-            repoDir: v.repoDir,
-            remoteBranch: v.branchId,
-            git: v.repoGit,
-            isFetch: true
-          })
+    Result.bind(
+      'isRemoteBranchExist',
+      async (v): Result.ResultAsync<boolean, never> =>
+        isUndefined(v.repoGit)
+          ? Result.succeed(false)
+          : isRemoteBranchExist({
+              repoDir: v.repoDir,
+              remoteBranch: v.branchId,
+              git: v.repoGit,
+              isFetch: true
+            })
     ),
     Result.andThrough(v =>
       isUndefined(v.repoGit)
@@ -76,6 +83,8 @@ export function restoreProjectGitCloneRepoBranch(item: {
             git: v.repoGit
           })
     ),
-    Result.andThen(v => Result.succeed(v.keyDir))
+    Result.andThen(
+      (v): Result.Result<string, never> => Result.succeed(v.keyDir)
+    )
   );
 }

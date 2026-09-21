@@ -16,12 +16,18 @@ export function restoreProjectGitCloneRepo(item: {
   keyDir: string;
 }): Result.ResultAsync<string, never> {
   return Result.pipe(
-    Result.succeed({ ...item }),
-    Result.bind('repoDir', v => Result.succeed(`${v.projectDir}/${v.repoId}`)),
-    Result.bind('isRepoExist', v =>
-      v.repoId === PROD_REPO_ID
-        ? Result.succeed(true)
-        : isPathExist({ path: v.repoDir })
+    Result.succeed(item),
+    Result.bind(
+      'repoDir',
+      (v): Result.Result<`${string}/${string}`, never> =>
+        Result.succeed(`${v.projectDir}/${v.repoId}`)
+    ),
+    Result.bind(
+      'isRepoExist',
+      async (v): Result.ResultAsync<boolean, never> =>
+        v.repoId === PROD_REPO_ID
+          ? Result.succeed(true)
+          : isPathExist({ path: v.repoDir })
     ),
     Result.andThrough(v =>
       v.isRepoExist === false
@@ -39,6 +45,8 @@ export function restoreProjectGitCloneRepo(item: {
           })
         : Result.succeed()
     ),
-    Result.andThen(v => Result.succeed(v.keyDir))
+    Result.andThen(
+      (v): Result.Result<string, never> => Result.succeed(v.keyDir)
+    )
   );
 }

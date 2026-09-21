@@ -1,5 +1,7 @@
 import { Result } from '@praha/byethrow';
+import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { DiskGetEffectiveIsFetchError } from '#common/zod/disk/function-errors/disk-get-effective-is-fetch-error';
+import type { GetChangesToCommitError } from '#common/zod/node-common/function-errors/get-changes-to-commit-error';
 import { getChangesToCommit } from '#node-common/functions-result/get-changes-to-commit';
 
 export function getEffectiveIsFetch(item: {
@@ -12,12 +14,14 @@ export function getEffectiveIsFetch(item: {
 
   return Result.pipe(
     Result.succeed(item),
-    Result.bind('changesToCommit', v =>
-      getChangesToCommit({
-        repoDir: v.repoDir
-      })
+    Result.bind(
+      'changesToCommit',
+      (v): Result.ResultAsync<DiskFileChange[], GetChangesToCommitError> =>
+        getChangesToCommit({
+          repoDir: v.repoDir
+        })
     ),
-    Result.map(v => {
+    Result.map((v): boolean => {
       let repoHasChanges: boolean = v.changesToCommit.length > 0;
 
       return repoHasChanges === true ? false : v.isFetch;

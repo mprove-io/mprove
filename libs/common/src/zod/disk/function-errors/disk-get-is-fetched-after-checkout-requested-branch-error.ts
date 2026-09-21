@@ -9,16 +9,16 @@ import {
   zDiskCheckoutBranchError
 } from '#common/zod/disk/function-errors/disk-checkout-branch-error';
 
-export type DiskCheckoutRequestedBranchError =
+export type DiskGetIsFetchedAfterCheckoutRequestedBranchError =
   | DiskBranchIsNotExistError
   | DiskCheckoutBranchError;
 
-export let zDiskCheckoutRequestedBranchError = z.union([
+export let zDiskGetIsFetchedAfterCheckoutRequestedBranchError = z.union([
   zDiskBranchIsNotExistError,
   zDiskCheckoutBranchError
 ]);
 
 assertTypesEqual<
-  DiskCheckoutRequestedBranchError,
-  z.infer<typeof zDiskCheckoutRequestedBranchError>
+  DiskGetIsFetchedAfterCheckoutRequestedBranchError,
+  z.infer<typeof zDiskGetIsFetchedAfterCheckoutRequestedBranchError>
 >({ value: true });

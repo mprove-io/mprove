@@ -11,21 +11,24 @@ export function checkRestoreOrgProject(item: {
   projectId: string;
   projectLt: ProjectLt;
 }): Result.ResultAsync<string, never> {
-  let { remoteType, orgId, orgPath, projectId, projectLt } = item;
-
-  let orgDir = `${orgPath}/${orgId}`;
-
   return Result.pipe(
-    checkRestoreOrg({ orgId: orgId, orgPath: orgPath }),
-    Result.andThen(() =>
-      restoreProject({
-        remoteType: remoteType,
-        orgId: orgId,
-        orgPath: orgPath,
-        orgDir: orgDir,
-        projectId: projectId,
-        projectLt: projectLt
-      })
+    Result.succeed({
+      ...item,
+      orgDir: `${item.orgPath}/${item.orgId}`
+    }),
+    Result.andThrough(v =>
+      checkRestoreOrg({ orgId: v.orgId, orgPath: v.orgPath })
+    ),
+    Result.andThen(
+      (v): Result.ResultAsync<string, never> =>
+        restoreProject({
+          remoteType: v.remoteType,
+          orgId: v.orgId,
+          orgPath: v.orgPath,
+          orgDir: v.orgDir,
+          projectId: v.projectId,
+          projectLt: v.projectLt
+        })
     )
   );
 }

@@ -1,22 +1,13 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import {
-  type FileIsSymlinkError,
-  zFileIsSymlinkError
-} from '#common/zod/node-common/errors/file-is-symlink-error';
-import {
-  type FileSizeIsTooBigError,
-  zFileSizeIsTooBigError
-} from '#common/zod/node-common/errors/file-size-is-too-big-error';
+  type GetChangesToCommitError,
+  zGetChangesToCommitError
+} from '#common/zod/node-common/function-errors/get-changes-to-commit-error';
 
-export type DiskGetEffectiveIsFetchError =
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError;
+export type DiskGetEffectiveIsFetchError = GetChangesToCommitError;
 
-export let zDiskGetEffectiveIsFetchError = z.discriminatedUnion('code', [
-  zFileIsSymlinkError,
-  zFileSizeIsTooBigError
-]);
+export let zDiskGetEffectiveIsFetchError = zGetChangesToCommitError;
 
 assertTypesEqual<
   DiskGetEffectiveIsFetchError,

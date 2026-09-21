@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskIsBranchExistOutput } from '#common/zod/disk/routes/branches/is-branch-exist/is-branch-exist-response';
@@ -50,50 +51,65 @@ export class IsBranchExistService {
         orgId: orgId,
         projectId: projectId,
         repoId: repoId,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
+        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
+        branch: branch,
+        isRemote: isRemote,
+        passPhrase: passPhrase,
+        publicKey: publicKey,
+        privateKeyEncrypted: privateKeyEncrypted,
+        gitUrl: gitUrl,
+        projectLt: projectLt,
+        orgPath: orgPath,
+        remoteType: remoteType
       }),
-      Result.bind('keyDir', item =>
-        checkRestoreOrgProjectRepo({
-          remoteType: remoteType,
-          orgId: item.orgId,
-          orgPath: orgPath,
-          projectId: item.projectId,
-          projectLt: projectLt,
-          repoId: item.repoId
-        })
+      Result.bind(
+        'keyDir',
+        (v): Result.ResultAsync<string, never> =>
+          checkRestoreOrgProjectRepo({
+            remoteType: v.remoteType,
+            orgId: v.orgId,
+            orgPath: v.orgPath,
+            projectId: v.projectId,
+            projectLt: v.projectLt,
+            repoId: v.repoId
+          })
       ),
-      Result.bind('git', item =>
-        createGit({
-          repoDir: item.repoDir,
-          remoteType: remoteType,
-          keyDir: item.keyDir,
-          gitUrl: gitUrl,
-          privateKeyEncrypted: privateKeyEncrypted,
-          publicKey: publicKey,
-          passPhrase: passPhrase
-        })
+      Result.bind(
+        'git',
+        (v): Result.ResultAsync<SimpleGit, never> =>
+          createGit({
+            repoDir: v.repoDir,
+            remoteType: v.remoteType,
+            keyDir: v.keyDir,
+            gitUrl: v.gitUrl,
+            privateKeyEncrypted: v.privateKeyEncrypted,
+            publicKey: v.publicKey,
+            passPhrase: v.passPhrase
+          })
       ),
-      Result.bind('isBranchExist', item =>
-        isRemote === true
-          ? isRemoteBranchExist({
-              repoDir: item.repoDir,
-              remoteBranch: branch,
-              git: item.git,
-              isFetch: true
-            })
-          : isLocalBranchExist({
-              repoDir: item.repoDir,
-              localBranch: branch
-            })
+      Result.bind(
+        'isBranchExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          v.isRemote === true
+            ? isRemoteBranchExist({
+                repoDir: v.repoDir,
+                remoteBranch: v.branch,
+                git: v.git,
+                isFetch: true
+              })
+            : isLocalBranchExist({
+                repoDir: v.repoDir,
+                localBranch: v.branch
+              })
       ),
       Result.map(
-        (item): ToDiskIsBranchExistOutput => ({
-          orgId: item.orgId,
-          projectId: item.projectId,
-          repoId: item.repoId,
-          branch: branch,
-          isRemote: isRemote,
-          isBranchExist: item.isBranchExist
+        (v): ToDiskIsBranchExistOutput => ({
+          orgId: v.orgId,
+          projectId: v.projectId,
+          repoId: v.repoId,
+          branch: v.branch,
+          isRemote: v.isRemote,
+          isBranchExist: v.isBranchExist
         })
       )
     );

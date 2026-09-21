@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
 import type { BaseProject } from '#common/zod/backend/base-project';
+import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
+import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
+import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
 import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskCreateProjectOutput } from '#common/zod/disk/routes/projects/create-project/create-project-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
@@ -55,86 +60,102 @@ export class CreateProjectService {
         projectId: projectId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
         keyDir: `${orgPath}/${orgId}/_keys/${projectId}`,
-        prodRepoDir: `${orgPath}/${orgId}/${projectId}/${PROD_REPO_ID}`
+        prodRepoDir: `${orgPath}/${orgId}/${projectId}/${PROD_REPO_ID}`,
+        devRepoId: devRepoId,
+        passPhrase: passPhrase,
+        publicKey: publicKey,
+        privateKeyEncrypted: privateKeyEncrypted,
+        gitUrl: gitUrl,
+        remoteType: remoteType,
+        userAlias: userAlias,
+        seedProjectId: seedProjectId,
+        projectName: projectName,
+        orgPath: orgPath
       }),
-      Result.andThrough(() =>
+      Result.andThrough(v =>
         checkRestoreOrg({
-          orgId: orgId,
-          orgPath: orgPath
+          orgId: v.orgId,
+          orgPath: v.orgPath
         })
       ),
-      Result.andThrough(item =>
-        checkProjectDoesNotExist({ projectDir: item.projectDir })
+      Result.andThrough(v =>
+        checkProjectDoesNotExist({ projectDir: v.projectDir })
       ),
-      Result.andThrough(item => ensureDir({ dir: item.projectDir })),
-      Result.andThrough(item => ensureDir({ dir: item.keyDir })),
-      Result.andThrough(item =>
+      Result.andThrough(v => ensureDir({ dir: v.projectDir })),
+      Result.andThrough(v => ensureDir({ dir: v.keyDir })),
+      Result.andThrough(v =>
         prepareRemoteAndProd({
-          projectId: item.projectId,
-          projectName: projectName,
-          projectDir: item.projectDir,
-          seedProjectId: seedProjectId,
-          userAlias: userAlias,
-          remoteType: remoteType,
-          gitUrl: gitUrl,
-          keyDir: item.keyDir,
-          privateKeyEncrypted: privateKeyEncrypted,
-          publicKey: publicKey,
-          passPhrase: passPhrase
+          projectId: v.projectId,
+          projectName: v.projectName,
+          projectDir: v.projectDir,
+          seedProjectId: v.seedProjectId,
+          userAlias: v.userAlias,
+          remoteType: v.remoteType,
+          gitUrl: v.gitUrl,
+          keyDir: v.keyDir,
+          privateKeyEncrypted: v.privateKeyEncrypted,
+          publicKey: v.publicKey,
+          passPhrase: v.passPhrase
         })
       ),
-      Result.andThrough(item =>
+      Result.andThrough(v =>
         cloneRemoteToDev({
-          orgId: item.orgId,
-          projectId: item.projectId,
-          devRepoId: devRepoId,
-          orgPath: orgPath,
-          remoteType: remoteType,
-          gitUrl: gitUrl,
-          keyDir: item.keyDir,
-          privateKeyEncrypted: privateKeyEncrypted,
-          publicKey: publicKey,
-          passPhrase: passPhrase
+          orgId: v.orgId,
+          projectId: v.projectId,
+          devRepoId: v.devRepoId,
+          orgPath: v.orgPath,
+          remoteType: v.remoteType,
+          gitUrl: v.gitUrl,
+          keyDir: v.keyDir,
+          privateKeyEncrypted: v.privateKeyEncrypted,
+          publicKey: v.publicKey,
+          passPhrase: v.passPhrase
         })
       ),
-      Result.bind('prodItemCatalog', item =>
-        getNodesAndFiles({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: PROD_REPO_ID,
-          readFiles: true,
-          isRootMproveDir: false
-        })
+      Result.bind(
+        'prodItemCatalog',
+        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
+          getNodesAndFiles({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: PROD_REPO_ID,
+            readFiles: true,
+            isRootMproveDir: false
+          })
       ),
-      Result.bind('prodGit', item =>
-        createGit({
-          repoDir: item.prodRepoDir,
-          remoteType: remoteType,
-          keyDir: item.keyDir,
-          gitUrl: gitUrl,
-          privateKeyEncrypted: privateKeyEncrypted,
-          publicKey: publicKey,
-          passPhrase: passPhrase
-        })
+      Result.bind(
+        'prodGit',
+        (v): Result.ResultAsync<SimpleGit, never> =>
+          createGit({
+            repoDir: v.prodRepoDir,
+            remoteType: v.remoteType,
+            keyDir: v.keyDir,
+            gitUrl: v.gitUrl,
+            privateKeyEncrypted: v.privateKeyEncrypted,
+            publicKey: v.publicKey,
+            passPhrase: v.passPhrase
+          })
       ),
-      Result.bind('prodItemStatus', item =>
-        getRepoStatus({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: PROD_REPO_ID,
-          repoDir: item.prodRepoDir,
-          git: item.prodGit,
-          isFetch: true,
-          isCheckConflicts: true
-        })
+      Result.bind(
+        'prodItemStatus',
+        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
+          getRepoStatus({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: PROD_REPO_ID,
+            repoDir: v.prodRepoDir,
+            git: v.prodGit,
+            isFetch: true,
+            isCheckConflicts: true
+          })
       ),
       Result.map(
-        (item): ToDiskCreateProjectOutput => ({
-          orgId: item.orgId,
-          projectId: item.projectId,
-          defaultBranch: item.prodItemStatus.currentBranch,
-          prodFiles: item.prodItemCatalog.files,
-          mproveDir: item.prodItemCatalog.mproveDir
+        (v): ToDiskCreateProjectOutput => ({
+          orgId: v.orgId,
+          projectId: v.projectId,
+          defaultBranch: v.prodItemStatus.currentBranch,
+          prodFiles: v.prodItemCatalog.files,
+          mproveDir: v.prodItemCatalog.mproveDir
         })
       )
     );

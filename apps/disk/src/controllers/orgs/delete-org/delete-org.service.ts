@@ -25,15 +25,19 @@ export class DeleteOrgService {
         orgId: orgId,
         orgDir: `${orgPath}/${orgId}`
       }),
-      Result.bind('isOrgExist', item => isPathExist({ path: item.orgDir })),
-      Result.andThrough(item =>
-        item.isOrgExist === true
-          ? removePath({ path: item.orgDir })
+      Result.bind(
+        'isOrgExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          isPathExist({ path: v.orgDir })
+      ),
+      Result.andThrough(v =>
+        v.isOrgExist === true
+          ? removePath({ path: v.orgDir })
           : Result.succeed()
       ),
       Result.map(
-        (item): ToDiskDeleteOrgOutput => ({
-          deletedOrgId: item.orgId
+        (v): ToDiskDeleteOrgOutput => ({
+          deletedOrgId: v.orgId
         })
       )
     );

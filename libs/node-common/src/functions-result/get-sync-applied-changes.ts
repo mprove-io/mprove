@@ -7,6 +7,7 @@ import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
 import type { DiskPathTraversalError } from '#common/zod/disk/errors/disk-path-traversal-error';
 import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
 import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
+import type { GetSyncAppliedChangesError } from '#common/zod/node-common/function-errors/get-sync-applied-changes-error';
 import { readFileCheckSize } from './read-file-check-size';
 import { validatePathUnderDir } from './validate-path-under-dir';
 
@@ -23,10 +24,7 @@ export function getSyncAppliedChanges(item: {
   changedFiles: DiskSyncFile[];
   deletedFiles: DiskSyncFile[];
   statusResult: StatusResult;
-}): Result.ResultAsync<
-  string[],
-  DiskPathTraversalError | FileIsSymlinkError | FileSizeIsTooBigError
-> {
+}): Result.ResultAsync<string[], GetSyncAppliedChangesError> {
   let { repoDir, changedFiles, deletedFiles, statusResult } = item;
 
   return Result.try({

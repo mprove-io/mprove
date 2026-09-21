@@ -24,11 +24,15 @@ export class IsOrgExistService {
         orgId: orgId,
         orgDir: `${orgPath}/${orgId}`
       }),
-      Result.bind('isOrgExist', item => isPathExist({ path: item.orgDir })),
+      Result.bind(
+        'isOrgExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          isPathExist({ path: v.orgDir })
+      ),
       Result.map(
-        (item): ToDiskIsOrgExistOutput => ({
-          orgId: item.orgId,
-          isOrgExist: item.isOrgExist
+        (v): ToDiskIsOrgExistOutput => ({
+          orgId: v.orgId,
+          isOrgExist: v.isOrgExist
         })
       )
     );

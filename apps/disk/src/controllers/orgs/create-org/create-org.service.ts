@@ -25,9 +25,9 @@ export class CreateOrgService {
         orgId: orgId,
         orgDir: `${orgPath}/${orgId}`
       }),
-      Result.andThrough(item => checkOrgDoesNotExist({ orgDir: item.orgDir })),
-      Result.andThrough(item => ensureDir({ dir: item.orgDir })),
-      Result.map((item): ToDiskCreateOrgOutput => ({ orgId: item.orgId }))
+      Result.andThrough(v => checkOrgDoesNotExist({ orgDir: v.orgDir })),
+      Result.andThrough(v => ensureDir({ dir: v.orgDir })),
+      Result.map((v): ToDiskCreateOrgOutput => ({ orgId: v.orgId }))
     );
 
     return createOrgResult;

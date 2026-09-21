@@ -25,22 +25,25 @@ export class IsProjectExistService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        projectDir: `${orgPath}/${orgId}/${projectId}`
+        projectDir: `${orgPath}/${orgId}/${projectId}`,
+        orgPath: orgPath
       }),
-      Result.andThrough(item =>
+      Result.andThrough(v =>
         checkRestoreOrg({
-          orgId: item.orgId,
-          orgPath: orgPath
+          orgId: v.orgId,
+          orgPath: v.orgPath
         })
       ),
-      Result.bind('isProjectExist', item =>
-        isPathExist({ path: item.projectDir })
+      Result.bind(
+        'isProjectExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          isPathExist({ path: v.projectDir })
       ),
       Result.map(
-        (item): ToDiskIsProjectExistOutput => ({
-          orgId: item.orgId,
-          projectId: item.projectId,
-          isProjectExist: item.isProjectExist
+        (v): ToDiskIsProjectExistOutput => ({
+          orgId: v.orgId,
+          projectId: v.projectId,
+          isProjectExist: v.isProjectExist
         })
       )
     );

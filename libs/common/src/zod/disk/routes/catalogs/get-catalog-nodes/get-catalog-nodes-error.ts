@@ -1,13 +1,15 @@
 import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import {
-  type DiskCheckoutRequestedBranchError,
-  zDiskCheckoutRequestedBranchError
-} from '#common/zod/disk/function-errors/disk-checkout-requested-branch-error';
+  type DiskGetIsFetchedAfterCheckoutRequestedBranchError,
+  zDiskGetIsFetchedAfterCheckoutRequestedBranchError
+} from '#common/zod/disk/function-errors/disk-get-is-fetched-after-checkout-requested-branch-error';
 
-export type ToDiskGetCatalogNodesError = DiskCheckoutRequestedBranchError;
+export type ToDiskGetCatalogNodesError =
+  DiskGetIsFetchedAfterCheckoutRequestedBranchError;
 
-export let zToDiskGetCatalogNodesError = zDiskCheckoutRequestedBranchError;
+export let zToDiskGetCatalogNodesError =
+  zDiskGetIsFetchedAfterCheckoutRequestedBranchError;
 
 assertTypesEqual<
   ToDiskGetCatalogNodesError,

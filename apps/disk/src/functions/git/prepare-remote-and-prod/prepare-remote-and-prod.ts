@@ -1,7 +1,9 @@
 import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import type { DiskInitializeAndPushManagedProdError } from '#common/zod/disk/function-errors/disk-initialize-and-push-managed-prod-error';
 import type { DiskPrepareRemoteAndProdError } from '#common/zod/disk/function-errors/disk-prepare-remote-and-prod-error';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import { createGit } from '#disk/functions/git/create-git/create-git';
@@ -41,33 +43,38 @@ export function prepareRemoteAndProd(item: {
             ? initializeManagedCentralRepo({ centralDir: v.centralDir })
             : Result.succeed()
         ),
-        Result.bind('git', v =>
-          createGit({
-            repoDir: undefined,
-            remoteType: v.remoteType,
-            keyDir: v.keyDir,
-            gitUrl: v.gitUrl,
-            privateKeyEncrypted: v.privateKeyEncrypted,
-            publicKey: v.publicKey,
-            passPhrase: v.passPhrase
-          })
+        Result.bind(
+          'git',
+          (v): Result.ResultAsync<SimpleGit, never> =>
+            createGit({
+              repoDir: undefined,
+              remoteType: v.remoteType,
+              keyDir: v.keyDir,
+              gitUrl: v.gitUrl,
+              privateKeyEncrypted: v.privateKeyEncrypted,
+              publicKey: v.publicKey,
+              passPhrase: v.passPhrase
+            })
         ),
         Result.andThrough(async v => {
           await v.git.clone(v.remoteUrl, v.prodDir);
 
           return Result.succeed();
         }),
-        Result.andThen(v =>
-          v.remoteType === ProjectRemoteTypeEnum.Managed
-            ? initializeAndPushManagedProd({
-                projectId: v.projectId,
-                projectDir: v.projectDir,
-                prodDir: v.prodDir,
-                seedProjectId: v.seedProjectId,
-                userAlias: v.userAlias,
-                projectName: v.projectName
-              })
-            : Result.succeed()
+        Result.andThen(
+          async (
+            v
+          ): Result.ResultAsync<void, DiskInitializeAndPushManagedProdError> =>
+            v.remoteType === ProjectRemoteTypeEnum.Managed
+              ? initializeAndPushManagedProd({
+                  projectId: v.projectId,
+                  projectDir: v.projectDir,
+                  prodDir: v.prodDir,
+                  seedProjectId: v.seedProjectId,
+                  userAlias: v.userAlias,
+                  projectName: v.projectName
+                })
+              : Result.succeed()
         )
       )
   });

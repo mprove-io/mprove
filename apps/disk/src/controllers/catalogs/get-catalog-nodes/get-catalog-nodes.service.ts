@@ -1,7 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
+import { isUndefined } from '#common/functions/is-undefined';
 import type { BaseProject } from '#common/zod/backend/base-project';
+import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
+import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
+import type { DiskGetEffectiveIsFetchError } from '#common/zod/disk/function-errors/disk-get-effective-is-fetch-error';
+import type { DiskGetIsFetchedAfterCheckoutRequestedBranchError } from '#common/zod/disk/function-errors/disk-get-is-fetched-after-checkout-requested-branch-error';
+import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
+import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
 import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
@@ -11,8 +20,8 @@ import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { checkoutRequestedBranch } from './checkout-requested-branch/checkout-requested-branch';
 import { getEffectiveIsFetch } from './get-effective-is-fetch/get-effective-is-fetch';
+import { getIsFetchedAfterCheckoutRequestedBranch } from './get-is-fetched-after-checkout-requested-branch/get-is-fetched-after-checkout-requested-branch';
 
 @Injectable()
 export class GetCatalogNodesService {
@@ -53,80 +62,113 @@ export class GetCatalogNodesService {
         projectId: projectId,
         repoId: repoId,
         projectDir: `${orgPath}/${orgId}/${projectId}`,
-        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`
+        repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
+        isFetch: isFetch,
+        passPhrase: passPhrase,
+        publicKey: publicKey,
+        privateKeyEncrypted: privateKeyEncrypted,
+        gitUrl: gitUrl,
+        branch: branch,
+        projectLt: projectLt,
+        orgPath: orgPath,
+        remoteType: remoteType
       }),
-      Result.bind('keyDir', item =>
-        checkRestoreOrgProjectRepoBranch({
-          remoteType: remoteType,
-          orgId: item.orgId,
-          orgPath: orgPath,
-          projectId: item.projectId,
-          projectLt: projectLt,
-          repoId: item.repoId,
-          branchId: branch
-        })
+      Result.bind(
+        'keyDir',
+        (
+          v
+        ): Result.ResultAsync<
+          string,
+          DiskCheckRestoreOrgProjectRepoBranchError
+        > =>
+          checkRestoreOrgProjectRepoBranch({
+            remoteType: v.remoteType,
+            orgId: v.orgId,
+            orgPath: v.orgPath,
+            projectId: v.projectId,
+            projectLt: v.projectLt,
+            repoId: v.repoId,
+            branchId: v.branch
+          })
       ),
-      Result.bind('git', item =>
-        createGit({
-          repoDir: item.repoDir,
-          remoteType: remoteType,
-          keyDir: item.keyDir,
-          gitUrl: gitUrl,
-          privateKeyEncrypted: privateKeyEncrypted,
-          publicKey: publicKey,
-          passPhrase: passPhrase
-        })
+      Result.bind(
+        'git',
+        (v): Result.ResultAsync<SimpleGit, never> =>
+          createGit({
+            repoDir: v.repoDir,
+            remoteType: v.remoteType,
+            keyDir: v.keyDir,
+            gitUrl: v.gitUrl,
+            privateKeyEncrypted: v.privateKeyEncrypted,
+            publicKey: v.publicKey,
+            passPhrase: v.passPhrase
+          })
       ),
-      Result.bind('effectiveIsFetch', item =>
-        getEffectiveIsFetch({
-          isFetch: isFetch,
-          repoDir: item.repoDir
-        })
+      Result.bind(
+        'effectiveIsFetch',
+        async (v): Result.ResultAsync<boolean, DiskGetEffectiveIsFetchError> =>
+          getEffectiveIsFetch({
+            isFetch: v.isFetch,
+            repoDir: v.repoDir
+          })
       ),
-      Result.bind('isFetched', item =>
-        checkoutRequestedBranch({
-          branch: branch,
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
-          git: item.git,
-          isFetch: item.effectiveIsFetch
-        })
+      Result.bind(
+        'isFetched',
+        async (
+          v
+        ): Result.ResultAsync<
+          boolean,
+          DiskGetIsFetchedAfterCheckoutRequestedBranchError
+        > =>
+          isUndefined(v.branch)
+            ? Result.succeed(false)
+            : getIsFetchedAfterCheckoutRequestedBranch({
+                branch: v.branch,
+                projectId: v.projectId,
+                projectDir: v.projectDir,
+                repoId: v.repoId,
+                repoDir: v.repoDir,
+                git: v.git,
+                isFetch: v.effectiveIsFetch
+              })
       ),
-      Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          readFiles: false,
-          isRootMproveDir: false
-        })
+      Result.bind(
+        'itemCatalog',
+        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
+          getNodesAndFiles({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            readFiles: false,
+            isRootMproveDir: false
+          })
       ),
-      Result.bind('itemStatus', item =>
-        getRepoStatus({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
-          git: item.git,
-          isFetch: item.isFetched === true ? false : item.effectiveIsFetch,
-          isCheckConflicts: true
-        })
+      Result.bind(
+        'itemStatus',
+        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
+          getRepoStatus({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            repoDir: v.repoDir,
+            git: v.git,
+            isFetch: v.isFetched === true ? false : v.effectiveIsFetch,
+            isCheckConflicts: true
+          })
       ),
       Result.map(
-        (item): ToDiskGetCatalogNodesOutput => ({
+        (v): ToDiskGetCatalogNodesOutput => ({
           repo: {
-            orgId: item.orgId,
-            projectId: item.projectId,
-            repoId: item.repoId,
-            repoStatus: item.itemStatus.repoStatus,
-            repoError: item.itemStatus.repoError,
-            currentBranchId: item.itemStatus.currentBranch,
-            conflicts: item.itemStatus.conflicts,
-            nodes: item.itemCatalog.nodes,
-            changesToCommit: item.itemStatus.changesToCommit,
-            changesToPush: item.itemStatus.changesToPush
+            orgId: v.orgId,
+            projectId: v.projectId,
+            repoId: v.repoId,
+            repoStatus: v.itemStatus.repoStatus,
+            repoError: v.itemStatus.repoError,
+            currentBranchId: v.itemStatus.currentBranch,
+            conflicts: v.itemStatus.conflicts,
+            nodes: v.itemCatalog.nodes,
+            changesToCommit: v.itemStatus.changesToCommit,
+            changesToPush: v.itemStatus.changesToPush
           }
         })
       )

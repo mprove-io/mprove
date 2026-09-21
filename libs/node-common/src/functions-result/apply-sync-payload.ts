@@ -5,6 +5,7 @@ import pIteration from 'p-iteration';
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
 import type { DiskPathTraversalError } from '#common/zod/disk/errors/disk-path-traversal-error';
 import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
+import type { ApplySyncPayloadError } from '#common/zod/node-common/function-errors/apply-sync-payload-error';
 import { validatePathUnderDir } from './validate-path-under-dir';
 
 const { forEachSeries } = pIteration;
@@ -13,7 +14,7 @@ export function applySyncPayload(item: {
   repoDir: string;
   changedFiles: DiskSyncFile[];
   deletedFiles: DiskSyncFile[];
-}): Result.ResultAsync<void, DiskPathTraversalError | FileIsSymlinkError> {
+}): Result.ResultAsync<void, ApplySyncPayloadError> {
   let { repoDir, changedFiles, deletedFiles } = item;
 
   return Result.try({

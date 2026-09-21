@@ -1,41 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { LogResult, StatusResult } from 'simple-git';
+import type { LogResult, SimpleGit, StatusResult } from 'simple-git';
 import type { BaseProject } from '#common/zod/backend/base-project';
+import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
 import type { DiskDevRepoCommitDoesNotMatchLocalCommitError } from '#common/zod/disk/errors/disk-dev-repo-commit-does-not-match-local-commit-error';
+import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
+import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
+import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
+import type { DiskGetSyncDataError } from '#common/zod/disk/function-errors/disk-get-sync-data-error';
 import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskSyncRepoOutput } from '#common/zod/disk/routes/repos/sync-repo/sync-repo-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
+import {
+  getSyncData,
+  type SyncData
+} from '#disk/controllers/repos/sync-repo/get-sync-data/get-sync-data';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
-import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab.service';
-import { applySyncPayload } from '#node-common/functions-result/apply-sync-payload';
-import { getSyncAppliedChanges } from '#node-common/functions-result/get-sync-applied-changes';
-import { getSyncFilesPayload } from '#node-common/functions-result/get-sync-files-payload';
-import { resetWorkingTreeToHead } from '#node-common/functions-result/reset-working-tree-to-head';
-
-type SyncData =
-  | {
-      direction: 'from-server';
-      changedFiles: DiskSyncFile[];
-      deletedFiles: DiskSyncFile[];
-    }
-  | {
-      direction: 'to-server';
-      appliedChangesOnServer: string[];
-    };
-
-type SyncFilesPayload = {
-  changedFiles: DiskSyncFile[];
-  deletedFiles: DiskSyncFile[];
-};
 
 @Injectable()
 export class SyncRepoService {
@@ -109,58 +98,81 @@ export class SyncRepoService {
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
-        repoDir: repoDir
+        repoDir: repoDir,
+        getRepoNodes: getRepoNodes,
+        getRepo: getRepo,
+        deletedFiles: deletedFiles,
+        changedFiles: changedFiles,
+        direction: direction,
+        lastCommit: lastCommit,
+        passPhrase: passPhrase,
+        publicKey: publicKey,
+        privateKeyEncrypted: privateKeyEncrypted,
+        gitUrl: gitUrl,
+        branch: branch,
+        projectLt: projectLt,
+        orgPath: orgPath,
+        remoteType: remoteType
       }),
-      Result.bind('keyDir', () =>
-        checkRestoreOrgProjectRepoBranch({
-          remoteType: remoteType,
-          orgId: orgId,
-          orgPath: orgPath,
-          projectId: projectId,
-          projectLt: projectLt,
-          repoId: repoId,
-          branchId: branch
-        })
+      Result.bind(
+        'keyDir',
+        (
+          v
+        ): Result.ResultAsync<
+          string,
+          DiskCheckRestoreOrgProjectRepoBranchError
+        > =>
+          checkRestoreOrgProjectRepoBranch({
+            remoteType: v.remoteType,
+            orgId: v.orgId,
+            orgPath: v.orgPath,
+            projectId: v.projectId,
+            projectLt: v.projectLt,
+            repoId: v.repoId,
+            branchId: v.branch
+          })
       ),
-      Result.bind('git', item =>
-        createGit({
-          repoDir: item.repoDir,
-          remoteType: remoteType,
-          keyDir: item.keyDir,
-          gitUrl: gitUrl,
-          privateKeyEncrypted: privateKeyEncrypted,
-          publicKey: publicKey,
-          passPhrase: passPhrase
-        })
+      Result.bind(
+        'git',
+        (v): Result.ResultAsync<SimpleGit, never> =>
+          createGit({
+            repoDir: v.repoDir,
+            remoteType: v.remoteType,
+            keyDir: v.keyDir,
+            gitUrl: v.gitUrl,
+            privateKeyEncrypted: v.privateKeyEncrypted,
+            publicKey: v.publicKey,
+            passPhrase: v.passPhrase
+          })
       ),
-      Result.andThrough(item =>
+      Result.andThrough(v =>
         checkoutBranch({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
-          branchName: branch,
-          git: item.git,
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          repoDir: v.repoDir,
+          branchName: v.branch,
+          git: v.git,
           isFetch: false
         })
       ),
       Result.andThrough(
         async (
-          item
+          v
         ): Result.ResultAsync<
           void,
           DiskDevRepoCommitDoesNotMatchLocalCommitError
         > => {
-          let logResult: LogResult = await item.git.log(['-1']);
+          let logResult: LogResult = await v.git.log(['-1']);
           let diskLastCommit = logResult.latest?.hash;
 
-          if (lastCommit !== diskLastCommit) {
+          if (v.lastCommit !== diskLastCommit) {
             return Result.fail({
               code: 'DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT',
               displayData: {
-                branch: branch,
+                branch: v.branch,
                 devLastCommit: diskLastCommit,
-                localLastCommit: lastCommit
+                localLastCommit: v.lastCommit
               }
             });
           }
@@ -168,116 +180,84 @@ export class SyncRepoService {
           return Result.succeed();
         }
       ),
-      Result.bind('statusResult', async item => {
-        let statusResult: StatusResult = await item.git.status();
-        return Result.succeed(statusResult);
-      }),
-      Result.bind('syncFilesPayload', item => {
-        if (direction === 'from-server') {
-          return Result.pipe(
-            getSyncFilesPayload({
-              repoDir: item.repoDir,
-              statusResult: item.statusResult
-            }),
-            Result.map(
-              (item2: SyncFilesPayload): SyncData => ({
-                direction: 'from-server',
-                changedFiles: item2.changedFiles,
-                deletedFiles: item2.deletedFiles
-              })
-            )
-          );
+      Result.bind(
+        'statusResult',
+        async (v): Result.ResultAsync<StatusResult, never> => {
+          let statusResult: StatusResult = await v.git.status();
+          return Result.succeed(statusResult);
         }
-
-        return Result.pipe(
-          getSyncAppliedChanges({
-            repoDir: item.repoDir,
-            changedFiles: changedFiles,
-            deletedFiles: deletedFiles,
-            statusResult: item.statusResult
-          }),
-          Result.andThen(appliedChangesOnServer =>
-            Result.pipe(
-              resetWorkingTreeToHead({
-                repoDir: item.repoDir,
-                statusResult: item.statusResult
-              }),
-              Result.andThen(() =>
-                applySyncPayload({
-                  repoDir: item.repoDir,
-                  changedFiles: changedFiles,
-                  deletedFiles: deletedFiles
-                })
-              ),
-              Result.andThen(() =>
-                addChangesToStage({ repoDir: item.repoDir })
-              ),
-              Result.map(
-                (): SyncData => ({
-                  direction: 'to-server',
-                  appliedChangesOnServer: appliedChangesOnServer
-                })
-              )
-            )
-          )
-        );
-      }),
-      Result.bind('repoStatus', item =>
-        getRepoStatus({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
-          git: item.git,
-          isFetch: true,
-          isCheckConflicts: getRepo === true,
-          addContent: true,
-          expandRenamed: true
-        })
       ),
-      Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          readFiles: true,
-          isRootMproveDir: false
-        })
+      Result.bind(
+        'syncFilesPayload',
+        (v): Result.ResultAsync<SyncData, DiskGetSyncDataError> =>
+          getSyncData({
+            direction: v.direction,
+            repoDir: v.repoDir,
+            changedFiles: v.changedFiles,
+            deletedFiles: v.deletedFiles,
+            statusResult: v.statusResult
+          })
       ),
-      Result.map((item): ToDiskSyncRepoOutput => {
+      Result.bind(
+        'repoStatus',
+        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
+          getRepoStatus({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            repoDir: v.repoDir,
+            git: v.git,
+            isFetch: true,
+            isCheckConflicts: v.getRepo === true,
+            addContent: true,
+            expandRenamed: true
+          })
+      ),
+      Result.bind(
+        'itemCatalog',
+        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
+          getNodesAndFiles({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            readFiles: true,
+            isRootMproveDir: false
+          })
+      ),
+      Result.map((v): ToDiskSyncRepoOutput => {
         let basePayload = {
-          files: item.itemCatalog.files,
-          mproveDir: item.itemCatalog.mproveDir,
-          devChangesToCommit: item.repoStatus.changesToCommit,
+          files: v.itemCatalog.files,
+          mproveDir: v.itemCatalog.mproveDir,
+          devChangesToCommit: v.repoStatus.changesToCommit,
           repo:
-            getRepo === true
+            v.getRepo === true
               ? {
-                  orgId: item.orgId,
-                  projectId: item.projectId,
-                  repoId: item.repoId,
-                  repoStatus: item.repoStatus.repoStatus,
-                  repoError: item.repoStatus.repoError,
-                  currentBranchId: item.repoStatus.currentBranch,
-                  conflicts: item.repoStatus.conflicts,
+                  orgId: v.orgId,
+                  projectId: v.projectId,
+                  repoId: v.repoId,
+                  repoStatus: v.repoStatus.repoStatus,
+                  repoError: v.repoStatus.repoError,
+                  currentBranchId: v.repoStatus.currentBranch,
+                  conflicts: v.repoStatus.conflicts,
                   nodes:
-                    getRepoNodes === true ? item.itemCatalog.nodes : undefined
+                    v.getRepoNodes === true ? v.itemCatalog.nodes : undefined
                 }
               : undefined
         };
 
-        if (item.syncFilesPayload.direction === 'from-server') {
+        if (v.syncFilesPayload.direction === 'from-server') {
           return {
             direction: 'from-server',
             ...basePayload,
-            changedFiles: item.syncFilesPayload.changedFiles,
-            deletedFiles: item.syncFilesPayload.deletedFiles
+            changedFiles: v.syncFilesPayload.changedFiles,
+            deletedFiles: v.syncFilesPayload.deletedFiles
           };
         }
 
         return {
           direction: 'to-server',
           ...basePayload,
-          appliedChangesOnServer: item.syncFilesPayload.appliedChangesOnServer
+          appliedChangesOnServer: v.syncFilesPayload.appliedChangesOnServer
         };
       })
     );

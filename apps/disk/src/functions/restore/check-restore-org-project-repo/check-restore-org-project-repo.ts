@@ -12,32 +12,36 @@ export function checkRestoreOrgProjectRepo(item: {
   projectLt: ProjectLt;
   repoId: string;
 }): Result.ResultAsync<string, never> {
-  let { remoteType, orgId, orgPath, projectId, projectLt, repoId } = item;
-
-  let projectDir = `${orgPath}/${orgId}/${projectId}`;
-
   return Result.pipe(
-    checkRestoreOrgProject({
-      remoteType: remoteType,
-      orgId: orgId,
-      orgPath: orgPath,
-      projectId: projectId,
-      projectLt: projectLt
+    Result.succeed({
+      ...item,
+      projectDir: `${item.orgPath}/${item.orgId}/${item.projectId}`
     }),
-    Result.andThen(keyDir => {
-      if (remoteType !== ProjectRemoteTypeEnum.GitClone) {
-        return Result.succeed(keyDir);
+    Result.bind(
+      'keyDir',
+      (v): Result.ResultAsync<string, never> =>
+        checkRestoreOrgProject({
+          remoteType: v.remoteType,
+          orgId: v.orgId,
+          orgPath: v.orgPath,
+          projectId: v.projectId,
+          projectLt: v.projectLt
+        })
+    ),
+    Result.andThen(async (v): Result.ResultAsync<string, never> => {
+      if (v.remoteType !== ProjectRemoteTypeEnum.GitClone) {
+        return Result.succeed(v.keyDir);
       }
 
       return restoreProjectGitCloneRepo({
-        remoteType: remoteType,
-        orgId: orgId,
-        orgPath: orgPath,
-        projectId: projectId,
-        projectDir: projectDir,
-        projectLt: projectLt,
-        repoId: repoId,
-        keyDir: keyDir
+        remoteType: v.remoteType,
+        orgId: v.orgId,
+        orgPath: v.orgPath,
+        projectId: v.projectId,
+        projectDir: v.projectDir,
+        projectLt: v.projectLt,
+        repoId: v.repoId,
+        keyDir: v.keyDir
       });
     })
   );

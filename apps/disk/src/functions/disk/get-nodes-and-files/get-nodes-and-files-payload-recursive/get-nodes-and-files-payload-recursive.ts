@@ -15,7 +15,7 @@ import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-
 import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
 import { readFileCheckSize } from '#node-common/functions-result/read-file-check-size';
 
-type NodesAndFilesPayload = {
+export type NodesAndFilesPayload = {
   nodes: DiskCatalogNode[];
   files: DiskCatalogFile[];
 };

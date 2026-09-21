@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
+import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
 import type { BaseProject } from '#common/zod/backend/base-project';
+import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { DiskFileIsNotExistError } from '#common/zod/disk/errors/disk-file-is-not-exist-error';
+import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
+import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
+import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
 import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-response';
 import type { ProjectLt } from '#common/zod/st-lt';
@@ -57,116 +63,140 @@ export class SaveFileService {
         projectDir: `${orgPath}/${orgId}/${projectId}`,
         repoId: repoId,
         repoDir: `${orgPath}/${orgId}/${projectId}/${repoId}`,
-        filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${relativeFilePath}`
+        filePath: `${orgPath}/${orgId}/${projectId}/${repoId}/${relativeFilePath}`,
+        relativeFilePath: relativeFilePath,
+        userAlias: userAlias,
+        content: content,
+        branch: branch,
+        projectLt: projectLt,
+        orgPath: orgPath,
+        remoteType: remoteType
       }),
-      Result.andThrough(item =>
+      Result.andThrough(v =>
         validatePathUnderDir({
-          fullPath: item.filePath,
-          allowedDir: item.repoDir
+          fullPath: v.filePath,
+          allowedDir: v.repoDir
         })
       ),
-      Result.bind('keyDir', item =>
-        checkRestoreOrgProjectRepoBranch({
-          remoteType: remoteType,
-          orgId: item.orgId,
-          orgPath: orgPath,
-          projectId: item.projectId,
-          projectLt: projectLt,
-          repoId: item.repoId,
-          branchId: branch
-        })
+      Result.bind(
+        'keyDir',
+        (
+          v
+        ): Result.ResultAsync<
+          string,
+          DiskCheckRestoreOrgProjectRepoBranchError
+        > =>
+          checkRestoreOrgProjectRepoBranch({
+            remoteType: v.remoteType,
+            orgId: v.orgId,
+            orgPath: v.orgPath,
+            projectId: v.projectId,
+            projectLt: v.projectLt,
+            repoId: v.repoId,
+            branchId: v.branch
+          })
       ),
-      Result.bind('git', item =>
-        createGit({
-          repoDir: item.repoDir,
-          remoteType: remoteType,
-          keyDir: item.keyDir,
-          gitUrl: projectLt.gitUrl,
-          privateKeyEncrypted: projectLt.privateKeyEncrypted,
-          publicKey: projectLt.publicKey,
-          passPhrase: projectLt.passPhrase
-        })
+      Result.bind(
+        'git',
+        (v): Result.ResultAsync<SimpleGit, never> =>
+          createGit({
+            repoDir: v.repoDir,
+            remoteType: v.remoteType,
+            keyDir: v.keyDir,
+            gitUrl: v.projectLt.gitUrl,
+            privateKeyEncrypted: v.projectLt.privateKeyEncrypted,
+            publicKey: v.projectLt.publicKey,
+            passPhrase: v.projectLt.passPhrase
+          })
       ),
-      Result.andThrough(item =>
+      Result.andThrough(v =>
         checkoutBranch({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
-          branchName: branch,
-          git: item.git,
+          projectId: v.projectId,
+          projectDir: v.projectDir,
+          repoId: v.repoId,
+          repoDir: v.repoDir,
+          branchName: v.branch,
+          git: v.git,
           isFetch: false
         })
       ),
-      Result.bind('isFileExist', item => isPathExist({ path: item.filePath })),
+      Result.bind(
+        'isFileExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          isPathExist({ path: v.filePath })
+      ),
       Result.andThrough(
-        (item): Result.Result<void, DiskFileIsNotExistError> =>
-          item.isFileExist === false
+        (v): Result.Result<void, DiskFileIsNotExistError> =>
+          v.isFileExist === false
             ? Result.fail({ code: 'DISK_FILE_IS_NOT_EXIST' })
             : Result.succeed()
       ),
-      Result.andThrough(item =>
-        writeToFile({ filePath: item.filePath, content: content })
+      Result.andThrough(v =>
+        writeToFile({ filePath: v.filePath, content: v.content })
       ),
-      Result.andThrough(item => addChangesToStage({ repoDir: item.repoDir })),
-      Result.andThrough(item =>
-        item.repoId === PROD_REPO_ID
+      Result.andThrough(v => addChangesToStage({ repoDir: v.repoDir })),
+      Result.andThrough(v =>
+        v.repoId === PROD_REPO_ID
           ? commit({
-              repoDir: item.repoDir,
-              userAlias: userAlias,
-              commitMessage: `Modified file ${relativeFilePath}`
+              repoDir: v.repoDir,
+              userAlias: v.userAlias,
+              commitMessage: `Modified file ${v.relativeFilePath}`
             })
           : Result.succeed()
       ),
-      Result.andThrough(item =>
-        item.repoId === PROD_REPO_ID
+      Result.andThrough(v =>
+        v.repoId === PROD_REPO_ID
           ? pushToRemote({
-              projectId: item.projectId,
-              projectDir: item.projectDir,
-              repoId: item.repoId,
-              repoDir: item.repoDir,
-              branch: branch,
-              git: item.git,
+              projectId: v.projectId,
+              projectDir: v.projectDir,
+              repoId: v.repoId,
+              repoDir: v.repoDir,
+              branch: v.branch,
+              git: v.git,
               isFetch: true
             })
           : Result.succeed()
       ),
-      Result.bind('repoStatus', item =>
-        getRepoStatus({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          repoDir: item.repoDir,
-          git: item.git,
-          isFetch: true,
-          isCheckConflicts: true
-        })
+      Result.bind(
+        'repoStatus',
+        (v): Result.ResultAsync<DiskItemStatus, DiskGetRepoStatusError> =>
+          getRepoStatus({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            repoDir: v.repoDir,
+            git: v.git,
+            isFetch: true,
+            isCheckConflicts: true
+          })
       ),
-      Result.bind('itemCatalog', item =>
-        getNodesAndFiles({
-          projectId: item.projectId,
-          projectDir: item.projectDir,
-          repoId: item.repoId,
-          readFiles: true,
-          isRootMproveDir: false
-        })
+      Result.bind(
+        'itemCatalog',
+        (v): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> =>
+          getNodesAndFiles({
+            projectId: v.projectId,
+            projectDir: v.projectDir,
+            repoId: v.repoId,
+            readFiles: true,
+            isRootMproveDir: false
+          })
       ),
       Result.map(
-        (item): ToDiskSaveFileOutput => ({
+        (v): ToDiskSaveFileOutput => ({
           repo: {
-            orgId: item.orgId,
-            projectId: item.projectId,
-            repoId: item.repoId,
-            repoStatus: item.repoStatus.repoStatus,
-            repoError: item.repoStatus.repoError,
-            currentBranchId: item.repoStatus.currentBranch,
-            conflicts: item.repoStatus.conflicts,
-            nodes: item.itemCatalog.nodes,
-            changesToCommit: item.repoStatus.changesToCommit,
-            changesToPush: item.repoStatus.changesToPush
+            orgId: v.orgId,
+            projectId: v.projectId,
+            repoId: v.repoId,
+            repoStatus: v.repoStatus.repoStatus,
+            repoError: v.repoStatus.repoError,
+            currentBranchId: v.repoStatus.currentBranch,
+            conflicts: v.repoStatus.conflicts,
+            nodes: v.itemCatalog.nodes,
+            changesToCommit: v.repoStatus.changesToCommit,
+            changesToPush: v.repoStatus.changesToPush
           },
-          files: item.itemCatalog.files,
-          mproveDir: item.itemCatalog.mproveDir
+          files: v.itemCatalog.files,
+          mproveDir: v.itemCatalog.mproveDir
         })
       )
     );

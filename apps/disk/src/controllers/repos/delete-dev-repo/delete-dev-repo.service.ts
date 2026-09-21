@@ -43,30 +43,35 @@ export class DeleteDevRepoService {
         orgId: orgId,
         projectId: projectId,
         devRepoId: devRepoId,
-        devRepoDir: `${orgPath}/${orgId}/${projectId}/${devRepoId}`
+        devRepoDir: `${orgPath}/${orgId}/${projectId}/${devRepoId}`,
+        projectLt: projectLt,
+        orgPath: orgPath,
+        baseProject: baseProject
       }),
-      Result.andThrough(item =>
+      Result.andThrough(v =>
         checkRestoreOrgProject({
-          remoteType: baseProject.remoteType,
-          orgId: item.orgId,
-          orgPath: orgPath,
-          projectId: item.projectId,
-          projectLt: projectLt
+          remoteType: v.baseProject.remoteType,
+          orgId: v.orgId,
+          orgPath: v.orgPath,
+          projectId: v.projectId,
+          projectLt: v.projectLt
         })
       ),
-      Result.bind('isDevRepoExist', item =>
-        isPathExist({ path: item.devRepoDir })
+      Result.bind(
+        'isDevRepoExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          isPathExist({ path: v.devRepoDir })
       ),
-      Result.andThrough(item =>
-        item.isDevRepoExist === true
-          ? removePath({ path: item.devRepoDir })
+      Result.andThrough(v =>
+        v.isDevRepoExist === true
+          ? removePath({ path: v.devRepoDir })
           : Result.succeed()
       ),
       Result.map(
-        (item): ToDiskDeleteDevRepoOutput => ({
-          orgId: item.orgId,
-          projectId: item.projectId,
-          deletedRepoId: item.devRepoId
+        (v): ToDiskDeleteDevRepoOutput => ({
+          orgId: v.orgId,
+          projectId: v.projectId,
+          deletedRepoId: v.devRepoId
         })
       )
     );

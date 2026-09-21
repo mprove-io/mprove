@@ -1,12 +1,12 @@
 import path from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { DiskPathTraversalError } from '#common/zod/disk/errors/disk-path-traversal-error';
+import type { ValidatePathUnderDirError } from '#common/zod/node-common/function-errors/validate-path-under-dir-error';
 
 export function validatePathUnderDir(item: {
   fullPath: string;
   allowedDir: string;
   displayPath?: string;
-}): Result.Result<string, DiskPathTraversalError> {
+}): Result.Result<string, ValidatePathUnderDirError> {
   let { fullPath, allowedDir, displayPath } = item;
 
   let resolvedDir: string = path.resolve(allowedDir);

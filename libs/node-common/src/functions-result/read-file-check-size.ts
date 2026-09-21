@@ -1,14 +1,13 @@
 import { Result } from '@praha/byethrow';
 import fse, { type Stats } from 'fs-extra';
-import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
+import type { ReadFileCheckSizeError } from '#common/zod/node-common/function-errors/read-file-check-size-error';
 
 export async function readFileCheckSize(item: {
   filePath: string | URL;
   getStat: boolean;
 }): Result.ResultAsync<
   { content: string; stat?: Stats },
-  FileIsSymlinkError | FileSizeIsTooBigError
+  ReadFileCheckSizeError
 > {
   let { filePath, getStat } = item;
 

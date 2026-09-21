@@ -31,7 +31,7 @@ export function createInitialCommitToProd(item: {
             projectName: v.projectName
           })
         ),
-        Result.andThen(async v => {
+        Result.andThen(async (v): Result.ResultAsync<void, never> => {
           let git: SimpleGit = v.git;
 
           await git.add('.');

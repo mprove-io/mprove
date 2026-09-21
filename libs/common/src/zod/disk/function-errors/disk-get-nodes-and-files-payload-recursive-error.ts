@@ -1,22 +1,13 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal';
 import {
-  type FileIsSymlinkError,
-  zFileIsSymlinkError
-} from '#common/zod/node-common/errors/file-is-symlink-error';
-import {
-  type FileSizeIsTooBigError,
-  zFileSizeIsTooBigError
-} from '#common/zod/node-common/errors/file-size-is-too-big-error';
+  type ReadFileCheckSizeError,
+  zReadFileCheckSizeError
+} from '#common/zod/node-common/function-errors/read-file-check-size-error';
 
-export type DiskGetNodesAndFilesPayloadRecursiveError =
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError;
+export type DiskGetNodesAndFilesPayloadRecursiveError = ReadFileCheckSizeError;
 
-export let zDiskGetNodesAndFilesPayloadRecursiveError = z.discriminatedUnion(
-  'code',
-  [zFileIsSymlinkError, zFileSizeIsTooBigError]
-);
+export let zDiskGetNodesAndFilesPayloadRecursiveError = zReadFileCheckSizeError;
 
 assertTypesEqual<
   DiskGetNodesAndFilesPayloadRecursiveError,

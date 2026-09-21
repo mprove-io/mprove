@@ -13,15 +13,19 @@ export function restoreProject(item: {
   projectLt: ProjectLt;
 }): Result.ResultAsync<string, never> {
   return Result.pipe(
-    Result.succeed({ ...item }),
-    Result.bind('projectDir', v =>
-      Result.succeed(`${v.orgDir}/${v.projectId}`)
+    Result.succeed(item),
+    Result.bind(
+      'projectDir',
+      (v): Result.Result<`${string}/${string}`, never> =>
+        Result.succeed(`${v.orgDir}/${v.projectId}`)
     ),
-    Result.bind('keyDir', v =>
-      Result.succeed(`${v.orgDir}/_keys/${v.projectId}`)
+    Result.bind(
+      'keyDir',
+      (v): Result.Result<`${string}/_keys/${string}`, never> =>
+        Result.succeed(`${v.orgDir}/_keys/${v.projectId}`)
     ),
     Result.andThrough(v => ensureDir({ dir: v.keyDir })),
-    Result.andThen(v => {
+    Result.andThen(async (v): Result.ResultAsync<string, never> => {
       if (v.remoteType !== ProjectRemoteTypeEnum.GitClone) {
         return Result.succeed(v.keyDir);
       }

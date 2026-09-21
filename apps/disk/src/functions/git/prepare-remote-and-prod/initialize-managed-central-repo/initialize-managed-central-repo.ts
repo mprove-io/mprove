@@ -8,9 +8,9 @@ export function initializeManagedCentralRepo(item: {
   centralDir: string;
 }): Result.ResultAsync<void, never> {
   return Result.pipe(
-    Result.succeed({ ...item }),
+    Result.succeed(item),
     Result.andThrough(v => ensureDir({ dir: v.centralDir })),
-    Result.andThen(async v => {
+    Result.andThen(async (v): Result.ResultAsync<void, never> => {
       let centralGit: SimpleGit = createSimpleGit({ baseDir: v.centralDir });
 
       await centralGit.init(true);

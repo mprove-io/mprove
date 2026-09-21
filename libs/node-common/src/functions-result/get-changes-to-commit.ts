@@ -8,6 +8,7 @@ import type { FileStatus } from '#common/zod/disk/file-status';
 import type { FileWithGitFileStatus } from '#common/zod/disk/file-with-git-file-status';
 import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
 import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
+import type { GetChangesToCommitError } from '#common/zod/node-common/function-errors/get-changes-to-commit-error';
 import { createSimpleGit } from '../functions/create-simple-git';
 import { readFileCheckSize } from './read-file-check-size';
 
@@ -17,10 +18,7 @@ export function getChangesToCommit(item: {
   repoDir: string;
   addContent?: boolean;
   expandRenamed?: boolean;
-}): Result.ResultAsync<
-  DiskFileChange[],
-  FileIsSymlinkError | FileSizeIsTooBigError
-> {
+}): Result.ResultAsync<DiskFileChange[], GetChangesToCommitError> {
   let { repoDir, addContent, expandRenamed } = item;
 
   return Result.try({

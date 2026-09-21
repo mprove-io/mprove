@@ -6,6 +6,7 @@ import type { FileStatus } from '#common/zod/disk/file-status';
 import type { FileWithGitFileStatus } from '#common/zod/disk/file-with-git-file-status';
 import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
 import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
+import type { GetSyncFilesPayloadError } from '#common/zod/node-common/function-errors/get-sync-files-payload-error';
 import { readFileCheckSize } from './read-file-check-size';
 
 const { forEachSeries } = pIteration;
@@ -18,10 +19,7 @@ type SyncFilesPayload = {
 export function getSyncFilesPayload(item: {
   statusResult: StatusResult;
   repoDir: string;
-}): Result.ResultAsync<
-  SyncFilesPayload,
-  FileIsSymlinkError | FileSizeIsTooBigError
-> {
+}): Result.ResultAsync<SyncFilesPayload, GetSyncFilesPayloadError> {
   let { statusResult, repoDir } = item;
 
   return Result.try({

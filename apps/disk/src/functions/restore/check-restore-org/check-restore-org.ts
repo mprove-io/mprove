@@ -6,14 +6,18 @@ export function checkRestoreOrg(item: {
   orgId: string;
   orgPath: string;
 }): Result.ResultAsync<void, never> {
-  let { orgId, orgPath } = item;
-
-  let orgDir = `${orgPath}/${orgId}`;
-
   return Result.pipe(
-    isPathExist({ path: orgDir }),
-    Result.andThen(isOrgExist =>
-      isOrgExist === false ? ensureDir({ dir: orgDir }) : Result.succeed()
+    Result.succeed({
+      ...item,
+      orgDir: `${item.orgPath}/${item.orgId}`
+    }),
+    Result.bind(
+      'isOrgExist',
+      (v): Result.ResultAsync<boolean, never> => isPathExist({ path: v.orgDir })
+    ),
+    Result.andThen(
+      async (v): Result.ResultAsync<void, never> =>
+        v.isOrgExist === false ? ensureDir({ dir: v.orgDir }) : Result.succeed()
     )
   );
 }

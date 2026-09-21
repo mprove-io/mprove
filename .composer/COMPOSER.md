@@ -54,3 +54,4 @@
 - rules/byethrow/pipe-step-callbacks.md
 - rules/byethrow/pipe-step-argument-types.md
 - rules/byethrow/pipe-state-access.md
+- rules/byethrow/guard-optional-operations-at-caller.md

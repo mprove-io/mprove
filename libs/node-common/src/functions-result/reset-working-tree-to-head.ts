@@ -1,14 +1,14 @@
 import path from 'node:path';
 import { Result } from '@praha/byethrow';
 import type { SimpleGit, StatusResult } from 'simple-git';
-import type { DiskPathTraversalError } from '#common/zod/disk/errors/disk-path-traversal-error';
+import type { ResetWorkingTreeToHeadError } from '#common/zod/node-common/function-errors/reset-working-tree-to-head-error';
 import { createSimpleGit } from '../functions/create-simple-git';
 import { removePathUnderDir } from './remove-path-under-dir';
 
 export function resetWorkingTreeToHead(item: {
   repoDir: string;
   statusResult?: StatusResult;
-}): Result.ResultAsync<void, DiskPathTraversalError> {
+}): Result.ResultAsync<void, ResetWorkingTreeToHeadError> {
   return Result.pipe(
     Result.succeed(item),
     Result.bind('git', async v => {

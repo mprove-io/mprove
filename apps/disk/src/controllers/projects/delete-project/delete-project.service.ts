@@ -26,26 +26,29 @@ export class DeleteProjectService {
       Result.succeed({
         orgId: orgId,
         projectId: projectId,
-        projectDir: `${orgPath}/${orgId}/${projectId}`
+        projectDir: `${orgPath}/${orgId}/${projectId}`,
+        orgPath: orgPath
       }),
-      Result.andThrough(item =>
+      Result.andThrough(v =>
         checkRestoreOrg({
-          orgId: item.orgId,
-          orgPath: orgPath
+          orgId: v.orgId,
+          orgPath: v.orgPath
         })
       ),
-      Result.bind('isProjectExist', item =>
-        isPathExist({ path: item.projectDir })
+      Result.bind(
+        'isProjectExist',
+        (v): Result.ResultAsync<boolean, never> =>
+          isPathExist({ path: v.projectDir })
       ),
-      Result.andThrough(item =>
-        item.isProjectExist === true
-          ? removePath({ path: item.projectDir })
+      Result.andThrough(v =>
+        v.isProjectExist === true
+          ? removePath({ path: v.projectDir })
           : Result.succeed()
       ),
       Result.map(
-        (item): ToDiskDeleteProjectOutput => ({
-          orgId: item.orgId,
-          deletedProjectId: item.projectId
+        (v): ToDiskDeleteProjectOutput => ({
+          orgId: v.orgId,
+          deletedProjectId: v.projectId
         })
       )
     );

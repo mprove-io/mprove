@@ -28,21 +28,22 @@ export class CloneTestRepoService {
     let cloneTestRepoResult = Result.pipe(
       Result.succeed({
         testReposPath: testReposPath,
-        repoPath: repoPath
+        repoPath: repoPath,
+        gitUrl: gitUrl
       }),
-      Result.andThrough(async item => {
-        await ensureDir(item.testReposPath);
+      Result.andThrough(async v => {
+        await ensureDir(v.testReposPath);
         return Result.succeed();
       }),
-      Result.andThrough(async item => {
-        await remove(item.repoPath);
+      Result.andThrough(async v => {
+        await remove(v.repoPath);
         return Result.succeed();
       }),
-      Result.andThrough(async item => {
-        await createSimpleGit({}).clone(gitUrl, item.repoPath);
+      Result.andThrough(async v => {
+        await createSimpleGit({}).clone(v.gitUrl, v.repoPath);
         return Result.succeed();
       }),
-      Result.map((): ToDiskCloneTestRepoOutput => ({}))
+      Result.map((v): ToDiskCloneTestRepoOutput => ({}))
     );
 
     return cloneTestRepoResult;

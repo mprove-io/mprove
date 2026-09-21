@@ -1,6 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { PROD_REPO_ID } from '#common/constants/top';
+import type { DiskBranchIsNotExistError } from '#common/zod/disk/errors/disk-branch-is-not-exist-error';
 import type { DiskDeleteBranchFromRepositoriesError } from '#common/zod/disk/function-errors/disk-delete-branch-from-repositories-error';
 import { deleteLocalBranch } from '#disk/functions/git/delete-local-branch/delete-local-branch';
 import { deleteRemoteBranch } from '#disk/functions/git/delete-remote-branch/delete-remote-branch';
@@ -15,16 +16,18 @@ export function deleteBranchFromRepositories(item: {
   git: SimpleGit;
 }): Result.ResultAsync<void, DiskDeleteBranchFromRepositoriesError> {
   return Result.pipe(
-    Result.succeed({ ...item }),
-    Result.bind('isRemoteBranchExist', v =>
-      v.repoId === PROD_REPO_ID
-        ? isRemoteBranchExist({
-            repoDir: v.repoDir,
-            remoteBranch: v.branch,
-            git: v.git,
-            isFetch: true
-          })
-        : Result.succeed(false)
+    Result.succeed(item),
+    Result.bind(
+      'isRemoteBranchExist',
+      async (v): Result.ResultAsync<boolean, never> =>
+        v.repoId === PROD_REPO_ID
+          ? isRemoteBranchExist({
+              repoDir: v.repoDir,
+              remoteBranch: v.branch,
+              git: v.git,
+              isFetch: true
+            })
+          : Result.succeed(false)
     ),
     Result.andThrough(v =>
       v.isRemoteBranchExist === true
@@ -35,23 +38,27 @@ export function deleteBranchFromRepositories(item: {
           })
         : Result.succeed()
     ),
-    Result.bind('isLocalBranchExist', v =>
-      isLocalBranchExist({
-        repoDir: v.repoDir,
-        localBranch: v.branch
-      })
-    ),
-    Result.andThen(v => {
-      if (v.isLocalBranchExist === true) {
-        return deleteLocalBranch({
+    Result.bind(
+      'isLocalBranchExist',
+      (v): Result.ResultAsync<boolean, never> =>
+        isLocalBranchExist({
           repoDir: v.repoDir,
-          branch: v.branch
-        });
-      }
+          localBranch: v.branch
+        })
+    ),
+    Result.andThen(
+      async (v): Result.ResultAsync<void, DiskBranchIsNotExistError> => {
+        if (v.isLocalBranchExist === true) {
+          return deleteLocalBranch({
+            repoDir: v.repoDir,
+            branch: v.branch
+          });
+        }
 
-      return v.isRemoteBranchExist === true
-        ? Result.succeed()
-        : Result.fail({ code: 'DISK_BRANCH_IS_NOT_EXIST' });
-    })
+        return v.isRemoteBranchExist === true
+          ? Result.succeed()
+          : Result.fail({ code: 'DISK_BRANCH_IS_NOT_EXIST' });
+      }
+    )
   );
 }

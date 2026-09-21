@@ -18,19 +18,21 @@ export function getRepoStatusWithoutStagedChanges(item: {
   isFetch: boolean;
 }): Result.ResultAsync<DiskItemStatus, never> {
   return Result.pipe(
-    Result.succeed({ ...item }),
-    Result.bind('isBranchExistRemote', v =>
-      isRemoteBranchExist({
-        repoDir: v.repoDir,
-        remoteBranch: v.currentBranchName,
-        git: v.git,
-        isFetch: v.isFetch
-      })
+    Result.succeed(item),
+    Result.bind(
+      'isBranchExistRemote',
+      (v): Result.ResultAsync<boolean, never> =>
+        isRemoteBranchExist({
+          repoDir: v.repoDir,
+          remoteBranch: v.currentBranchName,
+          git: v.git,
+          isFetch: v.isFetch
+        })
     ),
-    Result.andThen(async v => {
+    Result.andThen(async (v): Result.ResultAsync<DiskItemStatus, never> => {
       // RETURN NeedPush
       if (v.isBranchExistRemote === false) {
-        return Result.succeed<DiskItemStatus>({
+        return Result.succeed({
           repoStatus: 'NeedPush',
           conflicts: v.conflicts,
           currentBranch: v.currentBranchName,
@@ -53,7 +55,7 @@ export function getRepoStatusWithoutStagedChanges(item: {
 
       // RETURN Ok
       if (localCommitId === remoteOriginCommitId) {
-        return Result.succeed<DiskItemStatus>({
+        return Result.succeed({
           repoStatus: 'Ok',
           conflicts: v.conflicts,
           currentBranch: v.currentBranchName,
@@ -72,7 +74,7 @@ export function getRepoStatusWithoutStagedChanges(item: {
 
       // simple-git resolves merge-base exit 1 with empty stderr as ''.
       if (baseCommitId === '') {
-        return Result.succeed<DiskItemStatus>({
+        return Result.succeed({
           repoStatus: 'NeedPull',
           repoError: 'NoCommonAncestor',
           conflicts: v.conflicts,

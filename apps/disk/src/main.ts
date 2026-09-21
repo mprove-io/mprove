@@ -11,6 +11,7 @@ import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
 import { APP_NAME_DISK } from '#common/constants/top-disk';
 import { ErEnum } from '#common/enums/er.enum';
+import type { DiskCheckSymlinksInDirError } from '#common/zod/disk/function-errors/disk-check-symlinks-in-dir-error';
 import { getLoggerOptions } from '#node-common/functions/get-logger-options';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events';
 import { AppModule } from './app.module';
@@ -42,16 +43,22 @@ async function bootstrap(): Promise<void> {
   if (config.diskIsCheckSymlinksOnStartup === true) {
     await Result.unwrap(
       Result.pipe(
-        checkSymlinksInDir({ dir: config.diskOrganizationsPath }),
-        Result.mapError(error => {
-          switch (error.code) {
+        Result.succeed({
+          diskOrganizationsPath: config.diskOrganizationsPath
+        }),
+        Result.andThen(
+          (v): Result.ResultAsync<void, DiskCheckSymlinksInDirError> =>
+            checkSymlinksInDir({ dir: v.diskOrganizationsPath })
+        ),
+        Result.mapError(v => {
+          switch (v.code) {
             case 'DISK_SYMLINKS_FOUND':
               return new Error(
-                `Symlinks found under ${error.displayData.dir}. Remove them before starting disk:\n${error.displayData.symlinks.join('\n')}`
+                `Symlinks found under ${v.displayData.dir}. Remove them before starting disk:\n${v.displayData.symlinks.join('\n')}`
               );
 
             default: {
-              let unhandled: never = error.code;
+              let unhandled: never = v.code;
 
               throw new Error(`Unhandled startup error: ${unhandled}`);
             }

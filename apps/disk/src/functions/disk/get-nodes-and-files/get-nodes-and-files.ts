@@ -4,8 +4,13 @@ import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
+import type { DiskGetNodesAndFilesPayloadRecursiveError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-payload-recursive-error';
+import type { GetMproveDirError } from '#common/zod/node-common/function-errors/get-mprove-dir-error';
 import { getMproveDir } from '#node-common/functions-result/get-mprove-dir';
-import { getNodesAndFilesPayloadRecursive } from './get-nodes-and-files-payload-recursive/get-nodes-and-files-payload-recursive';
+import {
+  getNodesAndFilesPayloadRecursive,
+  type NodesAndFilesPayload
+} from './get-nodes-and-files-payload-recursive/get-nodes-and-files-payload-recursive';
 
 export function getNodesAndFiles(item: {
   projectId: string;
@@ -14,44 +19,55 @@ export function getNodesAndFiles(item: {
   readFiles: boolean;
   isRootMproveDir: boolean;
 }): Result.ResultAsync<DiskItemCatalog, DiskGetNodesAndFilesError> {
-  let topNode: DiskCatalogNode = {
-    id: item.projectId,
-    name: item.projectId,
-    isFolder: true,
-    children: []
-  };
-
-  let repoDir = `${item.projectDir}/${item.repoId}`;
-
-  let repoDirPathLength = repoDir.length;
-
-  let configPath = repoDir + '/' + MPROVE_CONFIG_FILENAME;
-
   return Result.pipe(
-    Result.succeed(item),
-    Result.bind('mproveDir', v =>
-      v.isRootMproveDir === true
-        ? Result.succeed(repoDir)
-        : getMproveDir({
-            dir: repoDir,
-            configPath: configPath
-          })
+    Result.succeed({
+      ...item,
+      repoDir: `${item.projectDir}/${item.repoId}`,
+      configPath: `${item.projectDir}/${item.repoId}/${MPROVE_CONFIG_FILENAME}`,
+      repoDirPathLength: `${item.projectDir}/${item.repoId}`.length
+    }),
+    Result.bind(
+      'topNode',
+      (v): Result.Result<DiskCatalogNode, never> =>
+        Result.succeed({
+          id: v.projectId,
+          name: v.projectId,
+          isFolder: true,
+          children: []
+        })
     ),
-    Result.bind('nodesAndFilesPayload', v =>
-      getNodesAndFilesPayloadRecursive({
-        dir: repoDir,
-        projectId: v.projectId,
-        repoId: v.repoId,
-        repoDirPathLength: repoDirPathLength,
-        readFiles: v.readFiles,
-        mproveDir: v.mproveDir,
-        repoDir: repoDir
-      })
+    Result.bind(
+      'mproveDir',
+      async (v): Result.ResultAsync<string, GetMproveDirError> =>
+        v.isRootMproveDir === true
+          ? Result.succeed(v.repoDir)
+          : getMproveDir({
+              dir: v.repoDir,
+              configPath: v.configPath
+            })
     ),
-    Result.map(v => {
-      topNode.children = v.nodesAndFilesPayload.nodes;
+    Result.bind(
+      'nodesAndFilesPayload',
+      (
+        v
+      ): Result.ResultAsync<
+        NodesAndFilesPayload,
+        DiskGetNodesAndFilesPayloadRecursiveError
+      > =>
+        getNodesAndFilesPayloadRecursive({
+          dir: v.repoDir,
+          projectId: v.projectId,
+          repoId: v.repoId,
+          repoDirPathLength: v.repoDirPathLength,
+          readFiles: v.readFiles,
+          mproveDir: v.mproveDir,
+          repoDir: v.repoDir
+        })
+    ),
+    Result.map((v): DiskItemCatalog => {
+      v.topNode.children = v.nodesAndFilesPayload.nodes;
 
-      let nodes: DiskCatalogNode[] = [topNode];
+      let nodes: DiskCatalogNode[] = [v.topNode];
 
       let files: DiskCatalogFile[] = v.nodesAndFilesPayload.files;
 

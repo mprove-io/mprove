@@ -16,17 +16,27 @@ export function restoreProjectGitClone(item: {
   keyDir: string;
 }): Result.ResultAsync<string, never> {
   return Result.pipe(
-    Result.succeed({ ...item }),
-    Result.bind('prodRepoDir', v =>
-      Result.succeed(`${v.projectDir}/${PROD_REPO_ID}`)
+    Result.succeed(item),
+    Result.bind(
+      'prodRepoDir',
+      (v): Result.Result<`${string}/production`, never> =>
+        Result.succeed(`${v.projectDir}/${PROD_REPO_ID}`)
     ),
-    Result.bind('isProjectExist', v => isPathExist({ path: v.projectDir })),
+    Result.bind(
+      'isProjectExist',
+      (v): Result.ResultAsync<boolean, never> =>
+        isPathExist({ path: v.projectDir })
+    ),
     Result.andThrough(v =>
       v.isProjectExist === false
         ? ensureDir({ dir: v.projectDir })
         : Result.succeed()
     ),
-    Result.bind('isProdRepoExist', v => isPathExist({ path: v.prodRepoDir })),
+    Result.bind(
+      'isProdRepoExist',
+      (v): Result.ResultAsync<boolean, never> =>
+        isPathExist({ path: v.prodRepoDir })
+    ),
     Result.andThrough(v =>
       v.isProdRepoExist === false
         ? cloneRemote({
@@ -43,6 +53,8 @@ export function restoreProjectGitClone(item: {
           })
         : Result.succeed()
     ),
-    Result.andThen(v => Result.succeed(v.keyDir))
+    Result.andThen(
+      (v): Result.Result<string, never> => Result.succeed(v.keyDir)
+    )
   );
 }
