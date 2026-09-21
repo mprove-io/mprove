@@ -1,115 +1,36 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import fse from 'fs-extra';
-import pIteration from 'p-iteration';
-import path from 'path';
-
-const { forEachSeries } = pIteration;
-
-import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { buildChart } from '#blockml/functions/build-chart/_build-chart';
-import { makeChartAccessRolesCombined } from '#blockml/functions/build-chart/make-chart-access-roles-combined';
-import { buildDashboard } from '#blockml/functions/build-dashboard/_build-dashboard';
-import { buildField } from '#blockml/functions/build-field/_build-field';
-import { buildMconfigChart } from '#blockml/functions/build-mconfig-chart/_build-mconfig-chart';
-import { buildMetricsNext } from '#blockml/functions/build-metrics-next/_build-metrics-next';
-import { buildModStart } from '#blockml/functions/build-mod-start/_build-mod-start';
-import { buildReport } from '#blockml/functions/build-report/_build-report';
-import { buildSpace } from '#blockml/functions/build-spaces/_build-spaces';
-import { buildStoreNext } from '#blockml/functions/build-store-next/_build-store-next';
-import { buildStoreStart } from '#blockml/functions/build-store-start/_build-store-start';
-import { buildTile } from '#blockml/functions/build-tile/_build-tile';
-import { buildYaml } from '#blockml/functions/build-yaml/_build-yaml';
-import { buildExplorer } from '#blockml/functions/extra/build-explorer';
-import { checkSuggestModelDimension } from '#blockml/functions/extra/check-suggest-model-dimension';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { collectFiles } from '#blockml/functions/extra/collect-files';
 import { getMproveConfigFile } from '#blockml/functions/extra/get-mprove-config-file';
-import { logStruct } from '#blockml/functions/extra/log-struct';
-import { logToConsoleBlockml } from '#blockml/functions/log-to-console-blockml';
-import { prePopulateMalloySchemaCache } from '#blockml/functions/schema-parse/pre-populate-malloy-schema-cache';
 import { wrapCharts } from '#blockml/functions/wrap/wrap-charts';
 import { wrapDashboards } from '#blockml/functions/wrap/wrap-dashboards';
 import { wrapErrors } from '#blockml/functions/wrap/wrap-errors';
-import { wrapModels } from '#blockml/functions/wrap/wrap-models';
 import { wrapReports } from '#blockml/functions/wrap/wrap-reports';
 import { BlockmlTabService } from '#blockml/services/blockml-tab.service';
 import { PresetsService } from '#blockml/services/presets.service';
-import { MyRegex } from '#common/classes/my-regex';
 import { ServerError } from '#common/classes/server-error';
-import {
-  MPROVE_CONFIG_FILENAME,
-  PROJECT_CONFIG_ALLOW_TIMEZONES,
-  PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS,
-  PROJECT_CONFIG_CURRENCY_PREFIX,
-  PROJECT_CONFIG_CURRENCY_SUFFIX,
-  PROJECT_CONFIG_DEFAULT_TIMEZONE,
-  PROJECT_CONFIG_FORMAT_NUMBER,
-  PROJECT_CONFIG_THOUSANDS_SEPARATOR,
-  PROJECT_CONFIG_WEEK_START
-} from '#common/constants/top';
-import { ErEnum } from '#common/enums/er.enum';
-import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
-import { decodeFilePath } from '#common/functions/decode-file-path';
 import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeId } from '#common/functions/make-id';
-import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
 import type { BaseConnection } from '#common/zod/backend/base-connection';
-import type {
-  ExtraSchema,
-  ExtraSchemaColumn,
-  ExtraSchemaRelationship,
-  ExtraSchemaTable
-} from '#common/zod/backend/connection-schemas/extra-schema';
 import type { Ev } from '#common/zod/backend/ev';
 import type { MproveConfig } from '#common/zod/backend/mprove-config';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { SelectedGiven } from '#common/zod/backend/selected-given';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
 import type { BlockmlInternalError } from '#common/zod/blockml/errors/blockml-internal-error';
-import type { FileChart } from '#common/zod/blockml/internal/file-chart';
-import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
-import type { FileMod } from '#common/zod/blockml/internal/file-mod';
-import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
-import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
-import type { FileReport } from '#common/zod/blockml/internal/file-report';
-import type { FileSchema } from '#common/zod/blockml/internal/file-schema';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
-import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
-import type { Preset } from '#common/zod/blockml/preset';
 import type { ToBlockmlResponseResultForOperation } from '#common/zod/blockml/response/to-blockml-response-result-for-operation';
 import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
-import type { Space } from '#common/zod/blockml/space';
 import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
-import {
-  type MalloyConnection,
-  makeMalloyConnections
-} from '#node-common/functions/make-malloy-connections';
 import { getMproveDir } from '#node-common/functions-result/get-mprove-dir';
-
-interface RebuildStructPrep {
-  errors: BmError[];
-  stores: FileStore[];
-  dashboards: FileDashboard[];
-  metrics: ModelMetric[];
-  presets: Preset[];
-  apiModels: Model[];
-  reports: FileReport[];
-  charts: FileChart[];
-  spaces: Space[];
-  extraSchemas: ExtraSchema[];
-  mproveConfig: MproveConfig;
-  mproveExplorer: string;
-}
+import {
+  type RebuildStructPrep,
+  rebuildStructStateless
+} from './rebuild-struct-stateless/rebuild-struct-stateless';
 
 @Injectable()
 export class RebuildStructService {
@@ -176,7 +97,7 @@ export class RebuildStructService {
           projectConnections.push(projectConnection);
         });
 
-        let prep: RebuildStructPrep = await this.rebuildStructStateless({
+        let prep: RebuildStructPrep = await rebuildStructStateless({
           files: files,
           structId: structId,
           envId: envId,
@@ -190,7 +111,10 @@ export class RebuildStructService {
           cachedModels: cachedModels,
           cachedMetrics: cachedMetrics,
           selectedGivens: selectedGivens,
-          isTest: false
+          isTest: false,
+          presetsService: this.presetsService,
+          cs: this.cs,
+          logger: this.logger
         });
 
         let apiErrors = wrapErrors({ errors: prep.errors });
@@ -302,7 +226,7 @@ export class RebuildStructService {
       files.push(mproveConfigFile);
     }
 
-    let prep: RebuildStructPrep = await this.rebuildStructStateless({
+    let prep: RebuildStructPrep = await rebuildStructStateless({
       files: files,
       structId: item.structId,
       envId: item.envId,
@@ -316,590 +240,11 @@ export class RebuildStructService {
       cachedMproveConfig: undefined,
       cachedModels: [],
       cachedMetrics: [],
-      isTest: true
+      isTest: true,
+      presetsService: this.presetsService,
+      cs: this.cs,
+      logger: this.logger
     });
-
-    return prep;
-  }
-
-  async rebuildStructStateless(item: {
-    files: BmlFile[];
-    structId: string;
-    envId: string;
-    evs: Ev[];
-    projectConnections: ProjectConnection[];
-    selectedGivens: SelectedGiven[];
-    mproveDir: string;
-    overrideTimezone: string;
-    projectId: string;
-    isUseCache: boolean;
-    cachedMproveConfig: MproveConfig;
-    cachedModels: Model[];
-    cachedMetrics: ModelMetric[];
-    isTest: boolean;
-  }): Promise<RebuildStructPrep> {
-    //
-    let presets: Preset[] = this.presetsService.getPresets();
-
-    let errors: BmError[] = [];
-
-    let mods: FileMod[] = [];
-
-    let stores: FileStore[];
-    let schemas: FileSchema[];
-    let reports: FileReport[];
-    let dashboards: FileDashboard[];
-    let charts: FileChart[];
-    let fileSpaces: FileSpace[];
-    let spaces: FilePartSpace[];
-    let projectConfig: FileProjectConf;
-
-    let yamlBuildItem = buildYaml(
-      {
-        files: item.files,
-        connections: item.projectConnections,
-        mproveDir: item.mproveDir,
-        structId: item.structId,
-        errors: errors,
-        isUseCache: item.isUseCache,
-        caller: CallerEnum.BuildYaml
-      },
-      this.cs
-    );
-
-    stores =
-      item.isUseCache === true
-        ? item.cachedModels
-            .filter(model => model.type === ModelTypeEnum.Store)
-            .map(model => model.storeContent)
-        : yamlBuildItem.stores;
-    schemas = yamlBuildItem.schemas;
-    dashboards = yamlBuildItem.dashboards;
-    reports = yamlBuildItem.reports;
-    charts = yamlBuildItem.charts;
-    fileSpaces = yamlBuildItem.spaces;
-
-    spaces = buildSpace(
-      {
-        spaces: fileSpaces,
-        errors: errors,
-        structId: item.structId,
-        caller: CallerEnum.BuildSpace
-      },
-      this.cs
-    );
-
-    projectConfig =
-      item.isUseCache === true
-        ? <FileProjectConf>{
-            mprove_dir: item.cachedMproveConfig.mproveDirValue,
-            case_sensitive_string_filters:
-              item.cachedMproveConfig.caseSensitiveStringFilters
-                ?.toString()
-                .toLowerCase() ?? PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS,
-            week_start:
-              item.cachedMproveConfig.weekStart ?? PROJECT_CONFIG_WEEK_START,
-            default_timezone:
-              item.cachedMproveConfig.defaultTimezone ??
-              PROJECT_CONFIG_DEFAULT_TIMEZONE,
-            allow_timezones:
-              item.cachedMproveConfig.allowTimezones
-                ?.toString()
-                .toLowerCase() ?? PROJECT_CONFIG_ALLOW_TIMEZONES,
-            format_number:
-              item.cachedMproveConfig.formatNumber ??
-              PROJECT_CONFIG_FORMAT_NUMBER,
-            currency_prefix:
-              item.cachedMproveConfig.currencyPrefix ??
-              PROJECT_CONFIG_CURRENCY_PREFIX,
-            currency_suffix:
-              item.cachedMproveConfig.currencySuffix ??
-              PROJECT_CONFIG_CURRENCY_SUFFIX,
-            thousands_separator:
-              item.cachedMproveConfig.thousandsSeparator ??
-              PROJECT_CONFIG_THOUSANDS_SEPARATOR
-          }
-        : yamlBuildItem.projectConfig;
-
-    if (isUndefined(projectConfig)) {
-      return {
-        errors: errors,
-        apiModels: [],
-        metrics: [],
-        presets: [],
-        spaces: [],
-        stores: [],
-        reports: [],
-        dashboards: [],
-        charts: [],
-        extraSchemas: [],
-        mproveConfig: {
-          mproveDirValue: undefined,
-          weekStart: PROJECT_CONFIG_WEEK_START,
-          allowTimezones: toBooleanFromLowercaseString(
-            PROJECT_CONFIG_ALLOW_TIMEZONES
-          ),
-          defaultTimezone: PROJECT_CONFIG_DEFAULT_TIMEZONE,
-          currencyPrefix: PROJECT_CONFIG_CURRENCY_PREFIX,
-          currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
-          thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
-          formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
-          caseSensitiveStringFilters: toBooleanFromLowercaseString(
-            PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
-          )
-        },
-        mproveExplorer: undefined
-      };
-    }
-
-    let { mproveExplorer } = buildExplorer(
-      {
-        files: item.files,
-        errors: errors,
-        structId: item.structId,
-        caller: CallerEnum.RebuildStruct
-      },
-      this.cs
-    );
-
-    if (isDefined(item.overrideTimezone)) {
-      projectConfig.default_timezone = item.overrideTimezone;
-    }
-
-    let blockmlDataPath =
-      this.cs.get<BlockmlConfig['blockmlData']>('blockmlData');
-
-    let tempDir = `${blockmlDataPath}/${Date.now()}-${makeId()}`;
-
-    let malloyFiles =
-      item.isUseCache === true
-        ? []
-        : item.files.filter(y => y.name.endsWith('.malloy'));
-
-    let paths: string[] = [];
-
-    await forEachSeries(malloyFiles, async file => {
-      let relativePath = isDefined(file.pathRelativeToRepo)
-        ? file.pathRelativeToRepo
-        : decodeFilePath({ filePath: file.path });
-
-      file.blockmlPath = `${tempDir}/${relativePath}`;
-
-      paths.push(relativePath);
-
-      await fse.ensureDir(path.dirname(file.blockmlPath));
-      await fse.writeFile(file.blockmlPath, file.content);
-
-      let reg = MyRegex.CAPTURE_MPROVE_MODELS();
-      let r;
-
-      let captures: string[] = [];
-
-      while ((r = reg.exec(file.content))) {
-        captures.push(r[1]);
-      }
-
-      captures.forEach(sourceName => {
-        let ar = file.name.split('.');
-        let ext = ar[ar.length - 1];
-
-        let mod: FileMod = {
-          fileName: file.name,
-          fileExt: `.${ext}` as FileExtensionEnum, // malloy
-          filePath: relativePath,
-          name: sourceName,
-          location: relativePath,
-          blockmlPath: file.blockmlPath,
-          source: sourceName,
-          label: sourceName
-            .split('_')
-            .map(k => capitalizeFirstLetter(k))
-            .join(' ')
-        };
-
-        mods.push(mod);
-      });
-    });
-
-    let malloyConnections: MalloyConnection[] = makeMalloyConnections({
-      connections: item.projectConnections
-    });
-
-    prePopulateMalloySchemaCache({
-      malloyConnections: malloyConnections,
-      projectConnections: item.projectConnections
-    });
-
-    mods =
-      item.isUseCache === true
-        ? []
-        : (
-            await buildModStart(
-              {
-                files: item.files,
-                malloyConnections: malloyConnections,
-                connections: item.projectConnections,
-                mods: mods,
-                spaces: spaces,
-                tempDir: tempDir,
-                projectId: item.projectId,
-                errors: errors,
-                structId: item.structId,
-                caller: CallerEnum.BuildModStart
-              },
-              this.cs
-            )
-          ).mods;
-
-    if (item.isUseCache === false) {
-      stores = buildStoreStart(
-        {
-          stores: stores,
-          presets: presets,
-          structId: item.structId,
-          errors: errors,
-          caller: CallerEnum.BuildStoreStart
-        },
-        this.cs
-      );
-
-      stores = buildField(
-        {
-          entities: stores,
-          projectConfig: projectConfig,
-          structId: item.structId,
-          errors: errors,
-          caller: CallerEnum.BuildStoreField
-        },
-        this.cs
-      );
-
-      stores = buildStoreNext(
-        {
-          stores: stores,
-          spaces: spaces,
-          structId: item.structId,
-          errors: errors,
-          caller: CallerEnum.BuildStoreNext
-        },
-        this.cs
-      );
-    }
-
-    let apiModels =
-      item.isUseCache === true
-        ? item.cachedModels
-        : wrapModels({
-            projectId: item.projectId,
-            structId: item.structId,
-            stores: stores,
-            mods: mods,
-            spaces: spaces,
-            files: item.files
-          });
-
-    let metrics =
-      item.isUseCache === true
-        ? item.cachedMetrics
-        : buildMetricsNext(
-            {
-              apiModels: apiModels,
-              stores: stores,
-              structId: item.structId,
-              errors: errors,
-              caller: CallerEnum.BuildModelMetric
-            },
-            this.cs
-          ).metrics;
-
-    dashboards = buildField(
-      {
-        entities: dashboards,
-        projectConfig: projectConfig,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildDashboardField
-      },
-      this.cs
-    );
-
-    dashboards = buildDashboard(
-      {
-        dashboards: dashboards,
-        spaces: spaces,
-        stores: stores,
-        structId: item.structId,
-        caseSensitiveStringFilters: toBooleanFromLowercaseString(
-          projectConfig.case_sensitive_string_filters
-        ),
-        errors: errors,
-        caller: CallerEnum.BuildDashboard
-      },
-      this.cs
-    );
-
-    charts = buildChart(
-      {
-        charts: charts,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildChart
-      },
-      this.cs
-    );
-
-    dashboards = await buildTile(
-      {
-        projectId: item.projectId,
-        envId: item.envId,
-        entities: dashboards,
-        mconfigParentType: MconfigParentTypeEnum.Dashboard,
-        apiModels: apiModels,
-        malloyConnections: malloyConnections,
-        projectConnections: item.projectConnections,
-        stores: stores,
-        weekStart: projectConfig.week_start,
-        timezone: projectConfig.default_timezone,
-        caseSensitiveStringFilters: toBooleanFromLowercaseString(
-          projectConfig.case_sensitive_string_filters
-        ),
-        selectedGivens: item.selectedGivens,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildDashboardTile
-      },
-      this.cs
-    );
-
-    charts = await buildTile(
-      {
-        projectId: item.projectId,
-        envId: item.envId,
-        entities: charts,
-        mconfigParentType: MconfigParentTypeEnum.Chart,
-        apiModels: apiModels,
-        malloyConnections: malloyConnections,
-        projectConnections: item.projectConnections,
-        stores: stores,
-        weekStart: projectConfig.week_start,
-        timezone: projectConfig.default_timezone,
-        caseSensitiveStringFilters: toBooleanFromLowercaseString(
-          projectConfig.case_sensitive_string_filters
-        ),
-        selectedGivens: item.selectedGivens,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildChartTile
-      },
-      this.cs
-    );
-
-    charts = makeChartAccessRolesCombined(
-      {
-        charts: charts,
-        spaces: spaces,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildChart
-      },
-      this.cs
-    );
-
-    dashboards = buildMconfigChart(
-      {
-        entities: dashboards,
-        apiModels: apiModels,
-        stores: stores,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildDashboardTileCharts
-      },
-      this.cs
-    );
-
-    charts = buildMconfigChart(
-      {
-        entities: charts,
-        apiModels: apiModels,
-        stores: stores,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildChartTileCharts
-      },
-      this.cs
-    );
-
-    reports.forEach(x => {
-      x.tiles = [
-        {
-          options: x.options
-        }
-      ];
-    });
-
-    reports = buildMconfigChart(
-      {
-        entities: reports,
-        apiModels: apiModels,
-        stores: stores,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildReportCharts
-      },
-      this.cs
-    );
-
-    reports = buildField(
-      {
-        entities: reports,
-        projectConfig: projectConfig,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildReportField
-      },
-      this.cs
-    );
-
-    reports = buildReport(
-      {
-        reports: reports,
-        spaces: spaces,
-        metrics: metrics,
-        apiModels: apiModels,
-        stores: stores,
-        structId: item.structId,
-        caseSensitiveStringFilters: toBooleanFromLowercaseString(
-          projectConfig.case_sensitive_string_filters
-        ),
-        errors: errors,
-        caller: CallerEnum.BuildReport
-      },
-      this.cs
-    );
-
-    checkSuggestModelDimension(
-      {
-        entities: [...dashboards, ...reports],
-        apiModels: apiModels,
-        errors: errors,
-        structId: item.structId,
-        caller: CallerEnum.BuildCheckVmdSuggestModelDimension
-      },
-      this.cs
-    );
-
-    logStruct(
-      {
-        errors: errors,
-        stores: stores,
-        metrics: metrics,
-        dashboards: dashboards,
-        reports: reports,
-        charts: charts,
-        structId: item.structId,
-        caller: CallerEnum.RebuildStruct
-      },
-      this.cs
-    );
-
-    if (item.isTest === true) {
-      await fse.remove(tempDir);
-    } else {
-      fse.remove(tempDir);
-    }
-
-    malloyConnections.forEach(connection =>
-      connection.close().catch(er => {
-        logToConsoleBlockml({
-          log: new ServerError({
-            message: ErEnum.BLOCKML_MALLOY_CONNECTION_CLOSE_ERROR,
-            originalError: er
-          }),
-          logLevel: LogLevelEnum.Error,
-          logger: this.logger,
-          cs: this.cs
-        });
-      })
-    );
-
-    let prep: RebuildStructPrep = {
-      errors: errors,
-      stores: stores,
-      apiModels: apiModels,
-      metrics: metrics,
-      presets: presets.map(preset => {
-        let presetPart: Preset = {
-          presetId: preset.presetId,
-          label: preset.label,
-          path: preset.path,
-          parsedContent: undefined
-        };
-        return presetPart;
-      }),
-      dashboards: dashboards,
-      reports: reports,
-      charts: charts,
-      spaces: spaces.map(space => {
-        let apiSpace: Space = {
-          space: space.space,
-          title: space.title,
-          fullTitle: space.fullTitle,
-          filePath: space.filePath,
-          accessRoles: space.access_roles ?? [],
-          accessRolesCombined: space.accessRolesCombined ?? []
-        };
-        return apiSpace;
-      }),
-      extraSchemas: (schemas ?? []).map(sch => {
-        let extraSchema: ExtraSchema = {
-          schema: sch.schema,
-          description: sch.description,
-          tables: (sch.tables ?? []).map(tbl => {
-            let extraTable: ExtraSchemaTable = {
-              table: tbl.table,
-              description: tbl.description,
-              columns: (tbl.columns ?? []).map(col => {
-                let extraColumn: ExtraSchemaColumn = {
-                  column: col.column,
-                  example: col.example,
-                  description: col.description,
-                  cacheUniqueValues: isDefined(col.cache_unique_values)
-                    ? toBooleanFromLowercaseString(col.cache_unique_values)
-                    : undefined,
-                  relationships: (col.relationships ?? []).map(rel => {
-                    let extraRel: ExtraSchemaRelationship = {
-                      to: rel.to,
-                      toSchema: rel.to_schema,
-                      type: rel.type
-                    };
-                    return extraRel;
-                  })
-                };
-                return extraColumn;
-              })
-            };
-            return extraTable;
-          })
-        };
-        return extraSchema;
-      }),
-      mproveConfig: {
-        mproveDirValue: projectConfig.mprove_dir,
-        weekStart: projectConfig.week_start,
-        allowTimezones: toBooleanFromLowercaseString(
-          projectConfig.allow_timezones
-        ),
-        defaultTimezone: projectConfig.default_timezone,
-        formatNumber: projectConfig.format_number,
-        currencyPrefix: projectConfig.currency_prefix,
-        currencySuffix: projectConfig.currency_suffix,
-        thousandsSeparator: projectConfig.thousands_separator,
-        caseSensitiveStringFilters: toBooleanFromLowercaseString(
-          projectConfig.case_sensitive_string_filters
-        )
-      },
-      mproveExplorer: mproveExplorer
-    };
 
     return prep;
   }
