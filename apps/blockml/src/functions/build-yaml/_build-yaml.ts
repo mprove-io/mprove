@@ -1,6 +1,7 @@
-import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { BmError } from '#blockml/classes/bm-error';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
@@ -26,18 +27,38 @@ import { removeWrongExt } from './remove-wrong-ext';
 import { splitFiles } from './split-files';
 import { yamlToObjects } from './yaml-to-objects';
 
-export function buildYaml(
-  item: {
-    errors: BmError[];
-    files: BmlFile[];
-    structId: string;
-    connections: ProjectConnection[];
-    mproveDir: string;
-    isUseCache: boolean;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
+export type BuildYamlOutput = {
+  mods: FileMod[];
+  stores: FileStore[];
+  schemas: FileSchema[];
+  reports: FileReport[];
+  dashboards: FileDashboard[];
+  charts: FileChart[];
+  spaces: FileSpace[];
+  projectConfig?: FileProjectConf;
+};
+
+export function buildYaml(item: {
+  errors: BmError[];
+  files: BmlFile[];
+  structId: string;
+  connections: ProjectConnection[];
+  mproveDir: string;
+  isUseCache: boolean;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<BuildYamlOutput, never> {
+  let {
+    errors,
+    files,
+    structId,
+    connections,
+    mproveDir,
+    isUseCache,
+    caller,
+    cs
+  } = item;
+
   let mods: FileMod[];
   let stores: FileStore[];
   let schemas: FileSchema[];
@@ -49,10 +70,10 @@ export function buildYaml(
 
   let file2s: File2[] = removeWrongExt(
     {
-      files: item.files,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
+      files: files,
+      structId: structId,
+      errors: errors,
+      caller: caller
     },
     cs
   );
@@ -60,9 +81,9 @@ export function buildYaml(
   let file3s: File3[] = deduplicateFileNames(
     {
       file2s: file2s,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
+      structId: structId,
+      errors: errors,
+      caller: caller
     },
     cs
   );
@@ -81,9 +102,9 @@ export function buildYaml(
             FileExtensionEnum.Yml
           ].indexOf(x.ext) > -1
       ),
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
+      structId: structId,
+      errors: errors,
+      caller: caller
     },
     cs
   );
@@ -91,9 +112,9 @@ export function buildYaml(
   filesAny = makeLineNumbers(
     {
       filesAny: filesAny,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
+      structId: structId,
+      errors: errors,
+      caller: caller
     },
     cs
   );
@@ -101,9 +122,9 @@ export function buildYaml(
   filesAny = checkTopUnknownParameters(
     {
       filesAny: filesAny,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
+      structId: structId,
+      errors: errors,
+      caller: caller
     },
     cs
   );
@@ -111,9 +132,9 @@ export function buildYaml(
   filesAny = checkTopValues(
     {
       filesAny: filesAny,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
+      structId: structId,
+      errors: errors,
+      caller: caller
     },
     cs
   );
@@ -121,10 +142,10 @@ export function buildYaml(
   filesAny = checkConnections(
     {
       filesAny: filesAny,
-      connections: item.connections,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
+      connections: connections,
+      structId: structId,
+      errors: errors,
+      caller: caller
     },
     cs
   );
@@ -132,9 +153,9 @@ export function buildYaml(
   let splitFilesResult = splitFiles(
     {
       filesAny: filesAny,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
+      structId: structId,
+      errors: errors,
+      caller: caller
     },
     cs
   );
@@ -148,33 +169,33 @@ export function buildYaml(
   charts = splitFilesResult.charts;
   spaces = splitFilesResult.spaces;
 
-  let projectConfig =
-    item.isUseCache === false
-      ? checkProjectConfig(
+  let projectConfig: FileProjectConf =
+    isUseCache === true
+      ? undefined
+      : checkProjectConfig(
           {
             confs: confs,
-            structId: item.structId,
-            mproveDir: item.mproveDir,
-            errors: item.errors,
-            caller: item.caller
+            structId: structId,
+            mproveDir: mproveDir,
+            errors: errors,
+            caller: caller
           },
           cs
-        )
-      : undefined;
+        );
 
-  if (item.isUseCache === false) {
+  if (isUseCache === false) {
     checkSchema(
       {
         schemas: schemas,
-        errors: item.errors,
-        structId: item.structId,
-        caller: item.caller
+        errors: errors,
+        structId: structId,
+        caller: caller
       },
       cs
     );
   }
 
-  return {
+  return Result.succeed({
     mods: mods,
     stores: stores,
     schemas: schemas,
@@ -183,5 +204,5 @@ export function buildYaml(
     charts: charts,
     spaces: spaces,
     projectConfig: projectConfig
-  };
+  });
 }

@@ -10,6 +10,7 @@ import { wrapErrors } from '#blockml/functions/wrap/wrap-errors';
 import { wrapReports } from '#blockml/functions/wrap/wrap-reports';
 import { BlockmlTabService } from '#blockml/services/blockml-tab.service';
 import { PresetsService } from '#blockml/services/presets.service';
+import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
 import { ServerError } from '#common/classes/server-error';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -23,14 +24,12 @@ import type { BmlFile } from '#common/zod/blockml/bml-file';
 import type { BlockmlInternalError } from '#common/zod/blockml/errors/blockml-internal-error';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
+import type { Preset } from '#common/zod/blockml/preset';
 import type { ToBlockmlResponseResultForOperation } from '#common/zod/blockml/response/to-blockml-response-result-for-operation';
 import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
 import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
 import { getMproveDir } from '#node-common/functions-result/get-mprove-dir';
-import {
-  type RebuildStructPrep,
-  rebuildStructStateless
-} from './rebuild-struct-stateless/rebuild-struct-stateless';
+import { rebuildStructStateless } from './rebuild-struct-stateless/rebuild-struct-stateless';
 
 @Injectable()
 export class RebuildStructService {
@@ -97,25 +96,29 @@ export class RebuildStructService {
           projectConnections.push(projectConnection);
         });
 
-        let prep: RebuildStructPrep = await rebuildStructStateless({
-          files: files,
-          structId: structId,
-          envId: envId,
-          evs: evs,
-          projectConnections: projectConnections,
-          mproveDir: mproveDir,
-          overrideTimezone: overrideTimezone,
-          projectId: projectId,
-          isUseCache: isUseCache,
-          cachedMproveConfig: cachedMproveConfig,
-          cachedModels: cachedModels,
-          cachedMetrics: cachedMetrics,
-          selectedGivens: selectedGivens,
-          isTest: false,
-          presetsService: this.presetsService,
-          cs: this.cs,
-          logger: this.logger
-        });
+        let presets: Preset[] = this.presetsService.getPresets();
+
+        let prep: RebuildStructPrep = await Result.unwrap(
+          rebuildStructStateless({
+            files: files,
+            structId: structId,
+            envId: envId,
+            evs: evs,
+            projectConnections: projectConnections,
+            mproveDir: mproveDir,
+            overrideTimezone: overrideTimezone,
+            projectId: projectId,
+            isUseCache: isUseCache,
+            cachedMproveConfig: cachedMproveConfig,
+            cachedModels: cachedModels,
+            cachedMetrics: cachedMetrics,
+            selectedGivens: selectedGivens,
+            isTest: false,
+            presets: presets,
+            cs: this.cs,
+            logger: this.logger
+          })
+        );
 
         let apiErrors = wrapErrors({ errors: prep.errors });
 
@@ -226,25 +229,29 @@ export class RebuildStructService {
       files.push(mproveConfigFile);
     }
 
-    let prep: RebuildStructPrep = await rebuildStructStateless({
-      files: files,
-      structId: item.structId,
-      envId: item.envId,
-      evs: item.evs,
-      projectConnections: item.projectConnections,
-      selectedGivens: item.selectedGivens ?? [],
-      mproveDir: mproveDir,
-      overrideTimezone: item.overrideTimezone,
-      projectId: undefined,
-      isUseCache: false,
-      cachedMproveConfig: undefined,
-      cachedModels: [],
-      cachedMetrics: [],
-      isTest: true,
-      presetsService: this.presetsService,
-      cs: this.cs,
-      logger: this.logger
-    });
+    let presets: Preset[] = this.presetsService.getPresets();
+
+    let prep: RebuildStructPrep = await Result.unwrap(
+      rebuildStructStateless({
+        files: files,
+        structId: item.structId,
+        envId: item.envId,
+        evs: item.evs,
+        projectConnections: item.projectConnections,
+        selectedGivens: item.selectedGivens ?? [],
+        mproveDir: mproveDir,
+        overrideTimezone: item.overrideTimezone,
+        projectId: undefined,
+        isUseCache: false,
+        cachedMproveConfig: undefined,
+        cachedModels: [],
+        cachedMetrics: [],
+        isTest: true,
+        presets: presets,
+        cs: this.cs,
+        logger: this.logger
+      })
+    );
 
     return prep;
   }

@@ -1,6 +1,7 @@
-import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { BmError } from '#blockml/classes/bm-error';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileSpace } from '#common/zod/blockml/internal/file-space';
@@ -10,30 +11,30 @@ import { buildSpaceFullTitles } from './build-space-full-titles';
 import { checkSpaceFolders } from './check-space-folders';
 import { checkSpaceParents } from './check-space-parents';
 
-export function buildSpace(
-  item: {
-    spaces: FileSpace[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-): FilePartSpace[] {
-  let fileSpaces = checkSpaceFolders(
+export function buildSpace(item: {
+  spaces: FileSpace[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FilePartSpace[], never> {
+  let { spaces: inputSpaces, errors, structId, caller, cs } = item;
+
+  let fileSpaces: FileSpace[] = checkSpaceFolders(
     {
-      spaces: item.spaces,
-      errors: item.errors,
-      structId: item.structId,
-      caller: item.caller
+      spaces: inputSpaces,
+      errors: errors,
+      structId: structId,
+      caller: caller
     },
     cs
   );
 
-  let spaces = makeFilePartSpaces(
+  let spaces: FilePartSpace[] = makeFilePartSpaces(
     {
       spaces: fileSpaces,
-      structId: item.structId,
-      caller: item.caller
+      structId: structId,
+      caller: caller
     },
     cs
   );
@@ -41,9 +42,9 @@ export function buildSpace(
   spaces = checkSpaceParents(
     {
       spaces: spaces,
-      errors: item.errors,
-      structId: item.structId,
-      caller: item.caller
+      errors: errors,
+      structId: structId,
+      caller: caller
     },
     cs
   );
@@ -51,9 +52,9 @@ export function buildSpace(
   spaces = buildSpaceFullTitles(
     {
       spaces: spaces,
-      errors: item.errors,
-      structId: item.structId,
-      caller: item.caller
+      errors: errors,
+      structId: structId,
+      caller: caller
     },
     cs
   );
@@ -61,12 +62,12 @@ export function buildSpace(
   spaces = buildSpaceAccessRoles(
     {
       spaces: spaces,
-      errors: item.errors,
-      structId: item.structId,
-      caller: item.caller
+      errors: errors,
+      structId: structId,
+      caller: caller
     },
     cs
   );
 
-  return spaces;
+  return Result.succeed(spaces);
 }
