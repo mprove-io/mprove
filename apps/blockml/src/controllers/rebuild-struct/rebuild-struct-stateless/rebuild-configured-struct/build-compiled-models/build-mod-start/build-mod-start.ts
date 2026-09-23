@@ -1,0 +1,91 @@
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { BmError } from '#blockml/classes/bm-error';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
+import type { ProjectConnection } from '#common/zod/backend/project-connection';
+import type { BmlFile } from '#common/zod/blockml/bml-file';
+import type { FileMod } from '#common/zod/blockml/internal/file-mod';
+import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
+import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import { buildFlatMalloyFieldItems } from './build-flat-malloy-field-items/build-flat-malloy-field-items';
+import { buildMods } from './build-mods/build-mods';
+import { checkBuildMetricsFieldGroups } from './check-build-metrics-field-groups/check-build-metrics-field-groups';
+import { checkModSpaces } from './check-mod-spaces/check-mod-spaces';
+import { checkTimeframes } from './check-timeframes/check-timeframes';
+
+export async function buildModStart(item: {
+  files: BmlFile[];
+  malloyConnections: MalloyConnection[];
+  connections: ProjectConnection[];
+  mods: FileMod[];
+  spaces: FilePartSpace[];
+  tempDir: string;
+  projectId: string;
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.ResultAsync<FileMod[], never> {
+  let { cs } = item;
+
+  let mods: FileMod[] = item.mods;
+
+  mods = await buildMods(
+    {
+      mods: mods,
+      malloyConnections: item.malloyConnections,
+      connections: item.connections,
+      tempDir: item.tempDir,
+      projectId: item.projectId,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
+  mods = buildFlatMalloyFieldItems(
+    {
+      mods: mods,
+      projectId: item.projectId,
+      errors: item.errors,
+      structId: item.structId,
+      caller: item.caller
+    },
+    cs
+  );
+
+  mods = checkModSpaces(
+    {
+      mods: mods,
+      spaces: item.spaces,
+      errors: item.errors,
+      structId: item.structId,
+      caller: item.caller
+    },
+    cs
+  );
+
+  mods = checkTimeframes(
+    {
+      mods: mods,
+      errors: item.errors,
+      structId: item.structId,
+      caller: item.caller
+    },
+    cs
+  );
+
+  mods = checkBuildMetricsFieldGroups(
+    {
+      mods: mods,
+      errors: item.errors,
+      structId: item.structId,
+      caller: item.caller
+    },
+    cs
+  );
+
+  return Result.succeed(mods);
+}

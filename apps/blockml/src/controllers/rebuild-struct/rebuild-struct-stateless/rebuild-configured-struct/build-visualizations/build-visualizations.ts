@@ -52,15 +52,15 @@ export async function buildVisualizations(item: {
     item.projectConfig.case_sensitive_string_filters
   );
 
-  let dashboards: FileDashboard[] = buildField(
-    {
+  let dashboards: FileDashboard[] = Result.unwrap(
+    buildField({
       entities: item.dashboards,
       projectConfig: item.projectConfig,
       structId: item.structId,
       errors: item.errors,
-      caller: CallerEnum.BuildDashboardField
-    },
-    item.cs
+      caller: CallerEnum.BuildDashboardField,
+      cs: item.cs
+    })
   );
 
   dashboards = buildDashboard(
@@ -181,15 +181,15 @@ export async function buildVisualizations(item: {
     item.cs
   );
 
-  reports = buildField(
-    {
+  reports = Result.unwrap(
+    buildField({
       entities: reports,
       projectConfig: item.projectConfig,
       structId: item.structId,
       errors: item.errors,
-      caller: CallerEnum.BuildReportField
-    },
-    item.cs
+      caller: CallerEnum.BuildReportField,
+      cs: item.cs
+    })
   );
 
   reports = buildReport(

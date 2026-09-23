@@ -3,11 +3,6 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { buildField } from '#blockml/functions/build-field/_build-field';
-import { buildMetricsNext } from '#blockml/functions/build-metrics-next/_build-metrics-next';
-import { buildModStart } from '#blockml/functions/build-mod-start/_build-mod-start';
-import { buildStoreNext } from '#blockml/functions/build-store-next/_build-store-next';
-import { buildStoreStart } from '#blockml/functions/build-store-start/_build-store-start';
-import { wrapModels } from '#blockml/functions/wrap/wrap-models';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
@@ -19,6 +14,11 @@ import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { Preset } from '#common/zod/blockml/preset';
 import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import { buildMetricsNext } from './build-metrics-next/build-metrics-next';
+import { buildModStart } from './build-mod-start/build-mod-start';
+import { buildStoreNext } from './build-store-next/build-store-next';
+import { buildStoreStart } from './build-store-start/build-store-start';
+import { wrapModels } from './wrap-models/wrap-models';
 
 export type BuildCompiledModelsOutput = {
   mods: FileMod[];
@@ -27,7 +27,7 @@ export type BuildCompiledModelsOutput = {
   metrics: ModelMetric[];
 };
 
-export async function buildCompiledModels(item: {
+export function buildCompiledModels(item: {
   files: BmlFile[];
   malloyConnections: MalloyConnection[];
   projectConnections: ProjectConnection[];
@@ -45,96 +45,104 @@ export async function buildCompiledModels(item: {
   cachedModels: Model[];
   cachedMetrics: ModelMetric[];
 }): Result.ResultAsync<BuildCompiledModelsOutput, never> {
-  let mods: FileMod[] =
-    item.isUseCache === true
-      ? []
-      : (
-          await buildModStart(
-            {
-              files: item.files,
-              malloyConnections: item.malloyConnections,
-              connections: item.projectConnections,
-              mods: item.mods,
-              spaces: item.spaces,
-              tempDir: item.tempDir,
-              projectId: item.projectId,
-              errors: item.errors,
-              structId: item.structId,
-              caller: CallerEnum.BuildModStart
-            },
-            item.cs
-          )
-        ).mods;
-
-  let stores: FileStore[] = item.stores;
-
-  if (item.isUseCache === false) {
-    stores = buildStoreStart(
-      {
-        stores: stores,
-        presets: item.presets,
-        structId: item.structId,
-        errors: item.errors,
-        caller: CallerEnum.BuildStoreStart
-      },
-      item.cs
-    );
-
-    stores = buildField(
-      {
-        entities: stores,
-        projectConfig: item.projectConfig,
-        structId: item.structId,
-        errors: item.errors,
-        caller: CallerEnum.BuildStoreField
-      },
-      item.cs
-    );
-
-    stores = buildStoreNext(
-      {
-        stores: stores,
-        spaces: item.spaces,
-        structId: item.structId,
-        errors: item.errors,
-        caller: CallerEnum.BuildStoreNext
-      },
-      item.cs
-    );
-  }
-
-  let apiModels: Model[] =
-    item.isUseCache === true
-      ? item.cachedModels
-      : wrapModels({
-          projectId: item.projectId,
-          structId: item.structId,
-          stores: stores,
-          mods: mods,
-          spaces: item.spaces,
-          files: item.files
-        });
-
-  let metrics: ModelMetric[] =
-    item.isUseCache === true
-      ? item.cachedMetrics
-      : buildMetricsNext(
-          {
-            apiModels: apiModels,
-            stores: stores,
-            structId: item.structId,
-            errors: item.errors,
-            caller: CallerEnum.BuildModelMetric
-          },
-          item.cs
-        ).metrics;
-
-  let output: BuildCompiledModelsOutput = {
-    mods: mods,
-    stores: stores,
-    apiModels: apiModels,
-    metrics: metrics
-  };
-
-  return Result.succeed(output);
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind(
+      'compiledMods',
+      async (v): Result.ResultAsync<FileMod[], never> =>
+        v.isUseCache === true
+          ? Result.succeed([])
+          : buildModStart({
+              files: v.files,
+              malloyConnections: v.malloyConnections,
+              connections: v.projectConnections,
+              mods: v.mods,
+              spaces: v.spaces,
+              tempDir: v.tempDir,
+              projectId: v.projectId,
+              errors: v.errors,
+              structId: v.structId,
+              caller: CallerEnum.BuildModStart,
+              cs: v.cs
+            })
+    ),
+    Result.bind(
+      'startedStores',
+      (v): Result.Result<FileStore[], never> =>
+        v.isUseCache === true
+          ? Result.succeed(v.stores)
+          : buildStoreStart({
+              stores: v.stores,
+              presets: v.presets,
+              structId: v.structId,
+              errors: v.errors,
+              caller: CallerEnum.BuildStoreStart,
+              cs: v.cs
+            })
+    ),
+    Result.bind(
+      'fieldStores',
+      (v): Result.Result<FileStore[], never> =>
+        v.isUseCache === true
+          ? Result.succeed(v.startedStores)
+          : buildField({
+              entities: v.startedStores,
+              projectConfig: v.projectConfig,
+              structId: v.structId,
+              errors: v.errors,
+              caller: CallerEnum.BuildStoreField,
+              cs: v.cs
+            })
+    ),
+    Result.bind(
+      'compiledStores',
+      (v): Result.Result<FileStore[], never> =>
+        v.isUseCache === true
+          ? Result.succeed(v.fieldStores)
+          : buildStoreNext({
+              stores: v.fieldStores,
+              spaces: v.spaces,
+              structId: v.structId,
+              errors: v.errors,
+              caller: CallerEnum.BuildStoreNext,
+              cs: v.cs
+            })
+    ),
+    Result.bind(
+      'apiModels',
+      (v): Result.Result<Model[], never> =>
+        v.isUseCache === true
+          ? Result.succeed(v.cachedModels)
+          : wrapModels({
+              projectId: v.projectId,
+              structId: v.structId,
+              stores: v.compiledStores,
+              mods: v.compiledMods,
+              spaces: v.spaces,
+              files: v.files
+            })
+    ),
+    Result.bind(
+      'compiledMetrics',
+      (v): Result.Result<ModelMetric[], never> =>
+        v.isUseCache === true
+          ? Result.succeed(v.cachedMetrics)
+          : buildMetricsNext({
+              apiModels: v.apiModels,
+              stores: v.compiledStores,
+              structId: v.structId,
+              errors: v.errors,
+              caller: CallerEnum.BuildModelMetric,
+              cs: v.cs
+            })
+    ),
+    Result.map(
+      (v): BuildCompiledModelsOutput => ({
+        mods: v.compiledMods,
+        stores: v.compiledStores,
+        apiModels: v.apiModels,
+        metrics: v.compiledMetrics
+      })
+    )
+  );
 }

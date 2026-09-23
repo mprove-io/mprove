@@ -1,8 +1,9 @@
-import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { BmError } from '#blockml/classes/bm-error';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import { sdrType } from '#common/types/sdr-type';
+import type { sdrType } from '#common/types/sdr-type';
 import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import { checkAndSetImplicitFormatNumber } from './check-and-set-implicit-format-number';
@@ -16,17 +17,17 @@ import { checkStoreFieldDetail } from './check-store-field-detail';
 import { checkStoreFieldGroup } from './check-store-field-group';
 import { setImplicitLabel } from './set-implicit-label';
 
-export function buildField<T extends sdrType>(
-  item: {
-    entities: T[];
-    projectConfig: FileProjectConf;
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let entities = item.entities;
+export function buildField<T extends sdrType>(item: {
+  entities: T[];
+  projectConfig: FileProjectConf;
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<T[], never> {
+  let { cs } = item;
+
+  let entities: T[] = item.entities;
 
   entities = checkFieldsExist(
     {
@@ -133,5 +134,5 @@ export function buildField<T extends sdrType>(
     cs
   );
 
-  return entities;
+  return Result.succeed(entities);
 }
