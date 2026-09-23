@@ -9,6 +9,7 @@ RUN apt-get update && \
     apt-get -y install --no-install-recommends \
     ca-certificates \
     direnv \
+    ripgrep \
     sqlite3 \
     uuid-runtime && \
     update-ca-certificates
