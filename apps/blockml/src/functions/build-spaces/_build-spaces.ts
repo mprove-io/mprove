@@ -2,7 +2,7 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileSpace } from '#common/zod/blockml/internal/file-space';
 import { makeFilePartSpaces } from '../extra/make-file-part-spaces';
@@ -18,56 +18,60 @@ export function buildSpace(item: {
   caller: CallerEnum;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FilePartSpace[], never> {
-  let { spaces: inputSpaces, errors, structId, caller, cs } = item;
-
-  let fileSpaces: FileSpace[] = checkSpaceFolders(
-    {
-      spaces: inputSpaces,
-      errors: errors,
-      structId: structId,
-      caller: caller
-    },
-    cs
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind(
+      'fileSpaces',
+      (v): Result.Result<FileSpace[], never> =>
+        checkSpaceFolders({
+          spaces: v.spaces,
+          errors: v.errors,
+          structId: v.structId,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'filePartSpaces',
+      (v): Result.Result<FilePartSpace[], never> =>
+        makeFilePartSpaces({
+          spaces: v.fileSpaces,
+          structId: v.structId,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'parentCheckedSpaces',
+      (v): Result.Result<FilePartSpace[], never> =>
+        checkSpaceParents({
+          spaces: v.filePartSpaces,
+          errors: v.errors,
+          structId: v.structId,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'fullTitleSpaces',
+      (v): Result.Result<FilePartSpace[], never> =>
+        buildSpaceFullTitles({
+          spaces: v.parentCheckedSpaces,
+          errors: v.errors,
+          structId: v.structId,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.andThen(
+      (v): Result.Result<FilePartSpace[], never> =>
+        buildSpaceAccessRoles({
+          spaces: v.fullTitleSpaces,
+          errors: v.errors,
+          structId: v.structId,
+          caller: v.caller,
+          cs: v.cs
+        })
+    )
   );
-
-  let spaces: FilePartSpace[] = makeFilePartSpaces(
-    {
-      spaces: fileSpaces,
-      structId: structId,
-      caller: caller
-    },
-    cs
-  );
-
-  spaces = checkSpaceParents(
-    {
-      spaces: spaces,
-      errors: errors,
-      structId: structId,
-      caller: caller
-    },
-    cs
-  );
-
-  spaces = buildSpaceFullTitles(
-    {
-      spaces: spaces,
-      errors: errors,
-      structId: structId,
-      caller: caller
-    },
-    cs
-  );
-
-  spaces = buildSpaceAccessRoles(
-    {
-      spaces: spaces,
-      errors: errors,
-      structId: structId,
-      caller: caller
-    },
-    cs
-  );
-
-  return Result.succeed(spaces);
 }

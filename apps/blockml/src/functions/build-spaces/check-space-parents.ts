@@ -1,41 +1,47 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckSpaceParents;
 
-export function checkSpaceParents(
-  item: {
-    spaces: FilePartSpace[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
+export function checkSpaceParents(item: {
+  spaces: FilePartSpace[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FilePartSpace[], never> {
+  let { cs, ...logItem } = item;
+
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, logItem);
 
   let newSpaces: FilePartSpace[] = [];
 
   item.spaces.forEach(space => {
     let errorsOnStart = item.errors.length;
-    let parts = space.space.split('.');
+
+    let parts: string[] = space.space.split('.');
+
     parts.pop();
 
     while (parts.length > 0) {
-      let parentSpaceName = parts.join('.');
-      let parentSpace = item.spaces.find(x => x.space === parentSpaceName);
-      let isParentSpaceDefined = isDefined(parentSpace);
+      let parentSpaceName: string = parts.join('.');
 
-      if (isParentSpaceDefined === false) {
+      let parentSpace: FilePartSpace = item.spaces.find(
+        x => x.space === parentSpaceName
+      );
+
+      if (isUndefined(parentSpace)) {
         item.errors.push(
           new BmError({
             title: ErTitleEnum.SPACE_PARENT_DOES_NOT_EXIST,
@@ -60,7 +66,8 @@ export function checkSpaceParents(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Spaces, newSpaces);
 
-  return newSpaces;
+  return Result.succeed(newSpaces);
 }

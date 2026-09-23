@@ -1,5 +1,5 @@
 {
-  "model": "openai/gpt-5.6-sol",
+  "model": "openai/gpt-6-astra",
   "update": "disable",
   "permissions": [
     {

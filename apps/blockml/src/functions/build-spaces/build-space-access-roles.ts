@@ -1,7 +1,8 @@
-import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { BmError } from '#blockml/classes/bm-error';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -12,31 +13,32 @@ import { log } from '../extra/log';
 
 let func = FuncEnum.BuildSpaceAccessRoles;
 
-export function buildSpaceAccessRoles(
-  item: {
-    spaces: FilePartSpace[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
+export function buildSpaceAccessRoles(item: {
+  spaces: FilePartSpace[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FilePartSpace[], never> {
+  let { cs, ...logItem } = item;
+
   let { caller, structId } = item;
 
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+  log(cs, caller, func, structId, LogTypeEnum.Input, logItem);
 
   item.spaces.forEach(space => {
     let accessRolesInherited: AccessRoleCombined[] = [];
 
-    let parts = space.space.split('.');
+    let parts: string[] = space.space.split('.');
+
     parts.pop();
 
     let parentSpaceName = parts.length > 0 ? parts.join('.') : undefined;
 
-    let isParentSpaceNameDefined = isDefined(parentSpaceName);
-
-    while (isParentSpaceNameDefined) {
-      let parentSpace = item.spaces.find(x => x.space === parentSpaceName);
+    while (isDefined(parentSpaceName)) {
+      let parentSpace: FilePartSpace = item.spaces.find(
+        x => x.space === parentSpaceName
+      );
 
       if (isDefined(parentSpace)) {
         accessRolesInherited = [
@@ -49,11 +51,10 @@ export function buildSpaceAccessRoles(
       }
 
       parts = parentSpaceName.split('.');
+
       parts.pop();
 
       parentSpaceName = parts.length > 0 ? parts.join('.') : undefined;
-
-      isParentSpaceNameDefined = isDefined(parentSpaceName);
     }
 
     space.accessRolesCombined = makeAccessRolesCombined({
@@ -63,7 +64,8 @@ export function buildSpaceAccessRoles(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Spaces, item.spaces);
 
-  return item.spaces;
+  return Result.succeed(item.spaces);
 }

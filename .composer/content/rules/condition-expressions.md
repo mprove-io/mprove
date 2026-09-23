@@ -4,6 +4,9 @@ Inline a boolean expression in a condition when a variable would only store the
 expression for that single condition. This includes function and method calls
 that return a boolean.
 
+Use `isUndefined(value)` instead of `!isDefined(value)` when checking for an
+undefined value.
+
 When a function or method call returns a non-boolean value, assign its result to
 an explicitly typed variable before evaluating that value in a condition.
 
@@ -16,6 +19,12 @@ if (manifestPath === outputPath) {
 
 // correct: call returns a boolean
 if (isDefined(member)) {
+
+// correct: check for an undefined value
+if (isUndefined(member)) {
+
+// wrong: negated isDefined
+if (!isDefined(member)) {
 
 // correct: call returns a non-boolean value
 let member: unknown = this.membersService.getMember(memberId);

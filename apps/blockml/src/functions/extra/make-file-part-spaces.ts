@@ -1,40 +1,41 @@
-import { ConfigService } from '@nestjs/config';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileSpace } from '#common/zod/blockml/internal/file-space';
-import type { FileSpaceFolder } from '#common/zod/blockml/internal/file-space-folder';
-import { log } from '../extra/log';
+import { log } from './log';
+import { pushFilePartSpaceFoldersRecursive } from './push-file-part-space-folders-recursive';
 
 let func = FuncEnum.MakeFilePartSpaces;
 
-export function makeFilePartSpaces(
-  item: {
-    spaces: FileSpace[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-): FilePartSpace[] {
+export function makeFilePartSpaces(item: {
+  spaces: FileSpace[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FilePartSpace[], never> {
+  let { cs, ...logItem } = item;
+
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, logItem);
 
   let spaces: FilePartSpace[] = [];
 
   item.spaces.forEach(fileSpace => {
     let folders = fileSpace.folders;
+
     let space: FilePartSpace = Object.assign({}, fileSpace);
 
     delete (space as FileSpace).folders;
 
     spaces.push(space);
 
-    let isFoldersArray = Array.isArray(folders);
-
-    if (isFoldersArray) {
-      pushFilePartSpaceFolders({
+    if (Array.isArray(folders)) {
+      pushFilePartSpaceFoldersRecursive({
         folders: folders,
         parentSpace: fileSpace.space,
         fileName: fileSpace.fileName,
@@ -47,54 +48,5 @@ export function makeFilePartSpaces(
 
   log(cs, caller, func, structId, LogTypeEnum.Spaces, spaces);
 
-  return spaces;
-}
-
-function pushFilePartSpaceFolders(item: {
-  folders: FileSpaceFolder[];
-  parentSpace: string;
-  fileName: string;
-  filePath: string;
-  fileExt: FilePartSpace['fileExt'];
-  spaces: FilePartSpace[];
-}) {
-  let { folders, parentSpace, fileName, filePath, fileExt, spaces } = item;
-
-  folders.forEach(folder => {
-    if (folder?.constructor !== Object) {
-      return;
-    }
-
-    if (typeof folder.space !== 'string') {
-      return;
-    }
-
-    let folderSpace = `${parentSpace}.${folder.space}`;
-    let nestedFolders = folder.folders;
-    let space: FilePartSpace = Object.assign({}, folder, {
-      name: folderSpace,
-      fileName: fileName,
-      filePath: filePath,
-      fileExt: fileExt,
-      space: folderSpace,
-      accessRolesCombined: []
-    });
-
-    delete (space as FileSpaceFolder).folders;
-
-    spaces.push(space);
-
-    let isNestedFoldersArray = Array.isArray(nestedFolders);
-
-    if (isNestedFoldersArray) {
-      pushFilePartSpaceFolders({
-        folders: nestedFolders,
-        parentSpace: folderSpace,
-        fileName: fileName,
-        filePath: filePath,
-        fileExt: fileExt,
-        spaces: spaces
-      });
-    }
-  });
+  return Result.succeed(spaces);
 }
