@@ -2,13 +2,7 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { buildChart } from '#blockml/functions/build-chart/_build-chart';
-import { makeChartAccessRolesCombined } from '#blockml/functions/build-chart/make-chart-access-roles-combined';
-import { buildDashboard } from '#blockml/functions/build-dashboard/_build-dashboard';
 import { buildField } from '#blockml/functions/build-field/_build-field';
-import { buildMconfigChart } from '#blockml/functions/build-mconfig-chart/_build-mconfig-chart';
-import { buildReport } from '#blockml/functions/build-report/_build-report';
-import { buildTile } from '#blockml/functions/build-tile/_build-tile';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
@@ -23,6 +17,12 @@ import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import { buildChart } from './build-chart/build-chart';
+import { buildDashboard } from './build-dashboard/build-dashboard';
+import { buildMconfigChart } from './build-mconfig-chart/build-mconfig-chart';
+import { buildReport } from './build-report/build-report';
+import { buildTile } from './build-tile/build-tile';
+import { makeChartAccessRolesCombined } from './make-chart-access-roles-combined/make-chart-access-roles-combined';
 
 export type BuildVisualizationsOutput = {
   dashboards: FileDashboard[];
@@ -30,7 +30,7 @@ export type BuildVisualizationsOutput = {
   reports: FileReport[];
 };
 
-export async function buildVisualizations(item: {
+export function buildVisualizations(item: {
   projectConfig: FileProjectConf;
   dashboards: FileDashboard[];
   charts: FileChart[];
@@ -48,170 +48,188 @@ export async function buildVisualizations(item: {
   selectedGivens: SelectedGiven[];
   metrics: ModelMetric[];
 }): Result.ResultAsync<BuildVisualizationsOutput, never> {
+  let { projectConfig } = item;
+
   let caseSensitiveStringFilters: boolean = toBooleanFromLowercaseString(
-    item.projectConfig.case_sensitive_string_filters
+    projectConfig.case_sensitive_string_filters
   );
 
-  let dashboards: FileDashboard[] = Result.unwrap(
-    buildField({
-      entities: item.dashboards,
-      projectConfig: item.projectConfig,
-      structId: item.structId,
-      errors: item.errors,
-      caller: CallerEnum.BuildDashboardField,
-      cs: item.cs
-    })
+  return Result.pipe(
+    Result.succeed({
+      ...item,
+      caseSensitiveStringFilters: caseSensitiveStringFilters
+    }),
+    Result.bind(
+      'fieldBuiltDashboards',
+      (v): Result.Result<FileDashboard[], never> =>
+        buildField({
+          entities: v.dashboards,
+          projectConfig: v.projectConfig,
+          structId: v.structId,
+          errors: v.errors,
+          caller: CallerEnum.BuildDashboardField,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'builtDashboards',
+      (v): Result.Result<FileDashboard[], never> =>
+        buildDashboard({
+          dashboards: v.fieldBuiltDashboards,
+          spaces: v.spaces,
+          stores: v.stores,
+          structId: v.structId,
+          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+          errors: v.errors,
+          caller: CallerEnum.BuildDashboard,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'builtCharts',
+      (v): Result.Result<FileChart[], never> =>
+        buildChart({
+          charts: v.charts,
+          structId: v.structId,
+          errors: v.errors,
+          caller: CallerEnum.BuildChart,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'tileBuiltDashboards',
+      (v): Result.ResultAsync<FileDashboard[], never> =>
+        buildTile({
+          projectId: v.projectId,
+          envId: v.envId,
+          entities: v.builtDashboards,
+          mconfigParentType: MconfigParentTypeEnum.Dashboard,
+          apiModels: v.apiModels,
+          malloyConnections: v.malloyConnections,
+          projectConnections: v.projectConnections,
+          stores: v.stores,
+          weekStart: v.projectConfig.week_start,
+          timezone: v.projectConfig.default_timezone,
+          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+          selectedGivens: v.selectedGivens,
+          structId: v.structId,
+          errors: v.errors,
+          caller: CallerEnum.BuildDashboardTile,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'tileBuiltCharts',
+      (v): Result.ResultAsync<FileChart[], never> =>
+        buildTile({
+          projectId: v.projectId,
+          envId: v.envId,
+          entities: v.builtCharts,
+          mconfigParentType: MconfigParentTypeEnum.Chart,
+          apiModels: v.apiModels,
+          malloyConnections: v.malloyConnections,
+          projectConnections: v.projectConnections,
+          stores: v.stores,
+          weekStart: v.projectConfig.week_start,
+          timezone: v.projectConfig.default_timezone,
+          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+          selectedGivens: v.selectedGivens,
+          structId: v.structId,
+          errors: v.errors,
+          caller: CallerEnum.BuildChartTile,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'accessRolesCombinedCharts',
+      (v): Result.Result<FileChart[], never> =>
+        makeChartAccessRolesCombined({
+          charts: v.tileBuiltCharts,
+          spaces: v.spaces,
+          structId: v.structId,
+          errors: v.errors,
+          caller: CallerEnum.BuildChart,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'mconfigChartBuiltDashboards',
+      (v): Result.Result<FileDashboard[], never> =>
+        buildMconfigChart({
+          entities: v.tileBuiltDashboards,
+          apiModels: v.apiModels,
+          stores: v.stores,
+          structId: v.structId,
+          errors: v.errors,
+          caller: CallerEnum.BuildDashboardTileCharts,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'mconfigChartBuiltCharts',
+      (v): Result.Result<FileChart[], never> =>
+        buildMconfigChart({
+          entities: v.accessRolesCombinedCharts,
+          apiModels: v.apiModels,
+          stores: v.stores,
+          structId: v.structId,
+          errors: v.errors,
+          caller: CallerEnum.BuildChartTileCharts,
+          cs: v.cs
+        })
+    ),
+    Result.inspect(v => {
+      v.reports.forEach(report => {
+        report.tiles = [{ options: report.options }];
+      });
+    }),
+    Result.bind(
+      'mconfigChartBuiltReports',
+      (v): Result.Result<FileReport[], never> =>
+        buildMconfigChart({
+          entities: v.reports,
+          apiModels: v.apiModels,
+          stores: v.stores,
+          structId: v.structId,
+          errors: v.errors,
+          caller: CallerEnum.BuildReportCharts,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'fieldBuiltReports',
+      (v): Result.Result<FileReport[], never> =>
+        buildField({
+          entities: v.mconfigChartBuiltReports,
+          projectConfig: v.projectConfig,
+          structId: v.structId,
+          errors: v.errors,
+          caller: CallerEnum.BuildReportField,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'builtReports',
+      (v): Result.Result<FileReport[], never> =>
+        buildReport({
+          reports: v.fieldBuiltReports,
+          spaces: v.spaces,
+          metrics: v.metrics,
+          apiModels: v.apiModels,
+          stores: v.stores,
+          structId: v.structId,
+          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+          errors: v.errors,
+          caller: CallerEnum.BuildReport,
+          cs: v.cs
+        })
+    ),
+    Result.map(
+      (v): BuildVisualizationsOutput => ({
+        dashboards: v.mconfigChartBuiltDashboards,
+        charts: v.mconfigChartBuiltCharts,
+        reports: v.builtReports
+      })
+    )
   );
-
-  dashboards = buildDashboard(
-    {
-      dashboards: dashboards,
-      spaces: item.spaces,
-      stores: item.stores,
-      structId: item.structId,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      errors: item.errors,
-      caller: CallerEnum.BuildDashboard
-    },
-    item.cs
-  );
-
-  let charts: FileChart[] = buildChart(
-    {
-      charts: item.charts,
-      structId: item.structId,
-      errors: item.errors,
-      caller: CallerEnum.BuildChart
-    },
-    item.cs
-  );
-
-  dashboards = await buildTile(
-    {
-      projectId: item.projectId,
-      envId: item.envId,
-      entities: dashboards,
-      mconfigParentType: MconfigParentTypeEnum.Dashboard,
-      apiModels: item.apiModels,
-      malloyConnections: item.malloyConnections,
-      projectConnections: item.projectConnections,
-      stores: item.stores,
-      weekStart: item.projectConfig.week_start,
-      timezone: item.projectConfig.default_timezone,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      selectedGivens: item.selectedGivens,
-      structId: item.structId,
-      errors: item.errors,
-      caller: CallerEnum.BuildDashboardTile
-    },
-    item.cs
-  );
-
-  charts = await buildTile(
-    {
-      projectId: item.projectId,
-      envId: item.envId,
-      entities: charts,
-      mconfigParentType: MconfigParentTypeEnum.Chart,
-      apiModels: item.apiModels,
-      malloyConnections: item.malloyConnections,
-      projectConnections: item.projectConnections,
-      stores: item.stores,
-      weekStart: item.projectConfig.week_start,
-      timezone: item.projectConfig.default_timezone,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      selectedGivens: item.selectedGivens,
-      structId: item.structId,
-      errors: item.errors,
-      caller: CallerEnum.BuildChartTile
-    },
-    item.cs
-  );
-
-  charts = makeChartAccessRolesCombined(
-    {
-      charts: charts,
-      spaces: item.spaces,
-      structId: item.structId,
-      errors: item.errors,
-      caller: CallerEnum.BuildChart
-    },
-    item.cs
-  );
-
-  dashboards = buildMconfigChart(
-    {
-      entities: dashboards,
-      apiModels: item.apiModels,
-      stores: item.stores,
-      structId: item.structId,
-      errors: item.errors,
-      caller: CallerEnum.BuildDashboardTileCharts
-    },
-    item.cs
-  );
-
-  charts = buildMconfigChart(
-    {
-      entities: charts,
-      apiModels: item.apiModels,
-      stores: item.stores,
-      structId: item.structId,
-      errors: item.errors,
-      caller: CallerEnum.BuildChartTileCharts
-    },
-    item.cs
-  );
-
-  let reports: FileReport[] = item.reports;
-
-  reports.forEach(report => {
-    report.tiles = [{ options: report.options }];
-  });
-
-  reports = buildMconfigChart(
-    {
-      entities: reports,
-      apiModels: item.apiModels,
-      stores: item.stores,
-      structId: item.structId,
-      errors: item.errors,
-      caller: CallerEnum.BuildReportCharts
-    },
-    item.cs
-  );
-
-  reports = Result.unwrap(
-    buildField({
-      entities: reports,
-      projectConfig: item.projectConfig,
-      structId: item.structId,
-      errors: item.errors,
-      caller: CallerEnum.BuildReportField,
-      cs: item.cs
-    })
-  );
-
-  reports = buildReport(
-    {
-      reports: reports,
-      spaces: item.spaces,
-      metrics: item.metrics,
-      apiModels: item.apiModels,
-      stores: item.stores,
-      structId: item.structId,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      errors: item.errors,
-      caller: CallerEnum.BuildReport
-    },
-    item.cs
-  );
-
-  let output: BuildVisualizationsOutput = {
-    dashboards: dashboards,
-    charts: charts,
-    reports: reports
-  };
-
-  return Result.succeed(output);
 }

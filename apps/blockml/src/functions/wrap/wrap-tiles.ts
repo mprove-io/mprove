@@ -1,3 +1,4 @@
+import type { FilePartTileExtra } from '#blockml/types/file-part-tile-extra';
 import {
   EMPTY_QUERY_ID,
   TILE_DEFAULT_PLATE_HEIGHT,
@@ -31,7 +32,6 @@ import type { Model } from '#common/zod/blockml/model';
 import type { Query } from '#common/zod/blockml/query';
 import type { Tile } from '#common/zod/blockml/tile';
 import { makeQueryId } from '#node-common/functions/make-query-id';
-import type { FilePartTileExtra } from '../build-tile/file-part-tile-extra';
 import { wrapMconfigChart } from './wrap-mconfig-chart';
 
 export function wrapTiles(item: {

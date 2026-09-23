@@ -1,0 +1,41 @@
+import { ConfigService } from '@nestjs/config';
+import { BmError } from '#blockml/classes/bm-error';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { checkFilterConditions } from '#blockml/functions/extra/check-filter-conditions';
+import { log } from '#blockml/functions/extra/log';
+import { CallerEnum } from '#common/enums/special/caller.enum';
+import { FuncEnum } from '#common/enums/special/func.enum';
+import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import type { FileReport } from '#common/zod/blockml/internal/file-report';
+
+let func = FuncEnum.CheckReportFilterConditions;
+
+export function checkReportFilterConditions(
+  item: {
+    reports: FileReport[];
+    errors: BmError[];
+    structId: string;
+    caseSensitiveStringFilters: boolean;
+    caller: CallerEnum;
+  },
+  cs: ConfigService<BlockmlConfig>
+) {
+  let { caller, structId, caseSensitiveStringFilters } = item;
+  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+
+  let newReports = checkFilterConditions(
+    {
+      entities: item.reports,
+      errors: item.errors,
+      structId: item.structId,
+      caseSensitiveStringFilters: caseSensitiveStringFilters,
+      caller: item.caller
+    },
+    cs
+  );
+
+  log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+  log(cs, caller, func, structId, LogTypeEnum.Ds, newReports);
+
+  return newReports;
+}
