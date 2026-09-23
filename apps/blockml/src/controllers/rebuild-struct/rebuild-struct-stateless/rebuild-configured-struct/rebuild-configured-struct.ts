@@ -3,7 +3,6 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { buildExplorer } from '#blockml/functions/extra/build-explorer';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -22,6 +21,7 @@ import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { Preset } from '#common/zod/blockml/preset';
 import type { BuildCompiledModelsOutput } from './build-compiled-models/build-compiled-models';
 import { buildCompiledModels } from './build-compiled-models/build-compiled-models';
+import { buildExplorer } from './build-explorer/build-explorer';
 import type { BuildVisualizationsOutput } from './build-visualizations/build-visualizations';
 import { buildVisualizations } from './build-visualizations/build-visualizations';
 import { finalizeRebuildStruct } from './finalize-rebuild-struct/finalize-rebuild-struct';
@@ -54,19 +54,17 @@ export function rebuildConfiguredStruct(item: {
 }): Result.ResultAsync<RebuildStructPrep, never> {
   return Result.pipe(
     Result.succeed(item),
-    Result.bind('mproveExplorer', (v): Result.Result<string, never> => {
-      let { mproveExplorer } = buildExplorer(
-        {
+    Result.bind(
+      'mproveExplorer',
+      (v): Result.Result<string, never> =>
+        buildExplorer({
           files: v.files,
           errors: v.errors,
           structId: v.structId,
-          caller: CallerEnum.RebuildStruct
-        },
-        v.cs
-      );
-
-      return Result.succeed(mproveExplorer);
-    }),
+          caller: CallerEnum.RebuildStruct,
+          cs: v.cs
+        })
+    ),
     Result.andThrough(v => {
       if (isDefined(v.overrideTimezone)) {
         v.projectConfig.default_timezone = v.overrideTimezone;

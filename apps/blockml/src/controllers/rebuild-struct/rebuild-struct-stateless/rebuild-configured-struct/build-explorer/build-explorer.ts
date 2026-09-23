@@ -1,29 +1,34 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
+import { log } from '#blockml/functions/extra/log';
 import { MPROVE_EXPLORER_FILENAME } from '#common/constants/top';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
-import { log } from './log';
 
 let func = FuncEnum.CheckMproveExplorer;
 
-export function buildExplorer(
-  item: {
-    files: BmlFile[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+export function buildExplorer(item: {
+  files: BmlFile[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<string, never> {
+  let { caller, structId, cs, files } = item;
 
-  let mproveExplorerFiles = item.files.filter(
+  log(cs, caller, func, structId, LogTypeEnum.Input, {
+    files: files,
+    errors: item.errors,
+    structId: structId,
+    caller: caller
+  });
+
+  let mproveExplorerFiles: BmlFile[] = files.filter(
     file => file.name.toLowerCase() === MPROVE_EXPLORER_FILENAME
   );
 
@@ -47,10 +52,10 @@ export function buildExplorer(
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, errors);
 
-  return {
-    mproveExplorer:
-      mproveExplorerFiles.length === 1
-        ? mproveExplorerFiles[0].content
-        : undefined
-  };
+  let mproveExplorer: string =
+    mproveExplorerFiles.length === 1
+      ? mproveExplorerFiles[0].content
+      : undefined;
+
+  return Result.succeed(mproveExplorer);
 }
