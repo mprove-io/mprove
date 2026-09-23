@@ -5,23 +5,20 @@ import { readLog } from '#blockml/functions/extra/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/log-to-console-blockml';
 import { prepareTest } from '#blockml/functions/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
-import type { ProjectConnection } from '#common/zod/backend/project-connection';
-import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
 
-let caller = CallerEnum.BuildDashboard;
-let func = FuncEnum.CheckAccess;
-let testId = 'e__wrong-access-roles-element-2';
+let caller = CallerEnum.BuildYaml;
+let func = FuncEnum.CheckConnections;
+let testId = 'e__connection-not-found';
 
 test('1', async t => {
   let errors: BmError[];
-  let entDashboards: FileDashboard[];
+  let filesAny: any[];
 
   let wLogger;
   let configService;
@@ -45,24 +42,18 @@ test('1', async t => {
 
     wLogger = logger;
 
-    let connection: ProjectConnection = {
-      connectionId: 'c1',
-      options: {},
-      type: ConnectionTypeEnum.PostgreSQL
-    };
-
     await structService.rebuildStructFromDir({
       traceId: traceId,
       dir: dataDir,
       structId: structId,
       envId: PROJECT_ENV_PROD,
       evs: [],
-      projectConnections: [connection],
+      projectConnections: [],
       overrideTimezone: undefined
     });
 
     errors = await readLog(fromDir, LogTypeEnum.Errors);
-    entDashboards = await readLog(fromDir, LogTypeEnum.Entities);
+    filesAny = await readLog(fromDir, LogTypeEnum.FilesAny);
     if (isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -76,8 +67,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entDashboards.length, 0);
+  t.is(filesAny.length, 1);
 
-  t.is(errors[0].title, ErTitleEnum.WRONG_ACCESS_ROLES_ELEMENT);
+  t.is(errors[0].title, ErTitleEnum.CONNECTION_NOT_FOUND);
   t.is(errors[0].lines[0].line, 2);
 });

@@ -1,103 +1,45 @@
-import { Logger } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import fse from 'fs-extra';
-import { WinstonModule } from 'nest-winston';
-import { appServices } from '#blockml/app-services';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { getConfig } from '#blockml/config/get.config';
-import { RebuildStructService } from '#blockml/controllers/rebuild-struct/rebuild-struct.service';
-import { ConsumerService } from '#blockml/services/consumer.service';
-import { APP_NAME_BLOCKML, SRC_PATH } from '#common/constants/top-blockml';
-import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
+import { SRC_PATH } from '#common/constants/top-blockml';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
-import { isDefined } from '#common/functions/is-defined';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
-import { getLoggerOptions } from '#node-common/functions/get-logger-options';
+import {
+  type PrepareTestOutput,
+  prepareTest as prepareTestFromDirectory
+} from './prepare-test/prepare-test';
 
+// Compatibility entry point until the remaining tests pass their own directory.
 export async function prepareTest(
   caller: CallerEnum,
   func: FuncEnum,
   testId: string,
   connection?: ProjectConnection,
   overrideConfigOptions?: Partial<BlockmlConfig>
-) {
-  let extraOverride: Partial<BlockmlConfig> = {
-    blockmlEnv: BlockmlEnvEnum.TEST,
-    // blockmlLogResponseOk: true,
-    blockmlLogResponseError: true
-  };
-
-  let config = getConfig();
-
-  let mockConfig: BlockmlConfig = Object.assign(
-    config,
-    <Partial<BlockmlConfig>>{ logFunc: func },
-    overrideConfigOptions,
-    extraOverride
-  );
-
-  let moduleRef: TestingModule = await Test.createTestingModule({
-    imports: [
-      ConfigModule.forRoot({
-        load: [getConfig],
-        isGlobal: true
-      }),
-      WinstonModule.forRoot(
-        getLoggerOptions({
-          appName: APP_NAME_BLOCKML,
-          isJson: config.blockmlLogIsJson
-        })
-      )
-    ],
-    providers: [Logger, ...appServices]
-  })
-    .overrideProvider(ConfigService)
-    .useValue({ get: (key: any) => mockConfig[key as keyof BlockmlConfig] })
-    .overrideProvider(ConsumerService)
-    .useValue({})
-    .compile();
-
-  let structService = moduleRef.get<RebuildStructService>(RebuildStructService);
-  let logger = await moduleRef.resolve<Logger>(Logger);
-
-  let cs = moduleRef.get<ConfigService<BlockmlConfig>>(ConfigService);
-  let logsPath = cs.get<BlockmlConfig['logsPath']>('logsPath');
-  let copyLogsToModels =
-    cs.get<BlockmlConfig['copyLogsToModels']>('copyLogsToModels');
-
-  let funcArray = func.toString().split('/');
+): Promise<PrepareTestOutput> {
+  let funcArray: string[] = func.toString().split('/');
 
   let pack = funcArray[0];
+
   let f = funcArray[1];
 
-  let traceId = testId;
+  let testsDir = `${SRC_PATH}/functions/${pack}/tests/${f}`;
 
-  let structId = isDefined(connection)
-    ? `${caller}/${f}/${testId}/${connection.type}`
-    : `${caller}/${f}/${testId}`;
+  if (func === FuncEnum.MakeLineNumbers || func === FuncEnum.YamlToObjects) {
+    testsDir = `${SRC_PATH}/functions/${f}/tests`;
+  } else if (pack === 'build-yaml' || pack === 'build-spaces') {
+    let buildDir = pack === 'build-spaces' ? 'build-space' : 'build-yaml';
 
-  let fromDir = `${logsPath}/${caller}/${f}/${structId}`;
-  fse.emptyDirSync(fromDir);
+    testsDir = `${SRC_PATH}/controllers/rebuild-struct/rebuild-struct-stateless/${buildDir}/${f}/tests`;
+  }
 
-  let dataDir = `${SRC_PATH}/functions/${pack}/tests/${f}/data/${testId}`;
+  let output: PrepareTestOutput = await prepareTestFromDirectory({
+    caller: caller,
+    func: func,
+    testId: testId,
+    testsDir: testsDir,
+    connection: connection,
+    overrideConfigOptions: overrideConfigOptions
+  });
 
-  let toDir =
-    copyLogsToModels === false
-      ? null
-      : isDefined(connection)
-        ? `${SRC_PATH}/functions/${pack}/tests/${f}/logs/${testId}/${connection.type}`
-        : `${SRC_PATH}/functions/${pack}/tests/${f}/logs/${testId}`;
-
-  return {
-    structService: structService,
-    logger: logger,
-    traceId: traceId,
-    structId: structId,
-    dataDir: dataDir,
-    fromDir: fromDir,
-    toDir: toDir,
-    cs: cs
-  };
+  return output;
 }

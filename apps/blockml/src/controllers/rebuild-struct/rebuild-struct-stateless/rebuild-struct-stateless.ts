@@ -3,11 +3,6 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { buildSpace } from '#blockml/functions/build-spaces/_build-spaces';
-import {
-  type BuildYamlOutput,
-  buildYaml
-} from '#blockml/functions/build-yaml/_build-yaml';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -23,6 +18,8 @@ import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { Preset } from '#common/zod/blockml/preset';
+import { buildSpace } from './build-space/build-space';
+import { type BuildYamlOutput, buildYaml } from './build-yaml/build-yaml';
 import { getProjectConfig } from './get-project-config/get-project-config';
 import { makeEmptyRebuildStructPrep } from './make-empty-rebuild-struct-prep/make-empty-rebuild-struct-prep';
 import { rebuildConfiguredStruct } from './rebuild-configured-struct/rebuild-configured-struct';
