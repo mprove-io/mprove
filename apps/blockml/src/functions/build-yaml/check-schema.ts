@@ -1,12 +1,13 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { MyRegex } from '#common/classes/my-regex';
 import { RELATIONSHIP_TYPE_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
@@ -17,32 +18,18 @@ import type { FileSchemaColumn } from '#common/zod/blockml/internal/file-schema-
 import type { FileSchemaRelationship } from '#common/zod/blockml/internal/file-schema-relationship';
 import type { FileSchemaTable } from '#common/zod/blockml/internal/file-schema-table';
 import { log } from '../extra/log';
+import { getExpectedMirrorType } from './get-expected-mirror-type';
 
 let func = FuncEnum.CheckSchema;
 
-function getExpectedMirrorType(item: {
-  type: RelationshipTypeEnum;
-}): RelationshipTypeEnum {
-  let { type } = item;
-  if (type === RelationshipTypeEnum.OneToMany) {
-    return RelationshipTypeEnum.ManyToOne;
-  }
-  if (type === RelationshipTypeEnum.ManyToOne) {
-    return RelationshipTypeEnum.OneToMany;
-  }
-  return type;
-}
-
-export function checkSchema(
-  item: {
-    schemas: FileSchema[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
+export function checkSchema(item: {
+  schemas: FileSchema[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<void, never> {
+  let { caller, structId, cs } = item;
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   item.schemas.forEach(schema => {
@@ -801,4 +788,6 @@ export function checkSchema(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
+  return Result.succeed();
 }

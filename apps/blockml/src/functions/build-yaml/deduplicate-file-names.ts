@@ -1,7 +1,8 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
@@ -12,16 +13,14 @@ import { log } from '../extra/log';
 
 let func = FuncEnum.DeduplicateFileNames;
 
-export function deduplicateFileNames(
-  item: {
-    file2s: File2[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-): File3[] {
-  let { caller, structId } = item;
+export function deduplicateFileNames(item: {
+  file2s: File2[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<File3[], never> {
+  let { caller, structId, cs } = item;
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let file3s: File3[] = [];
@@ -56,5 +55,5 @@ export function deduplicateFileNames(
   log(cs, caller, func, structId, LogTypeEnum.File3s, file3s);
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
 
-  return file3s;
+  return Result.succeed(file3s);
 }

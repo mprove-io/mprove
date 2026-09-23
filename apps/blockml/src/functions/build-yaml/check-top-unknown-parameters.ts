@@ -1,12 +1,13 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { MyRegex } from '#common/classes/my-regex';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
@@ -14,16 +15,14 @@ import { log } from '../extra/log';
 
 let func = FuncEnum.CheckTopUnknownParameters;
 
-export function checkTopUnknownParameters(
-  item: {
-    filesAny: any[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-): any[] {
-  let { caller, structId } = item;
+export function checkTopUnknownParameters(item: {
+  filesAny: any[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<any[], never> {
+  let { caller, structId, cs } = item;
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let newFilesAny: any[] = [];
@@ -384,5 +383,5 @@ export function checkTopUnknownParameters(
   log(cs, caller, func, structId, LogTypeEnum.FilesAny, newFilesAny);
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
 
-  return newFilesAny;
+  return Result.succeed(newFilesAny);
 }

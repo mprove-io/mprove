@@ -1,92 +1,28 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { MyRegex } from '#common/classes/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { log } from '../extra/log';
+import { checkSpaceFolderValuesRecursive } from './check-space-folder-values-recursive';
 
 let func = FuncEnum.CheckTopValues;
 
-function checkSpaceValue(item: {
-  file: any;
-  parameter: string;
+export function checkTopValues(item: {
+  filesAny: any[];
   errors: BmError[];
-  isAllowDots: boolean;
-}) {
-  let { file, parameter, errors, isAllowDots } = item;
-  let regex = isAllowDots ? /^[a-z][a-z0-9_.]*$/ : /^[a-z][a-z0-9_]*$/;
-
-  if (!file[parameter].toString().match(regex)) {
-    errors.push(
-      new BmError({
-        title: ErTitleEnum.WRONG_CHARS_IN_PARAMETER_VALUE,
-        message: isAllowDots
-          ? `parameter "${parameter}" contains wrong characters or whitespace (only "a...z0...9_." is allowed and must start with a letter)`
-          : `parameter "${parameter}" contains wrong characters or whitespace (only "a...z0...9_" is allowed and must start with a letter)`,
-        lines: [
-          {
-            line: file[parameter + LINE_NUM],
-            name: file.name,
-            path: file.path
-          }
-        ]
-      })
-    );
-  }
-}
-
-function checkSpaceFolderValues(item: {
-  file: any;
-  rootFile: any;
-  errors: BmError[];
-}) {
-  let { file, rootFile, errors } = item;
-
-  if (!Array.isArray(file.folders)) {
-    return;
-  }
-
-  file.folders.forEach((folder: any) => {
-    if (folder?.constructor !== Object) {
-      return;
-    }
-
-    if (folder[ParameterEnum.Space.toString()]) {
-      checkSpaceValue({
-        file: Object.assign({}, folder, {
-          name: rootFile.name,
-          path: rootFile.path
-        }),
-        parameter: ParameterEnum.Space.toString(),
-        errors: errors,
-        isAllowDots: false
-      });
-    }
-
-    checkSpaceFolderValues({
-      file: folder,
-      rootFile: rootFile,
-      errors: errors
-    });
-  });
-}
-
-export function checkTopValues(
-  item: {
-    filesAny: any[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-): any[] {
-  let { caller, structId } = item;
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<any[], never> {
+  let { caller, structId, cs } = item;
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let newFilesAny: any[] = [];
@@ -183,7 +119,7 @@ export function checkTopValues(
       });
 
     if (file.ext === FileExtensionEnum.Space) {
-      checkSpaceFolderValues({
+      checkSpaceFolderValuesRecursive({
         file: file,
         rootFile: file,
         errors: item.errors
@@ -198,5 +134,5 @@ export function checkTopValues(
   log(cs, caller, func, structId, LogTypeEnum.FilesAny, newFilesAny);
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
 
-  return newFilesAny;
+  return Result.succeed(newFilesAny);
 }

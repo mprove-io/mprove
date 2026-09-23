@@ -1,5 +1,6 @@
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
@@ -56,8 +57,8 @@ export class AppModule implements OnModuleInit {
         this.cs
       );
 
-      let filesAny: any[] = yamlToObjects(
-        {
+      let filesAny: any[] = Result.unwrap(
+        yamlToObjects({
           file3s: presetFiles.map(y => {
             let pathParts = y.path.split('.');
 
@@ -67,24 +68,25 @@ export class AppModule implements OnModuleInit {
               path: y.path,
               content: y.content
             };
+
             return f;
           }),
           structId: undefined,
           errors: errors,
-          caller: CallerEnum.AppModule
-        },
-        this.cs
+          caller: CallerEnum.AppModule,
+          cs: this.cs
+        })
       );
 
-      filesAny = makeLineNumbers(
-        {
+      filesAny = Result.unwrap(
+        makeLineNumbers({
           filesAny: filesAny,
           structId: undefined,
           errors: errors,
           caller: CallerEnum.AppModule,
-          isSetLineNumToZero: true
-        },
-        this.cs
+          isSetLineNumToZero: true,
+          cs: this.cs
+        })
       );
 
       let presets: Preset[] = [];

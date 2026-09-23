@@ -24,7 +24,7 @@ import { checkTopValues } from './check-top-values';
 import { deduplicateFileNames } from './deduplicate-file-names';
 import { makeLineNumbers } from './make-line-numbers';
 import { removeWrongExt } from './remove-wrong-ext';
-import { splitFiles } from './split-files';
+import { type SplitFilesOutput, splitFiles } from './split-files';
 import { yamlToObjects } from './yaml-to-objects';
 
 export type BuildYamlOutput = {
@@ -48,161 +48,144 @@ export function buildYaml(item: {
   caller: CallerEnum;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<BuildYamlOutput, never> {
-  let {
-    errors,
-    files,
-    structId,
-    connections,
-    mproveDir,
-    isUseCache,
-    caller,
-    cs
-  } = item;
-
-  let mods: FileMod[];
-  let stores: FileStore[];
-  let schemas: FileSchema[];
-  let reports: FileReport[];
-  let dashboards: FileDashboard[];
-  let charts: FileChart[];
-  let spaces: FileSpace[];
-  let confs: FileProjectConf[];
-
-  let file2s: File2[] = removeWrongExt(
-    {
-      files: files,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind(
+      'file2s',
+      (v): Result.Result<File2[], never> =>
+        removeWrongExt({
+          files: v.files,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'file3s',
+      (v): Result.Result<File3[], never> =>
+        deduplicateFileNames({
+          file2s: v.file2s,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'filesAny',
+      (v): Result.Result<any[], never> =>
+        yamlToObjects({
+          file3s: v.file3s.filter(
+            x =>
+              [
+                FileExtensionEnum.Store,
+                FileExtensionEnum.Schema,
+                FileExtensionEnum.Report,
+                FileExtensionEnum.Dashboard,
+                FileExtensionEnum.Chart,
+                FileExtensionEnum.Space,
+                FileExtensionEnum.Yml
+              ].indexOf(x.ext) > -1
+          ),
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'numberedFiles',
+      (v): Result.Result<any[], never> =>
+        makeLineNumbers({
+          filesAny: v.filesAny,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'knownFiles',
+      (v): Result.Result<any[], never> =>
+        checkTopUnknownParameters({
+          filesAny: v.numberedFiles,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'validFiles',
+      (v): Result.Result<any[], never> =>
+        checkTopValues({
+          filesAny: v.knownFiles,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'connectedFiles',
+      (v): Result.Result<any[], never> =>
+        checkConnections({
+          filesAny: v.validFiles,
+          connections: v.connections,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'split',
+      (v): Result.Result<SplitFilesOutput, never> =>
+        splitFiles({
+          filesAny: v.connectedFiles,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'projectConfig',
+      (v): Result.Result<FileProjectConf | undefined, never> =>
+        v.isUseCache
+          ? Result.succeed(undefined)
+          : checkProjectConfig({
+              confs: v.split.confs,
+              structId: v.structId,
+              mproveDir: v.mproveDir,
+              errors: v.errors,
+              caller: v.caller,
+              cs: v.cs
+            })
+    ),
+    Result.andThrough(v =>
+      v.isUseCache
+        ? Result.succeed()
+        : checkSchema({
+            schemas: v.split.schemas,
+            errors: v.errors,
+            structId: v.structId,
+            caller: v.caller,
+            cs: v.cs
+          })
+    ),
+    Result.map(
+      (v): BuildYamlOutput => ({
+        mods: v.split.mods,
+        stores: v.split.stores,
+        schemas: v.split.schemas,
+        reports: v.split.reports,
+        dashboards: v.split.dashboards,
+        charts: v.split.charts,
+        spaces: v.split.spaces,
+        projectConfig: v.projectConfig
+      })
+    )
   );
-
-  let file3s: File3[] = deduplicateFileNames(
-    {
-      file2s: file2s,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  let filesAny: any[] = yamlToObjects(
-    {
-      file3s: file3s.filter(
-        x =>
-          [
-            FileExtensionEnum.Store,
-            FileExtensionEnum.Schema,
-            FileExtensionEnum.Report,
-            FileExtensionEnum.Dashboard,
-            FileExtensionEnum.Chart,
-            FileExtensionEnum.Space,
-            FileExtensionEnum.Yml
-          ].indexOf(x.ext) > -1
-      ),
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  filesAny = makeLineNumbers(
-    {
-      filesAny: filesAny,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  filesAny = checkTopUnknownParameters(
-    {
-      filesAny: filesAny,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  filesAny = checkTopValues(
-    {
-      filesAny: filesAny,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  filesAny = checkConnections(
-    {
-      filesAny: filesAny,
-      connections: connections,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  let splitFilesResult = splitFiles(
-    {
-      filesAny: filesAny,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  mods = splitFilesResult.mods;
-  stores = splitFilesResult.stores;
-  schemas = splitFilesResult.schemas;
-  confs = splitFilesResult.confs;
-  dashboards = splitFilesResult.dashboards;
-  reports = splitFilesResult.reports;
-  charts = splitFilesResult.charts;
-  spaces = splitFilesResult.spaces;
-
-  let projectConfig: FileProjectConf =
-    isUseCache === true
-      ? undefined
-      : checkProjectConfig(
-          {
-            confs: confs,
-            structId: structId,
-            mproveDir: mproveDir,
-            errors: errors,
-            caller: caller
-          },
-          cs
-        );
-
-  if (isUseCache === false) {
-    checkSchema(
-      {
-        schemas: schemas,
-        errors: errors,
-        structId: structId,
-        caller: caller
-      },
-      cs
-    );
-  }
-
-  return Result.succeed({
-    mods: mods,
-    stores: stores,
-    schemas: schemas,
-    reports: reports,
-    dashboards: dashboards,
-    charts: charts,
-    spaces: spaces,
-    projectConfig: projectConfig
-  });
 }

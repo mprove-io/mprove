@@ -1,7 +1,8 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { formatSpecifier } from 'd3-format';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { MyRegex } from '#common/classes/my-regex';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -18,7 +19,7 @@ import {
 } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
@@ -30,17 +31,15 @@ import { log } from '../extra/log';
 
 let func = FuncEnum.CheckProjectConfig;
 
-export function checkProjectConfig(
-  item: {
-    confs: FileProjectConf[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-    mproveDir: string;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
+export function checkProjectConfig(item: {
+  confs: FileProjectConf[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  mproveDir: string;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FileProjectConf | undefined, never> {
+  let { caller, structId, cs } = item;
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let errorsOnStart = item.errors.length;
@@ -277,7 +276,7 @@ export function checkProjectConfig(
       })
     );
 
-    return;
+    return Result.succeed(undefined);
   } else {
     // item.confs.length > 1
     // already checked by "duplicate file names" and "wrong extension"
@@ -293,5 +292,8 @@ export function checkProjectConfig(
     errorsOnStart === item.errors.length ? projectConfig : ''
   );
 
-  return errorsOnStart === item.errors.length ? projectConfig : undefined;
+  let result: FileProjectConf | undefined =
+    errorsOnStart === item.errors.length ? projectConfig : undefined;
+
+  return Result.succeed(result);
 }

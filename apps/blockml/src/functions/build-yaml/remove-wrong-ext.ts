@@ -1,9 +1,10 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { MyRegex } from '#common/classes/my-regex';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
@@ -12,16 +13,14 @@ import { log } from '../extra/log';
 
 let func = FuncEnum.RemoveWrongExt;
 
-export function removeWrongExt(
-  item: {
-    files: BmlFile[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-): File2[] {
-  let { caller, structId } = item;
+export function removeWrongExt(item: {
+  files: BmlFile[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<File2[], never> {
+  let { caller, structId, cs } = item;
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let file2s: File2[] = [];
@@ -68,5 +67,5 @@ export function removeWrongExt(
   log(cs, caller, func, structId, LogTypeEnum.File2s, file2s);
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
 
-  return file2s;
+  return Result.succeed(file2s);
 }
