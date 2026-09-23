@@ -1,5 +1,5 @@
 import test from 'ava';
-import { prepareTest } from '#blockml/functions/prepare-test';
+import { prepareTest } from '#blockml/functions/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -11,11 +11,12 @@ let func = FuncEnum.CheckSchema;
 let testId = 'u__schema-column-cache-unique-values';
 
 test('1', async t => {
-  let { structService, traceId, structId, dataDir } = await prepareTest(
-    caller,
-    func,
-    testId
-  );
+  let { structService, traceId, structId, dataDir } = await prepareTest({
+    caller: caller,
+    func: func,
+    testId: testId,
+    testsDir: import.meta.dirname
+  });
 
   let connection: ProjectConnection = {
     connectionId: 'c1',

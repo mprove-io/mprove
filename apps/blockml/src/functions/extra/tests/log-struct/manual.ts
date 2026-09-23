@@ -1,5 +1,5 @@
 import fse from 'fs-extra';
-import { prepareTest } from '#blockml/functions/prepare-test';
+import { prepareTest } from '#blockml/functions/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -13,7 +13,12 @@ let testId = 'manual-4';
 
 async function run() {
   let { structService, traceId, structId, dataDir, fromDir, toDir } =
-    await prepareTest(caller, func, testId);
+    await prepareTest({
+      caller: caller,
+      func: func,
+      testId: testId,
+      testsDir: import.meta.dirname
+    });
 
   let connection: ProjectConnection = {
     connectionId: 'c1',

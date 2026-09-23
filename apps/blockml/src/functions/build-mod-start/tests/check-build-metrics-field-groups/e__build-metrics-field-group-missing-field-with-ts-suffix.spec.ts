@@ -4,7 +4,7 @@ import { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { readLog } from '#blockml/functions/extra/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/log-to-console-blockml';
-import { prepareTest } from '#blockml/functions/prepare-test';
+import { prepareTest } from '#blockml/functions/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -37,7 +37,12 @@ test('1', async t => {
       toDir,
       logger,
       cs
-    } = await prepareTest(caller, func, testId);
+    } = await prepareTest({
+      caller: caller,
+      func: func,
+      testId: testId,
+      testsDir: import.meta.dirname
+    });
 
     wLogger = logger;
     configService = cs;

@@ -2,7 +2,7 @@ import test from 'ava';
 import fse from 'fs-extra';
 import type { BmError } from '#blockml/classes/bm-error';
 import { readLog } from '#blockml/functions/extra/read-log';
-import { prepareTest } from '#blockml/functions/prepare-test';
+import { prepareTest } from '#blockml/functions/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
@@ -16,7 +16,12 @@ let testId = 'e__space-unexpected-dictionary__folder';
 
 test('1', async t => {
   let { structService, traceId, structId, dataDir, fromDir, toDir } =
-    await prepareTest(caller, func, testId);
+    await prepareTest({
+      caller: caller,
+      func: func,
+      testId: testId,
+      testsDir: import.meta.dirname
+    });
 
   await structService.rebuildStructFromDir({
     traceId: traceId,
