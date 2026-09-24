@@ -1,6 +1,7 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex';
 import { FILTER_RESULT_VALUES } from '#common/constants/top';
@@ -12,22 +13,21 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { sdrType } from '#common/types/sdr-type';
+import type { sdrType } from '#common/types/sdr-type';
 import type { FieldAny } from '#common/zod/blockml/internal/field-any';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 
 let func = FuncEnum.CheckAndSetImplicitResult;
 
-export function checkAndSetImplicitResult<T extends sdrType>(
-  item: {
-    entities: T[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
+export function checkAndSetImplicitResult<T extends sdrType>(item: {
+  entities: T[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<T[], never> {
+  let { caller, structId, cs } = item;
+
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -118,7 +118,7 @@ export function checkAndSetImplicitResult<T extends sdrType>(
           return;
         }
 
-        let results = (x as FileStore).results.map(r => r.result);
+        let results: string[] = (x as FileStore).results.map(r => r.result);
 
         if (
           isDefined(field.result) &&
@@ -151,5 +151,5 @@ export function checkAndSetImplicitResult<T extends sdrType>(
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
   log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
 
-  return newEntities;
+  return Result.succeed(newEntities);
 }

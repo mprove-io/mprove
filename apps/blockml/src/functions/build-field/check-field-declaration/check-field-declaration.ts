@@ -1,6 +1,7 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
@@ -10,21 +11,20 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { sdrType } from '#common/types/sdr-type';
+import type { sdrType } from '#common/types/sdr-type';
 import type { FieldAny } from '#common/zod/blockml/internal/field-any';
 
 let func = FuncEnum.CheckFieldDeclaration;
 
-export function checkFieldDeclaration<T extends sdrType>(
-  item: {
-    entities: T[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
+export function checkFieldDeclaration<T extends sdrType>(item: {
+  entities: T[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<T[], never> {
+  let { caller, structId, cs } = item;
+
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -224,5 +224,5 @@ export function checkFieldDeclaration<T extends sdrType>(
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
   log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
 
-  return newEntities;
+  return Result.succeed(newEntities);
 }

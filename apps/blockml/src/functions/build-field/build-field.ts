@@ -25,114 +25,122 @@ export function buildField<T extends sdrType>(item: {
   caller: CallerEnum;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
-  let { cs } = item;
-
-  let entities: T[] = item.entities;
-
-  entities = checkFieldsExist(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind(
+      'entities',
+      (v): Result.Result<T[], never> =>
+        checkFieldsExist({
+          entities: v.entities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'entities',
+      (v): Result.Result<T[], never> =>
+        checkFieldIsObject({
+          entities: v.entities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'entities',
+      (v): Result.Result<T[], never> =>
+        checkFieldDeclaration({
+          entities: v.entities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    // parameters added to fields
+    Result.bind(
+      'entities',
+      (v): Result.Result<T[], never> =>
+        checkFieldNameDuplicates({
+          entities: v.entities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'entities',
+      (v): Result.Result<T[], never> =>
+        checkFieldUnknownParameters({
+          entities: v.entities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'entities',
+      (v): Result.Result<T[], never> =>
+        setImplicitLabel({
+          entities: v.entities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'entities',
+      (v): Result.Result<T[], never> =>
+        checkAndSetImplicitResult({
+          entities: v.entities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'entities',
+      (v): Result.Result<T[], never> =>
+        v.caller === CallerEnum.BuildStoreField
+          ? (checkStoreFieldGroup({
+              stores: v.entities as FileStore[],
+              structId: v.structId,
+              errors: v.errors,
+              caller: v.caller,
+              cs: v.cs
+            }) as Result.Result<T[], never>)
+          : Result.succeed(v.entities)
+    ),
+    Result.bind(
+      'entities',
+      (v): Result.Result<T[], never> =>
+        v.caller === CallerEnum.BuildStoreField
+          ? (checkStoreFieldDetail({
+              stores: v.entities as FileStore[],
+              structId: v.structId,
+              errors: v.errors,
+              caller: v.caller,
+              cs: v.cs
+            }) as Result.Result<T[], never>)
+          : Result.succeed(v.entities)
+    ),
+    Result.andThen(
+      (v): Result.Result<T[], never> =>
+        checkAndSetImplicitFormatNumber({
+          entities: v.entities,
+          projectConfig: v.projectConfig,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    )
   );
-
-  entities = checkFieldIsObject(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = checkFieldDeclaration(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  // parameters added to fields
-
-  entities = checkFieldNameDuplicates(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = checkFieldUnknownParameters(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = setImplicitLabel(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = checkAndSetImplicitResult(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  if (item.caller === CallerEnum.BuildStoreField) {
-    entities = checkStoreFieldGroup(
-      {
-        stores: entities as FileStore[],
-        structId: item.structId,
-        errors: item.errors,
-        caller: item.caller
-      },
-      cs
-    ) as T[];
-
-    entities = checkStoreFieldDetail(
-      {
-        stores: entities as FileStore[],
-        structId: item.structId,
-        errors: item.errors,
-        caller: item.caller
-      },
-      cs
-    ) as T[];
-  }
-
-  entities = checkAndSetImplicitFormatNumber(
-    {
-      entities: entities,
-      projectConfig: item.projectConfig,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  return Result.succeed(entities);
 }

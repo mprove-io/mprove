@@ -1,33 +1,33 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { formatSpecifier } from 'd3-format';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { sdrType } from '#common/types/sdr-type';
+import type { sdrType } from '#common/types/sdr-type';
 import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
 
 let func = FuncEnum.CheckAndSetImplicitFormatNumber;
 
-export function checkAndSetImplicitFormatNumber<T extends sdrType>(
-  item: {
-    entities: T[];
-    errors: BmError[];
-    structId: string;
-    projectConfig: FileProjectConf;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
+export function checkAndSetImplicitFormatNumber<T extends sdrType>(item: {
+  entities: T[];
+  errors: BmError[];
+  structId: string;
+  projectConfig: FileProjectConf;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<T[], never> {
+  let { caller, structId, cs } = item;
+
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -142,5 +142,5 @@ export function checkAndSetImplicitFormatNumber<T extends sdrType>(
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
   log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
 
-  return newEntities;
+  return Result.succeed(newEntities);
 }
