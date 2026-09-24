@@ -19,7 +19,7 @@ import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod/prepare-remote-and-prod';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org/check-restore-org';
-import { DiskTabService } from '#disk/services/disk-tab.service';
+import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
 import { checkProjectDoesNotExist } from './check-project-does-not-exist/check-project-does-not-exist';
 
 @Injectable()

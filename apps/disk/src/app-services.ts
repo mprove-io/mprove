@@ -28,9 +28,9 @@ import { RevertRepoToRemoteService } from './controllers/repos/revert-repo-to-re
 import { SyncRepoService } from './controllers/repos/sync-repo/sync-repo.service';
 import { SeedProjectService } from './controllers/seed/seed-project/seed-project.service';
 import { CloneTestRepoService } from './controllers/test-repos/clone-test-repo/clone-test-repo.service';
-import { ConsumerService } from './services/consumer.service';
-import { DiskTabService } from './services/disk-tab.service';
-import { MessageService } from './services/message.service';
+import { ConsumerService } from './services/consumer/consumer.service';
+import { DiskTabService } from './services/disk-tab/disk-tab.service';
+import { MessageService } from './services/message/message.service';
 
 export const appServices = [
   DiskTabService,

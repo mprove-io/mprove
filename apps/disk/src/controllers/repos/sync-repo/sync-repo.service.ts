@@ -24,7 +24,7 @@ import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-bra
 import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
-import { DiskTabService } from '#disk/services/disk-tab.service';
+import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
 
 @Injectable()
 export class SyncRepoService {

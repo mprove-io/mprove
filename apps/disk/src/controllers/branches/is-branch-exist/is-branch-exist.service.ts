@@ -11,7 +11,7 @@ import { createGit } from '#disk/functions/git/create-git/create-git';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
 import { checkRestoreOrgProjectRepo } from '#disk/functions/restore/check-restore-org-project-repo/check-restore-org-project-repo';
-import { DiskTabService } from '#disk/services/disk-tab.service';
+import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
 
 @Injectable()
 export class IsBranchExistService {

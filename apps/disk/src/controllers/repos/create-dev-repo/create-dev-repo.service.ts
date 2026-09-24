@@ -20,7 +20,7 @@ import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev/clone-
 import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project/check-restore-org-project';
-import { DiskTabService } from '#disk/services/disk-tab.service';
+import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
 
 @Injectable()
 export class CreateDevRepoService {

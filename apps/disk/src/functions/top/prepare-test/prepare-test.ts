@@ -8,9 +8,9 @@ import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
 import { appServices } from '#disk/app-services';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getConfig } from '#disk/config/get.config';
-import { ConsumerService } from '#disk/services/consumer.service';
-import { DiskTabService } from '#disk/services/disk-tab.service';
-import { MessageService } from '#disk/services/message.service';
+import { ConsumerService } from '#disk/services/consumer/consumer.service';
+import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import { MessageService } from '#disk/services/message/message.service';
 import { getLoggerOptions } from '#node-common/functions/get-logger-options';
 
 export async function prepareTest(

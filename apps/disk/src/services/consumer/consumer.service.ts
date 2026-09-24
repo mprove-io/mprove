@@ -6,7 +6,7 @@ import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
 import type { ToDiskInvalidRequestErrorResponse } from '#common/zod/disk/response/to-disk-invalid-request-error-response';
 import type { ToDiskOperationResponse } from '#common/zod/disk/response/to-disk-operation-response';
 import type { DiskConfig } from '#disk/config/disk-config';
-import { MessageService } from './message.service';
+import { MessageService } from '../message/message.service';
 
 @Injectable()
 export class ConsumerService {

@@ -22,7 +22,7 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-stat
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
-import { DiskTabService } from '#disk/services/disk-tab.service';
+import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
 
 @Injectable()
 export class CreateBranchService {

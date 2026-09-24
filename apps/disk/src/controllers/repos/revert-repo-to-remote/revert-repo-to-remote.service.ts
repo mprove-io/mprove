@@ -20,7 +20,7 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-stat
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
 import { revertRepoToRemote } from '#disk/functions/git/revert-repo-to-remote/revert-repo-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
-import { DiskTabService } from '#disk/services/disk-tab.service';
+import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
 
 @Injectable()
 export class RevertRepoToRemoteService {

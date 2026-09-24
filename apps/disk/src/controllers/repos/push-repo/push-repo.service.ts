@@ -22,7 +22,7 @@ import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is
 import { merge } from '#disk/functions/git/merge/merge';
 import { pushToRemote } from '#disk/functions/git/push-to-remote/push-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
-import { DiskTabService } from '#disk/services/disk-tab.service';
+import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
 
 @Injectable()
 export class PushRepoService {

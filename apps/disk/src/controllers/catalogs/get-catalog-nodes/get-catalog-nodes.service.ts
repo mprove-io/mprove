@@ -19,7 +19,7 @@ import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-n
 import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
-import { DiskTabService } from '#disk/services/disk-tab.service';
+import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
 import { getEffectiveIsFetch } from './get-effective-is-fetch/get-effective-is-fetch';
 import { getIsFetchedAfterCheckoutRequestedBranch } from './get-is-fetched-after-checkout-requested-branch/get-is-fetched-after-checkout-requested-branch';
 
