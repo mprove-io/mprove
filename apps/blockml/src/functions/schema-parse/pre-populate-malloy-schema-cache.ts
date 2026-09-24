@@ -12,9 +12,9 @@ import {
   TableSourceDef,
   TrinoDialect
 } from '@malloydata/malloy';
-import { BigQueryTypeParser } from '#blockml/functions/schema-parse/parse-bigquery-type';
-import { DatabricksTypeParser } from '#blockml/functions/schema-parse/parse-databricks-type';
-import { TrinoPrestoSchemaParser } from '#blockml/functions/schema-parse/parse-trino-type';
+import { BigQueryTypeParser } from '#blockml/classes/parse-bigquery-type';
+import { DatabricksTypeParser } from '#blockml/classes/parse-databricks-type';
+import { TrinoPrestoSchemaParser } from '#blockml/classes/parse-trino-type';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { RawSchemaColumn } from '#common/zod/backend/connection-schemas/raw-schema';
