@@ -5,7 +5,7 @@ import type { DiskConfig } from '#disk/config/disk-config';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { appServices } from './app-services';
 import { getConfig } from './config/get.config';
-import { logToConsoleDisk } from './functions/log-to-console-disk';
+import { logToConsoleDisk } from './functions/top/log-to-console-disk/log-to-console-disk';
 
 let devConfig = getConfig(); // check error once
 

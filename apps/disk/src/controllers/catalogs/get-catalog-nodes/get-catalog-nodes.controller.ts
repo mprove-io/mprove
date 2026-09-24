@@ -1,6 +1,6 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import type { ToDiskGetCatalogNodesResponse } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
-import { handleHttpRequest } from '#disk/functions/handle-http-request';
+import { handleHttpRequest } from '#disk/functions/top/handle-http-request/handle-http-request';
 import { GetCatalogNodesService } from './get-catalog-nodes.service';
 
 @Controller()

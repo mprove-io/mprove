@@ -14,8 +14,8 @@ import type { ToDiskPullRepoRequest } from '#common/zod/disk/routes/repos/pull-r
 import type { ToDiskPullRepoResponse } from '#common/zod/disk/routes/repos/pull-repo/pull-repo-response';
 import type { ToDiskPushRepoRequest } from '#common/zod/disk/routes/repos/push-repo/push-repo-request';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
-import { prepareTest } from '#disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
+import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 
 let testId = 'disk-pull-repo__force-need-push';
 

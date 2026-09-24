@@ -11,8 +11,8 @@ import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/orgs/create
 import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/projects/create-project/create-project-request';
 import type { ToDiskPushRepoRequest } from '#common/zod/disk/routes/repos/push-repo/push-repo-request';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
-import { prepareTest } from '#disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
+import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 
 let testId = 'disk-delete-branch__remote';
 

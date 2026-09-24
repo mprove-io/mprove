@@ -10,8 +10,8 @@ import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/project
 import type { ToDiskRevertRepoToLastCommitRequest } from '#common/zod/disk/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
 import type { ToDiskRevertRepoToLastCommitResponse } from '#common/zod/disk/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
-import { prepareTest } from '#disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
+import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 
 let testId = 'disk-revert-repo-to-last-commit__ok';
 

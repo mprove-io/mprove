@@ -5,8 +5,8 @@ import { zToDiskOperationRegistry } from '#common/zod/disk/request/to-disk-opera
 import type { ToDiskRequestForOperation } from '#common/zod/disk/request/to-disk-request-for-operation';
 import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
 import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
-import { makeInvalidRequestResponse } from '#disk/functions/make-invalid-request-response';
-import { processValidatedRequest } from '#disk/functions/process-validated-request';
+import { makeInvalidRequestResponse } from '#disk/functions/top/make-invalid-request-response/make-invalid-request-response';
+import { processValidatedRequest } from '#disk/functions/top/process-validated-request/process-validated-request';
 
 export async function handleHttpRequest<
   TOperation extends ToDiskOperation

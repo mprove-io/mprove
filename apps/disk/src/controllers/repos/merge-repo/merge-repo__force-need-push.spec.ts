@@ -13,8 +13,8 @@ import type { ToDiskCommitRepoRequest } from '#common/zod/disk/routes/repos/comm
 import type { ToDiskMergeRepoRequest } from '#common/zod/disk/routes/repos/merge-repo/merge-repo-request';
 import type { ToDiskMergeRepoResponse } from '#common/zod/disk/routes/repos/merge-repo/merge-repo-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
-import { prepareTest } from '#disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
+import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 
 let testId = 'disk-merge-repo__force-need-push';
 

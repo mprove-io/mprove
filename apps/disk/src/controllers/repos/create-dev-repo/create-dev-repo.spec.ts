@@ -9,8 +9,8 @@ import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/project
 import type { ToDiskCreateDevRepoRequest } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-request';
 import type { ToDiskCreateDevRepoResponse } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
-import { prepareTest } from '#disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
+import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 
 let testId = 'disk-create-dev-repo';
 

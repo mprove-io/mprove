@@ -4,8 +4,8 @@ import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/orgs/create
 import type { ToDiskDeleteOrgRequest } from '#common/zod/disk/routes/orgs/delete-org/delete-org-request';
 import type { ToDiskIsOrgExistRequest } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-request';
 import type { ToDiskIsOrgExistResponse } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-response';
-import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
-import { prepareTest } from '#disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
+import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 
 let testId = 'disk-delete-org';
 

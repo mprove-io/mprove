@@ -41,8 +41,8 @@ import { RevertRepoToRemoteService } from '#disk/controllers/repos/revert-repo-t
 import { SyncRepoService } from '#disk/controllers/repos/sync-repo/sync-repo.service';
 import { SeedProjectService } from '#disk/controllers/seed/seed-project/seed-project.service';
 import { CloneTestRepoService } from '#disk/controllers/test-repos/clone-test-repo/clone-test-repo.service';
-import { makeInvalidRequestResponse } from '#disk/functions/make-invalid-request-response';
-import { processValidatedRequest } from '#disk/functions/process-validated-request';
+import { makeInvalidRequestResponse } from '#disk/functions/top/make-invalid-request-response/make-invalid-request-response';
+import { processValidatedRequest } from '#disk/functions/top/process-validated-request/process-validated-request';
 
 @Injectable()
 export class MessageService {

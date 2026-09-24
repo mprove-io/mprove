@@ -1,6 +1,6 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import type { ToDiskRevertRepoToLastCommitResponse } from '#common/zod/disk/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
-import { handleHttpRequest } from '#disk/functions/handle-http-request';
+import { handleHttpRequest } from '#disk/functions/top/handle-http-request/handle-http-request';
 import { RevertRepoToLastCommitService } from './revert-repo-to-last-commit.service';
 
 @Controller()

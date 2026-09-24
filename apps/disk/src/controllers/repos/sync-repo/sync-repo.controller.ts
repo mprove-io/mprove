@@ -1,6 +1,6 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import type { ToDiskSyncRepoResponse } from '#common/zod/disk/routes/repos/sync-repo/sync-repo-response';
-import { handleHttpRequest } from '#disk/functions/handle-http-request';
+import { handleHttpRequest } from '#disk/functions/top/handle-http-request/handle-http-request';
 import { SyncRepoService } from './sync-repo.service';
 
 @Controller()

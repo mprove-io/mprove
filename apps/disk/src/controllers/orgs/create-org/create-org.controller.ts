@@ -1,6 +1,6 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import type { ToDiskCreateOrgResponse } from '#common/zod/disk/routes/orgs/create-org/create-org-response';
-import { handleHttpRequest } from '#disk/functions/handle-http-request';
+import { handleHttpRequest } from '#disk/functions/top/handle-http-request/handle-http-request';
 import { CreateOrgService } from './create-org.service';
 
 @Controller()

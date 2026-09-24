@@ -10,8 +10,8 @@ import type { ToDiskDeleteProjectRequest } from '#common/zod/disk/routes/project
 import type { ToDiskIsProjectExistRequest } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-request';
 import type { ToDiskIsProjectExistResponse } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
-import { prepareTest } from '#disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
+import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 
 let testId = 'disk-delete-project';
 

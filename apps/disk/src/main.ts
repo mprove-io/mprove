@@ -17,7 +17,7 @@ import { listenProcessEvents } from '#node-common/functions/listen-process-event
 import { AppModule } from './app.module';
 import { getConfig } from './config/get.config';
 import { checkSymlinksInDir } from './functions/disk/check-symlinks-in-dir/check-symlinks-in-dir';
-import { logToConsoleDisk } from './functions/log-to-console-disk';
+import { logToConsoleDisk } from './functions/top/log-to-console-disk/log-to-console-disk';
 
 async function bootstrap(): Promise<void> {
   listenProcessEvents({

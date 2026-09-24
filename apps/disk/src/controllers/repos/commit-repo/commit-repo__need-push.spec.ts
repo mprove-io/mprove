@@ -10,8 +10,8 @@ import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/project
 import type { ToDiskCommitRepoRequest } from '#common/zod/disk/routes/repos/commit-repo/commit-repo-request';
 import type { ToDiskCommitRepoResponse } from '#common/zod/disk/routes/repos/commit-repo/commit-repo-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
-import { prepareTest } from '#disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
+import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 
 let testId = 'disk-commit-repo__need-push';
 
