@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { log } from '#blockml/functions/extra/log';
+import { log } from '#blockml/functions/log/log';
 import type { FilePartTileExtra } from '#blockml/types/file-part-tile-extra';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';

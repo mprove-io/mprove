@@ -1,7 +1,7 @@
 import type { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import type { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
 import { Result } from '@praha/byethrow';
-import { parseTags } from '#blockml/functions/extra/parse-tags';
+import { parseTags } from '#blockml/functions/parse-tags/parse-tags';
 import { MF, UNCATEGORIZED_SPACE_TITLE } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';

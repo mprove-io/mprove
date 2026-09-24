@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { getSpaceFromFilePath } from '#blockml/functions/extra/get-space-from-file-path';
-import { log } from '#blockml/functions/extra/log';
+import { getSpaceFromFilePath } from '#blockml/functions/get-space-from-file-path/get-space-from-file-path';
+import { log } from '#blockml/functions/log/log';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';

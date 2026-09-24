@@ -2,7 +2,7 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { log } from '#blockml/functions/extra/log';
+import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import type { CallerEnum } from '#common/enums/special/caller.enum';

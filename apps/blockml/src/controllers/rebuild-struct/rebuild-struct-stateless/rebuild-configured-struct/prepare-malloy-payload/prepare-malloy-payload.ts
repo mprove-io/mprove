@@ -1,7 +1,7 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { prePopulateMalloySchemaCache } from '#blockml/functions/schema-parse/pre-populate-malloy-schema-cache';
+import { prePopulateMalloySchemaCache } from '#blockml/controllers/rebuild-struct/rebuild-struct-stateless/rebuild-configured-struct/prepare-malloy-payload/pre-populate-malloy-schema-cache/pre-populate-malloy-schema-cache';
 import { makeId } from '#common/functions/make-id';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { BmlFile } from '#common/zod/blockml/bml-file';

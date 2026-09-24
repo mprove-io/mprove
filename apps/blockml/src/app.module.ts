@@ -4,6 +4,8 @@ import { Result } from '@praha/byethrow';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { collectFiles } from '#blockml/functions/collect-files/collect-files';
+import { logToConsoleBlockml } from '#blockml/functions/log-to-console-blockml/log-to-console-blockml';
 import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -16,8 +18,6 @@ import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator
 import { appServices } from './app-services';
 import { BmError } from './classes/bm-error';
 import { getConfig } from './config/get.config';
-import { collectFiles } from './functions/extra/collect-files';
-import { logToConsoleBlockml } from './functions/log-to-console-blockml';
 import { makeLineNumbers } from './functions/make-line-numbers/make-line-numbers';
 import { yamlToObjects } from './functions/yaml-to-objects/yaml-to-objects';
 import { PresetsService } from './services/presets.service';

@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { checkFilterConditions } from '#blockml/functions/extra/check-filter-conditions';
-import { log } from '#blockml/functions/extra/log';
+import { checkFilterConditions } from '#blockml/functions/check-filter-conditions/check-filter-conditions';
+import { log } from '#blockml/functions/log/log';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';

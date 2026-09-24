@@ -1,8 +1,8 @@
 import type { ConfigService } from '@nestjs/config';
 import { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { log } from '#blockml/functions/extra/log';
-import { parseTags } from '#blockml/functions/extra/parse-tags';
+import { log } from '#blockml/functions/log/log';
+import { parseTags } from '#blockml/functions/parse-tags/parse-tags';
 import { MPROVE_TAG_FIELD_GROUP } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import type { CallerEnum } from '#common/enums/special/caller.enum';

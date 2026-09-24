@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { log } from '#blockml/functions/extra/log';
+import { log } from '#blockml/functions/log/log';
 import {
   METRIC_ID_BY,
   MF,

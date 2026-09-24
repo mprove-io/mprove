@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { checkAccess } from '#blockml/functions/extra/check-access';
-import { log } from '#blockml/functions/extra/log';
+import { checkAccess } from '#blockml/functions/check-access/check-access';
+import { log } from '#blockml/functions/log/log';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';

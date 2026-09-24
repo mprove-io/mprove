@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import { BmError } from '#blockml/classes/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { checkStoreFraction } from '#blockml/functions/extra/check-store-fraction';
-import { checkStoreFractionControls } from '#blockml/functions/extra/check-store-fraction-controls';
-import { checkStoreFractionControlsUse } from '#blockml/functions/extra/check-store-fraction-controls-use';
-import { log } from '#blockml/functions/extra/log';
+import { checkStoreFraction } from '#blockml/functions/check-store-fraction/check-store-fraction';
+import { checkStoreFractionControls } from '#blockml/functions/check-store-fraction-controls/check-store-fraction-controls';
+import { checkStoreFractionControlsUse } from '#blockml/functions/check-store-fraction-controls-use/check-store-fraction-controls-use';
+import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';

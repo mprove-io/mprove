@@ -3,7 +3,7 @@ import { Result } from '@praha/byethrow';
 import { load } from 'js-yaml';
 import { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { log } from '#blockml/functions/extra/log';
+import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex';
 import { LINE_NUM_END, LINE_NUM_START } from '#common/constants/top-blockml';
 import type { CallerEnum } from '#common/enums/special/caller.enum';

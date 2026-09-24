@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import { handleHttpRequest } from '#blockml/functions/handle-http-request';
+import { handleHttpRequest } from '#blockml/controllers/rebuild-struct/handle-http-request/handle-http-request';
 import type { ToBlockmlRebuildStructResponse } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
 import { RebuildStructService } from './rebuild-struct.service';
 

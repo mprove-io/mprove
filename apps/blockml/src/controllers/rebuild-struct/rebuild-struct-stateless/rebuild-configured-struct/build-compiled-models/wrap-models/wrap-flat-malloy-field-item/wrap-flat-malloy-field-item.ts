@@ -1,5 +1,5 @@
 import type { AtomicType } from '@malloydata/malloy-interfaces';
-import { parseTags } from '#blockml/functions/extra/parse-tags';
+import { parseTags } from '#blockml/functions/parse-tags/parse-tags';
 import {
   DOUBLE_UNDERSCORE,
   MPROVE_TAG_FIELD_GROUP,

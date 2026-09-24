@@ -2,7 +2,7 @@ import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { buildField } from '#blockml/functions/build-field/_build-field';
+import { buildField } from '#blockml/functions/build-field/build-field';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { BmlFile } from '#common/zod/blockml/bml-file';

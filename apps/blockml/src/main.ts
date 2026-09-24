@@ -8,13 +8,13 @@ let tracerNodeSdk = startTelemetry({
 //
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
+import { logToConsoleBlockml } from '#blockml/functions/log-to-console-blockml/log-to-console-blockml';
 import { APP_NAME_BLOCKML } from '#common/constants/top-blockml';
 import { ErEnum } from '#common/enums/er.enum';
 import { getLoggerOptions } from '#node-common/functions/get-logger-options';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events';
 import { AppModule } from './app.module';
 import { getConfig } from './config/get.config';
-import { logToConsoleBlockml } from './functions/log-to-console-blockml';
 
 async function bootstrap() {
   listenProcessEvents({
