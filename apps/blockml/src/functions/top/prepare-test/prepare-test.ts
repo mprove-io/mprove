@@ -7,7 +7,7 @@ import { appServices } from '#blockml/app-services';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { getConfig } from '#blockml/config/get.config';
 import { RebuildStructService } from '#blockml/controllers/rebuild-struct/rebuild-struct.service';
-import { ConsumerService } from '#blockml/services/consumer.service';
+import { ConsumerService } from '#blockml/services/consumer/consumer.service';
 import { APP_NAME_BLOCKML } from '#common/constants/top-blockml';
 import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
 import type { CallerEnum } from '#common/enums/special/caller.enum';

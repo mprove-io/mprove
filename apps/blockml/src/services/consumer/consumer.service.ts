@@ -6,7 +6,7 @@ import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
 import type { ToBlockmlInvalidRequestErrorResponse } from '#common/zod/blockml/response/to-blockml-invalid-request-error-response';
 import type { ToBlockmlOperationResponse } from '#common/zod/blockml/response/to-blockml-operation-response';
-import { MessageService } from './message.service';
+import { MessageService } from '../message/message.service';
 @Injectable()
 export class ConsumerService {
   redisClient: Redis;

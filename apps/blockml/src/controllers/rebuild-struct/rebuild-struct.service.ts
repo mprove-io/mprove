@@ -8,8 +8,8 @@ import { wrapDashboards } from '#blockml/controllers/rebuild-struct/wrap-dashboa
 import { wrapErrors } from '#blockml/controllers/rebuild-struct/wrap-errors/wrap-errors';
 import { wrapReports } from '#blockml/controllers/rebuild-struct/wrap-reports/wrap-reports';
 import { collectFiles } from '#blockml/functions/collect-files/collect-files';
-import { BlockmlTabService } from '#blockml/services/blockml-tab.service';
-import { PresetsService } from '#blockml/services/presets.service';
+import { BlockmlTabService } from '#blockml/services/blockml-tab/blockml-tab.service';
+import { PresetsService } from '#blockml/services/presets/presets.service';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
 import { ServerError } from '#common/classes/server-error';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';

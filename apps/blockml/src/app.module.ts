@@ -20,7 +20,7 @@ import { BmError } from './classes/bm-error';
 import { getConfig } from './config/get.config';
 import { makeLineNumbers } from './functions/make-line-numbers/make-line-numbers';
 import { yamlToObjects } from './functions/yaml-to-objects/yaml-to-objects';
-import { PresetsService } from './services/presets.service';
+import { PresetsService } from './services/presets/presets.service';
 
 let devConfig = getConfig(); // check error once
 

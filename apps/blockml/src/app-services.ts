@@ -2,10 +2,10 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { RebuildStructService } from './controllers/rebuild-struct/rebuild-struct.service';
-import { BlockmlTabService } from './services/blockml-tab.service';
-import { ConsumerService } from './services/consumer.service';
-import { MessageService } from './services/message.service';
-import { PresetsService } from './services/presets.service';
+import { BlockmlTabService } from './services/blockml-tab/blockml-tab.service';
+import { ConsumerService } from './services/consumer/consumer.service';
+import { MessageService } from './services/message/message.service';
+import { PresetsService } from './services/presets/presets.service';
 
 export const appServices = [
   BlockmlTabService,
