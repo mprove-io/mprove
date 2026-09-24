@@ -1,5 +1,5 @@
 import test from 'ava';
-import { prepareTest } from '#blockml/functions/prepare-test/prepare-test';
+import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';

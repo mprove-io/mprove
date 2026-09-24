@@ -1,7 +1,7 @@
 import type { Logger } from '@nestjs/common';
 import { z } from 'zod';
-import { makeInvalidRequestResponse } from '#blockml/functions/make-invalid-request-response/make-invalid-request-response';
-import { processValidatedRequest } from '#blockml/functions/process-validated-request/process-validated-request';
+import { makeInvalidRequestResponse } from '#blockml/functions/top/make-invalid-request-response/make-invalid-request-response';
+import { processValidatedRequest } from '#blockml/functions/top/process-validated-request/process-validated-request';
 import type { ToBlockmlOperation } from '#common/zod/blockml/request/to-blockml-operation';
 import { zToBlockmlOperationRegistry } from '#common/zod/blockml/request/to-blockml-operation-registry';
 import type { ToBlockmlRequestForOperation } from '#common/zod/blockml/request/to-blockml-request-for-operation';

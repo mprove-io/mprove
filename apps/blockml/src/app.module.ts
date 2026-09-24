@@ -5,7 +5,7 @@ import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { collectFiles } from '#blockml/functions/collect-files/collect-files';
-import { logToConsoleBlockml } from '#blockml/functions/log-to-console-blockml/log-to-console-blockml';
+import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { ServerError } from '#common/classes/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';

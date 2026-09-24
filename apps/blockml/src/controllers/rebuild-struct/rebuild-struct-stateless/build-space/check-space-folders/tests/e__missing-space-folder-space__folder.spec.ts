@@ -1,8 +1,8 @@
 import test from 'ava';
 import fse from 'fs-extra';
 import type { BmError } from '#blockml/classes/bm-error';
-import { prepareTest } from '#blockml/functions/prepare-test/prepare-test';
 import { readLog } from '#blockml/functions/read-log/read-log';
+import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';

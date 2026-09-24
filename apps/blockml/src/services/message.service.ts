@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import type { z } from 'zod';
 import { RebuildStructService } from '#blockml/controllers/rebuild-struct/rebuild-struct.service';
-import { makeInvalidRequestResponse } from '#blockml/functions/make-invalid-request-response/make-invalid-request-response';
-import { processValidatedRequest } from '#blockml/functions/process-validated-request/process-validated-request';
+import { makeInvalidRequestResponse } from '#blockml/functions/top/make-invalid-request-response/make-invalid-request-response';
+import { processValidatedRequest } from '#blockml/functions/top/process-validated-request/process-validated-request';
 import { METHOD_RPC } from '#common/constants/top';
 import {
   type ToBlockmlOperation,
