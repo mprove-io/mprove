@@ -1,32 +1,34 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { dcType } from '#common/types/dc-type';
+import type { dcType } from '#common/types/dc-type';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 
 let func = FuncEnum.CheckSelectElements;
 
-export function checkSelectElements<T extends dcType>(
-  item: {
-    entities: T[];
-    apiModels: Model[];
-    stores: FileStore[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
+export function checkSelectElements<T extends dcType>(item: {
+  entities: T[];
+  apiModels: Model[];
+  stores: FileStore[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<T[], never> {
+  let { cs, ...input } = item;
+
   let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, input);
 
   let newEntities: T[] = [];
 
@@ -83,7 +85,8 @@ export function checkSelectElements<T extends dcType>(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
 
-  return newEntities;
+  return Result.succeed(newEntities);
 }

@@ -1,9 +1,10 @@
-import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { BmError } from '#blockml/classes/bm-error';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { checkTopParameters } from '#blockml/functions/check-top-parameters/check-top-parameters';
 import { log } from '#blockml/functions/log/log';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
@@ -11,18 +12,19 @@ import type { FileStore } from '#common/zod/blockml/internal/file-store';
 
 let func = FuncEnum.CheckReportTopParameters;
 
-export function checkReportTopParameters(
-  item: {
-    reports: FileReport[];
-    stores: FileStore[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
+export function checkReportTopParameters(item: {
+  reports: FileReport[];
+  stores: FileStore[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FileReport[], never> {
+  let { cs, ...input } = item;
+
   let { caller, structId, stores } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, input);
 
   let newReports: FileReport[] = [];
 
@@ -49,7 +51,8 @@ export function checkReportTopParameters(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Entities, newReports);
 
-  return newReports;
+  return Result.succeed(newReports);
 }

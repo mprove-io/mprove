@@ -1,20 +1,21 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import asyncPool from 'tiny-async-pool';
-import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BmError } from '#blockml/classes/bm-error';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import type { FilePartTileExtra } from '#blockml/types/file-part-tile-extra';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import type { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { makeCopy } from '#common/functions/make-copy';
 import { makeId } from '#common/functions/make-id';
-import { dcType } from '#common/types/dc-type';
+import type { dcType } from '#common/types/dc-type';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { QueryOperation } from '#common/zod/backend/query-operation';
 import type { SelectedGiven } from '#common/zod/backend/selected-given';
@@ -25,33 +26,34 @@ import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { Model } from '#common/zod/blockml/model';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
-import { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
 import { makeMalloyQuery } from '#node-common/functions/make-malloy-query';
 
 let func = FuncEnum.FetchSql;
 
-export async function fetchSql<T extends dcType>(
-  item: {
-    envId: string;
-    projectId: string;
-    entities: T[];
-    mconfigParentType: MconfigParentTypeEnum;
-    apiModels: Model[];
-    malloyConnections: MalloyConnection[];
-    projectConnections: ProjectConnection[];
-    weekStart: ProjectWeekStartEnum;
-    timezone: string;
-    caseSensitiveStringFilters: boolean;
-    selectedGivens: SelectedGiven[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
+export async function fetchSql<T extends dcType>(item: {
+  envId: string;
+  projectId: string;
+  entities: T[];
+  mconfigParentType: MconfigParentTypeEnum;
+  apiModels: Model[];
+  malloyConnections: MalloyConnection[];
+  projectConnections: ProjectConnection[];
+  weekStart: ProjectWeekStartEnum;
+  timezone: string;
+  caseSensitiveStringFilters: boolean;
+  selectedGivens: SelectedGiven[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.ResultAsync<T[], never> {
+  let { cs, ...input } = item;
+
   let { caller, structId, timezone, envId, projectId, mconfigParentType } =
     item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, input);
 
   let tiles: FilePartTileExtra[] = [];
 
@@ -191,7 +193,8 @@ export async function fetchSql<T extends dcType>(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Entities, item.entities);
 
-  return item.entities;
+  return Result.succeed(item.entities);
 }

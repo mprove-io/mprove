@@ -1,32 +1,34 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { dcType } from '#common/types/dc-type';
+import type { dcType } from '#common/types/dc-type';
 import type { FileChartData } from '#common/zod/blockml/internal/file-chart-data';
 
 let func = FuncEnum.CheckChartData;
 
-export function checkChartData<T extends dcType>(
-  item: {
-    entities: T[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+export function checkChartData<T extends dcType>(item: {
+  entities: T[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<T[], never> {
+  let { cs, ...input } = item;
+
+  let { caller, structId } = input;
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, input);
 
   let newEntities: T[] = [];
 
@@ -133,7 +135,8 @@ export function checkChartData<T extends dcType>(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
 
-  return newEntities;
+  return Result.succeed(newEntities);
 }

@@ -1,13 +1,14 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex';
 import { ROW_TYPE_VALUES } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
@@ -18,18 +19,19 @@ import type { ModelMetric } from '#common/zod/blockml/model-metric';
 
 let func = FuncEnum.CheckReportRow;
 
-export function checkReportRow(
-  item: {
-    reports: FileReport[];
-    metrics: ModelMetric[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
+export function checkReportRow(item: {
+  reports: FileReport[];
+  metrics: ModelMetric[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FileReport[], never> {
+  let { cs, ...input } = item;
+
   let { caller, structId, metrics } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, input);
 
   let newReports: FileReport[] = [];
 
@@ -193,7 +195,8 @@ export function checkReportRow(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Entities, newReports);
 
-  return newReports;
+  return Result.succeed(newReports);
 }

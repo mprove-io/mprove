@@ -1,6 +1,7 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { checkStoreFraction } from '#blockml/functions/check-store-fraction/check-store-fraction';
 import { checkStoreFractionControls } from '#blockml/functions/check-store-fraction-controls/check-store-fraction-controls';
 import { checkStoreFractionControlsUse } from '#blockml/functions/check-store-fraction-controls-use/check-store-fraction-controls-use';
@@ -10,7 +11,7 @@ import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
@@ -27,19 +28,19 @@ import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
 
 let func = FuncEnum.CheckReportRowParameters;
 
-export function checkReportRowParameters(
-  item: {
-    caseSensitiveStringFilters: boolean;
-    reports: FileReport[];
-    metrics: ModelMetric[];
-    apiModels: Model[];
-    stores: FileStore[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
+export function checkReportRowParameters(item: {
+  caseSensitiveStringFilters: boolean;
+  reports: FileReport[];
+  metrics: ModelMetric[];
+  apiModels: Model[];
+  stores: FileStore[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FileReport[], never> {
+  let { cs, ...input } = item;
+
   let {
     caller,
     structId,
@@ -48,7 +49,8 @@ export function checkReportRowParameters(
     stores,
     caseSensitiveStringFilters
   } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, input);
 
   let newReports: FileReport[] = [];
 
@@ -585,7 +587,8 @@ export function checkReportRowParameters(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Entities, newReports);
 
-  return newReports;
+  return Result.succeed(newReports);
 }

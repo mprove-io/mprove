@@ -1,29 +1,31 @@
-import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { BmError } from '#blockml/classes/bm-error';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { checkFilterConditions } from '#blockml/functions/check-filter-conditions/check-filter-conditions';
 import { log } from '#blockml/functions/log/log';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
 
 let func = FuncEnum.CheckDashboardFilterConditions;
 
-export function checkDashboardFilterConditions(
-  item: {
-    dashboards: FileDashboard[];
-    errors: BmError[];
-    structId: string;
-    caseSensitiveStringFilters: boolean;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId, caseSensitiveStringFilters } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+export function checkDashboardFilterConditions(item: {
+  dashboards: FileDashboard[];
+  errors: BmError[];
+  structId: string;
+  caseSensitiveStringFilters: boolean;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FileDashboard[], never> {
+  let { cs, ...input } = item;
 
-  let newDashboards = checkFilterConditions(
+  let { caller, structId, caseSensitiveStringFilters } = input;
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, input);
+
+  let newDashboards: FileDashboard[] = checkFilterConditions(
     {
       entities: item.dashboards,
       errors: item.errors,
@@ -35,7 +37,8 @@ export function checkDashboardFilterConditions(
   );
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Ds, newDashboards);
 
-  return newDashboards;
+  return Result.succeed(newDashboards);
 }

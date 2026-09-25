@@ -22,69 +22,64 @@ export function buildDashboard(item: {
   caller: CallerEnum;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileDashboard[], never> {
-  let {
-    dashboards,
-    spaces,
-    stores,
-    errors,
-    structId,
-    caseSensitiveStringFilters,
-    caller,
-    cs
-  } = item;
-
-  dashboards = checkDashboardAccess(
-    {
-      dashboards: dashboards,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind(
+      'accessCheckedDashboards',
+      (v): Result.Result<FileDashboard[], never> =>
+        checkDashboardAccess({
+          dashboards: v.dashboards,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'topParametersCheckedDashboards',
+      (v): Result.Result<FileDashboard[], never> =>
+        checkDashboardTopParameters({
+          dashboards: v.accessCheckedDashboards,
+          stores: v.stores,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'filterConditionsCheckedDashboards',
+      (v): Result.Result<FileDashboard[], never> =>
+        checkDashboardFilterConditions({
+          dashboards: v.topParametersCheckedDashboards,
+          structId: v.structId,
+          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'tilesCheckedDashboards',
+      (v): Result.Result<FileDashboard[], never> =>
+        checkDashboardTilesExist({
+          dashboards: v.filterConditionsCheckedDashboards,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.andThen(
+      (v): Result.Result<FileDashboard[], never> =>
+        makeDashboardAccessRolesCombined({
+          dashboards: v.tilesCheckedDashboards,
+          spaces: v.spaces,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    )
   );
-
-  dashboards = checkDashboardTopParameters(
-    {
-      dashboards: dashboards,
-      stores: stores,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  dashboards = checkDashboardFilterConditions(
-    {
-      dashboards: dashboards,
-      structId: structId,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  dashboards = checkDashboardTilesExist(
-    {
-      dashboards: dashboards,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  dashboards = makeDashboardAccessRolesCombined(
-    {
-      dashboards: dashboards,
-      spaces: spaces,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  return Result.succeed(dashboards);
 }

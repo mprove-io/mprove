@@ -24,94 +24,109 @@ export function buildMconfigChart<T extends drcType>(item: {
   caller: CallerEnum;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<T[], never> {
-  let { entities, apiModels, stores, errors, structId, caller, cs } = item;
-
-  if (
-    caller === CallerEnum.BuildDashboardTileCharts ||
-    caller === CallerEnum.BuildChartTileCharts
-  ) {
-    entities = checkChartType(
-      {
-        entities: entities,
-        structId: structId,
-        errors: errors,
-        caller: caller
-      },
-      cs
-    );
-
-    entities = checkChartData(
-      {
-        entities: entities,
-        structId: structId,
-        errors: errors,
-        caller: caller
-      },
-      cs
-    );
-
-    entities = checkChartDataParameters(
-      {
-        entities: entities,
-        apiModels: apiModels,
-        stores: stores,
-        structId: structId,
-        errors: errors,
-        caller: caller
-      },
-      cs
-    );
-
-    entities = checkChartPlateParameters(
-      {
-        entities: entities,
-        structId: structId,
-        errors: errors,
-        caller: caller
-      },
-      cs
-    );
-  }
-
-  entities = checkChartOptionsParameters(
-    {
-      entities: entities,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
+  return Result.pipe(
+    Result.succeed({
+      ...item,
+      isTileCharts:
+        item.caller === CallerEnum.BuildDashboardTileCharts ||
+        item.caller === CallerEnum.BuildChartTileCharts
+    }),
+    Result.bind(
+      'typeCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        v.isTileCharts
+          ? checkChartType({
+              entities: v.entities,
+              structId: v.structId,
+              errors: v.errors,
+              caller: v.caller,
+              cs: v.cs
+            })
+          : Result.succeed(v.entities)
+    ),
+    Result.bind(
+      'dataCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        v.isTileCharts
+          ? checkChartData({
+              entities: v.typeCheckedEntities,
+              structId: v.structId,
+              errors: v.errors,
+              caller: v.caller,
+              cs: v.cs
+            })
+          : Result.succeed(v.typeCheckedEntities)
+    ),
+    Result.bind(
+      'dataParametersCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        v.isTileCharts
+          ? checkChartDataParameters({
+              entities: v.dataCheckedEntities,
+              apiModels: v.apiModels,
+              stores: v.stores,
+              structId: v.structId,
+              errors: v.errors,
+              caller: v.caller,
+              cs: v.cs
+            })
+          : Result.succeed(v.dataCheckedEntities)
+    ),
+    Result.bind(
+      'plateParametersCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        v.isTileCharts
+          ? checkChartPlateParameters({
+              entities: v.dataParametersCheckedEntities,
+              structId: v.structId,
+              errors: v.errors,
+              caller: v.caller,
+              cs: v.cs
+            })
+          : Result.succeed(v.dataParametersCheckedEntities)
+    ),
+    Result.bind(
+      'optionsParametersCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        checkChartOptionsParameters({
+          entities: v.plateParametersCheckedEntities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'xAxisParametersCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        checkChartOptionsXAxisParameters({
+          entities: v.optionsParametersCheckedEntities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'yAxisParametersCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        checkChartOptionsYAxisParameters({
+          entities: v.xAxisParametersCheckedEntities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.andThen(
+      (v): Result.Result<T[], never> =>
+        checkChartOptionsSeriesParameters({
+          entities: v.yAxisParametersCheckedEntities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    )
   );
-
-  entities = checkChartOptionsXAxisParameters(
-    {
-      entities: entities,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  entities = checkChartOptionsYAxisParameters(
-    {
-      entities: entities,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  entities = checkChartOptionsSeriesParameters(
-    {
-      entities: entities,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  return Result.succeed(entities);
 }

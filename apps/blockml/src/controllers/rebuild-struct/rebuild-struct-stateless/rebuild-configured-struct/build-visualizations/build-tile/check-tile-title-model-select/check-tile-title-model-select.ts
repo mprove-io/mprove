@@ -1,17 +1,18 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { dcType } from '#common/types/dc-type';
+import type { dcType } from '#common/types/dc-type';
 import type { FileErrorLine } from '#common/zod/blockml/internal/file-error-line';
 import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
@@ -19,19 +20,20 @@ import type { Model } from '#common/zod/blockml/model';
 
 let func = FuncEnum.CheckTileTitleModelSelect;
 
-export function checkTileTitleModelSelect<T extends dcType>(
-  item: {
-    entities: T[];
-    stores: FileStore[];
-    apiModels: Model[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
+export function checkTileTitleModelSelect<T extends dcType>(item: {
+  entities: T[];
+  stores: FileStore[];
+  apiModels: Model[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<T[], never> {
+  let { cs, ...input } = item;
+
   let { caller, structId, apiModels } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, input);
 
   let newEntities: T[] = [];
 
@@ -154,7 +156,8 @@ export function checkTileTitleModelSelect<T extends dcType>(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
 
-  return newEntities;
+  return Result.succeed(newEntities);
 }

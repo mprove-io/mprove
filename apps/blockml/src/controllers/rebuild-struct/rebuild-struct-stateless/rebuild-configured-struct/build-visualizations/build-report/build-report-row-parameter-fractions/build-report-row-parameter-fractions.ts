@@ -1,8 +1,9 @@
-import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
+import type { BmError } from '#blockml/classes/bm-error';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -13,19 +14,20 @@ import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
 
 let func = FuncEnum.BuildReportRowParameterFractions;
 
-export function buildReportRowParameterFractions(
-  item: {
-    caseSensitiveStringFilters: boolean;
-    reports: FileReport[];
-    metrics: ModelMetric[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
+export function buildReportRowParameterFractions(item: {
+  caseSensitiveStringFilters: boolean;
+  reports: FileReport[];
+  metrics: ModelMetric[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FileReport[], never> {
+  let { cs, ...input } = item;
+
   let { caller, structId, metrics, caseSensitiveStringFilters } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, input);
 
   let newReports: FileReport[] = [];
 
@@ -76,7 +78,8 @@ export function buildReportRowParameterFractions(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Entities, newReports);
 
-  return newReports;
+  return Result.succeed(newReports);
 }

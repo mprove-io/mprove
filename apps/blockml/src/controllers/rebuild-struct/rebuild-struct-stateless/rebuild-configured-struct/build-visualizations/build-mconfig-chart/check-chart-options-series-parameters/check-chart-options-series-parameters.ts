@@ -1,6 +1,7 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MyRegex } from '#common/classes/my-regex';
 import { CHART_TYPE_VALUES } from '#common/constants/top';
@@ -13,24 +14,25 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
-import { drcType } from '#common/types/drc-type';
+import type { drcType } from '#common/types/drc-type';
 import type { FileChartOptionsSeriesElement } from '#common/zod/blockml/internal/file-chart-options-series';
 import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
 
 let func = FuncEnum.CheckChartOptionsSeriesParameters;
 
-export function checkChartOptionsSeriesParameters<T extends drcType>(
-  item: {
-    entities: T[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
-  log(cs, caller, func, structId, LogTypeEnum.Input, item);
+export function checkChartOptionsSeriesParameters<T extends drcType>(item: {
+  entities: T[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<T[], never> {
+  let { cs, ...input } = item;
+
+  let { caller, structId } = input;
+
+  log(cs, caller, func, structId, LogTypeEnum.Input, input);
 
   let newEntities: T[] = [];
 
@@ -319,7 +321,8 @@ export function checkChartOptionsSeriesParameters<T extends drcType>(
   });
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
+
   log(cs, caller, func, structId, LogTypeEnum.Entities, newEntities);
 
-  return newEntities;
+  return Result.succeed(newEntities);
 }

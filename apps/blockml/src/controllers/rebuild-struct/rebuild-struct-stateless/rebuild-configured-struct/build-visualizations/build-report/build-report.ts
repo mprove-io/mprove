@@ -32,138 +32,137 @@ export function buildReport(item: {
   caller: CallerEnum;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileReport[], never> {
-  let {
-    reports,
-    spaces,
-    metrics,
-    apiModels,
-    stores,
-    errors,
-    structId,
-    caseSensitiveStringFilters,
-    caller,
-    cs
-  } = item;
-
-  reports = checkReport(
-    {
-      reports: reports,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind(
+      'checkedReports',
+      (v): Result.Result<FileReport[], never> =>
+        checkReport({
+          reports: v.reports,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'accessCheckedReports',
+      (v): Result.Result<FileReport[], never> =>
+        checkReportAccess({
+          reports: v.checkedReports,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'topParametersCheckedReports',
+      (v): Result.Result<FileReport[], never> =>
+        checkReportTopParameters({
+          reports: v.accessCheckedReports,
+          stores: v.stores,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'filterConditionsCheckedReports',
+      (v): Result.Result<FileReport[], never> =>
+        checkReportFilterConditions({
+          reports: v.topParametersCheckedReports,
+          structId: v.structId,
+          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'rowUnknownParametersCheckedReports',
+      (v): Result.Result<FileReport[], never> =>
+        checkReportRowUnknownParameters({
+          reports: v.filterConditionsCheckedReports,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'rowUnknownParamsCheckedReports',
+      (v): Result.Result<FileReport[], never> =>
+        checkReportRowUnknownParams({
+          reports: v.rowUnknownParametersCheckedReports,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'rowCheckedReports',
+      (v): Result.Result<FileReport[], never> =>
+        checkReportRow({
+          reports: v.rowUnknownParamsCheckedReports,
+          metrics: v.metrics,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'rowIdsCheckedReports',
+      (v): Result.Result<FileReport[], never> =>
+        checkReportRowIds({
+          reports: v.rowCheckedReports,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'rowParametersCheckedReports',
+      (v): Result.Result<FileReport[], never> =>
+        checkReportRowParameters({
+          reports: v.rowIdsCheckedReports,
+          metrics: v.metrics,
+          apiModels: v.apiModels,
+          stores: v.stores,
+          structId: v.structId,
+          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'rowParameterFractionsBuiltReports',
+      (v): Result.Result<FileReport[], never> =>
+        buildReportRowParameterFractions({
+          reports: v.rowParametersCheckedReports,
+          metrics: v.metrics,
+          structId: v.structId,
+          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.andThen(
+      (v): Result.Result<FileReport[], never> =>
+        makeReportAccessRolesCombined({
+          reports: v.rowParameterFractionsBuiltReports,
+          spaces: v.spaces,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    )
   );
-
-  reports = checkReportAccess(
-    {
-      reports: reports,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  reports = checkReportTopParameters(
-    {
-      reports: reports,
-      stores: stores,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  reports = checkReportFilterConditions(
-    {
-      reports: reports,
-      structId: structId,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  reports = checkReportRowUnknownParameters(
-    {
-      reports: reports,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  reports = checkReportRowUnknownParams(
-    {
-      reports: reports,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  reports = checkReportRow(
-    {
-      reports: reports,
-      metrics: metrics,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  reports = checkReportRowIds(
-    {
-      reports: reports,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  reports = checkReportRowParameters(
-    {
-      reports: reports,
-      metrics: metrics,
-      apiModels: apiModels,
-      stores: stores,
-      structId: structId,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  reports = buildReportRowParameterFractions(
-    {
-      reports: reports,
-      metrics: metrics,
-      structId: structId,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  reports = makeReportAccessRolesCombined(
-    {
-      reports: reports,
-      spaces: spaces,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  return Result.succeed(reports);
 }

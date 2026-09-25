@@ -14,27 +14,28 @@ export function buildChart(item: {
   caller: CallerEnum;
   cs: ConfigService<BlockmlConfig>;
 }): Result.Result<FileChart[], never> {
-  let { charts, errors, structId, caller, cs } = item;
-
-  charts = checkChartAccess(
-    {
-      charts: charts,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind(
+      'accessCheckedCharts',
+      (v): Result.Result<FileChart[], never> =>
+        checkChartAccess({
+          charts: v.charts,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.andThen(
+      (v): Result.Result<FileChart[], never> =>
+        checkChartTilesExist({
+          charts: v.accessCheckedCharts,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    )
   );
-
-  charts = checkChartTilesExist(
-    {
-      charts: charts,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  return Result.succeed(charts);
 }

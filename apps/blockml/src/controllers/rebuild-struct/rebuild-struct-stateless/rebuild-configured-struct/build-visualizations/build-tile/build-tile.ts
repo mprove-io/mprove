@@ -20,7 +20,7 @@ import { checkTileTitleModelSelect } from './check-tile-title-model-select/check
 import { checkTileUnknownParameters } from './check-tile-unknown-parameters/check-tile-unknown-parameters';
 import { fetchSql } from './fetch-sql/fetch-sql';
 
-export async function buildTile<T extends dcType>(item: {
+export function buildTile<T extends dcType>(item: {
   envId: string;
   projectId: string;
   entities: T[];
@@ -38,122 +38,112 @@ export async function buildTile<T extends dcType>(item: {
   caller: CallerEnum;
   cs: ConfigService<BlockmlConfig>;
 }): Result.ResultAsync<T[], never> {
-  let {
-    envId,
-    projectId,
-    entities,
-    mconfigParentType,
-    stores,
-    apiModels,
-    malloyConnections,
-    projectConnections,
-    weekStart,
-    timezone,
-    caseSensitiveStringFilters,
-    selectedGivens,
-    errors,
-    structId,
-    caller,
-    cs
-  } = item;
-
-  entities = checkTileIsObject(
-    {
-      entities: entities,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind(
+      'objectCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        checkTileIsObject({
+          entities: v.entities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'unknownParametersCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        checkTileUnknownParameters({
+          entities: v.objectCheckedEntities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'titleModelSelectCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        checkTileTitleModelSelect({
+          entities: v.unknownParametersCheckedEntities,
+          apiModels: v.apiModels,
+          stores: v.stores,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'selectElementsCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        checkSelectElements({
+          entities: v.titleModelSelectCheckedEntities,
+          apiModels: v.apiModels,
+          stores: v.stores,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'sortsCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        checkSorts({
+          entities: v.selectElementsCheckedEntities,
+          apiModels: v.apiModels,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'limitCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        checkLimit({
+          entities: v.sortsCheckedEntities,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'parametersCheckedEntities',
+      (v): Result.Result<T[], never> =>
+        checkTileParameters({
+          entities: v.limitCheckedEntities,
+          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+          apiModels: v.apiModels,
+          stores: v.stores,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.andThen(
+      (v): Result.ResultAsync<T[], never> =>
+        fetchSql({
+          entities: v.parametersCheckedEntities,
+          mconfigParentType: v.mconfigParentType,
+          apiModels: v.apiModels,
+          malloyConnections: v.malloyConnections,
+          projectConnections: v.projectConnections,
+          weekStart: v.weekStart,
+          timezone: v.timezone,
+          caseSensitiveStringFilters: v.caseSensitiveStringFilters,
+          selectedGivens: v.selectedGivens,
+          envId: v.envId,
+          projectId: v.projectId,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    )
   );
-
-  entities = checkTileUnknownParameters(
-    {
-      entities: entities,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  entities = checkTileTitleModelSelect(
-    {
-      entities: entities,
-      apiModels: apiModels,
-      stores: stores,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  entities = checkSelectElements(
-    {
-      entities: entities,
-      apiModels: apiModels,
-      stores: stores,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  entities = checkSorts(
-    {
-      entities: entities,
-      apiModels: apiModels,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  entities = checkLimit(
-    {
-      entities: entities,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  entities = checkTileParameters(
-    {
-      entities: entities,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      apiModels: apiModels,
-      stores: stores,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  entities = await fetchSql(
-    {
-      entities: entities,
-      mconfigParentType: mconfigParentType,
-      apiModels: apiModels,
-      malloyConnections: malloyConnections,
-      projectConnections: projectConnections,
-      weekStart: weekStart,
-      timezone: timezone,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      selectedGivens: selectedGivens,
-      envId: envId,
-      projectId: projectId,
-      structId: structId,
-      errors: errors,
-      caller: caller
-    },
-    cs
-  );
-
-  return Result.succeed(entities);
 }
