@@ -14,11 +14,11 @@ import type {
 } from '#common/zod/to-backend/branches/to-backend-create-branch';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
-import { mreq } from '#mcli/functions/mreq';
-import { prepareTest } from '#mcli/functions/prepare-test';
-import { DeleteBranchCommand } from './delete-branch';
+import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
+import { DeleteBranchCommand } from './delete-branch.command';
 
 let testId = 'mcli__delete-branch__ok';
 

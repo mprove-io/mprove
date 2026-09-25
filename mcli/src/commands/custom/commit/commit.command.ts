@@ -1,35 +1,32 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { PROD_REPO_ID } from '#common/constants/top';
+import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type {
-  ToBackendGetBranchesListRequestPayload,
-  ToBackendGetBranchesListResponse
-} from '#common/zod/to-backend/branches/to-backend-get-branches-list';
+  ToBackendCommitRepoRequestPayload,
+  ToBackendCommitRepoResponse
+} from '#common/zod/to-backend/repos/to-backend-commit-repo';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { mreq } from '#mcli/functions/mreq';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 
-export class GetBranchesCommand extends CustomCommand {
-  static paths = [['get-branches']];
+export class CommitCommand extends CustomCommand {
+  static paths = [['commit']];
 
   static usage = Command.Usage({
-    description: 'Get branches',
+    description: 'Commit changes',
     examples: [
       [
-        'Get Dev repo branches',
-        'mprove get-branches --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev'
-      ],
-      [
-        'Get Production repo branches',
-        'mprove get-branches --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production'
+        'Commit changes for Dev repo',
+        'mprove commit --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --commit-message ms1'
       ]
     ]
   });
@@ -42,6 +39,20 @@ export class GetBranchesCommand extends CustomCommand {
     required: true,
     validator: t.isEnum(RepoTypeEnum),
     description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
+  });
+
+  branch = Option.String('--branch', {
+    required: true,
+    description: '(required) Git Branch'
+  });
+
+  commitMessage = Option.String('--commit-message', {
+    required: true,
+    description: '(required) Commit message'
+  });
+
+  getRepo = Option.Boolean('--get-repo', false, {
+    description: '(default false), show repo in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -76,22 +87,44 @@ export class GetBranchesCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getBranchesListReqPayload: ToBackendGetBranchesListRequestPayload = {
-      projectId: this.projectId
+    let commitRepoReqPayload: ToBackendCommitRepoRequestPayload = {
+      projectId: this.projectId,
+      repoId: repoId,
+      branchId: this.branch,
+      commitMessage: this.commitMessage
     };
 
-    let getBranchesListResp = await mreq<ToBackendGetBranchesListResponse>({
+    let commitRepoResp = await mreq<ToBackendCommitRepoResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
-      payload: getBranchesListReqPayload,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+      payload: commitRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
+    let builderUrl = getBuilderUrl({
+      host: this.context.config.mproveCliHost,
+      orgId: commitRepoResp.payload.repo.orgId,
+      projectId: this.projectId,
+      repoId: commitRepoResp.payload.repo.repoId,
+      branch: this.branch,
+      env: PROJECT_ENV_PROD
+    });
+
     let log: any = {
-      branches: getBranchesListResp.payload.branchesList
-        .filter(x => x.repoId === repoId)
-        .map(b => b.branchId)
+      message: `Created commit "${this.commitMessage}"`
     };
+
+    if (this.getRepo === true) {
+      let repo = commitRepoResp.payload.repo;
+
+      delete repo.nodes;
+      delete repo.changesToCommit;
+      delete repo.changesToPush;
+
+      log.repo = repo;
+    }
+
+    log.url = builderUrl;
 
     logToConsoleMcli({
       log: log,

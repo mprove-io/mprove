@@ -28,12 +28,12 @@ import type {
 import type { ToBackendCloneTestRepoResponse } from '#common/zod/to-backend/test-routes/to-backend-clone-test-repo';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { getTestLoginToken } from '#mcli/functions/get-test-login-token';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
-import { mreq } from '#mcli/functions/mreq';
-import { prepareTest } from '#mcli/functions/prepare-test';
-import { SyncCommand } from './sync';
+import { getTestLoginToken } from '#mcli/functions/get-test-login-token/get-test-login-token';
+import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
+import { SyncCommand } from './sync.command';
 
 let testId = 'mcli_sync__from-server';
 

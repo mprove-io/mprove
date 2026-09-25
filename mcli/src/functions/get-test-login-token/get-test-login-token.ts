@@ -3,7 +3,7 @@ import type {
   ToBackendLoginUserRequestPayload,
   ToBackendLoginUserResponse
 } from '#common/zod/to-backend/users/to-backend-login-user';
-import { mreq } from './mreq';
+import { mreq } from '#mcli/functions/mreq/mreq';
 
 export async function getTestLoginToken(item: {
   email: string;

@@ -1,32 +1,36 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
+import { PROD_REPO_ID } from '#common/constants/top';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type {
-  ToBackendCommitRepoRequestPayload,
-  ToBackendCommitRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-commit-repo';
+  ToBackendValidateFilesRequestPayload,
+  ToBackendValidateFilesResponse
+} from '#common/zod/to-backend/files/to-backend-validate-files';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { mreq } from '#mcli/functions/mreq';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload/process-validate-files-payload';
 
-export class CommitCommand extends CustomCommand {
-  static paths = [['commit']];
+export class ValidateCommand extends CustomCommand {
+  static paths = [['validate']];
 
   static usage = Command.Usage({
-    description: 'Commit changes',
+    description: 'Validate (rebuild) Mprove Files for selected env',
     examples: [
       [
-        'Commit changes for Dev repo',
-        'mprove commit --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --commit-message ms1'
+        'Validate Mprove Files for Dev repo, env prod',
+        'mprove validate --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod'
+      ],
+      [
+        'Validate Mprove Files for Production repo, env prod',
+        'mprove validate --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch main --env prod'
       ]
     ]
   });
@@ -46,13 +50,8 @@ export class CommitCommand extends CustomCommand {
     description: '(required) Git Branch'
   });
 
-  commitMessage = Option.String('--commit-message', {
-    required: true,
-    description: '(required) Commit message'
-  });
-
-  getRepo = Option.Boolean('--get-repo', false, {
-    description: '(default false), show repo in output'
+  env = Option.String('--env', 'prod', {
+    description: '(default "prod") Environment'
   });
 
   json = Option.Boolean('--json', false, {
@@ -87,44 +86,27 @@ export class CommitCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let commitRepoReqPayload: ToBackendCommitRepoRequestPayload = {
+    let validateFilesReqPayload: ToBackendValidateFilesRequestPayload = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
-      commitMessage: this.commitMessage
+      envId: this.env
     };
 
-    let commitRepoResp = await mreq<ToBackendCommitRepoResponse>({
+    let validateFilesResp = await mreq<ToBackendValidateFilesResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-      payload: commitRepoReqPayload,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+      payload: validateFilesReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let builderUrl = getBuilderUrl({
+    let log = processValidateFilesPayload({
+      payload: validateFilesResp.payload,
       host: this.context.config.mproveCliHost,
-      orgId: commitRepoResp.payload.repo.orgId,
       projectId: this.projectId,
-      repoId: commitRepoResp.payload.repo.repoId,
       branch: this.branch,
-      env: PROJECT_ENV_PROD
+      env: this.env
     });
-
-    let log: any = {
-      message: `Created commit "${this.commitMessage}"`
-    };
-
-    if (this.getRepo === true) {
-      let repo = commitRepoResp.payload.repo;
-
-      delete repo.nodes;
-      delete repo.changesToCommit;
-      delete repo.changesToPush;
-
-      log.repo = repo;
-    }
-
-    log.url = builderUrl;
 
     logToConsoleMcli({
       log: log,

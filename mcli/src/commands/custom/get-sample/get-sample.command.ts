@@ -11,8 +11,8 @@ import type {
 } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { mreq } from '#mcli/functions/mreq';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 
 export class GetSampleCommand extends CustomCommand {
   static paths = [['get-sample']];

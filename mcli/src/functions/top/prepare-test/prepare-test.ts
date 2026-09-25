@@ -12,7 +12,7 @@ import type {
 } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { McliConfig } from '#mcli/config/mcli-config';
-import { mreq } from './mreq';
+import { mreq } from '#mcli/functions/mreq/mreq';
 
 const require = createRequire(import.meta.url);
 
@@ -30,7 +30,7 @@ export async function prepareTest(item: {
     enableColors: true,
     binaryLabel: 'Mprove',
     binaryName: 'mprove',
-    binaryVersion: require('../../package.json').version
+    binaryVersion: require('../../../../package.json').version
   });
 
   if (isDefined(command)) {

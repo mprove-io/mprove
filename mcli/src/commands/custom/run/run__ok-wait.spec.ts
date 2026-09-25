@@ -11,10 +11,10 @@ import { makeId } from '#common/functions/make-id/make-id';
 import type { McliQueriesStats } from '#common/zod/mcli/mcli-queries-stats';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
-import { prepareTest } from '#mcli/functions/prepare-test';
-import { RunCommand } from './run';
+import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
+import { RunCommand } from './run.command';
 
 let testId = 'mcli__run__ok-wait';
 

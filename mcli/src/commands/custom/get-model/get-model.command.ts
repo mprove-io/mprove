@@ -9,29 +9,28 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type {
-  ToBackendGetConnectionSchemasRequestPayload,
-  ToBackendGetConnectionSchemasResponse
-} from '#common/zod/to-backend/connections/to-backend-get-connection-schemas';
+  ToBackendGetModelRequestPayload,
+  ToBackendGetModelResponse
+} from '#common/zod/to-backend/models/to-backend-get-model';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { mreq } from '#mcli/functions/mreq';
-import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload/process-get-connection-schemas-payload';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
 
-export class GetSchemasCommand extends CustomCommand {
-  static paths = [['get-schemas']];
+export class GetModelCommand extends CustomCommand {
+  static paths = [['get-model']];
 
   static usage = Command.Usage({
-    description:
-      'Fetch database schemas (tables, columns, relationships, indexes) for project connections',
+    description: 'Get a model definition including its fields',
     examples: [
       [
-        'Get schemas for Dev repo with refresh',
-        'mprove get-schemas --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --refresh'
+        'Get model for Dev repo',
+        'mprove get-model --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --model-id my_model'
       ],
       [
-        'Get schemas for Production repo',
-        'mprove get-schemas --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch main --env prod'
+        'Get model for Production repo',
+        'mprove get-model --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch main --env prod --model-id my_model'
       ]
     ]
   });
@@ -55,8 +54,13 @@ export class GetSchemasCommand extends CustomCommand {
     description: '(default "prod") Environment'
   });
 
-  isRefreshExistingCache = Option.Boolean('--refresh', false, {
-    description: '(default false) Refresh schemas from database'
+  modelId = Option.String('--model-id', {
+    required: true,
+    description: '(required) Model Id'
+  });
+
+  getMalloy = Option.Boolean('--get-malloy', false, {
+    description: '(default false), show malloyModelDef in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -91,23 +95,24 @@ export class GetSchemasCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getSchemasReqPayload: ToBackendGetConnectionSchemasRequestPayload = {
+    let getModelReqPayload: ToBackendGetModelRequestPayload = {
       projectId: this.projectId,
-      envId: this.env,
       repoId: repoId,
       branchId: this.branch,
-      isRefreshExistingCache: this.isRefreshExistingCache
+      envId: this.env,
+      modelId: this.modelId,
+      getMalloy: this.getMalloy
     };
 
-    let getSchemasResp = await mreq<ToBackendGetConnectionSchemasResponse>({
+    let getModelResp = await mreq<ToBackendGetModelResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionSchemas,
-      payload: getSchemasReqPayload,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModel,
+      payload: getModelReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let log = processGetConnectionSchemasPayload({
-      payload: getSchemasResp.payload
+    let log = processGetModelPayload({
+      payload: getModelResp.payload
     });
 
     logToConsoleMcli({

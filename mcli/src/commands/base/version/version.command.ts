@@ -1,7 +1,7 @@
 import { Command, Option } from 'clipanion';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 
 export class VersionCommand extends Command {
   static paths = [['version']];

@@ -9,27 +9,27 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type {
-  ToBackendDeleteBranchRequestPayload,
-  ToBackendDeleteBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-delete-branch';
+  ToBackendCreateBranchRequestPayload,
+  ToBackendCreateBranchResponse
+} from '#common/zod/to-backend/branches/to-backend-create-branch';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { mreq } from '#mcli/functions/mreq';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 
-export class DeleteBranchCommand extends CustomCommand {
-  static paths = [['delete-branch']];
+export class CreateBranchCommand extends CustomCommand {
+  static paths = [['create-branch']];
 
   static usage = Command.Usage({
-    description: 'Delete branch',
+    description: 'Create branch',
     examples: [
       [
-        'Delete branch for Dev repo',
-        'mprove delete-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch b1'
+        'Create branch for Dev repo',
+        'mprove create-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --new-branch b1 --from-branch main'
       ],
       [
-        'Delete branch for Production repo',
-        'mprove delete-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch b1'
+        'Create branch for Production repo',
+        'mprove create-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --new-branch b1 --from-branch main'
       ]
     ]
   });
@@ -44,9 +44,14 @@ export class DeleteBranchCommand extends CustomCommand {
     description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
   });
 
-  branch = Option.String('--branch', {
+  newBranch = Option.String('--new-branch', {
     required: true,
-    description: '(required) Branch name'
+    description: '(required) New Branch name'
+  });
+
+  fromBranch = Option.String('--from-branch', {
+    required: true,
+    description: '(required) From Branch name'
   });
 
   json = Option.Boolean('--json', false, {
@@ -81,21 +86,22 @@ export class DeleteBranchCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let deleteBranchReqPayload: ToBackendDeleteBranchRequestPayload = {
+    let createBranchReqPayload: ToBackendCreateBranchRequestPayload = {
       projectId: this.projectId,
       repoId: repoId,
-      branchId: this.branch
+      newBranchId: this.newBranch,
+      fromBranchId: this.fromBranch
     };
 
-    let deleteBranchResp = await mreq<ToBackendDeleteBranchResponse>({
+    let createBranchResp = await mreq<ToBackendCreateBranchResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
-      payload: deleteBranchReqPayload,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+      payload: createBranchReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let log: any = {
-      message: `Deleted branch "${this.branch}"`
+      message: `Created branch "${this.newBranch}"`
     };
 
     logToConsoleMcli({

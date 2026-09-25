@@ -9,28 +9,29 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type {
-  ToBackendValidateFilesRequestPayload,
-  ToBackendValidateFilesResponse
-} from '#common/zod/to-backend/files/to-backend-validate-files';
+  ToBackendGetConnectionSchemasRequestPayload,
+  ToBackendGetConnectionSchemasResponse
+} from '#common/zod/to-backend/connections/to-backend-get-connection-schemas';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { mreq } from '#mcli/functions/mreq';
-import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload/process-validate-files-payload';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload/process-get-connection-schemas-payload';
 
-export class ValidateCommand extends CustomCommand {
-  static paths = [['validate']];
+export class GetSchemasCommand extends CustomCommand {
+  static paths = [['get-schemas']];
 
   static usage = Command.Usage({
-    description: 'Validate (rebuild) Mprove Files for selected env',
+    description:
+      'Fetch database schemas (tables, columns, relationships, indexes) for project connections',
     examples: [
       [
-        'Validate Mprove Files for Dev repo, env prod',
-        'mprove validate --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod'
+        'Get schemas for Dev repo with refresh',
+        'mprove get-schemas --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --refresh'
       ],
       [
-        'Validate Mprove Files for Production repo, env prod',
-        'mprove validate --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch main --env prod'
+        'Get schemas for Production repo',
+        'mprove get-schemas --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch main --env prod'
       ]
     ]
   });
@@ -52,6 +53,10 @@ export class ValidateCommand extends CustomCommand {
 
   env = Option.String('--env', 'prod', {
     description: '(default "prod") Environment'
+  });
+
+  isRefreshExistingCache = Option.Boolean('--refresh', false, {
+    description: '(default false) Refresh schemas from database'
   });
 
   json = Option.Boolean('--json', false, {
@@ -86,26 +91,23 @@ export class ValidateCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let validateFilesReqPayload: ToBackendValidateFilesRequestPayload = {
+    let getSchemasReqPayload: ToBackendGetConnectionSchemasRequestPayload = {
       projectId: this.projectId,
+      envId: this.env,
       repoId: repoId,
       branchId: this.branch,
-      envId: this.env
+      isRefreshExistingCache: this.isRefreshExistingCache
     };
 
-    let validateFilesResp = await mreq<ToBackendValidateFilesResponse>({
+    let getSchemasResp = await mreq<ToBackendGetConnectionSchemasResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
-      payload: validateFilesReqPayload,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionSchemas,
+      payload: getSchemasReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let log = processValidateFilesPayload({
-      payload: validateFilesResp.payload,
-      host: this.context.config.mproveCliHost,
-      projectId: this.projectId,
-      branch: this.branch,
-      env: this.env
+    let log = processGetConnectionSchemasPayload({
+      payload: getSchemasResp.payload
     });
 
     logToConsoleMcli({

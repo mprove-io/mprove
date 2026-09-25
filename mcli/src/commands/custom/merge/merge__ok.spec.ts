@@ -22,12 +22,12 @@ import type {
 } from '#common/zod/to-backend/repos/to-backend-commit-repo';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { getTestLoginToken } from '#mcli/functions/get-test-login-token';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
-import { mreq } from '#mcli/functions/mreq';
-import { prepareTest } from '#mcli/functions/prepare-test';
-import { MergeCommand } from './merge';
+import { getTestLoginToken } from '#mcli/functions/get-test-login-token/get-test-login-token';
+import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
+import { MergeCommand } from './merge.command';
 
 let testId = 'mcli__merge__ok';
 

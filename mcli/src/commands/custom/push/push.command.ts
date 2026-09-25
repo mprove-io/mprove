@@ -7,29 +7,28 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
 import type {
-  ToBackendCreateBranchRequestPayload,
-  ToBackendCreateBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-create-branch';
+  ToBackendPushRepoRequestPayload,
+  ToBackendPushRepoResponse
+} from '#common/zod/to-backend/repos/to-backend-push-repo';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { mreq } from '#mcli/functions/mreq';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 
-export class CreateBranchCommand extends CustomCommand {
-  static paths = [['create-branch']];
+export class PushCommand extends CustomCommand {
+  static paths = [['push']];
 
   static usage = Command.Usage({
-    description: 'Create branch',
+    description:
+      'Push committed changes from repo to Remote, validate Mprove Files for selected env',
     examples: [
       [
-        'Create branch for Dev repo',
-        'mprove create-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --new-branch b1 --from-branch main'
-      ],
-      [
-        'Create branch for Production repo',
-        'mprove create-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --new-branch b1 --from-branch main'
+        'Push committed changes from Dev to Remote, validate Mprove Files for env prod',
+        'mprove push --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod'
       ]
     ]
   });
@@ -44,14 +43,21 @@ export class CreateBranchCommand extends CustomCommand {
     description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
   });
 
-  newBranch = Option.String('--new-branch', {
+  branch = Option.String('--branch', {
     required: true,
-    description: '(required) New Branch name'
+    description: '(required) Git Branch'
   });
 
-  fromBranch = Option.String('--from-branch', {
-    required: true,
-    description: '(required) From Branch name'
+  env = Option.String('--env', 'prod', {
+    description: '(default "prod") Environment'
+  });
+
+  getErrors = Option.Boolean('--get-errors', false, {
+    description: '(default false), show validation errors in output'
+  });
+
+  getRepo = Option.Boolean('--get-repo', false, {
+    description: '(default false), show repo in output'
   });
 
   json = Option.Boolean('--json', false, {
@@ -86,23 +92,51 @@ export class CreateBranchCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let createBranchReqPayload: ToBackendCreateBranchRequestPayload = {
+    let pushRepoReqPayload: ToBackendPushRepoRequestPayload = {
       projectId: this.projectId,
       repoId: repoId,
-      newBranchId: this.newBranch,
-      fromBranchId: this.fromBranch
+      branchId: this.branch,
+      envId: this.env
     };
 
-    let createBranchResp = await mreq<ToBackendCreateBranchResponse>({
+    let pushRepoResp = await mreq<ToBackendPushRepoResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-      payload: createBranchReqPayload,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPushRepo,
+      payload: pushRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
+    let builderUrl = getBuilderUrl({
+      host: this.context.config.mproveCliHost,
+      orgId: pushRepoResp.payload.repo.orgId,
+      projectId: this.projectId,
+      repoId: pushRepoResp.payload.repo.repoId,
+      branch: this.branch,
+      env: this.env
+    });
+
     let log: any = {
-      message: `Created branch "${this.newBranch}"`
+      message: `Pushed changes to Remote`,
+      validationErrorsTotal: pushRepoResp.payload.struct.errors.length
     };
+
+    if (this.getRepo === true) {
+      let repo = pushRepoResp.payload.repo;
+
+      delete repo.nodes;
+      delete repo.changesToCommit;
+      delete repo.changesToPush;
+
+      log.repo = repo;
+    }
+
+    if (this.getErrors === true) {
+      log.validationErrors = mapBmlErrorsToMproveValidationErrors({
+        errors: pushRepoResp.payload.struct.errors
+      });
+    }
+
+    log.url = builderUrl;
 
     logToConsoleMcli({
       log: log,

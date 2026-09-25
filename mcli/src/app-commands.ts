@@ -1,24 +1,24 @@
-import { DefinitionsCommand } from './commands/base/definitions/definitions';
-import { HelpCommand } from './commands/base/help/help';
-import { VersionCommand } from './commands/base/version/version';
-import { CommitCommand } from './commands/custom/commit/commit';
-import { CreateBranchCommand } from './commands/custom/create-branch/create-branch';
-import { DeleteBranchCommand } from './commands/custom/delete-branch/delete-branch';
-import { GetBranchesCommand } from './commands/custom/get-branches/get-branches';
-import { GetConnectionsListCommand } from './commands/custom/get-connections-list/get-connections-list';
-import { GetModelCommand } from './commands/custom/get-model/get-model';
-import { GetQueryInfoCommand } from './commands/custom/get-query-info/get-query-info';
-import { GetSampleCommand } from './commands/custom/get-sample/get-sample';
-import { GetSchemasCommand } from './commands/custom/get-schemas/get-schemas';
-import { GetSkillsCommand } from './commands/custom/get-skills/get-skills';
-import { GetStateCommand } from './commands/custom/get-state/get-state';
-import { MergeCommand } from './commands/custom/merge/merge';
-import { PullCommand } from './commands/custom/pull/pull';
-import { PushCommand } from './commands/custom/push/push';
-import { RevertCommand } from './commands/custom/revert/revert';
-import { RunCommand } from './commands/custom/run/run';
-import { SyncCommand } from './commands/custom/sync/sync';
-import { ValidateCommand } from './commands/custom/validate/validate';
+import { DefinitionsCommand } from './commands/base/definitions/definitions.command';
+import { HelpCommand } from './commands/base/help/help.command';
+import { VersionCommand } from './commands/base/version/version.command';
+import { CommitCommand } from './commands/custom/commit/commit.command';
+import { CreateBranchCommand } from './commands/custom/create-branch/create-branch.command';
+import { DeleteBranchCommand } from './commands/custom/delete-branch/delete-branch.command';
+import { GetBranchesCommand } from './commands/custom/get-branches/get-branches.command';
+import { GetConnectionsListCommand } from './commands/custom/get-connections-list/get-connections-list.command';
+import { GetModelCommand } from './commands/custom/get-model/get-model.command';
+import { GetQueryInfoCommand } from './commands/custom/get-query-info/get-query-info.command';
+import { GetSampleCommand } from './commands/custom/get-sample/get-sample.command';
+import { GetSchemasCommand } from './commands/custom/get-schemas/get-schemas.command';
+import { GetSkillsCommand } from './commands/custom/get-skills/get-skills.command';
+import { GetStateCommand } from './commands/custom/get-state/get-state.command';
+import { MergeCommand } from './commands/custom/merge/merge.command';
+import { PullCommand } from './commands/custom/pull/pull.command';
+import { PushCommand } from './commands/custom/push/push.command';
+import { RevertCommand } from './commands/custom/revert/revert.command';
+import { RunCommand } from './commands/custom/run/run.command';
+import { SyncCommand } from './commands/custom/sync/sync.command';
+import { ValidateCommand } from './commands/custom/validate/validate.command';
 
 export const appCommands = [
   // base

@@ -1,34 +1,31 @@
 import { Command, Option } from 'clipanion';
-import * as t from 'typanion';
 import { ServerError } from '#common/classes/server-error/server-error';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
 import type {
-  ToBackendPushRepoRequestPayload,
-  ToBackendPushRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-push-repo';
+  ToBackendMergeRepoRequestPayload,
+  ToBackendMergeRepoResponse
+} from '#common/zod/to-backend/repos/to-backend-merge-repo';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { mreq } from '#mcli/functions/mreq';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 
-export class PushCommand extends CustomCommand {
-  static paths = [['push']];
+export class MergeCommand extends CustomCommand {
+  static paths = [['merge']];
 
   static usage = Command.Usage({
     description:
-      'Push committed changes from repo to Remote, validate Mprove Files for selected env',
+      'Merge their-branch to branch for Dev repo, validate Mprove Files for selected env',
     examples: [
       [
-        'Push committed changes from Dev to Remote, validate Mprove Files for env prod',
-        'mprove push --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod'
+        'Merge their-branch to branch for Dev repo, validate Mprove Files for env prod',
+        'mprove merge --project-id DXYE72ODCP5LWPWH2EXQ --their-branch b1 --branch main --env prod'
       ]
     ]
   });
@@ -37,19 +34,22 @@ export class PushCommand extends CustomCommand {
     description: '(required) Project Id'
   });
 
-  repoType = Option.String('--repo-type', {
-    required: true,
-    validator: t.isEnum(RepoTypeEnum),
-    description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
-  });
-
   branch = Option.String('--branch', {
     required: true,
     description: '(required) Git Branch'
   });
 
+  theirBranch = Option.String('--their-branch', {
+    required: true,
+    description: '(required) Their git Branch'
+  });
+
   env = Option.String('--env', 'prod', {
     description: '(default "prod") Environment'
+  });
+
+  theirBranchRemote = Option.Boolean('--their-branch-remote', false, {
+    description: '(default false), merge from production (remote) repo branch'
   });
 
   getErrors = Option.Boolean('--get-errors', false, {
@@ -85,43 +85,42 @@ export class PushCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let repoId =
-      this.repoType === RepoTypeEnum.Production
-        ? PROD_REPO_ID
-        : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
-          ? apiKey.split('-')[2].toLowerCase()
-          : apiKey.split('-')[2];
+    let repoId = apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
+      ? apiKey.split('-')[2].toLowerCase()
+      : apiKey.split('-')[2];
 
-    let pushRepoReqPayload: ToBackendPushRepoRequestPayload = {
+    let mergeRepoReqPayload: ToBackendMergeRepoRequestPayload = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
-      envId: this.env
+      theirBranchId: this.theirBranch,
+      envId: this.env,
+      isTheirBranchRemote: this.theirBranchRemote
     };
 
-    let pushRepoResp = await mreq<ToBackendPushRepoResponse>({
-      apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPushRepo,
-      payload: pushRepoReqPayload,
+    let mergeRepoResp = await mreq<ToBackendMergeRepoResponse>({
+      apiKey: this.context.config.mproveCliApiKey,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
+      payload: mergeRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
-      orgId: pushRepoResp.payload.repo.orgId,
+      orgId: mergeRepoResp.payload.repo.orgId,
       projectId: this.projectId,
-      repoId: pushRepoResp.payload.repo.repoId,
+      repoId: mergeRepoResp.payload.repo.repoId,
       branch: this.branch,
       env: this.env
     });
 
     let log: any = {
-      message: `Pushed changes to Remote`,
-      validationErrorsTotal: pushRepoResp.payload.struct.errors.length
+      message: `Merged branch "${this.theirBranch}" to "${this.branch}"`,
+      validationErrorsTotal: mergeRepoResp.payload.struct.errors.length
     };
 
     if (this.getRepo === true) {
-      let repo = pushRepoResp.payload.repo;
+      let repo = mergeRepoResp.payload.repo;
 
       delete repo.nodes;
       delete repo.changesToCommit;
@@ -132,7 +131,7 @@ export class PushCommand extends CustomCommand {
 
     if (this.getErrors === true) {
       log.validationErrors = mapBmlErrorsToMproveValidationErrors({
-        errors: pushRepoResp.payload.struct.errors
+        errors: mergeRepoResp.payload.struct.errors
       });
     }
 

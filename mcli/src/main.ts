@@ -6,7 +6,7 @@ import { listenProcessEvents } from '#node-common/functions/listen-process-event
 import pkg from '../package.json';
 import { appCommands } from './app-commands';
 import type { CustomContext } from './classes/custom-command/custom-command';
-import { logToConsoleMcli } from './functions/log-to-console-mcli';
+import { logToConsoleMcli } from './functions/top/log-to-console-mcli/log-to-console-mcli';
 
 listenProcessEvents({
   appTerminated: ErEnum.MCLI_APP_TERMINATED,

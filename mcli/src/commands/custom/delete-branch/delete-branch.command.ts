@@ -9,28 +9,27 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type {
-  ToBackendGetModelRequestPayload,
-  ToBackendGetModelResponse
-} from '#common/zod/to-backend/models/to-backend-get-model';
+  ToBackendDeleteBranchRequestPayload,
+  ToBackendDeleteBranchResponse
+} from '#common/zod/to-backend/branches/to-backend-delete-branch';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { mreq } from '#mcli/functions/mreq';
-import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
+import { mreq } from '#mcli/functions/mreq/mreq';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
 
-export class GetModelCommand extends CustomCommand {
-  static paths = [['get-model']];
+export class DeleteBranchCommand extends CustomCommand {
+  static paths = [['delete-branch']];
 
   static usage = Command.Usage({
-    description: 'Get a model definition including its fields',
+    description: 'Delete branch',
     examples: [
       [
-        'Get model for Dev repo',
-        'mprove get-model --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch main --env prod --model-id my_model'
+        'Delete branch for Dev repo',
+        'mprove delete-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo-type dev --branch b1'
       ],
       [
-        'Get model for Production repo',
-        'mprove get-model --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch main --env prod --model-id my_model'
+        'Delete branch for Production repo',
+        'mprove delete-branch --project-id DXYE72ODCP5LWPWH2EXQ --repo-type production --branch b1'
       ]
     ]
   });
@@ -47,20 +46,7 @@ export class GetModelCommand extends CustomCommand {
 
   branch = Option.String('--branch', {
     required: true,
-    description: '(required) Git Branch'
-  });
-
-  env = Option.String('--env', 'prod', {
-    description: '(default "prod") Environment'
-  });
-
-  modelId = Option.String('--model-id', {
-    required: true,
-    description: '(required) Model Id'
-  });
-
-  getMalloy = Option.Boolean('--get-malloy', false, {
-    description: '(default false), show malloyModelDef in output'
+    description: '(required) Branch name'
   });
 
   json = Option.Boolean('--json', false, {
@@ -95,25 +81,22 @@ export class GetModelCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getModelReqPayload: ToBackendGetModelRequestPayload = {
+    let deleteBranchReqPayload: ToBackendDeleteBranchRequestPayload = {
       projectId: this.projectId,
       repoId: repoId,
-      branchId: this.branch,
-      envId: this.env,
-      modelId: this.modelId,
-      getMalloy: this.getMalloy
+      branchId: this.branch
     };
 
-    let getModelResp = await mreq<ToBackendGetModelResponse>({
+    let deleteBranchResp = await mreq<ToBackendDeleteBranchResponse>({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModel,
-      payload: getModelReqPayload,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
+      payload: deleteBranchReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let log = processGetModelPayload({
-      payload: getModelResp.payload
-    });
+    let log: any = {
+      message: `Deleted branch "${this.branch}"`
+    };
 
     logToConsoleMcli({
       log: log,

@@ -9,10 +9,10 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
-import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
-import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
-import { prepareTest } from '#mcli/functions/prepare-test';
-import { ValidateCommand } from './validate';
+import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
+import { logToConsoleMcli } from '#mcli/functions/top/log-to-console-mcli/log-to-console-mcli';
+import { prepareTest } from '#mcli/functions/top/prepare-test/prepare-test';
+import { ValidateCommand } from './validate.command';
 
 let testId = 'mcli__validate__ok';
 
