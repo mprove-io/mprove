@@ -20,13 +20,13 @@ import type {
   ToBackendCommitRepoRequestPayload,
   ToBackendCommitRepoResponse
 } from '#common/zod/to-backend/repos/to-backend-commit-repo';
+import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
 import { mreq } from '#mcli/functions/mreq';
 import { prepareTest } from '#mcli/functions/prepare-test';
-import { CustomContext } from '#mcli/models/custom-command';
 import { MergeCommand } from '../merge';
 
 let testId = 'mcli__merge__ok';

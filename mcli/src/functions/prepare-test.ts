@@ -10,8 +10,8 @@ import type {
   ToBackendSeedRecordsRequestPayload,
   ToBackendSeedRecordsResponse
 } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
+import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { McliConfig } from '#mcli/config/mcli-config';
-import { CustomContext } from '#mcli/models/custom-command';
 import { mreq } from './mreq';
 
 const require = createRequire(import.meta.url);

@@ -14,10 +14,10 @@ import type {
   ToBackendSyncRepoRequestPayload,
   ToBackendSyncRepoResponse
 } from '#common/zod/to-backend/repos/to-backend-sync-repo';
+import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
-import { CustomCommand } from '#mcli/models/custom-command';
 import { applySyncPayload } from '#node-common/functions/apply-sync-payload/apply-sync-payload';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit/get-changes-to-commit';

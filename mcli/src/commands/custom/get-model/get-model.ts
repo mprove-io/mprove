@@ -12,10 +12,10 @@ import type {
   ToBackendGetModelRequestPayload,
   ToBackendGetModelResponse
 } from '#common/zod/to-backend/models/to-backend-get-model';
+import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
-import { CustomCommand } from '#mcli/models/custom-command';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
 
 export class GetModelCommand extends CustomCommand {

@@ -26,13 +26,13 @@ import type {
   ToBackendCreateFolderResponse
 } from '#common/zod/to-backend/folders/to-backend-create-folder';
 import type { ToBackendCloneTestRepoResponse } from '#common/zod/to-backend/test-routes/to-backend-clone-test-repo';
+import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
 import { mreq } from '#mcli/functions/mreq';
 import { prepareTest } from '#mcli/functions/prepare-test';
-import type { CustomContext } from '#mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
 
 let testId = 'mcli_sync__from-server';

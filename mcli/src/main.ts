@@ -4,6 +4,7 @@ import 'reflect-metadata';
 import { ErEnum } from '#common/enums/er.enum';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
 import pkg from '../package.json';
+import type { CustomContext } from './classes/custom-command/custom-command';
 import { DefinitionsCommand } from './commands/base/definitions/definitions';
 import { HelpCommand } from './commands/base/help/help';
 import { VersionCommand } from './commands/base/version/version';
@@ -26,7 +27,6 @@ import { RunCommand } from './commands/custom/run/run';
 import { SyncCommand } from './commands/custom/sync/sync';
 import { ValidateCommand } from './commands/custom/validate/validate';
 import { logToConsoleMcli } from './functions/log-to-console-mcli';
-import { CustomContext } from './models/custom-command';
 
 listenProcessEvents({
   appTerminated: ErEnum.MCLI_APP_TERMINATED,

@@ -5,9 +5,9 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { SkillItem } from '#common/zod/backend/skill-item';
 import type { ToBackendGetSkillsResponse } from '#common/zod/to-backend/skills/to-backend-get-skills';
+import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq';
-import { CustomCommand } from '#mcli/models/custom-command';
 
 export class GetSkillsCommand extends CustomCommand {
   static paths = [['get-skills']];

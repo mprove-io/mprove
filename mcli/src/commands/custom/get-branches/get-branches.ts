@@ -12,10 +12,10 @@ import type {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
 } from '#common/zod/to-backend/branches/to-backend-get-branches-list';
+import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
-import { CustomCommand } from '#mcli/models/custom-command';
 
 export class GetBranchesCommand extends CustomCommand {
   static paths = [['get-branches']];

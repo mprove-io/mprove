@@ -9,11 +9,11 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { McliQueriesStats } from '#common/zod/mcli/mcli-queries-stats';
+import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
 import { prepareTest } from '#mcli/functions/prepare-test';
-import { CustomContext } from '#mcli/models/custom-command';
 import { RunCommand } from '../run';
 
 let testId = 'mcli__run__ok';

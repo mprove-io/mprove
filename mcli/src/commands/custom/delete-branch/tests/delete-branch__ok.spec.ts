@@ -12,12 +12,12 @@ import type {
   ToBackendCreateBranchRequestPayload,
   ToBackendCreateBranchResponse
 } from '#common/zod/to-backend/branches/to-backend-create-branch';
+import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
 import { mreq } from '#mcli/functions/mreq';
 import { prepareTest } from '#mcli/functions/prepare-test';
-import { CustomContext } from '#mcli/models/custom-command';
 import { DeleteBranchCommand } from '../delete-branch';
 
 let testId = 'mcli__delete-branch__ok';

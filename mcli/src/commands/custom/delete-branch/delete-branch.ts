@@ -12,10 +12,10 @@ import type {
   ToBackendDeleteBranchRequestPayload,
   ToBackendDeleteBranchResponse
 } from '#common/zod/to-backend/branches/to-backend-delete-branch';
+import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
-import { CustomCommand } from '#mcli/models/custom-command';
 
 export class DeleteBranchCommand extends CustomCommand {
   static paths = [['delete-branch']];

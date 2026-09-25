@@ -13,10 +13,10 @@ import type {
   ToBackendCommitRepoRequestPayload,
   ToBackendCommitRepoResponse
 } from '#common/zod/to-backend/repos/to-backend-commit-repo';
+import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
-import { CustomCommand } from '#mcli/models/custom-command';
 
 export class CommitCommand extends CustomCommand {
   static paths = [['commit']];

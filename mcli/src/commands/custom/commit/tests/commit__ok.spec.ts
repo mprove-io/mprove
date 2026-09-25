@@ -12,13 +12,13 @@ import type {
   ToBackendSaveFileRequestPayload,
   ToBackendSaveFileResponse
 } from '#common/zod/to-backend/files/to-backend-save-file';
+import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
 import { mreq } from '#mcli/functions/mreq';
 import { prepareTest } from '#mcli/functions/prepare-test';
-import { CustomContext } from '#mcli/models/custom-command';
 import { CommitCommand } from '../commit';
 
 let testId = 'mcli__commit__ok';

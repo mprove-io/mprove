@@ -11,10 +11,10 @@ import type {
   ToBackendMergeRepoRequestPayload,
   ToBackendMergeRepoResponse
 } from '#common/zod/to-backend/repos/to-backend-merge-repo';
+import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
-import { CustomCommand } from '#mcli/models/custom-command';
 
 export class MergeCommand extends CustomCommand {
   static paths = [['merge']];

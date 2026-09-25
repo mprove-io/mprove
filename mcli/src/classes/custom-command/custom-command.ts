@@ -1,6 +1,6 @@
-import { BaseContext, Command } from 'clipanion';
+import { type BaseContext, Command } from 'clipanion';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { McliConfig } from '#mcli/config/mcli-config';
+import type { McliConfig } from '#mcli/config/mcli-config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 
 export interface CustomContext extends BaseContext {

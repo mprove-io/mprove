@@ -14,10 +14,10 @@ import type {
   ToBackendPushRepoRequestPayload,
   ToBackendPushRepoResponse
 } from '#common/zod/to-backend/repos/to-backend-push-repo';
+import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
-import { CustomCommand } from '#mcli/models/custom-command';
 
 export class PushCommand extends CustomCommand {
   static paths = [['push']];
