@@ -1,6 +1,6 @@
-import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { ConfigService } from '@nestjs/config';
+import type { BmError } from '#blockml/classes/bm-error';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import {
   METRIC_ID_BY,
@@ -20,41 +20,12 @@ import { isUndefined } from '#common/functions/is-undefined';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
-import type { ModelNode } from '#common/zod/blockml/model-node';
+import {
+  type FindModelNodeOutput,
+  findModelNodeRecursive
+} from './find-model-node-recursive/find-model-node-recursive';
 
 let func = FuncEnum.CreateModelMetrics;
-
-function findModelNode(item: {
-  nodes: ModelNode[];
-  nodeId: string;
-  parentNode: ModelNode;
-}): { node: ModelNode; parentNode: ModelNode } {
-  let { nodes, nodeId, parentNode } = item;
-
-  let foundNode = nodes.find(node => node.id === nodeId);
-
-  if (isDefined(foundNode)) {
-    return { node: foundNode, parentNode: parentNode };
-  }
-
-  let result: { node: ModelNode; parentNode: ModelNode };
-
-  nodes.forEach(node => {
-    if (isDefined(result)) {
-      return;
-    }
-
-    let children = node.children ?? [];
-
-    result = findModelNode({
-      nodes: children,
-      nodeId: nodeId,
-      parentNode: node
-    });
-  });
-
-  return result;
-}
 
 export function createModelMetrics(
   item: {
@@ -195,7 +166,7 @@ export function createModelMetrics(
               ? apiModel.nodes.find(n => n.id === x.malloyFieldPath.join('.'))
               : apiModel.nodes.find(n => n.id === MF);
 
-          let xNodeResult = findModelNode({
+          let xNodeResult: FindModelNodeOutput = findModelNodeRecursive({
             nodes: apiModel.nodes,
             nodeId: x.id,
             parentNode: xTopNode
@@ -207,11 +178,12 @@ export function createModelMetrics(
           let xParentNodeIsDefined = isDefined(xParentNode);
 
           if (fieldGroupTagIsDefined && xParentNodeIsDefined) {
-            let xTimeGroupNodeResult = findModelNode({
-              nodes: apiModel.nodes,
-              nodeId: xParentNode.id,
-              parentNode: xTopNode
-            });
+            let xTimeGroupNodeResult: FindModelNodeOutput =
+              findModelNodeRecursive({
+                nodes: apiModel.nodes,
+                nodeId: xParentNode.id,
+                parentNode: xTopNode
+              });
 
             xTimeNode = xTimeGroupNodeResult?.parentNode ?? xTopNode;
           }
@@ -245,7 +217,7 @@ export function createModelMetrics(
                 ? apiModel.nodes.find(n => n.id === y.malloyFieldPath.join('.'))
                 : apiModel.nodes.find(n => n.id === MF);
 
-            let yNodeResult = findModelNode({
+            let yNodeResult: FindModelNodeOutput = findModelNodeRecursive({
               nodes: apiModel.nodes,
               nodeId: y.id,
               parentNode: yTopNode
