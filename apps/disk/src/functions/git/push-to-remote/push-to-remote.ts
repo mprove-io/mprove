@@ -5,7 +5,7 @@ import type { DiskRepoStatusIsNotNeedPushError } from '#common/zod/disk/errors/d
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
 import type { DiskPushToRemoteError } from '#common/zod/disk/function-errors/disk-push-to-remote-error';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
-import { addTraceSpan } from '#node-common/functions/add-trace-span';
+import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
 export function pushToRemote(item: {
   projectId: string;

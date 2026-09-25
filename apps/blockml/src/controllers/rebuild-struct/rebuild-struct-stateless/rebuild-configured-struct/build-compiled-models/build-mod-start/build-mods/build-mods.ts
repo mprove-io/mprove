@@ -28,8 +28,8 @@ import { isDefined } from '#common/functions/is-defined';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 import type { WrapResult } from '#common/zod/wrap-result';
-import { addTraceSpan } from '#node-common/functions/add-trace-span';
-import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
+import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { errorToWrapResult } from './error-to-wrap-result/error-to-wrap-result';
 import { getWrapResult } from './get-wrap-result/get-wrap-result';
 

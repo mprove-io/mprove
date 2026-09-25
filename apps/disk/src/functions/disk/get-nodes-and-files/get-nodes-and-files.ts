@@ -6,7 +6,7 @@ import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetNodesAndFilesPayloadRecursiveError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-payload-recursive-error';
 import type { GetMproveDirError } from '#common/zod/node-common/function-errors/get-mprove-dir-error';
-import { getMproveDir } from '#node-common/functions-result/get-mprove-dir';
+import { getMproveDir } from '#node-common/functions/get-mprove-dir/get-mprove-dir';
 import {
   getNodesAndFilesPayloadRecursive,
   type NodesAndFilesPayload

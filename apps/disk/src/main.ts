@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Result } from '@praha/byethrow';
-import { startTelemetry } from '#node-common/functions/start-telemetry';
+import { startTelemetry } from '#node-common/functions/start-telemetry/start-telemetry';
 
 let tracerNodeSdk = startTelemetry({
   serviceName: 'mprove-disk'
@@ -12,8 +12,8 @@ import { WinstonModule } from 'nest-winston';
 import { APP_NAME_DISK } from '#common/constants/top-disk';
 import { ErEnum } from '#common/enums/er.enum';
 import type { DiskCheckSymlinksInDirError } from '#common/zod/disk/function-errors/disk-check-symlinks-in-dir-error';
-import { getLoggerOptions } from '#node-common/functions/get-logger-options';
-import { listenProcessEvents } from '#node-common/functions/listen-process-events';
+import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
+import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
 import { AppModule } from './app.module';
 import { getConfig } from './config/get.config';
 import { checkSymlinksInDir } from './functions/disk/check-symlinks-in-dir/check-symlinks-in-dir';

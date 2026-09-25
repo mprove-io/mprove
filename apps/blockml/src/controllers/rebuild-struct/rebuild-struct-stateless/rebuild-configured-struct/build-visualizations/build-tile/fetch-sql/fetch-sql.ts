@@ -24,10 +24,10 @@ import type { FileChart } from '#common/zod/blockml/internal/file-chart';
 import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { Model } from '#common/zod/blockml/model';
-import { addTraceSpan } from '#node-common/functions/add-trace-span';
-import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
-import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
-import { makeMalloyQuery } from '#node-common/functions/make-malloy-query';
+import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
+import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
+import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
+import { makeMalloyQuery } from '#node-common/functions/malloy/make-malloy-query/make-malloy-query';
 
 let func = FuncEnum.FetchSql;
 

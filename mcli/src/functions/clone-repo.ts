@@ -1,6 +1,6 @@
 import path from 'node:path';
 import fse from 'fs-extra';
-import { createSimpleGit } from '#node-common/functions/create-simple-git';
+import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
 export async function cloneRepo(item: {
   repoPath: string;

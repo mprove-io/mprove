@@ -26,7 +26,7 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-stat
 import { pushToRemote } from '#disk/functions/git/push-to-remote/push-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
-import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
+import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir/validate-path-under-dir';
 import { getContentFromFileName } from './get-content-from-file-name/get-content-from-file-name';
 
 @Injectable()

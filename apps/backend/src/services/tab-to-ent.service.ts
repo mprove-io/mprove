@@ -130,7 +130,7 @@ import type {
   UserLt,
   UserSt
 } from '#common/zod/st-lt';
-import { encryptData } from '#node-common/functions/encrypt-decrypt';
+import { encryptData } from '#node-common/functions/encrypt-data/encrypt-data';
 import { HashService } from './hash.service';
 
 @Injectable()

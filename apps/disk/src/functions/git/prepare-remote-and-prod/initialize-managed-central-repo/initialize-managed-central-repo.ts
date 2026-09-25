@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
-import { createSimpleGit } from '#node-common/functions/create-simple-git';
+import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
 export function initializeManagedCentralRepo(item: {
   centralDir: string;

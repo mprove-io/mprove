@@ -5,7 +5,7 @@ import { getConfig } from '#blockml/config/get.config';
 import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { logToConsole } from '#node-common/functions/log-to-console';
+import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 
 export function logToConsoleBlockml(item: {
   log: any;

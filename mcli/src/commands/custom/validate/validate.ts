@@ -16,7 +16,7 @@ import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
-import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload';
+import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload/process-validate-files-payload';
 
 export class ValidateCommand extends CustomCommand {
   static paths = [['validate']];

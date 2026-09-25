@@ -16,7 +16,7 @@ import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
-import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload';
+import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload/process-get-connection-schemas-payload';
 
 export class GetSchemasCommand extends CustomCommand {
   static paths = [['get-schemas']];

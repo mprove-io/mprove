@@ -2,7 +2,7 @@ import { Cli } from 'clipanion';
 import 'reflect-metadata';
 
 import { ErEnum } from '#common/enums/er.enum';
-import { listenProcessEvents } from '#node-common/functions/listen-process-events';
+import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
 import pkg from '../package.json';
 import { DefinitionsCommand } from './commands/base/definitions/definitions';
 import { HelpCommand } from './commands/base/help/help';

@@ -29,7 +29,7 @@ import { isUndefined } from '#common/functions/is-undefined';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { ModelField } from '#common/zod/blockml/model-field';
-import { makeQueryId } from '#node-common/functions/make-query-id';
+import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 import { HashService } from '../hash.service';
 import { StoreService } from '../store.service';
 import { TabService } from '../tab.service';

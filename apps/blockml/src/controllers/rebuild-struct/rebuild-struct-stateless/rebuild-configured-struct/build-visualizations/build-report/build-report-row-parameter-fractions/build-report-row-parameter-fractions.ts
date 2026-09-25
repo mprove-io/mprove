@@ -10,7 +10,7 @@ import { isDefined } from '#common/functions/is-defined';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
-import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
+import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
 let func = FuncEnum.BuildReportRowParameterFractions;
 

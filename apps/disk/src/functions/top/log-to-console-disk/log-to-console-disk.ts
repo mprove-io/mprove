@@ -5,7 +5,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getConfig } from '#disk/config/get.config';
-import { logToConsole } from '#node-common/functions/log-to-console';
+import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 
 export function logToConsoleDisk(item: {
   log: any;

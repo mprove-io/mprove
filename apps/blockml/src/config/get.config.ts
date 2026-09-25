@@ -1,7 +1,7 @@
 import { zBlockmlConfig } from '#blockml/config/blockml-config';
 import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw';
+import { zodParseOrThrow } from '#node-common/functions/zod-parse-or-throw/zod-parse-or-throw';
 import { getDevConfig } from './get-dev.config';
 import { getProdConfig } from './get-prod.config';
 import { getTestConfig } from './get-test.config';

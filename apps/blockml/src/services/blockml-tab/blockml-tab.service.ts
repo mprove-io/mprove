@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import {
-  decryptData,
-  encryptData
-} from '#node-common/functions/encrypt-decrypt';
+import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
+import { encryptData } from '#node-common/functions/encrypt-data/encrypt-data';
 
 @Injectable()
 export class BlockmlTabService {

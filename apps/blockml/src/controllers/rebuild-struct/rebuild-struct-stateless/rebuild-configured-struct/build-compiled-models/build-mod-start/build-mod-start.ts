@@ -7,7 +7,7 @@ import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
-import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { buildFlatMalloyFieldItems } from './build-flat-malloy-field-items/build-flat-malloy-field-items';
 import { buildMods } from './build-mods/build-mods';
 import { checkBuildMetricsFieldGroups } from './check-build-metrics-field-groups/check-build-metrics-field-groups';

@@ -8,8 +8,8 @@ import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/di
 import type { GetChangesToCommitError } from '#common/zod/node-common/function-errors/get-changes-to-commit-error';
 import { getRepoConflicts } from '#disk/functions/git/get-repo-status/get-repo-conflicts/get-repo-conflicts';
 import { getRepoStatusWithoutStagedChanges } from '#disk/functions/git/get-repo-status/get-repo-status-without-staged-changes/get-repo-status-without-staged-changes';
-import { addTraceSpan } from '#node-common/functions/add-trace-span';
-import { getChangesToCommit } from '#node-common/functions-result/get-changes-to-commit';
+import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
+import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit/get-changes-to-commit';
 
 export function getRepoStatus(item: {
   projectId: string;

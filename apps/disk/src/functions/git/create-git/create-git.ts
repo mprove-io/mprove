@@ -2,7 +2,7 @@ import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import type { SimpleGit } from 'simple-git';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { createSimpleGit } from '#node-common/functions/create-simple-git';
+import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
 export async function createGit(item: {
   repoDir: string;

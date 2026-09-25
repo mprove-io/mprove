@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
-import { addTraceSpan } from '#node-common/functions/add-trace-span';
+import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
 export function merge(item: {
   projectId: string;

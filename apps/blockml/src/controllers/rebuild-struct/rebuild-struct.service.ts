@@ -28,7 +28,7 @@ import type { Preset } from '#common/zod/blockml/preset';
 import type { ToBlockmlResponseResultForOperation } from '#common/zod/blockml/response/to-blockml-response-result-for-operation';
 import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
 import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
-import { getMproveDir } from '#node-common/functions-result/get-mprove-dir';
+import { getMproveDir } from '#node-common/functions/get-mprove-dir/get-mprove-dir';
 import { rebuildStructStateless } from './rebuild-struct-stateless/rebuild-struct-stateless';
 
 @Injectable()

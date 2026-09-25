@@ -10,7 +10,7 @@ import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { SelectedGiven } from '#common/zod/backend/selected-given';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
-import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { checkLimit } from './check-limit/check-limit';
 import { checkSelectElements } from './check-select-elements/check-select-elements';
 import { checkSorts } from './check-sorts/check-sorts';

@@ -18,12 +18,12 @@ import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
-import { createSimpleGit } from '#node-common/functions/create-simple-git';
-import { applySyncPayload } from '#node-common/functions-result/apply-sync-payload';
-import { getChangesToCommit } from '#node-common/functions-result/get-changes-to-commit';
-import { getSyncAppliedChanges } from '#node-common/functions-result/get-sync-applied-changes';
-import { getSyncFilesPayload } from '#node-common/functions-result/get-sync-files-payload';
-import { resetWorkingTreeToHead } from '#node-common/functions-result/reset-working-tree-to-head';
+import { applySyncPayload } from '#node-common/functions/apply-sync-payload/apply-sync-payload';
+import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
+import { getChangesToCommit } from '#node-common/functions/get-changes-to-commit/get-changes-to-commit';
+import { getSyncAppliedChanges } from '#node-common/functions/get-sync-applied-changes/get-sync-applied-changes';
+import { getSyncFilesPayload } from '#node-common/functions/get-sync-files-payload/get-sync-files-payload';
+import { resetWorkingTreeToHead } from '#node-common/functions/reset-working-tree-to-head/reset-working-tree-to-head';
 
 export class SyncCommand extends CustomCommand {
   static paths = [['sync']];

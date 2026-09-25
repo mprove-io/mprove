@@ -3,7 +3,7 @@ import prettyjson from 'prettyjson';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
-import { wrapError } from '#node-common/functions/wrap-error';
+import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
 export function logToConsoleMcli(item: {
   log: any;

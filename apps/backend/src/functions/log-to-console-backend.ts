@@ -5,7 +5,7 @@ import { getConfig } from '#backend/config/get.config';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { logToConsole } from '#node-common/functions/log-to-console';
+import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 
 export function logToConsoleBackend(item: {
   log: any;

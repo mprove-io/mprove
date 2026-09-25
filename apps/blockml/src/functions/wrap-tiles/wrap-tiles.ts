@@ -32,7 +32,7 @@ import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { Model } from '#common/zod/blockml/model';
 import type { Query } from '#common/zod/blockml/query';
 import type { Tile } from '#common/zod/blockml/tile';
-import { makeQueryId } from '#node-common/functions/make-query-id';
+import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 
 export function wrapTiles(item: {
   structId: string;

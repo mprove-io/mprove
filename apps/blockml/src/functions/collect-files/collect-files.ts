@@ -10,7 +10,7 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
-import { readFileCheckSize } from '#node-common/functions-result/read-file-check-size';
+import { readFileCheckSize } from '#node-common/functions/read-file-check-size/read-file-check-size';
 
 let func = FuncEnum.CollectFiles;
 

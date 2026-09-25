@@ -18,7 +18,7 @@ import {
   zMcpToolGetModelInput,
   zMcpToolGetModelOutput
 } from '#common/zod/to-backend/mcp-tools/mcp-tool-get-model';
-import { processGetModelPayload } from '#node-common/functions/process-get-model-payload';
+import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

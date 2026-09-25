@@ -6,7 +6,7 @@ import type { DiskCheckoutBranchError } from '#common/zod/disk/function-errors/d
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
 import type { RepoStatus } from '#common/zod/disk/repo-status';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
-import { addTraceSpan } from '#node-common/functions/add-trace-span';
+import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
 export function checkoutBranch(item: {
   projectId: string;

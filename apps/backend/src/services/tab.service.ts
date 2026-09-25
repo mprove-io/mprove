@@ -71,7 +71,7 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import { decryptData } from '#node-common/functions/encrypt-decrypt';
+import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
 import { TabToEntService } from './tab-to-ent.service';
 
 @Injectable()

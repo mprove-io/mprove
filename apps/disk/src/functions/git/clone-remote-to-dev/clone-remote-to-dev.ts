@@ -3,7 +3,7 @@ import type { SimpleGit } from 'simple-git';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { createGit } from '#disk/functions/git/create-git/create-git';
-import { addTraceSpan } from '#node-common/functions/add-trace-span';
+import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 
 export function cloneRemoteToDev(item: {
   orgId: string;

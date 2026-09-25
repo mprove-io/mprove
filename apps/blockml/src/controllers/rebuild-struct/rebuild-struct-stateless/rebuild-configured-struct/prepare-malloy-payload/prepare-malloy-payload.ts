@@ -9,7 +9,7 @@ import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 import {
   type MalloyConnection,
   makeMalloyConnections
-} from '#node-common/functions/make-malloy-connections';
+} from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { prepareMalloyFile } from './prepare-malloy-file/prepare-malloy-file';
 
 export type MalloyPayload = {

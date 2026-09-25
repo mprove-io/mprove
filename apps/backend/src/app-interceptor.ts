@@ -20,7 +20,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { MyResponse } from '#common/zod/to/my-response';
 import type { ToBackendRequest } from '#common/zod/to-backend/to-backend-request';
-import { WrappedError } from '#node-common/functions/wrap-error';
+import { WrappedError } from '#node-common/functions/wrap-error/wrap-error';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
 import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';

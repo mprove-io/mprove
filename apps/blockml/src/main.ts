@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { startTelemetry } from '#node-common/functions/start-telemetry';
+import { startTelemetry } from '#node-common/functions/start-telemetry/start-telemetry';
 
 let tracerNodeSdk = startTelemetry({
   serviceName: 'mprove-blockml'
@@ -11,8 +11,8 @@ import { WinstonModule } from 'nest-winston';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import { APP_NAME_BLOCKML } from '#common/constants/top-blockml';
 import { ErEnum } from '#common/enums/er.enum';
-import { getLoggerOptions } from '#node-common/functions/get-logger-options';
-import { listenProcessEvents } from '#node-common/functions/listen-process-events';
+import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
+import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
 import { AppModule } from './app.module';
 import { getConfig } from './config/get.config';
 

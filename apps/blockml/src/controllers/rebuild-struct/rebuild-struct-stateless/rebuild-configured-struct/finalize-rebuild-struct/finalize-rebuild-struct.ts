@@ -31,7 +31,7 @@ import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { Preset } from '#common/zod/blockml/preset';
 import type { Space } from '#common/zod/blockml/space';
-import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { removeRebuildStructTempDir } from './remove-rebuild-struct-temp-dir/remove-rebuild-struct-temp-dir';
 
 export async function finalizeRebuildStruct(item: {

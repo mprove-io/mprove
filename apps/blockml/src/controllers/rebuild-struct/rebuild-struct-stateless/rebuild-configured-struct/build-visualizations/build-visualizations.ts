@@ -16,7 +16,7 @@ import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
-import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { buildChart } from './build-chart/build-chart';
 import { buildDashboard } from './build-dashboard/build-dashboard';
 import { buildMconfigChart } from './build-mconfig-chart/build-mconfig-chart';

@@ -18,7 +18,7 @@ import {
   zMcpToolGetSchemasInput,
   zMcpToolGetSchemasOutput
 } from '#common/zod/to-backend/mcp-tools/mcp-tool-get-schemas';
-import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload';
+import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload/process-get-connection-schemas-payload';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

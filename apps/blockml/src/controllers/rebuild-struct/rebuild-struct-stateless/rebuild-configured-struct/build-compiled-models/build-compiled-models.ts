@@ -13,7 +13,7 @@ import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { Preset } from '#common/zod/blockml/preset';
-import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { buildMetricsNext } from './build-metrics-next/build-metrics-next';
 import { buildModStart } from './build-mod-start/build-mod-start';
 import { buildStoreNext } from './build-store-next/build-store-next';

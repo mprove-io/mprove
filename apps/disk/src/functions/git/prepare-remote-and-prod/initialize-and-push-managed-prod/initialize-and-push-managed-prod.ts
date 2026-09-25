@@ -5,7 +5,7 @@ import type { DiskInitializeAndPushManagedProdError } from '#common/zod/disk/fun
 import type { DiskPushToRemoteError } from '#common/zod/disk/function-errors/disk-push-to-remote-error';
 import { createInitialCommitToProd } from '#disk/functions/git/prepare-remote-and-prod/initialize-and-push-managed-prod/create-initial-commit-to-prod/create-initial-commit-to-prod';
 import { pushToRemote } from '#disk/functions/git/push-to-remote/push-to-remote';
-import { createSimpleGit } from '#node-common/functions/create-simple-git';
+import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
 export function initializeAndPushManagedProd(item: {
   projectId: string;

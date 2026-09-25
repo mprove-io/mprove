@@ -24,7 +24,7 @@ import { getLastCommitFileContent } from '#disk/functions/git/get-last-commit-fi
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
-import { validatePathUnderDir } from '#node-common/functions-result/validate-path-under-dir';
+import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir/validate-path-under-dir';
 
 @Injectable()
 export class GetFileService {

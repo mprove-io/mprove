@@ -24,7 +24,7 @@ import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { FileStoreResult } from '#common/zod/blockml/internal/file-store-result';
 import type { FileTileParameter } from '#common/zod/blockml/internal/file-tile-parameter';
 import type { Model } from '#common/zod/blockml/model';
-import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
+import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
 let func = FuncEnum.CheckTileParameters;
 

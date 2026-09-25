@@ -16,7 +16,7 @@ import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
-import { processGetModelPayload } from '#node-common/functions/process-get-model-payload';
+import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
 
 export class GetModelCommand extends CustomCommand {
   static paths = [['get-model']];

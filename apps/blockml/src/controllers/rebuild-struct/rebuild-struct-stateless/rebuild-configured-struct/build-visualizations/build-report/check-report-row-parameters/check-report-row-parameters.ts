@@ -24,7 +24,7 @@ import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { FileStoreResult } from '#common/zod/blockml/internal/file-store-result';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
-import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
+import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
 let func = FuncEnum.CheckReportRowParameters;
 

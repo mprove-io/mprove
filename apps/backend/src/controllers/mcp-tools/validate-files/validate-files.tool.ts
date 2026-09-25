@@ -21,7 +21,7 @@ import {
   zMcpToolValidateFilesInput,
   zMcpToolValidateFilesOutput
 } from '#common/zod/to-backend/mcp-tools/mcp-tool-validate-files';
-import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload';
+import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload/process-validate-files-payload';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

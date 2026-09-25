@@ -40,7 +40,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import type { Column } from '#common/zod/blockml/column';
 import type { Fraction } from '#common/zod/blockml/fraction';
-import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
+import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
 @Injectable()
 export class ReportTimeColumnsService {
