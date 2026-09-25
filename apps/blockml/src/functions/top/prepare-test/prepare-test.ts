@@ -103,14 +103,14 @@ export async function prepareTest(item: {
 
   let testsDir: string = resolveTestSourceDir({ testsDir: item.testsDir });
 
-  let dataDir = `${testsDir}/data/${testId}`;
+  let dataDir = `${testsDir}/data`;
 
   let toDir =
     isCopyLogsToModels === false
       ? null
       : isDefined(connection)
-        ? `${testsDir}/logs/${testId}/${connection.type}`
-        : `${testsDir}/logs/${testId}`;
+        ? `${testsDir}/logs/${connection.type}`
+        : `${testsDir}/logs`;
 
   let output: PrepareTestOutput = {
     structService: structService,
