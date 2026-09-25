@@ -7,6 +7,7 @@ import type {
   ModelEntryValueWithSource
 } from '@malloydata/malloy-interfaces';
 import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
@@ -65,17 +66,16 @@ type MalloyFieldItem = {
   sourceField: MalloySourceField;
 };
 
-export function buildFlatMalloyFieldItems(
-  item: {
-    mods: FileMod[];
-    projectId: string;
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
+export function buildFlatMalloyFieldItems(item: {
+  mods: FileMod[];
+  projectId: string;
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FileMod[], never> {
+  let { caller, structId, cs } = item;
+
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let newMods: FileMod[] = [];
@@ -109,7 +109,7 @@ export function buildFlatMalloyFieldItems(
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
   log(cs, caller, func, structId, LogTypeEnum.Mods, newMods);
 
-  return newMods;
+  return Result.succeed(newMods);
 }
 
 function getMalloyFieldItems(item: {

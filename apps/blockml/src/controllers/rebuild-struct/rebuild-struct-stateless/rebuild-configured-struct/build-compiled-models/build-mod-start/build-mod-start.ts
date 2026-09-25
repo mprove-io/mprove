@@ -14,7 +14,7 @@ import { checkBuildMetricsFieldGroups } from './check-build-metrics-field-groups
 import { checkModSpaces } from './check-mod-spaces/check-mod-spaces';
 import { checkTimeframes } from './check-timeframes/check-timeframes';
 
-export async function buildModStart(item: {
+export function buildModStart(item: {
   files: BmlFile[];
   malloyConnections: MalloyConnection[];
   connections: ProjectConnection[];
@@ -27,65 +27,67 @@ export async function buildModStart(item: {
   caller: CallerEnum;
   cs: ConfigService<BlockmlConfig>;
 }): Result.ResultAsync<FileMod[], never> {
-  let { cs } = item;
-
-  let mods: FileMod[] = item.mods;
-
-  mods = await buildMods(
-    {
-      mods: mods,
-      malloyConnections: item.malloyConnections,
-      connections: item.connections,
-      tempDir: item.tempDir,
-      projectId: item.projectId,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
+  return Result.pipe(
+    Result.succeed(item),
+    Result.bind(
+      'compiledMods',
+      (v): Result.ResultAsync<FileMod[], never> =>
+        buildMods({
+          mods: v.mods,
+          malloyConnections: v.malloyConnections,
+          connections: v.connections,
+          tempDir: v.tempDir,
+          projectId: v.projectId,
+          structId: v.structId,
+          errors: v.errors,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'flatMods',
+      (v): Result.Result<FileMod[], never> =>
+        buildFlatMalloyFieldItems({
+          mods: v.compiledMods,
+          projectId: v.projectId,
+          errors: v.errors,
+          structId: v.structId,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'spaceMods',
+      (v): Result.Result<FileMod[], never> =>
+        checkModSpaces({
+          mods: v.flatMods,
+          spaces: v.spaces,
+          errors: v.errors,
+          structId: v.structId,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.bind(
+      'timeframeMods',
+      (v): Result.Result<FileMod[], never> =>
+        checkTimeframes({
+          mods: v.spaceMods,
+          errors: v.errors,
+          structId: v.structId,
+          caller: v.caller,
+          cs: v.cs
+        })
+    ),
+    Result.andThen(
+      (v): Result.Result<FileMod[], never> =>
+        checkBuildMetricsFieldGroups({
+          mods: v.timeframeMods,
+          errors: v.errors,
+          structId: v.structId,
+          caller: v.caller,
+          cs: v.cs
+        })
+    )
   );
-
-  mods = buildFlatMalloyFieldItems(
-    {
-      mods: mods,
-      projectId: item.projectId,
-      errors: item.errors,
-      structId: item.structId,
-      caller: item.caller
-    },
-    cs
-  );
-
-  mods = checkModSpaces(
-    {
-      mods: mods,
-      spaces: item.spaces,
-      errors: item.errors,
-      structId: item.structId,
-      caller: item.caller
-    },
-    cs
-  );
-
-  mods = checkTimeframes(
-    {
-      mods: mods,
-      errors: item.errors,
-      structId: item.structId,
-      caller: item.caller
-    },
-    cs
-  );
-
-  mods = checkBuildMetricsFieldGroups(
-    {
-      mods: mods,
-      errors: item.errors,
-      structId: item.structId,
-      caller: item.caller
-    },
-    cs
-  );
-
-  return Result.succeed(mods);
 }

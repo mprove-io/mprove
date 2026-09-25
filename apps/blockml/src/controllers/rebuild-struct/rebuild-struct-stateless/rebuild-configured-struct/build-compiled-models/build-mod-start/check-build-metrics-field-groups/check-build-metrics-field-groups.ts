@@ -1,4 +1,5 @@
 import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
@@ -15,16 +16,15 @@ import type { FlatMalloyFieldItem } from '#common/zod/blockml/internal/flat-mall
 
 let func = FuncEnum.CheckBuildMetricsFieldGroups;
 
-export function checkBuildMetricsFieldGroups(
-  item: {
-    mods: FileMod[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
+export function checkBuildMetricsFieldGroups(item: {
+  mods: FileMod[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FileMod[], never> {
+  let { caller, structId, cs } = item;
+
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let newMods: FileMod[] = [];
@@ -50,7 +50,7 @@ export function checkBuildMetricsFieldGroups(
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
   log(cs, caller, func, structId, LogTypeEnum.Mods, newMods);
 
-  return newMods;
+  return Result.succeed(newMods);
 }
 
 function checkModBuildMetricsFieldGroups(item: {

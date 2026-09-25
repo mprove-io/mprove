@@ -1,25 +1,26 @@
 import path from 'node:path';
 import {
-  Model as MalloyModel,
-  ModelDef as MalloyModelDef,
+  type Model as MalloyModel,
+  type ModelDef as MalloyModelDef,
   Runtime as MalloyRuntime,
-  SourceDef as MalloySourceDef,
+  type SourceDef as MalloySourceDef,
   modelDefToModelInfo
 } from '@malloydata/malloy';
 import {
   type ModelInfo as MalloyModelInfo,
   type ModelEntryValueWithSource
 } from '@malloydata/malloy-interfaces';
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import pIteration from 'p-iteration';
 
 const { forEachSeries } = pIteration;
 
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
@@ -28,26 +29,24 @@ import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 import type { WrapResult } from '#common/zod/wrap-result';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
-import { MalloyConnection } from '#node-common/functions/make-malloy-connections';
+import type { MalloyConnection } from '#node-common/functions/make-malloy-connections';
 import { errorToWrapResult } from './error-to-wrap-result/error-to-wrap-result';
 import { getWrapResult } from './get-wrap-result/get-wrap-result';
 
 let func = FuncEnum.BuildMods;
 
-export async function buildMods(
-  item: {
-    mods: FileMod[];
-    malloyConnections: MalloyConnection[];
-    connections: ProjectConnection[];
-    tempDir: string;
-    projectId: string;
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId, projectId } = item;
+export async function buildMods(item: {
+  mods: FileMod[];
+  malloyConnections: MalloyConnection[];
+  connections: ProjectConnection[];
+  tempDir: string;
+  projectId: string;
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.ResultAsync<FileMod[], never> {
+  let { caller, structId, projectId, cs } = item;
 
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
@@ -231,5 +230,5 @@ export async function buildMods(
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
   log(cs, caller, func, structId, LogTypeEnum.Mods, newMods);
 
-  return newMods;
+  return Result.succeed(newMods);
 }

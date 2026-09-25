@@ -1,10 +1,11 @@
-import { ConfigService } from '@nestjs/config';
+import type { ConfigService } from '@nestjs/config';
+import { Result } from '@praha/byethrow';
 import { BmError } from '#blockml/classes/bm-error';
-import { BlockmlConfig } from '#blockml/config/blockml-config';
+import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { parseTags } from '#blockml/functions/parse-tags/parse-tags';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
-import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
@@ -16,17 +17,16 @@ import type { KeyValuePair } from '#common/zod/blockml/key-value-pair';
 
 let func = FuncEnum.CheckModSpaces;
 
-export function checkModSpaces(
-  item: {
-    mods: FileMod[];
-    spaces: FilePartSpace[];
-    errors: BmError[];
-    structId: string;
-    caller: CallerEnum;
-  },
-  cs: ConfigService<BlockmlConfig>
-) {
-  let { caller, structId } = item;
+export function checkModSpaces(item: {
+  mods: FileMod[];
+  spaces: FilePartSpace[];
+  errors: BmError[];
+  structId: string;
+  caller: CallerEnum;
+  cs: ConfigService<BlockmlConfig>;
+}): Result.Result<FileMod[], never> {
+  let { caller, structId, cs } = item;
+
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   item.mods.forEach(mod => {
@@ -78,5 +78,5 @@ export function checkModSpaces(
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
   log(cs, caller, func, structId, LogTypeEnum.Entities, item.mods);
 
-  return item.mods;
+  return Result.succeed(item.mods);
 }
