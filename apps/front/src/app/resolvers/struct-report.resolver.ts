@@ -13,7 +13,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type {
   ToBackendGetReportRequestPayload,
   ToBackendGetReportResponse

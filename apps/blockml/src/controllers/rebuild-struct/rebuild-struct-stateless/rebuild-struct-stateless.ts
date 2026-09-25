@@ -1,12 +1,12 @@
 import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Ev } from '#common/zod/backend/ev';
 import type { MproveConfig } from '#common/zod/backend/mprove-config';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';

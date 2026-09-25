@@ -1,16 +1,16 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import { BmError } from '#blockml/classes/bm-error';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import type { FileReportRowParameter } from '#common/zod/blockml/internal/file-report-row-parameter';
 

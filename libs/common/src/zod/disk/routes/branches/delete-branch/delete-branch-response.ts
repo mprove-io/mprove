@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,

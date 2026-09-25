@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { ServerError } from '#common/classes/server-error';
+import type { ServerError } from '#common/classes/server-error/server-error';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 
 export let zResponseInfo = z

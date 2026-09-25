@@ -19,7 +19,7 @@ import { ReportDataService } from '#backend/services/report-data.service';
 import { TabService } from '#backend/services/tab.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { makeCopy } from '#common/functions/make-copy';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ToBackendGetReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-report';
 
 @Injectable()

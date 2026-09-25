@@ -4,12 +4,12 @@ import {
   DEFAULT_CHART_Y_AXIS
 } from '#common/constants/mconfig-chart';
 import { UI_CHART_TYPES } from '#common/constants/ui-chart-types';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FileChartOptions } from '#common/zod/blockml/internal/file-chart-options';
 import type { FileChartOptionsSeriesElement } from '#common/zod/blockml/internal/file-chart-options-series';
 import type { FileChartOptionsXAxisElement } from '#common/zod/blockml/internal/file-chart-options-x-axis';
 import type { FileChartOptionsYAxisElement } from '#common/zod/blockml/internal/file-chart-options-y-axis';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
-import { isDefined } from './is-defined';
 
 export function toFileChartOptions(item: {
   chart: MconfigChart;

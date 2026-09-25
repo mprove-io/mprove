@@ -16,7 +16,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendIsBranchExistResponsePayload } from '#common/zod/to-backend/branches/to-backend-is-branch-exist';
 
 @ApiTags('Branches')

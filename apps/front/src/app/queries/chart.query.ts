@@ -8,7 +8,7 @@ import {
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { TileX } from '#common/zod/backend/tile-x';

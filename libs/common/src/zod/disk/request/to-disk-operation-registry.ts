@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
 import type { ToDiskCreateBranchRequest } from '#common/zod/disk/routes/branches/create-branch/create-branch-request';
 import { zToDiskCreateBranchRequest } from '#common/zod/disk/routes/branches/create-branch/create-branch-request';

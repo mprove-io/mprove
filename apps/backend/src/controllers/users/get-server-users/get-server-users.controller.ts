@@ -22,7 +22,7 @@ import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { makeFullName } from '#backend/functions/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type {

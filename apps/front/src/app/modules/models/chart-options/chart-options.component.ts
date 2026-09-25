@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { encodeFilePath } from '#common/functions/encode-file-path';
-import { spaceUnitToChartUnit } from '#common/functions/space/space-unit-to-chart-unit';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
+import { spaceUnitToChartUnit } from '#common/functions/space-unit-to-chart-unit/space-unit-to-chart-unit';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
 import { NavQuery } from '#front/app/queries/nav.query';

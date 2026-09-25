@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
 export type DiskNewPathAlreadyExistError = {
   code: 'DISK_NEW_PATH_ALREADY_EXIST';

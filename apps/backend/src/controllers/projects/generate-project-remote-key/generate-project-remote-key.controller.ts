@@ -29,7 +29,7 @@ import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendGenerateProjectRemoteKeyResponsePayload } from '#common/zod/to-backend/projects/to-backend-generate-project-remote-key';
 
 @ApiTags('Projects')

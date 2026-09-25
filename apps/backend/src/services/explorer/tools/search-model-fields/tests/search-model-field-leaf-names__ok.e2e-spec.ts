@@ -8,7 +8,7 @@ import { SearchModelFieldLeafNamesService } from '#backend/services/explorer/too
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 
 let testId = 'search-model-field-leaf-names__ok';
 

@@ -1,5 +1,5 @@
 import { NO_CAPITALIZE_LIST } from '#common/constants/top';
-import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 
 export function getLabel(item: { value: string }): string {
   let { value } = item;

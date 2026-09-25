@@ -5,7 +5,7 @@ import {
   LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
   LOCAL_STORAGE_NEW_ORG_OWNER
 } from '#common/constants/top-front';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { AuthService } from '#front/app/services/auth.service';
 
 @Component({

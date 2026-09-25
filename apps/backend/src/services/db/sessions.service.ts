@@ -11,7 +11,7 @@ import {
   SessionEnt,
   sessionsTable
 } from '#backend/drizzle/postgres/schema/sessions';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';

@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { UsersService } from '#backend/services/db/users.service';
 import { HashService } from '#backend/services/hash.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 
 @Injectable()

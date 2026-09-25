@@ -13,7 +13,7 @@ import { take, tap } from 'rxjs/operators';
 import type { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Given } from '#common/zod/backend/given';
 import type { Role } from '#common/zod/backend/role';
 import type {

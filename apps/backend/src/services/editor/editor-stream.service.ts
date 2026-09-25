@@ -19,7 +19,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import {
   CODEX_PROVIDER_ID,
   OPENAI_PROVIDER_ID
@@ -35,7 +35,7 @@ import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { OpencodeStreamCommandEnum } from '#common/enums/opencode-stream-command.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
 import { SessionsService } from '../db/sessions.service';

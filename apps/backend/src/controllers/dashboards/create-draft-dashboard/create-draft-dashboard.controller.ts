@@ -41,7 +41,7 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
@@ -51,9 +51,9 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { encodeFilePath } from '#common/functions/encode-file-path';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import type { ToBackendCreateDraftDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-create-draft-dashboard';

@@ -27,7 +27,7 @@ import {
   PATH_SESSION
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeQueryParams } from '../functions/make-query-params';
 import { ModelQuery, ModelState } from '../queries/model.query';
 import { NavQuery, NavState } from '../queries/nav.query';

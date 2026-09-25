@@ -1,8 +1,8 @@
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { Model } from '#common/zod/blockml/model';
 import type { Query } from '#common/zod/blockml/query';

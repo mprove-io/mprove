@@ -1,12 +1,12 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';

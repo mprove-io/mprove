@@ -28,7 +28,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { EmailService } from '#backend/services/email.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
 import {
   DEFAULT_SRV_UI,
@@ -36,10 +36,10 @@ import {
 } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRegisterUserResponsePayload } from '#common/zod/to-backend/users/to-backend-register-user';
 
 @ApiTags('Users')

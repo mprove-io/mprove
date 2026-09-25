@@ -10,7 +10,7 @@ import { MCP_TOOL_SEARCH_DOCS } from '#common/constants/mcp-tools-registry';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type {
   ToBackendGenerateUserApiKeyRequest,
   ToBackendGenerateUserApiKeyResponse

@@ -1,7 +1,7 @@
 import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { getCompLabel } from '#common/functions/set-chart-title-on-select-change/get-comp-label/get-comp-label';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { ModelField } from '#common/zod/blockml/model-field';
-import { isDefined } from './is-defined';
 
 export function setChartTitleOnSelectChange<T extends Mconfig>(item: {
   mconfig: T;
@@ -26,19 +26,22 @@ export function setChartTitleOnSelectChange<T extends Mconfig>(item: {
     let newTitle = '';
 
     fieldsSelectedMeasuresAndCalculations.forEach(x => {
-      let compLabel = getCompLabel(x);
+      let compLabel: string = getCompLabel({ field: x });
+
       newTitle = newTitle === '' ? `${compLabel}` : `${newTitle}, ${compLabel}`;
     });
 
     if (newTitle === '') {
       fieldsSelectedDimensions.forEach(x => {
-        let compLabel = getCompLabel(x);
+        let compLabel: string = getCompLabel({ field: x });
+
         newTitle =
           newTitle === '' ? `${compLabel}` : `${newTitle}, ${compLabel}`;
       });
     } else {
       fieldsSelectedDimensions.forEach(x => {
-        let compLabel = getCompLabel(x);
+        let compLabel: string = getCompLabel({ field: x });
+
         newTitle = `${newTitle} by ${compLabel}`;
       });
     }
@@ -47,14 +50,4 @@ export function setChartTitleOnSelectChange<T extends Mconfig>(item: {
   }
 
   return mconfig;
-}
-
-function getCompLabel(x: ModelField) {
-  let topLabelPrefix = `${x.topLabel} `;
-
-  let groupLabel = isDefined(x.groupLabel) ? `${x.groupLabel} ` : '';
-
-  let compLabel = `${topLabelPrefix}${groupLabel}${x.label}`;
-
-  return compLabel;
 }

@@ -41,15 +41,15 @@ import { TrinoService } from '#backend/services/dwh/trino.service';
 import { ParentService } from '#backend/services/parent.service';
 import { StoreService } from '#backend/services/store.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRunQueriesResponsePayload } from '#common/zod/to-backend/queries/to-backend-run-queries';
 
 @Injectable()

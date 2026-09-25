@@ -21,8 +21,8 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { Query } from '#common/zod/blockml/query';
 import type {

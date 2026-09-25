@@ -5,7 +5,7 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { Listener } from '#common/zod/blockml/listener';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';

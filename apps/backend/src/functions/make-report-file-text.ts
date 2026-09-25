@@ -2,7 +2,7 @@ import type {
   ModelTab,
   StructTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import {
   REPORT_FIELD_DEFAULT_HIDDEN,
   REPORT_ROW_DEFAULT_SHOW_CHART
@@ -11,11 +11,11 @@ import { ControlClassEnum } from '#common/enums/control-class.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
-import { toFileChartOptions } from '#common/functions/to-file-chart-options';
-import { toYaml } from '#common/functions/to-yaml';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
+import { toFileChartOptions } from '#common/functions/to-file-chart-options/to-file-chart-options';
+import { toYaml } from '#common/functions/to-yaml/to-yaml';
 import type { FileFraction } from '#common/zod/blockml/internal/file-fraction';
 import type { FileFractionControl } from '#common/zod/blockml/internal/file-fraction-control';
 import type { FileReport } from '#common/zod/blockml/internal/file-report';

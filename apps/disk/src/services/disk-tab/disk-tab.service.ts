@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
 import { encryptData } from '#node-common/functions/encrypt-data/encrypt-data';

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 @Injectable()
 export class HashService {

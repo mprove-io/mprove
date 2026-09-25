@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ChartPointsData } from '#common/zod/front/chart-points-data';
 import type { DataPoint } from '#common/zod/front/data-point';
 import type { DataRow } from '#common/zod/front/data-row';

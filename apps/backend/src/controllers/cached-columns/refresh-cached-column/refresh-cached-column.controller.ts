@@ -37,13 +37,13 @@ import { SnowFlakeService } from '#backend/services/dwh/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRefreshCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-refresh-cached-column';
 
 const CACHED_PARTS_INSERT_CHUNK_SIZE = 400;

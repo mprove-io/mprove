@@ -25,7 +25,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendSetAvatarResponsePayload } from '#common/zod/to-backend/avatars/to-backend-set-avatar';
 
 @ApiTags('Avatars')

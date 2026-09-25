@@ -12,7 +12,7 @@ import type {
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access';
 import { makeReportFiltersX } from '#backend/functions/make-report-filters-x';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import {
   EMPTY_REPORT_ID,
@@ -23,10 +23,10 @@ import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined';
-import { makeCopy } from '#common/functions/make-copy';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelX } from '#common/zod/backend/model-x';
 import type { ReportUnit } from '#common/zod/backend/report-unit';

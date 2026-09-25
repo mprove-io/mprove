@@ -10,9 +10,9 @@ import {
   SHARED_SPACE_ID,
   UNCATEGORIZED_SPACE_ID
 } from '#common/constants/top';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Member } from '#common/zod/backend/member';
 import type { SpaceFolder } from '#common/zod/backend/space-folder';
 import type { SpaceNode } from '#common/zod/backend/space-node';

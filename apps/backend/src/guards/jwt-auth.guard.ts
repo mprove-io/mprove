@@ -9,7 +9,7 @@ import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { parseApiKey } from '#backend/functions/api-key/parse-api-key';
 import { validateApiKeySecret } from '#backend/functions/api-key/validate-api-key-secret';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { MCLI_SESSION_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-session-allowed-request-names';
 import { MCLI_USER_ALLOWED_REQUEST_NAMES } from '#common/constants/mcli-user-allowed-request-names';
 import { PROD_REPO_ID } from '#common/constants/top';

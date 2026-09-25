@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import pIteration from 'p-iteration';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';

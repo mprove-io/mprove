@@ -1,5 +1,5 @@
-import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
-import { isDefined } from '#common/functions/is-defined';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export function makeFullName(item: { firstName: string; lastName: string }) {
   return isDefined(item.firstName) && isDefined(item.lastName)

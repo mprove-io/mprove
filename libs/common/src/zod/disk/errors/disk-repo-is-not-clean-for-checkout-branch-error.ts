@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
 export type DiskRepoIsNotCleanForCheckoutBranchError = {
   code: 'DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH';

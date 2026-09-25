@@ -30,7 +30,7 @@ import { TabToEntService } from '#backend/services/tab-to-ent.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type {
   ColumnCombinedReference,
   CombinedSchema,

@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';

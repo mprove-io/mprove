@@ -24,8 +24,8 @@ import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import { getCurrentUnitStartTs } from '#node-common/functions/get-current-unit-start-ts/get-current-unit-start-ts';
 import { getUnitDuration } from '#node-common/functions/get-unit-duration/get-unit-duration';

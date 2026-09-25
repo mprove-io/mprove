@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
 export type DiskRepoStatusIsNotNeedPushError = {
   code: 'DISK_REPO_STATUS_IS_NOT_NEED_PUSH';

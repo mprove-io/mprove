@@ -4,7 +4,7 @@ import type { LanguageModel } from 'ai';
 import { streamText } from 'ai';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ExplorerModelsService } from './explorer-models.service';

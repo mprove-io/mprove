@@ -2,7 +2,7 @@ import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER
 } from '#common/constants/top';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 
 export function getUserFolderNodeId(item: {
   projectId: string;

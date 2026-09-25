@@ -21,7 +21,7 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectsItem } from '#common/zod/backend/projects-item';
 import type {
   ToBackendGetProjectsListRequestPayload,

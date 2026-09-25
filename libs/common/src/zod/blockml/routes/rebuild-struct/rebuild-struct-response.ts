@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { ExtraSchema } from '#common/zod/backend/connection-schemas/extra-schema';
 import { zExtraSchema } from '#common/zod/backend/connection-schemas/extra-schema';
 import type { MproveConfig } from '#common/zod/backend/mprove-config';

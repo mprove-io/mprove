@@ -6,7 +6,7 @@ import { PostgresConnection } from '@malloydata/db-postgres';
 import { SnowflakeConnection } from '@malloydata/db-snowflake';
 import { PrestoConnection, TrinoConnection } from '@malloydata/db-trino';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 
 export type MalloyConnection =

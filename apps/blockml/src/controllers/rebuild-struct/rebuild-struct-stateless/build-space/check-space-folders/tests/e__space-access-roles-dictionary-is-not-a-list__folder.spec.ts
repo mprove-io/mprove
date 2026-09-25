@@ -1,6 +1,6 @@
 import test from 'ava';
 import fse from 'fs-extra';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import { readLog } from '#blockml/functions/read-log/read-log';
 import { prepareTest } from '#blockml/functions/top/prepare-test/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
@@ -8,7 +8,7 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 let caller = CallerEnum.BuildSpace;
 let func = FuncEnum.CheckSpaceFolders;

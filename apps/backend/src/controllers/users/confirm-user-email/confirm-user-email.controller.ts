@@ -27,10 +27,10 @@ import { MembersService } from '#backend/services/db/members.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendConfirmUserEmailResponsePayload } from '#common/zod/to-backend/users/to-backend-confirm-user-email';
 
 @ApiTags('Users')

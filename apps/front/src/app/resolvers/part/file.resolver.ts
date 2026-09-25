@@ -10,7 +10,7 @@ import { map, take, tap } from 'rxjs/operators';
 import { PARAMETER_FILE_ID } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import { getFileIds } from '#front/app/functions/get-file-ids';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { UiQuery } from '#front/app/queries/ui.query';

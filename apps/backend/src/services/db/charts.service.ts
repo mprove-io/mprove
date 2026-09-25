@@ -13,7 +13,7 @@ import { checkAccess } from '#backend/functions/check-access';
 import { checkModelAccess } from '#backend/functions/check-model-access';
 import { makeTilesX } from '#backend/functions/make-tiles-x';
 import { sortSpaceNodes } from '#backend/functions/space/sort-space-nodes';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import {
   MPROVE_USERS_FOLDER,
   MY_CHARTS_SPACE_TITLE
@@ -21,8 +21,8 @@ import {
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';

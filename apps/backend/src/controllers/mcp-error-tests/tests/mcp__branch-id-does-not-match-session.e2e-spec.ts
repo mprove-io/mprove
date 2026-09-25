@@ -16,7 +16,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 
 let testId = 'backend-mcp__branch-id-does-not-match-session';
 

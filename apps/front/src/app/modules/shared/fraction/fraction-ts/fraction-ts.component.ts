@@ -31,9 +31,9 @@ import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
 import { StructQuery } from '#front/app/queries/struct.query';

@@ -21,7 +21,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendGetConnectionsResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connections';
 
 @ApiTags('Connections')

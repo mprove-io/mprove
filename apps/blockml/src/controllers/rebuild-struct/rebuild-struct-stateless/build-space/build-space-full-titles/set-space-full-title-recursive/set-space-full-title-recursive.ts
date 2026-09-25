@@ -1,5 +1,5 @@
-import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
-import { isDefined } from '#common/functions/is-defined';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 
 export function setSpaceFullTitleRecursive(item: {

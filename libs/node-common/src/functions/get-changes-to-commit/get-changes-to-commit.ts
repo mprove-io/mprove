@@ -1,8 +1,8 @@
 import { Result } from '@praha/byethrow';
 import pIteration from 'p-iteration';
 import type { StatusResult } from 'simple-git';
-import { encodeFilePath } from '#common/functions/encode-file-path';
-import { isUndefined } from '#common/functions/is-undefined';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { FileStatus } from '#common/zod/disk/file-status';
 import type { FileWithGitFileStatus } from '#common/zod/disk/file-with-git-file-status';

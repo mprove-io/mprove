@@ -1,4 +1,4 @@
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 

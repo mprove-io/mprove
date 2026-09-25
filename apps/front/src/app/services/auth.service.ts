@@ -14,7 +14,7 @@ import {
   LOCAL_STORAGE_ORG_ID,
   LOCAL_STORAGE_TOKEN
 } from '#common/constants/top-front';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

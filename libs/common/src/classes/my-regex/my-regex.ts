@@ -1,5 +1,5 @@
+import { cloneRegexp } from '#common/classes/my-regex/clone-regexp/clone-regexp';
 import { QUAD_UNDERSCORE } from '#common/constants/top';
-import { cloneRegexp } from '#common/functions/clone-regexp';
 
 export class MyRegex {
   // COMMON

@@ -3,7 +3,7 @@ import { IHeaderAngularComp } from 'ag-grid-angular';
 import { IHeaderParams } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { DataRow } from '#common/zod/front/data-row';
 import { UiQuery } from '#front/app/queries/ui.query';
 

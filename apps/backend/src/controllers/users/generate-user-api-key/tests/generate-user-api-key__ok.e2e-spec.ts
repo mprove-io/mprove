@@ -10,7 +10,7 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type {
   ToBackendGenerateUserApiKeyRequest,
   ToBackendGenerateUserApiKeyResponse

@@ -50,7 +50,7 @@ import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.
 import { EditorStreamService } from '#backend/services/editor/editor-stream.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -61,8 +61,8 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
 import type { ToBackendCreateEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
 

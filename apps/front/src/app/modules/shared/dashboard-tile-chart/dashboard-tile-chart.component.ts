@@ -13,7 +13,7 @@ import { tap } from 'rxjs/operators';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { TileX } from '#common/zod/backend/tile-x';

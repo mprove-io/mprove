@@ -46,7 +46,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
@@ -54,7 +54,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendCancelQueriesResponsePayload } from '#common/zod/to-backend/queries/to-backend-cancel-queries';
 
 @ApiTags('Queries')

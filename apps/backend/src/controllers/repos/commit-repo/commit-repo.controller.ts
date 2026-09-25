@@ -15,7 +15,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { SessionArchiveService } from '#backend/services/session/session-archive.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';

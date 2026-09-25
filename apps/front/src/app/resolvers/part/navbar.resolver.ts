@@ -14,7 +14,7 @@ import {
 } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type {
   ToBackendGetNavRequestPayload,
   ToBackendGetNavResponse

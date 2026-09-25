@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { encodeFilePath } from '#common/functions/encode-file-path';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
 import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';

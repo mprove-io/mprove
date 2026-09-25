@@ -29,8 +29,8 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ErrorData } from '#common/zod/front/error-data';
 import type {
   ToBackendGetReportsRequestPayload,

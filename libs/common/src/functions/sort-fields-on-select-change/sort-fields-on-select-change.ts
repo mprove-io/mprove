@@ -1,9 +1,9 @@
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { ModelField } from '#common/zod/blockml/model-field';
-import { isDefined } from './is-defined';
 
 export function sortFieldsOnSelectChange<T extends Mconfig>(item: {
   mconfig: T;

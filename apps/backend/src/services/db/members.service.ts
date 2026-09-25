@@ -20,16 +20,16 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeFullName } from '#backend/functions/make-full-name';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { Member } from '#common/zod/backend/member';
 import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
 import { BlockmlService } from '../blockml.service';

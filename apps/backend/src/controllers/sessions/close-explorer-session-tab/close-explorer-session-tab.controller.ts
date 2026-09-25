@@ -11,7 +11,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';

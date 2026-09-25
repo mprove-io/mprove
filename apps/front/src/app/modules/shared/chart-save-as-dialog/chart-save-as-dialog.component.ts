@@ -30,11 +30,11 @@ import {
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
-import { makeSpaceUnits } from '#common/functions/space/make-space-units';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
+import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';

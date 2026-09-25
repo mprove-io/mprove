@@ -1,4 +1,4 @@
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ModelNode } from '#common/zod/blockml/model-node';
 
 export type FindModelNodeOutput = {

@@ -12,7 +12,7 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ToBackendGetProvidersRequest } from '#common/zod/to-backend/providers/get-providers/get-providers-request';
 import type { ToBackendGetProvidersResponse } from '#common/zod/to-backend/providers/get-providers/get-providers-response';

@@ -1,6 +1,6 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import type { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';

@@ -8,7 +8,7 @@ import { add, type Duration, fromUnixTime, getUnixTime, sub } from 'date-fns';
 import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
 import type { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { getCurrentUnitStartTs } from '#node-common/functions/get-current-unit-start-ts/get-current-unit-start-ts';
 import { getUnitDuration } from '#node-common/functions/get-unit-duration/get-unit-duration';
 import { getTimeSpecUnitStartTs as getTimeSpecUnitMomentStartTs } from '#node-common/functions/malloy/get-malloy-filter-ts-fractions/get-start/get-timespec-unit-start-ts/get-timespec-unit-start-ts';

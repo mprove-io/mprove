@@ -30,7 +30,7 @@ import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Member } from '#common/zod/backend/member';
 import type { StructX } from '#common/zod/backend/struct-x';
 import type { Repo } from '#common/zod/disk/repo';

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
 export type DiskDevRepoCommitDoesNotMatchLocalCommitError = {
   code: 'DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT';

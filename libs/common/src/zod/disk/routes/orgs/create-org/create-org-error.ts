@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type DiskCheckOrgDoesNotExistError,
   zDiskCheckOrgDoesNotExistError

@@ -31,7 +31,7 @@ import { UrlService } from '#backend/services/url.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ToBackendEditProviderRequestPayload } from '#common/zod/to-backend/providers/edit-provider/edit-provider-request-payload';
 import type { ToBackendEditProviderResponsePayload } from '#common/zod/to-backend/providers/edit-provider/edit-provider-response-payload';

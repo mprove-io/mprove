@@ -19,7 +19,7 @@ import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';

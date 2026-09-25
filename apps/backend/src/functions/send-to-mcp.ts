@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export async function sendToMcp(item: {
   httpServer: any;

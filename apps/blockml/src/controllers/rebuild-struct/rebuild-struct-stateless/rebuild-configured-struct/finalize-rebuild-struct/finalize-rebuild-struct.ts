@@ -1,18 +1,18 @@
 import type { Logger } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { checkSuggestModelDimension } from '#blockml/controllers/rebuild-struct/rebuild-struct-stateless/rebuild-configured-struct/finalize-rebuild-struct/check-suggest-model-dimension/check-suggest-model-dimension';
 import { logStruct } from '#blockml/controllers/rebuild-struct/rebuild-struct-stateless/rebuild-configured-struct/finalize-rebuild-struct/log-struct/log-struct';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type {
   ExtraSchema,
   ExtraSchemaColumn,

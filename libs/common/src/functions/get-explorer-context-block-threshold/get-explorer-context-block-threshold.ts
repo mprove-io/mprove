@@ -1,6 +1,6 @@
 import { EXPLORER_CONTEXT_USAGE_BUFFER } from '#common/constants/top';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from './is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 export function getExplorerContextBlockThreshold(item: {
   contextLimit?: number;

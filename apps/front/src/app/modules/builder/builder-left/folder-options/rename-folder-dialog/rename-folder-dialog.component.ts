@@ -18,10 +18,10 @@ import { take, tap } from 'rxjs/operators';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { decodeFilePath } from '#common/functions/decode-file-path';
-import { encodeFilePath } from '#common/functions/encode-file-path';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type {
   ToBackendRenameCatalogNodeRequestPayload,
   ToBackendRenameCatalogNodeResponse

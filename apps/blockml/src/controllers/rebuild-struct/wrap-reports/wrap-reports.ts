@@ -9,9 +9,9 @@ import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.e
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';

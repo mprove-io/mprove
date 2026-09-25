@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import type { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { DiskRestoreProjectGitCloneRepoBranchError } from '#common/zod/disk/function-errors/disk-restore-project-git-clone-repo-branch-error';
 import type { ProjectLt } from '#common/zod/st-lt';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';

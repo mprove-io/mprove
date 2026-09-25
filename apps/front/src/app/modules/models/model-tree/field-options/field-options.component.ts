@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { encodeFilePath } from '#common/functions/encode-file-path';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import type { ModelNodeExtra } from '#common/zod/front/model-node-extra';
 import { MetricNode } from '#front/app/modules/reports/metrics-tree/metrics-tree.component';
 import { UiQuery } from '#front/app/queries/ui.query';

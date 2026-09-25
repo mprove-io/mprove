@@ -1,5 +1,5 @@
-import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
-import { isDefined } from '#common/functions/is-defined';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Member } from '#common/zod/backend/member';
 import type { User } from '#common/zod/backend/user';
 

@@ -23,7 +23,7 @@ import {
   ASTSegmentViewDefinition,
   ASTViewOperation
 } from '@malloydata/malloy-query-builder';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 // import { FieldBase } from '@malloydata/malloy/dist/model/malloy_types';
 import { DOUBLE_UNDERSCORE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
@@ -32,12 +32,12 @@ import { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeId } from '#common/functions/make-id';
-import { replaceChartField } from '#common/functions/replace-chart-field';
-import { setChartFields } from '#common/functions/set-chart-fields';
-import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeId } from '#common/functions/make-id/make-id';
+import { replaceChartField } from '#common/functions/replace-chart-field/replace-chart-field';
+import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
+import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import type { QueryOperation } from '#common/zod/backend/query-operation';
 import type { SelectedGiven } from '#common/zod/backend/selected-given';
 import type { SelectedGivenValue } from '#common/zod/backend/selected-given-value';

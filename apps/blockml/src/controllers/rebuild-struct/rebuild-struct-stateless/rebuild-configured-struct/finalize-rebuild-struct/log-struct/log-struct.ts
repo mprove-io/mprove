@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { CallerEnum } from '#common/enums/special/caller.enum';

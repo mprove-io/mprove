@@ -1,11 +1,11 @@
 import path from 'node:path';
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import type { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
-import { decodeFilePath } from '#common/functions/decode-file-path';
-import { isDefined } from '#common/functions/is-defined';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
+import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 

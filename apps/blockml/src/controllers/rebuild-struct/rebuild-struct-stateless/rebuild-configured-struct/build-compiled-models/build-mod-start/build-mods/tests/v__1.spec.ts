@@ -1,6 +1,6 @@
 import test from 'ava';
 import fse from 'fs-extra';
-import { BmError } from '#blockml/classes/bm-error';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { readLog } from '#blockml/functions/read-log/read-log';
 import { logToConsoleBlockml } from '#blockml/functions/top/log-to-console-blockml/log-to-console-blockml';
@@ -11,7 +11,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { FileMod } from '#common/zod/blockml/internal/file-mod';
 

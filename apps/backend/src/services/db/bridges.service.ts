@@ -4,9 +4,9 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

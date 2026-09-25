@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import { makeIdPrefix } from '#common/functions/make-id-prefix';
+import { makeIdPrefix } from '#common/functions/make-id-prefix/make-id-prefix';
 
 export async function generateApiKeyParts() {
   let prefix = makeIdPrefix();

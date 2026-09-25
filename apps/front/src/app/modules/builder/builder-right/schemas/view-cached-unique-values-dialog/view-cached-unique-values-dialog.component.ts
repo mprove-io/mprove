@@ -12,7 +12,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { map, take } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CachedColumn } from '#common/zod/to-backend/connections/cached-column';
 import type { ToBackendViewCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-view-cached-column';
 import { ApiService } from '#front/app/services/api.service';

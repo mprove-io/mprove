@@ -1,12 +1,12 @@
 import { Command, Option } from 'clipanion';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { getBuilderUrl } from '#common/functions/get-builder-url';
-import { isUndefined } from '#common/functions/is-undefined';
-import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
+import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
 import type {
   ToBackendMergeRepoRequestPayload,
   ToBackendMergeRepoResponse

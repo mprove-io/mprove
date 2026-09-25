@@ -1,6 +1,6 @@
 import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { FieldAny } from '#common/zod/blockml/internal/field-any';
 import type { ModelField } from '#common/zod/blockml/model-field';
 import type { ModelNode } from '#common/zod/blockml/model-node';

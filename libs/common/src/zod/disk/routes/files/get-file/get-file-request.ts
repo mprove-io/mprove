@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   type BaseProject,
   zBaseProject

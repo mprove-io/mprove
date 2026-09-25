@@ -1,9 +1,9 @@
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import { parseTags } from '#blockml/functions/parse-tags/parse-tags';
 import { MPROVE_TAG_FIELD_GROUP } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { FlatMalloyFieldItem } from '#common/zod/blockml/internal/flat-malloy-field-item';
 import { checkGroupSuffix } from './check-group-suffix/check-group-suffix';
 

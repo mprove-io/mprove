@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { MconfigChartSeries } from '#common/zod/blockml/mconfig-chart-series';
 import type { ChartSeriesWithField } from '#common/zod/front/chart-series-with-field';
 import type { EventChartSeriesElementUpdate } from '#common/zod/front/event-chart-series-element-update';

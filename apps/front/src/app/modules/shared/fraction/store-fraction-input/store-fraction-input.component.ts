@@ -21,14 +21,14 @@ import {
   take,
   tap
 } from 'rxjs';
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { makeCopy } from '#common/functions/make-copy';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';

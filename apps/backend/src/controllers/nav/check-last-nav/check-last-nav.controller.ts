@@ -21,7 +21,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendCheckLastNavResponsePayload } from '#common/zod/to-backend/nav/to-backend-check-last-nav';
 
 @ApiTags('Nav')

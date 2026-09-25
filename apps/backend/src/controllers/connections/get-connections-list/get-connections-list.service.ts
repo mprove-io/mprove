@@ -10,7 +10,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ConnectionItem } from '#common/zod/to-backend/connections/connection-item';
 
 @Injectable()

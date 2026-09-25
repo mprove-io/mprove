@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { checkApiHostname } from '#backend/functions/check-api-hostname';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 
 @Injectable()
 export class UrlService {

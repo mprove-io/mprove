@@ -1,4 +1,4 @@
-import { isDefined } from './is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export function capitalizeFirstLetter(value: string) {
   return isDefined(value) && value.length > 0

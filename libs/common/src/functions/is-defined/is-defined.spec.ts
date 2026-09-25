@@ -1,5 +1,5 @@
 import test from 'ava';
-import { isDefined } from './is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 let testPrefix: string = 'isDefined';
 

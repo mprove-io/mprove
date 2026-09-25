@@ -23,7 +23,7 @@ import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { MconfigField } from '#common/zod/backend/mconfig-field';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';

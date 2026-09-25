@@ -16,12 +16,12 @@ import { PrestoService } from '#backend/services/dwh/presto.service';
 import { SnowFlakeService } from '#backend/services/dwh/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { FetchSampleResult } from '#common/zod/to-backend/connections/fetch-sample-result';
 
 @Injectable()

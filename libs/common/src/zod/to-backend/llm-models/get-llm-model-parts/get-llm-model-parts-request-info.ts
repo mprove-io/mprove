@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { Extend } from '#common/types/extend';
 import {
   type ToBackendRequestInfo,

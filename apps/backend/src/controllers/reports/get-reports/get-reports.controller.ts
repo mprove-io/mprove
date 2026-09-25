@@ -24,7 +24,7 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendGetReportsResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-reports';
 
 @ApiTags('Reports')

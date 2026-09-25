@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
@@ -10,9 +10,9 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { FileStoreBuildMetric } from '#common/zod/blockml/internal/file-store-build-metric';
 

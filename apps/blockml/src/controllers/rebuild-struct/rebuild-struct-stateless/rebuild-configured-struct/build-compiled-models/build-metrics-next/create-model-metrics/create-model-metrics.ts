@@ -1,5 +1,5 @@
 import type { ConfigService } from '@nestjs/config';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import {
@@ -14,9 +14,9 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';

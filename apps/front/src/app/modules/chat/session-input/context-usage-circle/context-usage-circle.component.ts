@@ -13,7 +13,7 @@ import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE } from '#common/constants/top';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold';
+import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold/get-explorer-context-block-threshold';
 import type { LlmModelWithProvider } from '#common/zod/backend/llm-models/llm-model-with-provider';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
 import { SessionQuery } from '#front/app/queries/session.query';

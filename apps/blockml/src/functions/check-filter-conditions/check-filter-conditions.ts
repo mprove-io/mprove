@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
@@ -8,8 +8,8 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { sdrType } from '#common/types/sdr-type';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 

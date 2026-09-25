@@ -46,7 +46,7 @@ import {
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendDuplicateMconfigAndQueryResponsePayload } from '#common/zod/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 

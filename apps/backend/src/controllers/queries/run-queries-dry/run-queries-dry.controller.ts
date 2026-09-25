@@ -42,7 +42,7 @@ import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { QueryEstimate } from '#common/zod/backend/query-estimate';
 import type { ToBackendRunQueriesDryResponsePayload } from '#common/zod/to-backend/queries/to-backend-run-queries-dry';
 

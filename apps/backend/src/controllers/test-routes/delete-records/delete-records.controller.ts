@@ -50,7 +50,7 @@ import { HashService } from '#backend/services/hash.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendDeleteRecordsResponse } from '#common/zod/to-backend/test-routes/to-backend-delete-records';
 
 @ApiTags('TestRoutes')

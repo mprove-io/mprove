@@ -11,7 +11,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';

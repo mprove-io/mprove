@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { BaseConnection } from '#common/zod/backend/base-connection';
 import { zBaseConnection } from '#common/zod/backend/base-connection';
 import type { Ev } from '#common/zod/backend/ev';

@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getConfig } from '#disk/config/get.config';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';

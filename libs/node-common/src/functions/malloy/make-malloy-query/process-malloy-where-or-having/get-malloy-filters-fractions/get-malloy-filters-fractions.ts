@@ -12,7 +12,7 @@ import {
   ParsedFilter
 } from '@malloydata/malloy-query-builder';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { Model } from '#common/zod/blockml/model';
 import { getMalloyFilterBooleanFractions } from '#node-common/functions/malloy/get-malloy-filter-boolean-fractions/get-malloy-filter-boolean-fractions';

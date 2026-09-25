@@ -28,9 +28,9 @@ import {
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Role } from '#common/zod/backend/role';
 import type { Space } from '#common/zod/blockml/space';

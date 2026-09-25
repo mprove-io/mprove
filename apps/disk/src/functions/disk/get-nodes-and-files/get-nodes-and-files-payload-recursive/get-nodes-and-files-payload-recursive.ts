@@ -4,10 +4,10 @@ import pIteration from 'p-iteration';
 
 const { forEachSeries } = pIteration;
 
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
-import { encodeFilePath } from '#common/functions/encode-file-path';
-import { isDefined } from '#common/functions/is-defined';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
 import type { DiskGetNodesAndFilesPayloadRecursiveError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-payload-recursive-error';

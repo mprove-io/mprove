@@ -3,9 +3,9 @@ import {
   DEFAULT_CHART_Y_AXIS
 } from '#common/constants/mconfig-chart';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { makeCopy } from '#common/functions/make-copy';
-import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { FileChartData } from '#common/zod/blockml/internal/file-chart-data';
 import type { FileChartOptions } from '#common/zod/blockml/internal/file-chart-options';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';

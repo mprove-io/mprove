@@ -13,7 +13,7 @@ import {
   MCP_TOOL_RUN_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import {
   type McpToolRunInput,
   zMcpToolRunInput,

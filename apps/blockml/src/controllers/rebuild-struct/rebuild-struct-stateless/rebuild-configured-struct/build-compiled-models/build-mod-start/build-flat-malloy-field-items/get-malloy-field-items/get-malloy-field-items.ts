@@ -6,7 +6,7 @@ import type { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
 import type { ConfigService } from '@nestjs/config';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { MalloySourceField } from '#blockml/types/malloy-source-field';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FlatMalloyFieldItem } from '#common/zod/blockml/internal/flat-malloy-field-item';
 import { flattenMalloyFieldItemsRecursive } from './flatten-malloy-field-items-recursive/flatten-malloy-field-items-recursive';
 import { getMalloySourceAnnotationValues } from './get-malloy-source-annotation-values/get-malloy-source-annotation-values';

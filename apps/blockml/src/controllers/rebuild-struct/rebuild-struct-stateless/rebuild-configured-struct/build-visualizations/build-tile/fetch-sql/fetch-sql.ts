@@ -1,7 +1,7 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import asyncPool from 'tiny-async-pool';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import type { FilePartTileExtra } from '#blockml/types/file-part-tile-extra';
@@ -13,8 +13,8 @@ import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum'
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { dcType } from '#common/types/dc-type';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { QueryOperation } from '#common/zod/backend/query-operation';

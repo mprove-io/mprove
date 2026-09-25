@@ -14,7 +14,7 @@ import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { structsTable } from '#backend/drizzle/postgres/schema/structs';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import {
   EMPTY_STRUCT_ID,
   PROJECT_CONFIG_CURRENCY_PREFIX,
@@ -25,7 +25,7 @@ import {
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ModelMetricX } from '#common/zod/backend/model-metric-x';
 import type { ModelPartX } from '#common/zod/backend/model-part-x';
 import type { StructX } from '#common/zod/backend/struct-x';

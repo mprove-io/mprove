@@ -1,8 +1,8 @@
 import type { ConfigService } from '@nestjs/config';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { MalloySourceField } from '#blockml/types/malloy-source-field';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 export type MakeMalloySourceErrorLineOutput = {
   line: number;

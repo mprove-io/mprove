@@ -25,9 +25,9 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { encodeFilePath } from '#common/functions/encode-file-path';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ModelX } from '#common/zod/backend/model-x';
 import type {
   ToBackendGetChartRequestPayload,

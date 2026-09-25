@@ -24,7 +24,7 @@ import { ReportRowService } from '#backend/services/report-row.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendEditDraftReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-edit-draft-report';
 
 @ApiTags('Reports')

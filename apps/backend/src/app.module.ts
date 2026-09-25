@@ -31,7 +31,7 @@ const { Client } = pg;
 
 import { backendPackageJson } from '#backend/backend-package-json';
 import { BackendConfig } from '#backend/config/backend-config';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import {
   DEMO_ORG_NAME,
   PROJECT_ENV_PROD,
@@ -43,10 +43,10 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { Ev } from '#common/zod/backend/ev';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { appControllers } from './app-controllers';

@@ -1,6 +1,6 @@
 import { createZodValidationPipe } from 'nestjs-zod';
 import type { z } from 'zod';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 
 export const ZodValidationPipe = createZodValidationPipe({

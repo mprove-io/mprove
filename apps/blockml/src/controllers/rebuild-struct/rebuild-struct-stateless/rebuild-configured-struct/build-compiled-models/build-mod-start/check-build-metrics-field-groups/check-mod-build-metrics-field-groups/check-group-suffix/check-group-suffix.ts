@@ -1,4 +1,4 @@
-import { BmError } from '#blockml/classes/bm-error';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { MPROVE_TAG_FIELD_GROUP } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import type { ErTitleEnum } from '#common/enums/special/er-title.enum';

@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import type { DiffResult, SimpleGit } from 'simple-git';
-import { encodeFilePath } from '#common/functions/encode-file-path';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
 import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';

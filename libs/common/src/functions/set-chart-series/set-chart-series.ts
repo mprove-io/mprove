@@ -5,11 +5,11 @@ import {
   DEFAULT_CHART_SERIES_SCATTER
 } from '#common/constants/mconfig-chart';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
 import type { MconfigChartSeries } from '#common/zod/blockml/mconfig-chart-series';
-import { isDefined } from './is-defined';
-import { makeCopy } from './make-copy';
 
 export function setChartSeries<T extends Mconfig>(item: { mconfig: T }) {
   let { mconfig } = item;

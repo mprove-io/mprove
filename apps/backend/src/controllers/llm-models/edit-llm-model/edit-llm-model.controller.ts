@@ -31,15 +31,15 @@ import {
   type LlmModelPartsResult,
   LlmModelService
 } from '#backend/services/llm-model.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { Provider } from '#common/zod/backend/provider';

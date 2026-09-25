@@ -27,7 +27,7 @@ import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { SuggestField } from '#common/zod/backend/suggest-field';
 import type { ToBackendGetSuggestFieldsResponsePayload } from '#common/zod/to-backend/suggest-fields/to-backend-get-suggest-fields';
 

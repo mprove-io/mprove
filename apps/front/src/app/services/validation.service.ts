@@ -5,12 +5,12 @@ import type {
   ValidationErrors
 } from '@angular/forms';
 import { formatSpecifier } from 'd3-format';
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import type { GivenTypeEnum } from '#common/enums/given-type.enum';
-import { getMotherduckDatabaseWrongChars } from '#common/functions/check-motherduck-database-name';
-import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error';
-import { isUndefined } from '#common/functions/is-undefined';
-import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
+import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
+import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 
 @Injectable({ providedIn: 'root' })
 export class ValidationService {

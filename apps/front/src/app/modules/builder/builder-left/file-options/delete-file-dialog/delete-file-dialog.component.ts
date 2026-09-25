@@ -9,8 +9,8 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { decodeFilePath } from '#common/functions/decode-file-path';
-import { isDefined } from '#common/functions/is-defined';
+import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type {
   ToBackendDeleteFileRequestPayload,
   ToBackendDeleteFileResponse

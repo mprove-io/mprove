@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { RebuildStructPrep } from '#blockml/types/rebuild-struct-prep';
 import {
   PROJECT_CONFIG_ALLOW_TIMEZONES,
@@ -11,7 +11,7 @@ import {
   PROJECT_CONFIG_THOUSANDS_SEPARATOR,
   PROJECT_CONFIG_WEEK_START
 } from '#common/constants/top';
-import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import { MproveConfig } from '#common/zod/backend/mprove-config';
 
 export function makeEmptyRebuildStructPrep(item: {

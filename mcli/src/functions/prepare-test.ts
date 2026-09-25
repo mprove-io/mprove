@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 import { BaseContext, Cli, CommandClass } from 'clipanion';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type {
   ToBackendDeleteRecordsRequestPayload,
   ToBackendDeleteRecordsResponse

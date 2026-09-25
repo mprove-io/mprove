@@ -22,7 +22,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ModelX } from '#common/zod/backend/model-x';
 import type { ToBackendGetModelsResponsePayload } from '#common/zod/to-backend/models/to-backend-get-models';
 

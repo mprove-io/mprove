@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 
 export function zodParseOrThrowMcli<T extends z.ZodType>(item: {
   schema: T;

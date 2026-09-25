@@ -1,6 +1,6 @@
 import { getUserFolderNodeId } from '#backend/functions/get-user-folder-node-id';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Space } from '#common/zod/blockml/space';
 
 export function getTargetParentNodeId(item: {

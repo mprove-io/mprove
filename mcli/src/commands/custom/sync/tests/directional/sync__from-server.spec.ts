@@ -8,7 +8,7 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type {
   ToBackendRenameCatalogNodeRequestPayload,
   ToBackendRenameCatalogNodeResponse

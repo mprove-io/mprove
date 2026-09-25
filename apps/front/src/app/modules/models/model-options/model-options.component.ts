@@ -2,7 +2,7 @@ import { TreeNode } from '@ali-hm/angular-tree-component';
 import { Component, Input } from '@angular/core';
 import { EMPTY_CHART_ID } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { encodeFilePath } from '#common/functions/encode-file-path';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { ModelX } from '#common/zod/backend/model-x';
 import { NavQuery } from '#front/app/queries/nav.query';

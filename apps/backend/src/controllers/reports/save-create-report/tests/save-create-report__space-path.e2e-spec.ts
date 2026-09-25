@@ -15,9 +15,9 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
-import { makeSpaceUnits } from '#common/functions/space/make-space-units';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
+import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import type {
   ToBackendCreateDraftReportRequest,
   ToBackendCreateDraftReportResponse

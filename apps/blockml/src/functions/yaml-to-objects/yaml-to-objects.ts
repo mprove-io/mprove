@@ -1,16 +1,16 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { load } from 'js-yaml';
-import { BmError } from '#blockml/classes/bm-error';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { LINE_NUM_END, LINE_NUM_START } from '#common/constants/top-blockml';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { File3 } from '#common/zod/blockml/internal/file-3';
 
 let func = FuncEnum.YamlToObjects;

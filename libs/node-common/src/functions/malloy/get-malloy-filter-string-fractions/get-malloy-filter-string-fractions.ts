@@ -8,7 +8,7 @@ import {
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import { malloyEscape } from '#node-common/functions/malloy/get-malloy-filter-string-fractions/malloy-escape/malloy-escape';
 import { malloyUnescape } from '#node-common/functions/malloy/get-malloy-filter-string-fractions/malloy-unescape/malloy-unescape';

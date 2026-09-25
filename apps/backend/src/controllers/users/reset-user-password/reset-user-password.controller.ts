@@ -30,7 +30,7 @@ import {
   THROTTLE_MULTIPLIER
 } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 
 @ApiTags('Users')
 @SkipJwtCheck()

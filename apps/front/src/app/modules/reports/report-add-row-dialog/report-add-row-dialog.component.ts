@@ -13,7 +13,7 @@ import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ModelMetricX } from '#common/zod/backend/model-metric-x';
 import type { RowChange } from '#common/zod/blockml/row-change';
 import { MemberQuery } from '#front/app/queries/member.query';

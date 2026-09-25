@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { ToBlockmlOperation } from '#common/zod/blockml/request/to-blockml-operation';
 import type { ToBlockmlRebuildStructRequest } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-request';
 import { zToBlockmlRebuildStructRequest } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-request';

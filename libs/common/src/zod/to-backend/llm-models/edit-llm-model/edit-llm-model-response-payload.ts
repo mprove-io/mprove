@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import { type Provider, zProvider } from '#common/zod/backend/provider';
 
 export type ToBackendEditLlmModelResponsePayload = {

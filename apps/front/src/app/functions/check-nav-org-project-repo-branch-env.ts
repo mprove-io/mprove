@@ -14,7 +14,7 @@ import {
   PROD_REPO_ID
 } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import { NavState } from '../queries/nav.query';
 
 export function checkNavOrgProjectRepoBranchEnv(item: {

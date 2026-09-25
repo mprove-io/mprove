@@ -1,5 +1,5 @@
 import type { ConfigService } from '@nestjs/config';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
@@ -7,7 +7,7 @@ import { FieldResultEnum } from '#common/enums/field-result.enum';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { sdrType } from '#common/types/sdr-type';
 import type { Model } from '#common/zod/blockml/model';
 import { checkSuggestApiFields } from './check-suggest-api-fields/check-suggest-api-fields';

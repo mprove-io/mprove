@@ -1,6 +1,6 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { checkAndSetImplicitFormatNumber } from '#blockml/functions/build-field/check-and-set-implicit-format-number/check-and-set-implicit-format-number';
 import { checkAndSetImplicitResult } from '#blockml/functions/build-field/check-and-set-implicit-result/check-and-set-implicit-result';

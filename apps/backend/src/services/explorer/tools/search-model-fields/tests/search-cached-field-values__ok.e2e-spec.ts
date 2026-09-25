@@ -10,7 +10,7 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 
 let testId = 'search-cached-field-values__ok';
 

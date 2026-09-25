@@ -30,10 +30,10 @@ import {
   type ExplorerRebuildResult
 } from '#backend/services/explorer/explorer-chart-rebuild.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendGetExplorerChartTabResponsePayload } from '#common/zod/to-backend/charts/to-backend-get-explorer-chart-tab';
 
 type GetExplorerChartTabErrors = Extract<

@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { MyResponse } from '#common/zod/to/my-response';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 import { wrapError } from '#node-common/functions/wrap-error/wrap-error';

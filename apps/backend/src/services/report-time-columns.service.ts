@@ -29,15 +29,15 @@ import {
 } from 'date-fns';
 import { BackendConfig } from '#backend/config/backend-config';
 import { nodeFormatTsUnix } from '#backend/functions/node-format-ts-unix';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { TIME_COLUMNS_LIMIT } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Column } from '#common/zod/blockml/column';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';

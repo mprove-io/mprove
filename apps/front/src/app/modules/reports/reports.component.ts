@@ -52,12 +52,12 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { getTimezones } from '#common/functions/get-timezones';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeSpaceUnits } from '#common/functions/space/make-space-units';
+import { getTimezones } from '#common/functions/get-timezones/get-timezones';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { SpaceNode } from '#common/zod/backend/space-node';

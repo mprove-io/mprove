@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { DiskPrepareInitialProjectFilesError } from '#common/zod/disk/function-errors/disk-prepare-initial-project-files-error';
 import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
 import { copyPath } from '#disk/functions/disk/copy-path/copy-path';

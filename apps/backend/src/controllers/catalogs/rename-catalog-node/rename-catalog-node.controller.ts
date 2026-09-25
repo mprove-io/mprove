@@ -40,7 +40,7 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToDiskRenameCatalogNodeOutput } from '#common/zod/disk/routes/catalogs/rename-catalog-node/rename-catalog-node-response';
 import type { ToBackendRenameCatalogNodeResponsePayload } from '#common/zod/to-backend/catalogs/to-backend-rename-catalog-node';
 

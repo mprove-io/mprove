@@ -17,7 +17,7 @@ import {
   PATH_SELECT_FILE,
   PATH_SESSION
 } from '#common/constants/top';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export function checkNavMain(item: {
   navArray: string[];

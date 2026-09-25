@@ -1,7 +1,7 @@
 import { parse } from 'dotenv';
 import fse from 'fs-extra';
 import { ErEnum } from '#common/enums/er.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import { zodParseOrThrowMcli } from '#mcli/functions/zod-parse-or-throw-mcli';
 import { McliConfig, zMcliConfig } from './mcli-config';
 

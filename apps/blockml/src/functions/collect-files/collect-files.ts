@@ -3,12 +3,12 @@ import { Result } from '@praha/byethrow';
 import walk from 'walk';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
-import { MyRegex } from '#common/classes/my-regex';
-import { ServerError } from '#common/classes/server-error';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size/read-file-check-size';
 

@@ -6,7 +6,7 @@ import {
   IDEMP_EXPIRE_SECONDS,
   KEY_SSE_TICKET
 } from '#common/constants/top-backend';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 @Injectable()
 export class RedisService implements OnModuleDestroy {

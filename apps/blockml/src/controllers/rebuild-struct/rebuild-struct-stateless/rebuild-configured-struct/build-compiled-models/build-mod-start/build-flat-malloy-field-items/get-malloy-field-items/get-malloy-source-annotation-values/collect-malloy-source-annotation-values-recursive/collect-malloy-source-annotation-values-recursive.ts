@@ -1,4 +1,4 @@
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 export type MalloyAnnotations = {
   inherits?: MalloyAnnotations;

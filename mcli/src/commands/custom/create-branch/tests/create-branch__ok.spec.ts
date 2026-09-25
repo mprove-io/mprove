@@ -5,7 +5,7 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key';

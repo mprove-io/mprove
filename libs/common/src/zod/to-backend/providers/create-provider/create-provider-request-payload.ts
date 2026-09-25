@@ -6,7 +6,7 @@ import {
   RESERVED_PROVIDER_IDS
 } from '#common/constants/providers';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { Extend } from '#common/types/extend';
 import {
   type ProviderOptionsAnthropic,

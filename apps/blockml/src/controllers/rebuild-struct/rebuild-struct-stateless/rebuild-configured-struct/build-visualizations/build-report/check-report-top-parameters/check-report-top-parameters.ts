@@ -1,6 +1,6 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { checkTopParameters } from '#blockml/functions/check-top-parameters/check-top-parameters';
 import { log } from '#blockml/functions/log/log';

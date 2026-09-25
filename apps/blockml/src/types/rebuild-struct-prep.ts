@@ -1,4 +1,4 @@
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { ExtraSchema } from '#common/zod/backend/connection-schemas/extra-schema';
 import type { MproveConfig } from '#common/zod/backend/mprove-config';
 import type { FileChart } from '#common/zod/blockml/internal/file-chart';

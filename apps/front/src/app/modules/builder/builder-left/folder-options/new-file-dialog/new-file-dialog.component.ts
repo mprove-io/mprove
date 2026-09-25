@@ -19,7 +19,7 @@ import { take, tap } from 'rxjs/operators';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { encodeFilePath } from '#common/functions/encode-file-path';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import type {
   ToBackendCreateFileRequestPayload,
   ToBackendCreateFileResponse

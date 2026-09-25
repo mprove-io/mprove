@@ -9,8 +9,8 @@ import { PATH_LOGIN } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type {
   ToBackendResendUserEmailRequestPayload,
   ToBackendResendUserEmailResponse

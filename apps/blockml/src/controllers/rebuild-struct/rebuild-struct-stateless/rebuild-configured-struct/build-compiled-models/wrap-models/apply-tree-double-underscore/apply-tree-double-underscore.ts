@@ -1,6 +1,6 @@
 import { DOUBLE_UNDERSCORE } from '#common/constants/top';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ModelNode } from '#common/zod/blockml/model-node';
 
 import {

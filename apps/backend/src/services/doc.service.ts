@@ -13,8 +13,8 @@ import type { KitTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTs } from '#backend/functions/make-ts';
 import { nodeFormatTsUnix } from '#backend/functions/node-format-ts-unix';
-import { MyRegex } from '#common/classes/my-regex';
-import { ServerError } from '#common/classes/server-error';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
+import { ServerError } from '#common/classes/server-error/server-error';
 import {
   DOUBLE_UNDERSCORE,
   SOME_ROWS_HAVE_FORMULA_ERRORS
@@ -24,15 +24,15 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ReportDataColumn } from '#common/zod/backend/report-data-column';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { Row } from '#common/zod/blockml/row';
 import type { RowRecord } from '#common/zod/blockml/row-record';
-import { CycleGraph } from '#node-common/classes/cycle-graph';
+import { CycleGraph } from '#node-common/classes/cycle-graph/cycle-graph';
 
 @Injectable()
 export class DocService implements OnModuleDestroy {

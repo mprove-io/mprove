@@ -17,8 +17,8 @@ import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum'
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { Query } from '#common/zod/blockml/query';

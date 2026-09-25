@@ -42,8 +42,8 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/files/create-file/create-file-response';
 import type { ToBackendCreateFileResponsePayload } from '#common/zod/to-backend/files/to-backend-create-file';
 

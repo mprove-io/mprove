@@ -7,8 +7,8 @@ import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.e
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { FilterX } from '#common/zod/backend/filter-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';

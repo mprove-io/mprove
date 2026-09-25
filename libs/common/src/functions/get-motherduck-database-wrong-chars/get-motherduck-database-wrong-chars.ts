@@ -1,5 +1,5 @@
-import { MyRegex } from '#common/classes/my-regex';
-import { isUndefined } from './is-undefined';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 export function getMotherduckDatabaseWrongChars(item: {
   databaseName: string;

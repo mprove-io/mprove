@@ -47,10 +47,10 @@ import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { ToBackendSuggestDimensionValuesResponsePayload } from '#common/zod/to-backend/mconfigs/to-backend-suggest-dimension-values';
 

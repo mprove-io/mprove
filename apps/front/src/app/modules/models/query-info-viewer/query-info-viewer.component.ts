@@ -20,10 +20,10 @@ import {
 } from '#common/constants/code-themes/themes';
 import { LIGHT_PLUS_LANGUAGES } from '#common/constants/top-front';
 import { QueryPartEnum } from '#common/enums/query-part.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { prepareTile } from '#common/functions/prepare-tile';
-import { toYaml } from '#common/functions/to-yaml';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { prepareTile } from '#common/functions/prepare-tile/prepare-tile';
+import { toYaml } from '#common/functions/to-yaml/to-yaml';
 import type { ChartX } from '#common/zod/backend/chart-x';
 import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
 import { ChartQuery } from '#front/app/queries/chart.query';

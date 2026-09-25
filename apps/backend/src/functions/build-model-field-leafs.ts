@@ -4,7 +4,7 @@ import type {
 } from '@malloydata/malloy';
 import type { ModelFieldLeafTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Model } from '#common/zod/blockml/model';
 
 type MalloyFieldLeafInfo = {

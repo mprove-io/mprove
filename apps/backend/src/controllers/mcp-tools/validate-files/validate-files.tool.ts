@@ -15,7 +15,7 @@ import {
   MCP_TOOL_VALIDATE_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import {
   type McpToolValidateFilesInput,
   zMcpToolValidateFilesInput,

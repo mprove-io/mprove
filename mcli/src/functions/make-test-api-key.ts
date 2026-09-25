@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { makeIdPrefix } from '#common/functions/make-id-prefix';
+import { makeIdPrefix } from '#common/functions/make-id-prefix/make-id-prefix';
 
 export function makeTestApiKey(item: {
   testId: string;

@@ -1,4 +1,4 @@
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { checkSpaceValue } from './check-space-value/check-space-value';
 

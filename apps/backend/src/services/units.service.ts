@@ -6,7 +6,7 @@ import type {
   ReportTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { Member } from '#common/zod/backend/member';

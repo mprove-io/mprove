@@ -50,11 +50,11 @@ import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { decodeFilePath } from '#common/functions/decode-file-path';
-import { encodeFilePath } from '#common/functions/encode-file-path';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { isUndefined } from '#common/functions/is-undefined';
+import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelX } from '#common/zod/backend/model-x';
 import type {

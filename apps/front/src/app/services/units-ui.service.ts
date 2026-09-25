@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { makeCopy } from '#common/functions/make-copy';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { SpaceNode } from '#common/zod/backend/space-node';
 import type { SpaceUnit } from '#common/zod/backend/space-unit';
 import type { SpaceUnitX } from '#common/zod/backend/space-unit-x';

@@ -3,7 +3,7 @@
 import { Logger } from '@nestjs/common';
 import * as util from 'util';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import { getLogSorted } from '#node-common/functions/log-to-console/get-log-sorted/get-log-sorted';
 import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 

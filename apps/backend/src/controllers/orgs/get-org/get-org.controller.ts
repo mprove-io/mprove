@@ -14,7 +14,7 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { ToBackendGetOrgResponsePayload } from '#common/zod/to-backend/orgs/to-backend-get-org';

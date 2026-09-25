@@ -6,11 +6,11 @@ import type {
 import { getDashboardUrl } from '#backend/functions/get-dashboard-url';
 import { DashboardsService } from '#backend/services/db/dashboards.service';
 import { MembersService } from '#backend/services/db/members.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { RunDashboard } from '#common/zod/backend/run/run-dashboard';
 import type { RunQuery } from '#common/zod/backend/run/run-query';
 

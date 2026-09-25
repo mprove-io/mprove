@@ -16,7 +16,7 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type {
   ToBackendCreateEditorSessionRequest,
   ToBackendCreateEditorSessionResponse

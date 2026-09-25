@@ -12,7 +12,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendCreateProviderRequest } from '#common/zod/to-backend/providers/create-provider/create-provider-request';
 import type { ToBackendCreateProviderResponse } from '#common/zod/to-backend/providers/create-provider/create-provider-response';
 

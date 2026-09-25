@@ -15,7 +15,7 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendDeleteProviderRequest } from '#common/zod/to-backend/providers/delete-provider/delete-provider-request';
 import type { ToBackendDeleteProviderResponse } from '#common/zod/to-backend/providers/delete-provider/delete-provider-response';
 

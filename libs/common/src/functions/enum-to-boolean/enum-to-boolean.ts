@@ -1,4 +1,4 @@
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { BoolEnum } from '#common/enums/bool.enum';
 import { ErEnum } from '#common/enums/er.enum';
 

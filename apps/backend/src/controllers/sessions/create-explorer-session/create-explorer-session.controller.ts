@@ -38,7 +38,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ExplorerStreamService } from '#backend/services/explorer/explorer-stream.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -46,7 +46,7 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendCreateExplorerSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-explorer-session';
 
 @ApiTags('Sessions')

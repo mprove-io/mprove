@@ -1,5 +1,5 @@
-import { isDefined } from '#common/functions/is-defined';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { FilterX } from '#common/zod/backend/filter-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { ModelX } from '#common/zod/backend/model-x';

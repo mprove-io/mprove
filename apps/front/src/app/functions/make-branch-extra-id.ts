@@ -1,5 +1,5 @@
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 export function makeBranchExtraId(item: {
   repoType: RepoTypeEnum;

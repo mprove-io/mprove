@@ -24,8 +24,8 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { getBuilderUrl } from '#common/functions/get-builder-url';
-import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors';
+import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
+import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
 import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
 import type { ToBackendGetStateResponsePayload } from '#common/zod/to-backend/state/to-backend-get-state';
 

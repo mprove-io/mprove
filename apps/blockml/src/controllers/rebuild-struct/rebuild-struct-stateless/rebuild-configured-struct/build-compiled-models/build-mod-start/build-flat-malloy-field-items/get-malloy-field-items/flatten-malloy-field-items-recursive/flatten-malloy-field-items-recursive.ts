@@ -1,7 +1,7 @@
 import type { FieldInfo } from '@malloydata/malloy-interfaces';
 import type { MalloySourceField } from '#blockml/types/malloy-source-field';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 const EXPLORER_FILTER_FIELD_PREFIX: string = '#NO_UI';
 

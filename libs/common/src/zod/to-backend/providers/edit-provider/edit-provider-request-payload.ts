@@ -5,7 +5,7 @@ import {
   OPENAI_PROVIDER_ID,
   RESERVED_PROVIDER_IDS
 } from '#common/constants/providers';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import { zProviderOptionsAnthropic } from '#common/zod/backend/provider-options/provider-options-anthropic';
 import { zProviderOptionsCodex } from '#common/zod/backend/provider-options/provider-options-codex';
 import { zProviderOptionsOpenAI } from '#common/zod/backend/provider-options/provider-options-openai';

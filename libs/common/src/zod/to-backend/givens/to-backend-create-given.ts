@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { zGiven } from '#common/zod/backend/given';

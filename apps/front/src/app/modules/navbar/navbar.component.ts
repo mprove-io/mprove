@@ -16,7 +16,7 @@ import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Member } from '#common/zod/backend/member';
 import type {
   ToBackendCheckLastNavRequestPayload,

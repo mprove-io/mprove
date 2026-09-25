@@ -16,7 +16,7 @@ import { OrgsService } from '#backend/services/db/orgs.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendIsProjectExistResponsePayload } from '#common/zod/to-backend/projects/to-backend-is-project-exist';
 
 @ApiTags('Projects')

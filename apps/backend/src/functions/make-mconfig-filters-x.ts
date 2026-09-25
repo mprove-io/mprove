@@ -1,5 +1,5 @@
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FilterX } from '#common/zod/backend/filter-x';
 import type { Filter } from '#common/zod/blockml/filter';
 import type { ModelField } from '#common/zod/blockml/model-field';

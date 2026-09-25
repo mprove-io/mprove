@@ -1,9 +1,9 @@
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import { load } from 'js-yaml';
-import { MyRegex } from '#common/classes/my-regex';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MPROVE_CONFIG_DIR_DOT_SLASH } from '#common/constants/top';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { GetMproveDirError } from '#common/zod/node-common/function-errors/get-mprove-dir-error';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size/read-file-check-size';
 

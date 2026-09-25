@@ -14,9 +14,9 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
-import { makeSpaceUnits } from '#common/functions/space/make-space-units';
-import { spaceUnitToChartUnit } from '#common/functions/space/space-unit-to-chart-unit';
+import { makeId } from '#common/functions/make-id/make-id';
+import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
+import { spaceUnitToChartUnit } from '#common/functions/space-unit-to-chart-unit/space-unit-to-chart-unit';
 import type {
   ToBackendGetChartRequest,
   ToBackendGetChartResponse

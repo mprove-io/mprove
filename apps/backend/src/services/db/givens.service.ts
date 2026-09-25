@@ -4,12 +4,12 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { GivenTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { givensTable } from '#backend/drizzle/postgres/schema/givens';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { GivenTypeEnum } from '#common/enums/given-type.enum';
-import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { getGivenValueValidationError } from '#common/functions/get-given-value-validation-error/get-given-value-validation-error';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Given } from '#common/zod/backend/given';
 import type {
   MemberGiven,

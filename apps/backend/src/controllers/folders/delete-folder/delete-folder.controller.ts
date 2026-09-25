@@ -41,7 +41,7 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToDiskDeleteFolderOutput } from '#common/zod/disk/routes/folders/delete-folder/delete-folder-response';
 import type { ToBackendDeleteFolderResponsePayload } from '#common/zod/to-backend/folders/to-backend-delete-folder';
 

@@ -13,13 +13,13 @@ import {
   type CodexModelsResult,
   CodexService
 } from '#backend/services/codex.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { OPENAI_PROVIDER_ID } from '#common/constants/providers';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { CodexModel } from '#common/zod/backend/codex-model';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelInput } from '#common/zod/backend/llm-models/llm-model-input';

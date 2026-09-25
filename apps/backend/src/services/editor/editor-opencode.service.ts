@@ -25,14 +25,14 @@ import {
 } from '#backend/functions/anthropic-model-variants';
 import { getOpenAiVariantOptions } from '#backend/functions/openai-model-variants';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 
 export const OPENCODE_PROJECT_OPENAI_PROVIDER_ID = '_mprove_openai';

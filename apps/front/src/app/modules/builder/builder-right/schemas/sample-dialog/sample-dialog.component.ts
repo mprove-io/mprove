@@ -12,7 +12,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { map, take } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendGetConnectionSampleResponse } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../../../shared/shared.module';

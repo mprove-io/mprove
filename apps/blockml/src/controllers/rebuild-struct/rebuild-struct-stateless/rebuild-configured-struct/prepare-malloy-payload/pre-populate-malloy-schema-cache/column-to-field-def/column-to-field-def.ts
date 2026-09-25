@@ -11,7 +11,7 @@ import { BigQueryTypeParser } from '#blockml/classes/parse/parse-bigquery-type/p
 import { DatabricksTypeParser } from '#blockml/classes/parse/parse-databricks-type/parse-databricks-type';
 import { TrinoPrestoSchemaParser } from '#blockml/classes/parse/parse-trino-type/parse-trino-type';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { RawSchemaColumn } from '#common/zod/backend/connection-schemas/raw-schema';
 
 export function columnToFieldDef(item: {

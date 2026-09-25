@@ -13,7 +13,7 @@ import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendIsOrgExistResponsePayload } from '#common/zod/to-backend/orgs/to-backend-is-org-exist';
 
 @ApiTags('Orgs')

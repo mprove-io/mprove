@@ -19,12 +19,12 @@ import { OrgsService } from '#backend/services/db/orgs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendCreateOrgResponsePayload } from '#common/zod/to-backend/orgs/to-backend-create-org';
 
 @ApiTags('Orgs')

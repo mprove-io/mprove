@@ -1,10 +1,10 @@
-import { BmError } from '#blockml/classes/bm-error';
-import { MyRegex } from '#common/classes/my-regex';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { FieldAny } from '#common/zod/blockml/internal/field-any';
 import type { Model } from '#common/zod/blockml/model';
 

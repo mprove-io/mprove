@@ -21,7 +21,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-files/get-catalog-files-response';
 import type { ToBackendValidateFilesResponsePayload } from '#common/zod/to-backend/files/to-backend-validate-files';
 

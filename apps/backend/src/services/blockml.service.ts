@@ -14,8 +14,8 @@ import { buildModelFieldLeafs } from '#backend/functions/build-model-field-leafs
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { processRowIds } from '#backend/functions/process-row-ids';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Ev } from '#common/zod/backend/ev';
 import type { MproveConfig } from '#common/zod/backend/mprove-config';
 import type { SelectedGiven } from '#common/zod/backend/selected-given';

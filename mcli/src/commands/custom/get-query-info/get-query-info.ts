@@ -1,6 +1,6 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -8,7 +8,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type {
   ToBackendGetQueryInfoRequestPayload,
   ToBackendGetQueryInfoResponse

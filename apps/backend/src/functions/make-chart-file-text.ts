@@ -1,5 +1,5 @@
-import { prepareTile } from '#common/functions/prepare-tile';
-import { toYaml } from '#common/functions/to-yaml';
+import { prepareTile } from '#common/functions/prepare-tile/prepare-tile';
+import { toYaml } from '#common/functions/to-yaml/to-yaml';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
 

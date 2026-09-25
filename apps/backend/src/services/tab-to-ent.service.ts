@@ -67,7 +67,7 @@ import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { DbEntsPack } from '#backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type {
   AvatarLt,
   AvatarSt,

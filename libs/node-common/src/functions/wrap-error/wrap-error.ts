@@ -1,4 +1,4 @@
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErrorStoryEnum } from '#common/enums/error-story.enum';
 import { splitMultilineMessage } from '#node-common/functions/wrap-error/split-multiline-message/split-multiline-message';
 

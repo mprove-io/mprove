@@ -14,8 +14,8 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabToEntService } from '#backend/services/tab-to-ent.service';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type {
   ToBackendDeleteRecordsRequest,
   ToBackendDeleteRecordsRequestPayload,

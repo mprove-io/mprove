@@ -1,11 +1,11 @@
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { setChartSeries } from '#common/functions/set-chart-series/set-chart-series';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
 import type { ModelField } from '#common/zod/blockml/model-field';
-import { isDefined } from './is-defined';
-import { setChartSeries } from './set-chart-series';
 
 export function setChartFields<T extends Mconfig>(item: {
   oldChartType?: ChartTypeEnum;

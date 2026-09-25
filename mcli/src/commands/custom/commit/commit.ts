@@ -1,14 +1,14 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { getBuilderUrl } from '#common/functions/get-builder-url';
-import { isUndefined } from '#common/functions/is-undefined';
+import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type {
   ToBackendCommitRepoRequestPayload,
   ToBackendCommitRepoResponse

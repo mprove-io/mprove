@@ -47,7 +47,7 @@ import { EmailService } from '#backend/services/email.service';
 import { HashService } from '#backend/services/hash.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import {
   EMPTY_REPORT_ID,
   EMPTY_STRUCT_ID,
@@ -69,10 +69,10 @@ import {
 } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
 import type { ToBackendCreateMemberResponsePayload } from '#common/zod/to-backend/members/to-backend-create-member';
 

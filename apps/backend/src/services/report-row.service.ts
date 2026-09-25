@@ -7,8 +7,8 @@ import { rowIdNumberToLetter } from '#backend/functions/row-id-number-to-letter'
 import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Listener } from '#common/zod/blockml/listener';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { Parameter } from '#common/zod/blockml/parameter';

@@ -10,9 +10,9 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { DatePicker } from '@vaadin/date-picker';
 import { COMMON_I18N } from '#common/constants/top-front';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { makeCopy } from '#common/functions/make-copy';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';

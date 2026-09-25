@@ -16,7 +16,7 @@ import { DbEntsPack } from '#backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import { TabService } from '#backend/services/tab.service';
 import { TabToEntService } from '#backend/services/tab-to-ent.service';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import { drizzleSetAllColumnsFull } from './drizzle-set-all-columns-full';
 import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
 import { avatarsTable } from './schema/avatars';

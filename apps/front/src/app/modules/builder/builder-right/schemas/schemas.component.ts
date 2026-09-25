@@ -16,9 +16,9 @@ import { interval, of, type Subscription } from 'rxjs';
 import { exhaustMap, finalize, map, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { makeCopy } from '#common/functions/make-copy';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type {
   ColumnCombinedReference,
   CombinedSchemaItem

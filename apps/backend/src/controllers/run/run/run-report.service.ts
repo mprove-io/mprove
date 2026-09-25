@@ -10,11 +10,11 @@ import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '#backend/functions/check-access';
 import { getReportUrl } from '#backend/functions/get-report-url';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { RunQuery } from '#common/zod/backend/run/run-query';
 import type { RunReport } from '#common/zod/backend/run/run-report';
 

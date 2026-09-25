@@ -4,9 +4,9 @@ import {
 } from '#common/constants/top';
 import { EMPTY_SPACE_NAME } from '#common/constants/top-front';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Space } from '#common/zod/blockml/space';
 
 export function makeUnitDisplayPath(item: {

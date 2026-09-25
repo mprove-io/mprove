@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
 const repoStatusValues = ['NeedCommit', 'NeedPull', 'NeedPush', 'Ok'] as const;
 

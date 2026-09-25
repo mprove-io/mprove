@@ -14,7 +14,7 @@ import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';

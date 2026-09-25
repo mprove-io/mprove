@@ -31,7 +31,7 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeCopy } from '#common/functions/make-copy';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { BranchItem } from '#common/zod/front/branch-item';
 import type {
   ToBackendCreateBranchRequestPayload,

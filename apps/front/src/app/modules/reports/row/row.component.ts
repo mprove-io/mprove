@@ -16,7 +16,7 @@ import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { FilterX } from '#common/zod/backend/filter-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { ReportX } from '#common/zod/backend/report-x';

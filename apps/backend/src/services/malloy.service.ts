@@ -8,7 +8,7 @@ import type {
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';

@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { BmError } from '#blockml/classes/bm-error';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
@@ -7,8 +7,8 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
 import type { FileStore } from '#common/zod/blockml/internal/file-store';
 

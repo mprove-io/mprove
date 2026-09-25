@@ -6,7 +6,7 @@ import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { McliQueriesStats } from '#common/zod/mcli/mcli-queries-stats';
 import { getConfig } from '#mcli/config/get.config';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';

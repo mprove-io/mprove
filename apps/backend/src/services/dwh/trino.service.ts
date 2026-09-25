@@ -17,9 +17,9 @@ import { makeTsNumber } from '#backend/functions/make-ts-number';
 import type { CachedPartsResult } from '#backend/interfaces/cached-parts-result';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type {
   ConnectionRawSchema,
   RawSchemaColumn,

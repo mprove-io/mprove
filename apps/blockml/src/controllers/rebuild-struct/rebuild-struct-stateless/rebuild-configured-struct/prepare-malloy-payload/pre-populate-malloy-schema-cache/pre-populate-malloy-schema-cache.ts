@@ -1,6 +1,6 @@
 import type { FieldDef, TableSourceDef } from '@malloydata/malloy';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { columnToFieldDef } from './column-to-field-def/column-to-field-def';

@@ -24,8 +24,8 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { DatabricksAuthTypeEnum } from '#common/enums/databricks-auth-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
 import type { EnvsItem } from '#common/zod/backend/envs-item';
 import type {

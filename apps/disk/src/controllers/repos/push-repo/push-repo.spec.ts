@@ -2,7 +2,7 @@ import test from 'ava';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ToDiskSaveFileRequest } from '#common/zod/disk/routes/files/save-file/save-file-request';
 import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/orgs/create-org/create-org-request';

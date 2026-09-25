@@ -1,8 +1,8 @@
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { MconfigField } from '#common/zod/backend/mconfig-field';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
 

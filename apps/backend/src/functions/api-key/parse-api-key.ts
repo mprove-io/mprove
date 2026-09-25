@@ -1,4 +1,4 @@
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 

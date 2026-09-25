@@ -21,9 +21,9 @@ import {
   TILE_DEFAULT_PLATE_Y
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { encodeFilePath } from '#common/functions/encode-file-path';
-import { isDefined } from '#common/functions/is-defined';
-import { makeId } from '#common/functions/make-id';
+import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { DeleteFilterFnItem } from '#common/zod/front/delete-filter-fn-item';

@@ -1,11 +1,11 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { buildField } from '#blockml/functions/build-field/build-field';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
-import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { SelectedGiven } from '#common/zod/backend/selected-given';
 import type { FileChart } from '#common/zod/blockml/internal/file-chart';

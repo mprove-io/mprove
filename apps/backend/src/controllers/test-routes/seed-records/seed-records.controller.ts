@@ -77,9 +77,9 @@ import {
 } from '#common/constants/top-backend';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { makeCopy } from '#common/functions/make-copy';
-import { makeId } from '#common/functions/make-id';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { ToDiskSeedProjectOutput } from '#common/zod/disk/routes/seed/seed-project/seed-project-response';

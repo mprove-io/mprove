@@ -1,8 +1,8 @@
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
-import { enumToBoolean } from '#common/functions/enum-to-boolean';
-import { isDefined } from '#common/functions/is-defined';
+import { enumToBoolean } from '#common/functions/enum-to-boolean/enum-to-boolean';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export function getDevConfig() {
   let devConfig: BlockmlConfig = {

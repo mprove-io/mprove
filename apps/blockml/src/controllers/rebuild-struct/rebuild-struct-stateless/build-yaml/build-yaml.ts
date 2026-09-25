@@ -1,6 +1,6 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { BmError } from '#blockml/classes/bm-error';
+import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { makeLineNumbers } from '#blockml/functions/make-line-numbers/make-line-numbers';
 import { yamlToObjects } from '#blockml/functions/yaml-to-objects/yaml-to-objects';

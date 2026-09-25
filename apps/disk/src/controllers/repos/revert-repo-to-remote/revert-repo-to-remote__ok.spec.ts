@@ -3,7 +3,7 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { ToDiskGetFileRequest } from '#common/zod/disk/routes/files/get-file/get-file-request';
 import type { ToDiskGetFileResponse } from '#common/zod/disk/routes/files/get-file/get-file-response';

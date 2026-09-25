@@ -24,7 +24,7 @@ import { RolesService } from '#backend/services/db/roles.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendGetMembersResponsePayload } from '#common/zod/to-backend/members/to-backend-get-members';
 
 @ApiTags('Members')

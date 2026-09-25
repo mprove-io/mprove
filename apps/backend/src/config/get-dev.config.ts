@@ -2,8 +2,8 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { EmailTransportEnum } from '#common/enums/email-transport.enum';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { enumToBoolean } from '#common/functions/enum-to-boolean';
-import { isDefined } from '#common/functions/is-defined';
+import { enumToBoolean } from '#common/functions/enum-to-boolean/enum-to-boolean';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 export function getDevConfig() {
   let devConfig: BackendConfig = {

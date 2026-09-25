@@ -8,7 +8,7 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { RepoStatus } from '#common/zod/disk/repo-status';
 import type {
   ToBackendValidateFilesRequestPayload,

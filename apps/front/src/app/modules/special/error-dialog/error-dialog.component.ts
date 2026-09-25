@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ErEnum } from '#common/enums/er.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 
 import type { ErrorData } from '#common/zod/front/error-data';
 import { UiService } from '#front/app/services/ui.service';

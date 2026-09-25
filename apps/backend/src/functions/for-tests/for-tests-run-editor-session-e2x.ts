@@ -17,7 +17,7 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
+import { makeId } from '#common/functions/make-id/make-id';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 import type {
   ToBackendCreateEditorSessionRequest,

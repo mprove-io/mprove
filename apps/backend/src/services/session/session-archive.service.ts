@@ -16,7 +16,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { isDefined } from '#common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { SessionApi } from '#common/zod/backend/session-api';
 
 @Injectable()

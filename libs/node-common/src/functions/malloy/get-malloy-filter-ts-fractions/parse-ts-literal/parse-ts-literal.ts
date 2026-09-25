@@ -1,7 +1,7 @@
 import type { TemporalUnit } from '@malloydata/malloy-filter';
-import { MyRegex } from '#common/classes/my-regex';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { MyRegex } from '#common/classes/my-regex/my-regex';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
 export function parseTsLiteral(item: { input: string; units: TemporalUnit }) {
   let { input, units } = item;

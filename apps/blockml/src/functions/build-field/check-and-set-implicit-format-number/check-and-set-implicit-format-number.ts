@@ -1,7 +1,7 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { formatSpecifier } from 'd3-format';
-import { BmError } from '#blockml/classes/bm-error';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { log } from '#blockml/functions/log/log';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
@@ -11,8 +11,8 @@ import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { sdrType } from '#common/types/sdr-type';
 import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
 

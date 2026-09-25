@@ -1,4 +1,4 @@
-import { BmError } from '#blockml/classes/bm-error';
+import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 

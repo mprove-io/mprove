@@ -44,11 +44,11 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { setChartFields } from '#common/functions/set-chart-fields';
-import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change';
-import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change';
-import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change';
+import { isDefined } from '#common/functions/is-defined/is-defined';
+import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
+import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
+import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change/sort-chart-fields-on-select-change';
+import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change/sort-fields-on-select-change';
 import type { QueryOperation } from '#common/zod/backend/query-operation';
 import type { ToBackendGroupMetricByDimensionResponsePayload } from '#common/zod/to-backend/mconfigs/to-backend-group-metric-by-dimension';
 

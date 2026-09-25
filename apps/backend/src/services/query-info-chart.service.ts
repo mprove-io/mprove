@@ -22,12 +22,12 @@ import { QueriesService } from '#backend/services/db/queries.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { MalloyService } from '#backend/services/malloy.service';
 import { TabService } from '#backend/services/tab.service';
-import { ServerError } from '#common/classes/server-error';
+import { ServerError } from '#common/classes/server-error/server-error';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
-import { makeCopy } from '#common/functions/make-copy';
+import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { QueryOperation } from '#common/zod/backend/query-operation';
 import type { ToBackendGetChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-get-chart';
 

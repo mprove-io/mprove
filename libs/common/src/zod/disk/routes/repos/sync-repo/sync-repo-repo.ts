@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { Extend } from '#common/types/extend';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
 import { zDiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
