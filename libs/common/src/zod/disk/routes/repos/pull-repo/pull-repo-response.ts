@@ -7,12 +7,18 @@ import {
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskPullRepoError,
   zToDiskPullRepoError
 } from './pull-repo-error';
+
+export type ToDiskPullRepoResponse = ToDiskResponseBase<
+  'pullRepo',
+  ToDiskPullRepoOutput,
+  ToDiskPullRepoError
+>;
 
 export type ToDiskPullRepoOutput = {
   repo: Repo;
@@ -20,22 +26,22 @@ export type ToDiskPullRepoOutput = {
   mproveDir: string;
 };
 
-export type ToDiskPullRepoResponse = ToDiskResponse<
-  'pullRepo',
-  ToDiskPullRepoOutput,
-  ToDiskPullRepoError
->;
+export let zToDiskPullRepoOutput = z
+  .object({
+    repo: zRepo,
+    files: z.array(zDiskCatalogFile),
+    mproveDir: z.string()
+  })
+  .meta({ id: 'ToDiskPullRepoOutput' });
 
 export let zToDiskPullRepoResponse = makeToDiskResponseSchema({
   operation: 'pullRepo',
-  success: z
-    .object({
-      repo: zRepo,
-      files: z.array(zDiskCatalogFile),
-      mproveDir: z.string()
-    })
-    .meta({ id: 'ToDiskPullRepoOutput' }),
+  output: zToDiskPullRepoOutput,
   error: zToDiskPullRepoError
+});
+
+assertTypesEqual<ToDiskPullRepoOutput, z.infer<typeof zToDiskPullRepoOutput>>({
+  value: true
 });
 
 assertTypesEqual<

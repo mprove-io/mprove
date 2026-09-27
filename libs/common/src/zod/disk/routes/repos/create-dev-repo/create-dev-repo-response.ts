@@ -7,12 +7,18 @@ import {
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskCreateDevRepoError,
   zToDiskCreateDevRepoError
 } from './create-dev-repo-error';
+
+export type ToDiskCreateDevRepoResponse = ToDiskResponseBase<
+  'createDevRepo',
+  ToDiskCreateDevRepoOutput,
+  ToDiskCreateDevRepoError
+>;
 
 export type ToDiskCreateDevRepoOutput = {
   repo: Repo;
@@ -21,24 +27,25 @@ export type ToDiskCreateDevRepoOutput = {
   initialCommitHash?: string;
 };
 
-export type ToDiskCreateDevRepoResponse = ToDiskResponse<
-  'createDevRepo',
-  ToDiskCreateDevRepoOutput,
-  ToDiskCreateDevRepoError
->;
+export let zToDiskCreateDevRepoOutput = z
+  .object({
+    repo: zRepo,
+    files: z.array(zDiskCatalogFile),
+    mproveDir: z.string(),
+    initialCommitHash: z.string().nullish()
+  })
+  .meta({ id: 'ToDiskCreateDevRepoOutput' });
 
 export let zToDiskCreateDevRepoResponse = makeToDiskResponseSchema({
   operation: 'createDevRepo',
-  success: z
-    .object({
-      repo: zRepo,
-      files: z.array(zDiskCatalogFile),
-      mproveDir: z.string(),
-      initialCommitHash: z.string().nullish()
-    })
-    .meta({ id: 'ToDiskCreateDevRepoOutput' }),
+  output: zToDiskCreateDevRepoOutput,
   error: zToDiskCreateDevRepoError
 });
+
+assertTypesEqual<
+  ToDiskCreateDevRepoOutput,
+  z.infer<typeof zToDiskCreateDevRepoOutput>
+>({ value: true });
 
 assertTypesEqual<
   ToDiskCreateDevRepoResponse,

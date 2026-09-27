@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskIsProjectExistOutput } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-response';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org/check-restore-org';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 @Injectable()
 export class IsProjectExistService {
@@ -14,7 +14,7 @@ export class IsProjectExistService {
   async process(item: {
     orgId: string;
     projectId: string;
-  }): Promise<ToDiskResponseResultForOperation<'isProjectExist'>> {
+  }): Promise<DiskResultForOperation<'isProjectExist'>> {
     let { orgId, projectId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

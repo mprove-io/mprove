@@ -10,7 +10,6 @@ import type { DiskBranchIsNotExistError } from '#common/zod/disk/errors/disk-bra
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskCreateBranchOutput } from '#common/zod/disk/routes/branches/create-branch/create-branch-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -23,6 +22,7 @@ import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 @Injectable()
 export class CreateBranchService {
@@ -37,7 +37,7 @@ export class CreateBranchService {
     newBranch: string;
     fromBranch: string;
     isFromRemote: boolean;
-  }): Promise<ToDiskResponseResultForOperation<'createBranch'>> {
+  }): Promise<DiskResultForOperation<'createBranch'>> {
     let { baseProject, repoId, newBranch, fromBranch, isFromRemote } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

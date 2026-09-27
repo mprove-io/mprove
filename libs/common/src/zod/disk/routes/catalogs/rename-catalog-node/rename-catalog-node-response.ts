@@ -7,12 +7,18 @@ import {
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskRenameCatalogNodeError,
   zToDiskRenameCatalogNodeError
 } from './rename-catalog-node-error';
+
+export type ToDiskRenameCatalogNodeResponse = ToDiskResponseBase<
+  'renameCatalogNode',
+  ToDiskRenameCatalogNodeOutput,
+  ToDiskRenameCatalogNodeError
+>;
 
 export type ToDiskRenameCatalogNodeOutput = {
   repo: Repo;
@@ -20,23 +26,24 @@ export type ToDiskRenameCatalogNodeOutput = {
   mproveDir: string;
 };
 
-export type ToDiskRenameCatalogNodeResponse = ToDiskResponse<
-  'renameCatalogNode',
-  ToDiskRenameCatalogNodeOutput,
-  ToDiskRenameCatalogNodeError
->;
+export let zToDiskRenameCatalogNodeOutput = z
+  .object({
+    repo: zRepo,
+    files: z.array(zDiskCatalogFile),
+    mproveDir: z.string()
+  })
+  .meta({ id: 'ToDiskRenameCatalogNodeOutput' });
 
 export let zToDiskRenameCatalogNodeResponse = makeToDiskResponseSchema({
   operation: 'renameCatalogNode',
-  success: z
-    .object({
-      repo: zRepo,
-      files: z.array(zDiskCatalogFile),
-      mproveDir: z.string()
-    })
-    .meta({ id: 'ToDiskRenameCatalogNodeOutput' }),
+  output: zToDiskRenameCatalogNodeOutput,
   error: zToDiskRenameCatalogNodeError
 });
+
+assertTypesEqual<
+  ToDiskRenameCatalogNodeOutput,
+  z.infer<typeof zToDiskRenameCatalogNodeOutput>
+>({ value: true });
 
 assertTypesEqual<
   ToDiskRenameCatalogNodeResponse,

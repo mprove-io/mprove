@@ -10,7 +10,6 @@ import type { DiskFileAlreadyExistError } from '#common/zod/disk/errors/disk-fil
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/files/create-file/create-file-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -26,6 +25,7 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-stat
 import { pushToRemote } from '#disk/functions/git/push-to-remote/push-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir/validate-path-under-dir';
 import { getContentFromFileName } from './get-content-from-file-name/get-content-from-file-name';
 
@@ -44,7 +44,7 @@ export class CreateFileService {
     parentNodeId: string;
     fileName: string;
     fileText?: string;
-  }): Promise<ToDiskResponseResultForOperation<'createFile'>> {
+  }): Promise<DiskResultForOperation<'createFile'>> {
     let {
       baseProject,
       repoId,

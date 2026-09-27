@@ -7,12 +7,18 @@ import {
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskCreateBranchError,
   zToDiskCreateBranchError
 } from './create-branch-error';
+
+export type ToDiskCreateBranchResponse = ToDiskResponseBase<
+  'createBranch',
+  ToDiskCreateBranchOutput,
+  ToDiskCreateBranchError
+>;
 
 export type ToDiskCreateBranchOutput = {
   repo: Repo;
@@ -20,23 +26,24 @@ export type ToDiskCreateBranchOutput = {
   mproveDir: string;
 };
 
-export type ToDiskCreateBranchResponse = ToDiskResponse<
-  'createBranch',
-  ToDiskCreateBranchOutput,
-  ToDiskCreateBranchError
->;
+export let zToDiskCreateBranchOutput = z
+  .object({
+    repo: zRepo,
+    files: z.array(zDiskCatalogFile),
+    mproveDir: z.string()
+  })
+  .meta({ id: 'ToDiskCreateBranchOutput' });
 
 export let zToDiskCreateBranchResponse = makeToDiskResponseSchema({
   operation: 'createBranch',
-  success: z
-    .object({
-      repo: zRepo,
-      files: z.array(zDiskCatalogFile),
-      mproveDir: z.string()
-    })
-    .meta({ id: 'ToDiskCreateBranchOutput' }),
+  output: zToDiskCreateBranchOutput,
   error: zToDiskCreateBranchError
 });
+
+assertTypesEqual<
+  ToDiskCreateBranchOutput,
+  z.infer<typeof zToDiskCreateBranchOutput>
+>({ value: true });
 
 assertTypesEqual<
   ToDiskCreateBranchResponse,

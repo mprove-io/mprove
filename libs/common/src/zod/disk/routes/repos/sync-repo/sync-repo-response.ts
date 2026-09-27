@@ -14,13 +14,19 @@ import {
 } from '#common/zod/disk/disk-sync-file';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskSyncRepoError,
   zToDiskSyncRepoError
 } from './sync-repo-error';
 import { type ToDiskSyncRepoRepo, zToDiskSyncRepoRepo } from './sync-repo-repo';
+
+export type ToDiskSyncRepoResponse = ToDiskResponseBase<
+  'syncRepo',
+  ToDiskSyncRepoOutput,
+  ToDiskSyncRepoError
+>;
 
 export type ToDiskSyncRepoOutput =
   | {
@@ -41,36 +47,36 @@ export type ToDiskSyncRepoOutput =
       appliedChangesOnServer: string[];
     };
 
-export type ToDiskSyncRepoResponse = ToDiskResponse<
-  'syncRepo',
-  ToDiskSyncRepoOutput,
-  ToDiskSyncRepoError
->;
+export let zToDiskSyncRepoOutput = z
+  .discriminatedUnion('direction', [
+    z.object({
+      direction: z.literal('from-server'),
+      files: z.array(zDiskCatalogFile),
+      mproveDir: z.string(),
+      devChangesToCommit: z.array(zDiskFileChange),
+      repo: zToDiskSyncRepoRepo.nullish(),
+      changedFiles: z.array(zDiskSyncFile),
+      deletedFiles: z.array(zDiskSyncFile)
+    }),
+    z.object({
+      direction: z.literal('to-server'),
+      files: z.array(zDiskCatalogFile),
+      mproveDir: z.string(),
+      devChangesToCommit: z.array(zDiskFileChange),
+      repo: zToDiskSyncRepoRepo.nullish(),
+      appliedChangesOnServer: z.array(z.string())
+    })
+  ])
+  .meta({ id: 'ToDiskSyncRepoOutput' });
 
 export let zToDiskSyncRepoResponse = makeToDiskResponseSchema({
   operation: 'syncRepo',
-  success: z
-    .discriminatedUnion('direction', [
-      z.object({
-        direction: z.literal('from-server'),
-        files: z.array(zDiskCatalogFile),
-        mproveDir: z.string(),
-        devChangesToCommit: z.array(zDiskFileChange),
-        repo: zToDiskSyncRepoRepo.nullish(),
-        changedFiles: z.array(zDiskSyncFile),
-        deletedFiles: z.array(zDiskSyncFile)
-      }),
-      z.object({
-        direction: z.literal('to-server'),
-        files: z.array(zDiskCatalogFile),
-        mproveDir: z.string(),
-        devChangesToCommit: z.array(zDiskFileChange),
-        repo: zToDiskSyncRepoRepo.nullish(),
-        appliedChangesOnServer: z.array(z.string())
-      })
-    ])
-    .meta({ id: 'ToDiskSyncRepoOutput' }),
+  output: zToDiskSyncRepoOutput,
   error: zToDiskSyncRepoError
+});
+
+assertTypesEqual<ToDiskSyncRepoOutput, z.infer<typeof zToDiskSyncRepoOutput>>({
+  value: true
 });
 
 assertTypesEqual<

@@ -95,11 +95,11 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.result.type, 'Success');
+  t.is(resp.type, 'Success');
 
-  if (resp.result.type !== 'Success') {
+  if (resp.type !== 'Success') {
     return;
   }
 
-  t.is(resp.result.value.isProjectExist, true);
+  t.is(resp.output.isProjectExist, true);
 });

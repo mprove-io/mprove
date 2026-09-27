@@ -11,7 +11,6 @@ import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
 import type { DiskGetSyncDataError } from '#common/zod/disk/function-errors/disk-get-sync-data-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskSyncRepoOutput } from '#common/zod/disk/routes/repos/sync-repo/sync-repo-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -25,6 +24,7 @@ import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 @Injectable()
 export class SyncRepoService {
@@ -55,7 +55,7 @@ export class SyncRepoService {
           changedFiles: DiskSyncFile[];
           deletedFiles: DiskSyncFile[];
         }
-  ): Promise<ToDiskResponseResultForOperation<'syncRepo'>> {
+  ): Promise<DiskResultForOperation<'syncRepo'>> {
     let {
       baseProject,
       repoId,
@@ -188,7 +188,7 @@ export class SyncRepoService {
         }
       ),
       Result.bind(
-        'syncFilesPayload',
+        'syncFilesOutput',
         (v): Result.ResultAsync<SyncData, DiskGetSyncDataError> =>
           getSyncData({
             direction: v.direction,
@@ -225,7 +225,7 @@ export class SyncRepoService {
           })
       ),
       Result.map((v): ToDiskSyncRepoOutput => {
-        let basePayload = {
+        let baseOutput = {
           files: v.itemCatalog.files,
           mproveDir: v.itemCatalog.mproveDir,
           devChangesToCommit: v.repoStatus.changesToCommit,
@@ -245,19 +245,19 @@ export class SyncRepoService {
               : undefined
         };
 
-        if (v.syncFilesPayload.direction === 'from-server') {
+        if (v.syncFilesOutput.direction === 'from-server') {
           return {
             direction: 'from-server',
-            ...basePayload,
-            changedFiles: v.syncFilesPayload.changedFiles,
-            deletedFiles: v.syncFilesPayload.deletedFiles
+            ...baseOutput,
+            changedFiles: v.syncFilesOutput.changedFiles,
+            deletedFiles: v.syncFilesOutput.deletedFiles
           };
         }
 
         return {
           direction: 'to-server',
-          ...basePayload,
-          appliedChangesOnServer: v.syncFilesPayload.appliedChangesOnServer
+          ...baseOutput,
+          appliedChangesOnServer: v.syncFilesOutput.appliedChangesOnServer
         };
       })
     );

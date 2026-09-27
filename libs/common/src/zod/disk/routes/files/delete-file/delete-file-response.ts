@@ -7,12 +7,18 @@ import {
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskDeleteFileError,
   zToDiskDeleteFileError
 } from './delete-file-error';
+
+export type ToDiskDeleteFileResponse = ToDiskResponseBase<
+  'deleteFile',
+  ToDiskDeleteFileOutput,
+  ToDiskDeleteFileError
+>;
 
 export type ToDiskDeleteFileOutput = {
   repo: Repo;
@@ -21,24 +27,25 @@ export type ToDiskDeleteFileOutput = {
   mproveDir: string;
 };
 
-export type ToDiskDeleteFileResponse = ToDiskResponse<
-  'deleteFile',
-  ToDiskDeleteFileOutput,
-  ToDiskDeleteFileError
->;
+export let zToDiskDeleteFileOutput = z
+  .object({
+    repo: zRepo,
+    deletedFileNodeId: z.string(),
+    files: z.array(zDiskCatalogFile),
+    mproveDir: z.string()
+  })
+  .meta({ id: 'ToDiskDeleteFileOutput' });
 
 export let zToDiskDeleteFileResponse = makeToDiskResponseSchema({
   operation: 'deleteFile',
-  success: z
-    .object({
-      repo: zRepo,
-      deletedFileNodeId: z.string(),
-      files: z.array(zDiskCatalogFile),
-      mproveDir: z.string()
-    })
-    .meta({ id: 'ToDiskDeleteFileOutput' }),
+  output: zToDiskDeleteFileOutput,
   error: zToDiskDeleteFileError
 });
+
+assertTypesEqual<
+  ToDiskDeleteFileOutput,
+  z.infer<typeof zToDiskDeleteFileOutput>
+>({ value: true });
 
 assertTypesEqual<
   ToDiskDeleteFileResponse,

@@ -60,11 +60,11 @@ test('1', async t => {
       cs: configService
     });
   }
-  t.is(resp.result.type, 'Success');
+  t.is(resp.type, 'Success');
 
-  if (resp.result.type !== 'Success') {
+  if (resp.type !== 'Success') {
     return;
   }
 
-  t.is(resp.result.value.isOrgExist, false);
+  t.is(resp.output.isOrgExist, false);
 });

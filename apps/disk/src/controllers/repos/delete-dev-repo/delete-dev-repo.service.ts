@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BaseProject } from '#common/zod/backend/base-project';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskDeleteDevRepoOutput } from '#common/zod/disk/routes/repos/delete-dev-repo/delete-dev-repo-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -10,6 +9,7 @@ import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path/remove-path';
 import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project/check-restore-org-project';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 @Injectable()
 export class DeleteDevRepoService {
@@ -21,7 +21,7 @@ export class DeleteDevRepoService {
   async process(item: {
     baseProject: BaseProject;
     devRepoId: string;
-  }): Promise<ToDiskResponseResultForOperation<'deleteDevRepo'>> {
+  }): Promise<DiskResultForOperation<'deleteDevRepo'>> {
     let { baseProject, devRepoId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

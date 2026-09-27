@@ -9,7 +9,6 @@ import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { DiskGetInitialCommitHashError } from '#common/zod/disk/function-errors/disk-get-initial-commit-hash-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -21,6 +20,7 @@ import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project/check-restore-org-project';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 @Injectable()
 export class CreateDevRepoService {
@@ -34,7 +34,7 @@ export class CreateDevRepoService {
     devRepoId: string;
     initialBranch?: string;
     sessionBranch?: string;
-  }): Promise<ToDiskResponseResultForOperation<'createDevRepo'>> {
+  }): Promise<DiskResultForOperation<'createDevRepo'>> {
     let { baseProject, devRepoId, initialBranch, sessionBranch } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

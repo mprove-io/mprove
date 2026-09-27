@@ -126,14 +126,14 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.result.type, 'Success');
+  t.is(resp.type, 'Success');
 
-  if (resp.result.type !== 'Success') {
+  if (resp.type !== 'Success') {
     return;
   }
 
   t.is(
-    resp.result.value.repo.nodes[0].children[0].children[0].id,
+    resp.output.repo.nodes[0].children[0].children[0].id,
     `${projectId}/fo1/fo2`
   );
 });

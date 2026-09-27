@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import { ensureDir, remove } from 'fs-extra';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskCloneTestRepoOutput } from '#common/zod/disk/routes/test-repos/clone-test-repo/clone-test-repo-response';
 import type { DiskConfig } from '#disk/config/disk-config';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class CloneTestRepoService {
 
   async process(item: {
     testId: string;
-  }): Promise<ToDiskResponseResultForOperation<'cloneTestRepo'>> {
+  }): Promise<DiskResultForOperation<'cloneTestRepo'>> {
     let { testId } = item;
 
     let testReposPath: string =

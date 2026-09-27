@@ -7,12 +7,18 @@ import {
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskGetCatalogFilesError,
   zToDiskGetCatalogFilesError
 } from './get-catalog-files-error';
+
+export type ToDiskGetCatalogFilesResponse = ToDiskResponseBase<
+  'getCatalogFiles',
+  ToDiskGetCatalogFilesOutput,
+  ToDiskGetCatalogFilesError
+>;
 
 export type ToDiskGetCatalogFilesOutput = {
   repo: Repo;
@@ -20,23 +26,24 @@ export type ToDiskGetCatalogFilesOutput = {
   mproveDir: string;
 };
 
-export type ToDiskGetCatalogFilesResponse = ToDiskResponse<
-  'getCatalogFiles',
-  ToDiskGetCatalogFilesOutput,
-  ToDiskGetCatalogFilesError
->;
+export let zToDiskGetCatalogFilesOutput = z
+  .object({
+    repo: zRepo,
+    files: z.array(zDiskCatalogFile),
+    mproveDir: z.string()
+  })
+  .meta({ id: 'ToDiskGetCatalogFilesOutput' });
 
 export let zToDiskGetCatalogFilesResponse = makeToDiskResponseSchema({
   operation: 'getCatalogFiles',
-  success: z
-    .object({
-      repo: zRepo,
-      files: z.array(zDiskCatalogFile),
-      mproveDir: z.string()
-    })
-    .meta({ id: 'ToDiskGetCatalogFilesOutput' }),
+  output: zToDiskGetCatalogFilesOutput,
   error: zToDiskGetCatalogFilesError
 });
+
+assertTypesEqual<
+  ToDiskGetCatalogFilesOutput,
+  z.infer<typeof zToDiskGetCatalogFilesOutput>
+>({ value: true });
 
 assertTypesEqual<
   ToDiskGetCatalogFilesResponse,

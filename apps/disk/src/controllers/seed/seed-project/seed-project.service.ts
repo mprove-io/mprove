@@ -8,7 +8,6 @@ import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskSeedProjectOutput } from '#common/zod/disk/routes/seed/seed-project/seed-project-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -18,6 +17,7 @@ import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod/prepare-remote-and-prod';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 @Injectable()
 export class SeedProjectService {
@@ -31,7 +31,7 @@ export class SeedProjectService {
     seedProjectId?: string;
     devRepoId: string;
     userAlias: string;
-  }): Promise<ToDiskResponseResultForOperation<'seedProject'>> {
+  }): Promise<DiskResultForOperation<'seedProject'>> {
     let { baseProject, devRepoId, userAlias, seedProjectId } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

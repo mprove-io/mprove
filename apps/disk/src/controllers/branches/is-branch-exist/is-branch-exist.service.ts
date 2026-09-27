@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import type { BaseProject } from '#common/zod/backend/base-project';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskIsBranchExistOutput } from '#common/zod/disk/routes/branches/is-branch-exist/is-branch-exist-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -12,6 +11,7 @@ import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/is-remote-branch-exist';
 import { checkRestoreOrgProjectRepo } from '#disk/functions/restore/check-restore-org-project-repo/check-restore-org-project-repo';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 @Injectable()
 export class IsBranchExistService {
@@ -25,7 +25,7 @@ export class IsBranchExistService {
     repoId: string;
     branch: string;
     isRemote: boolean;
-  }): Promise<ToDiskResponseResultForOperation<'isBranchExist'>> {
+  }): Promise<DiskResultForOperation<'isBranchExist'>> {
     let { baseProject, repoId, branch, isRemote } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

@@ -7,12 +7,18 @@ import {
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskSeedProjectError,
   zToDiskSeedProjectError
 } from './seed-project-error';
+
+export type ToDiskSeedProjectResponse = ToDiskResponseBase<
+  'seedProject',
+  ToDiskSeedProjectOutput,
+  ToDiskSeedProjectError
+>;
 
 export type ToDiskSeedProjectOutput = {
   repo: Repo;
@@ -20,23 +26,24 @@ export type ToDiskSeedProjectOutput = {
   mproveDir: string;
 };
 
-export type ToDiskSeedProjectResponse = ToDiskResponse<
-  'seedProject',
-  ToDiskSeedProjectOutput,
-  ToDiskSeedProjectError
->;
+export let zToDiskSeedProjectOutput = z
+  .object({
+    repo: zRepo,
+    files: z.array(zDiskCatalogFile),
+    mproveDir: z.string()
+  })
+  .meta({ id: 'ToDiskSeedProjectOutput' });
 
 export let zToDiskSeedProjectResponse = makeToDiskResponseSchema({
   operation: 'seedProject',
-  success: z
-    .object({
-      repo: zRepo,
-      files: z.array(zDiskCatalogFile),
-      mproveDir: z.string()
-    })
-    .meta({ id: 'ToDiskSeedProjectOutput' }),
+  output: zToDiskSeedProjectOutput,
   error: zToDiskSeedProjectError
 });
+
+assertTypesEqual<
+  ToDiskSeedProjectOutput,
+  z.infer<typeof zToDiskSeedProjectOutput>
+>({ value: true });
 
 assertTypesEqual<
   ToDiskSeedProjectResponse,

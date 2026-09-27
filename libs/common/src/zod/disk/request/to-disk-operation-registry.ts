@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
+import type { ToDiskResponseBase } from '#common/zod/disk/response/to-disk-response-base';
 import type { ToDiskCreateBranchRequest } from '#common/zod/disk/routes/branches/create-branch/create-branch-request';
 import { zToDiskCreateBranchRequest } from '#common/zod/disk/routes/branches/create-branch/create-branch-request';
 import type { ToDiskCreateBranchResponse } from '#common/zod/disk/routes/branches/create-branch/create-branch-response';
@@ -126,13 +127,7 @@ type ValidateOperationRegistry<
   TRegistry extends {
     [TOperation in ToDiskOperation]: {
       request: { operation: TOperation; traceId: string; input: unknown };
-      response: {
-        operation: TOperation;
-        method: string;
-        duration: number;
-        traceId: string;
-        result: unknown;
-      };
+      response: ToDiskResponseBase<TOperation, unknown, unknown>;
     };
   }
 > = TRegistry;

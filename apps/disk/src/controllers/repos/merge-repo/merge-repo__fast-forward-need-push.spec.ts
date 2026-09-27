@@ -180,11 +180,11 @@ test('1', async t => {
     });
   }
   // NeedPush because we merge with different branch
-  t.is(resp.result.type, 'Success');
+  t.is(resp.type, 'Success');
 
-  if (resp.result.type !== 'Success') {
+  if (resp.type !== 'Success') {
     return;
   }
 
-  t.is(resp.result.value.repo.repoStatus, 'NeedPush');
+  t.is(resp.output.repo.repoStatus, 'NeedPush');
 });

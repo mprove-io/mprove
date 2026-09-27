@@ -108,18 +108,18 @@ test('1', async t => {
     });
   }
 
-  t.is(resp1.result.type, 'Success');
+  t.is(resp1.type, 'Success');
 
-  if (resp1.result.type !== 'Success') {
+  if (resp1.type !== 'Success') {
     return;
   }
 
-  t.is(resp2.result.type, 'Success');
+  t.is(resp2.type, 'Success');
 
-  if (resp2.result.type !== 'Success') {
+  if (resp2.type !== 'Success') {
     return;
   }
 
-  t.is(resp1.result.value.isProjectExist, true);
-  t.is(resp2.result.value.isProjectExist, false);
+  t.is(resp1.output.isProjectExist, true);
+  t.is(resp2.output.isProjectExist, false);
 });

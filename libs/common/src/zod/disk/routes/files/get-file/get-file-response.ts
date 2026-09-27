@@ -3,9 +3,15 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import { type ToDiskGetFileError, zToDiskGetFileError } from './get-file-error';
+
+export type ToDiskGetFileResponse = ToDiskResponseBase<
+  'getFile',
+  ToDiskGetFileOutput,
+  ToDiskGetFileError
+>;
 
 export type ToDiskGetFileOutput = {
   repo: Repo;
@@ -14,23 +20,23 @@ export type ToDiskGetFileOutput = {
   isExist: boolean;
 };
 
-export type ToDiskGetFileResponse = ToDiskResponse<
-  'getFile',
-  ToDiskGetFileOutput,
-  ToDiskGetFileError
->;
+export let zToDiskGetFileOutput = z
+  .object({
+    repo: zRepo,
+    originalContent: z.string(),
+    content: z.string(),
+    isExist: z.boolean()
+  })
+  .meta({ id: 'ToDiskGetFileOutput' });
 
 export let zToDiskGetFileResponse = makeToDiskResponseSchema({
   operation: 'getFile',
-  success: z
-    .object({
-      repo: zRepo,
-      originalContent: z.string(),
-      content: z.string(),
-      isExist: z.boolean()
-    })
-    .meta({ id: 'ToDiskGetFileOutput' }),
+  output: zToDiskGetFileOutput,
   error: zToDiskGetFileError
+});
+
+assertTypesEqual<ToDiskGetFileOutput, z.infer<typeof zToDiskGetFileOutput>>({
+  value: true
 });
 
 assertTypesEqual<ToDiskGetFileResponse, z.infer<typeof zToDiskGetFileResponse>>(

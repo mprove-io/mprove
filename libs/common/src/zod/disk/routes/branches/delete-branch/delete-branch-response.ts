@@ -3,31 +3,38 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskDeleteBranchError,
   zToDiskDeleteBranchError
 } from './delete-branch-error';
+
+export type ToDiskDeleteBranchResponse = ToDiskResponseBase<
+  'deleteBranch',
+  ToDiskDeleteBranchOutput,
+  ToDiskDeleteBranchError
+>;
 
 export type ToDiskDeleteBranchOutput = {
   repo: Repo;
   deletedBranch: string;
 };
 
-export type ToDiskDeleteBranchResponse = ToDiskResponse<
-  'deleteBranch',
-  ToDiskDeleteBranchOutput,
-  ToDiskDeleteBranchError
->;
+export let zToDiskDeleteBranchOutput = z
+  .object({ repo: zRepo, deletedBranch: z.string() })
+  .meta({ id: 'ToDiskDeleteBranchOutput' });
 
 export let zToDiskDeleteBranchResponse = makeToDiskResponseSchema({
   operation: 'deleteBranch',
-  success: z
-    .object({ repo: zRepo, deletedBranch: z.string() })
-    .meta({ id: 'ToDiskDeleteBranchOutput' }),
+  output: zToDiskDeleteBranchOutput,
   error: zToDiskDeleteBranchError
 });
+
+assertTypesEqual<
+  ToDiskDeleteBranchOutput,
+  z.infer<typeof zToDiskDeleteBranchOutput>
+>({ value: true });
 
 assertTypesEqual<
   ToDiskDeleteBranchResponse,

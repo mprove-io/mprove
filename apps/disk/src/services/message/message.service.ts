@@ -7,10 +7,10 @@ import {
 } from '#common/zod/disk/request/to-disk-operation';
 import { zToDiskOperationRegistry } from '#common/zod/disk/request/to-disk-operation-registry';
 import type { ToDiskRequest } from '#common/zod/disk/request/to-disk-request';
-import type { ToDiskInvalidRequestErrorResponse } from '#common/zod/disk/response/to-disk-invalid-request-error-response';
-import type { ToDiskOperationResponse } from '#common/zod/disk/response/to-disk-operation-response';
+import type { ToDiskResponse } from '#common/zod/disk/response/to-disk-response';
 import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
 import type { ToDiskResponseForRequest } from '#common/zod/disk/response/to-disk-response-for-request';
+import type { ToDiskUnknownOperationResponse } from '#common/zod/disk/response/to-disk-unknown-operation-response';
 import { CreateBranchService } from '#disk/controllers/branches/create-branch/create-branch.service';
 import { DeleteBranchService } from '#disk/controllers/branches/delete-branch/delete-branch.service';
 import { IsBranchExistService } from '#disk/controllers/branches/is-branch-exist/is-branch-exist.service';
@@ -99,9 +99,7 @@ export class MessageService {
     return response;
   }
 
-  async handleMessage(item: {
-    message: unknown;
-  }): Promise<ToDiskOperationResponse | ToDiskInvalidRequestErrorResponse> {
+  async handleMessage(item: { message: unknown }): Promise<ToDiskResponse> {
     let { message } = item;
 
     let startTs: number = Date.now();
@@ -120,23 +118,21 @@ export class MessageService {
           ? message.traceId
           : undefined;
 
-      let response: ToDiskInvalidRequestErrorResponse = {
+      let response: ToDiskUnknownOperationResponse = {
+        type: 'Failure',
         operation: typeof operationValue === 'string' ? operationValue : '',
         method: METHOD_RPC,
         duration: Date.now() - startTs,
         traceId: typeof traceIdValue === 'string' ? traceIdValue : '',
-        result: {
-          type: 'Failure',
-          error: {
-            code: 'DISK_INVALID_REQUEST',
-            displayData: [
-              {
-                path: 'operation',
-                message: 'Missing or unknown disk request discriminator',
-                code: 'invalid_value'
-              }
-            ]
-          }
+        error: {
+          code: 'DISK_INVALID_REQUEST',
+          displayData: [
+            {
+              path: 'operation',
+              message: 'Missing or unknown disk request discriminator',
+              code: 'invalid_value'
+            }
+          ]
         }
       };
 
@@ -149,20 +145,22 @@ export class MessageService {
       zToDiskOperationRegistry[operation].request.safeParse(message);
 
     if (requestResult.success === false) {
-      let response: ToDiskOperationResponse = makeInvalidRequestResponse({
-        operation: operation,
-        message: message,
-        error: requestResult.error,
-        startTs: startTs,
-        method: METHOD_RPC
-      });
+      let response: ToDiskResponseForOperation<ToDiskOperation> =
+        makeInvalidRequestResponse({
+          operation: operation,
+          message: message,
+          error: requestResult.error,
+          startTs: startTs,
+          method: METHOD_RPC
+        });
 
       return response;
     }
 
-    let response: ToDiskOperationResponse = await this.dispatch({
-      request: requestResult.data
-    });
+    let response: ToDiskResponseForOperation<ToDiskOperation> =
+      await this.dispatch({
+        request: requestResult.data
+      });
 
     return response;
   }

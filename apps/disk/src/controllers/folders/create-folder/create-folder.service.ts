@@ -10,7 +10,6 @@ import type { DiskParentPathIsNotExistError } from '#common/zod/disk/errors/disk
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskCreateFolderOutput } from '#common/zod/disk/routes/folders/create-folder/create-folder-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -22,6 +21,7 @@ import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir/validate-path-under-dir';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class CreateFolderService {
     branch: string;
     parentNodeId: string;
     folderName: string;
-  }): Promise<ToDiskResponseResultForOperation<'createFolder'>> {
+  }): Promise<DiskResultForOperation<'createFolder'>> {
     let { baseProject, repoId, branch, parentNodeId, folderName } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

@@ -142,32 +142,32 @@ test('1', async t => {
     });
   }
 
-  t.is(resp1.result.type, 'Success');
+  t.is(resp1.type, 'Success');
 
-  if (resp1.result.type !== 'Success') {
+  if (resp1.type !== 'Success') {
     return;
   }
 
-  t.is(resp2.result.type, 'Success');
+  t.is(resp2.type, 'Success');
 
-  if (resp2.result.type !== 'Success') {
+  if (resp2.type !== 'Success') {
     return;
   }
 
-  t.is(resp3.result.type, 'Success');
+  t.is(resp3.type, 'Success');
 
-  if (resp3.result.type !== 'Success') {
+  if (resp3.type !== 'Success') {
     return;
   }
 
-  t.is(resp4.result.type, 'Success');
+  t.is(resp4.type, 'Success');
 
-  if (resp4.result.type !== 'Success') {
+  if (resp4.type !== 'Success') {
     return;
   }
 
-  t.is(resp1.result.value.isBranchExist, true);
-  t.is(resp2.result.value.isBranchExist, true);
-  t.is(resp3.result.value.isBranchExist, false);
-  t.is(resp4.result.value.isBranchExist, false);
+  t.is(resp1.output.isBranchExist, true);
+  t.is(resp2.output.isBranchExist, true);
+  t.is(resp3.output.isBranchExist, false);
+  t.is(resp4.output.isBranchExist, false);
 });

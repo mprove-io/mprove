@@ -7,12 +7,18 @@ import {
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskSaveFileError,
   zToDiskSaveFileError
 } from './save-file-error';
+
+export type ToDiskSaveFileResponse = ToDiskResponseBase<
+  'saveFile',
+  ToDiskSaveFileOutput,
+  ToDiskSaveFileError
+>;
 
 export type ToDiskSaveFileOutput = {
   repo: Repo;
@@ -20,22 +26,22 @@ export type ToDiskSaveFileOutput = {
   mproveDir: string;
 };
 
-export type ToDiskSaveFileResponse = ToDiskResponse<
-  'saveFile',
-  ToDiskSaveFileOutput,
-  ToDiskSaveFileError
->;
+export let zToDiskSaveFileOutput = z
+  .object({
+    repo: zRepo,
+    files: z.array(zDiskCatalogFile),
+    mproveDir: z.string()
+  })
+  .meta({ id: 'ToDiskSaveFileOutput' });
 
 export let zToDiskSaveFileResponse = makeToDiskResponseSchema({
   operation: 'saveFile',
-  success: z
-    .object({
-      repo: zRepo,
-      files: z.array(zDiskCatalogFile),
-      mproveDir: z.string()
-    })
-    .meta({ id: 'ToDiskSaveFileOutput' }),
+  output: zToDiskSaveFileOutput,
   error: zToDiskSaveFileError
+});
+
+assertTypesEqual<ToDiskSaveFileOutput, z.infer<typeof zToDiskSaveFileOutput>>({
+  value: true
 });
 
 assertTypesEqual<

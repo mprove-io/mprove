@@ -39,9 +39,9 @@ type DiskRoute = {
 };
 
 type DiskSuccessOutput<TRequest extends ToDiskRequest> = Extract<
-  ToDiskResponseForOperation<TRequest['operation']>['result'],
+  ToDiskResponseForOperation<TRequest['operation']>,
   { type: 'Success' }
->['value'];
+>['output'];
 
 @Injectable()
 export class RpcService implements OnModuleDestroy {
@@ -391,9 +391,8 @@ export class RpcService implements OnModuleDestroy {
         groupId: route.groupId
       });
 
-    if (response.result.type === 'Failure') {
-      let error: { code: string; displayData?: unknown } =
-        response.result.error;
+    if (response.type === 'Failure') {
+      let error: { code: string; displayData?: unknown } = response.error;
 
       throw new ServerError({
         message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
@@ -404,7 +403,7 @@ export class RpcService implements OnModuleDestroy {
       });
     }
 
-    let output: DiskSuccessOutput<TRequest> = response.result.value;
+    let output: DiskSuccessOutput<TRequest> = response.output;
 
     return output;
   }

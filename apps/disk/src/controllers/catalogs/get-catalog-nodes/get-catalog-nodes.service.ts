@@ -11,7 +11,6 @@ import type { DiskGetEffectiveIsFetchError } from '#common/zod/disk/function-err
 import type { DiskGetIsFetchedAfterCheckoutRequestedBranchError } from '#common/zod/disk/function-errors/disk-get-is-fetched-after-checkout-requested-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -20,6 +19,7 @@ import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 import { getEffectiveIsFetch } from './get-effective-is-fetch/get-effective-is-fetch';
 import { getIsFetchedAfterCheckoutRequestedBranch } from './get-is-fetched-after-checkout-requested-branch/get-is-fetched-after-checkout-requested-branch';
 
@@ -35,7 +35,7 @@ export class GetCatalogNodesService {
     repoId: string;
     branch?: string;
     isFetch: boolean;
-  }): Promise<ToDiskResponseResultForOperation<'getCatalogNodes'>> {
+  }): Promise<DiskResultForOperation<'getCatalogNodes'>> {
     let { baseProject, repoId, branch, isFetch } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

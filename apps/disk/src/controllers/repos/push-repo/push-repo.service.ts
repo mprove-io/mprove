@@ -9,7 +9,6 @@ import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskPushRepoOutput } from '#common/zod/disk/routes/repos/push-repo/push-repo-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -23,6 +22,7 @@ import { merge } from '#disk/functions/git/merge/merge';
 import { pushToRemote } from '#disk/functions/git/push-to-remote/push-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 @Injectable()
 export class PushRepoService {
@@ -36,7 +36,7 @@ export class PushRepoService {
     repoId: string;
     branch: string;
     userAlias: string;
-  }): Promise<ToDiskResponseResultForOperation<'pushRepo'>> {
+  }): Promise<DiskResultForOperation<'pushRepo'>> {
     let { baseProject, repoId, branch, userAlias } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

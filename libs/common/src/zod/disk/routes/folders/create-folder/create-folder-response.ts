@@ -7,12 +7,18 @@ import {
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskCreateFolderError,
   zToDiskCreateFolderError
 } from './create-folder-error';
+
+export type ToDiskCreateFolderResponse = ToDiskResponseBase<
+  'createFolder',
+  ToDiskCreateFolderOutput,
+  ToDiskCreateFolderError
+>;
 
 export type ToDiskCreateFolderOutput = {
   repo: Repo;
@@ -20,23 +26,24 @@ export type ToDiskCreateFolderOutput = {
   mproveDir: string;
 };
 
-export type ToDiskCreateFolderResponse = ToDiskResponse<
-  'createFolder',
-  ToDiskCreateFolderOutput,
-  ToDiskCreateFolderError
->;
+export let zToDiskCreateFolderOutput = z
+  .object({
+    repo: zRepo,
+    files: z.array(zDiskCatalogFile),
+    mproveDir: z.string()
+  })
+  .meta({ id: 'ToDiskCreateFolderOutput' });
 
 export let zToDiskCreateFolderResponse = makeToDiskResponseSchema({
   operation: 'createFolder',
-  success: z
-    .object({
-      repo: zRepo,
-      files: z.array(zDiskCatalogFile),
-      mproveDir: z.string()
-    })
-    .meta({ id: 'ToDiskCreateFolderOutput' }),
+  output: zToDiskCreateFolderOutput,
   error: zToDiskCreateFolderError
 });
+
+assertTypesEqual<
+  ToDiskCreateFolderOutput,
+  z.infer<typeof zToDiskCreateFolderOutput>
+>({ value: true });
 
 assertTypesEqual<
   ToDiskCreateFolderResponse,

@@ -171,13 +171,13 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.result.type, 'Success');
+  t.is(resp.type, 'Success');
 
-  if (resp.result.type !== 'Success') {
+  if (resp.type !== 'Success') {
     return;
   }
 
-  let fileNodeIds = resp.result.value.files.map(f => f.fileNodeId);
+  let fileNodeIds = resp.output.files.map(f => f.fileNodeId);
 
   t.true(fileNodeIds.includes(`${projectId}/mprove.yml`));
   t.true(fileNodeIds.includes(`${projectId}/data/file1.yml`));

@@ -9,7 +9,6 @@ import type { DiskRemoteBranchIsNotExistError } from '#common/zod/disk/errors/di
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/disk/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -21,6 +20,7 @@ import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/
 import { revertRepoToRemote } from '#disk/functions/git/revert-repo-to-remote/revert-repo-to-remote';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 @Injectable()
 export class RevertRepoToRemoteService {
@@ -33,7 +33,7 @@ export class RevertRepoToRemoteService {
     baseProject: BaseProject;
     repoId: string;
     branch: string;
-  }): Promise<ToDiskResponseResultForOperation<'revertRepoToRemote'>> {
+  }): Promise<DiskResultForOperation<'revertRepoToRemote'>> {
     let { baseProject, repoId, branch } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

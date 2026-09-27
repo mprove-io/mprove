@@ -3,26 +3,35 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
-  type ToDiskResponse
-} from '#common/zod/disk/response/to-disk-response';
+  type ToDiskResponseBase
+} from '#common/zod/disk/response/to-disk-response-base';
 import {
   type ToDiskCommitRepoError,
   zToDiskCommitRepoError
 } from './commit-repo-error';
 
-export type ToDiskCommitRepoOutput = { repo: Repo };
-
-export type ToDiskCommitRepoResponse = ToDiskResponse<
+export type ToDiskCommitRepoResponse = ToDiskResponseBase<
   'commitRepo',
   ToDiskCommitRepoOutput,
   ToDiskCommitRepoError
 >;
 
+export type ToDiskCommitRepoOutput = { repo: Repo };
+
+export let zToDiskCommitRepoOutput = z
+  .object({ repo: zRepo })
+  .meta({ id: 'ToDiskCommitRepoOutput' });
+
 export let zToDiskCommitRepoResponse = makeToDiskResponseSchema({
   operation: 'commitRepo',
-  success: z.object({ repo: zRepo }).meta({ id: 'ToDiskCommitRepoOutput' }),
+  output: zToDiskCommitRepoOutput,
   error: zToDiskCommitRepoError
 });
+
+assertTypesEqual<
+  ToDiskCommitRepoOutput,
+  z.infer<typeof zToDiskCommitRepoOutput>
+>({ value: true });
 
 assertTypesEqual<
   ToDiskCommitRepoResponse,

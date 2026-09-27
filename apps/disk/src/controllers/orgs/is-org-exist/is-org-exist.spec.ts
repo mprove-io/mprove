@@ -65,18 +65,18 @@ test('1', async t => {
     });
   }
 
-  t.is(resp1.result.type, 'Success');
+  t.is(resp1.type, 'Success');
 
-  if (resp1.result.type !== 'Success') {
+  if (resp1.type !== 'Success') {
     return;
   }
 
-  t.is(resp2.result.type, 'Success');
+  t.is(resp2.type, 'Success');
 
-  if (resp2.result.type !== 'Success') {
+  if (resp2.type !== 'Success') {
     return;
   }
 
-  t.is(resp1.result.value.isOrgExist, true);
-  t.is(resp2.result.value.isOrgExist, false);
+  t.is(resp1.output.isOrgExist, true);
+  t.is(resp2.output.isOrgExist, false);
 });

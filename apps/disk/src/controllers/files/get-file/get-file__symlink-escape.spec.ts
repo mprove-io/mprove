@@ -121,11 +121,11 @@ test('1', async t => {
     });
   }
 
-  if (resp.result.type !== 'Failure') {
+  if (resp.type !== 'Failure') {
     t.fail('server must reject symlinks without returning file contents');
 
     return;
   }
 
-  t.is(resp.result.error.code, ErEnum.FILE_IS_SYMLINK);
+  t.is(resp.error.code, ErEnum.FILE_IS_SYMLINK);
 });

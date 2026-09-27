@@ -100,11 +100,11 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.result.type, 'Failure');
+  t.is(resp.type, 'Failure');
 
-  if (resp.result.type !== 'Failure') {
+  if (resp.type !== 'Failure') {
     return;
   }
 
-  t.is(resp.result.error.code, 'DISK_PATH_TRAVERSAL');
+  t.is(resp.error.code, 'DISK_PATH_TRAVERSAL');
 });

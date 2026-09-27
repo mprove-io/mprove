@@ -10,7 +10,6 @@ import type { DiskOldPathIsNotExistError } from '#common/zod/disk/errors/disk-ol
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskRenameCatalogNodeOutput } from '#common/zod/disk/routes/catalogs/rename-catalog-node/rename-catalog-node-response';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -23,6 +22,7 @@ import { createGit } from '#disk/functions/git/create-git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir/validate-path-under-dir';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class RenameCatalogNodeService {
     branch: string;
     nodeId: string;
     newName: string;
-  }): Promise<ToDiskResponseResultForOperation<'renameCatalogNode'>> {
+  }): Promise<DiskResultForOperation<'renameCatalogNode'>> {
     let { baseProject, repoId, branch, nodeId, newName } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

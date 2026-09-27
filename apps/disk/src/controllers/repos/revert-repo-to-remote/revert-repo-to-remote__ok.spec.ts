@@ -179,18 +179,18 @@ test('1', async t => {
     });
   }
 
-  t.is(resp1.result.type, 'Success');
+  t.is(resp1.type, 'Success');
 
-  if (resp1.result.type !== 'Success') {
+  if (resp1.type !== 'Success') {
     return;
   }
 
-  t.is(resp1.result.value.repo.repoStatus, 'Ok');
-  t.is(resp2.result.type, 'Success');
+  t.is(resp1.output.repo.repoStatus, 'Ok');
+  t.is(resp2.type, 'Success');
 
-  if (resp2.result.type !== 'Success') {
+  if (resp2.type !== 'Success') {
     return;
   }
 
-  t.is(resp2.result.value.content, content1);
+  t.is(resp2.output.content, content1);
 });

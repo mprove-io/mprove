@@ -8,7 +8,6 @@ import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
 import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskCreateProjectOutput } from '#common/zod/disk/routes/projects/create-project/create-project-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -20,6 +19,7 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-stat
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod/prepare-remote-and-prod';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org/check-restore-org';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 import { checkProjectDoesNotExist } from './check-project-does-not-exist/check-project-does-not-exist';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class CreateProjectService {
     seedProjectId?: string;
     devRepoId: string;
     userAlias: string;
-  }): Promise<ToDiskResponseResultForOperation<'createProject'>> {
+  }): Promise<DiskResultForOperation<'createProject'>> {
     let { baseProject, seedProjectId, devRepoId, userAlias } = item;
 
     let orgPath: string = this.cs.get<DiskConfig['diskOrganizationsPath']>(

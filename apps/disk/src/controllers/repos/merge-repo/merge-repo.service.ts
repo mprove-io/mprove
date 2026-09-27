@@ -9,7 +9,6 @@ import type { DiskTheirBranchIsNotExistError } from '#common/zod/disk/errors/dis
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskResponseResultForOperation } from '#common/zod/disk/response/to-disk-response-result-for-operation';
 import type { ToDiskMergeRepoOutput } from '#common/zod/disk/routes/repos/merge-repo/merge-repo-response';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
@@ -22,6 +21,7 @@ import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist/
 import { merge } from '#disk/functions/git/merge/merge';
 import { checkRestoreOrgProjectRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/check-restore-org-project-repo-branch';
 import { DiskTabService } from '#disk/services/disk-tab/disk-tab.service';
+import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 @Injectable()
 export class MergeRepoService {
@@ -37,7 +37,7 @@ export class MergeRepoService {
     theirBranch: string;
     isTheirBranchRemote: boolean;
     userAlias: string;
-  }): Promise<ToDiskResponseResultForOperation<'mergeRepo'>> {
+  }): Promise<DiskResultForOperation<'mergeRepo'>> {
     let {
       baseProject,
       repoId,
