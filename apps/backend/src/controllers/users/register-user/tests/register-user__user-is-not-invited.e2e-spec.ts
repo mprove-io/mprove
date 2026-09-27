@@ -8,12 +8,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendRegisterUserRequest,
-  ToBackendRegisterUserResponse
-} from '#common/zod/to-backend/users/to-backend-register-user';
+import type { ToBackendRegisterUserRequest } from '#common/zod/backend/routes/users/register-user/register-user-request';
+import type { ToBackendRegisterUserResponse } from '#common/zod/backend/routes/users/register-user/register-user-response';
 
 let testId = 'backend-register-user__user-is-not-invited';
 
@@ -41,18 +38,16 @@ test('1', async t => {
       });
 
       let registerUserReq: ToBackendRegisterUserRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           email: email,
           password: password
         }
       };
 
-      resp = await sendToBackend<ToBackendRegisterUserResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendRegisterUser',
         httpServer: prep.httpServer,
         req: registerUserReq
       });
@@ -70,7 +65,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_USER_IS_NOT_INVITED);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_USER_IS_NOT_INVITED);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

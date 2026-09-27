@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendSendMessageToEditorSessionRequest,
-  zToBackendSendMessageToEditorSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-send-message-to-editor-session';
+import { zToBackendSendMessageToEditorSessionRequest } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
+import { zToBackendSendMessageToEditorSessionResponse } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-response';
 
 export class ToBackendSendMessageToEditorSessionRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendSendMessageToEditorSessionRequest })

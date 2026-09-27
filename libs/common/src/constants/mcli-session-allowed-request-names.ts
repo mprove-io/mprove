@@ -1,14 +1,13 @@
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
-export const MCLI_SESSION_ALLOWED_REQUEST_NAMES: ToBackendRequestInfoNameEnum[] =
-  [
-    ToBackendRequestInfoNameEnum.ToBackendGetConnectionsList, // get-connections-list
-    ToBackendRequestInfoNameEnum.ToBackendGetConnectionSample, // get-sample
-    ToBackendRequestInfoNameEnum.ToBackendGetConnectionSchemas, // get-schemas
-    ToBackendRequestInfoNameEnum.ToBackendSyncRepo, // sync
-    ToBackendRequestInfoNameEnum.ToBackendValidateFiles, // validate
-    ToBackendRequestInfoNameEnum.ToBackendGetState, // get-state
-    ToBackendRequestInfoNameEnum.ToBackendGetModel, // get-model
-    ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo, // get-query-info
-    ToBackendRequestInfoNameEnum.ToBackendRun // run
-  ];
+export const MCLI_SESSION_ALLOWED_REQUEST_NAMES: ToBackendRoute[] = [
+  'api/ToBackendGetConnectionsList', // get-connections-list
+  'api/ToBackendGetConnectionSample', // get-sample
+  'api/ToBackendGetConnectionSchemas', // get-schemas
+  'api/ToBackendSyncRepo', // sync
+  'api/ToBackendValidateFiles', // validate
+  'api/ToBackendGetState', // get-state
+  'api/ToBackendGetModel', // get-model
+  'api/ToBackendGetQueryInfo', // get-query-info
+  'api/ToBackendRun' // run
+];

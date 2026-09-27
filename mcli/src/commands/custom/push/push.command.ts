@@ -6,14 +6,11 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type {
-  ToBackendPushRepoRequestPayload,
-  ToBackendPushRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-push-repo';
+import type { ToBackendPushRepoInput } from '#common/zod/backend/routes/repos/push-repo/push-repo-request';
+import type { ToBackendPushRepoOutput } from '#common/zod/backend/routes/repos/push-repo/push-repo-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -92,36 +89,36 @@ export class PushCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let pushRepoReqPayload: ToBackendPushRepoRequestPayload = {
+    let pushRepoReqPayload: ToBackendPushRepoInput = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
       envId: this.env
     };
 
-    let pushRepoResp = await mreq<ToBackendPushRepoResponse>({
+    let pushRepoOutput: ToBackendPushRepoOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPushRepo,
+      route: 'api/ToBackendPushRepo',
       payload: pushRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
-      orgId: pushRepoResp.payload.repo.orgId,
+      orgId: pushRepoOutput.repo.orgId,
       projectId: this.projectId,
-      repoId: pushRepoResp.payload.repo.repoId,
+      repoId: pushRepoOutput.repo.repoId,
       branch: this.branch,
       env: this.env
     });
 
     let log: any = {
       message: `Pushed changes to Remote`,
-      validationErrorsTotal: pushRepoResp.payload.struct.errors.length
+      validationErrorsTotal: pushRepoOutput.struct.errors.length
     };
 
     if (this.getRepo === true) {
-      let repo = pushRepoResp.payload.repo;
+      let repo = pushRepoOutput.repo;
 
       delete repo.nodes;
       delete repo.changesToCommit;
@@ -132,7 +129,7 @@ export class PushCommand extends CustomCommand {
 
     if (this.getErrors === true) {
       log.validationErrors = mapBmlErrorsToMproveValidationErrors({
-        errors: pushRepoResp.payload.struct.errors
+        errors: pushRepoOutput.struct.errors
       });
     }
 

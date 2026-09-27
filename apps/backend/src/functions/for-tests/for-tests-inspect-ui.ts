@@ -2,7 +2,8 @@ import type { ExecutionContext } from 'ava';
 import { Prep } from '#backend/interfaces/prep';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
-import type { ToBackendCreateEditorSessionResponse } from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendCreateEditorSessionResponse } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-response';
 
 export async function forTestsInspectUi(item: {
   t: ExecutionContext;
@@ -16,7 +17,10 @@ export async function forTestsInspectUi(item: {
   }
 
   if (item.createSessionResp) {
-    console.log('sessionId:', item.createSessionResp.payload.sessionId);
+    console.log(
+      'sessionId:',
+      unwrapToBackendResponse({ response: item.createSessionResp }).sessionId
+    );
   }
 
   item.t.pass('Session created for inspection');

@@ -7,13 +7,9 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendLogoutUserRequest,
-  ToBackendLogoutUserResponse
-} from '#common/zod/to-backend/users/to-backend-logout-user';
+import type { ToBackendLogoutUserRequest } from '#common/zod/backend/routes/users/logout-user/logout-user-request';
+import type { ToBackendLogoutUserResponse } from '#common/zod/backend/routes/users/logout-user/logout-user-response';
 
 let testId = 'backend-logout-user__ok';
 
@@ -48,15 +44,13 @@ test('1', async t => {
       });
 
       let logoutUserReq: ToBackendLogoutUserRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendLogoutUser,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {}
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {}
       };
 
-      resp = await sendToBackend<ToBackendLogoutUserResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendLogoutUser',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: logoutUserReq
@@ -75,8 +69,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

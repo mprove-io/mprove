@@ -16,8 +16,7 @@ import {
   ToBackendUpdateUserPasswordResponseDto
 } from '#backend/controllers/users/update-user-password/update-user-password.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
@@ -27,8 +26,8 @@ import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Users')
 @SkipJwtCheck()
@@ -44,7 +43,7 @@ export class UpdateUserPasswordController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword)
+  @Post('api/ToBackendUpdateUserPassword' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'UpdateUserPassword',
     description: 'Set a new password using a valid reset token'
@@ -55,7 +54,7 @@ export class UpdateUserPasswordController {
   async updateUserPassword(
     @Body() body: ToBackendUpdateUserPasswordRequestDto
   ) {
-    let { passwordResetToken, newPassword } = body.payload;
+    let { passwordResetToken, newPassword } = body.input;
 
     let hashSecret = await this.dconfigsService.getDconfigHashSecret();
 

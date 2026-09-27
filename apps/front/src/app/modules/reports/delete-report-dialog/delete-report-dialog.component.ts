@@ -10,13 +10,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
-import type {
-  ToBackendDeleteReportRequestPayload,
-  ToBackendDeleteReportResponse
-} from '#common/zod/to-backend/reports/to-backend-delete-report';
+import type { ToBackendDeleteReportInput } from '#common/zod/backend/routes/reports/delete-report/delete-report-request';
+import type { ToBackendDeleteReportResponse } from '#common/zod/backend/routes/reports/delete-report/delete-report-response';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -74,7 +70,7 @@ export class DeleteReportDialogComponent implements OnInit {
     let report: ReportUnit = this.ref.data.report;
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendDeleteReportRequestPayload = {
+    let payload: ToBackendDeleteReportInput = {
       projectId: projectId,
       branchId: branchId,
       envId: this.ref.data.envId,
@@ -84,16 +80,16 @@ export class DeleteReportDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteReport,
+        route: 'api/ToBackendDeleteReport',
         payload: payload,
         showSpinner: !this.ref.data.isStartSpinnerUntilNavEnd
       })
       .pipe(
         tap((resp: ToBackendDeleteReportResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.reportsQuery.update({
-              reportUnitDrafts: resp.payload.reportUnitDrafts,
-              reportSpaceNodes: resp.payload.reportSpaceNodes
+              reportUnitDrafts: resp.result.value.reportUnitDrafts,
+              reportSpaceNodes: resp.result.value.reportSpaceNodes
             });
 
             let currentReport = this.reportQuery.getValue();

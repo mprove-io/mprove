@@ -16,15 +16,14 @@ import {
   ToBackendDeleteUserCodexAuthResponseDto
 } from '#backend/controllers/users/delete-user-codex-auth/delete-user-codex-auth.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendDeleteUserCodexAuthResponsePayload } from '#common/zod/to-backend/users/to-backend-delete-user-codex-auth';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDeleteUserCodexAuthOutput } from '#common/zod/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-response';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -38,7 +37,7 @@ export class DeleteUserCodexAuthController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteUserCodexAuth)
+  @Post('api/ToBackendDeleteUserCodexAuth' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteUserCodexAuth',
     description: "Clear the user's Codex auth credentials"
@@ -70,7 +69,7 @@ export class DeleteUserCodexAuthController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendDeleteUserCodexAuthResponsePayload = {
+    let payload: ToBackendDeleteUserCodexAuthOutput = {
       user: this.usersService.tabToApi({ user: user })
     };
 

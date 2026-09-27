@@ -15,12 +15,9 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendDeleteDashboardRequest,
-  ToBackendDeleteDashboardResponse
-} from '#common/zod/to-backend/dashboards/to-backend-delete-dashboard';
+import type { ToBackendDeleteDashboardRequest } from '#common/zod/backend/routes/dashboards/delete-dashboard/delete-dashboard-request';
+import type { ToBackendDeleteDashboardResponse } from '#common/zod/backend/routes/dashboards/delete-dashboard/delete-dashboard-response';
 
 let testId = 'backend-delete-dashboard__forbidden-dashboard';
 
@@ -107,12 +104,9 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteDashboardRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -121,7 +115,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteDashboardResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteDashboard',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -140,7 +135,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_FORBIDDEN_DASHBOARD);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_FORBIDDEN_DASHBOARD);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

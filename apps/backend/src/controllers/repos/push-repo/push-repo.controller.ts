@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendPushRepoRequestDto,
   ToBackendPushRepoResponseDto
 } from '#backend/controllers/repos/push-repo/push-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -45,11 +41,13 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendPushRepoOutput } from '#common/zod/backend/routes/repos/push-repo/push-repo-response';
 import type { ToDiskPushRepoOutput } from '#common/zod/disk/routes/repos/push-repo/push-repo-response';
-import type { ToBackendPushRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-push-repo';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -73,7 +71,7 @@ export class PushRepoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendPushRepo)
+  @Post('api/ToBackendPushRepo' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'PushRepo',
     description: 'Push branch commits to the remote repo'
@@ -85,8 +83,8 @@ export class PushRepoController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendPushRepoRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, envId } = body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, envId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -130,7 +128,7 @@ export class PushRepoController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'pushRepo',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -243,7 +241,7 @@ export class PushRepoController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendPushRepoResponsePayload = {
+    let payload: ToBackendPushRepoOutput = {
       repo: diskPushRepoOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,

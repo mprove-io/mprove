@@ -9,13 +9,9 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendSetProjectInfoRequest,
-  ToBackendSetProjectInfoResponse
-} from '#common/zod/to-backend/projects/to-backend-set-project-info';
+import type { ToBackendSetProjectInfoRequest } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-request';
+import type { ToBackendSetProjectInfoResponse } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-response';
 
 let testId = 'backend-set-project-info__ok';
 
@@ -88,18 +84,16 @@ test('1', async t => {
       });
 
       let req: ToBackendSetProjectInfoRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           name: projectNameNext
         }
       };
 
-      resp = await sendToBackend<ToBackendSetProjectInfoResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendSetProjectInfo',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -118,8 +112,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

@@ -1,6 +1,5 @@
 import { Injectable, UseFilters } from '@nestjs/common';
-import type { Context } from '@rekog/mcp-nest';
-import { Tool } from '@rekog/mcp-nest';
+import { type Context, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetStateService } from '#backend/controllers/state/get-state/get-state.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -18,7 +17,7 @@ import {
   type McpToolGetStateInput,
   zMcpToolGetStateInput,
   zMcpToolGetStateOutput
-} from '#common/zod/to-backend/mcp-tools/mcp-tool-get-state';
+} from '#common/zod/backend/mcp-tools/mcp-tool-get-state';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

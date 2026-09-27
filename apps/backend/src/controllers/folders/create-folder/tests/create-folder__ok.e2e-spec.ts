@@ -9,13 +9,9 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateFolderRequest,
-  ToBackendCreateFolderResponse
-} from '#common/zod/to-backend/folders/to-backend-create-folder';
+import type { ToBackendCreateFolderRequest } from '#common/zod/backend/routes/folders/create-folder/create-folder-request';
+import type { ToBackendCreateFolderResponse } from '#common/zod/backend/routes/folders/create-folder/create-folder-response';
 
 let testId = 'backend-create-folder__ok';
 
@@ -89,12 +85,9 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateFolderRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId,
@@ -104,7 +97,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendCreateFolderResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCreateFolder',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -123,8 +117,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

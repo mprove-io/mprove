@@ -8,12 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PARAMETER_ORG_ID } from '#common/constants/top';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetOrgRequestPayload,
-  ToBackendGetOrgResponse
-} from '#common/zod/to-backend/orgs/to-backend-get-org';
+import type { ToBackendGetOrgInput } from '#common/zod/backend/routes/orgs/get-org/get-org-request';
+import type { ToBackendGetOrgResponse } from '#common/zod/backend/routes/orgs/get-org/get-org-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { OrgQuery } from '../queries/org.query';
@@ -49,19 +45,19 @@ export class OrgAccountResolver implements Resolve<Observable<boolean>> {
       nav: nav
     });
 
-    let payload: ToBackendGetOrgRequestPayload = {
+    let payload: ToBackendGetOrgInput = {
       orgId: route.params[PARAMETER_ORG_ID]
     };
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetOrg,
+        route: 'api/ToBackendGetOrg',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetOrgResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let org = resp.payload.org;
+          if (resp.result?.type === 'Success') {
+            let org = resp.result.value.org;
             this.orgQuery.update(org);
             return true;
           } else {

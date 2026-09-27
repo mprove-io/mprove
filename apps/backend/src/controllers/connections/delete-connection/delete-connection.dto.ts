@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendDeleteConnectionRequest,
-  zToBackendDeleteConnectionResponse
-} from '#common/zod/to-backend/connections/to-backend-delete-connection';
+import { zToBackendDeleteConnectionRequest } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-request';
+import { zToBackendDeleteConnectionResponse } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-response';
 
 export class ToBackendDeleteConnectionRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendDeleteConnectionRequest })

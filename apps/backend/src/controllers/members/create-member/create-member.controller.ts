@@ -12,17 +12,13 @@ import { seconds, Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateMemberRequestDto,
   ToBackendCreateMemberResponseDto
 } from '#backend/controllers/members/create-member/create-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   UserTab
@@ -68,13 +64,15 @@ import {
   THROTTLE_MULTIPLIER
 } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateMemberOutput } from '#common/zod/backend/routes/members/create-member/create-member-response';
 import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
-import type { ToBackendCreateMemberResponsePayload } from '#common/zod/to-backend/members/to-backend-create-member';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)
@@ -117,7 +115,7 @@ export class CreateMemberController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateMember)
+  @Post('api/ToBackendCreateMember' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateMember',
     description: 'Add a user to a project as a member'
@@ -129,8 +127,8 @@ export class CreateMemberController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateMemberRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, email } = body.payload;
+    let { traceId } = body;
+    let { projectId, email } = body.input;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -368,7 +366,7 @@ export class CreateMemberController {
       apiMember.avatarSmall = avatar.avatarSmall;
     }
 
-    let payload: ToBackendCreateMemberResponsePayload = {
+    let payload: ToBackendCreateMemberOutput = {
       member: apiMember
     };
 

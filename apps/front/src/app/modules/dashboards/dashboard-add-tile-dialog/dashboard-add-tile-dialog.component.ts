@@ -10,14 +10,10 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendGetModelsInput } from '#common/zod/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
 import type { Dashboard } from '#common/zod/blockml/dashboard';
 import type { Model } from '#common/zod/blockml/model';
-import type {
-  ToBackendGetModelsRequestPayload,
-  ToBackendGetModelsResponse
-} from '#common/zod/to-backend/models/to-backend-get-models';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
@@ -68,7 +64,7 @@ export class DashboardAddTileDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendGetModelsRequestPayload = {
+    let payload: ToBackendGetModelsInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -77,13 +73,15 @@ export class DashboardAddTileDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        route: 'api/ToBackendGetModels',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.models = resp.payload.models.filter(y => y.hasAccess === true);
+          if (resp.result?.type === 'Success') {
+            this.models = resp.result.value.models.filter(
+              y => y.hasAccess === true
+            );
 
             this.spinner.hide(this.spinnerName);
 

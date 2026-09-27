@@ -7,12 +7,8 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetServerUsersRequestPayload,
-  ToBackendGetServerUsersResponse
-} from '#common/zod/to-backend/users/to-backend-get-server-users';
+import type { ToBackendGetServerUsersInput } from '#common/zod/backend/routes/users/get-server-users/get-server-users-request';
+import type { ToBackendGetServerUsersResponse } from '#common/zod/backend/routes/users/get-server-users/get-server-users-response';
 import { ServerUsersQuery } from '../queries/server-users.query';
 import { ApiService } from '../services/api.service';
 
@@ -27,22 +23,22 @@ export class ServerUsersResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let payload: ToBackendGetServerUsersRequestPayload = {
+    let payload: ToBackendGetServerUsersInput = {
       pageNum: 1,
       perPage: USERS_PER_PAGE
     };
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetServerUsers,
+        route: 'api/ToBackendGetServerUsers',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetServerUsersResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.serverUsersQuery.update({
-              serverUsers: resp.payload.serverUsersList,
-              total: resp.payload.total
+              serverUsers: resp.result.value.serverUsersList,
+              total: resp.result.value.total
             });
             return true;
           } else {

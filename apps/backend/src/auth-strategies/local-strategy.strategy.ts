@@ -13,8 +13,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     private usersService: UsersService
   ) {
     super({
-      usernameField: 'payload[]email',
-      passwordField: 'payload[]password'
+      usernameField: 'input[]email',
+      passwordField: 'input[]password'
     });
   }
 

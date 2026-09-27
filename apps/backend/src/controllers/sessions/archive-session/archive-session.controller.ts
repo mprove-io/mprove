@@ -16,8 +16,8 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendArchiveSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-archive-session';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendArchiveSessionOutput } from '#common/zod/backend/routes/sessions/archive-session/archive-session-response';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -30,7 +30,7 @@ export class ArchiveSessionController {
     private sessionArchiveService: SessionArchiveService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendArchiveSession)
+  @Post('api/ToBackendArchiveSession' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'ArchiveSession',
     description: 'Archive an editor session and delete its sandbox'
@@ -42,7 +42,7 @@ export class ArchiveSessionController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendArchiveSessionRequestDto
   ) {
-    let { sessionId } = body.payload;
+    let { sessionId } = body.input;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId
@@ -70,7 +70,7 @@ export class ArchiveSessionController {
       e2bApiKey: project.e2bApiKey
     });
 
-    let payload: ToBackendArchiveSessionResponsePayload = {
+    let payload: ToBackendArchiveSessionOutput = {
       session: sessionApi
     };
 

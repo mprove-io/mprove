@@ -7,12 +7,8 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendDeleteMemberRequestPayload,
-  ToBackendDeleteMemberResponse
-} from '#common/zod/to-backend/members/to-backend-delete-member';
+import type { ToBackendDeleteMemberInput } from '#common/zod/backend/routes/members/delete-member/delete-member-request';
+import type { ToBackendDeleteMemberResponse } from '#common/zod/backend/routes/members/delete-member/delete-member-response';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
 
@@ -50,7 +46,7 @@ export class RemoveMemberDialogComponent implements OnInit {
   remove() {
     this.ref.close();
 
-    let payload: ToBackendDeleteMemberRequestPayload = {
+    let payload: ToBackendDeleteMemberInput = {
       projectId: this.ref.data.projectId,
       memberId: this.ref.data.memberId
     };
@@ -59,13 +55,13 @@ export class RemoveMemberDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteMember,
+        route: 'api/ToBackendDeleteMember',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteMemberResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let teamState = this.teamQuery.getValue();
 
             this.teamQuery.update({

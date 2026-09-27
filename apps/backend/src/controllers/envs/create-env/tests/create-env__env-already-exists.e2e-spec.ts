@@ -10,12 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateEnvRequest,
-  ToBackendCreateEnvResponse
-} from '#common/zod/to-backend/envs/to-backend-create-env';
+import type { ToBackendCreateEnvRequest } from '#common/zod/backend/routes/envs/create-env/create-env-request';
+import type { ToBackendCreateEnvResponse } from '#common/zod/backend/routes/envs/create-env/create-env-response';
 
 let testId = 'backend-create-env__env-already-exists';
 
@@ -87,18 +84,16 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateEnvRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateEnv,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           envId: PROJECT_ENV_PROD,
           projectId: projectId
         }
       };
 
-      resp = await sendToBackend<ToBackendCreateEnvResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCreateEnv',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -117,7 +112,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_ENV_ALREADY_EXISTS);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_ENV_ALREADY_EXISTS);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

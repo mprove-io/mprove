@@ -10,8 +10,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetStateResponsePayload } from '#common/zod/to-backend/state/to-backend-get-state';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetStateOutput } from '#common/zod/backend/routes/state/get-state/get-state-response';
 
 @ApiTags('State')
 @UseGuards(ThrottlerUserIdGuard)
@@ -20,7 +20,7 @@ import type { ToBackendGetStateResponsePayload } from '#common/zod/to-backend/st
 export class GetStateController {
   constructor(private getStateService: GetStateService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetState)
+  @Post('api/ToBackendGetState' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetState',
     description:
@@ -33,7 +33,7 @@ export class GetStateController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetStateRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -48,26 +48,25 @@ export class GetStateController {
       getCharts,
       getMetrics,
       getReports
-    } = body.payload;
+    } = body.input;
 
-    let payload: ToBackendGetStateResponsePayload =
-      await this.getStateService.getState({
-        traceId: traceId,
-        user: user,
-        projectId: projectId,
-        repoId: repoId,
-        branchId: branchId,
-        envId: envId,
-        isFetch: isFetch,
-        getErrors: getErrors,
-        getRepo: getRepo,
-        getRepoNodes: getRepoNodes,
-        getModels: getModels,
-        getDashboards: getDashboards,
-        getCharts: getCharts,
-        getMetrics: getMetrics,
-        getReports: getReports
-      });
+    let payload: ToBackendGetStateOutput = await this.getStateService.getState({
+      traceId: traceId,
+      user: user,
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId,
+      envId: envId,
+      isFetch: isFetch,
+      getErrors: getErrors,
+      getRepo: getRepo,
+      getRepoNodes: getRepoNodes,
+      getModels: getModels,
+      getDashboards: getDashboards,
+      getCharts: getCharts,
+      getMetrics: getMetrics,
+      getReports: getReports
+    });
 
     return payload;
   }

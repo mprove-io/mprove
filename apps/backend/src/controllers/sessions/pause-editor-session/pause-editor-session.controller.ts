@@ -17,8 +17,8 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendPauseEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-pause-editor-session';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendPauseEditorSessionOutput } from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-response';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -32,7 +32,7 @@ export class PauseEditorSessionController {
     private editorStreamService: EditorStreamService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendPauseEditorSession)
+  @Post('api/ToBackendPauseEditorSession' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'PauseEditorSession',
     description: 'Pause an editor session and its sandbox'
@@ -44,7 +44,7 @@ export class PauseEditorSessionController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendPauseEditorSessionRequestDto
   ) {
-    let { sessionId } = body.payload;
+    let { sessionId } = body.input;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId
@@ -85,7 +85,7 @@ export class PauseEditorSessionController {
         session: freshSession
       });
 
-      let payload: ToBackendPauseEditorSessionResponsePayload = {
+      let payload: ToBackendPauseEditorSessionOutput = {
         session: freshSessionApi
       };
 

@@ -7,8 +7,7 @@ import {
   ToBackendClearCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/clear-cached-column/clear-cached-column.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
@@ -20,8 +19,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { HashService } from '#backend/services/hash.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendClearCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-clear-cached-column';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendClearCachedColumnOutput } from '#common/zod/backend/routes/connections/clear-cached-column/clear-cached-column-response';
 
 @ApiTags('CachedColumns')
 @UseGuards(ThrottlerUserIdGuard)
@@ -37,7 +36,7 @@ export class ClearCachedColumnController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendClearCachedColumn)
+  @Post('api/ToBackendClearCachedColumn' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'ClearCachedColumn',
     description: 'Clear cached column'
@@ -46,9 +45,9 @@ export class ClearCachedColumnController {
   async clearCachedColumn(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendClearCachedColumnRequestDto
-  ): Promise<ToBackendClearCachedColumnResponse['payload']> {
+  ): Promise<ToBackendClearCachedColumnOutput> {
     let { projectId, envId, connectionId, schemaName, tableName, columnName } =
-      body.payload;
+      body.input;
 
     await this.projectsService.getProjectCheckExists({ projectId: projectId });
 

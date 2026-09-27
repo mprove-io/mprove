@@ -6,17 +6,12 @@ import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendSaveFileRequestPayload,
-  ToBackendSaveFileResponse
-} from '#common/zod/to-backend/files/to-backend-save-file';
-import type {
-  ToBackendCommitRepoRequestPayload,
-  ToBackendCommitRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-commit-repo';
+import type { ToBackendSaveFileInput } from '#common/zod/backend/routes/files/save-file/save-file-request';
+import type { ToBackendSaveFileOutput } from '#common/zod/backend/routes/files/save-file/save-file-response';
+import type { ToBackendCommitRepoInput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
+import type { ToBackendCommitRepoOutput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-response';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token/get-test-login-token';
@@ -124,7 +119,7 @@ test('1', async () => {
         host: config.mproveCliHost
       });
 
-      let saveFileReqPayload: ToBackendSaveFileRequestPayload = {
+      let saveFileReqPayload: ToBackendSaveFileInput = {
         projectId: projectId,
         repoId: userId,
         branchId: branch,
@@ -133,23 +128,23 @@ test('1', async () => {
         content: '123'
       };
 
-      let saveFileResp = await mreq<ToBackendSaveFileResponse>({
+      let saveFileOutput: ToBackendSaveFileOutput = await mreq({
         apiKey: loginToken,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+        route: 'api/ToBackendSaveFile',
         payload: saveFileReqPayload,
         host: config.mproveCliHost
       });
 
-      let commitRepoReqPayload: ToBackendCommitRepoRequestPayload = {
+      let commitRepoReqPayload: ToBackendCommitRepoInput = {
         projectId: projectId,
         repoId: userId,
         branchId: branch,
         commitMessage: 'm1'
       };
 
-      let commitRepoResp = await mreq<ToBackendCommitRepoResponse>({
+      let commitRepoOutput: ToBackendCommitRepoOutput = await mreq({
         apiKey: context.config.mproveCliApiKey,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+        route: 'api/ToBackendCommitRepo',
         payload: commitRepoReqPayload,
         host: config.mproveCliHost
       });

@@ -19,12 +19,8 @@ import {
   LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
   LOCAL_STORAGE_NEW_ORG_OWNER
 } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendSetOrgOwnerRequestPayload,
-  ToBackendSetOrgOwnerResponse
-} from '#common/zod/to-backend/orgs/to-backend-set-org-owner';
+import type { ToBackendSetOrgOwnerInput } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-request';
+import type { ToBackendSetOrgOwnerResponse } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
@@ -85,7 +81,7 @@ export class EditOrgOwnerDialogComponent implements OnInit {
 
     let newOwnerEmail = this.editOrgOwnerForm.value.ownerEmail;
 
-    let payload: ToBackendSetOrgOwnerRequestPayload = {
+    let payload: ToBackendSetOrgOwnerInput = {
       orgId: this.ref.data.orgId,
       ownerEmail: newOwnerEmail
     };
@@ -94,14 +90,14 @@ export class EditOrgOwnerDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
+        route: 'api/ToBackendSetOrgOwner',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendSetOrgOwnerResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let org = resp.payload.org;
+          if (resp.result?.type === 'Success') {
+            let org = resp.result.value.org;
             localStorage.setItem(
               LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
               org.name

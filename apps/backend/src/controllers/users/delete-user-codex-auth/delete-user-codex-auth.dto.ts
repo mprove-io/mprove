@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendDeleteUserCodexAuthRequest,
-  zToBackendDeleteUserCodexAuthResponse
-} from '#common/zod/to-backend/users/to-backend-delete-user-codex-auth';
+import { zToBackendDeleteUserCodexAuthRequest } from '#common/zod/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-request';
+import { zToBackendDeleteUserCodexAuthResponse } from '#common/zod/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-response';
 
 export class ToBackendDeleteUserCodexAuthRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendDeleteUserCodexAuthRequest })

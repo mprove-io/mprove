@@ -15,12 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendCreateFolderRequestPayload,
-  ToBackendCreateFolderResponse
-} from '#common/zod/to-backend/folders/to-backend-create-folder';
+import type { ToBackendCreateFolderInput } from '#common/zod/backend/routes/folders/create-folder/create-folder-request';
+import type { ToBackendCreateFolderResponse } from '#common/zod/backend/routes/folders/create-folder/create-folder-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -92,7 +88,7 @@ export class CreateFolderDialogComponent implements OnInit {
 
     let folderName = this.createFolderForm.value.folderName.toLowerCase();
 
-    let payload: ToBackendCreateFolderRequestPayload = {
+    let payload: ToBackendCreateFolderInput = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -105,17 +101,17 @@ export class CreateFolderDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
+        route: 'api/ToBackendCreateFolder',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendCreateFolderResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
           }
         }),

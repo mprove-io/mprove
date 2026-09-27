@@ -12,8 +12,8 @@ import { LocalAuthGuard } from '#backend/guards/local-auth.guard';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendLoginUserResponsePayload } from '#common/zod/to-backend/users/to-backend-login-user';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendLoginUserOutput } from '#common/zod/backend/routes/users/login-user/login-user-response';
 
 @ApiTags('Users')
 @SkipJwtCheck()
@@ -26,7 +26,7 @@ export class LoginUserController {
     private usersService: UsersService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendLoginUser)
+  @Post('api/ToBackendLoginUser' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'LoginUser',
     description: 'Authenticate a user and issue a JWT token'
@@ -40,7 +40,7 @@ export class LoginUserController {
   ) {
     let token = this.jwtService.sign({ userId: user.userId });
 
-    let payload: ToBackendLoginUserResponsePayload = {
+    let payload: ToBackendLoginUserOutput = {
       token: token,
       user: this.usersService.tabToApi({ user: user })
     };

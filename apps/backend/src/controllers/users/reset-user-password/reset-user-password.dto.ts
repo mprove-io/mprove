@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendResetUserPasswordRequest,
-  zToBackendResetUserPasswordResponse
-} from '#common/zod/to-backend/users/to-backend-reset-user-password';
+import { zToBackendResetUserPasswordRequest } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-request';
+import { zToBackendResetUserPasswordResponse } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-response';
 
 export class ToBackendResetUserPasswordRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendResetUserPasswordRequest })

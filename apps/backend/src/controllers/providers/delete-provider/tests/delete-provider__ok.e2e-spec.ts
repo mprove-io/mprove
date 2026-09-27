@@ -13,11 +13,10 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDeleteProviderRequest } from '#common/zod/to-backend/providers/delete-provider/delete-provider-request';
-import type { ToBackendDeleteProviderResponse } from '#common/zod/to-backend/providers/delete-provider/delete-provider-response';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendDeleteProviderRequest } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-request';
+import type { ToBackendDeleteProviderResponse } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-response';
 
 let testId = 'backend-delete-provider__ok';
 
@@ -122,18 +121,16 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteProviderRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteProvider,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           providerId: providerId
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteProviderResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteProvider',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -162,11 +159,9 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.result.type, 'Success');
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-
-    assert.deepEqual(resp.payload, {});
+    assert.deepEqual(unwrapToBackendResponse({ response: resp }), {});
 
     assert.equal(deletedProvider, undefined);
 

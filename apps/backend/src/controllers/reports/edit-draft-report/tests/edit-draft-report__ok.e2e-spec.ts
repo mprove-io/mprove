@@ -16,20 +16,14 @@ import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateDraftReportRequest,
-  ToBackendCreateDraftReportResponse
-} from '#common/zod/to-backend/reports/to-backend-create-draft-report';
-import type {
-  ToBackendEditDraftReportRequest,
-  ToBackendEditDraftReportResponse
-} from '#common/zod/to-backend/reports/to-backend-edit-draft-report';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
+import type { ToBackendEditDraftReportRequest } from '#common/zod/backend/routes/reports/edit-draft-report/edit-draft-report-request';
+import type { ToBackendEditDraftReportResponse } from '#common/zod/backend/routes/reports/edit-draft-report/edit-draft-report-response';
 
 let testId = 'backend-edit-draft-report__ok';
 
@@ -114,12 +108,9 @@ test('1', async t => {
       });
 
       let req1: ToBackendCreateDraftReportRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -136,24 +127,23 @@ test('1', async t => {
         }
       };
 
-      let resp1 = await sendToBackend<ToBackendCreateDraftReportResponse>({
+      let resp1 = await sendToBackend({
+        route: 'api/ToBackendCreateDraftReport',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
       });
 
       let req2: ToBackendEditDraftReportRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendEditDraftReport,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
           envId: PROJECT_ENV_PROD,
-          reportId: resp1.payload.report.reportId,
+          reportId: unwrapToBackendResponse({ response: resp1 }).report
+            .reportId,
           rowIds: undefined,
           changeType: ChangeTypeEnum.AddEmpty,
           rowChange: { rowType: RowTypeEnum.Empty, showChart: false },
@@ -165,7 +155,8 @@ test('1', async t => {
         }
       };
 
-      resp2 = await sendToBackend<ToBackendEditDraftReportResponse>({
+      resp2 = await sendToBackend({
+        route: 'api/ToBackendEditDraftReport',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req2
@@ -184,8 +175,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp2.info.error, undefined);
-    assert.equal(resp2.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp2.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

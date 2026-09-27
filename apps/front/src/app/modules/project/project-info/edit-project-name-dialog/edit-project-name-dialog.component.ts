@@ -15,12 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendSetProjectInfoRequestPayload,
-  ToBackendSetProjectInfoResponse
-} from '#common/zod/to-backend/projects/to-backend-set-project-info';
+import type { ToBackendSetProjectInfoInput } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-request';
+import type { ToBackendSetProjectInfoResponse } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
@@ -77,7 +73,7 @@ export class EditProjectNameDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendSetProjectInfoRequestPayload = {
+    let payload: ToBackendSetProjectInfoInput = {
       projectId: this.ref.data.projectId,
       name: this.editProjectNameForm.value.projectName
     };
@@ -86,14 +82,14 @@ export class EditProjectNameDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
+        route: 'api/ToBackendSetProjectInfo',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendSetProjectInfoResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let project = resp.payload.project;
+          if (resp.result?.type === 'Success') {
+            let project = resp.result.value.project;
             this.projectQuery.update(project);
             this.navQuery.updatePart({
               projectId: project.projectId,

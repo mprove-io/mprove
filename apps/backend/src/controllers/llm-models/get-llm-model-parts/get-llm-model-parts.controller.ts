@@ -16,8 +16,7 @@ import {
   ToBackendGetLlmModelPartsResponseDto
 } from '#backend/controllers/llm-models/get-llm-model-parts/get-llm-model-parts.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   UserTab
@@ -36,13 +35,13 @@ import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
-import type { ToBackendGetLlmModelPartsRequestPayload } from '#common/zod/to-backend/llm-models/get-llm-model-parts/get-llm-model-parts-request-payload';
-import type { ToBackendGetLlmModelPartsResponsePayload } from '#common/zod/to-backend/llm-models/get-llm-model-parts/get-llm-model-parts-response-payload';
+import type { ToBackendGetLlmModelPartsInput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
+import type { ToBackendGetLlmModelPartsOutput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-response';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -59,7 +58,7 @@ export class GetLlmModelPartsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetLlmModelParts)
+  @Post('api/ToBackendGetLlmModelParts' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetLlmModelParts',
     description: 'Get models available for a built-in provider'
@@ -68,8 +67,8 @@ export class GetLlmModelPartsController {
   async getLlmModelParts(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetLlmModelPartsRequestDto
-  ): Promise<ToBackendGetLlmModelPartsResponsePayload> {
-    let bodyPayload: ToBackendGetLlmModelPartsRequestPayload = body.payload;
+  ): Promise<ToBackendGetLlmModelPartsOutput> {
+    let bodyPayload: ToBackendGetLlmModelPartsInput = body.input;
 
     let { projectId, providerId } = bodyPayload;
 
@@ -185,7 +184,7 @@ export class GetLlmModelPartsController {
       );
     }
 
-    let payload: ToBackendGetLlmModelPartsResponsePayload = {
+    let payload: ToBackendGetLlmModelPartsOutput = {
       modelParts: modelPartsResult.modelParts,
       errorMessage: modelPartsResult.errorMessage
     };

@@ -16,8 +16,7 @@ import {
   ToBackendCreateEnvUserResponseDto
 } from '#backend/controllers/envs/create-env-user/create-env-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -28,8 +27,8 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendCreateEnvUserResponsePayload } from '#common/zod/to-backend/envs/to-backend-create-env-user';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateEnvUserOutput } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-response';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -46,7 +45,7 @@ export class CreateEnvUserController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateEnvUser)
+  @Post('api/ToBackendCreateEnvUser' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateEnvUser',
     description: 'Grant a team member access to an environment'
@@ -58,7 +57,7 @@ export class CreateEnvUserController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateEnvUserRequestDto
   ) {
-    let { projectId, envId, envUserId } = body.payload;
+    let { projectId, envId, envUserId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -114,7 +113,7 @@ export class CreateEnvUserController {
       projectId: projectId
     });
 
-    let payload: ToBackendCreateEnvUserResponsePayload = {
+    let payload: ToBackendCreateEnvUserOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       envs: apiEnvs
     };

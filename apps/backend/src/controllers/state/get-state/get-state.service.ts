@@ -2,8 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
@@ -26,8 +25,8 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
+import type { ToBackendGetStateOutput } from '#common/zod/backend/routes/state/get-state/get-state-response';
 import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
-import type { ToBackendGetStateResponsePayload } from '#common/zod/to-backend/state/to-backend-get-state';
 
 @Injectable()
 export class GetStateService {
@@ -62,7 +61,7 @@ export class GetStateService {
     getCharts: boolean;
     getMetrics: boolean;
     getReports: boolean;
-  }): Promise<ToBackendGetStateResponsePayload> {
+  }): Promise<ToBackendGetStateOutput> {
     let {
       traceId,
       user,
@@ -249,7 +248,7 @@ export class GetStateService {
       env: envId
     });
 
-    let repo: ToBackendGetStateResponsePayload['repo'];
+    let repo: ToBackendGetStateOutput['repo'];
 
     if (getRepo === true && diskGetCatalogNodesOutput) {
       let diskRepo = diskGetCatalogNodesOutput.repo;
@@ -264,7 +263,7 @@ export class GetStateService {
       repo = diskRepo;
     }
 
-    let payload: ToBackendGetStateResponsePayload = {
+    let payload: ToBackendGetStateOutput = {
       needValidate: bridge.needValidate,
       structId: struct.structId,
       validationErrorsTotal: struct.errors.length,

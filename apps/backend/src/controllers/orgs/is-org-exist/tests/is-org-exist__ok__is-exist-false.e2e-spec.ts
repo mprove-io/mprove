@@ -7,13 +7,10 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendIsOrgExistRequest,
-  ToBackendIsOrgExistResponse
-} from '#common/zod/to-backend/orgs/to-backend-is-org-exist';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendIsOrgExistRequest } from '#common/zod/backend/routes/orgs/is-org-exist/is-org-exist-request';
+import type { ToBackendIsOrgExistResponse } from '#common/zod/backend/routes/orgs/is-org-exist/is-org-exist-response';
 
 let testId = 'backend-is-org-exist__ok__is-exist-false';
 
@@ -50,17 +47,15 @@ test('1', async t => {
       });
 
       let req: ToBackendIsOrgExistRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendIsOrgExist,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           name: orgName
         }
       };
 
-      resp = await sendToBackend<ToBackendIsOrgExistResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendIsOrgExist',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -79,9 +74,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-    assert.equal(resp.payload.isExist, false);
+    assert.equal(resp.result.type, 'Success');
+    assert.equal(unwrapToBackendResponse({ response: resp }).isExist, false);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

@@ -9,13 +9,10 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendIsProjectExistRequest,
-  ToBackendIsProjectExistResponse
-} from '#common/zod/to-backend/projects/to-backend-is-project-exist';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendIsProjectExistRequest } from '#common/zod/backend/routes/projects/is-project-exist/is-project-exist-request';
+import type { ToBackendIsProjectExistResponse } from '#common/zod/backend/routes/projects/is-project-exist/is-project-exist-response';
 
 let testId = 'backend-is-project-exist__ok__is-exist-true';
 
@@ -86,18 +83,16 @@ test('1', async t => {
       });
 
       let req: ToBackendIsProjectExistRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendIsProjectExist,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           orgId: orgId,
           name: projectName
         }
       };
 
-      resp = await sendToBackend<ToBackendIsProjectExistResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendIsProjectExist',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -116,9 +111,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-    assert.equal(resp.payload.isExist, true);
+    assert.equal(resp.result.type, 'Success');
+    assert.equal(unwrapToBackendResponse({ response: resp }).isExist, true);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

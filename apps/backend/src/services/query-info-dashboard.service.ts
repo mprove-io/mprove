@@ -3,8 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   MemberTab,
@@ -33,8 +32,8 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
+import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-response';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
-import type { ToBackendGetDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
 import { UsersService } from './db/users.service';
 
 @Injectable()
@@ -64,7 +63,7 @@ export class QueryInfoDashboardService {
     dashboardId: string;
     timezone: string;
     skipUi: boolean;
-  }): Promise<ToBackendGetDashboardResponsePayload> {
+  }): Promise<ToBackendGetDashboardOutput> {
     let {
       traceId,
       user,
@@ -282,7 +281,7 @@ export class QueryInfoDashboardService {
       );
     }
 
-    let payload: ToBackendGetDashboardResponsePayload = {
+    let payload: ToBackendGetDashboardOutput = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,

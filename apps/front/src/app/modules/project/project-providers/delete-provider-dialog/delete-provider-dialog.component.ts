@@ -7,10 +7,8 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendDeleteProviderRequestPayload } from '#common/zod/to-backend/providers/delete-provider/delete-provider-request-payload';
-import type { ToBackendDeleteProviderResponse } from '#common/zod/to-backend/providers/delete-provider/delete-provider-response';
+import type { ToBackendDeleteProviderInput } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-request';
+import type { ToBackendDeleteProviderResponse } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-response';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
 
@@ -47,20 +45,20 @@ export class DeleteProviderDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteProviderRequestPayload = {
+    let payload: ToBackendDeleteProviderInput = {
       projectId: this.ref.data.projectId,
       providerId: this.ref.data.providerId
     };
 
     this.ref.data.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteProvider,
+        route: 'api/ToBackendDeleteProvider',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteProviderResponse) => {
-          if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type !== 'Success') {
             return;
           }
 

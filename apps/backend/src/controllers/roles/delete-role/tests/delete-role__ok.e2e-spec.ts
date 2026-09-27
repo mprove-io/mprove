@@ -9,21 +9,12 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetMembersRequest,
-  ToBackendGetMembersResponse
-} from '#common/zod/to-backend/members/to-backend-get-members';
-import type {
-  ToBackendCreateRoleRequest,
-  ToBackendCreateRoleResponse
-} from '#common/zod/to-backend/roles/to-backend-create-role';
-import type {
-  ToBackendDeleteRoleRequest,
-  ToBackendDeleteRoleResponse
-} from '#common/zod/to-backend/roles/to-backend-delete-role';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGetMembersRequest } from '#common/zod/backend/routes/members/get-members/get-members-request';
+import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
+import type { ToBackendDeleteRoleRequest } from '#common/zod/backend/routes/roles/delete-role/delete-role-request';
+import type { ToBackendDeleteRoleResponse } from '#common/zod/backend/routes/roles/delete-role/delete-role-response';
 
 let testId = 'backend-delete-role__ok';
 
@@ -114,18 +105,16 @@ test('1', async t => {
       });
 
       let createRoleOneReq: ToBackendCreateRoleRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateRole,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           roleId: 'role_one'
         }
       };
 
-      await sendToBackend<ToBackendCreateRoleResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendCreateRole',
         checkIsOk: true,
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -133,18 +122,16 @@ test('1', async t => {
       });
 
       let createRoleTwoReq: ToBackendCreateRoleRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateRole,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           roleId: 'role_two'
         }
       };
 
-      await sendToBackend<ToBackendCreateRoleResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendCreateRole',
         checkIsOk: true,
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -152,50 +139,46 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteRoleRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteRole,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           roleId: 'role_one'
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteRoleResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteRole',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
       });
 
       let getMembersReq: ToBackendGetMembersRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetMembers,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           pageNum: 1,
           perPage: 10
         }
       };
 
-      let getMembersResp = await sendToBackend<ToBackendGetMembersResponse>({
+      let getMembersResp = await sendToBackend({
+        route: 'api/ToBackendGetMembers',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: getMembersReq
       });
 
-      assert.equal(getMembersResp.info.error, undefined);
+      assert.equal(getMembersResp.result.type, 'Success');
 
-      let adminMember = getMembersResp.payload.members.find(
-        member => member.memberId === userId
-      );
-      let projectMember = getMembersResp.payload.members.find(
-        member => member.memberId === memberUserId
-      );
+      let adminMember = unwrapToBackendResponse({
+        response: getMembersResp
+      }).members.find(member => member.memberId === userId);
+      let projectMember = unwrapToBackendResponse({
+        response: getMembersResp
+      }).members.find(member => member.memberId === memberUserId);
 
       assert.ok(adminMember);
       assert.ok(projectMember);
@@ -215,11 +198,13 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-    assert.deepEqual(resp.payload.userMember.roles, ['role_two']);
+    assert.equal(resp.result.type, 'Success');
     assert.deepEqual(
-      resp.payload.roles.map(x => x.roleId),
+      unwrapToBackendResponse({ response: resp }).userMember.roles,
+      ['role_two']
+    );
+    assert.deepEqual(
+      unwrapToBackendResponse({ response: resp }).roles.map(x => x.roleId),
       ['role_two']
     );
 

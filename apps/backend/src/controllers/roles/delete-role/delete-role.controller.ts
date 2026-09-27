@@ -17,8 +17,7 @@ import {
   ToBackendDeleteRoleResponseDto
 } from '#backend/controllers/roles/delete-role/delete-role.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
   UserTab
@@ -32,9 +31,9 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendDeleteRoleResponsePayload } from '#common/zod/to-backend/roles/to-backend-delete-role';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDeleteRoleOutput } from '#common/zod/backend/routes/roles/delete-role/delete-role-response';
 
 @ApiTags('Roles')
 @UseGuards(ThrottlerUserIdGuard)
@@ -51,7 +50,7 @@ export class DeleteRoleController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteRole)
+  @Post('api/ToBackendDeleteRole' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteRole',
     description: 'Delete a project role'
@@ -63,7 +62,7 @@ export class DeleteRoleController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteRoleRequestDto
   ) {
-    let { projectId, roleId } = body.payload;
+    let { projectId, roleId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -118,7 +117,7 @@ export class DeleteRoleController {
       member => member.memberId === userMember.memberId
     );
 
-    let payload: ToBackendDeleteRoleResponsePayload = {
+    let payload: ToBackendDeleteRoleOutput = {
       userMember: this.membersService.tabToApi({
         member: isDefined(updatedUserMember) ? updatedUserMember : userMember
       }),

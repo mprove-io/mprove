@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteReportRequestDto,
   ToBackendDeleteReportResponseDto
 } from '#backend/controllers/reports/delete-report/delete-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
@@ -40,7 +36,9 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -63,7 +61,7 @@ export class DeleteReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteReport)
+  @Post('api/ToBackendDeleteReport' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteReport',
     description: 'Delete a report'
@@ -75,8 +73,8 @@ export class DeleteReportController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteReportRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, envId, reportId } = body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, envId, reportId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -140,7 +138,7 @@ export class DeleteReportController {
     await this.rpcService.sendToDiskUnwrapOutput({
       request: {
         operation: 'deleteFile',
-        traceId: body.info.traceId,
+        traceId: body.traceId,
         input: {
           baseProject: baseProject,
           repoId: repoId,

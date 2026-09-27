@@ -13,9 +13,9 @@ import { RedisService } from '#backend/services/redis.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateSessionSseTicketResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-session-sse-ticket';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateSessionSseTicketOutput } from '#common/zod/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-response';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -27,7 +27,7 @@ export class CreateSessionSseTicketController {
     private redisService: RedisService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateSessionSseTicket)
+  @Post('api/ToBackendCreateSessionSseTicket' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateSessionSseTicket',
     description: 'Issue a short-lived ticket for authorizing the SSE stream'
@@ -39,7 +39,7 @@ export class CreateSessionSseTicketController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateSessionSseTicketRequestDto
   ) {
-    let { sessionId } = body.payload;
+    let { sessionId } = body.input;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId
@@ -58,7 +58,7 @@ export class CreateSessionSseTicketController {
       sessionId: sessionId
     });
 
-    let payload: ToBackendCreateSessionSseTicketResponsePayload = {
+    let payload: ToBackendCreateSessionSseTicketOutput = {
       sseTicket: sseTicket
     };
 

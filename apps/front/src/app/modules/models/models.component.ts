@@ -53,8 +53,6 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { QueryPartEnum } from '#common/enums/query-part.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { getTimezones } from '#common/functions/get-timezones/get-timezones';
 import { isDefined } from '#common/functions/is-defined/is-defined';
@@ -70,6 +68,16 @@ import type { ChartX } from '#common/zod/backend/chart-x';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { ModelX } from '#common/zod/backend/model-x';
 import type { QueryEstimate } from '#common/zod/backend/query-estimate';
+import type { ToBackendSetFavoriteInput } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-request';
+import type { ToBackendSetFavoriteResponse } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-response';
+import type { ToBackendCancelQueriesInput } from '#common/zod/backend/routes/queries/cancel-queries/cancel-queries-request';
+import type { ToBackendCancelQueriesResponse } from '#common/zod/backend/routes/queries/cancel-queries/cancel-queries-response';
+import type { ToBackendGetQueryInput } from '#common/zod/backend/routes/queries/get-query/get-query-request';
+import type { ToBackendGetQueryResponse } from '#common/zod/backend/routes/queries/get-query/get-query-response';
+import type { ToBackendRunQueriesInput } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
+import type { ToBackendRunQueriesResponse } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
+import type { ToBackendRunQueriesDryInput } from '#common/zod/backend/routes/queries/run-queries-dry/run-queries-dry-request';
+import type { ToBackendRunQueriesDryResponse } from '#common/zod/backend/routes/queries/run-queries-dry/run-queries-dry-response';
 import type { SpaceNode } from '#common/zod/backend/space-node';
 import type { SpaceNodeX } from '#common/zod/backend/space-node-x';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
@@ -77,26 +85,6 @@ import type { ModelField } from '#common/zod/blockml/model-field';
 import type { ModelFieldY } from '#common/zod/blockml/model-field-y';
 import type { Query } from '#common/zod/blockml/query';
 import type { RefreshItem } from '#common/zod/front/refresh-item';
-import type {
-  ToBackendSetFavoriteRequestPayload,
-  ToBackendSetFavoriteResponse
-} from '#common/zod/to-backend/favorites/to-backend-set-favorite';
-import type {
-  ToBackendCancelQueriesRequestPayload,
-  ToBackendCancelQueriesResponse
-} from '#common/zod/to-backend/queries/to-backend-cancel-queries';
-import type {
-  ToBackendGetQueryRequestPayload,
-  ToBackendGetQueryResponse
-} from '#common/zod/to-backend/queries/to-backend-get-query';
-import type {
-  ToBackendRunQueriesRequestPayload,
-  ToBackendRunQueriesResponse
-} from '#common/zod/to-backend/queries/to-backend-run-queries';
-import type {
-  ToBackendRunQueriesDryRequestPayload,
-  ToBackendRunQueriesDryResponse
-} from '#common/zod/to-backend/queries/to-backend-run-queries-dry';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';
@@ -796,7 +784,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
           if (this.query?.status === QueryStatusEnum.Running) {
             let nav = this.navQuery.getValue();
 
-            let payload: ToBackendGetQueryRequestPayload = {
+            let payload: ToBackendGetQueryInput = {
               projectId: nav.projectId,
               repoId: nav.repoId,
               branchId: nav.branchId,
@@ -807,19 +795,19 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
             return this.apiService
               .req({
-                pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                route: 'api/ToBackendGetQuery',
                 payload: payload
               })
               .pipe(
                 tap((resp: ToBackendGetQueryResponse) => {
                   if (
-                    resp.info?.status === ResponseInfoStatusEnum.Ok &&
+                    resp.result?.type === 'Success' &&
                     this.isQueryIdTheSameAndStatusOrServerTsChanged(
-                      resp.payload.query
+                      resp.result.value.query
                     )
                   ) {
                     let newTile = Object.assign({}, this.chart.tiles[0], {
-                      query: resp.payload.query
+                      query: resp.result.value.query
                     });
 
                     let newChart = Object.assign({}, this.chart, {
@@ -1230,7 +1218,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendRunQueriesRequestPayload = {
+    let payload: ToBackendRunQueriesInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -1240,13 +1228,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        route: 'api/ToBackendRunQueries',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let { runningQueries } = resp.payload;
+          if (resp.result?.type === 'Success') {
+            let { runningQueries } = resp.result.value;
 
             if (
               this.isQueryIdTheSameAndStatusOrServerTsChanged(runningQueries[0])
@@ -1278,7 +1266,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.dryId = makeId();
 
-    let payload: ToBackendRunQueriesDryRequestPayload = {
+    let payload: ToBackendRunQueriesDryInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -1289,14 +1277,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
+        route: 'api/ToBackendRunQueriesDry',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendRunQueriesDryResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let { validQueryEstimates, errorQueries } = resp.payload;
+          if (resp.result?.type === 'Success') {
+            let { validQueryEstimates, errorQueries } = resp.result.value;
 
             if (errorQueries.length > 0) {
               if (
@@ -1332,7 +1320,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendCancelQueriesRequestPayload = {
+    let payload: ToBackendCancelQueriesInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -1342,13 +1330,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
+        route: 'api/ToBackendCancelQueries',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendCancelQueriesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let { queries } = resp.payload;
+          if (resp.result?.type === 'Success') {
+            let { queries } = resp.result.value;
             if (
               queries.length > 0 &&
               this.isQueryIdTheSameAndStatusOrServerTsChanged(queries[0])
@@ -1953,7 +1941,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendSetFavoriteRequestPayload = {
+    let payload: ToBackendSetFavoriteInput = {
       projectId: nav.projectId,
       type: FavoriteTypeEnum.Chart,
       targetId: chartId,
@@ -1962,12 +1950,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetFavorite,
+        route: 'api/ToBackendSetFavorite',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp.info?.status === ResponseInfoStatusEnum.Ok;
+          let isOk = resp.result?.type === 'Success';
 
           if (isOk === false) {
             this.chartsQuery.updatePart({

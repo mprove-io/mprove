@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateConnectionRequestDto,
   ToBackendCreateConnectionResponseDto
 } from '#backend/controllers/connections/create-connection/create-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -36,10 +32,12 @@ import { UrlService } from '#backend/services/url.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendCreateConnectionResponsePayload } from '#common/zod/to-backend/connections/to-backend-create-connection';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateConnectionOutput } from '#common/zod/backend/routes/connections/create-connection/create-connection-response';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)
@@ -58,7 +56,7 @@ export class CreateConnectionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateConnection)
+  @Post('api/ToBackendCreateConnection' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateConnection',
     description: 'Create a new connection in a project environment'
@@ -70,7 +68,7 @@ export class CreateConnectionController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateConnectionRequestDto
   ) {
-    let { projectId, envId, connectionId, type, options } = body.payload;
+    let { projectId, envId, connectionId, type, options } = body.input;
 
     if (isDefined(options.storeApi)) {
       await this.urlService.checkApiUrl({
@@ -158,7 +156,7 @@ export class CreateConnectionController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendCreateConnectionResponsePayload = {
+    let payload: ToBackendCreateConnectionOutput = {
       connection: this.connectionsService.tabToApiProjectConnection({
         connection: newConnection,
         isIncludePasswords: false

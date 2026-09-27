@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { interval, type Observable, type Subscription } from 'rxjs';
 import { exhaustMap, tap } from 'rxjs/operators';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGetExplorerChartTabInput } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
 import type {
-  ToBackendGetExplorerChartTabRequestPayload,
+  ToBackendGetExplorerChartTabOutput,
   ToBackendGetExplorerChartTabResponse
-} from '#common/zod/to-backend/charts/to-backend-get-explorer-chart-tab';
-import type { ToBackendCloseExplorerSessionTabRequestPayload } from '#common/zod/to-backend/sessions/to-backend-close-explorer-session-tab';
+} from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-response';
+import type { ToBackendCloseExplorerSessionTabInput } from '#common/zod/backend/routes/sessions/close-explorer-session-tab/close-explorer-session-tab-request';
 import { ExplorerTabsQuery } from '#front/app/queries/explorer-tabs.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -39,7 +40,7 @@ export class ExplorerTabService {
             sessionId: sessionId,
             tabId: tabId,
             chartId: chartId,
-            respPayload: resp.payload
+            respPayload: unwrapToBackendResponse({ response: resp })
           });
         })
       )
@@ -74,7 +75,7 @@ export class ExplorerTabService {
     sessionId: string;
     closedExplorerTabIds: string[];
   }) {
-    let payload: ToBackendCloseExplorerSessionTabRequestPayload = {
+    let payload: ToBackendCloseExplorerSessionTabInput = {
       sessionId: item.sessionId,
       closedExplorerTabIds: item.closedExplorerTabIds
     };
@@ -88,8 +89,7 @@ export class ExplorerTabService {
 
     this.apiService
       .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendCloseExplorerSessionTab,
+        route: 'api/ToBackendCloseExplorerSessionTab',
         payload: payload
       })
       .subscribe();
@@ -107,13 +107,13 @@ export class ExplorerTabService {
     sessionId: string;
     chartId: string;
   }): Observable<ToBackendGetExplorerChartTabResponse> {
-    let payload: ToBackendGetExplorerChartTabRequestPayload = {
+    let payload: ToBackendGetExplorerChartTabInput = {
       sessionId: item.sessionId,
       chartId: item.chartId
     };
 
     return this.apiService.req({
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetExplorerChartTab,
+      route: 'api/ToBackendGetExplorerChartTab',
       payload: payload
     });
   }
@@ -122,7 +122,7 @@ export class ExplorerTabService {
     sessionId: string;
     tabId: string;
     chartId: string;
-    respPayload: ToBackendGetExplorerChartTabResponse['payload'];
+    respPayload: ToBackendGetExplorerChartTabOutput;
   }) {
     let { sessionId, tabId, chartId, respPayload } = item;
 
@@ -177,7 +177,7 @@ export class ExplorerTabService {
             sessionId: sessionId,
             tabId: tabId,
             chartId: chartId,
-            respPayload: resp.payload
+            respPayload: unwrapToBackendResponse({ response: resp })
           });
         })
       )

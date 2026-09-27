@@ -6,8 +6,7 @@ import {
   ToBackendGetOrgsListResponseDto
 } from '#backend/controllers/orgs/get-orgs-list/get-orgs-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
@@ -15,8 +14,8 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetOrgsListResponsePayload } from '#common/zod/to-backend/orgs/to-backend-get-orgs-list';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetOrgsListOutput } from '#common/zod/backend/routes/orgs/get-orgs-list/get-orgs-list-response';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -28,7 +27,7 @@ export class GetOrgsListController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrgsList)
+  @Post('api/ToBackendGetOrgsList' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetOrgsList',
     description: 'Get organizations accessible to the current user'
@@ -82,7 +81,7 @@ export class GetOrgsListController {
       a.name > b.name ? 1 : b.name > a.name ? -1 : 0
     );
 
-    let payload: ToBackendGetOrgsListResponsePayload = {
+    let payload: ToBackendGetOrgsListOutput = {
       orgsList: sortedOrgs.map(x => this.orgsService.tabToApi({ org: x }))
     };
 

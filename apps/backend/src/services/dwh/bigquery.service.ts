@@ -23,10 +23,10 @@ import type {
   RawSchemaIndex,
   RawSchemaTable
 } from '#common/zod/backend/connection-schemas/raw-schema';
+import type { FetchSampleResult } from '#common/zod/backend/connections/fetch-sample-result';
+import type { TestConnectionResult } from '#common/zod/backend/connections/test-connection-result';
 import type { MalloyConfigPart } from '#common/zod/backend/malloy-config-part';
 import type { QueryEstimate } from '#common/zod/backend/query-estimate';
-import type { FetchSampleResult } from '#common/zod/to-backend/connections/fetch-sample-result';
-import type { TestConnectionResult } from '#common/zod/to-backend/connections/to-backend-test-connection';
 
 const { forEachSeries } = pIteration;
 

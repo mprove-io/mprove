@@ -9,13 +9,9 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendDeleteFolderRequest,
-  ToBackendDeleteFolderResponse
-} from '#common/zod/to-backend/folders/to-backend-delete-folder';
+import type { ToBackendDeleteFolderRequest } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-request';
+import type { ToBackendDeleteFolderResponse } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-response';
 
 let testId = 'backend-delete-folder__ok';
 
@@ -91,12 +87,9 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteFolderRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId,
@@ -105,7 +98,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteFolderResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteFolder',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -124,8 +118,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

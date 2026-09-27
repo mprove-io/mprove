@@ -17,12 +17,11 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PROVIDER_TYPE_NAME_BY_TYPE } from '#common/constants/providers';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ProviderOptionsOpenAICompatible } from '#common/zod/backend/provider-options/provider-options-openai-compatible';
-import type { ToBackendEditProviderRequestPayload } from '#common/zod/to-backend/providers/edit-provider/edit-provider-request-payload';
-import type { ToBackendEditProviderResponse } from '#common/zod/to-backend/providers/edit-provider/edit-provider-response';
+import type { ToBackendEditProviderInput } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-request';
+import type { ToBackendEditProviderResponse } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -165,7 +164,7 @@ export class EditProviderDialogComponent implements OnInit {
 
     let provider = this.ref.data.provider;
 
-    let payload: ToBackendEditProviderRequestPayload;
+    let payload: ToBackendEditProviderInput;
 
     if (provider.type === ProviderTypeEnum.OpenAICompatible) {
       payload = {
@@ -217,21 +216,22 @@ export class EditProviderDialogComponent implements OnInit {
 
     this.ref.data.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditProvider,
+        route: 'api/ToBackendEditProvider',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditProviderResponse) => {
-          if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type !== 'Success') {
             return;
           }
 
           let providers = this.providersQuery
             .getValue()
             .providers.map(x =>
-              x.providerId === resp.payload.provider.providerId
-                ? resp.payload.provider
+              x.providerId ===
+              unwrapToBackendResponse({ response: resp }).provider.providerId
+                ? unwrapToBackendResponse({ response: resp }).provider
                 : x
             );
           this.providersQuery.updatePart({

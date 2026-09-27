@@ -17,8 +17,7 @@ import {
   ToBackendDeleteOrgResponseDto
 } from '#backend/controllers/orgs/delete-org/delete-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -35,7 +34,7 @@ import { OrgsService } from '#backend/services/db/orgs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -51,7 +50,7 @@ export class DeleteOrgController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteOrg)
+  @Post('api/ToBackendDeleteOrg' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteOrg',
     description: 'Delete an organization and all its projects'
@@ -63,7 +62,7 @@ export class DeleteOrgController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteOrgRequestDto
   ) {
-    let { orgId } = body.payload;
+    let { orgId } = body.input;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -75,7 +74,7 @@ export class DeleteOrgController {
     await this.rpcService.sendToDiskUnwrapOutput({
       request: {
         operation: 'deleteOrg',
-        traceId: body.info.traceId,
+        traceId: body.traceId,
         input: {
           orgId: org.orgId
         }

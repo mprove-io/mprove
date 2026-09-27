@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendCompleteUserRegistrationRequest,
-  zToBackendCompleteUserRegistrationResponse
-} from '#common/zod/to-backend/users/to-backend-complete-user-registration';
+import { zToBackendCompleteUserRegistrationRequest } from '#common/zod/backend/routes/users/complete-user-registration/complete-user-registration-request';
+import { zToBackendCompleteUserRegistrationResponse } from '#common/zod/backend/routes/users/complete-user-registration/complete-user-registration-response';
 
 export class ToBackendCompleteUserRegistrationRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendCompleteUserRegistrationRequest })

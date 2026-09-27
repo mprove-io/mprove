@@ -17,8 +17,7 @@ import {
   ToBackendDuplicateMconfigAndQueryResponseDto
 } from '#backend/controllers/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MconfigTab,
   QueryTab,
@@ -45,9 +44,9 @@ import {
 } from '#common/constants/mconfig-chart';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDuplicateMconfigAndQueryResponsePayload } from '#common/zod/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDuplicateMconfigAndQueryOutput } from '#common/zod/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-response';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 
 @ApiTags('Mconfigs')
@@ -73,7 +72,7 @@ export class DuplicateMconfigAndQueryController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDuplicateMconfigAndQuery)
+  @Post('api/ToBackendDuplicateMconfigAndQuery' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DuplicateMconfigAndQuery',
     description: 'Duplicate an mconfig and its associated query'
@@ -85,9 +84,9 @@ export class DuplicateMconfigAndQueryController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDuplicateMconfigAndQueryRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let { projectId, repoId, branchId, envId, oldMconfigId, setPivotDefaults } =
-      body.payload;
+      body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -217,7 +216,7 @@ export class DuplicateMconfigAndQueryController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendDuplicateMconfigAndQueryResponsePayload = {
+    let payload: ToBackendDuplicateMconfigAndQueryOutput = {
       mconfig: this.mconfigsService.tabToApi({
         mconfig: newMconfig,
         modelFields: model.fields

@@ -11,10 +11,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateProviderRequest } from '#common/zod/to-backend/providers/create-provider/create-provider-request';
-import type { ToBackendCreateProviderResponse } from '#common/zod/to-backend/providers/create-provider/create-provider-response';
+import type { ToBackendCreateProviderRequest } from '#common/zod/backend/routes/providers/create-provider/create-provider-request';
+import type { ToBackendCreateProviderResponse } from '#common/zod/backend/routes/providers/create-provider/create-provider-response';
 
 let testId = 'backend-create-provider__member-is-not-admin';
 
@@ -94,12 +93,9 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateProviderRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateProvider,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           providerId: 'non_admin_provider',
           type: ProviderTypeEnum.OpenAICompatible,
@@ -118,7 +114,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendCreateProviderResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCreateProvider',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -138,7 +135,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: unknown) => {

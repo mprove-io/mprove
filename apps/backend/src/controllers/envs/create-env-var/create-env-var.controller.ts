@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateEnvVarRequestDto,
   ToBackendCreateEnvVarResponseDto
 } from '#backend/controllers/envs/create-env-var/create-env-var.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -34,10 +30,12 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Ev } from '#common/zod/backend/ev';
-import type { ToBackendCreateEnvVarResponsePayload } from '#common/zod/to-backend/envs/to-backend-create-env-var';
+import type { ToBackendCreateEnvVarOutput } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-response';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -54,7 +52,7 @@ export class CreateEnvVarController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateEnvVar)
+  @Post('api/ToBackendCreateEnvVar' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateEnvVar',
     description: 'Create a new environment variable'
@@ -66,7 +64,7 @@ export class CreateEnvVarController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateEnvVarRequestDto
   ) {
-    let { projectId, envId, evId, val } = body.payload;
+    let { projectId, envId, evId, val } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -134,7 +132,7 @@ export class CreateEnvVarController {
       projectId: projectId
     });
 
-    let payload: ToBackendCreateEnvVarResponsePayload = {
+    let payload: ToBackendCreateEnvVarOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       envs: apiEnvs
     };

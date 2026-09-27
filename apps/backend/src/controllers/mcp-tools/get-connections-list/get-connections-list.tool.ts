@@ -1,6 +1,5 @@
 import { Injectable, UseFilters } from '@nestjs/common';
-import type { Context } from '@rekog/mcp-nest';
-import { Tool } from '@rekog/mcp-nest';
+import { type Context, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetConnectionsListService } from '#backend/controllers/connections/get-connections-list/get-connections-list.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -13,12 +12,12 @@ import {
   MCP_TOOL_GET_CONNECTIONS_LIST_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import type { ToBackendGetConnectionsListResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connections-list';
 import {
   type McpToolGetConnectionsListInput,
   zMcpToolGetConnectionsListInput,
   zMcpToolGetConnectionsListOutput
-} from '#common/zod/to-backend/mcp-tools/mcp-tool-get-connections-list';
+} from '#common/zod/backend/mcp-tools/mcp-tool-get-connections-list';
+import type { ToBackendGetConnectionsListOutput } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-response';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
@@ -54,7 +53,7 @@ export class GetConnectionsListTool {
       });
     }
 
-    let payload: ToBackendGetConnectionsListResponsePayload =
+    let payload: ToBackendGetConnectionsListOutput =
       await this.getConnectionsListService.getConnectionsList({
         userId: user.userId,
         projectId: item.projectId,

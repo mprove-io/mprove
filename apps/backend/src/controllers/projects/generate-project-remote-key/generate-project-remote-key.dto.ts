@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendGenerateProjectRemoteKeyRequest,
-  zToBackendGenerateProjectRemoteKeyResponse
-} from '#common/zod/to-backend/projects/to-backend-generate-project-remote-key';
+import { zToBackendGenerateProjectRemoteKeyRequest } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-request';
+import { zToBackendGenerateProjectRemoteKeyResponse } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-response';
 
 export class ToBackendGenerateProjectRemoteKeyRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGenerateProjectRemoteKeyRequest })

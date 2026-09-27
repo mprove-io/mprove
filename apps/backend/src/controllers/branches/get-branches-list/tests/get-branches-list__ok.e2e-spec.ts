@@ -9,13 +9,9 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetBranchesListRequest,
-  ToBackendGetBranchesListResponse
-} from '#common/zod/to-backend/branches/to-backend-get-branches-list';
+import type { ToBackendGetBranchesListRequest } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-request';
+import type { ToBackendGetBranchesListResponse } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-response';
 
 let testId = 'backend-get-branches-list__ok';
 
@@ -87,17 +83,15 @@ test('1', async t => {
       });
 
       let req: ToBackendGetBranchesListRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId
         }
       };
 
-      resp = await sendToBackend<ToBackendGetBranchesListResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetBranchesList',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -116,8 +110,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

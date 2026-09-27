@@ -29,14 +29,10 @@ import {
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
+import type { ToBackendCreateBranchInput } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendCreateBranchResponse } from '#common/zod/backend/routes/branches/create-branch/create-branch-response';
 import type { BranchItem } from '#common/zod/front/branch-item';
-import type {
-  ToBackendCreateBranchRequestPayload,
-  ToBackendCreateBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-create-branch';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
@@ -173,7 +169,7 @@ export class CreateBranchDialogComponent implements OnInit {
     let repoId =
       this.targetRepoType === RepoTypeEnum.Production ? PROD_REPO_ID : userId;
 
-    let payload: ToBackendCreateBranchRequestPayload = {
+    let payload: ToBackendCreateBranchInput = {
       projectId: this.ref.data.projectId,
       newBranchId: this.createBranchForm.value.branchId,
       fromBranchId: this.selectedBranchItem.branchId,
@@ -184,12 +180,12 @@ export class CreateBranchDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+        route: 'api/ToBackendCreateBranch',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendCreateBranchResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
               this.ref.data.orgId,

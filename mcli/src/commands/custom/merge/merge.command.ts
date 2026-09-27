@@ -3,14 +3,11 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type {
-  ToBackendMergeRepoRequestPayload,
-  ToBackendMergeRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-merge-repo';
+import type { ToBackendMergeRepoInput } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-request';
+import type { ToBackendMergeRepoOutput } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -89,7 +86,7 @@ export class MergeCommand extends CustomCommand {
       ? apiKey.split('-')[2].toLowerCase()
       : apiKey.split('-')[2];
 
-    let mergeRepoReqPayload: ToBackendMergeRepoRequestPayload = {
+    let mergeRepoReqPayload: ToBackendMergeRepoInput = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
@@ -98,29 +95,29 @@ export class MergeCommand extends CustomCommand {
       isTheirBranchRemote: this.theirBranchRemote
     };
 
-    let mergeRepoResp = await mreq<ToBackendMergeRepoResponse>({
+    let mergeRepoOutput: ToBackendMergeRepoOutput = await mreq({
       apiKey: this.context.config.mproveCliApiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
+      route: 'api/ToBackendMergeRepo',
       payload: mergeRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
-      orgId: mergeRepoResp.payload.repo.orgId,
+      orgId: mergeRepoOutput.repo.orgId,
       projectId: this.projectId,
-      repoId: mergeRepoResp.payload.repo.repoId,
+      repoId: mergeRepoOutput.repo.repoId,
       branch: this.branch,
       env: this.env
     });
 
     let log: any = {
       message: `Merged branch "${this.theirBranch}" to "${this.branch}"`,
-      validationErrorsTotal: mergeRepoResp.payload.struct.errors.length
+      validationErrorsTotal: mergeRepoOutput.struct.errors.length
     };
 
     if (this.getRepo === true) {
-      let repo = mergeRepoResp.payload.repo;
+      let repo = mergeRepoOutput.repo;
 
       delete repo.nodes;
       delete repo.changesToCommit;
@@ -131,7 +128,7 @@ export class MergeCommand extends CustomCommand {
 
     if (this.getErrors === true) {
       log.validationErrors = mapBmlErrorsToMproveValidationErrors({
-        errors: mergeRepoResp.payload.struct.errors
+        errors: mergeRepoOutput.struct.errors
       });
     }
 

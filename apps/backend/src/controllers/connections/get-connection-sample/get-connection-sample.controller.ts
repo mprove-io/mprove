@@ -10,8 +10,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetConnectionSampleResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetConnectionSampleOutput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)
@@ -20,7 +20,7 @@ import type { ToBackendGetConnectionSampleResponsePayload } from '#common/zod/to
 export class GetConnectionSampleController {
   constructor(private connectionSampleService: GetConnectionSampleService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetConnectionSample)
+  @Post('api/ToBackendGetConnectionSample' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetConnectionSample',
     description: 'Get sample data'
@@ -40,9 +40,9 @@ export class GetConnectionSampleController {
       tableName,
       columnName,
       offset
-    } = body.payload;
+    } = body.input;
 
-    let payload: ToBackendGetConnectionSampleResponsePayload =
+    let payload: ToBackendGetConnectionSampleOutput =
       await this.connectionSampleService.getConnectionSample({
         userId: user.userId,
         projectId: projectId,

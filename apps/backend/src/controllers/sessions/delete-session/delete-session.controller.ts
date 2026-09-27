@@ -17,8 +17,7 @@ import {
   ToBackendDeleteSessionResponseDto
 } from '#backend/controllers/sessions/delete-session/delete-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   SessionTab,
   UserTab
@@ -51,8 +50,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -73,7 +72,7 @@ export class DeleteSessionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteSession)
+  @Post('api/ToBackendDeleteSession' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteSession',
     description: 'Delete a session'
@@ -85,8 +84,8 @@ export class DeleteSessionController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteSessionRequestDto
   ) {
-    let { traceId } = body.info;
-    let { sessionId } = body.payload;
+    let { traceId } = body;
+    let { sessionId } = body.input;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId

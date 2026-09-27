@@ -14,17 +14,11 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateDraftDashboardRequest,
-  ToBackendCreateDraftDashboardResponse
-} from '#common/zod/to-backend/dashboards/to-backend-create-draft-dashboard';
-import type {
-  ToBackendGetDashboardRequest,
-  ToBackendGetDashboardResponse
-} from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendCreateDraftDashboardRequest } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-request';
+import type { ToBackendCreateDraftDashboardResponse } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-response';
+import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
 
 let testId = 'backend-create-draft-dashboard__ok';
 
@@ -111,12 +105,9 @@ test('1', async t => {
       });
 
       let req1: ToBackendGetDashboardRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -126,34 +117,34 @@ test('1', async t => {
         }
       };
 
-      let resp1 = await sendToBackend<ToBackendGetDashboardResponse>({
+      let resp1 = await sendToBackend({
+        route: 'api/ToBackendGetDashboard',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
       });
 
       let req: ToBackendCreateDraftDashboardRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
           envId: PROJECT_ENV_PROD,
           oldDashboardId: oldDashboardId,
           newDashboardId: makeId(),
-          newDashboardFields: resp1.payload.dashboard.fields,
-          tiles: resp1.payload.dashboard.tiles,
+          newDashboardFields: unwrapToBackendResponse({ response: resp1 })
+            .dashboard.fields,
+          tiles: unwrapToBackendResponse({ response: resp1 }).dashboard.tiles,
           timezone: 'UTC',
           isQueryCache: false,
           cachedQueryMconfigIds: []
         }
       };
 
-      resp = await sendToBackend<ToBackendCreateDraftDashboardResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCreateDraftDashboard',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -172,8 +163,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

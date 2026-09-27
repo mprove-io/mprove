@@ -21,16 +21,12 @@ import {
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendGetBranchesListInput } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-request';
+import type { ToBackendGetBranchesListResponse } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-response';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { RepoStatus } from '#common/zod/disk/repo-status';
 import type { BranchItem } from '#common/zod/front/branch-item';
-import type {
-  ToBackendGetBranchesListRequestPayload,
-  ToBackendGetBranchesListResponse
-} from '#common/zod/to-backend/branches/to-backend-get-branches-list';
 import { checkNavMain } from '#front/app/functions/check-nav-main';
 import { makeBranchExtraId } from '#front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
@@ -187,22 +183,22 @@ export class BranchSelectComponent {
 
     this.branchesListLoading = true;
 
-    let payload: ToBackendGetBranchesListRequestPayload = {
+    let payload: ToBackendGetBranchesListInput = {
       projectId: this.selectedProjectId
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
+        route: 'api/ToBackendGetBranchesList',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetBranchesListResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.sessionsList = resp.payload.sessionsList;
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.sessionsList = resp.result.value.sessionsList;
 
-            this.branchesList = resp.payload.branchesList.map(y =>
+            this.branchesList = resp.result.value.branchesList.map(y =>
               this.makeBranchItem({
                 branchId: y.branchId,
                 repoId: y.repoId,

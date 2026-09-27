@@ -1,6 +1,5 @@
 import { Injectable, UseFilters } from '@nestjs/common';
-import type { Context } from '@rekog/mcp-nest';
-import { Tool } from '@rekog/mcp-nest';
+import { type Context, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetSkillsService } from '#backend/controllers/skills/get-skills/get-skills.service';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
@@ -14,7 +13,7 @@ import {
   type McpToolGetSkillsInput,
   zMcpToolGetSkillsInput,
   zMcpToolGetSkillsOutput
-} from '#common/zod/to-backend/mcp-tools/mcp-tool-get-skills';
+} from '#common/zod/backend/mcp-tools/mcp-tool-get-skills';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

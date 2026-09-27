@@ -8,17 +8,11 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGenerateUserApiKeyRequest,
-  ToBackendGenerateUserApiKeyResponse
-} from '#common/zod/to-backend/users/to-backend-generate-user-api-key';
-import type {
-  ToBackendSetUserNameRequest,
-  ToBackendSetUserNameResponse
-} from '#common/zod/to-backend/users/to-backend-set-user-name';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
+import type { ToBackendSetUserNameRequest } from '#common/zod/backend/routes/users/set-user-name/set-user-name-request';
+import type { ToBackendSetUserNameResponse } from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
 
 let testId = 'backend-jwt-auth-guard__user-key-request-not-allowed';
 
@@ -53,38 +47,33 @@ test('1', async t => {
       });
 
       let generateReq: ToBackendGenerateUserApiKeyRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {}
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {}
       };
 
-      let generateResp =
-        await sendToBackend<ToBackendGenerateUserApiKeyResponse>({
-          httpServer: prep.httpServer,
-          loginToken: prep.loginToken,
-          req: generateReq,
-          checkIsOk: true
-        });
+      let generateResp = await sendToBackend({
+        route: 'api/ToBackendGenerateUserApiKey',
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: generateReq,
+        checkIsOk: true
+      });
 
       // non-MCLI endpoint
       let setNameReq: ToBackendSetUserNameRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendSetUserName,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           firstName: 'Test',
           lastName: 'User'
         }
       };
 
-      resp = await sendToBackend<ToBackendSetUserNameResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendSetUserName',
         httpServer: prep.httpServer,
-        apiKey: generateResp.payload.apiKey,
+        apiKey: unwrapToBackendResponse({ response: generateResp }).apiKey,
         req: setNameReq
       });
 
@@ -101,9 +90,10 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Error);
+    assert.equal(resp.result.type, 'Failure');
+    assert.ok(resp.result.type === 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_USER_API_KEY_REQUEST_NOT_ALLOWED
     );
 

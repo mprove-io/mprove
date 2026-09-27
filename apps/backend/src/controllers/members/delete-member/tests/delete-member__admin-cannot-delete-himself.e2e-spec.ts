@@ -10,12 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendDeleteMemberRequest,
-  ToBackendDeleteMemberResponse
-} from '#common/zod/to-backend/members/to-backend-delete-member';
+import type { ToBackendDeleteMemberRequest } from '#common/zod/backend/routes/members/delete-member/delete-member-request';
+import type { ToBackendDeleteMemberResponse } from '#common/zod/backend/routes/members/delete-member/delete-member-response';
 
 let testId = 'backend-delete-member__admin-cannot-delete-himself';
 
@@ -87,18 +84,16 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteMemberRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteMember,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           memberId: userId
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteMemberResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteMember',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -117,8 +112,9 @@ test('1', async t => {
       }
     }
 
+    assert.ok(resp.result.type === 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_ADMIN_CANNOT_DELETE_HIMSELF
     );
 

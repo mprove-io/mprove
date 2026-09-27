@@ -7,12 +7,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendGetQueryInfoRequestPayload,
-  ToBackendGetQueryInfoResponse
-} from '#common/zod/to-backend/query-info/to-backend-get-query-info';
+import type { ToBackendGetQueryInfoInput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-request';
+import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -139,7 +136,7 @@ export class GetQueryInfoCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getQueryInfoReqPayload: ToBackendGetQueryInfoRequestPayload = {
+    let getQueryInfoReqPayload: ToBackendGetQueryInfoInput = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
@@ -158,15 +155,15 @@ export class GetQueryInfoCommand extends CustomCommand {
       isFetch: true
     };
 
-    let getQueryInfoResp = await mreq<ToBackendGetQueryInfoResponse>({
+    let getQueryInfoOutput: ToBackendGetQueryInfoOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo,
+      route: 'api/ToBackendGetQueryInfo',
       payload: getQueryInfoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     logToConsoleMcli({
-      log: getQueryInfoResp.payload,
+      log: getQueryInfoOutput,
       logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json

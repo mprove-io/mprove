@@ -1,6 +1,5 @@
 import { Injectable, UseFilters } from '@nestjs/common';
-import type { Context } from '@rekog/mcp-nest';
-import { Tool } from '@rekog/mcp-nest';
+import { type Context, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { RunService } from '#backend/controllers/run/run/run.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -18,8 +17,8 @@ import {
   type McpToolRunInput,
   zMcpToolRunInput,
   zMcpToolRunOutput
-} from '#common/zod/to-backend/mcp-tools/mcp-tool-run';
-import type { ToBackendRunResponsePayload } from '#common/zod/to-backend/run/to-backend-run';
+} from '#common/zod/backend/mcp-tools/mcp-tool-run';
+import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-response';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
@@ -67,7 +66,7 @@ export class RunTool {
 
     let traceId = makeId();
 
-    let payload: ToBackendRunResponsePayload = await this.runService.run({
+    let payload: ToBackendRunOutput = await this.runService.run({
       traceId: traceId,
       user: user,
       projectId: item.projectId,

@@ -16,8 +16,7 @@ import {
   ToBackendCreateRoleResponseDto
 } from '#backend/controllers/roles/create-role/create-role.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -25,8 +24,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendCreateRoleResponsePayload } from '#common/zod/to-backend/roles/to-backend-create-role';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateRoleOutput } from '#common/zod/backend/routes/roles/create-role/create-role-response';
 
 @ApiTags('Roles')
 @UseGuards(ThrottlerUserIdGuard)
@@ -42,7 +41,7 @@ export class CreateRoleController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateRole)
+  @Post('api/ToBackendCreateRole' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateRole',
     description: 'Create a project role'
@@ -54,7 +53,7 @@ export class CreateRoleController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateRoleRequestDto
   ) {
-    let { projectId, roleId } = body.payload;
+    let { projectId, roleId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -94,7 +93,7 @@ export class CreateRoleController {
       projectId: projectId
     });
 
-    let payload: ToBackendCreateRoleResponsePayload = {
+    let payload: ToBackendCreateRoleOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       roles: apiRoles
     };

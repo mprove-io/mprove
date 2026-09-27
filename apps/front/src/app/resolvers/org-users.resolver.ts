@@ -8,12 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetOrgUsersRequestPayload,
-  ToBackendGetOrgUsersResponse
-} from '#common/zod/to-backend/org-users/to-backend-get-org-users';
+import type { ToBackendGetOrgUsersInput } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
+import type { ToBackendGetOrgUsersResponse } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { UsersQuery } from '../queries/users.query';
@@ -55,7 +51,7 @@ export class OrgUsersResolver implements Resolve<Observable<boolean>> {
       orgId = x;
     });
 
-    let payload: ToBackendGetOrgUsersRequestPayload = {
+    let payload: ToBackendGetOrgUsersInput = {
       orgId: orgId,
       pageNum: 1,
       perPage: USERS_PER_PAGE
@@ -63,15 +59,15 @@ export class OrgUsersResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
+        route: 'api/ToBackendGetOrgUsers',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetOrgUsersResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.usersQuery.update({
-              users: resp.payload.orgUsersList,
-              total: resp.payload.total
+              users: resp.result.value.orgUsersList,
+              total: resp.result.value.total
             });
             return true;
           } else {

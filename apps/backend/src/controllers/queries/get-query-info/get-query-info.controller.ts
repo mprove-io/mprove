@@ -10,8 +10,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetQueryInfoResponsePayload } from '#common/zod/to-backend/query-info/to-backend-get-query-info';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-response';
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -20,7 +20,7 @@ import type { ToBackendGetQueryInfoResponsePayload } from '#common/zod/to-backen
 export class GetQueryInfoController {
   constructor(private getQueryInfoService: GetQueryInfoService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo)
+  @Post('api/ToBackendGetQueryInfo' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetQueryInfo',
     description: 'Get Malloy, SQL, and data'
@@ -32,7 +32,7 @@ export class GetQueryInfoController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetQueryInfoRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -50,9 +50,9 @@ export class GetQueryInfoController {
       getSql,
       getData,
       isFetch
-    } = body.payload;
+    } = body.input;
 
-    let payload: ToBackendGetQueryInfoResponsePayload =
+    let payload: ToBackendGetQueryInfoOutput =
       await this.getQueryInfoService.getQueryInfo({
         traceId: traceId,
         user: user,

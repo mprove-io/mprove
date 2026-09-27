@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendSetFavoriteRequest,
-  zToBackendSetFavoriteResponse
-} from '#common/zod/to-backend/favorites/to-backend-set-favorite';
+import { zToBackendSetFavoriteRequest } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-request';
+import { zToBackendSetFavoriteResponse } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-response';
 
 export class ToBackendSetFavoriteRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendSetFavoriteRequest })

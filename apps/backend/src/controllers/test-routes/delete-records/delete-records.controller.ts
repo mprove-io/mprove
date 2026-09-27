@@ -18,8 +18,7 @@ import {
   ToBackendDeleteRecordsResponseDto
 } from '#backend/controllers/test-routes/delete-records/delete-records.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -49,9 +48,9 @@ import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { HashService } from '#backend/services/hash.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendDeleteRecordsResponse } from '#common/zod/to-backend/test-routes/to-backend-delete-records';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDeleteRecordsOutput } from '#common/zod/backend/routes/test-routes/delete-records/delete-records-response';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()
@@ -69,7 +68,7 @@ export class DeleteRecordsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
+  @Post('api/ToBackendDeleteRecords' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteRecords',
     description: 'Delete test orgs, projects, users and related records'
@@ -85,7 +84,7 @@ export class DeleteRecordsController {
       orgNames,
       projectNames,
       structIds: payloadStructIds
-    } = body.payload;
+    } = body.input;
 
     emails = emails || [];
     projectIds = projectIds || [];
@@ -138,7 +137,7 @@ export class DeleteRecordsController {
         await this.rpcService.sendToDiskUnwrapOutput({
           request: {
             operation: 'deleteOrg',
-            traceId: body.info.traceId,
+            traceId: body.traceId,
             input: {
               orgId: x
             }
@@ -277,7 +276,7 @@ export class DeleteRecordsController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendDeleteRecordsResponse['payload'] = {};
+    let payload: ToBackendDeleteRecordsOutput = {};
 
     return payload;
   }

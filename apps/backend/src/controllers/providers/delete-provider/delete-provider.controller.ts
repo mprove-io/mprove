@@ -17,8 +17,7 @@ import {
   ToBackendDeleteProviderResponseDto
 } from '#backend/controllers/providers/delete-provider/delete-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { providersTable } from '#backend/drizzle/postgres/schema/providers';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -27,9 +26,9 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendDeleteProviderRequestPayload } from '#common/zod/to-backend/providers/delete-provider/delete-provider-request-payload';
-import type { ToBackendDeleteProviderResponsePayload } from '#common/zod/to-backend/providers/delete-provider/delete-provider-response-payload';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDeleteProviderInput } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-request';
+import type { ToBackendDeleteProviderOutput } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-response';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -45,7 +44,7 @@ export class DeleteProviderController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteProvider)
+  @Post('api/ToBackendDeleteProvider' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteProvider',
     description: 'Delete a provider from a project'
@@ -57,7 +56,7 @@ export class DeleteProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteProviderRequestDto
   ) {
-    let bodyPayload: ToBackendDeleteProviderRequestPayload = body.payload;
+    let bodyPayload: ToBackendDeleteProviderInput = body.input;
 
     let { projectId, providerId } = bodyPayload;
 
@@ -86,7 +85,7 @@ export class DeleteProviderController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendDeleteProviderResponsePayload = {};
+    let payload: ToBackendDeleteProviderOutput = {};
 
     return payload;
   }

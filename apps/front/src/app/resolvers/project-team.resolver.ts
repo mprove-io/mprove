@@ -8,12 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { MEMBERS_PER_PAGE } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetMembersRequestPayload,
-  ToBackendGetMembersResponse
-} from '#common/zod/to-backend/members/to-backend-get-members';
+import type { ToBackendGetMembersInput } from '#common/zod/backend/routes/members/get-members/get-members-request';
+import type { ToBackendGetMembersResponse } from '#common/zod/backend/routes/members/get-members/get-members-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -59,7 +55,7 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
       projectId = x;
     });
 
-    let payload: ToBackendGetMembersRequestPayload = {
+    let payload: ToBackendGetMembersInput = {
       projectId: projectId,
       pageNum: 1,
       perPage: MEMBERS_PER_PAGE
@@ -67,18 +63,18 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetMembers,
+        route: 'api/ToBackendGetMembers',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetMembersResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
 
-            this.teamQuery.update(resp.payload);
+            this.teamQuery.update(resp.result.value);
 
             this.rolesQuery.update({
-              roles: resp.payload.roles
+              roles: resp.result.value.roles
             });
 
             return true;

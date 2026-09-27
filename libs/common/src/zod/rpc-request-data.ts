@@ -1,11 +1,18 @@
 import { z } from 'zod';
-import { zMyRequest } from '#common/zod/to/my-request';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+
+export type RpcRequestData = {
+  message: unknown;
+  replyTo: string;
+};
 
 export let zRpcRequestData = z
   .object({
-    message: zMyRequest,
+    message: z.unknown(),
     replyTo: z.string()
   })
   .meta({ id: 'RpcRequestData' });
 
-export type RpcRequestData = z.infer<typeof zRpcRequestData>;
+assertTypesEqual<RpcRequestData, z.infer<typeof zRpcRequestData>>({
+  value: true
+});

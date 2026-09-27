@@ -1,12 +1,8 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendValidateFilesRequestPayload,
-  ToBackendValidateFilesResponse
-} from '#common/zod/to-backend/files/to-backend-validate-files';
+import type { ToBackendValidateFilesInput } from '#common/zod/backend/routes/files/validate-files/validate-files-request';
+import type { ToBackendValidateFilesResponse } from '#common/zod/backend/routes/files/validate-files/validate-files-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
@@ -76,7 +72,7 @@ export class ValidationStatusComponent {
   ) {}
 
   validate() {
-    let payload: ToBackendValidateFilesRequestPayload = {
+    let payload: ToBackendValidateFilesInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -85,17 +81,17 @@ export class ValidationStatusComponent {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+        route: 'api/ToBackendValidateFiles',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendValidateFilesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
           }
         }),

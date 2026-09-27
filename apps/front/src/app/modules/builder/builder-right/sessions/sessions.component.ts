@@ -4,24 +4,17 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import { PATH_NEW_SESSION } from '#common/constants/top';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendArchiveSessionInput } from '#common/zod/backend/routes/sessions/archive-session/archive-session-request';
+import type { ToBackendArchiveSessionResponse } from '#common/zod/backend/routes/sessions/archive-session/archive-session-response';
+import type { ToBackendGetSessionsListInput } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
+import type { ToBackendGetSessionsListResponse } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
+import type { ToBackendPauseEditorSessionInput } from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-request';
+import type { ToBackendPauseEditorSessionResponse } from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-response';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { SessionApiX } from '#common/zod/front/session-api-x';
-import type {
-  ToBackendArchiveSessionRequestPayload,
-  ToBackendArchiveSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-archive-session';
-import type {
-  ToBackendGetSessionsListRequestPayload,
-  ToBackendGetSessionsListResponse
-} from '#common/zod/to-backend/sessions/to-backend-get-sessions-list';
-import type {
-  ToBackendPauseEditorSessionRequestPayload,
-  ToBackendPauseEditorSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-pause-editor-session';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -123,7 +116,7 @@ export class SessionsComponent implements OnInit {
     let currentSessionId =
       this.currentSession?.sessionId ?? this.sessionQuery.getValue()?.sessionId;
 
-    let payload: ToBackendGetSessionsListRequestPayload = {
+    let payload: ToBackendGetSessionsListInput = {
       projectId: projectId,
       currentSessionId: currentSessionId,
       sessionType: SessionTypeEnum.Editor
@@ -135,13 +128,13 @@ export class SessionsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSessionsList,
+        route: 'api/ToBackendGetSessionsList',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let sessions = resp.payload.sessions;
+          if (resp.result?.type === 'Success') {
+            let sessions = unwrapToBackendResponse({ response: resp }).sessions;
 
             if (currentSessionId) {
               let freshCurrentSession = sessions.find(
@@ -152,7 +145,9 @@ export class SessionsComponent implements OnInit {
               }
             }
 
-            let hasMoreArchived = resp.payload.hasMoreArchived ?? false;
+            let hasMoreArchived =
+              unwrapToBackendResponse({ response: resp }).hasMoreArchived ??
+              false;
 
             this.sessionsQuery.updatePart({
               sessions: sessions,
@@ -199,19 +194,19 @@ export class SessionsComponent implements OnInit {
 
     let sessionId = session.sessionId;
 
-    let payload: ToBackendPauseEditorSessionRequestPayload = {
+    let payload: ToBackendPauseEditorSessionInput = {
       sessionId: sessionId
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPauseEditorSession,
+        route: 'api/ToBackendPauseEditorSession',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         map((resp: ToBackendPauseEditorSessionResponse) => {
-          let respSession = resp.payload.session;
+          let respSession = unwrapToBackendResponse({ response: resp }).session;
 
           if (respSession.status === 'Archived') {
             this.updatedArchivedSessions({
@@ -254,19 +249,19 @@ export class SessionsComponent implements OnInit {
 
     let sessionId = session.sessionId;
 
-    let payload: ToBackendArchiveSessionRequestPayload = {
+    let payload: ToBackendArchiveSessionInput = {
       sessionId: sessionId
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendArchiveSession,
+        route: 'api/ToBackendArchiveSession',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         map((resp: ToBackendArchiveSessionResponse) => {
-          let respSession = resp.payload.session;
+          let respSession = unwrapToBackendResponse({ response: resp }).session;
 
           this.updatedArchivedSessions({
             session: session,
@@ -339,7 +334,7 @@ export class SessionsComponent implements OnInit {
       projectId = x;
     });
 
-    let payload: ToBackendGetSessionsListRequestPayload = {
+    let payload: ToBackendGetSessionsListInput = {
       projectId: projectId,
       includeArchived: true,
       archivedLimit: 10,
@@ -353,13 +348,13 @@ export class SessionsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSessionsList,
+        route: 'api/ToBackendGetSessionsList',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let sessions = resp.payload.sessions;
+          if (resp.result?.type === 'Success') {
+            let sessions = unwrapToBackendResponse({ response: resp }).sessions;
 
             if (this.currentSession?.sessionId) {
               let freshCurrentSession = sessions.find(
@@ -370,13 +365,17 @@ export class SessionsComponent implements OnInit {
               }
             }
 
-            let hasMoreArchived = resp.payload.hasMoreArchived ?? false;
+            let hasMoreArchived =
+              unwrapToBackendResponse({ response: resp }).hasMoreArchived ??
+              false;
 
             this.sessionsQuery.updatePart({
               sessions: sessions,
               hasMoreArchived: hasMoreArchived
             });
-            let archivedSessions = resp.payload.sessions.filter(
+            let archivedSessions = unwrapToBackendResponse({
+              response: resp
+            }).sessions.filter(
               s =>
                 s.status === SessionStatusEnum.Archived &&
                 s.sessionId !== this.currentSession?.sessionId

@@ -6,13 +6,9 @@ import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetConnectionSchemasRequestPayload,
-  ToBackendGetConnectionSchemasResponse
-} from '#common/zod/to-backend/connections/to-backend-get-connection-schemas';
+import type { ToBackendGetConnectionSchemasInput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
@@ -130,17 +126,16 @@ test('1', async () => {
 
       let repoId = apiKey.split('-')[2];
 
-      await mreq<ToBackendGetConnectionSchemasResponse>({
+      await mreq({
         apiKey: apiKey,
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendGetConnectionSchemas,
+        route: 'api/ToBackendGetConnectionSchemas',
         payload: {
           projectId: projectId,
           envId: PROJECT_ENV_PROD,
           repoId: repoId,
           branchId: defaultBranch,
           isRefreshExistingCache: true
-        } as ToBackendGetConnectionSchemasRequestPayload,
+        } as ToBackendGetConnectionSchemasInput,
         host: config.mproveCliHost
       });
 

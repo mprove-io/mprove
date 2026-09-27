@@ -9,13 +9,10 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetOrgUsersRequest,
-  ToBackendGetOrgUsersResponse
-} from '#common/zod/to-backend/org-users/to-backend-get-org-users';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGetOrgUsersRequest } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
+import type { ToBackendGetOrgUsersResponse } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
 
 let testId = 'backend-get-org-users__ok-2';
 
@@ -105,19 +102,17 @@ test('1', async t => {
       });
 
       let req: ToBackendGetOrgUsersRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           orgId: orgId,
           perPage: 10,
           pageNum: 1
         }
       };
 
-      resp = await sendToBackend<ToBackendGetOrgUsersResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetOrgUsers',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -136,10 +131,12 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-    assert.equal(resp.payload.total, 1);
-    assert.equal(resp.payload.orgUsersList.length, 1);
+    assert.equal(resp.result.type, 'Success');
+    assert.equal(unwrapToBackendResponse({ response: resp }).total, 1);
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).orgUsersList.length,
+      1
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

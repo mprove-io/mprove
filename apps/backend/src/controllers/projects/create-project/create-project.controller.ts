@@ -16,8 +16,7 @@ import {
   ToBackendCreateProjectResponseDto
 } from '#backend/controllers/projects/create-project/create-project.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { NoteTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { notesTable } from '#backend/drizzle/postgres/schema/notes';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -31,11 +30,11 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateProjectResponsePayload } from '#common/zod/to-backend/projects/to-backend-create-project';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateProjectOutput } from '#common/zod/backend/routes/projects/create-project/create-project-response';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)
@@ -53,7 +52,7 @@ export class CreateProjectController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateProject)
+  @Post('api/ToBackendCreateProject' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateProject',
     description: 'Create a new project'
@@ -65,8 +64,8 @@ export class CreateProjectController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateProjectRequestDto
   ) {
-    let { traceId } = body.info;
-    let { name, orgId, remoteType, noteId, gitUrl } = body.payload;
+    let { traceId } = body;
+    let { name, orgId, remoteType, noteId, gitUrl } = body.input;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -124,7 +123,7 @@ export class CreateProjectController {
     let newProject = await this.projectsService.addProject({
       orgId: orgId,
       name: name,
-      traceId: body.info.traceId,
+      traceId: body.traceId,
       user: user,
       seedProjectId: undefined,
       remoteType: remoteType,
@@ -143,7 +142,7 @@ export class CreateProjectController {
       .delete(notesTable)
       .where(eq(notesTable.noteId, noteId));
 
-    let payload: ToBackendCreateProjectResponsePayload = {
+    let payload: ToBackendCreateProjectOutput = {
       project: this.projectsService.tabToApiProject({
         project: newProject,
         isAddPublicKey: true,

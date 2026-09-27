@@ -10,8 +10,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetExplorerChartTabRequestPayload } from '#common/zod/to-backend/charts/to-backend-get-explorer-chart-tab';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetExplorerChartTabInput } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -20,7 +20,7 @@ import type { ToBackendGetExplorerChartTabRequestPayload } from '#common/zod/to-
 export class GetExplorerChartTabController {
   constructor(private getExplorerChartTabService: GetExplorerChartTabService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetExplorerChartTab)
+  @Post('api/ToBackendGetExplorerChartTab' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetExplorerChartTab',
     description:
@@ -33,10 +33,9 @@ export class GetExplorerChartTabController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetExplorerChartTabRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
 
-    let { sessionId, chartId }: ToBackendGetExplorerChartTabRequestPayload =
-      body.payload;
+    let { sessionId, chartId }: ToBackendGetExplorerChartTabInput = body.input;
 
     let payload = await this.getExplorerChartTabService.getExplorerChartTab({
       user: user,

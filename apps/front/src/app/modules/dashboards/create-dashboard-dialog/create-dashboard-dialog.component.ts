@@ -26,22 +26,16 @@ import {
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Role } from '#common/zod/backend/role';
+import type { ToBackendSaveCreateDashboardInput } from '#common/zod/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-request';
+import type { ToBackendSaveCreateDashboardResponse } from '#common/zod/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-response';
+import type { ToBackendGetRolesInput } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/zod/blockml/space';
-import type {
-  ToBackendSaveCreateDashboardRequestPayload,
-  ToBackendSaveCreateDashboardResponse
-} from '#common/zod/to-backend/dashboards/to-backend-save-create-dashboard';
-import type {
-  ToBackendGetRolesRequestPayload,
-  ToBackendGetRolesResponse
-} from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -273,7 +267,7 @@ export class CreateDashboardDialogComponent implements OnInit {
 
     let { newTitle, roles } = item;
 
-    let payload: ToBackendSaveCreateDashboardRequestPayload = {
+    let payload: ToBackendSaveCreateDashboardInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -292,20 +286,20 @@ export class CreateDashboardDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveCreateDashboard,
+        route: 'api/ToBackendSaveCreateDashboard',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendSaveCreateDashboardResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            if (isUndefined(resp.payload.dashboardSpaceNodes)) {
+          if (resp.result?.type === 'Success') {
+            if (isUndefined(resp.result.value.dashboardSpaceNodes)) {
               this.spinner.hide(APP_SPINNER_NAME);
               return;
             }
 
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
-              dashboardSpaceNodes: resp.payload.dashboardSpaceNodes
+              dashboardUnitDrafts: resp.result.value.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.result.value.dashboardSpaceNodes
             });
 
             this.navigateService.navigateToDashboard({
@@ -319,7 +313,7 @@ export class CreateDashboardDialogComponent implements OnInit {
   }
 
   loadRoles() {
-    let payload: ToBackendGetRolesRequestPayload = {
+    let payload: ToBackendGetRolesInput = {
       projectId: this.nav.projectId
     };
 
@@ -327,13 +321,13 @@ export class CreateDashboardDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRoles,
+        route: 'api/ToBackendGetRoles',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.roles = resp.payload.roles.sort((a, b) =>
+          if (resp.result?.type === 'Success') {
+            this.roles = resp.result.value.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
             this.cd.detectChanges();

@@ -14,13 +14,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetModelRequest,
-  ToBackendGetModelResponse
-} from '#common/zod/to-backend/models/to-backend-get-model';
+import type { ToBackendGetModelRequest } from '#common/zod/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelResponse } from '#common/zod/backend/routes/models/get-model/get-model-response';
 
 let testId = 'backend-get-model__ok-access-roles';
 
@@ -106,12 +102,9 @@ test('1', async t => {
       });
 
       let req: ToBackendGetModelRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetModel,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -121,7 +114,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendGetModelResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetModel',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -140,8 +134,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

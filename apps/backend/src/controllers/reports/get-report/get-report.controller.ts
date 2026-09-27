@@ -16,8 +16,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { QueryInfoReportService } from '#backend/services/query-info-report.service';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-report';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetReportOutput } from '#common/zod/backend/routes/reports/get-report/get-report-response';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -49,7 +49,7 @@ export class GetReportController {
     private queryInfoReportService: QueryInfoReportService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetReport)
+  @Post('api/ToBackendGetReport' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetReport',
     description: 'Get a report'
@@ -61,7 +61,7 @@ export class GetReportController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetReportRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -71,7 +71,7 @@ export class GetReportController {
       timeRangeFractionBrick,
       timeSpec,
       timezone
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -108,7 +108,7 @@ export class GetReportController {
       envId: envId
     });
 
-    let payload: ToBackendGetReportResponsePayload =
+    let payload: ToBackendGetReportOutput =
       await this.queryInfoReportService.getReportData({
         traceId: traceId,
         user: user,

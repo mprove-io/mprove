@@ -14,15 +14,11 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendGetSessionsListInput } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
+import type { ToBackendGetSessionsListResponse } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { SessionApiX } from '#common/zod/front/session-api-x';
-import type {
-  ToBackendGetSessionsListRequestPayload,
-  ToBackendGetSessionsListResponse
-} from '#common/zod/to-backend/sessions/to-backend-get-sessions-list';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -179,7 +175,7 @@ export class ExplorerHistoryComponent implements OnInit {
     let currentSessionId =
       this.currentSession?.sessionId ?? this.sessionQuery.getValue()?.sessionId;
 
-    let payload: ToBackendGetSessionsListRequestPayload = {
+    let payload: ToBackendGetSessionsListInput = {
       projectId: projectId,
       currentSessionId: currentSessionId,
       sessionType: SessionTypeEnum.Explorer
@@ -193,13 +189,13 @@ export class ExplorerHistoryComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSessionsList,
+        route: 'api/ToBackendGetSessionsList',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let sessions = resp.payload.sessions;
+          if (resp.result?.type === 'Success') {
+            let sessions = resp.result.value.sessions;
 
             if (currentSessionId) {
               let freshCurrentSession = sessions.find(
@@ -213,7 +209,7 @@ export class ExplorerHistoryComponent implements OnInit {
             this.sessionsQuery.updatePart({
               sessions: sessions,
               isListLoaded: true,
-              hasMoreArchived: resp.payload.hasMoreArchived ?? false
+              hasMoreArchived: resp.result.value.hasMoreArchived ?? false
             });
           }
 

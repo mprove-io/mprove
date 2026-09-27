@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendDeleteRoleRequest,
-  zToBackendDeleteRoleResponse
-} from '#common/zod/to-backend/roles/to-backend-delete-role';
+import { zToBackendDeleteRoleRequest } from '#common/zod/backend/routes/roles/delete-role/delete-role-request';
+import { zToBackendDeleteRoleResponse } from '#common/zod/backend/routes/roles/delete-role/delete-role-response';
 
 export class ToBackendDeleteRoleRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendDeleteRoleRequest })

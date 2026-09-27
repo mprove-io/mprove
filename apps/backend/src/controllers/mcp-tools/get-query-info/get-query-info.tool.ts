@@ -1,6 +1,5 @@
 import { Injectable, UseFilters } from '@nestjs/common';
-import type { Context } from '@rekog/mcp-nest';
-import { Tool } from '@rekog/mcp-nest';
+import { type Context, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetQueryInfoService } from '#backend/controllers/queries/get-query-info/get-query-info.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -18,8 +17,8 @@ import {
   type McpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoOutput
-} from '#common/zod/to-backend/mcp-tools/mcp-tool-get-query-info';
-import type { ToBackendGetQueryInfoResponsePayload } from '#common/zod/to-backend/query-info/to-backend-get-query-info';
+} from '#common/zod/backend/mcp-tools/mcp-tool-get-query-info';
+import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-response';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
@@ -72,7 +71,7 @@ export class GetQueryInfoTool {
 
     let traceId = makeId();
 
-    let payload: ToBackendGetQueryInfoResponsePayload =
+    let payload: ToBackendGetQueryInfoOutput =
       await this.getQueryInfoService.getQueryInfo({
         traceId: traceId,
         user: user,

@@ -7,8 +7,7 @@ import {
   ToBackendResendUserEmailResponseDto
 } from '#backend/controllers/users/resend-user-email/resend-user-email.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
 import { UsersService } from '#backend/services/db/users.service';
@@ -17,9 +16,9 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendResendUserEmailResponsePayload } from '#common/zod/to-backend/users/to-backend-resend-user-email';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendResendUserEmailOutput } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-response';
 
 @ApiTags('Users')
 @SkipJwtCheck()
@@ -49,7 +48,7 @@ export class ResendUserEmailController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendResendUserEmail)
+  @Post('api/ToBackendResendUserEmail' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'ResendUserEmail',
     description: 'Resend the email verification message to the user'
@@ -58,7 +57,7 @@ export class ResendUserEmailController {
     type: ToBackendResendUserEmailResponseDto
   })
   async resendUserEmail(@Body() body: ToBackendResendUserEmailRequestDto) {
-    let { userId } = body.payload;
+    let { userId } = body.input;
 
     let user = await this.db.drizzle.query.usersTable
       .findFirst({
@@ -75,7 +74,7 @@ export class ResendUserEmailController {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
     if (user.isEmailVerified === true) {
-      let payload: ToBackendResendUserEmailResponsePayload = {
+      let payload: ToBackendResendUserEmailOutput = {
         isEmailVerified: true
       };
       return payload;
@@ -85,7 +84,7 @@ export class ResendUserEmailController {
         emailVerificationToken: user.emailVerificationToken
       });
 
-      let payload: ToBackendResendUserEmailResponsePayload = {
+      let payload: ToBackendResendUserEmailOutput = {
         isEmailVerified: false
       };
       return payload;

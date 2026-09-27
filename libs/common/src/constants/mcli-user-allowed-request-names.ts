@@ -1,25 +1,25 @@
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
-export const MCLI_USER_ALLOWED_REQUEST_NAMES: ToBackendRequestInfoNameEnum[] = [
-  ToBackendRequestInfoNameEnum.ToBackendGetConnectionsList, // get-connections-list
-  ToBackendRequestInfoNameEnum.ToBackendGetConnectionSample, // get-sample
-  ToBackendRequestInfoNameEnum.ToBackendGetConnectionSchemas, // get-schemas
-  ToBackendRequestInfoNameEnum.ToBackendSyncRepo, // sync
-  ToBackendRequestInfoNameEnum.ToBackendValidateFiles, // validate
-  ToBackendRequestInfoNameEnum.ToBackendGetState, // get-state
-  ToBackendRequestInfoNameEnum.ToBackendGetModel, // get-model
-  ToBackendRequestInfoNameEnum.ToBackendGetQueryInfo, // get-query-info
-  ToBackendRequestInfoNameEnum.ToBackendRun, // run
+export const MCLI_USER_ALLOWED_REQUEST_NAMES: ToBackendRoute[] = [
+  'api/ToBackendGetConnectionsList', // get-connections-list
+  'api/ToBackendGetConnectionSample', // get-sample
+  'api/ToBackendGetConnectionSchemas', // get-schemas
+  'api/ToBackendSyncRepo', // sync
+  'api/ToBackendValidateFiles', // validate
+  'api/ToBackendGetState', // get-state
+  'api/ToBackendGetModel', // get-model
+  'api/ToBackendGetQueryInfo', // get-query-info
+  'api/ToBackendRun', // run
   // git
-  ToBackendRequestInfoNameEnum.ToBackendGetBranchesList, // get-branches
-  ToBackendRequestInfoNameEnum.ToBackendCreateBranch, // create-branch
-  ToBackendRequestInfoNameEnum.ToBackendDeleteBranch, // delete-branch
-  ToBackendRequestInfoNameEnum.ToBackendMergeRepo, // merge
-  ToBackendRequestInfoNameEnum.ToBackendCommitRepo, // commit
-  ToBackendRequestInfoNameEnum.ToBackendPullRepo, // pull
-  ToBackendRequestInfoNameEnum.ToBackendPushRepo, // push
-  ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit, // revert
-  ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote, // revert
+  'api/ToBackendGetBranchesList', // get-branches
+  'api/ToBackendCreateBranch', // create-branch
+  'api/ToBackendDeleteBranch', // delete-branch
+  'api/ToBackendMergeRepo', // merge
+  'api/ToBackendCommitRepo', // commit
+  'api/ToBackendPullRepo', // pull
+  'api/ToBackendPushRepo', // push
+  'api/ToBackendRevertRepoToLastCommit', // revert
+  'api/ToBackendRevertRepoToRemote', // revert
   // other
-  ToBackendRequestInfoNameEnum.ToBackendGetSkills // get-skills
+  'api/ToBackendGetSkills' // get-skills
 ];

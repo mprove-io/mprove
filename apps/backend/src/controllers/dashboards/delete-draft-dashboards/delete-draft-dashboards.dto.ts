@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendDeleteDraftDashboardsRequest,
-  zToBackendDeleteDraftDashboardsResponse
-} from '#common/zod/to-backend/dashboards/to-backend-delete-draft-dashboards';
+import { zToBackendDeleteDraftDashboardsRequest } from '#common/zod/backend/routes/dashboards/delete-draft-dashboards/delete-draft-dashboards-request';
+import { zToBackendDeleteDraftDashboardsResponse } from '#common/zod/backend/routes/dashboards/delete-draft-dashboards/delete-draft-dashboards-response';
 
 export class ToBackendDeleteDraftDashboardsRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendDeleteDraftDashboardsRequest })

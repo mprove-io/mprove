@@ -18,8 +18,7 @@ import {
   ToBackendCreateEditorSessionResponseDto
 } from '#backend/controllers/sessions/create-editor-session/create-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   OcSessionTab,
@@ -60,11 +59,11 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateEditorSessionOutput } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-response';
 import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
-import type { ToBackendCreateEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
 
 const { forEachSeries } = pIteration;
 
@@ -94,7 +93,7 @@ export class CreateEditorSessionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateEditorSession)
+  @Post('api/ToBackendCreateEditorSession' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateEditorSession',
     description: 'Create a new editor session'
@@ -118,7 +117,7 @@ export class CreateEditorSessionController {
       firstMessage,
       messageId,
       partId
-    } = body.payload;
+    } = body.input;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -346,13 +345,13 @@ export class CreateEditorSessionController {
       project: project,
       envId: envId,
       initialBranch: initialBranch,
-      traceId: body.info.traceId
+      traceId: body.traceId
     });
     // console.log(
     //   `createSessionRepoAsync took ${(Date.now() - createSessionRepoStart) / 1000}s`
     // );
 
-    let payload: ToBackendCreateEditorSessionResponsePayload = {
+    let payload: ToBackendCreateEditorSessionOutput = {
       sessionId: session.sessionId,
       repoId: repoId,
       branchId: branchId,

@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendRunQueriesDryRequest,
-  zToBackendRunQueriesDryResponse
-} from '#common/zod/to-backend/queries/to-backend-run-queries-dry';
+import { zToBackendRunQueriesDryRequest } from '#common/zod/backend/routes/queries/run-queries-dry/run-queries-dry-request';
+import { zToBackendRunQueriesDryResponse } from '#common/zod/backend/routes/queries/run-queries-dry/run-queries-dry-response';
 
 export class ToBackendRunQueriesDryRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendRunQueriesDryRequest })

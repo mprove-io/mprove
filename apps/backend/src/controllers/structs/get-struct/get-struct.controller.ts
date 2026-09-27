@@ -18,8 +18,8 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetStructResponsePayload } from '#common/zod/to-backend/structs/to-backend-get-struct';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetStructOutput } from '#common/zod/backend/routes/structs/get-struct/get-struct-response';
 
 @ApiTags('Structs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -38,7 +38,7 @@ export class GetStructController {
     private envsService: EnvsService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetStruct)
+  @Post('api/ToBackendGetStruct' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetStruct',
     description: 'Get struct'
@@ -50,7 +50,7 @@ export class GetStructController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetStructRequestDto
   ) {
-    let { projectId, repoId, branchId, envId } = body.payload;
+    let { projectId, repoId, branchId, envId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -99,7 +99,7 @@ export class GetStructController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendGetStructResponsePayload = {
+    let payload: ToBackendGetStructOutput = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,

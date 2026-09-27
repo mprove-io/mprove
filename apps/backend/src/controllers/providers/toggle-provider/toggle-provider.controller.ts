@@ -16,8 +16,7 @@ import {
   ToBackendToggleProviderResponseDto
 } from '#backend/controllers/providers/toggle-provider/toggle-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   UserTab
@@ -28,10 +27,10 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendToggleProviderRequestPayload } from '#common/zod/to-backend/providers/toggle-provider/toggle-provider-request-payload';
-import type { ToBackendToggleProviderResponsePayload } from '#common/zod/to-backend/providers/toggle-provider/toggle-provider-response-payload';
+import type { ToBackendToggleProviderInput } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
+import type { ToBackendToggleProviderOutput } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-response';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -47,7 +46,7 @@ export class ToggleProviderController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendToggleProvider)
+  @Post('api/ToBackendToggleProvider' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'ToggleProvider',
     description: 'Enable or disable an existing provider'
@@ -57,7 +56,7 @@ export class ToggleProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendToggleProviderRequestDto
   ) {
-    let bodyPayload: ToBackendToggleProviderRequestPayload = body.payload;
+    let bodyPayload: ToBackendToggleProviderInput = body.input;
 
     let { projectId, providerId, isEnabled } = bodyPayload;
 
@@ -93,7 +92,7 @@ export class ToggleProviderController {
       isIncludePasswords: false
     });
 
-    let payload: ToBackendToggleProviderResponsePayload = {
+    let payload: ToBackendToggleProviderOutput = {
       provider: apiProvider
     };
 

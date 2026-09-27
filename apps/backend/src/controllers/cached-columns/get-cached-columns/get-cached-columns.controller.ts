@@ -7,8 +7,7 @@ import {
   ToBackendGetCachedColumnsResponseDto
 } from '#backend/controllers/cached-columns/get-cached-columns/get-cached-columns.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -19,9 +18,9 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { CachedColumn } from '#common/zod/to-backend/connections/cached-column';
-import type { ToBackendGetCachedColumnsResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-cached-columns';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { CachedColumn } from '#common/zod/backend/connections/cached-column';
+import type { ToBackendGetCachedColumnsOutput } from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-response';
 
 @ApiTags('CachedColumns')
 @UseGuards(ThrottlerUserIdGuard)
@@ -38,7 +37,7 @@ export class GetCachedColumnsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetCachedColumns)
+  @Post('api/ToBackendGetCachedColumns' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetCachedColumns',
     description: 'Get cached columns'
@@ -48,7 +47,7 @@ export class GetCachedColumnsController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetCachedColumnsRequestDto
   ) {
-    let { projectId, envId, columns } = body.payload;
+    let { projectId, envId, columns } = body.input;
 
     await this.projectsService.getProjectCheckExists({ projectId: projectId });
 
@@ -97,7 +96,7 @@ export class GetCachedColumnsController {
         );
     }
 
-    let payload: ToBackendGetCachedColumnsResponsePayload = {
+    let payload: ToBackendGetCachedColumnsOutput = {
       cachedColumns: cachedColumns
     };
 

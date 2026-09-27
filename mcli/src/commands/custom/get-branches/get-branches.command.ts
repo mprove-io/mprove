@@ -6,12 +6,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendGetBranchesListRequestPayload,
-  ToBackendGetBranchesListResponse
-} from '#common/zod/to-backend/branches/to-backend-get-branches-list';
+import type { ToBackendGetBranchesListInput } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-request';
+import type { ToBackendGetBranchesListOutput } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -76,19 +73,19 @@ export class GetBranchesCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getBranchesListReqPayload: ToBackendGetBranchesListRequestPayload = {
+    let getBranchesListReqPayload: ToBackendGetBranchesListInput = {
       projectId: this.projectId
     };
 
-    let getBranchesListResp = await mreq<ToBackendGetBranchesListResponse>({
+    let getBranchesListOutput: ToBackendGetBranchesListOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
+      route: 'api/ToBackendGetBranchesList',
       payload: getBranchesListReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let log: any = {
-      branches: getBranchesListResp.payload.branchesList
+      branches: getBranchesListOutput.branchesList
         .filter(x => x.repoId === repoId)
         .map(b => b.branchId)
     };

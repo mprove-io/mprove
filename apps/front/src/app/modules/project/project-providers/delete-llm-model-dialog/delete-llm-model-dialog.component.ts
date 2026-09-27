@@ -7,12 +7,11 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendDeleteLlmModelRequestPayload } from '#common/zod/to-backend/llm-models/delete-llm-model/delete-llm-model-request-payload';
-import type { ToBackendDeleteLlmModelResponse } from '#common/zod/to-backend/llm-models/delete-llm-model/delete-llm-model-response';
+import type { ToBackendDeleteLlmModelInput } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
+import type { ToBackendDeleteLlmModelResponse } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
 
@@ -49,7 +48,7 @@ export class DeleteLlmModelDialogComponent implements OnInit {
   delete() {
     let provider = this.ref.data.provider;
 
-    let payload: ToBackendDeleteLlmModelRequestPayload = {
+    let payload: ToBackendDeleteLlmModelInput = {
       projectId: provider.projectId,
       providerId: provider.providerId,
       modelId: this.ref.data.model.modelId
@@ -59,21 +58,22 @@ export class DeleteLlmModelDialogComponent implements OnInit {
 
     this.ref.data.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteLlmModel,
+        route: 'api/ToBackendDeleteLlmModel',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteLlmModelResponse) => {
-          if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type !== 'Success') {
             return;
           }
 
           let providers = this.providersQuery
             .getValue()
             .providers.map(x =>
-              x.providerId === resp.payload.provider.providerId
-                ? resp.payload.provider
+              x.providerId ===
+              unwrapToBackendResponse({ response: resp }).provider.providerId
+                ? unwrapToBackendResponse({ response: resp }).provider
                 : x
             );
 

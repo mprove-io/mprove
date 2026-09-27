@@ -10,13 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetFileRequest,
-  ToBackendGetFileResponse
-} from '#common/zod/to-backend/files/to-backend-get-file';
+import type { ToBackendGetFileRequest } from '#common/zod/backend/routes/files/get-file/get-file-request';
+import type { ToBackendGetFileResponse } from '#common/zod/backend/routes/files/get-file/get-file-response';
 
 let testId = 'backend-get-file__ok';
 
@@ -90,12 +86,9 @@ test('1', async t => {
       });
 
       let req: ToBackendGetFileRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetFile,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId,
@@ -105,7 +98,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendGetFileResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetFile',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -124,8 +118,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

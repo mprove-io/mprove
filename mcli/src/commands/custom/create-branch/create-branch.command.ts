@@ -6,12 +6,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendCreateBranchRequestPayload,
-  ToBackendCreateBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-create-branch';
+import type { ToBackendCreateBranchInput } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendCreateBranchOutput } from '#common/zod/backend/routes/branches/create-branch/create-branch-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -86,16 +83,16 @@ export class CreateBranchCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let createBranchReqPayload: ToBackendCreateBranchRequestPayload = {
+    let createBranchReqPayload: ToBackendCreateBranchInput = {
       projectId: this.projectId,
       repoId: repoId,
       newBranchId: this.newBranch,
       fromBranchId: this.fromBranch
     };
 
-    let createBranchResp = await mreq<ToBackendCreateBranchResponse>({
+    let createBranchOutput: ToBackendCreateBranchOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+      route: 'api/ToBackendCreateBranch',
       payload: createBranchReqPayload,
       host: this.context.config.mproveCliHost
     });

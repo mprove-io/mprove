@@ -1,5 +1,21 @@
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import bodyParser from 'body-parser';
+import { WinstonModule } from 'nest-winston';
+import { cleanupOpenApiDoc } from 'nestjs-zod';
 import 'reflect-metadata';
+import { OPEN_API_ALLOWED_PATHS } from '#common/constants/open-api-allowed-paths';
+import {
+  APP_NAME_BACKEND,
+  APP_NAME_SCHEDULER
+} from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
+import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
+import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
 import { startTelemetry } from '#node-common/functions/start-telemetry/start-telemetry';
+import { AppModule } from './app.module';
+import { getConfig } from './config/get.config';
+import { logToConsoleBackend } from './functions/log-to-console-backend';
 
 let tracerNodeSdk = startTelemetry({
   serviceName:
@@ -8,26 +24,7 @@ let tracerNodeSdk = startTelemetry({
       : 'mprove-backend'
 });
 
-//
-import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import bodyParser from 'body-parser';
-import { cleanupOpenApiDoc } from 'nestjs-zod';
-
 const { json, urlencoded } = bodyParser;
-
-import { WinstonModule } from 'nest-winston';
-import {
-  APP_NAME_BACKEND,
-  APP_NAME_SCHEDULER,
-  OPEN_API_ALLOWED_PATHS
-} from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
-import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
-import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
-import { AppModule } from './app.module';
-import { getConfig } from './config/get.config';
-import { logToConsoleBackend } from './functions/log-to-console-backend';
 
 async function bootstrap() {
   listenProcessEvents({

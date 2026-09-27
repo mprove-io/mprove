@@ -12,13 +12,9 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { interval, of, Subscription } from 'rxjs';
 import { concatMap, take, tap } from 'rxjs/operators';
 import { CodexDeviceAuthStatusEnum } from '#common/enums/codex-device-auth-status.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendPollUserCodexAuthRequestPayload,
-  ToBackendPollUserCodexAuthResponse
-} from '#common/zod/to-backend/users/to-backend-poll-user-codex-auth';
-import type { ToBackendStartUserCodexAuthResponse } from '#common/zod/to-backend/users/to-backend-start-user-codex-auth';
+import type { ToBackendPollUserCodexAuthInput } from '#common/zod/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-request';
+import type { ToBackendPollUserCodexAuthResponse } from '#common/zod/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-response';
+import type { ToBackendStartUserCodexAuthResponse } from '#common/zod/backend/routes/users/start-user-codex-auth/start-user-codex-auth-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -82,17 +78,17 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendStartUserCodexAuth,
+        route: 'api/ToBackendStartUserCodexAuth',
         payload: {},
         showSpinner: false
       })
       .pipe(
         tap((resp: ToBackendStartUserCodexAuthResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.userCode = resp.payload.userCode;
-            this.verificationUrl = resp.payload.verificationUrl;
-            this.deviceAuthId = resp.payload.deviceAuthId;
-            this.intervalSec = resp.payload.intervalSec;
+          if (resp.result?.type === 'Success') {
+            this.userCode = resp.result.value.userCode;
+            this.verificationUrl = resp.result.value.verificationUrl;
+            this.deviceAuthId = resp.result.value.deviceAuthId;
+            this.intervalSec = resp.result.value.intervalSec;
             this.spinner.hide(this.spinnerName);
             this.cd.detectChanges();
             this.startPolling();
@@ -120,29 +116,28 @@ export class SetCodexAuthDialogComponent implements OnInit, OnDestroy {
             return of(undefined);
           }
 
-          let payload: ToBackendPollUserCodexAuthRequestPayload = {
+          let payload: ToBackendPollUserCodexAuthInput = {
             deviceAuthId: this.deviceAuthId,
             userCode: this.userCode
           };
 
           return apiService.req({
-            pathInfoName:
-              ToBackendRequestInfoNameEnum.ToBackendPollUserCodexAuth,
+            route: 'api/ToBackendPollUserCodexAuth',
             payload: payload,
             showSpinner: false
           });
         }),
         tap((resp: ToBackendPollUserCodexAuthResponse) => {
-          if (!resp || resp.info?.status !== ResponseInfoStatusEnum.Ok) {
+          if (!resp || resp.result?.type !== 'Success') {
             return;
           }
 
-          let status = resp.payload.status;
+          let status = resp.result.value.status;
 
           if (status === CodexDeviceAuthStatusEnum.Authorized) {
             this.pollSub?.unsubscribe();
-            if (resp.payload.user) {
-              this.userQuery.update(resp.payload.user);
+            if (resp.result.value.user) {
+              this.userQuery.update(resp.result.value.user);
             }
             this.ref.close();
           } else if (status === CodexDeviceAuthStatusEnum.Failed) {

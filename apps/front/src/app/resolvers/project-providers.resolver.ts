@@ -7,10 +7,8 @@ import {
 } from '@angular/router';
 import type { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetProvidersRequestPayload } from '#common/zod/to-backend/providers/get-providers/get-providers-request-payload';
-import type { ToBackendGetProvidersResponse } from '#common/zod/to-backend/providers/get-providers/get-providers-response';
+import type { ToBackendGetProvidersInput } from '#common/zod/backend/routes/providers/get-providers/get-providers-request';
+import type { ToBackendGetProvidersResponse } from '#common/zod/backend/routes/providers/get-providers/get-providers-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, type NavState } from '../queries/nav.query';
@@ -54,25 +52,25 @@ export class ProjectProvidersResolver implements Resolve<Observable<boolean>> {
       projectId = x;
     });
 
-    let payload: ToBackendGetProvidersRequestPayload = {
+    let payload: ToBackendGetProvidersInput = {
       projectId: projectId
     };
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProviders,
+        route: 'api/ToBackendGetProviders',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetProvidersResponse) => {
-          if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type !== 'Success') {
             return false;
           }
 
-          this.memberQuery.update(resp.payload.userMember);
+          this.memberQuery.update(resp.result.value.userMember);
 
           this.providersQuery.update({
-            providers: resp.payload.providers
+            providers: resp.result.value.providers
           });
 
           return true;

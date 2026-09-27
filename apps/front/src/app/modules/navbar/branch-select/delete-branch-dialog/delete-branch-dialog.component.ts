@@ -20,12 +20,8 @@ import {
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendDeleteBranchRequestPayload,
-  ToBackendDeleteBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-delete-branch';
+import type { ToBackendDeleteBranchInput } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-request';
+import type { ToBackendDeleteBranchResponse } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-response';
 import { ApiService } from '#front/app/services/api.service';
 
 export interface DeleteBranchDialogData {
@@ -79,7 +75,7 @@ export class DeleteBranchDialogComponent implements OnInit {
 
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendDeleteBranchRequestPayload = {
+    let payload: ToBackendDeleteBranchInput = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId
@@ -89,12 +85,12 @@ export class DeleteBranchDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
+        route: 'api/ToBackendDeleteBranch',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendDeleteBranchResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
               this.ref.data.orgId,

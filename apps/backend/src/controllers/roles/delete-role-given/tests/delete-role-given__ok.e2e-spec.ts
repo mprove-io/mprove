@@ -10,25 +10,13 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateGivenRequest,
-  ToBackendCreateGivenResponse
-} from '#common/zod/to-backend/givens/to-backend-create-given';
-import type {
-  ToBackendCreateRoleRequest,
-  ToBackendCreateRoleResponse
-} from '#common/zod/to-backend/roles/to-backend-create-role';
-import type {
-  ToBackendCreateRoleGivenRequest,
-  ToBackendCreateRoleGivenResponse
-} from '#common/zod/to-backend/roles/to-backend-create-role-given';
-import type {
-  ToBackendDeleteRoleGivenRequest,
-  ToBackendDeleteRoleGivenResponse
-} from '#common/zod/to-backend/roles/to-backend-delete-role-given';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
+import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
+import type { ToBackendCreateRoleGivenRequest } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
+import type { ToBackendDeleteRoleGivenRequest } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-request';
+import type { ToBackendDeleteRoleGivenResponse } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-response';
 
 let testId = 'backend-delete-role-given__ok';
 
@@ -103,12 +91,9 @@ test('1', async t => {
       });
 
       let createGivenReq: ToBackendCreateGivenRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateGiven,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           givenId: givenId,
           type: GivenTypeEnum.String,
@@ -117,7 +102,8 @@ test('1', async t => {
         }
       };
 
-      await sendToBackend<ToBackendCreateGivenResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendCreateGiven',
         checkIsOk: true,
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -125,18 +111,16 @@ test('1', async t => {
       });
 
       let createRoleReq: ToBackendCreateRoleRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateRole,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           roleId: 'role_one'
         }
       };
 
-      await sendToBackend<ToBackendCreateRoleResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendCreateRole',
         checkIsOk: true,
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -144,12 +128,9 @@ test('1', async t => {
       });
 
       let createRoleGivenReq: ToBackendCreateRoleGivenRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateRoleGiven,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           roleId: roleId,
           givenId: givenId,
@@ -157,7 +138,8 @@ test('1', async t => {
         }
       };
 
-      await sendToBackend<ToBackendCreateRoleGivenResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendCreateRoleGiven',
         checkIsOk: true,
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -165,19 +147,17 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteRoleGivenRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteRoleGiven,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           roleId: roleId,
           givenId: givenId
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteRoleGivenResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteRoleGiven',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -196,11 +176,16 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-    assert.equal(resp.payload.roles.length, 1);
-    assert.equal(resp.payload.roles[0].roleId, roleId);
-    assert.deepEqual(resp.payload.roles[0].gvs, []);
+    assert.equal(resp.result.type, 'Success');
+    assert.equal(unwrapToBackendResponse({ response: resp }).roles.length, 1);
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).roles[0].roleId,
+      roleId
+    );
+    assert.deepEqual(
+      unwrapToBackendResponse({ response: resp }).roles[0].gvs,
+      []
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

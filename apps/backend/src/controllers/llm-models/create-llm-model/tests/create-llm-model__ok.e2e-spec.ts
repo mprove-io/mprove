@@ -19,12 +19,11 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
-import type { ToBackendCreateLlmModelRequest } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-request';
-import type { ToBackendCreateLlmModelResponse } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-response';
+import type { ToBackendCreateLlmModelRequest } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-request';
+import type { ToBackendCreateLlmModelResponse } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-response';
 
 type ResponseModelPart = {
   modelId: string;
@@ -157,12 +156,9 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateLlmModelRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateLlmModel,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           providerId: providerId,
           modelId: 'model-2',
@@ -199,19 +195,17 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendCreateLlmModelResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCreateLlmModel',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
       });
 
       let codexReq: ToBackendCreateLlmModelRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateLlmModel,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           providerId: CODEX_PROVIDER_ID,
           modelId: 'gpt-5.5',
@@ -241,7 +235,8 @@ test('1', async t => {
         }
       };
 
-      codexResp = await sendToBackend<ToBackendCreateLlmModelResponse>({
+      codexResp = await sendToBackend({
+        route: 'api/ToBackendCreateLlmModel',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: codexReq
@@ -291,19 +286,15 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.result.type, 'Success');
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-
-    assert.equal(codexResp.info.error, undefined);
-
-    assert.equal(codexResp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(codexResp.result.type, 'Success');
 
     let {
       serverTs,
       models: responseModels,
       ...providerWithoutServerTsAndModels
-    } = resp.payload.provider;
+    } = unwrapToBackendResponse({ response: resp }).provider;
 
     let responseModelParts: ResponseModelPart[] = responseModels.map(model => ({
       modelId: model.modelId,
@@ -423,7 +414,8 @@ test('1', async t => {
     ];
 
     assert.deepEqual(
-      codexResp.payload.provider.models[0].variants,
+      unwrapToBackendResponse({ response: codexResp }).provider.models[0]
+        .variants,
       expectedCodexVariants
     );
 

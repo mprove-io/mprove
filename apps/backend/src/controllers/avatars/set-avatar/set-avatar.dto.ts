@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendSetAvatarRequest,
-  zToBackendSetAvatarResponse
-} from '#common/zod/to-backend/avatars/to-backend-set-avatar';
+import { zToBackendSetAvatarRequest } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-request';
+import { zToBackendSetAvatarResponse } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-response';
 
 export class ToBackendSetAvatarRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendSetAvatarRequest })

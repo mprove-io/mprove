@@ -10,7 +10,7 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)
@@ -19,7 +19,7 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 export class ValidateFilesController {
   constructor(private validateFilesService: ValidateFilesService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendValidateFiles)
+  @Post('api/ToBackendValidateFiles' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'ValidateFiles',
     description: 'Validate repository files and rebuild state'
@@ -31,8 +31,8 @@ export class ValidateFilesController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendValidateFilesRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, envId, branchId } = body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, envId, branchId } = body.input;
 
     let payload = await this.validateFilesService.validateFiles({
       traceId: traceId,

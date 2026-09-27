@@ -17,8 +17,7 @@ import {
   ToBackendEditDraftDashboardResponseDto
 } from '#backend/controllers/dashboards/edit-draft-dashboard/edit-draft-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -47,13 +46,13 @@ import {
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendEditDraftDashboardOutput } from '#common/zod/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-response';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
-import type { ToBackendEditDraftDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-edit-draft-dashboard';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)
@@ -80,7 +79,7 @@ export class EditDraftDashboardController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendEditDraftDashboard)
+  @Post('api/ToBackendEditDraftDashboard' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'EditDraftDashboard',
     description: 'Edit tiles and fields of an existing draft dashboard'
@@ -92,7 +91,7 @@ export class EditDraftDashboardController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditDraftDashboardRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -102,7 +101,7 @@ export class EditDraftDashboardController {
       newDashboardFields,
       tiles,
       timezone
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -338,7 +337,7 @@ export class EditDraftDashboardController {
         user: user
       });
 
-    let payload: ToBackendEditDraftDashboardResponsePayload = {
+    let payload: ToBackendEditDraftDashboardOutput = {
       dashboard: newDashboardX
     };
 

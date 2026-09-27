@@ -7,13 +7,9 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendSetOrgOwnerRequest,
-  ToBackendSetOrgOwnerResponse
-} from '#common/zod/to-backend/orgs/to-backend-set-org-owner';
+import type { ToBackendSetOrgOwnerRequest } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-request';
+import type { ToBackendSetOrgOwnerResponse } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-response';
 
 let testId = 'backend-set-org-owner__ok';
 
@@ -67,18 +63,16 @@ test('1', async t => {
       });
 
       let req: ToBackendSetOrgOwnerRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           orgId: orgId,
           ownerEmail: newOwnerEmail
         }
       };
 
-      resp = await sendToBackend<ToBackendSetOrgOwnerResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendSetOrgOwner',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -97,8 +91,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

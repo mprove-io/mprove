@@ -16,8 +16,7 @@ import {
   ToBackendEditGivenResponseDto
 } from '#backend/controllers/givens/edit-given/edit-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -25,8 +24,8 @@ import { GivensService } from '#backend/services/db/givens.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendEditGivenResponsePayload } from '#common/zod/to-backend/givens/to-backend-edit-given';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendEditGivenOutput } from '#common/zod/backend/routes/givens/edit-given/edit-given-response';
 
 @ApiTags('Givens')
 @UseGuards(ThrottlerUserIdGuard)
@@ -42,7 +41,7 @@ export class EditGivenController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendEditGiven)
+  @Post('api/ToBackendEditGiven' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'EditGiven',
     description: 'Edit a project given'
@@ -54,7 +53,7 @@ export class EditGivenController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditGivenRequestDto
   ) {
-    let { projectId, givenId, values } = body.payload;
+    let { projectId, givenId, values } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -96,7 +95,7 @@ export class EditGivenController {
       projectId: projectId
     });
 
-    let payload: ToBackendEditGivenResponsePayload = {
+    let payload: ToBackendEditGivenOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       givens: apiGivens
     };

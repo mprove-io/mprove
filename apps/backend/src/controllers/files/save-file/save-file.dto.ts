@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendSaveFileRequest,
-  zToBackendSaveFileResponse
-} from '#common/zod/to-backend/files/to-backend-save-file';
+import { zToBackendSaveFileRequest } from '#common/zod/backend/routes/files/save-file/save-file-request';
+import { zToBackendSaveFileResponse } from '#common/zod/backend/routes/files/save-file/save-file-response';
 
 export class ToBackendSaveFileRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendSaveFileRequest })

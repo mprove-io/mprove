@@ -10,8 +10,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { GivensService } from '#backend/services/db/givens.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetGivensResponsePayload } from '#common/zod/to-backend/givens/to-backend-get-givens';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetGivensOutput } from '#common/zod/backend/routes/givens/get-givens/get-givens-response';
 
 @ApiTags('Givens')
 @UseGuards(ThrottlerUserIdGuard)
@@ -23,7 +23,7 @@ export class GetGivensController {
     private givensService: GivensService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetGivens)
+  @Post('api/ToBackendGetGivens' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetGivens',
     description: 'Get project givens'
@@ -35,7 +35,7 @@ export class GetGivensController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetGivensRequestDto
   ) {
-    let { projectId } = body.payload;
+    let { projectId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -50,7 +50,7 @@ export class GetGivensController {
       projectId: projectId
     });
 
-    let payload: ToBackendGetGivensResponsePayload = {
+    let payload: ToBackendGetGivensOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       givens: apiGivens
     };

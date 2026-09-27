@@ -10,13 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendDeleteConnectionRequest,
-  ToBackendDeleteConnectionResponse
-} from '#common/zod/to-backend/connections/to-backend-delete-connection';
+import type { ToBackendDeleteConnectionRequest } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-request';
+import type { ToBackendDeleteConnectionResponse } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-response';
 
 let testId = 'backend-delete-connection__ok';
 
@@ -99,19 +95,17 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteConnectionRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           envId: PROJECT_ENV_PROD,
           connectionId: connectionId
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteConnectionResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteConnection',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -130,8 +124,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

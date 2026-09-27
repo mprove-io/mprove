@@ -7,8 +7,7 @@ import {
   ToBackendViewCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/view-cached-column/view-cached-column.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
@@ -22,9 +21,9 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendViewCachedColumnResponsePayload } from '#common/zod/to-backend/connections/to-backend-view-cached-column';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendViewCachedColumnOutput } from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-response';
 
 @ApiTags('CachedColumns')
 @UseGuards(ThrottlerUserIdGuard)
@@ -41,7 +40,7 @@ export class ViewCachedColumnController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendViewCachedColumn)
+  @Post('api/ToBackendViewCachedColumn' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'ViewCachedColumn',
     description: 'View cached column'
@@ -59,7 +58,7 @@ export class ViewCachedColumnController {
       tableName,
       columnName,
       offset
-    } = body.payload;
+    } = body.input;
 
     if (!Number.isInteger(offset) || offset < 0) {
       throw new ServerError({
@@ -126,7 +125,7 @@ export class ViewCachedColumnController {
         });
       });
 
-    let payload: ToBackendViewCachedColumnResponsePayload = {
+    let payload: ToBackendViewCachedColumnOutput = {
       cachedColumn: cachedColumn,
       columnNames: ['Value', 'Count'],
       rows: rows.map(row => [row.columnValue ?? '', row.count.toString()]),

@@ -26,7 +26,7 @@ import type { QueryInfoQuery } from '#common/zod/backend/query-info/query-info-q
 import type { QueryInfoReport } from '#common/zod/backend/query-info/query-info-report';
 import type { QueryInfoRow } from '#common/zod/backend/query-info/query-info-row';
 import type { QueryInfoTile } from '#common/zod/backend/query-info/query-info-tile';
-import type { ToBackendGetQueryInfoResponsePayload } from '#common/zod/to-backend/query-info/to-backend-get-query-info';
+import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-response';
 
 @Injectable()
 export class GetQueryInfoService {
@@ -62,7 +62,7 @@ export class GetQueryInfoService {
     getSql: boolean;
     getData: boolean;
     isFetch: boolean;
-  }): Promise<ToBackendGetQueryInfoResponsePayload> {
+  }): Promise<ToBackendGetQueryInfoOutput> {
     let {
       traceId,
       user,
@@ -165,7 +165,7 @@ export class GetQueryInfoService {
 
     let orgId = project.orgId;
 
-    let payload: ToBackendGetQueryInfoResponsePayload = {
+    let payload: ToBackendGetQueryInfoOutput = {
       chart: undefined,
       dashboard: undefined,
       report: undefined

@@ -14,8 +14,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { QueryInfoDashboardService } from '#backend/services/query-info-dashboard.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-response';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)
@@ -31,7 +31,7 @@ export class GetDashboardController {
     private queryInfoDashboardService: QueryInfoDashboardService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetDashboard)
+  @Post('api/ToBackendGetDashboard' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetDashboard',
     description: 'Get a dashboard'
@@ -43,9 +43,9 @@ export class GetDashboardController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetDashboardRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let { projectId, repoId, branchId, envId, dashboardId, timezone } =
-      body.payload;
+      body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -82,7 +82,7 @@ export class GetDashboardController {
       envId: envId
     });
 
-    let payload: ToBackendGetDashboardResponsePayload =
+    let payload: ToBackendGetDashboardOutput =
       await this.queryInfoDashboardService.getDashboardData({
         traceId: traceId,
         user: user,

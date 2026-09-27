@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendDeleteOrgRequest,
-  zToBackendDeleteOrgResponse
-} from '#common/zod/to-backend/orgs/to-backend-delete-org';
+import { zToBackendDeleteOrgRequest } from '#common/zod/backend/routes/orgs/delete-org/delete-org-request';
+import { zToBackendDeleteOrgResponse } from '#common/zod/backend/routes/orgs/delete-org/delete-org-response';
 
 export class ToBackendDeleteOrgRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendDeleteOrgRequest })

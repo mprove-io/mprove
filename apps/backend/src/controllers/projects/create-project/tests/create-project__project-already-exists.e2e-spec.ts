@@ -10,12 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateProjectRequest,
-  ToBackendCreateProjectResponse
-} from '#common/zod/to-backend/projects/to-backend-create-project';
+import type { ToBackendCreateProjectRequest } from '#common/zod/backend/routes/projects/create-project/create-project-request';
+import type { ToBackendCreateProjectResponse } from '#common/zod/backend/routes/projects/create-project/create-project-response';
 
 let testId = 'backend-create-project__project-already-exists';
 
@@ -72,19 +69,17 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateProjectRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateProject,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           orgId: orgId,
           name: projectName,
           remoteType: ProjectRemoteTypeEnum.Managed
         }
       };
 
-      resp = await sendToBackend<ToBackendCreateProjectResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCreateProject',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -103,8 +98,9 @@ test('1', async t => {
       }
     }
 
+    assert.ok(resp.result.type === 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_PROJECT_ALREADY_EXISTS
     );
 

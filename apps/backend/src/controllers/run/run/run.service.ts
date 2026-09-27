@@ -19,12 +19,12 @@ import { ErEnum } from '#common/enums/er.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { sleep } from '#common/functions/sleep/sleep';
+import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-response';
 import type { RunChart } from '#common/zod/backend/run/run-chart';
 import type { RunDashboard } from '#common/zod/backend/run/run-dashboard';
 import type { RunQuery } from '#common/zod/backend/run/run-query';
 import type { RunReport } from '#common/zod/backend/run/run-report';
 import type { McliQueriesStats } from '#common/zod/mcli/mcli-queries-stats';
-import type { ToBackendRunResponsePayload } from '#common/zod/to-backend/run/to-backend-run';
 
 @Injectable()
 export class RunService {
@@ -63,7 +63,7 @@ export class RunService {
     reportIds?: string;
     noReports: boolean;
     getReports: boolean;
-  }): Promise<ToBackendRunResponsePayload> {
+  }): Promise<ToBackendRunOutput> {
     let {
       traceId,
       user,
@@ -375,7 +375,7 @@ export class RunService {
       ? this.runReportService.filterErrors({ reports: reportParts })
       : [];
 
-    let payload: ToBackendRunResponsePayload = {
+    let payload: ToBackendRunOutput = {
       charts: getCharts === true ? chartParts : [],
       dashboards: getDashboards === true ? dashboardParts : [],
       reports: getReports === true ? reportParts : [],

@@ -16,8 +16,7 @@ import {
   ToBackendSetProjectInfoResponseDto
 } from '#backend/controllers/projects/set-project-info/set-project-info.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -25,9 +24,9 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendSetProjectInfoResponsePayload } from '#common/zod/to-backend/projects/to-backend-set-project-info';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSetProjectInfoOutput } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-response';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)
@@ -43,7 +42,7 @@ export class SetProjectInfoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo)
+  @Post('api/ToBackendSetProjectInfo' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SetProjectInfo',
     description: "Update a project's info"
@@ -55,7 +54,7 @@ export class SetProjectInfoController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetProjectInfoRequestDto
   ) {
-    let { projectId, name } = body.payload;
+    let { projectId, name } = body.input;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -84,7 +83,7 @@ export class SetProjectInfoController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendSetProjectInfoResponsePayload = {
+    let payload: ToBackendSetProjectInfoOutput = {
       project: this.projectsService.tabToApiProject({
         project: project,
         isAddPublicKey: userMember.isAdmin,

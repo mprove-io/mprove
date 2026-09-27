@@ -13,12 +13,8 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendSeedRecordsRequest,
-  ToBackendSeedRecordsResponse
-} from '#common/zod/to-backend/test-routes/to-backend-seed-records';
+import type { ToBackendSeedRecordsRequest } from '#common/zod/backend/routes/test-routes/seed-records/seed-records-request';
 
 let testId = 'search-dwh-schema-field-names__ok';
 
@@ -136,12 +132,9 @@ test('1', async t => {
       });
 
       let seedLeafsReq: ToBackendSeedRecordsRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           modelFieldLeafs: [
             {
               structId: bridge.structId,
@@ -157,7 +150,8 @@ test('1', async t => {
         }
       };
 
-      await sendToBackend<ToBackendSeedRecordsResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendSeedRecords',
         httpServer: prep.httpServer,
         req: seedLeafsReq,
         checkIsOk: true

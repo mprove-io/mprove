@@ -10,12 +10,8 @@ import {
   PATH_PROJECT
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetRepoRequestPayload,
-  ToBackendGetRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-get-repo';
+import type { ToBackendGetRepoInput } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
+import type { ToBackendGetRepoResponse } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -54,7 +50,7 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
     let branchId = route.params[PARAMETER_BRANCH_ID];
     let envId = route.params[PARAMETER_ENV_ID];
 
-    let payload: ToBackendGetRepoRequestPayload = {
+    let payload: ToBackendGetRepoInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: branchId,
@@ -64,28 +60,28 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        route: 'api/ToBackendGetRepo',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetRepoResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
 
-            this.uiQuery.updatePart({ ...resp.payload.user.ui });
+            this.uiQuery.updatePart({ ...resp.result.value.user.ui });
 
-            this.structQuery.update(resp.payload.struct);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
               branchId: branchId,
               envId: envId,
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
-            this.repoQuery.update(resp.payload.repo);
+            this.repoQuery.update(resp.result.value.repo);
 
             return true;
           } else if (
-            resp.info?.status === ResponseInfoStatusEnum.Error &&
-            resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.result?.type === 'Failure' &&
+            resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
               PATH_ORG,

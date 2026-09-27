@@ -17,8 +17,7 @@ import {
   ToBackendDeleteEnvResponseDto
 } from '#backend/controllers/envs/delete-env/delete-env.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
@@ -34,8 +33,8 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendDeleteEnvResponsePayload } from '#common/zod/to-backend/envs/to-backend-delete-env';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDeleteEnvOutput } from '#common/zod/backend/routes/envs/delete-env/delete-env-response';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -52,7 +51,7 @@ export class DeleteEnvController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteEnv)
+  @Post('api/ToBackendDeleteEnv' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteEnv',
     description: 'Delete an environment'
@@ -64,7 +63,7 @@ export class DeleteEnvController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteEnvRequestDto
   ) {
-    let { projectId, envId } = body.payload;
+    let { projectId, envId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -127,7 +126,7 @@ export class DeleteEnvController {
       projectId: projectId
     });
 
-    let payload: ToBackendDeleteEnvResponsePayload = {
+    let payload: ToBackendDeleteEnvOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       envs: apiEnvs
     };

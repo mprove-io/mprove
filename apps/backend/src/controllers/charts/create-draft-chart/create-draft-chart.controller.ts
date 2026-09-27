@@ -17,8 +17,7 @@ import {
   ToBackendCreateDraftChartResponseDto
 } from '#backend/controllers/charts/create-draft-chart/create-draft-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ChartTab,
   MconfigTab,
@@ -50,11 +49,11 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateDraftChartOutput } from '#common/zod/backend/routes/charts/create-draft-chart/create-draft-chart-response';
 import type { Tile } from '#common/zod/blockml/tile';
-import type { ToBackendCreateDraftChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-create-draft-chart';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -81,7 +80,7 @@ export class CreateDraftChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateDraftChart)
+  @Post('api/ToBackendCreateDraftChart' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateDraftChart',
     description: 'Create a draft chart'
@@ -93,7 +92,7 @@ export class CreateDraftChartController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateDraftChartRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       mconfig: apiMconfig,
       isKeepQueryId,
@@ -104,7 +103,7 @@ export class CreateDraftChartController {
       cellMetricsStartDateMs,
       cellMetricsEndDateMs,
       queryOperation
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -311,7 +310,7 @@ export class CreateDraftChartController {
       spaces: struct.spaces
     });
 
-    let payload: ToBackendCreateDraftChartResponsePayload = {
+    let payload: ToBackendCreateDraftChartOutput = {
       chart: this.chartsService.tabToApi({
         chart: newChart,
         mconfigs: [

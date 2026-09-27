@@ -3,12 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { BlockmlService } from '#backend/services/blockml.service';
@@ -22,8 +18,10 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendValidateFilesOutput } from '#common/zod/backend/routes/files/validate-files/validate-files-response';
 import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-files/get-catalog-files-response';
-import type { ToBackendValidateFilesResponsePayload } from '#common/zod/to-backend/files/to-backend-validate-files';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class ValidateFilesService {
@@ -50,7 +48,7 @@ export class ValidateFilesService {
     repoId: string;
     branchId: string;
     envId: string;
-  }): Promise<ToBackendValidateFilesResponsePayload> {
+  }): Promise<ToBackendValidateFilesOutput> {
     let { traceId, userId, projectId, repoId, branchId, envId } = item;
 
     let repoType = await this.sessionsService.checkRepoId({
@@ -162,7 +160,7 @@ export class ValidateFilesService {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendValidateFilesResponsePayload = {
+    let payload: ToBackendValidateFilesOutput = {
       repo: diskGetCatalogFilesOutput.repo,
       needValidate: currentBridge.needValidate,
       struct: this.structsService.tabToApi({

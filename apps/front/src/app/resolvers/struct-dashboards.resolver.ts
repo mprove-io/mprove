@@ -9,12 +9,8 @@ import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetDashboardsRequestPayload,
-  ToBackendGetDashboardsResponse
-} from '#common/zod/to-backend/dashboards/to-backend-get-dashboards';
+import type { ToBackendGetDashboardsInput } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-request';
+import type { ToBackendGetDashboardsResponse } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardUnitsQuery } from '../queries/dashboard-units.query';
 import { MemberQuery } from '../queries/member.query';
@@ -66,7 +62,7 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let payload: ToBackendGetDashboardsRequestPayload = {
+    let payload: ToBackendGetDashboardsInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -75,29 +71,29 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        route: 'api/ToBackendGetDashboards',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetDashboardsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
 
-            this.structQuery.update(resp.payload.struct);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
-            this.modelsQuery.update({ models: resp.payload.models });
+            this.modelsQuery.update({ models: resp.result.value.models });
 
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
-              dashboardSpaceNodes: resp.payload.dashboardSpaceNodes
+              dashboardUnitDrafts: resp.result.value.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.result.value.dashboardSpaceNodes
             });
 
             return true;
           } else if (
-            resp.info?.status === ResponseInfoStatusEnum.Error &&
-            resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.result?.type === 'Failure' &&
+            resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
               PATH_ORG,

@@ -11,8 +11,8 @@ import { GivensService } from '#backend/services/db/givens.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetRolesResponsePayload } from '#common/zod/to-backend/roles/to-backend-get-roles';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetRolesOutput } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 
 @ApiTags('Roles')
 @UseGuards(ThrottlerUserIdGuard)
@@ -25,7 +25,7 @@ export class GetRolesController {
     private givensService: GivensService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetRoles)
+  @Post('api/ToBackendGetRoles' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetRoles',
     description: 'Get project roles'
@@ -37,7 +37,7 @@ export class GetRolesController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetRolesRequestDto
   ) {
-    let { projectId } = body.payload;
+    let { projectId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -56,7 +56,7 @@ export class GetRolesController {
       projectId: projectId
     });
 
-    let payload: ToBackendGetRolesResponsePayload = {
+    let payload: ToBackendGetRolesOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       roles: apiRoles,
       givens: apiGivens

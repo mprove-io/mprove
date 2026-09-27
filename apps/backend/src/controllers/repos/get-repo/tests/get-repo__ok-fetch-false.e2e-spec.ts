@@ -9,13 +9,9 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetRepoRequest,
-  ToBackendGetRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-get-repo';
+import type { ToBackendGetRepoRequest } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
+import type { ToBackendGetRepoResponse } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
 
 let testId = 'backend-get-repo__ok-fetch-false';
 
@@ -89,12 +85,9 @@ test('1', async t => {
       });
 
       let req: ToBackendGetRepoRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId,
@@ -103,7 +96,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendGetRepoResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetRepo',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -122,8 +116,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

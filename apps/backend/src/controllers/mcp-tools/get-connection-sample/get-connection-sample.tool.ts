@@ -1,6 +1,5 @@
 import { Injectable, UseFilters } from '@nestjs/common';
-import type { Context } from '@rekog/mcp-nest';
-import { Tool } from '@rekog/mcp-nest';
+import { type Context, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetConnectionSampleService } from '#backend/controllers/connections/get-connection-sample/get-connection-sample.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -13,12 +12,12 @@ import {
   MCP_TOOL_GET_SAMPLE_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import type { ToBackendGetConnectionSampleResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
 import {
   type McpToolGetSampleInput,
   zMcpToolGetSampleInput,
   zMcpToolGetSampleOutput
-} from '#common/zod/to-backend/mcp-tools/mcp-tool-get-sample';
+} from '#common/zod/backend/mcp-tools/mcp-tool-get-sample';
+import type { ToBackendGetConnectionSampleOutput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)
@@ -52,7 +51,7 @@ export class GetConnectionSampleTool {
       });
     }
 
-    let payload: ToBackendGetConnectionSampleResponsePayload =
+    let payload: ToBackendGetConnectionSampleOutput =
       await this.getConnectionSampleService.getConnectionSample({
         userId: user.userId,
         projectId: item.projectId,

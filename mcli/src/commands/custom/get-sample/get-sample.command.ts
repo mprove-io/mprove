@@ -3,12 +3,9 @@ import * as t from 'typanion';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendGetConnectionSampleRequestPayload,
-  ToBackendGetConnectionSampleResponse
-} from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
+import type { ToBackendGetConnectionSampleInput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-request';
+import type { ToBackendGetConnectionSampleOutput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -89,7 +86,7 @@ export class GetSampleCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let getSampleReqPayload: ToBackendGetConnectionSampleRequestPayload = {
+    let getSampleReqPayload: ToBackendGetConnectionSampleInput = {
       projectId: this.projectId,
       envId: this.env,
       connectionId: this.connectionId,
@@ -99,15 +96,15 @@ export class GetSampleCommand extends CustomCommand {
       offset: this.offset
     };
 
-    let getSampleResp = await mreq<ToBackendGetConnectionSampleResponse>({
+    let getSampleOutput: ToBackendGetConnectionSampleOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionSample,
+      route: 'api/ToBackendGetConnectionSample',
       payload: getSampleReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     logToConsoleMcli({
-      log: getSampleResp.payload,
+      log: getSampleOutput,
       logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json

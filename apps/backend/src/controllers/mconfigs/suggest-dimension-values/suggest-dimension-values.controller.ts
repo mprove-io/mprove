@@ -18,8 +18,7 @@ import {
 } from '#backend/controllers/mconfigs/suggest-dimension-values/suggest-dimension-values.dto';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { QueryTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { cachedPartsTable } from '#backend/drizzle/postgres/schema/cached-parts';
@@ -46,13 +45,13 @@ import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSuggestDimensionValuesOutput } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
-import type { ToBackendSuggestDimensionValuesResponsePayload } from '#common/zod/to-backend/mconfigs/to-backend-suggest-dimension-values';
 
 type CachedMatchedValueRow = {
   value: string | null;
@@ -91,7 +90,7 @@ export class SuggestDimensionValuesController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSuggestDimensionValues)
+  @Post('api/ToBackendSuggestDimensionValues' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SuggestDimensionValues',
     description: 'Build a query to suggest values for a dimension'
@@ -103,7 +102,7 @@ export class SuggestDimensionValuesController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSuggestDimensionValuesRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -119,7 +118,7 @@ export class SuggestDimensionValuesController {
       term,
       cellMetricsStartDateMs,
       cellMetricsEndDateMs
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -198,7 +197,7 @@ export class SuggestDimensionValuesController {
     });
 
     if (model.type === ModelTypeEnum.Malloy) {
-      // let temporaryPayload: ToBackendSuggestDimensionValuesResponsePayload = {
+      // let temporaryPayload: ToBackendSuggestDimensionValuesOutput = {
       //   matchedValues: [],
       //   errorMessage: 'Temporary Malloy suggest error for UI testing'
       // };
@@ -228,7 +227,7 @@ LIMIT 1;
       let cachedColumnRows = rawCachedColumnsData.rows || [];
 
       if (cachedColumnRows.length === 0) {
-        let payload: ToBackendSuggestDimensionValuesResponsePayload = {
+        let payload: ToBackendSuggestDimensionValuesOutput = {
           matchedValues: [],
           matchedValuesMessage: 'no cached values'
         };
@@ -275,7 +274,7 @@ LIMIT 500;
 
       let rows = rawData.rows || [];
 
-      let payload: ToBackendSuggestDimensionValuesResponsePayload = {
+      let payload: ToBackendSuggestDimensionValuesOutput = {
         matchedValues: rows.map(row => ({
           value: row.value ?? '',
           count: Number(row.count)
@@ -286,7 +285,7 @@ LIMIT 500;
     }
 
     if (model.type !== ModelTypeEnum.Store) {
-      let payload: ToBackendSuggestDimensionValuesResponsePayload = {
+      let payload: ToBackendSuggestDimensionValuesOutput = {
         matchedValues: []
       };
 
@@ -400,7 +399,7 @@ LIMIT 500;
     }
 
     if (newQuery.status === QueryStatusEnum.Error) {
-      let payload: ToBackendSuggestDimensionValuesResponsePayload = {
+      let payload: ToBackendSuggestDimensionValuesOutput = {
         matchedValues: [],
         errorMessage: newQuery.lastErrorMessage ?? 'Suggest Values Error'
       };
@@ -415,7 +414,7 @@ LIMIT 500;
         }))
       : [];
 
-    let payload: ToBackendSuggestDimensionValuesResponsePayload = {
+    let payload: ToBackendSuggestDimensionValuesOutput = {
       matchedValues: matchedValues
     };
 

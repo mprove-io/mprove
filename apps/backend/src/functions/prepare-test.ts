@@ -2,9 +2,6 @@ import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import bodyParser from 'body-parser';
-
-const { json, urlencoded } = bodyParser;
-
 import { AppModule, mcpModuleOptions } from '#backend/app.module';
 import { BackendConfig } from '#backend/config/backend-config';
 import { getConfig } from '#backend/config/get.config';
@@ -13,25 +10,24 @@ import { EmailService } from '#backend/services/email.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabToEntService } from '#backend/services/tab-to-ent.service';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type {
-  ToBackendDeleteRecordsRequest,
-  ToBackendDeleteRecordsRequestPayload,
-  ToBackendDeleteRecordsResponse
-} from '#common/zod/to-backend/test-routes/to-backend-delete-records';
+  ToBackendDeleteRecordsInput,
+  ToBackendDeleteRecordsRequest
+} from '#common/zod/backend/routes/test-routes/delete-records/delete-records-request';
 import type {
-  ToBackendSeedRecordsRequest,
-  ToBackendSeedRecordsRequestPayload,
-  ToBackendSeedRecordsResponse
-} from '#common/zod/to-backend/test-routes/to-backend-seed-records';
+  ToBackendSeedRecordsInput,
+  ToBackendSeedRecordsRequest
+} from '#common/zod/backend/routes/test-routes/seed-records/seed-records-request';
 import type {
-  ToBackendLoginUserRequest,
-  ToBackendLoginUserRequestPayload,
-  ToBackendLoginUserResponse
-} from '#common/zod/to-backend/users/to-backend-login-user';
+  ToBackendLoginUserInput,
+  ToBackendLoginUserRequest
+} from '#common/zod/backend/routes/users/login-user/login-user-request';
+import type { ToBackendLoginUserResponse } from '#common/zod/backend/routes/users/login-user/login-user-response';
 import { sendToBackend } from './send-to-backend';
+
+const { json, urlencoded } = bodyParser;
 
 export async function prepareTest(item: {
   overrideConfigOptions?: Partial<BackendConfig>;
@@ -100,9 +96,9 @@ export async function prepareTest(item: {
 export async function prepareSeed(item: {
   httpServer: any;
   traceId: string;
-  seedRecordsPayload?: ToBackendSeedRecordsRequestPayload;
-  deleteRecordsPayload?: ToBackendDeleteRecordsRequestPayload;
-  loginUserPayload?: ToBackendLoginUserRequestPayload;
+  seedRecordsPayload?: ToBackendSeedRecordsInput;
+  deleteRecordsPayload?: ToBackendDeleteRecordsInput;
+  loginUserPayload?: ToBackendLoginUserInput;
 }) {
   let {
     httpServer,
@@ -114,14 +110,12 @@ export async function prepareSeed(item: {
 
   if (isDefined(deleteRecordsPayload)) {
     let deleteRecordsRequest: ToBackendDeleteRecordsRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: deleteRecordsPayload
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: deleteRecordsPayload
     };
-    await sendToBackend<ToBackendDeleteRecordsResponse>({
+    await sendToBackend({
+      route: 'api/ToBackendDeleteRecords',
       checkIsOk: true,
       httpServer: httpServer,
       req: deleteRecordsRequest
@@ -132,15 +126,13 @@ export async function prepareSeed(item: {
 
   if (isDefined(seedRecordsPayload)) {
     let seedRecordsRequest: ToBackendSeedRecordsRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: seedRecordsPayload
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: seedRecordsPayload
     };
 
-    await sendToBackend<ToBackendSeedRecordsResponse>({
+    await sendToBackend({
+      route: 'api/ToBackendSeedRecords',
       checkIsOk: true,
       httpServer: httpServer,
       req: seedRecordsRequest
@@ -153,15 +145,13 @@ export async function prepareSeed(item: {
 
   if (isDefined(loginUserPayload)) {
     let loginUserRequest: ToBackendLoginUserRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: loginUserPayload
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: loginUserPayload
     };
 
-    loginUserResp = (await sendToBackend<ToBackendLoginUserResponse>({
+    loginUserResp = (await sendToBackend({
+      route: 'api/ToBackendLoginUser',
       checkIsOk: true,
       httpServer: httpServer,
       req: loginUserRequest
@@ -172,16 +162,19 @@ export async function prepareSeed(item: {
   }
 
   return {
-    loginToken: loginUserResp?.payload?.token
+    loginToken:
+      loginUserResp?.result.type === 'Success'
+        ? loginUserResp.result.value.token
+        : undefined
   };
 }
 
 export async function prepareTestAndSeed(item: {
   traceId: string;
-  seedRecordsPayload?: ToBackendSeedRecordsRequestPayload;
-  deleteRecordsPayload?: ToBackendDeleteRecordsRequestPayload;
+  seedRecordsPayload?: ToBackendSeedRecordsInput;
+  deleteRecordsPayload?: ToBackendDeleteRecordsInput;
   overrideConfigOptions?: Partial<BackendConfig>;
-  loginUserPayload?: ToBackendLoginUserRequestPayload;
+  loginUserPayload?: ToBackendLoginUserInput;
 }) {
   let {
     traceId,

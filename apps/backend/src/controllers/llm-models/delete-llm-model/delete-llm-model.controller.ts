@@ -16,8 +16,7 @@ import {
   ToBackendDeleteLlmModelResponseDto
 } from '#backend/controllers/llm-models/delete-llm-model/delete-llm-model.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   UserTab
@@ -28,10 +27,10 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendDeleteLlmModelRequestPayload } from '#common/zod/to-backend/llm-models/delete-llm-model/delete-llm-model-request-payload';
-import type { ToBackendDeleteLlmModelResponsePayload } from '#common/zod/to-backend/llm-models/delete-llm-model/delete-llm-model-response-payload';
+import type { ToBackendDeleteLlmModelInput } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
+import type { ToBackendDeleteLlmModelOutput } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -47,7 +46,7 @@ export class DeleteLlmModelController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteLlmModel)
+  @Post('api/ToBackendDeleteLlmModel' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteLlmModel',
     description: 'Delete a model from an existing provider'
@@ -56,8 +55,8 @@ export class DeleteLlmModelController {
   async deleteLlmModel(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteLlmModelRequestDto
-  ): Promise<ToBackendDeleteLlmModelResponsePayload> {
-    let bodyPayload: ToBackendDeleteLlmModelRequestPayload = body.payload;
+  ): Promise<ToBackendDeleteLlmModelOutput> {
+    let bodyPayload: ToBackendDeleteLlmModelInput = body.input;
 
     let { projectId, providerId, modelId } = bodyPayload;
 
@@ -98,7 +97,7 @@ export class DeleteLlmModelController {
       isIncludePasswords: false
     });
 
-    let payload: ToBackendDeleteLlmModelResponsePayload = {
+    let payload: ToBackendDeleteLlmModelOutput = {
       provider: apiProvider
     };
 

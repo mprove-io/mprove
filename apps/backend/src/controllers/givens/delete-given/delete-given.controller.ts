@@ -17,8 +17,7 @@ import {
   ToBackendDeleteGivenResponseDto
 } from '#backend/controllers/givens/delete-given/delete-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { givensTable } from '#backend/drizzle/postgres/schema/givens';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -28,8 +27,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendDeleteGivenResponsePayload } from '#common/zod/to-backend/givens/to-backend-delete-given';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDeleteGivenOutput } from '#common/zod/backend/routes/givens/delete-given/delete-given-response';
 
 @ApiTags('Givens')
 @UseGuards(ThrottlerUserIdGuard)
@@ -46,7 +45,7 @@ export class DeleteGivenController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteGiven)
+  @Post('api/ToBackendDeleteGiven' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteGiven',
     description: 'Delete a project given'
@@ -58,7 +57,7 @@ export class DeleteGivenController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteGivenRequestDto
   ) {
-    let { projectId, givenId } = body.payload;
+    let { projectId, givenId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -112,7 +111,7 @@ export class DeleteGivenController {
       projectId: projectId
     });
 
-    let payload: ToBackendDeleteGivenResponsePayload = {
+    let payload: ToBackendDeleteGivenOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       givens: apiGivens
     };

@@ -6,8 +6,7 @@ import {
   ToBackendGetSuggestFieldsResponseDto
 } from '#backend/controllers/suggest-fields/get-suggest-fields/get-suggest-fields.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
@@ -26,10 +25,10 @@ import { TabService } from '#backend/services/tab.service';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetSuggestFieldsOutput } from '#common/zod/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-response';
 import type { SuggestField } from '#common/zod/backend/suggest-field';
-import type { ToBackendGetSuggestFieldsResponsePayload } from '#common/zod/to-backend/suggest-fields/to-backend-get-suggest-fields';
 
 @ApiTags('SuggestFields')
 @UseGuards(ThrottlerUserIdGuard)
@@ -50,7 +49,7 @@ export class GetSuggestFieldsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields)
+  @Post('api/ToBackendGetSuggestFields' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetSuggestFields',
     description: 'Get suggested dimension fields for a dashboard or report'
@@ -63,7 +62,7 @@ export class GetSuggestFieldsController {
     @Body() body: ToBackendGetSuggestFieldsRequestDto
   ) {
     let { projectId, repoId, branchId, envId, parentId, parentType } =
-      body.payload;
+      body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -205,7 +204,7 @@ export class GetSuggestFieldsController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendGetSuggestFieldsResponsePayload = {
+    let payload: ToBackendGetSuggestFieldsOutput = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,

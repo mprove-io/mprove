@@ -1,7 +1,7 @@
-import type { ToBackendGetConnectionSchemasResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connection-schemas';
+import type { ToBackendGetConnectionSchemasOutput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-response';
 
 export function processGetConnectionSchemasPayload(item: {
-  payload: ToBackendGetConnectionSchemasResponsePayload;
+  payload: ToBackendGetConnectionSchemasOutput;
 }) {
   let { payload } = item;
 

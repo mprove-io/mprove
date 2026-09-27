@@ -10,8 +10,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { GivensService } from '#backend/services/db/givens.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetMemberGivensResponsePayload } from '#common/zod/to-backend/members/to-backend-get-member-givens';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetMemberGivensOutput } from '#common/zod/backend/routes/members/get-member-givens/get-member-givens-response';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)
@@ -23,7 +23,7 @@ export class GetMemberGivensController {
     private givensService: GivensService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetMemberGivens)
+  @Post('api/ToBackendGetMemberGivens' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetMemberGivens',
     description: 'Get effective given values available to a project member'
@@ -35,7 +35,7 @@ export class GetMemberGivensController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetMemberGivensRequestDto
   ) {
-    let { projectId, memberId } = body.payload;
+    let { projectId, memberId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -56,7 +56,7 @@ export class GetMemberGivensController {
       roles: member.roles
     });
 
-    let payload: ToBackendGetMemberGivensResponsePayload = {
+    let payload: ToBackendGetMemberGivensOutput = {
       memberGivens: memberGivens
     };
 

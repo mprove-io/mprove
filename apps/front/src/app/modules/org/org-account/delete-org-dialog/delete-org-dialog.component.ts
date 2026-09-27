@@ -14,12 +14,8 @@ import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_DELETED_ORG_NAME
 } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendDeleteOrgRequestPayload,
-  ToBackendDeleteOrgResponse
-} from '#common/zod/to-backend/orgs/to-backend-delete-org';
+import type { ToBackendDeleteOrgInput } from '#common/zod/backend/routes/orgs/delete-org/delete-org-request';
+import type { ToBackendDeleteOrgResponse } from '#common/zod/backend/routes/orgs/delete-org/delete-org-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -62,7 +58,7 @@ export class DeleteOrgDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendDeleteOrgRequestPayload = {
+    let payload: ToBackendDeleteOrgInput = {
       orgId: this.ref.data.orgId
     };
 
@@ -70,12 +66,12 @@ export class DeleteOrgDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteOrg,
+        route: 'api/ToBackendDeleteOrg',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendDeleteOrgResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             localStorage.setItem(
               LOCAL_STORAGE_DELETED_ORG_NAME,
               this.ref.data.orgName

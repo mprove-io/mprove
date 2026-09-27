@@ -15,24 +15,12 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateEditorSessionRequest,
-  ToBackendCreateEditorSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
-import type {
-  ToBackendDeleteSessionRequest,
-  ToBackendDeleteSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-delete-session';
-import type {
-  ToBackendGetSessionRequest,
-  ToBackendGetSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-get-session';
-import type {
-  ToBackendSendMessageToEditorSessionRequest,
-  ToBackendSendMessageToEditorSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-send-message-to-editor-session';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendCreateEditorSessionRequest } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-request';
+import type { ToBackendDeleteSessionRequest } from '#common/zod/backend/routes/sessions/delete-session/delete-session-request';
+import type { ToBackendGetSessionRequest } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
+import type { ToBackendSendMessageToEditorSessionRequest } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
 
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
@@ -131,12 +119,9 @@ test('1', async t => {
 
     // Create session
     let createSessionReq: ToBackendCreateEditorSessionRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendCreateEditorSession,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
         providerId: OPENAI_PROVIDER_ID,
@@ -150,14 +135,15 @@ test('1', async t => {
       }
     };
 
-    let createResp = await sendToBackend<ToBackendCreateEditorSessionResponse>({
+    let createResp = await sendToBackend({
+      route: 'api/ToBackendCreateEditorSession',
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: createSessionReq,
       checkIsOk: true
     });
 
-    let sessionId = createResp.payload.sessionId;
+    let sessionId = unwrapToBackendResponse({ response: createResp }).sessionId;
     console.log(`[test] session created: ${sessionId}`);
 
     await new Promise<void>(resolve => {
@@ -189,12 +175,9 @@ test('1', async t => {
     console.log('[test] SSE connected, sending message...');
 
     let sendMessageReq: ToBackendSendMessageToEditorSessionRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSendMessageToEditorSession,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: {
         sessionId: sessionId,
         interactionType: InteractionTypeEnum.Message,
         message: 'what is 10 + 20?',
@@ -205,7 +188,8 @@ test('1', async t => {
       }
     };
 
-    await sendToBackend<ToBackendSendMessageToEditorSessionResponse>({
+    await sendToBackend({
+      route: 'api/ToBackendSendMessageToEditorSession',
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: sendMessageReq,
@@ -232,43 +216,39 @@ test('1', async t => {
 
     // Fetch session with messages and parts (simulates page reload)
     let getSessionReq: ToBackendGetSessionRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetSession,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: {
         sessionId: sessionId,
         isFetchFromOpencode: true
       }
     };
 
-    let getResp = await sendToBackend<ToBackendGetSessionResponse>({
+    let getResp = await sendToBackend({
+      route: 'api/ToBackendGetSession',
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: getSessionReq,
       checkIsOk: true
     });
 
-    messages = getResp.payload.messages;
-    parts = getResp.payload.parts;
+    messages = unwrapToBackendResponse({ response: getResp }).messages;
+    parts = unwrapToBackendResponse({ response: getResp }).parts;
 
     console.log(
       `[test] GetSession: messages=${messages?.length}, parts=${parts?.length}`
     );
 
     let deleteSessionReq: ToBackendDeleteSessionRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendDeleteSession,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: {
         sessionId: sessionId
       }
     };
 
-    await sendToBackend<ToBackendDeleteSessionResponse>({
+    await sendToBackend({
+      route: 'api/ToBackendDeleteSession',
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: deleteSessionReq,

@@ -8,14 +8,10 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendDeleteFolderRequestPayload,
-  ToBackendDeleteFolderResponse
-} from '#common/zod/to-backend/folders/to-backend-delete-folder';
+import type { ToBackendDeleteFolderInput } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-request';
+import type { ToBackendDeleteFolderResponse } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-response';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -89,7 +85,7 @@ export class DeleteFolderDialogComponent implements OnInit {
       }
     }
 
-    let payload: ToBackendDeleteFolderRequestPayload = {
+    let payload: ToBackendDeleteFolderInput = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -101,17 +97,17 @@ export class DeleteFolderDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
+        route: 'api/ToBackendDeleteFolder',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteFolderResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             if (isRemoveSecondFile === true) {

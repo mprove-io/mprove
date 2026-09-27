@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendRevertRepoToLastCommitRequest,
-  zToBackendRevertRepoToLastCommitResponse
-} from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
+import { zToBackendRevertRepoToLastCommitRequest } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
+import { zToBackendRevertRepoToLastCommitResponse } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
 
 export class ToBackendRevertRepoToLastCommitRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendRevertRepoToLastCommitRequest })

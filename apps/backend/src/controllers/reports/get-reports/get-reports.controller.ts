@@ -6,8 +6,7 @@ import {
   ToBackendGetReportsResponseDto
 } from '#backend/controllers/reports/get-reports/get-reports.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
@@ -23,9 +22,9 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetReportsResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-reports';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetReportsOutput } from '#common/zod/backend/routes/reports/get-reports/get-reports-response';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -45,7 +44,7 @@ export class GetReportsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetReports)
+  @Post('api/ToBackendGetReports' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetReports',
     description: 'List reports'
@@ -57,7 +56,7 @@ export class GetReportsController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetReportsRequestDto
   ) {
-    let { projectId, repoId, branchId, envId } = body.payload;
+    let { projectId, repoId, branchId, envId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -133,7 +132,7 @@ export class GetReportsController {
       spaces: struct.spaces
     });
 
-    let payload: ToBackendGetReportsResponsePayload = {
+    let payload: ToBackendGetReportsOutput = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,

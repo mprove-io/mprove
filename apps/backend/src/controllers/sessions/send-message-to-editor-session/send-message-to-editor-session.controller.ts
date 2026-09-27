@@ -17,8 +17,7 @@ import {
   ToBackendSendMessageToEditorSessionResponseDto
 } from '#backend/controllers/sessions/send-message-to-editor-session/send-message-to-editor-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   SessionTab,
@@ -51,9 +50,9 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendSendMessageToEditorSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-send-message-to-editor-session';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSendMessageToEditorSessionOutput } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-response';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -76,7 +75,7 @@ export class SendMessageToEditorSessionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSendMessageToEditorSession)
+  @Post('api/ToBackendSendMessageToEditorSession' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SendMessageToEditorSession',
     description: 'Send a message or interaction to an editor session'
@@ -102,7 +101,7 @@ export class SendMessageToEditorSessionController {
       answers,
       messageId,
       partId
-    } = body.payload;
+    } = body.input;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId
@@ -450,7 +449,7 @@ export class SendMessageToEditorSessionController {
       ocSession: ocSession
     });
 
-    let payload: ToBackendSendMessageToEditorSessionResponsePayload = {
+    let payload: ToBackendSendMessageToEditorSessionOutput = {
       session: sessionApi
     };
 

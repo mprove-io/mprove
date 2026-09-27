@@ -28,16 +28,10 @@ import {
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendCreateProjectRequestPayload,
-  ToBackendCreateProjectResponse
-} from '#common/zod/to-backend/projects/to-backend-create-project';
-import type {
-  ToBackendGenerateProjectRemoteKeyRequestPayload,
-  ToBackendGenerateProjectRemoteKeyResponse
-} from '#common/zod/to-backend/projects/to-backend-generate-project-remote-key';
+import type { ToBackendCreateProjectInput } from '#common/zod/backend/routes/projects/create-project/create-project-request';
+import type { ToBackendCreateProjectResponse } from '#common/zod/backend/routes/projects/create-project/create-project-response';
+import type { ToBackendGenerateProjectRemoteKeyInput } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-request';
+import type { ToBackendGenerateProjectRemoteKeyResponse } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ApiService } from '#front/app/services/api.service';
 import { ValidationService } from '#front/app/services/validation.service';
@@ -104,7 +98,7 @@ export class CreateProjectDialogComponent implements OnInit {
       ]
     });
 
-    let payload: ToBackendGenerateProjectRemoteKeyRequestPayload = {
+    let payload: ToBackendGenerateProjectRemoteKeyInput = {
       orgId: this.ref.data.orgId
     };
 
@@ -112,15 +106,14 @@ export class CreateProjectDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendGenerateProjectRemoteKey,
+        route: 'api/ToBackendGenerateProjectRemoteKey',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGenerateProjectRemoteKeyResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.noteId = resp.payload.noteId;
-            this.publicKey = resp.payload.publicKey;
+          if (resp.result?.type === 'Success') {
+            this.noteId = resp.result.value.noteId;
+            this.publicKey = resp.result.value.publicKey;
             this.maskedPublicKey =
               this.publicKey.substring(0, 40) +
               '•'.repeat(this.publicKey.length - 40);
@@ -156,7 +149,7 @@ export class CreateProjectDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateProjectRequestPayload = {
+    let payload: ToBackendCreateProjectInput = {
       orgId: this.ref.data.orgId,
       name: this.createProjectForm.value.projectName,
       remoteType: this.projectRemoteRepoType,
@@ -168,21 +161,21 @@ export class CreateProjectDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateProject,
+        route: 'api/ToBackendCreateProject',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendCreateProjectResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
-              resp.payload.project.orgId,
+              resp.result.value.project.orgId,
               PATH_PROJECT,
-              resp.payload.project.projectId,
+              resp.result.value.project.projectId,
               PATH_REPO,
               PROD_REPO_ID,
               PATH_BRANCH,
-              resp.payload.project.defaultBranch,
+              resp.result.value.project.defaultBranch,
               PATH_ENV,
               PROJECT_ENV_PROD,
               PATH_BUILDER

@@ -16,8 +16,7 @@ import {
   ToBackendSetProjectSandboxProviderResponseDto
 } from '#backend/controllers/projects/set-project-sandbox-provider/set-project-sandbox-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -25,9 +24,9 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendSetProjectSandboxProviderResponsePayload } from '#common/zod/to-backend/projects/to-backend-set-project-sandbox-provider';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSetProjectSandboxProviderOutput } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-response';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)
@@ -43,7 +42,7 @@ export class SetProjectSandboxProviderController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSetProjectSandboxProvider)
+  @Post('api/ToBackendSetProjectSandboxProvider' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SetProjectSandboxProvider',
     description: 'Update the sandbox provider API key on a project'
@@ -55,7 +54,7 @@ export class SetProjectSandboxProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetProjectSandboxProviderRequestDto
   ) {
-    let { projectId, e2bApiKey } = body.payload;
+    let { projectId, e2bApiKey } = body.input;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -84,7 +83,7 @@ export class SetProjectSandboxProviderController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendSetProjectSandboxProviderResponsePayload = {
+    let payload: ToBackendSetProjectSandboxProviderOutput = {
       project: this.projectsService.tabToApiProject({
         project: project,
         isAddPublicKey: userMember.isAdmin,

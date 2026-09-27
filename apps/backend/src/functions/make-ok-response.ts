@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import type { MyResponse } from '#common/zod/to/my-response';
+import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendResponse } from '#common/zod/backend/response/to-backend-response';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 
 export function makeOkResponse(item: {
@@ -29,21 +29,19 @@ export function makeOkResponse(item: {
     useLoggerOnlyForErrorLevel
   } = item;
 
-  let response: MyResponse = {
-    info: {
-      path: path,
-      method: method,
-      mproveVersion: mproveVersion,
-      duration: duration,
-      traceId: body.info?.traceId,
-      status: ResponseInfoStatusEnum.Ok
-    },
-    payload: payload
+  let response: ToBackendResponse = {
+    method: method,
+    mproveVersion: mproveVersion,
+    duration: duration,
+    traceId: body?.traceId ?? makeId(),
+    result: { type: 'Success', value: payload }
   };
 
   if (logResponseOk === true) {
     let log = {
-      response: Object.assign({}, response, { payload: undefined })
+      response: Object.assign({}, response, {
+        result: { type: response.result.type }
+      })
     };
     logToConsole({
       log: log,

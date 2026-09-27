@@ -13,13 +13,9 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendCreateEnvVarRequestPayload,
-  ToBackendCreateEnvVarResponse
-} from '#common/zod/to-backend/envs/to-backend-create-env-var';
+import type { ToBackendCreateEnvVarInput } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-request';
+import type { ToBackendCreateEnvVarResponse } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -83,7 +79,7 @@ export class AddEvDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateEnvVarRequestPayload = {
+    let payload: ToBackendCreateEnvVarInput = {
       projectId: this.dataItem.projectId,
       envId: this.dataItem.envId,
       evId: this.addEvForm.value.evId,
@@ -94,15 +90,17 @@ export class AddEvDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateEnvVar,
+        route: 'api/ToBackendCreateEnvVar',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendCreateEnvVarResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.environmentsQuery.update({ environments: resp.payload.envs });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.environmentsQuery.update({
+              environments: resp.result.value.envs
+            });
           }
         }),
         take(1)

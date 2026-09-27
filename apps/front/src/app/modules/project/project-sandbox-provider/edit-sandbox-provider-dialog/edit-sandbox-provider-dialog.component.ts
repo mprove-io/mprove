@@ -15,12 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendSetProjectSandboxProviderRequestPayload,
-  ToBackendSetProjectSandboxProviderResponse
-} from '#common/zod/to-backend/projects/to-backend-set-project-sandbox-provider';
+import type { ToBackendSetProjectSandboxProviderInput } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-request';
+import type { ToBackendSetProjectSandboxProviderResponse } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -67,21 +63,20 @@ export class EditSandboxProviderDialogComponent implements OnInit {
     }
 
     this.ref.close();
-    let payload: ToBackendSetProjectSandboxProviderRequestPayload = {
+    let payload: ToBackendSetProjectSandboxProviderInput = {
       projectId: this.ref.data.projectId,
       e2bApiKey: value
     };
     this.ref.data.apiService
       .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendSetProjectSandboxProvider,
+        route: 'api/ToBackendSetProjectSandboxProvider',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendSetProjectSandboxProviderResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.projectQuery.update(resp.payload.project);
+          if (resp.result?.type === 'Success') {
+            this.projectQuery.update(resp.result.value.project);
           }
         }),
         take(1)

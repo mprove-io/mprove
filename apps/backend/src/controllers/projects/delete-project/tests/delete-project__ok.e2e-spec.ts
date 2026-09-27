@@ -9,13 +9,9 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendDeleteProjectRequest,
-  ToBackendDeleteProjectResponse
-} from '#common/zod/to-backend/projects/to-backend-delete-project';
+import type { ToBackendDeleteProjectRequest } from '#common/zod/backend/routes/projects/delete-project/delete-project-request';
+import type { ToBackendDeleteProjectResponse } from '#common/zod/backend/routes/projects/delete-project/delete-project-response';
 
 let testId = 'backend-delete-project__ok';
 
@@ -87,17 +83,15 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteProjectRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteProject,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteProjectResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteProject',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -116,8 +110,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

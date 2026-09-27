@@ -15,12 +15,8 @@ import {
   PATH_PROJECT
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetModelRequestPayload,
-  ToBackendGetModelResponse
-} from '#common/zod/to-backend/models/to-backend-get-model';
+import type { ToBackendGetModelInput } from '#common/zod/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelResponse } from '#common/zod/backend/routes/models/get-model/get-model-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { ModelQuery } from '../queries/model.query';
@@ -92,7 +88,7 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    let payload: ToBackendGetModelRequestPayload = {
+    let payload: ToBackendGetModelInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -103,23 +99,23 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        route: 'api/ToBackendGetModel',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetModelResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
 
-            this.structQuery.update(resp.payload.struct);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
-            this.modelQuery.update(resp.payload.model);
+            this.modelQuery.update(resp.result.value.model);
 
             if (
-              resp.payload.model.hasAccess === true ||
+              resp.result.value.model.hasAccess === true ||
               isChartRoute === true
             ) {
               return true;
@@ -129,8 +125,8 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
               return false;
             }
           } else if (
-            resp.info?.status === ResponseInfoStatusEnum.Error &&
-            resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.result?.type === 'Failure' &&
+            resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
               PATH_ORG,

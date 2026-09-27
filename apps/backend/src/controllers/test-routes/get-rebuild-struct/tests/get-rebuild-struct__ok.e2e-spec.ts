@@ -9,16 +9,12 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { BaseProject } from '#common/zod/backend/base-project';
+import type { ToBackendGetRebuildStructRequest } from '#common/zod/backend/routes/test-routes/get-rebuild-struct/get-rebuild-struct-request';
+import type { ToBackendGetRebuildStructResponse } from '#common/zod/backend/routes/test-routes/get-rebuild-struct/get-rebuild-struct-response';
 import type { ToDiskSeedProjectRequest } from '#common/zod/disk/routes/seed/seed-project/seed-project-request';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
-import type {
-  ToBackendGetRebuildStructRequest,
-  ToBackendGetRebuildStructResponse
-} from '#common/zod/to-backend/test-routes/to-backend-get-rebuild-struct';
 
 let testId = 'get-rebuild-struct__ok';
 
@@ -136,12 +132,9 @@ test('1', async t => {
       // to backend
 
       let getRebuildStructReq: ToBackendGetRebuildStructRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           orgId: orgId,
           projectId: projectId,
           repoId: devRepoId,
@@ -154,7 +147,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendGetRebuildStructResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetRebuildStruct',
         httpServer: prep.httpServer,
         req: getRebuildStructReq
       });
@@ -172,8 +166,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

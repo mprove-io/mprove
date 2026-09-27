@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendCheckSignUpRequest,
-  zToBackendCheckSignUpResponse
-} from '#common/zod/to-backend/check/to-backend-check-sign-up';
+import { zToBackendCheckSignUpRequest } from '#common/zod/backend/routes/check/check-sign-up/check-sign-up-request';
+import { zToBackendCheckSignUpResponse } from '#common/zod/backend/routes/check/check-sign-up/check-sign-up-response';
 
 export class ToBackendCheckSignUpRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendCheckSignUpRequest })

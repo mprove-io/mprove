@@ -6,12 +6,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendGetStateRequestPayload,
-  ToBackendGetStateResponse
-} from '#common/zod/to-backend/state/to-backend-get-state';
+import type { ToBackendGetStateInput } from '#common/zod/backend/routes/state/get-state/get-state-request';
+import type { ToBackendGetStateOutput } from '#common/zod/backend/routes/state/get-state/get-state-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -118,7 +115,7 @@ export class GetStateCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getStateReqPayload: ToBackendGetStateRequestPayload = {
+    let getStateReqPayload: ToBackendGetStateInput = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
@@ -134,15 +131,15 @@ export class GetStateCommand extends CustomCommand {
       getReports: this.getReports
     };
 
-    let getStateResp = await mreq<ToBackendGetStateResponse>({
+    let getStateOutput: ToBackendGetStateOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetState,
+      route: 'api/ToBackendGetState',
       payload: getStateReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     logToConsoleMcli({
-      log: getStateResp.payload,
+      log: getStateOutput,
       logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json

@@ -6,9 +6,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetUserProfileResponse } from '#common/zod/to-backend/users/to-backend-get-user-profile';
+import type { ToBackendGetUserProfileResponse } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '../../services/api.service';
 
@@ -25,13 +23,13 @@ export class ProfileResolver implements Resolve<Observable<boolean>> {
   ): Observable<boolean> {
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
+        route: 'api/ToBackendGetUserProfile',
         payload: {}
       })
       .pipe(
         map((resp: ToBackendGetUserProfileResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let user = resp.payload.user;
+          if (resp.result?.type === 'Success') {
+            let user = resp.result.value.user;
             this.userQuery.update(user);
             return true;
           } else {

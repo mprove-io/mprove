@@ -6,8 +6,7 @@ import {
   ToBackendGetEnvsListResponseDto
 } from '#backend/controllers/envs/get-envs-list/get-envs-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -16,8 +15,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetEnvsListResponsePayload } from '#common/zod/to-backend/envs/to-backend-get-envs-list';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetEnvsListOutput } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-response';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -31,7 +30,7 @@ export class GetEnvsListController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetEnvsList)
+  @Post('api/ToBackendGetEnvsList' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetEnvsList',
     description: 'Get a list of project environments'
@@ -43,7 +42,7 @@ export class GetEnvsListController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetEnvsListRequestDto
   ) {
-    let { projectId, isFilter } = body.payload;
+    let { projectId, isFilter } = body.input;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -71,7 +70,7 @@ export class GetEnvsListController {
       a.envId > b.envId ? 1 : b.envId > a.envId ? -1 : 0
     );
 
-    let payload: ToBackendGetEnvsListResponsePayload = {
+    let payload: ToBackendGetEnvsListOutput = {
       envsList: sortedEnvs.map(x =>
         this.envsService.wrapToApiEnvsItem({ env: x })
       )

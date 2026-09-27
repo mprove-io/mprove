@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSaveFileRequestDto,
   ToBackendSaveFileResponseDto
 } from '#backend/controllers/files/save-file/save-file.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -39,10 +35,12 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSaveFileOutput } from '#common/zod/backend/routes/files/save-file/save-file-response';
 import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-response';
-import type { ToBackendSaveFileResponsePayload } from '#common/zod/to-backend/files/to-backend-save-file';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)
@@ -65,7 +63,7 @@ export class SaveFileController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSaveFile)
+  @Post('api/ToBackendSaveFile' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SaveFile',
     description: 'Save file changes'
@@ -77,9 +75,9 @@ export class SaveFileController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSaveFileRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let { projectId, repoId, branchId, envId, fileNodeId, content } =
-      body.payload;
+      body.input;
 
     await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -117,7 +115,7 @@ export class SaveFileController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'saveFile',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -190,7 +188,7 @@ export class SaveFileController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendSaveFileResponsePayload = {
+    let payload: ToBackendSaveFileOutput = {
       repo: diskSaveFileOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,

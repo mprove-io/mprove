@@ -6,14 +6,11 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type {
-  ToBackendPullRepoRequestPayload,
-  ToBackendPullRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-pull-repo';
+import type { ToBackendPullRepoInput } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-request';
+import type { ToBackendPullRepoOutput } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -96,36 +93,36 @@ export class PullCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let pullRepoReqPayload: ToBackendPullRepoRequestPayload = {
+    let pullRepoReqPayload: ToBackendPullRepoInput = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
       envId: this.env
     };
 
-    let pullRepoResp = await mreq<ToBackendPullRepoResponse>({
+    let pullRepoOutput: ToBackendPullRepoOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPullRepo,
+      route: 'api/ToBackendPullRepo',
       payload: pullRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
-      orgId: pullRepoResp.payload.repo.orgId,
+      orgId: pullRepoOutput.repo.orgId,
       projectId: this.projectId,
-      repoId: pullRepoResp.payload.repo.repoId,
+      repoId: pullRepoOutput.repo.repoId,
       branch: this.branch,
       env: this.env
     });
 
     let log: any = {
       message: `Pulled changes from Remote`,
-      validationErrorsTotal: pullRepoResp.payload.struct.errors.length
+      validationErrorsTotal: pullRepoOutput.struct.errors.length
     };
 
     if (this.getRepo === true) {
-      let repo = pullRepoResp.payload.repo;
+      let repo = pullRepoOutput.repo;
 
       delete repo.nodes;
       delete repo.changesToCommit;
@@ -136,7 +133,7 @@ export class PullCommand extends CustomCommand {
 
     if (this.getErrors === true) {
       log.validationErrors = mapBmlErrorsToMproveValidationErrors({
-        errors: pullRepoResp.payload.struct.errors
+        errors: pullRepoOutput.struct.errors
       });
     }
 

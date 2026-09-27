@@ -8,13 +8,10 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGenerateUserApiKeyRequest,
-  ToBackendGenerateUserApiKeyResponse
-} from '#common/zod/to-backend/users/to-backend-generate-user-api-key';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
+import type { ToBackendGenerateUserApiKeyResponse } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
 
 let testId = 'backend-generate-user-api-key__ok';
 
@@ -49,15 +46,13 @@ test('1', async t => {
       });
 
       let req: ToBackendGenerateUserApiKeyRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {}
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {}
       };
 
-      resp = await sendToBackend<ToBackendGenerateUserApiKeyResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGenerateUserApiKey',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -76,11 +71,14 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-    t.truthy(resp.payload.apiKey);
-    t.truthy(resp.payload.apiKeyPrefix);
-    t.true(resp.payload.apiKey.startsWith(`${ApiKeyTypeEnum.PK}-`));
+    assert.equal(resp.result.type, 'Success');
+    t.truthy(unwrapToBackendResponse({ response: resp }).apiKey);
+    t.truthy(unwrapToBackendResponse({ response: resp }).apiKeyPrefix);
+    t.true(
+      unwrapToBackendResponse({ response: resp }).apiKey.startsWith(
+        `${ApiKeyTypeEnum.PK}-`
+      )
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

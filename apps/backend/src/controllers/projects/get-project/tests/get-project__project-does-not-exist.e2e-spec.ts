@@ -8,12 +8,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetProjectRequest,
-  ToBackendGetProjectResponse
-} from '#common/zod/to-backend/projects/to-backend-get-project';
+import type { ToBackendGetProjectRequest } from '#common/zod/backend/routes/projects/get-project/get-project-request';
+import type { ToBackendGetProjectResponse } from '#common/zod/backend/routes/projects/get-project/get-project-response';
 
 let testId = 'backend-get-project__project-does-not-exist';
 
@@ -64,17 +61,15 @@ test('1', async t => {
       });
 
       let req: ToBackendGetProjectRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetProject,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId
         }
       };
 
-      resp = await sendToBackend<ToBackendGetProjectResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetProject',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -93,8 +88,9 @@ test('1', async t => {
       }
     }
 
+    assert.ok(resp.result.type === 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_PROJECT_DOES_NOT_EXIST
     );
 

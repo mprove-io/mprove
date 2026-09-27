@@ -26,22 +26,16 @@ import {
 } from '#common/constants/top-front';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { Role } from '#common/zod/backend/role';
+import type { ToBackendSaveModifyChartInput } from '#common/zod/backend/routes/charts/save-modify-chart/save-modify-chart-request';
+import type { ToBackendSaveModifyChartResponse } from '#common/zod/backend/routes/charts/save-modify-chart/save-modify-chart-response';
+import type { ToBackendGetRolesInput } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/zod/blockml/space';
-import type {
-  ToBackendSaveModifyChartRequestPayload,
-  ToBackendSaveModifyChartResponse
-} from '#common/zod/to-backend/charts/to-backend-save-modify-chart';
-import type {
-  ToBackendGetRolesRequestPayload,
-  ToBackendGetRolesResponse
-} from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ChartQuery } from '#front/app/queries/chart.query';
@@ -235,7 +229,7 @@ export class EditChartInfoDialogComponent implements OnInit {
 
       let uiState = this.uiQuery.getValue();
 
-      let payload: ToBackendSaveModifyChartRequestPayload = {
+      let payload: ToBackendSaveModifyChartInput = {
         projectId: this.ref.data.projectId,
         repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
@@ -255,19 +249,19 @@ export class EditChartInfoDialogComponent implements OnInit {
 
       apiService
         .req({
-          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart,
+          route: 'api/ToBackendSaveModifyChart',
           payload: payload,
           showSpinner: true
         })
         .pipe(
           tap(async (resp: ToBackendSaveModifyChartResponse) => {
-            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              let newChart = resp.payload.chart;
+            if (resp.result?.type === 'Success') {
+              let newChart = resp.result.value.chart;
 
               if (isDefined(newChart)) {
                 this.chartsQuery.update({
-                  chartUnitDrafts: resp.payload.chartUnitDrafts,
-                  chartSpaceNodes: resp.payload.chartSpaceNodes
+                  chartUnitDrafts: resp.result.value.chartUnitDrafts,
+                  chartSpaceNodes: resp.result.value.chartSpaceNodes
                 });
 
                 let currentChart = this.chartQuery.getValue();
@@ -285,7 +279,7 @@ export class EditChartInfoDialogComponent implements OnInit {
   }
 
   loadRoles() {
-    let payload: ToBackendGetRolesRequestPayload = {
+    let payload: ToBackendGetRolesInput = {
       projectId: this.ref.data.projectId
     };
 
@@ -293,13 +287,13 @@ export class EditChartInfoDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRoles,
+        route: 'api/ToBackendGetRoles',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.roles = resp.payload.roles.sort((a, b) =>
+          if (resp.result?.type === 'Success') {
+            this.roles = resp.result.value.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
             this.cd.detectChanges();

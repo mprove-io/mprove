@@ -48,10 +48,8 @@ import { FractionTsLastCompleteOptionEnum } from '#common/enums/fraction/fractio
 import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getTimezones } from '#common/functions/get-timezones/get-timezones';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
@@ -60,6 +58,12 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
+import type { ToBackendSetFavoriteInput } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-request';
+import type { ToBackendSetFavoriteResponse } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-response';
+import type { ToBackendRunQueriesInput } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
+import type { ToBackendRunQueriesResponse } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
+import type { ToBackendGetReportInput } from '#common/zod/backend/routes/reports/get-report/get-report-request';
+import type { ToBackendGetReportResponse } from '#common/zod/backend/routes/reports/get-report/get-report-response';
 import type { SpaceNode } from '#common/zod/backend/space-node';
 import type { SpaceNodeX } from '#common/zod/backend/space-node-x';
 import type { Fraction } from '#common/zod/blockml/fraction';
@@ -68,18 +72,6 @@ import type { DataPoint } from '#common/zod/front/data-point';
 import type { DataRow } from '#common/zod/front/data-row';
 import type { RefreshItem } from '#common/zod/front/refresh-item';
 import type { SeriesPart } from '#common/zod/front/series-part';
-import type {
-  ToBackendSetFavoriteRequestPayload,
-  ToBackendSetFavoriteResponse
-} from '#common/zod/to-backend/favorites/to-backend-set-favorite';
-import type {
-  ToBackendRunQueriesRequestPayload,
-  ToBackendRunQueriesResponse
-} from '#common/zod/to-backend/queries/to-backend-run-queries';
-import type {
-  ToBackendGetReportRequestPayload,
-  ToBackendGetReportResponse
-} from '#common/zod/to-backend/reports/to-backend-get-report';
 import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '#front/app/functions/make-query-params';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
@@ -818,7 +810,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let uiState = this.uiQuery.getValue();
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendGetReportRequestPayload = {
+    let payload: ToBackendGetReportInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -831,23 +823,23 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetReport,
+        route: 'api/ToBackendGetReport',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetReportResponse) => {
           if (
-            resp.info?.status === ResponseInfoStatusEnum.Ok &&
-            this.report.reportId === resp.payload.report.reportId
+            resp.result?.type === 'Success' &&
+            this.report.reportId === resp.result.value.report.reportId
           ) {
-            this.memberQuery.update(resp.payload.userMember);
+            this.memberQuery.update(resp.result.value.userMember);
 
-            this.structQuery.update(resp.payload.struct);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
-            this.reportQuery.update(resp.payload.report);
+            this.reportQuery.update(resp.result.value.report);
           }
         })
       );
@@ -862,7 +854,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendRunQueriesRequestPayload = {
+    let payload: ToBackendRunQueriesInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -874,13 +866,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        route: 'api/ToBackendRunQueries',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let { runningQueries } = resp.payload;
+          if (resp.result?.type === 'Success') {
+            let { runningQueries } = resp.result.value;
             if (
               runningQueries
                 .map(y => y.queryId)
@@ -1234,7 +1226,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendSetFavoriteRequestPayload = {
+    let payload: ToBackendSetFavoriteInput = {
       projectId: nav.projectId,
       type: FavoriteTypeEnum.Report,
       targetId: reportId,
@@ -1243,12 +1235,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetFavorite,
+        route: 'api/ToBackendSetFavorite',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp.info?.status === ResponseInfoStatusEnum.Ok;
+          let isOk = resp.result?.type === 'Success';
 
           if (isOk === false) {
             this.reportsQuery.updatePart({

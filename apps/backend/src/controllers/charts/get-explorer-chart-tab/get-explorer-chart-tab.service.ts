@@ -4,8 +4,7 @@ import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ChartTab,
   MconfigTab,
@@ -34,10 +33,10 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendGetExplorerChartTabResponsePayload } from '#common/zod/to-backend/charts/to-backend-get-explorer-chart-tab';
+import type { ToBackendGetExplorerChartTabOutput } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-response';
 
 type GetExplorerChartTabErrors = Extract<
-  ToBackendGetExplorerChartTabResponsePayload,
+  ToBackendGetExplorerChartTabOutput,
   { status: 'error' }
 >['errors'];
 
@@ -63,7 +62,7 @@ export class GetExplorerChartTabService {
     traceId: string;
     sessionId: string;
     chartId: string;
-  }): Promise<ToBackendGetExplorerChartTabResponsePayload> {
+  }): Promise<ToBackendGetExplorerChartTabOutput> {
     let { user, traceId, sessionId, chartId } = item;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
@@ -232,7 +231,7 @@ export class GetExplorerChartTabService {
     }
 
     let hasRebuildErrors = !isUndefined(rebuildErrors);
-    let apiPayload: ToBackendGetExplorerChartTabResponsePayload;
+    let apiPayload: ToBackendGetExplorerChartTabOutput;
 
     if (hasRebuildErrors) {
       apiPayload = {

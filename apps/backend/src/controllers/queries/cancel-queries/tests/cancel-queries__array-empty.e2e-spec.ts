@@ -20,15 +20,12 @@ import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendCancelQueriesRequest } from '#common/zod/backend/routes/queries/cancel-queries/cancel-queries-request';
+import type { ToBackendCancelQueriesResponse } from '#common/zod/backend/routes/queries/cancel-queries/cancel-queries-response';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 import type { Query } from '#common/zod/blockml/query';
-import type {
-  ToBackendCancelQueriesRequest,
-  ToBackendCancelQueriesResponse
-} from '#common/zod/to-backend/queries/to-backend-cancel-queries';
 
 let testId = 'backend-cancel-queries__array-empty';
 
@@ -174,12 +171,9 @@ test('1', async t => {
       });
 
       let req1: ToBackendCancelQueriesRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: PROD_REPO_ID,
           branchId: BRANCH_MAIN,
@@ -188,7 +182,8 @@ test('1', async t => {
         }
       };
 
-      resp1 = await sendToBackend<ToBackendCancelQueriesResponse>({
+      resp1 = await sendToBackend({
+        route: 'api/ToBackendCancelQueries',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
@@ -207,9 +202,16 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp1.info.error.message, ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
-    assert.equal(resp1.info.error.displayData[0].code, 'too_small');
-    assert.equal(resp1.info.error.displayData[0].path, 'payload.mconfigIds');
+    assert.ok(resp1.result.type === 'Failure');
+
+    assert.equal(
+      resp1.result.error.message,
+      ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+    );
+
+    assert.equal(resp1.result.error.displayData[0].code, 'too_small');
+
+    assert.equal(resp1.result.error.displayData[0].path, 'input.mconfigIds');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

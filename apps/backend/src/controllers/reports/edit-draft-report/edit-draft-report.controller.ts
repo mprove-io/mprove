@@ -6,8 +6,7 @@ import {
   ToBackendEditDraftReportResponseDto
 } from '#backend/controllers/reports/edit-draft-report/edit-draft-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
@@ -23,9 +22,9 @@ import { ReportDataService } from '#backend/services/report-data.service';
 import { ReportRowService } from '#backend/services/report-row.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendEditDraftReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-edit-draft-report';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendEditDraftReportOutput } from '#common/zod/backend/routes/reports/edit-draft-report/edit-draft-report-response';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -48,7 +47,7 @@ export class EditDraftReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendEditDraftReport)
+  @Post('api/ToBackendEditDraftReport' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'EditDraftReport',
     description: 'Edit a draft report'
@@ -60,7 +59,7 @@ export class EditDraftReportController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditDraftReportRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -76,7 +75,7 @@ export class EditDraftReportController {
       newReportFields,
       listeners,
       chart
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -202,7 +201,7 @@ export class EditDraftReportController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendEditDraftReportResponsePayload = {
+    let payload: ToBackendEditDraftReportOutput = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,

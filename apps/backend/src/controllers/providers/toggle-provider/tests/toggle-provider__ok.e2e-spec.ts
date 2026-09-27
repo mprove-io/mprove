@@ -18,12 +18,11 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendToggleProviderRequest } from '#common/zod/to-backend/providers/toggle-provider/toggle-provider-request';
-import type { ToBackendToggleProviderResponse } from '#common/zod/to-backend/providers/toggle-provider/toggle-provider-response';
+import type { ToBackendToggleProviderRequest } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
+import type { ToBackendToggleProviderResponse } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-response';
 
 let testId = 'backend-toggle-provider__ok';
 
@@ -145,19 +144,17 @@ test('1', async t => {
       });
 
       let req: ToBackendToggleProviderRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendToggleProvider,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           providerId: providerId,
           isEnabled: false
         }
       };
 
-      resp = await sendToBackend<ToBackendToggleProviderResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendToggleProvider',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -195,11 +192,11 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.result.type, 'Success');
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-
-    let provider: Provider = resp.payload.provider;
+    let provider: Provider = unwrapToBackendResponse({
+      response: resp
+    }).provider;
 
     let { serverTs, ...providerWithoutServerTs } = provider;
 

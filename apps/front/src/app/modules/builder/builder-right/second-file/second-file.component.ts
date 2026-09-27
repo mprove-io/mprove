@@ -23,24 +23,16 @@ import {
 } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ModelX } from '#common/zod/backend/model-x';
-import type {
-  ToBackendGetChartRequestPayload,
-  ToBackendGetChartResponse
-} from '#common/zod/to-backend/charts/to-backend-get-chart';
-import type {
-  ToBackendGetFileRequestPayload,
-  ToBackendGetFileResponse
-} from '#common/zod/to-backend/files/to-backend-get-file';
-import type {
-  ToBackendGetModelsRequestPayload,
-  ToBackendGetModelsResponse
-} from '#common/zod/to-backend/models/to-backend-get-models';
+import type { ToBackendGetChartInput } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
+import type { ToBackendGetChartResponse } from '#common/zod/backend/routes/charts/get-chart/get-chart-response';
+import type { ToBackendGetFileInput } from '#common/zod/backend/routes/files/get-file/get-file-request';
+import type { ToBackendGetFileResponse } from '#common/zod/backend/routes/files/get-file/get-file-response';
+import type { ToBackendGetModelsInput } from '#common/zod/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
 import { getFileItems } from '#front/app/functions/get-file-items';
 import { FileQuery } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -259,7 +251,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
 
       let nav = this.navQuery.getValue();
 
-      let payload: ToBackendGetModelsRequestPayload = {
+      let payload: ToBackendGetModelsInput = {
         projectId: nav.projectId,
         repoId: nav.repoId,
         branchId: nav.branchId,
@@ -268,13 +260,13 @@ export class SecondFileComponent implements OnInit, OnDestroy {
 
       this.apiService
         .req({
-          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
+          route: 'api/ToBackendGetModels',
           payload: payload
         })
         .pipe(
           tap((resp: ToBackendGetModelsResponse) => {
-            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              models = resp.payload.models.filter(
+            if (resp.result?.type === 'Success') {
+              models = resp.result.value.models.filter(
                 y => y.filePath === this.secondFileNodeId
               );
 
@@ -309,7 +301,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
     } else if (dotExt === FileExtensionEnum.Chart) {
       let nav = this.navQuery.getValue();
 
-      let payload: ToBackendGetChartRequestPayload = {
+      let payload: ToBackendGetChartInput = {
         projectId: nav.projectId,
         repoId: nav.repoId,
         branchId: nav.branchId,
@@ -322,17 +314,17 @@ export class SecondFileComponent implements OnInit, OnDestroy {
 
       this.apiService
         .req({
-          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetChart,
+          route: 'api/ToBackendGetChart',
           payload: payload
         })
         .pipe(
           map((resp: ToBackendGetChartResponse) => {
-            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              this.memberQuery.update(resp.payload.userMember);
+            if (resp.result?.type === 'Success') {
+              this.memberQuery.update(resp.result.value.userMember);
 
-              if (isDefined(resp.payload.chart)) {
+              if (isDefined(resp.result.value.chart)) {
                 this.navigateService.navigateToChart({
-                  modelId: resp.payload.chart.modelId,
+                  modelId: resp.result.value.chart.modelId,
                   chartId: id
                 });
               } else {
@@ -394,7 +386,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
           this.uiQuery.updatePart({ secondFileNodeId: undefined });
         }, 0);
       } else {
-        let getFilePayload: ToBackendGetFileRequestPayload = {
+        let getFilePayload: ToBackendGetFileInput = {
           projectId: nav.projectId,
           repoId: nav.repoId,
           branchId: nav.branchId,
@@ -410,26 +402,26 @@ export class SecondFileComponent implements OnInit, OnDestroy {
 
         this.apiService
           .req({
-            pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetFile,
+            route: 'api/ToBackendGetFile',
             payload: getFilePayload,
             showSpinner: false
           })
           .pipe(
             tap(async (resp: ToBackendGetFileResponse) => {
-              if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+              if (resp.result?.type === 'Success') {
                 let repoState = this.repoQuery.getValue();
                 // biome-ignore format: theme breaks
-                let newRepoState: RepoState = Object.assign(resp.payload.repo, <RepoState>{
+                let newRepoState: RepoState = Object.assign(resp.result.value.repo, <RepoState>{
                   conflicts: repoState.conflicts, // getFile does not check for conflicts
                   repoStatus: repoState.repoStatus // getFile does not use git fetch
                 });
                 this.repoQuery.update(newRepoState);
-                this.structQuery.update(resp.payload.struct);
+                this.structQuery.update(resp.result.value.struct);
                 this.navQuery.updatePart({
-                  needValidate: resp.payload.needValidate
+                  needValidate: resp.result.value.needValidate
                 });
 
-                this.secondFileContent = resp.payload.content;
+                this.secondFileContent = resp.result.value.content;
 
                 this.setLanguage();
 

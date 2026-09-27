@@ -9,8 +9,7 @@ import {
   ToBackendCreateOrgResponseDto
 } from '#backend/controllers/orgs/create-org/create-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -23,9 +22,9 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendCreateOrgResponsePayload } from '#common/zod/to-backend/orgs/to-backend-create-org';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateOrgOutput } from '#common/zod/backend/routes/orgs/create-org/create-org-response';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -42,7 +41,7 @@ export class CreateOrgController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateOrg)
+  @Post('api/ToBackendCreateOrg' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateOrg',
     description: 'Create a new organization owned by the current user'
@@ -72,7 +71,7 @@ export class CreateOrgController {
       });
     }
 
-    let { name } = body.payload;
+    let { name } = body.input;
 
     let hashSecret = await this.dconfigsService.getDconfigHashSecret();
 
@@ -101,10 +100,10 @@ export class CreateOrgController {
       name: name,
       ownerId: user.userId,
       ownerEmail: user.email,
-      traceId: body.info.traceId
+      traceId: body.traceId
     });
 
-    let payload: ToBackendCreateOrgResponsePayload = {
+    let payload: ToBackendCreateOrgOutput = {
       org: this.orgsService.tabToApi({ org: newOrg })
     };
 

@@ -11,8 +11,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendStartUserCodexAuthResponsePayload } from '#common/zod/to-backend/users/to-backend-start-user-codex-auth';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendStartUserCodexAuthOutput } from '#common/zod/backend/routes/users/start-user-codex-auth/start-user-codex-auth-response';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -24,7 +24,7 @@ export class StartUserCodexAuthController {
     private codexService: CodexService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendStartUserCodexAuth)
+  @Post('api/ToBackendStartUserCodexAuth' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'StartUserCodexAuth',
     description: 'Start OpenAI device-code OAuth flow for Codex'
@@ -40,7 +40,7 @@ export class StartUserCodexAuthController {
 
     let started = await this.codexService.startDeviceAuth();
 
-    let payload: ToBackendStartUserCodexAuthResponsePayload = {
+    let payload: ToBackendStartUserCodexAuthOutput = {
       userCode: started.userCode,
       verificationUrl: started.verificationUrl,
       deviceAuthId: started.deviceAuthId,

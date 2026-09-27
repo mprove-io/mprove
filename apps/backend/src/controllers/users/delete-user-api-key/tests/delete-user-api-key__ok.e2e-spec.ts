@@ -7,17 +7,10 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendDeleteUserApiKeyRequest,
-  ToBackendDeleteUserApiKeyResponse
-} from '#common/zod/to-backend/users/to-backend-delete-user-api-key';
-import type {
-  ToBackendGenerateUserApiKeyRequest,
-  ToBackendGenerateUserApiKeyResponse
-} from '#common/zod/to-backend/users/to-backend-generate-user-api-key';
+import type { ToBackendDeleteUserApiKeyRequest } from '#common/zod/backend/routes/users/delete-user-api-key/delete-user-api-key-request';
+import type { ToBackendDeleteUserApiKeyResponse } from '#common/zod/backend/routes/users/delete-user-api-key/delete-user-api-key-response';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 
 let testId = 'backend-delete-user-api-key__ok';
 
@@ -53,15 +46,13 @@ test('1', async t => {
 
       // First generate an API key
       let generateReq: ToBackendGenerateUserApiKeyRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {}
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {}
       };
 
-      await sendToBackend<ToBackendGenerateUserApiKeyResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendGenerateUserApiKey',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: generateReq,
@@ -70,15 +61,13 @@ test('1', async t => {
 
       // Then delete it
       let deleteReq: ToBackendDeleteUserApiKeyRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteUserApiKey,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {}
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {}
       };
 
-      resp = await sendToBackend<ToBackendDeleteUserApiKeyResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteUserApiKey',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: deleteReq
@@ -97,8 +86,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

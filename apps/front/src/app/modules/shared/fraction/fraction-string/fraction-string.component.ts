@@ -26,16 +26,13 @@ import { MALLOY_FILTER_ANY } from '#common/constants/top';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendSuggestDimensionValuesInput } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-request';
+import type { ToBackendSuggestDimensionValuesResponse } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
-import type {
-  ToBackendSuggestDimensionValuesRequestPayload,
-  ToBackendSuggestDimensionValuesResponse
-} from '#common/zod/to-backend/mconfigs/to-backend-suggest-dimension-values';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { FractionTypeItem } from '../fraction.component';
@@ -217,7 +214,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
               let nav = this.navQuery.getValue();
 
-              let payload: ToBackendSuggestDimensionValuesRequestPayload = {
+              let payload: ToBackendSuggestDimensionValuesInput = {
                 projectId: nav.projectId,
                 repoId: nav.repoId,
                 branchId: nav.branchId,
@@ -236,13 +233,12 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
               let q1Resp = await this.apiService
                 .req({
-                  pathInfoName:
-                    ToBackendRequestInfoNameEnum.ToBackendSuggestDimensionValues,
+                  route: 'api/ToBackendSuggestDimensionValues',
                   payload: payload
                 })
                 .pipe(
                   tap((resp: ToBackendSuggestDimensionValuesResponse) => {
-                    if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+                    if (resp.result?.type === 'Success') {
                       return resp;
                     }
                   }),
@@ -250,7 +246,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 )
                 .toPromise();
 
-              if (isDefined(q1Resp.payload.errorMessage)) {
+              if (
+                isDefined(
+                  unwrapToBackendResponse({ response: q1Resp }).errorMessage
+                )
+              ) {
                 this.items = isDefinedAndNotEmpty(this.searchValue)
                   ? [
                       {
@@ -260,7 +260,9 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                       {
                         id: 1,
                         name: 'Error: Suggest Values Failed',
-                        errorMessage: q1Resp.payload.errorMessage,
+                        errorMessage: unwrapToBackendResponse({
+                          response: q1Resp
+                        }).errorMessage,
                         disabled: true
                       }
                     ]
@@ -268,11 +270,18 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                       {
                         id: 0,
                         name: 'Error: Suggest Values Failed',
-                        errorMessage: q1Resp.payload.errorMessage,
+                        errorMessage: unwrapToBackendResponse({
+                          response: q1Resp
+                        }).errorMessage,
                         disabled: true
                       }
                     ];
-              } else if (isDefined(q1Resp.payload.matchedValuesMessage)) {
+              } else if (
+                isDefined(
+                  unwrapToBackendResponse({ response: q1Resp })
+                    .matchedValuesMessage
+                )
+              ) {
                 this.items = isDefinedAndNotEmpty(this.searchValue)
                   ? [
                       {
@@ -281,24 +290,27 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                       },
                       {
                         id: 1,
-                        name: q1Resp.payload.matchedValuesMessage,
+                        name: unwrapToBackendResponse({ response: q1Resp })
+                          .matchedValuesMessage,
                         disabled: true
                       }
                     ]
                   : [
                       {
                         id: 0,
-                        name: q1Resp.payload.matchedValuesMessage,
+                        name: unwrapToBackendResponse({ response: q1Resp })
+                          .matchedValuesMessage,
                         disabled: true
                       }
                     ];
               } else {
-                this.items = (q1Resp.payload.matchedValues ?? []).map(
-                  (x, i) => ({
-                    id: i,
-                    name: x.value
-                  })
-                );
+                this.items = (
+                  unwrapToBackendResponse({ response: q1Resp }).matchedValues ??
+                  []
+                ).map((x, i) => ({
+                  id: i,
+                  name: x.value
+                }));
 
                 if (isDefinedAndNotEmpty(this.searchValue)) {
                   let searchValueLc = this.searchValue.toLowerCase();

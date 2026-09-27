@@ -13,13 +13,9 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendSetUserNameInput } from '#common/zod/backend/routes/users/set-user-name/set-user-name-request';
+import type { ToBackendSetUserNameResponse } from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
 import type { User } from '#common/zod/backend/user';
-import type {
-  ToBackendSetUserNameRequestPayload,
-  ToBackendSetUserNameResponse
-} from '#common/zod/to-backend/users/to-backend-set-user-name';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../shared/shared.module';
@@ -83,7 +79,7 @@ export class EditNameDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendSetUserNameRequestPayload = {
+    let payload: ToBackendSetUserNameInput = {
       firstName: this.editNameForm.value.firstName,
       lastName: this.editNameForm.value.lastName
     };
@@ -92,14 +88,14 @@ export class EditNameDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetUserName,
+        route: 'api/ToBackendSetUserName',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendSetUserNameResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let user = resp.payload.user as User;
+          if (resp.result?.type === 'Success') {
+            let user = resp.result.value.user as User;
             this.userQuery.update(user);
           }
         }),

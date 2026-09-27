@@ -5,8 +5,8 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { ToBackendCheckSignUpResponseDto } from '#backend/controllers/check/check-sign-up/check-sign-up.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendCheckSignUpResponsePayload } from '#common/zod/to-backend/check/to-backend-check-sign-up';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCheckSignUpOutput } from '#common/zod/backend/routes/check/check-sign-up/check-sign-up-response';
 
 @ApiTags('Check')
 @SkipJwtCheck()
@@ -15,7 +15,7 @@ import type { ToBackendCheckSignUpResponsePayload } from '#common/zod/to-backend
 export class CheckSignUpController {
   constructor(private cs: ConfigService<BackendConfig>) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCheckSignUp)
+  @Post('api/ToBackendCheckSignUp' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CheckSignUp',
     description: 'Check whether sign-up is restricted to invited users only'
@@ -24,7 +24,7 @@ export class CheckSignUpController {
     type: ToBackendCheckSignUpResponseDto
   })
   async completeUserRegistration() {
-    let payload: ToBackendCheckSignUpResponsePayload = {
+    let payload: ToBackendCheckSignUpOutput = {
       isRegisterOnlyInvitedUsers:
         this.cs.get<BackendConfig['registerOnlyInvitedUsers']>(
           'registerOnlyInvitedUsers'

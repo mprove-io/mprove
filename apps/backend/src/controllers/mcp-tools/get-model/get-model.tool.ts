@@ -1,6 +1,5 @@
 import { Injectable, UseFilters } from '@nestjs/common';
-import type { Context } from '@rekog/mcp-nest';
-import { Tool } from '@rekog/mcp-nest';
+import { type Context, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetModelService } from '#backend/controllers/models/get-model/get-model.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -17,7 +16,7 @@ import {
   type McpToolGetModelInput,
   zMcpToolGetModelInput,
   zMcpToolGetModelOutput
-} from '#common/zod/to-backend/mcp-tools/mcp-tool-get-model';
+} from '#common/zod/backend/mcp-tools/mcp-tool-get-model';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
 
 @Injectable()

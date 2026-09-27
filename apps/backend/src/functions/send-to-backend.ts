@@ -2,19 +2,22 @@ import { HttpStatus } from '@nestjs/common';
 import request from 'supertest';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRequestForRoute } from '#common/zod/backend/request/to-backend-request-for-route';
+import type { ToBackendResponseForRoute } from '#common/zod/backend/response/to-backend-response-for-route';
 
-export async function sendToBackend<T>(item: {
+export async function sendToBackend<TRoute extends ToBackendRoute>(item: {
   httpServer: any;
-  req: any;
+  route: TRoute;
+  req: ToBackendRequestForRoute<NoInfer<TRoute>>;
   checkIsOk?: boolean;
   loginToken?: string;
   apiKey?: string;
-}) {
-  let { httpServer, req, checkIsOk, loginToken, apiKey } = item;
+}): Promise<ToBackendResponseForRoute<TRoute>> {
+  let { httpServer, route, req, checkIsOk, loginToken, apiKey } = item;
 
-  let rq = request(httpServer).post('/' + req.info.name);
+  let rq: request.Test = request(httpServer).post('/' + route);
 
   if (isDefined(apiKey)) {
     rq = rq.auth(apiKey, { type: 'bearer' });
@@ -22,7 +25,7 @@ export async function sendToBackend<T>(item: {
     rq = rq.auth(loginToken, { type: 'bearer' });
   }
 
-  let response = await rq.send(req);
+  let response: request.Response = await rq.send(req);
 
   if (response.status !== HttpStatus.CREATED) {
     throw new ServerError({
@@ -31,15 +34,14 @@ export async function sendToBackend<T>(item: {
     });
   }
 
-  if (
-    checkIsOk === true &&
-    response.body.info.status !== ResponseInfoStatusEnum.Ok
-  ) {
+  if (checkIsOk === true && response.body.result.type !== 'Success') {
     throw new ServerError({
       message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_BACKEND,
-      originalError: response.body.info.error
+      originalError: response.body.result.error
     });
   }
 
-  return response.body as unknown as T;
+  let result: ToBackendResponseForRoute<TRoute> = response.body;
+
+  return result;
 }

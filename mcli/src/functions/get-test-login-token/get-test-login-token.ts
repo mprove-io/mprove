@@ -1,8 +1,5 @@
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendLoginUserRequestPayload,
-  ToBackendLoginUserResponse
-} from '#common/zod/to-backend/users/to-backend-login-user';
+import type { ToBackendLoginUserInput } from '#common/zod/backend/routes/users/login-user/login-user-request';
+import type { ToBackendLoginUserOutput } from '#common/zod/backend/routes/users/login-user/login-user-response';
 import { mreq } from '#mcli/functions/mreq/mreq';
 
 export async function getTestLoginToken(item: {
@@ -10,16 +7,18 @@ export async function getTestLoginToken(item: {
   password: string;
   host: string;
 }): Promise<string> {
-  let loginUserReqPayload: ToBackendLoginUserRequestPayload = {
+  let loginUserReqPayload: ToBackendLoginUserInput = {
     email: item.email,
     password: item.password
   };
 
-  let loginUserResp = await mreq<ToBackendLoginUserResponse>({
-    pathInfoName: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+  let loginUserOutput: ToBackendLoginUserOutput = await mreq({
+    route: 'api/ToBackendLoginUser',
     payload: loginUserReqPayload,
     host: item.host
   });
 
-  return loginUserResp.payload.token;
+  let token: string = loginUserOutput.token;
+
+  return token;
 }

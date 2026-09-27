@@ -10,8 +10,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetSkillsResponsePayload } from '#common/zod/to-backend/skills/to-backend-get-skills';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetSkillsOutput } from '#common/zod/backend/routes/skills/get-skills/get-skills-response';
 
 @ApiTags('Skills')
 @UseGuards(ThrottlerUserIdGuard)
@@ -20,7 +20,7 @@ import type { ToBackendGetSkillsResponsePayload } from '#common/zod/to-backend/s
 export class GetSkillsController {
   constructor(private getSkillsService: GetSkillsService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetSkills)
+  @Post('api/ToBackendGetSkills' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetSkills',
     description: 'Get contents of Mprove SKILL.md files'
@@ -32,7 +32,7 @@ export class GetSkillsController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetSkillsRequestDto
   ) {
-    let payload: ToBackendGetSkillsResponsePayload =
+    let payload: ToBackendGetSkillsOutput =
       await this.getSkillsService.getSkills();
 
     return payload;

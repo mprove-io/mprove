@@ -2,8 +2,7 @@ import { ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { eq } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { parseApiKey } from '#backend/functions/api-key/parse-api-key';
@@ -16,7 +15,6 @@ import { PROD_REPO_ID } from '#common/constants/top';
 import { SKIP_JWT } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -35,9 +33,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     if (
       [
-        ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces,
-        ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics,
-        ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs
+        'api/ToBackendTelemetryTraces',
+        'api/ToBackendTelemetryMetrics',
+        'api/ToBackendTelemetryLogs'
       ].indexOf(path.slice(1)) > -1 &&
       request.headers.authorization === 'Bearer null'
     ) {
@@ -130,7 +128,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         });
       }
 
-      let repoId = request.body?.payload?.repoId;
+      let repoId = request.body?.input?.repoId;
 
       if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
         throw new ServerError({
@@ -202,7 +200,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         });
       }
 
-      let repoId = request.body?.payload?.repoId;
+      let repoId = request.body?.input?.repoId;
 
       if (repoId && repoId !== parsed.entityId && repoId !== PROD_REPO_ID) {
         throw new ServerError({
@@ -210,7 +208,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         });
       }
 
-      let envId = request.body?.payload?.envId;
+      let envId = request.body?.input?.envId;
 
       if (envId && session.envId && envId !== session.envId) {
         throw new ServerError({
@@ -218,7 +216,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         });
       }
 
-      let branchId = request.body?.payload?.branchId;
+      let branchId = request.body?.input?.branchId;
 
       if (branchId && session.branchId && branchId !== session.branchId) {
         throw new ServerError({

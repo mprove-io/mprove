@@ -9,13 +9,9 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendRevertRepoToLastCommitRequest,
-  ToBackendRevertRepoToLastCommitResponse
-} from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
+import type { ToBackendRevertRepoToLastCommitRequest } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
+import type { ToBackendRevertRepoToLastCommitResponse } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
 
 let testId = 'backend-revert-repo-to-last-commit__ok';
 
@@ -89,12 +85,9 @@ test('1', async t => {
       });
 
       let req: ToBackendRevertRepoToLastCommitRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId,
@@ -102,7 +95,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendRevertRepoToLastCommitResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendRevertRepoToLastCommit',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -121,8 +115,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

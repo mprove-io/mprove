@@ -6,18 +6,13 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type {
-  ToBackendRevertRepoToLastCommitRequestPayload,
-  ToBackendRevertRepoToLastCommitResponse
-} from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
-import type {
-  ToBackendRevertRepoToRemoteRequestPayload,
-  ToBackendRevertRepoToRemoteResponse
-} from '#common/zod/to-backend/repos/to-backend-revert-repo-to-remote';
+import type { ToBackendRevertRepoToLastCommitInput } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
+import type { ToBackendRevertRepoToLastCommitOutput } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
+import type { ToBackendRevertRepoToRemoteInput } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
+import type { ToBackendRevertRepoToRemoteOutput } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -111,12 +106,12 @@ export class RevertCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let revertRepoResp:
-      | ToBackendRevertRepoToLastCommitResponse
-      | ToBackendRevertRepoToRemoteResponse;
+    let revertRepoOutput:
+      | ToBackendRevertRepoToLastCommitOutput
+      | ToBackendRevertRepoToRemoteOutput;
 
     if (this.to === ToEnum.LastCommit) {
-      let revertRepoToLastCommitReqPayload: ToBackendRevertRepoToLastCommitRequestPayload =
+      let revertRepoToLastCommitReqPayload: ToBackendRevertRepoToLastCommitInput =
         {
           projectId: this.projectId,
           repoId: repoId,
@@ -124,25 +119,23 @@ export class RevertCommand extends CustomCommand {
           envId: this.env
         };
 
-      revertRepoResp = await mreq<ToBackendRevertRepoToLastCommitResponse>({
+      revertRepoOutput = await mreq({
         apiKey: apiKey,
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
+        route: 'api/ToBackendRevertRepoToLastCommit',
         payload: revertRepoToLastCommitReqPayload,
         host: this.context.config.mproveCliHost
       });
     } else {
-      let revertRepoToRemoteReqPayload: ToBackendRevertRepoToRemoteRequestPayload =
-        {
-          projectId: this.projectId,
-          repoId: repoId,
-          branchId: this.branch,
-          envId: this.env
-        };
+      let revertRepoToRemoteReqPayload: ToBackendRevertRepoToRemoteInput = {
+        projectId: this.projectId,
+        repoId: repoId,
+        branchId: this.branch,
+        envId: this.env
+      };
 
-      revertRepoResp = await mreq<ToBackendRevertRepoToRemoteResponse>({
+      revertRepoOutput = await mreq({
         apiKey: apiKey,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
+        route: 'api/ToBackendRevertRepoToRemote',
         payload: revertRepoToRemoteReqPayload,
         host: this.context.config.mproveCliHost
       });
@@ -150,20 +143,20 @@ export class RevertCommand extends CustomCommand {
 
     let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
-      orgId: revertRepoResp.payload.repo.orgId,
+      orgId: revertRepoOutput.repo.orgId,
       projectId: this.projectId,
-      repoId: revertRepoResp.payload.repo.repoId,
+      repoId: revertRepoOutput.repo.repoId,
       branch: this.branch,
       env: this.env
     });
 
     let log: any = {
       message: `Reverted repo state to ${this.to}`,
-      validationErrorsTotal: revertRepoResp.payload.struct.errors.length
+      validationErrorsTotal: revertRepoOutput.struct.errors.length
     };
 
     if (this.getRepo === true) {
-      let repo = revertRepoResp.payload.repo;
+      let repo = revertRepoOutput.repo;
 
       delete repo.nodes;
       delete repo.changesToCommit;
@@ -174,7 +167,7 @@ export class RevertCommand extends CustomCommand {
 
     if (this.getErrors === true) {
       log.validationErrors = mapBmlErrorsToMproveValidationErrors({
-        errors: revertRepoResp.payload.struct.errors
+        errors: revertRepoOutput.struct.errors
       });
     }
 

@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendGroupMetricByDimensionRequest,
-  zToBackendGroupMetricByDimensionResponse
-} from '#common/zod/to-backend/mconfigs/to-backend-group-metric-by-dimension';
+import { zToBackendGroupMetricByDimensionRequest } from '#common/zod/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-request';
+import { zToBackendGroupMetricByDimensionResponse } from '#common/zod/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-response';
 
 export class ToBackendGroupMetricByDimensionRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGroupMetricByDimensionRequest })

@@ -26,11 +26,9 @@ import {
   PROVIDER_TYPE_NAME_BY_TYPE
 } from '#common/constants/providers';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendCreateProviderRequestPayload } from '#common/zod/to-backend/providers/create-provider/create-provider-request-payload';
-import type { ToBackendCreateProviderResponse } from '#common/zod/to-backend/providers/create-provider/create-provider-response';
+import type { ToBackendCreateProviderInput } from '#common/zod/backend/routes/providers/create-provider/create-provider-request';
+import type { ToBackendCreateProviderResponse } from '#common/zod/backend/routes/providers/create-provider/create-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -208,7 +206,7 @@ export class AddProviderDialogComponent implements OnInit {
 
     let value = this.addProviderForm.getRawValue();
     let type: ProviderTypeEnum = value.type;
-    let payload: ToBackendCreateProviderRequestPayload;
+    let payload: ToBackendCreateProviderInput;
 
     if (type === ProviderTypeEnum.OpenAICompatible) {
       payload = {
@@ -264,17 +262,17 @@ export class AddProviderDialogComponent implements OnInit {
 
     this.ref.data.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateProvider,
+        route: 'api/ToBackendCreateProvider',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendCreateProviderResponse) => {
-          if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type !== 'Success') {
             return;
           }
           let providers = this.providersQuery.getValue().providers;
-          let newProviders = [...providers, resp.payload.provider].sort(
+          let newProviders = [...providers, resp.result.value.provider].sort(
             (a, b) => a.name.localeCompare(b.name)
           );
           this.providersQuery.updatePart({ providers: newProviders });

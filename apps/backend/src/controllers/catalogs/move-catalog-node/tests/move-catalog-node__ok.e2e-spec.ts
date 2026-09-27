@@ -9,13 +9,9 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendMoveCatalogNodeRequest,
-  ToBackendMoveCatalogNodeResponse
-} from '#common/zod/to-backend/catalogs/to-backend-move-catalog-node';
+import type { ToBackendMoveCatalogNodeRequest } from '#common/zod/backend/routes/catalogs/move-catalog-node/move-catalog-node-request';
+import type { ToBackendMoveCatalogNodeResponse } from '#common/zod/backend/routes/catalogs/move-catalog-node/move-catalog-node-response';
 
 let testId = 'backend-move-catalog-node__ok';
 
@@ -91,12 +87,9 @@ test('1', async t => {
       });
 
       let req: ToBackendMoveCatalogNodeRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId,
@@ -106,7 +99,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendMoveCatalogNodeResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendMoveCatalogNode',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -125,8 +119,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

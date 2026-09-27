@@ -15,12 +15,8 @@ import {
   PATH_TEAM,
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetUserGivensRequestPayload,
-  ToBackendGetUserGivensResponse
-} from '#common/zod/to-backend/users/to-backend-get-user-givens';
+import type { ToBackendGetUserGivensInput } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-request';
+import type { ToBackendGetUserGivensResponse } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -188,23 +184,23 @@ export class ProjectMenuComponent implements OnInit {
   }
 
   showSelectedGivens() {
-    let payload: ToBackendGetUserGivensRequestPayload = {
+    let payload: ToBackendGetUserGivensInput = {
       projectId: this.nav.projectId
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetUserGivens,
+        route: 'api/ToBackendGetUserGivens',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendGetUserGivensResponse) => {
-          if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type !== 'Success') {
             return;
           }
 
-          let user = resp.payload.user;
+          let user = resp.result.value.user;
 
           this.userQuery.update(user);
           this.uiQuery.updatePart({ ...user.ui });
@@ -212,7 +208,7 @@ export class ProjectMenuComponent implements OnInit {
           this.myDialogService.showSelectedGivens({
             projectId: this.nav.projectId,
             userId: user.userId,
-            memberGivens: resp.payload.memberGivens
+            memberGivens: resp.result.value.memberGivens
           });
         }),
         take(1)

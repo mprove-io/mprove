@@ -7,12 +7,8 @@ import { take, tap } from 'rxjs/operators';
 import { FORGOT_YOUR_PASSWORD_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_LOGIN, PATH_PASSWORD_RESET_SENT } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendResetUserPasswordRequestPayload,
-  ToBackendResetUserPasswordResponse
-} from '#common/zod/to-backend/users/to-backend-reset-user-password';
+import type { ToBackendResetUserPasswordInput } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-request';
+import type { ToBackendResetUserPasswordResponse } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-response';
 import { ApiService } from '#front/app/services/api.service';
 
 @Component({
@@ -53,18 +49,18 @@ export class ForgotPasswordComponent implements OnInit {
 
     let email = this.resetPasswordForm.value.email;
 
-    let payload: ToBackendResetUserPasswordRequestPayload = {
+    let payload: ToBackendResetUserPasswordInput = {
       email: email
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
+        route: 'api/ToBackendResetUserPassword',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendResetUserPasswordResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             localStorage.setItem('PASSWORD_RESET_EMAIL', email);
             this.router.navigate([PATH_PASSWORD_RESET_SENT]);
           }

@@ -16,8 +16,7 @@ import {
   ToBackendResetUserPasswordResponseDto
 } from '#backend/controllers/users/reset-user-password/reset-user-password.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
@@ -29,8 +28,8 @@ import {
   PASSWORD_EXPIRES_OFFSET,
   THROTTLE_MULTIPLIER
 } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Users')
 @SkipJwtCheck()
@@ -62,7 +61,7 @@ export class ResetUserPasswordController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendResetUserPassword)
+  @Post('api/ToBackendResetUserPassword' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'ResetUserPassword',
     description: 'Email a password reset link with a token'
@@ -71,7 +70,7 @@ export class ResetUserPasswordController {
     type: ToBackendResetUserPasswordResponseDto
   })
   async resetUserPassword(@Body() body: ToBackendResetUserPasswordRequestDto) {
-    let { email } = body.payload;
+    let { email } = body.input;
 
     let user = await this.usersService.getUserByEmailCheckExists({
       email: email

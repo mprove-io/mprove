@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateBranchRequestDto,
   ToBackendCreateBranchResponseDto
 } from '#backend/controllers/branches/create-branch/create-branch.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   UserTab
@@ -43,9 +39,11 @@ import { EMPTY_STRUCT_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToDiskCreateBranchOutput } from '#common/zod/disk/routes/branches/create-branch/create-branch-response';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)
@@ -66,7 +64,7 @@ export class CreateBranchController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateBranch)
+  @Post('api/ToBackendCreateBranch' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateBranch',
     description: 'Create a new branch from an existing branch'
@@ -78,8 +76,8 @@ export class CreateBranchController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateBranchRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, newBranchId, fromBranchId, repoId } = body.payload;
+    let { traceId } = body;
+    let { projectId, newBranchId, fromBranchId, repoId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

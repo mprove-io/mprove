@@ -5,20 +5,20 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
-import type { FormGroup } from '@angular/forms';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { GivenTypeEnum } from '#common/enums/given-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { Given } from '#common/zod/backend/given';
 import type { Gv } from '#common/zod/backend/gv';
 import type { Role } from '#common/zod/backend/role';
-import type {
-  ToBackendEditRoleGivenRequestPayload,
-  ToBackendEditRoleGivenResponse
-} from '#common/zod/to-backend/roles/to-backend-edit-role-given';
+import type { ToBackendEditRoleGivenInput } from '#common/zod/backend/routes/roles/edit-role-given/edit-role-given-request';
+import type { ToBackendEditRoleGivenResponse } from '#common/zod/backend/routes/roles/edit-role-given/edit-role-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
@@ -94,7 +94,7 @@ export class EditRoleGivenDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendEditRoleGivenRequestPayload = {
+    let payload: ToBackendEditRoleGivenInput = {
       projectId: this.dataItem.role.projectId,
       roleId: this.dataItem.role.roleId,
       givenId: this.dataItem.gv.givenId,
@@ -107,15 +107,15 @@ export class EditRoleGivenDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditRoleGiven,
+        route: 'api/ToBackendEditRoleGiven',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditRoleGivenResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.rolesQuery.update({ roles: resp.payload.roles });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.rolesQuery.update({ roles: resp.result.value.roles });
           }
         }),
         take(1)

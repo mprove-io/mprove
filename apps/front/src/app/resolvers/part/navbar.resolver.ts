@@ -12,13 +12,9 @@ import {
   LOCAL_STORAGE_ORG_ID,
   LOCAL_STORAGE_PROJECT_ID
 } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendGetNavRequestPayload,
-  ToBackendGetNavResponse
-} from '#common/zod/to-backend/nav/to-backend-get-nav';
+import type { ToBackendGetNavInput } from '#common/zod/backend/routes/nav/get-nav/get-nav-request';
+import type { ToBackendGetNavResponse } from '#common/zod/backend/routes/nav/get-nav/get-nav-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -80,7 +76,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
       return of(false);
     }
 
-    let payload: ToBackendGetNavRequestPayload = {
+    let payload: ToBackendGetNavInput = {
       orgId: localStorage.getItem(LOCAL_STORAGE_ORG_ID),
       projectId: localStorage.getItem(LOCAL_STORAGE_PROJECT_ID),
       getRepo: isRepoInPath === false
@@ -88,12 +84,12 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetNav,
+        route: 'api/ToBackendGetNav',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetNavResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let {
               avatarSmall,
               avatarBig,
@@ -114,7 +110,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
               userMember,
               struct,
               repo
-            } = resp.payload;
+            } = resp.result.value;
 
             let nav: NavState = {
               avatarSmall: avatarSmall,
@@ -130,23 +126,23 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
               branchId: branchId,
               envId: envId,
               needValidate: needValidate,
-              mproveVersion: resp.info.mproveVersion,
+              mproveVersion: resp.mproveVersion,
               serverTimeDiff: Date.now() - serverNowTs,
               isMproveAdmin: isMproveAdmin
             };
 
             this.navQuery.update(nav);
             this.userQuery.update(user);
-            this.uiQuery.updatePart({ ...resp.payload.user.ui });
+            this.uiQuery.updatePart({ ...resp.result.value.user.ui });
 
             if (isDefined(userMember)) {
-              this.memberQuery.update(resp.payload.userMember);
+              this.memberQuery.update(resp.result.value.userMember);
             }
             if (isDefined(struct)) {
-              this.structQuery.update(resp.payload.struct);
+              this.structQuery.update(resp.result.value.struct);
             }
             if (isDefined(repo)) {
-              this.repoQuery.update(resp.payload.repo);
+              this.repoQuery.update(resp.result.value.repo);
             }
 
             if (user.isEmailVerified === true) {

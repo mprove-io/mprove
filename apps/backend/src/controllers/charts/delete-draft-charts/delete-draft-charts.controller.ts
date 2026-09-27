@@ -17,8 +17,7 @@ import {
   ToBackendDeleteDraftChartsResponseDto
 } from '#backend/controllers/charts/delete-draft-charts/delete-draft-charts.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
@@ -37,7 +36,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -60,7 +59,7 @@ export class DeleteDraftChartsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteDraftCharts)
+  @Post('api/ToBackendDeleteDraftCharts' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteDraftCharts',
     description: "Delete the current user's draft charts"
@@ -74,8 +73,8 @@ export class DeleteDraftChartsController {
   ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, envId, chartIds } = body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, envId, chartIds } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

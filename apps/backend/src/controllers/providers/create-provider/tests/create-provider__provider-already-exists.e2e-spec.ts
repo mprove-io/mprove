@@ -11,11 +11,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateProviderRequest } from '#common/zod/to-backend/providers/create-provider/create-provider-request';
-import type { ToBackendCreateProviderResponse } from '#common/zod/to-backend/providers/create-provider/create-provider-response';
+import type { ToBackendCreateProviderRequest } from '#common/zod/backend/routes/providers/create-provider/create-provider-request';
+import type { ToBackendCreateProviderResponse } from '#common/zod/backend/routes/providers/create-provider/create-provider-response';
 
 let testId = 'backend-create-provider__provider-already-exists';
 
@@ -98,7 +96,7 @@ test('1', async t => {
         loginUserPayload: { email: email, password: password }
       });
 
-      let payload: ToBackendCreateProviderRequest['payload'] = {
+      let payload: ToBackendCreateProviderRequest['input'] = {
         projectId: projectId,
         providerId: providerId,
         type: ProviderTypeEnum.OpenAICompatible,
@@ -117,30 +115,26 @@ test('1', async t => {
       };
 
       let firstReq: ToBackendCreateProviderRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateProvider,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: payload
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: payload
       };
 
-      firstResp = await sendToBackend<ToBackendCreateProviderResponse>({
+      firstResp = await sendToBackend({
+        route: 'api/ToBackendCreateProvider',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: firstReq
       });
 
       let duplicateReq: ToBackendCreateProviderRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateProvider,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: payload
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: payload
       };
 
-      duplicateResp = await sendToBackend<ToBackendCreateProviderResponse>({
+      duplicateResp = await sendToBackend({
+        route: 'api/ToBackendCreateProvider',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: duplicateReq
@@ -160,12 +154,11 @@ test('1', async t => {
       }
     }
 
-    assert.equal(firstResp.info.error, undefined);
+    assert.equal(firstResp.result.type, 'Success');
 
-    assert.equal(firstResp.info.status, ResponseInfoStatusEnum.Ok);
-
+    assert.ok(duplicateResp.result.type === 'Failure');
     assert.equal(
-      duplicateResp.info.error.message,
+      duplicateResp.result.error.message,
       ErEnum.BACKEND_PROVIDER_ALREADY_EXISTS
     );
 

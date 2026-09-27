@@ -17,8 +17,7 @@ import {
   ToBackendDeleteBranchResponseDto
 } from '#backend/controllers/branches/delete-branch/delete-branch.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -33,7 +32,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)
@@ -51,7 +50,7 @@ export class DeleteBranchController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteBranch)
+  @Post('api/ToBackendDeleteBranch' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteBranch',
     description: 'Delete a branch'
@@ -63,7 +62,7 @@ export class DeleteBranchController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteBranchRequestDto
   ) {
-    let { projectId, repoId, branchId } = body.payload;
+    let { projectId, repoId, branchId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -106,7 +105,7 @@ export class DeleteBranchController {
     await this.rpcService.sendToDiskUnwrapOutput({
       request: {
         operation: 'deleteBranch',
-        traceId: body.info.traceId,
+        traceId: body.traceId,
         input: {
           baseProject: baseProject,
           repoId: repoId,

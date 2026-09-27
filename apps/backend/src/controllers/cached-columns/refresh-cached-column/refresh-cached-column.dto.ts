@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendRefreshCachedColumnRequest,
-  zToBackendRefreshCachedColumnResponse
-} from '#common/zod/to-backend/connections/to-backend-refresh-cached-column';
+import { zToBackendRefreshCachedColumnRequest } from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-request';
+import { zToBackendRefreshCachedColumnResponse } from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-response';
 
 export class ToBackendRefreshCachedColumnRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendRefreshCachedColumnRequest })

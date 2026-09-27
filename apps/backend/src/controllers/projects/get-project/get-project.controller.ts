@@ -10,8 +10,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetProjectResponsePayload } from '#common/zod/to-backend/projects/to-backend-get-project';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetProjectOutput } from '#common/zod/backend/routes/projects/get-project/get-project-response';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)
@@ -23,7 +23,7 @@ export class GetProjectController {
     private membersService: MembersService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetProject)
+  @Post('api/ToBackendGetProject' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetProject',
     description: 'Get a project'
@@ -35,7 +35,7 @@ export class GetProjectController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetProjectRequestDto
   ) {
-    let { projectId } = body.payload;
+    let { projectId } = body.input;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -46,7 +46,7 @@ export class GetProjectController {
       memberId: user.userId
     });
 
-    let payload: ToBackendGetProjectResponsePayload = {
+    let payload: ToBackendGetProjectOutput = {
       project: this.projectsService.tabToApiProject({
         project: project,
         isAddPublicKey: userMember.isAdmin === true,

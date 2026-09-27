@@ -16,8 +16,7 @@ import {
   ToBackendEditProviderResponseDto
 } from '#backend/controllers/providers/edit-provider/edit-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   UserTab
@@ -30,11 +29,11 @@ import { ProvidersService } from '#backend/services/db/providers.service';
 import { UrlService } from '#backend/services/url.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendEditProviderRequestPayload } from '#common/zod/to-backend/providers/edit-provider/edit-provider-request-payload';
-import type { ToBackendEditProviderResponsePayload } from '#common/zod/to-backend/providers/edit-provider/edit-provider-response-payload';
+import type { ToBackendEditProviderInput } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-request';
+import type { ToBackendEditProviderOutput } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-response';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -51,7 +50,7 @@ export class EditProviderController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendEditProvider)
+  @Post('api/ToBackendEditProvider' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'EditProvider',
     description: 'Update an existing provider'
@@ -63,7 +62,7 @@ export class EditProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditProviderRequestDto
   ) {
-    let bodyPayload: ToBackendEditProviderRequestPayload = body.payload;
+    let bodyPayload: ToBackendEditProviderInput = body.input;
 
     let { projectId, providerId, options } = bodyPayload;
 
@@ -142,7 +141,7 @@ export class EditProviderController {
       isIncludePasswords: false
     });
 
-    let payload: ToBackendEditProviderResponsePayload = {
+    let payload: ToBackendEditProviderOutput = {
       provider: apiProvider
     };
 

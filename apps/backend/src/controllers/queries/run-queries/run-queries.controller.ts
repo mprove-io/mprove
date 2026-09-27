@@ -10,8 +10,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendRunQueriesResponsePayload } from '#common/zod/to-backend/queries/to-backend-run-queries';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRunQueriesOutput } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -20,7 +20,7 @@ import type { ToBackendRunQueriesResponsePayload } from '#common/zod/to-backend/
 export class RunQueriesController {
   constructor(private runQueriesService: RunQueriesService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendRunQueries)
+  @Post('api/ToBackendRunQueries' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'RunQueries',
     description: 'Run queries for specified mconfigs'
@@ -33,9 +33,9 @@ export class RunQueriesController {
     @Body() body: ToBackendRunQueriesRequestDto
   ) {
     let { projectId, repoId, branchId, envId, mconfigIds, poolSize } =
-      body.payload;
+      body.input;
 
-    let payload: ToBackendRunQueriesResponsePayload =
+    let payload: ToBackendRunQueriesOutput =
       await this.runQueriesService.runQueries({
         user: user,
         projectId: projectId,

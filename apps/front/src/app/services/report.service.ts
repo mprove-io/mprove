@@ -3,26 +3,18 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ChangeTypeEnum } from '#common/enums/change-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ReportX } from '#common/zod/backend/report-x';
+import type { ToBackendCreateDraftReportInput } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
+import type { ToBackendCreateDraftReportResponse } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-response';
+import type { ToBackendDeleteDraftReportsInput } from '#common/zod/backend/routes/reports/delete-draft-reports/delete-draft-reports-request';
+import type { ToBackendDeleteDraftReportsResponse } from '#common/zod/backend/routes/reports/delete-draft-reports/delete-draft-reports-response';
+import type { ToBackendEditDraftReportInput } from '#common/zod/backend/routes/reports/edit-draft-report/edit-draft-report-request';
+import type { ToBackendEditDraftReportResponse } from '#common/zod/backend/routes/reports/edit-draft-report/edit-draft-report-response';
 import type { Listener } from '#common/zod/blockml/listener';
 import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
 import type { ReportField } from '#common/zod/blockml/report-field';
 import type { RowChange } from '#common/zod/blockml/row-change';
-import type {
-  ToBackendCreateDraftReportRequestPayload,
-  ToBackendCreateDraftReportResponse
-} from '#common/zod/to-backend/reports/to-backend-create-draft-report';
-import type {
-  ToBackendDeleteDraftReportsRequestPayload,
-  ToBackendDeleteDraftReportsResponse
-} from '#common/zod/to-backend/reports/to-backend-delete-draft-reports';
-import type {
-  ToBackendEditDraftReportRequestPayload,
-  ToBackendEditDraftReportResponse
-} from '#common/zod/to-backend/reports/to-backend-edit-draft-report';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportQuery } from '../queries/report.query';
@@ -122,7 +114,7 @@ export class ReportService {
 
     let uiState = this.uiQuery.getValue();
 
-    let payload: ToBackendCreateDraftReportRequestPayload = {
+    let payload: ToBackendCreateDraftReportInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -141,16 +133,16 @@ export class ReportService {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport,
+        route: 'api/ToBackendCreateDraftReport',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendCreateDraftReportResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let report = resp.payload.report;
+          if (resp.result?.type === 'Success') {
+            let report = resp.result.value.report;
 
             this.reportsQuery.update({
-              reportUnitDrafts: resp.payload.reportUnitDrafts,
+              reportUnitDrafts: resp.result.value.reportUnitDrafts,
               reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
             });
 
@@ -178,7 +170,7 @@ export class ReportService {
 
     let uiState = this.uiQuery.getValue();
 
-    let payload: ToBackendEditDraftReportRequestPayload = {
+    let payload: ToBackendEditDraftReportInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -197,21 +189,21 @@ export class ReportService {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditDraftReport,
+        route: 'api/ToBackendEditDraftReport',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditDraftReportResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
 
-            this.structQuery.update(resp.payload.struct);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
-            this.reportQuery.update(resp.payload.report);
+            this.reportQuery.update(resp.result.value.report);
 
             return true;
           }
@@ -226,7 +218,7 @@ export class ReportService {
 
     let report = this.reportQuery.getValue();
 
-    let payload: ToBackendDeleteDraftReportsRequestPayload = {
+    let payload: ToBackendDeleteDraftReportsInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -236,15 +228,15 @@ export class ReportService {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports,
+        route: 'api/ToBackendDeleteDraftReports',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteDraftReportsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.reportsQuery.update({
-              reportUnitDrafts: resp.payload.reportUnitDrafts,
+              reportUnitDrafts: resp.result.value.reportUnitDrafts,
               reportSpaceNodes: this.reportsQuery.getValue().reportSpaceNodes
             });
 

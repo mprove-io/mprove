@@ -16,16 +16,13 @@ import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateDraftReportRequest,
-  ToBackendCreateDraftReportResponse
-} from '#common/zod/to-backend/reports/to-backend-create-draft-report';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
+import type { ToBackendCreateDraftReportResponse } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-response';
 
 let testId = 'backend-create-draft-report__ok';
 
@@ -110,12 +107,9 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateDraftReportRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -132,7 +126,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendCreateDraftReportResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCreateDraftReport',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -151,11 +146,19 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-    assert.equal(resp.payload.report.space, undefined);
-    assert.deepEqual(resp.payload.report.accessRoles, []);
-    assert.deepEqual(resp.payload.report.accessRolesCombined, []);
+    assert.equal(resp.result.type, 'Success');
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).report.space,
+      undefined
+    );
+    assert.deepEqual(
+      unwrapToBackendResponse({ response: resp }).report.accessRoles,
+      []
+    );
+    assert.deepEqual(
+      unwrapToBackendResponse({ response: resp }).report.accessRolesCombined,
+      []
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

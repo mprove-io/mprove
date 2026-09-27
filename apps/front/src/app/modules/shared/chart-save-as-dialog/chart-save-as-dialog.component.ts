@@ -28,8 +28,6 @@ import {
   EMPTY_SPACE_NAME
 } from '#common/constants/top-front';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
@@ -40,30 +38,20 @@ import type { ChartX } from '#common/zod/backend/chart-x';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Role } from '#common/zod/backend/role';
+import type { ToBackendSaveCreateChartInput } from '#common/zod/backend/routes/charts/save-create-chart/save-create-chart-request';
+import type { ToBackendSaveCreateChartResponse } from '#common/zod/backend/routes/charts/save-create-chart/save-create-chart-response';
+import type { ToBackendGetDashboardInput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
+import type { ToBackendGetDashboardResponse } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-response';
+import type { ToBackendGetDashboardsInput } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-request';
+import type { ToBackendGetDashboardsResponse } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-response';
+import type { ToBackendSaveModifyDashboardInput } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
+import type { ToBackendSaveModifyDashboardResponse } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
+import type { ToBackendGetRolesInput } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { Chart } from '#common/zod/blockml/chart';
 import type { Model } from '#common/zod/blockml/model';
 import type { Space } from '#common/zod/blockml/space';
-import type {
-  ToBackendSaveCreateChartRequestPayload,
-  ToBackendSaveCreateChartResponse
-} from '#common/zod/to-backend/charts/to-backend-save-create-chart';
-import type {
-  ToBackendGetDashboardRequestPayload,
-  ToBackendGetDashboardResponse
-} from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
-import type {
-  ToBackendGetDashboardsRequestPayload,
-  ToBackendGetDashboardsResponse
-} from '#common/zod/to-backend/dashboards/to-backend-get-dashboards';
-import type {
-  ToBackendSaveModifyDashboardRequestPayload,
-  ToBackendSaveModifyDashboardResponse
-} from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
-import type {
-  ToBackendGetRolesRequestPayload,
-  ToBackendGetRolesResponse
-} from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';
@@ -268,7 +256,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     this.updateNewChartPath();
     this.loadRoles();
 
-    let payload: ToBackendGetDashboardsRequestPayload = {
+    let payload: ToBackendGetDashboardsInput = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
@@ -281,16 +269,16 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        route: 'api/ToBackendGetDashboards',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetDashboardsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.dashboardUnits = [
-              ...resp.payload.dashboardUnitDrafts,
+              ...resp.result.value.dashboardUnitDrafts,
               ...makeSpaceUnits({
-                spaceNodes: resp.payload.dashboardSpaceNodes
+                spaceNodes: resp.result.value.dashboardSpaceNodes
               }).map(spaceUnit =>
                 spaceUnitToDashboardUnit({ spaceUnit: spaceUnit })
               )
@@ -450,7 +438,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     let selectedDashboardId = this.selectedDashboardId;
 
-    let payload: ToBackendGetDashboardRequestPayload = {
+    let payload: ToBackendGetDashboardInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -461,7 +449,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        route: 'api/ToBackendGetDashboard',
         payload: payload
       })
       .pipe(
@@ -469,11 +457,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
           let isSelectedDashboard =
             selectedDashboardId === this.selectedDashboardId;
 
-          if (
-            resp.info?.status === ResponseInfoStatusEnum.Ok &&
-            isSelectedDashboard
-          ) {
-            this.selectedDashboard = resp.payload.dashboard;
+          if (resp.result?.type === 'Success' && isSelectedDashboard) {
+            this.selectedDashboard = resp.result.value.dashboard;
 
             this.selectedDashboardLoaded = true;
 
@@ -515,7 +500,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     let { newTitle } = item;
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendSaveCreateChartRequestPayload = {
+    let payload: ToBackendSaveCreateChartInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -535,18 +520,18 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveCreateChart,
+        route: 'api/ToBackendSaveCreateChart',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendSaveCreateChartResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let newChart = resp.payload.chart;
+          if (resp.result?.type === 'Success') {
+            let newChart = resp.result.value.chart;
 
             if (isDefined(newChart)) {
               this.chartsQuery.update({
-                chartUnitDrafts: resp.payload.chartUnitDrafts,
-                chartSpaceNodes: resp.payload.chartSpaceNodes
+                chartUnitDrafts: resp.result.value.chartUnitDrafts,
+                chartSpaceNodes: resp.result.value.chartSpaceNodes
               });
 
               this.navigateService.navigateToChart({
@@ -589,7 +574,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       plateY: TILE_DEFAULT_PLATE_Y // recalculated on backend
     };
 
-    let payloadModifyDashboard: ToBackendSaveModifyDashboardRequestPayload = {
+    let payloadModifyDashboard: ToBackendSaveModifyDashboardInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -604,12 +589,12 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard,
+        route: 'api/ToBackendSaveModifyDashboard',
         payload: payloadModifyDashboard
       })
       .pipe(
         tap((resp: ToBackendSaveModifyDashboardResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.navigateService.navigateToDashboard({
               dashboardId: this.selectedDashboardId
             });
@@ -644,7 +629,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   loadRoles() {
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendGetRolesRequestPayload = {
+    let payload: ToBackendGetRolesInput = {
       projectId: nav.projectId
     };
 
@@ -652,13 +637,13 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRoles,
+        route: 'api/ToBackendGetRoles',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let newSortedRoles = resp.payload.roles.sort((a, b) =>
+          if (resp.result?.type === 'Success') {
+            let newSortedRoles = resp.result.value.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
 

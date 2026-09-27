@@ -15,14 +15,10 @@ import {
   EXPLORER_CONTEXT_USAGE_WARNING_PERCENTAGE,
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
-import type {
-  ToBackendGetLlmModelsWithProviderRequestPayload,
-  ToBackendGetLlmModelsWithProviderResponse
-} from '#common/zod/to-backend/llm-models/get-llm-models-with-provider/get-llm-models-with-provider';
+import type { ToBackendGetLlmModelsWithProviderInput } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
+import type { ToBackendGetLlmModelsWithProviderResponse } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
@@ -390,30 +386,29 @@ export class SessionInputComponent implements OnChanges {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendGetLlmModelsWithProviderRequestPayload = {
+    let payload: ToBackendGetLlmModelsWithProviderInput = {
       projectId: nav.projectId,
       sessionTypes: [this.sessionType]
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendGetLlmModelsWithProvider,
+        route: 'api/ToBackendGetLlmModelsWithProvider',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetLlmModelsWithProviderResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let state = this.sessionModelsQuery.getValue();
 
             let updatedModelsOpencode =
               this.sessionType === SessionTypeEnum.Editor
-                ? resp.payload.modelsOpencode
+                ? resp.result.value.modelsOpencode
                 : state.modelsOpencode;
 
             let updatedModelsAi =
               this.sessionType === SessionTypeEnum.Explorer
-                ? resp.payload.modelsAi
+                ? resp.result.value.modelsAi
                 : state.modelsAi;
 
             this.sessionModelsQuery.update({
@@ -423,8 +418,8 @@ export class SessionInputComponent implements OnChanges {
 
             let models =
               this.sessionType === SessionTypeEnum.Explorer
-                ? resp.payload.modelsAi
-                : resp.payload.modelsOpencode;
+                ? resp.result.value.modelsAi
+                : resp.result.value.modelsOpencode;
 
             this.applyModels({ apiModels: models, selectRecommended: false });
           }

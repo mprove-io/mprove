@@ -11,13 +11,9 @@ import {
   PATH_VERIFY_EMAIL
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendCheckSignUpResponse } from '#common/zod/to-backend/check/to-backend-check-sign-up';
-import type {
-  ToBackendRegisterUserRequestPayload,
-  ToBackendRegisterUserResponse
-} from '#common/zod/to-backend/users/to-backend-register-user';
+import type { ToBackendCheckSignUpResponse } from '#common/zod/backend/routes/check/check-sign-up/check-sign-up-response';
+import type { ToBackendRegisterUserInput } from '#common/zod/backend/routes/users/register-user/register-user-request';
+import type { ToBackendRegisterUserResponse } from '#common/zod/backend/routes/users/register-user/register-user-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 
@@ -77,14 +73,14 @@ export class RegisterComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCheckSignUp,
+        route: 'api/ToBackendCheckSignUp',
         payload: {}
       })
       .pipe(
         tap((resp: ToBackendCheckSignUpResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.isRegisterOnlyInvitedUsers =
-              resp.payload.isRegisterOnlyInvitedUsers;
+              resp.result.value.isRegisterOnlyInvitedUsers;
 
             this.checkLoaded = true;
             this.cd.detectChanges();
@@ -114,20 +110,20 @@ export class RegisterComponent implements OnInit {
 
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendRegisterUserRequestPayload = {
+    let payload: ToBackendRegisterUserInput = {
       email: this.registerForm.value.email,
       password: this.registerForm.value.password
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
+        route: 'api/ToBackendRegisterUser',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendRegisterUserResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let user = resp.payload.user;
+          if (resp.result?.type === 'Success') {
+            let user = resp.result.value.user;
 
             this.userQuery.update(user);
 

@@ -2,12 +2,9 @@ import { Command, Option } from 'clipanion';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendGetConnectionsListRequestPayload,
-  ToBackendGetConnectionsListResponse
-} from '#common/zod/to-backend/connections/to-backend-get-connections-list';
+import type { ToBackendGetConnectionsListInput } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-request';
+import type { ToBackendGetConnectionsListOutput } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -63,22 +60,21 @@ export class GetConnectionsListCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let getConnectionsListReqPayload: ToBackendGetConnectionsListRequestPayload =
-      {
-        projectId: this.projectId,
-        envId: this.env
-      };
+    let getConnectionsListReqPayload: ToBackendGetConnectionsListInput = {
+      projectId: this.projectId,
+      envId: this.env
+    };
 
-    let getConnectionsListResp =
-      await mreq<ToBackendGetConnectionsListResponse>({
+    let getConnectionsListOutput: ToBackendGetConnectionsListOutput =
+      await mreq({
         apiKey: apiKey,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionsList,
+        route: 'api/ToBackendGetConnectionsList',
         payload: getConnectionsListReqPayload,
         host: this.context.config.mproveCliHost
       });
 
     logToConsoleMcli({
-      log: getConnectionsListResp.payload,
+      log: getConnectionsListOutput,
       logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json

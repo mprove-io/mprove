@@ -6,8 +6,7 @@ import {
   ToBackendGetOrgUsersResponseDto
 } from '#backend/controllers/users/get-org-users/get-org-users.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import {
   AvatarEnt,
@@ -20,11 +19,9 @@ import { makeFullName } from '#backend/functions/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  OrgUsersItem,
-  ToBackendGetOrgUsersResponsePayload
-} from '#common/zod/to-backend/org-users/to-backend-get-org-users';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { OrgUsersItem } from '#common/zod/backend/org-users/org-users-item';
+import type { ToBackendGetOrgUsersOutput } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -36,7 +33,7 @@ export class GetOrgUsersController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
+  @Post('api/ToBackendGetOrgUsers' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetOrgUsers',
     description: 'Get a paginated list of users across org projects'
@@ -48,7 +45,7 @@ export class GetOrgUsersController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetOrgUsersRequestDto
   ) {
-    let { orgId, perPage, pageNum } = body.payload;
+    let { orgId, perPage, pageNum } = body.input;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -161,7 +158,7 @@ export class GetOrgUsersController {
       orgUserItems.push(orgUserItem);
     });
 
-    let payload: ToBackendGetOrgUsersResponsePayload = {
+    let payload: ToBackendGetOrgUsersOutput = {
       orgUsersList: orgUserItems,
       total: sortedUsers.length
     };

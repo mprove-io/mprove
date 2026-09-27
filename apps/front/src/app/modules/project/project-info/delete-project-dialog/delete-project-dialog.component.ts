@@ -14,12 +14,8 @@ import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_DELETED_PROJECT_NAME
 } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendDeleteProjectRequestPayload,
-  ToBackendDeleteProjectResponse
-} from '#common/zod/to-backend/projects/to-backend-delete-project';
+import type { ToBackendDeleteProjectInput } from '#common/zod/backend/routes/projects/delete-project/delete-project-request';
+import type { ToBackendDeleteProjectResponse } from '#common/zod/backend/routes/projects/delete-project/delete-project-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -62,7 +58,7 @@ export class DeleteProjectDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendDeleteProjectRequestPayload = {
+    let payload: ToBackendDeleteProjectInput = {
       projectId: this.ref.data.projectId
     };
 
@@ -70,12 +66,12 @@ export class DeleteProjectDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteProject,
+        route: 'api/ToBackendDeleteProject',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendDeleteProjectResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             localStorage.setItem(
               LOCAL_STORAGE_DELETED_PROJECT_NAME,
               this.ref.data.projectName

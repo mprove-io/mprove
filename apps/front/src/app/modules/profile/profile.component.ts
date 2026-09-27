@@ -10,15 +10,11 @@ import {
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendDeleteUserApiKeyResponse } from '#common/zod/to-backend/users/to-backend-delete-user-api-key';
-import type { ToBackendDeleteUserCodexAuthResponse } from '#common/zod/to-backend/users/to-backend-delete-user-codex-auth';
-import type { ToBackendGenerateUserApiKeyResponse } from '#common/zod/to-backend/users/to-backend-generate-user-api-key';
-import type {
-  ToBackendResetUserPasswordRequestPayload,
-  ToBackendResetUserPasswordResponse
-} from '#common/zod/to-backend/users/to-backend-reset-user-password';
+import type { ToBackendDeleteUserApiKeyResponse } from '#common/zod/backend/routes/users/delete-user-api-key/delete-user-api-key-response';
+import type { ToBackendDeleteUserCodexAuthResponse } from '#common/zod/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-response';
+import type { ToBackendGenerateUserApiKeyResponse } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
+import type { ToBackendResetUserPasswordInput } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-request';
+import type { ToBackendResetUserPasswordResponse } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -112,18 +108,18 @@ export class ProfileComponent implements OnInit {
     let email: string;
     this.userQuery.email$.pipe(take(1)).subscribe(x => (email = x));
 
-    let payload: ToBackendResetUserPasswordRequestPayload = {
+    let payload: ToBackendResetUserPasswordInput = {
       email: email
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
+        route: 'api/ToBackendResetUserPassword',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendResetUserPasswordResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             localStorage.setItem('PASSWORD_RESET_EMAIL', email);
             this.router.navigate([PATH_PASSWORD_RESET_SENT_AUTH]);
           }
@@ -157,18 +153,18 @@ export class ProfileComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey,
+        route: 'api/ToBackendGenerateUserApiKey',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendGenerateUserApiKeyResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.userQuery.updatePart({
-              apiKeyPrefix: resp.payload.apiKeyPrefix
+              apiKeyPrefix: resp.result.value.apiKeyPrefix
             });
             this.myDialogService.showGeneratedApiKey({
-              apiKey: resp.payload.apiKey
+              apiKey: resp.result.value.apiKey
             });
           }
         }),
@@ -182,13 +178,13 @@ export class ProfileComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteUserApiKey,
+        route: 'api/ToBackendDeleteUserApiKey',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteUserApiKeyResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.userQuery.updatePart({
               apiKeyPrefix: undefined
             });
@@ -216,14 +212,14 @@ export class ProfileComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteUserCodexAuth,
+        route: 'api/ToBackendDeleteUserCodexAuth',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteUserCodexAuthResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.userQuery.update(resp.payload.user);
+          if (resp.result?.type === 'Success') {
+            this.userQuery.update(resp.result.value.user);
           }
         }),
         take(1)

@@ -14,10 +14,10 @@ import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { LlmModelWithProvider } from '#common/zod/backend/llm-models/llm-model-with-provider';
-import type { ToBackendGetLlmModelsWithProviderResponsePayload } from '#common/zod/to-backend/llm-models/get-llm-models-with-provider/get-llm-models-with-provider';
+import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -30,7 +30,7 @@ export class GetLlmModelsWithProviderController {
     private providersService: ProvidersService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetLlmModelsWithProvider)
+  @Post('api/ToBackendGetLlmModelsWithProvider' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetLlmModelsWithProvider',
     description: 'List available LLM provider models'
@@ -42,7 +42,7 @@ export class GetLlmModelsWithProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetLlmModelsWithProviderRequestDto
   ) {
-    let { sessionTypes, projectId } = body.payload;
+    let { sessionTypes, projectId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -97,7 +97,7 @@ export class GetLlmModelsWithProviderController {
           }))
       : [];
 
-    let payload: ToBackendGetLlmModelsWithProviderResponsePayload = {
+    let payload: ToBackendGetLlmModelsWithProviderOutput = {
       modelsOpencode: modelsOpencode,
       modelsAi: modelsAi
     };

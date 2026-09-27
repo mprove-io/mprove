@@ -9,8 +9,7 @@ import {
   ToBackendRefreshCachedColumnResponseDto
 } from '#backend/controllers/cached-columns/refresh-cached-column/refresh-cached-column.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   CachedColumnTab,
   CachedPartTab,
@@ -42,9 +41,9 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendRefreshCachedColumnResponse } from '#common/zod/to-backend/connections/to-backend-refresh-cached-column';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRefreshCachedColumnOutput } from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-response';
 
 const CACHED_PARTS_INSERT_CHUNK_SIZE = 400;
 
@@ -72,7 +71,7 @@ export class RefreshCachedColumnController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendRefreshCachedColumn)
+  @Post('api/ToBackendRefreshCachedColumn' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'RefreshCachedColumn',
     description: 'Refresh cached column'
@@ -81,7 +80,7 @@ export class RefreshCachedColumnController {
   async refreshCachedColumn(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendRefreshCachedColumnRequestDto
-  ): Promise<ToBackendRefreshCachedColumnResponse['payload']> {
+  ): Promise<ToBackendRefreshCachedColumnOutput> {
     let {
       projectId,
       envId,
@@ -91,7 +90,7 @@ export class RefreshCachedColumnController {
       columnName,
       refreshType,
       sampleSize
-    } = body.payload;
+    } = body.input;
 
     await this.projectsService.getProjectCheckExists({ projectId: projectId });
 

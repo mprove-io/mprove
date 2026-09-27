@@ -32,14 +32,18 @@ import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.e
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { StoreFilterForEnum } from '#common/enums/store-filter-for.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { ToBackendGetModelInput } from '#common/zod/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelResponse } from '#common/zod/backend/routes/models/get-model/get-model-response';
+import type { ToBackendGetModelsInput } from '#common/zod/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
+import type { ToBackendGetSuggestFieldsInput } from '#common/zod/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-request';
+import type { ToBackendGetSuggestFieldsResponse } from '#common/zod/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-response';
 import type { SuggestField } from '#common/zod/backend/suggest-field';
 import type { DashboardField } from '#common/zod/blockml/dashboard-field';
 import type { Fraction } from '#common/zod/blockml/fraction';
@@ -47,18 +51,6 @@ import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
 import type { Model } from '#common/zod/blockml/model';
 import type { SelectItem } from '#common/zod/front/select-item';
-import type {
-  ToBackendGetModelRequestPayload,
-  ToBackendGetModelResponse
-} from '#common/zod/to-backend/models/to-backend-get-model';
-import type {
-  ToBackendGetModelsRequestPayload,
-  ToBackendGetModelsResponse
-} from '#common/zod/to-backend/models/to-backend-get-models';
-import type {
-  ToBackendGetSuggestFieldsRequestPayload,
-  ToBackendGetSuggestFieldsResponse
-} from '#common/zod/to-backend/suggest-fields/to-backend-get-suggest-fields';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery } from '#front/app/queries/struct.query';
@@ -383,7 +375,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     this.spinner.show(this.storeModelsSpinnerName);
 
-    let payload: ToBackendGetModelsRequestPayload = {
+    let payload: ToBackendGetModelsInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -392,13 +384,13 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        route: 'api/ToBackendGetModels',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.storeModels = resp.payload.models.filter(
+          if (resp.result?.type === 'Success') {
+            this.storeModels = resp.result.value.models.filter(
               model => model.type === ModelTypeEnum.Store
             );
 
@@ -441,7 +433,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     this.spinner.show(this.storeFiltersSpinnerName);
 
-    let payload: ToBackendGetModelRequestPayload = {
+    let payload: ToBackendGetModelInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -452,15 +444,15 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        route: 'api/ToBackendGetModel',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetModelResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.storeModel = resp.payload.model;
+          if (resp.result?.type === 'Success') {
+            this.storeModel = resp.result.value.model;
 
-            this.storeFiltersList = resp.payload.model.fields
+            this.storeFiltersList = resp.result.value.model.fields
               .filter(x => x.fieldClass === FieldClassEnum.Filter)
               .map(field => {
                 let storeFiltersItem: StoreFiltersItem = {
@@ -472,7 +464,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
               });
 
             this.storeResultsList =
-              resp.payload.model.storeContent.results?.map(
+              resp.result.value.model.storeContent.results?.map(
                 result => result.result
               ) || [];
 
@@ -501,7 +493,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       )
       .subscribe();
 
-    let payload: ToBackendGetSuggestFieldsRequestPayload = {
+    let payload: ToBackendGetSuggestFieldsInput = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       repoId: nav.repoId,
@@ -516,15 +508,15 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields,
+        route: 'api/ToBackendGetSuggestFields',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetSuggestFieldsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.suggestFields = [
               this.emptySuggestField,
-              ...resp.payload.suggestFields
+              ...resp.result.value.suggestFields
             ];
 
             this.suggestFieldsLoading = false;

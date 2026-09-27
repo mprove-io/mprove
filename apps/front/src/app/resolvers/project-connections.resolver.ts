@@ -7,12 +7,8 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetConnectionsRequestPayload,
-  ToBackendGetConnectionsResponse
-} from '#common/zod/to-backend/connections/to-backend-get-connections';
+import type { ToBackendGetConnectionsInput } from '#common/zod/backend/routes/connections/get-connections/get-connections-request';
+import type { ToBackendGetConnectionsResponse } from '#common/zod/backend/routes/connections/get-connections/get-connections-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { ConnectionsQuery } from '../queries/connections.query';
 import { MemberQuery } from '../queries/member.query';
@@ -58,22 +54,22 @@ export class ProjectConnectionsResolver
       projectId = x;
     });
 
-    let payload: ToBackendGetConnectionsRequestPayload = {
+    let payload: ToBackendGetConnectionsInput = {
       projectId: projectId
     };
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnections,
+        route: 'api/ToBackendGetConnections',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetConnectionsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
 
             this.connectionsQuery.update({
-              connections: resp.payload.connections
+              connections: resp.result.value.connections
             });
 
             return true;

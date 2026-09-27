@@ -8,12 +8,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendSetAvatarRequest,
-  ToBackendSetAvatarResponse
-} from '#common/zod/to-backend/avatars/to-backend-set-avatar';
+import type { ToBackendSetAvatarRequest } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-request';
+import type { ToBackendSetAvatarResponse } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-response';
 
 let testId = 'backend-set-avatar__wrong-request-params';
 
@@ -50,17 +47,15 @@ test('1', async t => {
       });
 
       let req: ToBackendSetAvatarRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: <any>{
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: <any>{
           unk: '123'
         }
       };
 
-      resp = await sendToBackend<ToBackendSetAvatarResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendSetAvatar',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -79,9 +74,16 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
-    assert.equal(resp.info.error.displayData[0].code, 'invalid_type');
-    assert.equal(resp.info.error.displayData[0].path, 'payload.avatarSmall');
+    assert.ok(resp.result.type === 'Failure');
+
+    assert.equal(
+      resp.result.error.message,
+      ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+    );
+
+    assert.equal(resp.result.error.displayData[0].code, 'invalid_type');
+
+    assert.equal(resp.result.error.displayData[0].path, 'input.avatarSmall');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

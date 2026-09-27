@@ -6,8 +6,7 @@ import {
   ToBackendGetOrgResponseDto
 } from '#backend/controllers/orgs/get-org/get-org.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -16,8 +15,8 @@ import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetOrgResponsePayload } from '#common/zod/to-backend/orgs/to-backend-get-org';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetOrgOutput } from '#common/zod/backend/routes/orgs/get-org/get-org-response';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -29,7 +28,7 @@ export class GetOrgController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrg)
+  @Post('api/ToBackendGetOrg' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetOrg',
     description: 'Get an organization'
@@ -41,7 +40,7 @@ export class GetOrgController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetOrgRequestDto
   ) {
-    let { orgId } = body.payload;
+    let { orgId } = body.input;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -71,7 +70,7 @@ export class GetOrgController {
       }
     }
 
-    let payload: ToBackendGetOrgResponsePayload = {
+    let payload: ToBackendGetOrgOutput = {
       org: this.orgsService.tabToApi({ org: org })
     };
 

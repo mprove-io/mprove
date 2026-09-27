@@ -10,12 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendEditConnectionRequest,
-  ToBackendEditConnectionResponse
-} from '#common/zod/to-backend/connections/to-backend-edit-connection';
+import type { ToBackendEditConnectionRequest } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-request';
+import type { ToBackendEditConnectionResponse } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-response';
 
 let testId = 'backend-edit-connection__connection-does-not-exist';
 
@@ -89,12 +86,9 @@ test('1', async t => {
       });
 
       let req: ToBackendEditConnectionRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendEditConnection,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           envId: PROJECT_ENV_PROD,
           connectionId: connectionId,
@@ -102,7 +96,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendEditConnectionResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendEditConnection',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -121,8 +116,9 @@ test('1', async t => {
       }
     }
 
+    assert.ok(resp.result.type === 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
     );
 

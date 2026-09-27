@@ -16,8 +16,7 @@ import {
   ToBackendEditRoleGivenResponseDto
 } from '#backend/controllers/roles/edit-role-given/edit-role-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -26,8 +25,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendEditRoleGivenResponsePayload } from '#common/zod/to-backend/roles/to-backend-edit-role-given';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendEditRoleGivenOutput } from '#common/zod/backend/routes/roles/edit-role-given/edit-role-given-response';
 
 @ApiTags('Roles')
 @UseGuards(ThrottlerUserIdGuard)
@@ -44,7 +43,7 @@ export class EditRoleGivenController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendEditRoleGiven)
+  @Post('api/ToBackendEditRoleGiven' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'EditRoleGiven',
     description: 'Edit a project role given'
@@ -56,7 +55,7 @@ export class EditRoleGivenController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditRoleGivenRequestDto
   ) {
-    let { projectId, roleId, givenId, values } = body.payload;
+    let { projectId, roleId, givenId, values } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -108,7 +107,7 @@ export class EditRoleGivenController {
       projectId: projectId
     });
 
-    let payload: ToBackendEditRoleGivenResponsePayload = {
+    let payload: ToBackendEditRoleGivenOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       roles: apiRoles
     };

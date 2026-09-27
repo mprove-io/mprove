@@ -20,12 +20,10 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { EnvsItem } from '#common/zod/backend/envs-item';
-import type {
-  ToBackendGetEnvsListRequestPayload,
-  ToBackendGetEnvsListResponse
-} from '#common/zod/to-backend/envs/to-backend-get-envs-list';
+import type { ToBackendGetEnvsListInput } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-request';
+import type { ToBackendGetEnvsListResponse } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-response';
 import { checkNavMain } from '#front/app/functions/check-nav-main';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -106,18 +104,21 @@ export class EnvSelectComponent {
   openEnvSelect() {
     this.envsListLoading = true;
 
-    let payload: ToBackendGetEnvsListRequestPayload = {
+    let payload: ToBackendGetEnvsListInput = {
       projectId: this.selectedProjectId,
       isFilter: true
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        route: 'api/ToBackendGetEnvsList',
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetEnvsListResponse) => resp.payload.envsList),
+        map(
+          (resp: ToBackendGetEnvsListResponse) =>
+            unwrapToBackendResponse({ response: resp }).envsList
+        ),
         tap(x => {
           this.envsList = x;
           this.envsListLoading = false;

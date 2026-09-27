@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendGetExplorerChartTabRequest,
-  zToBackendGetExplorerChartTabResponse
-} from '#common/zod/to-backend/charts/to-backend-get-explorer-chart-tab';
+import { zToBackendGetExplorerChartTabRequest } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
+import { zToBackendGetExplorerChartTabResponse } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-response';
 
 export class ToBackendGetExplorerChartTabRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetExplorerChartTabRequest })

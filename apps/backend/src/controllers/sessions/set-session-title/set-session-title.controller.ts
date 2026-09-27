@@ -15,7 +15,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -28,7 +28,7 @@ export class SetSessionTitleController {
     private explorerStreamService: ExplorerStreamService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSetSessionTitle)
+  @Post('api/ToBackendSetSessionTitle' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SetSessionTitle',
     description: "Update the session's title"
@@ -40,7 +40,7 @@ export class SetSessionTitleController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetSessionTitleRequestDto
   ) {
-    let { sessionId, title } = body.payload;
+    let { sessionId, title } = body.input;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId

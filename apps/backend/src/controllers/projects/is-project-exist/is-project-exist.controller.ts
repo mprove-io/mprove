@@ -6,8 +6,7 @@ import {
   ToBackendIsProjectExistResponseDto
 } from '#backend/controllers/projects/is-project-exist/is-project-exist.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -15,9 +14,9 @@ import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendIsProjectExistResponsePayload } from '#common/zod/to-backend/projects/to-backend-is-project-exist';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendIsProjectExistOutput } from '#common/zod/backend/routes/projects/is-project-exist/is-project-exist-response';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)
@@ -31,7 +30,7 @@ export class IsProjectExistController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendIsProjectExist)
+  @Post('api/ToBackendIsProjectExist' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'IsProjectExist',
     description: 'Check if a project with the given name exists'
@@ -43,7 +42,7 @@ export class IsProjectExistController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendIsProjectExistRequestDto
   ) {
-    let { name, orgId } = body.payload;
+    let { name, orgId } = body.input;
 
     await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -58,7 +57,7 @@ export class IsProjectExistController {
       where: eq(projectsTable.nameHash, nameHash)
     });
 
-    let payload: ToBackendIsProjectExistResponsePayload = {
+    let payload: ToBackendIsProjectExistOutput = {
       isExist: isDefined(project)
     };
 

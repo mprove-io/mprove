@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendRevertRepoToRemoteRequestDto,
   ToBackendRevertRepoToRemoteResponseDto
 } from '#backend/controllers/repos/revert-repo-to-remote/revert-repo-to-remote.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -42,10 +38,12 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRevertRepoToRemoteOutput } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
 import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/disk/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
-import type { ToBackendRevertRepoToRemoteResponsePayload } from '#common/zod/to-backend/repos/to-backend-revert-repo-to-remote';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -68,7 +66,7 @@ export class RevertRepoToRemoteController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote)
+  @Post('api/ToBackendRevertRepoToRemote' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'RevertRepoToRemote',
     description: 'Reset the repo branch to match the remote'
@@ -80,8 +78,8 @@ export class RevertRepoToRemoteController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendRevertRepoToRemoteRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, envId } = body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, envId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -131,7 +129,7 @@ export class RevertRepoToRemoteController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'revertRepoToRemote',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -201,7 +199,7 @@ export class RevertRepoToRemoteController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendRevertRepoToRemoteResponsePayload = {
+    let payload: ToBackendRevertRepoToRemoteOutput = {
       repo: diskRevertRepoToRemoteOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,

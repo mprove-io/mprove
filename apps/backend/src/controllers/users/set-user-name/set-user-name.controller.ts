@@ -17,8 +17,7 @@ import {
   ToBackendSetUserNameResponseDto
 } from '#backend/controllers/users/set-user-name/set-user-name.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -26,8 +25,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendSetUserNameResponsePayload } from '#common/zod/to-backend/users/to-backend-set-user-name';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSetUserNameOutput } from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -42,7 +41,7 @@ export class SetUserNameController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSetUserName)
+  @Post('api/ToBackendSetUserName' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SetUserName',
     description: "Update the user's first and last name"
@@ -56,7 +55,7 @@ export class SetUserNameController {
   ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { firstName, lastName } = body.payload;
+    let { firstName, lastName } = body.input;
 
     user.firstName = firstName;
     user.lastName = lastName;
@@ -87,7 +86,7 @@ export class SetUserNameController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendSetUserNameResponsePayload = {
+    let payload: ToBackendSetUserNameOutput = {
       user: this.usersService.tabToApi({ user: user })
     };
 

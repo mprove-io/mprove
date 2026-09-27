@@ -10,7 +10,6 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-
 import type { ErrorData } from '#common/zod/front/error-data';
 import { UiService } from '#front/app/services/ui.service';
 
@@ -59,20 +58,20 @@ export class ErrorDialogComponent implements OnInit {
     this.rightButtonText = this.ref.data.rightButtonText;
 
     this.message =
-      this.ref.data?.response?.body?.info?.error?.message ||
+      this.ref.data?.response?.body?.result?.error?.message ||
       this.ref.data?.message ||
       this.ref.data;
 
-    let displayData = this.ref.data?.response?.body?.info?.error?.displayData;
+    let displayData = this.ref.data?.response?.body?.result?.error?.displayData;
     if (isDefined(displayData)) {
       this.displayData = JSON.stringify(displayData, undefined, 2);
     }
 
     this.originalErrorMessage =
-      this.ref.data?.response?.body?.info?.error?.originalError?.message;
+      this.ref.data?.response?.body?.result?.error?.originalError?.message;
 
-    this.path = this.ref.data?.reqBody?.info?.name;
-    this.traceId = this.ref.data?.reqBody?.info?.traceId;
+    this.path = this.ref.data?.reqUrl;
+    this.traceId = this.ref.data?.reqBody?.traceId;
 
     if (
       [

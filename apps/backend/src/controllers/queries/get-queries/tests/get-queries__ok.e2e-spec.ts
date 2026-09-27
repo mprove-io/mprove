@@ -14,17 +14,11 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetDashboardRequest,
-  ToBackendGetDashboardResponse
-} from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
-import type {
-  ToBackendGetQueriesRequest,
-  ToBackendGetQueriesResponse
-} from '#common/zod/to-backend/queries/to-backend-get-queries';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
+import type { ToBackendGetQueriesRequest } from '#common/zod/backend/routes/queries/get-queries/get-queries-request';
+import type { ToBackendGetQueriesResponse } from '#common/zod/backend/routes/queries/get-queries/get-queries-response';
 
 let testId = 'backend-get-queries__ok';
 
@@ -109,12 +103,9 @@ test('1', async t => {
       });
 
       let req1: ToBackendGetDashboardRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -124,32 +115,33 @@ test('1', async t => {
         }
       };
 
-      let resp1 = await sendToBackend<ToBackendGetDashboardResponse>({
+      let resp1 = await sendToBackend({
+        route: 'api/ToBackendGetDashboard',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
       });
 
       let req2: ToBackendGetQueriesRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetQueries,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
           envId: PROJECT_ENV_PROD,
           mconfigIds: [
-            resp1.payload.dashboard.tiles[0].mconfigId,
-            resp1.payload.dashboard.tiles[1].mconfigId
+            unwrapToBackendResponse({ response: resp1 }).dashboard.tiles[0]
+              .mconfigId,
+            unwrapToBackendResponse({ response: resp1 }).dashboard.tiles[1]
+              .mconfigId
           ],
           skipData: true
         }
       };
 
-      resp2 = await sendToBackend<ToBackendGetQueriesResponse>({
+      resp2 = await sendToBackend({
+        route: 'api/ToBackendGetQueries',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req2
@@ -168,8 +160,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp2.info.error, undefined);
-    assert.equal(resp2.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp2.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

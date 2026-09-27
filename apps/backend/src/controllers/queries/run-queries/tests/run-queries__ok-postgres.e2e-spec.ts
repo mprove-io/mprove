@@ -12,28 +12,16 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import { spaceUnitToChartUnit } from '#common/functions/space-unit-to-chart-unit/space-unit-to-chart-unit';
-import type {
-  ToBackendGetChartRequest,
-  ToBackendGetChartResponse
-} from '#common/zod/to-backend/charts/to-backend-get-chart';
-import type {
-  ToBackendGetChartsRequest,
-  ToBackendGetChartsResponse
-} from '#common/zod/to-backend/charts/to-backend-get-charts';
-import type {
-  ToBackendGetQueryRequest,
-  ToBackendGetQueryResponse
-} from '#common/zod/to-backend/queries/to-backend-get-query';
-import type {
-  ToBackendRunQueriesRequest,
-  ToBackendRunQueriesResponse
-} from '#common/zod/to-backend/queries/to-backend-run-queries';
-import type { ToBackendSeedRecordsRequestPayloadConnectionsItem } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGetChartRequest } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
+import type { ToBackendGetChartsRequest } from '#common/zod/backend/routes/charts/get-charts/get-charts-request';
+import type { ToBackendGetQueryRequest } from '#common/zod/backend/routes/queries/get-query/get-query-request';
+import type { ToBackendRunQueriesRequest } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
+import type { ToBackendRunQueriesResponse } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
+import type { ToBackendSeedRecordsInputConnectionsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-connections-item';
 
 let testId = 'backend-run-queries__ok-postgres';
 
@@ -62,7 +50,7 @@ test('1', async t => {
     try {
       prepTest = await prepareTest({});
 
-      let c1Postgres: ToBackendSeedRecordsRequestPayloadConnectionsItem = {
+      let c1Postgres: ToBackendSeedRecordsInputConnectionsItem = {
         envId: PROJECT_ENV_PROD,
         projectId: projectId,
         connectionId: 'c1_postgres',
@@ -136,12 +124,9 @@ test('1', async t => {
       });
 
       let req1: ToBackendGetChartsRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetCharts,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -149,14 +134,15 @@ test('1', async t => {
         }
       };
 
-      let resp1 = await sendToBackend<ToBackendGetChartsResponse>({
+      let resp1 = await sendToBackend({
+        route: 'api/ToBackendGetCharts',
         httpServer: prepTest.httpServer,
         loginToken: prepareSeedResult.loginToken,
         req: req1
       });
 
       let chartUnit = makeSpaceUnits({
-        spaceNodes: resp1.payload.chartSpaceNodes
+        spaceNodes: unwrapToBackendResponse({ response: resp1 }).chartSpaceNodes
       })
         .map(spaceUnit => spaceUnitToChartUnit({ spaceUnit: spaceUnit }))
         .find(x => x.chartId === chartId);
@@ -164,12 +150,9 @@ test('1', async t => {
       assert.ok(chartUnit);
 
       let reqGetChart: ToBackendGetChartRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetChart,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -179,21 +162,19 @@ test('1', async t => {
         }
       };
 
-      let respGetChart = await sendToBackend<ToBackendGetChartResponse>({
+      let respGetChart = await sendToBackend({
+        route: 'api/ToBackendGetChart',
         httpServer: prepTest.httpServer,
         loginToken: prepareSeedResult.loginToken,
         req: reqGetChart
       });
 
-      let chart = respGetChart.payload.chart;
+      let chart = unwrapToBackendResponse({ response: respGetChart }).chart;
 
       let req2: ToBackendRunQueriesRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -202,25 +183,24 @@ test('1', async t => {
         }
       };
 
-      resp2 = await sendToBackend<ToBackendRunQueriesResponse>({
+      resp2 = await sendToBackend({
+        route: 'api/ToBackendRunQueries',
         httpServer: prepTest.httpServer,
         loginToken: prepareSeedResult.loginToken,
         req: req2
       });
 
       // Wait for query to complete before closing to avoid "pool closed" error
-      let queryId = resp2.payload.runningQueries[0]?.queryId;
+      let queryId = unwrapToBackendResponse({ response: resp2 })
+        .runningQueries[0]?.queryId;
       if (queryId) {
         let maxWaitMs = 10000;
         let waited = 0;
         while (waited < maxWaitMs) {
           let reqGetQuery: ToBackendGetQueryRequest = {
-            info: {
-              name: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-              traceId: traceId,
-              idempotencyKey: makeId()
-            },
-            payload: {
+            traceId: traceId,
+            idempotencyKey: makeId(),
+            input: {
               projectId: projectId,
               repoId: userId,
               branchId: BRANCH_MAIN,
@@ -230,13 +210,15 @@ test('1', async t => {
             }
           };
 
-          let respGetQuery = await sendToBackend<ToBackendGetQueryResponse>({
+          let respGetQuery = await sendToBackend({
+            route: 'api/ToBackendGetQuery',
             httpServer: prepTest.httpServer,
             loginToken: prepareSeedResult.loginToken,
             req: reqGetQuery
           });
 
-          let status = respGetQuery.payload.query?.status;
+          let status = unwrapToBackendResponse({ response: respGetQuery }).query
+            ?.status;
           if (status !== QueryStatusEnum.Running) {
             break;
           }
@@ -259,8 +241,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp2.info.error, undefined);
-    assert.equal(resp2.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp2.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

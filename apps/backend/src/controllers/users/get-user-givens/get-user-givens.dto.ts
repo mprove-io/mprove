@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendGetUserGivensRequest,
-  zToBackendGetUserGivensResponse
-} from '#common/zod/to-backend/users/to-backend-get-user-givens';
+import { zToBackendGetUserGivensRequest } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-request';
+import { zToBackendGetUserGivensResponse } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-response';
 
 export class ToBackendGetUserGivensRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetUserGivensRequest })

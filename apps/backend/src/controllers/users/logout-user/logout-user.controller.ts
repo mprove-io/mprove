@@ -8,7 +8,7 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -16,7 +16,7 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 export class LogoutUserController {
   constructor(private tabService: TabService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendLogoutUser)
+  @Post('api/ToBackendLogoutUser' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'LogoutUser',
     description: 'Logout the current user'

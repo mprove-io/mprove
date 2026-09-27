@@ -1,6 +1,5 @@
 import { Injectable, UseFilters } from '@nestjs/common';
-import type { Context } from '@rekog/mcp-nest';
-import { Tool } from '@rekog/mcp-nest';
+import { type Context, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetConnectionSchemasService } from '#backend/controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -17,7 +16,7 @@ import {
   type McpToolGetSchemasInput,
   zMcpToolGetSchemasInput,
   zMcpToolGetSchemasOutput
-} from '#common/zod/to-backend/mcp-tools/mcp-tool-get-schemas';
+} from '#common/zod/backend/mcp-tools/mcp-tool-get-schemas';
 import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload/process-get-connection-schemas-payload';
 
 @Injectable()

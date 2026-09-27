@@ -3,8 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
 import { RunQueriesService } from '#backend/controllers/queries/run-queries/run-queries.service';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { SessionsService } from '#backend/services/db/sessions.service';
@@ -15,7 +14,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendProduceExplorerChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-produce-explorer-chart';
+import type { ToBackendProduceExplorerChartOutput } from '#common/zod/backend/routes/charts/produce-explorer-chart/produce-explorer-chart-response';
 
 export const CHART_ID_PLACEHOLDER = '<chart-id-placeholder>';
 
@@ -39,7 +38,7 @@ export class ProduceExplorerChartService {
     modelId: string;
     chartYaml: string;
     title: string;
-  }): Promise<ToBackendProduceExplorerChartResponsePayload> {
+  }): Promise<ToBackendProduceExplorerChartOutput> {
     let { user, traceId, sessionId, modelId, chartYaml, title } = item;
 
     let hasChartIdPlaceholder = chartYaml.includes(CHART_ID_PLACEHOLDER);
@@ -131,7 +130,7 @@ export class ProduceExplorerChartService {
       event: tabEvent
     });
 
-    let payload: ToBackendProduceExplorerChartResponsePayload = {
+    let payload: ToBackendProduceExplorerChartOutput = {
       status: 'ok',
       tabId: tabId,
       chartId: chart.chartId,

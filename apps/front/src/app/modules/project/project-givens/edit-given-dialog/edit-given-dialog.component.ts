@@ -13,13 +13,9 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { Given } from '#common/zod/backend/given';
-import type {
-  ToBackendEditGivenRequestPayload,
-  ToBackendEditGivenResponse
-} from '#common/zod/to-backend/givens/to-backend-edit-given';
+import type { ToBackendEditGivenInput } from '#common/zod/backend/routes/givens/edit-given/edit-given-request';
+import type { ToBackendEditGivenResponse } from '#common/zod/backend/routes/givens/edit-given/edit-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { GivensQuery } from '#front/app/queries/givens.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -83,7 +79,7 @@ export class EditGivenDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendEditGivenRequestPayload = {
+    let payload: ToBackendEditGivenInput = {
       projectId: this.dataItem.given.projectId,
       givenId: this.dataItem.given.givenId,
       values: ValidationService.parseGivenValues({
@@ -95,15 +91,15 @@ export class EditGivenDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditGiven,
+        route: 'api/ToBackendEditGiven',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditGivenResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.givensQuery.update({ givens: resp.payload.givens });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.givensQuery.update({ givens: resp.result.value.givens });
           }
         }),
         take(1)

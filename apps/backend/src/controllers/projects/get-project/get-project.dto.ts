@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendGetProjectRequest,
-  zToBackendGetProjectResponse
-} from '#common/zod/to-backend/projects/to-backend-get-project';
+import { zToBackendGetProjectRequest } from '#common/zod/backend/routes/projects/get-project/get-project-request';
+import { zToBackendGetProjectResponse } from '#common/zod/backend/routes/projects/get-project/get-project-response';
 
 export class ToBackendGetProjectRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetProjectRequest })

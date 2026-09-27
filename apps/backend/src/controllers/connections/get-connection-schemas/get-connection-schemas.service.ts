@@ -1,11 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { cachedColumnsTable } from '#backend/drizzle/postgres/schema/cached-columns';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
@@ -40,9 +36,11 @@ import type {
 } from '#common/zod/backend/connection-schemas/combined-schema';
 import type { ExtraSchema } from '#common/zod/backend/connection-schemas/extra-schema';
 import type { ConnectionRawSchema } from '#common/zod/backend/connection-schemas/raw-schema';
+import type { CachedColumn } from '#common/zod/backend/connections/cached-column';
 import type { Member } from '#common/zod/backend/member';
 import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
-import type { CachedColumn } from '#common/zod/to-backend/connections/cached-column';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class GetConnectionSchemasService {

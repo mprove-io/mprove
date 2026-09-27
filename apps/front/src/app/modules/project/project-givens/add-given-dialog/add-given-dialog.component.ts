@@ -17,12 +17,8 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { take, tap } from 'rxjs/operators';
 import { GIVEN_TYPES } from '#common/constants/top';
 import { GivenTypeEnum } from '#common/enums/given-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendCreateGivenRequestPayload,
-  ToBackendCreateGivenResponse
-} from '#common/zod/to-backend/givens/to-backend-create-given';
+import type { ToBackendCreateGivenInput } from '#common/zod/backend/routes/givens/create-given/create-given-request';
+import type { ToBackendCreateGivenResponse } from '#common/zod/backend/routes/givens/create-given/create-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { GivensQuery } from '#front/app/queries/givens.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -113,7 +109,7 @@ export class AddGivenDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateGivenRequestPayload = {
+    let payload: ToBackendCreateGivenInput = {
       projectId: this.dataItem.projectId,
       givenId: this.addGivenForm.value.givenId,
       type: this.addGivenForm.value.type,
@@ -127,15 +123,15 @@ export class AddGivenDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateGiven,
+        route: 'api/ToBackendCreateGiven',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendCreateGivenResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.givensQuery.update({ givens: resp.payload.givens });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.givensQuery.update({ givens: resp.result.value.givens });
           }
         }),
         take(1)

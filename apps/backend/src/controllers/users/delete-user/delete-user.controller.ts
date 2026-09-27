@@ -18,8 +18,7 @@ import {
   ToBackendDeleteUserResponseDto
 } from '#backend/controllers/users/delete-user/delete-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import {
@@ -37,7 +36,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -53,7 +52,7 @@ export class DeleteUserController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteUser)
+  @Post('api/ToBackendDeleteUser' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteUser',
     description: 'Delete the current user'
@@ -67,7 +66,7 @@ export class DeleteUserController {
   ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = body.info;
+    let { traceId } = body;
 
     let ownerOrgs = await this.db.drizzle.query.orgsTable.findMany({
       where: eq(orgsTable.ownerId, user.userId)

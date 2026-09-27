@@ -6,12 +6,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendValidateFilesRequestPayload,
-  ToBackendValidateFilesResponse
-} from '#common/zod/to-backend/files/to-backend-validate-files';
+import type { ToBackendValidateFilesInput } from '#common/zod/backend/routes/files/validate-files/validate-files-request';
+import type { ToBackendValidateFilesOutput } from '#common/zod/backend/routes/files/validate-files/validate-files-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -86,22 +83,22 @@ export class ValidateCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let validateFilesReqPayload: ToBackendValidateFilesRequestPayload = {
+    let validateFilesReqPayload: ToBackendValidateFilesInput = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
       envId: this.env
     };
 
-    let validateFilesResp = await mreq<ToBackendValidateFilesResponse>({
+    let validateFilesOutput: ToBackendValidateFilesOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+      route: 'api/ToBackendValidateFiles',
       payload: validateFilesReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let log = processValidateFilesPayload({
-      payload: validateFilesResp.payload,
+      payload: validateFilesOutput,
       host: this.context.config.mproveCliHost,
       projectId: this.projectId,
       branch: this.branch,

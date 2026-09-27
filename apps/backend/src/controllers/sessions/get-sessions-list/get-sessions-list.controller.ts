@@ -7,8 +7,7 @@ import {
   ToBackendGetSessionsListResponseDto
 } from '#backend/controllers/sessions/get-sessions-list/get-sessions-list.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import {
   SessionEnt,
@@ -23,8 +22,8 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetSessionsListResponsePayload } from '#common/zod/to-backend/sessions/to-backend-get-sessions-list';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetSessionsListOutput } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -40,7 +39,7 @@ export class GetSessionsListController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetSessionsList)
+  @Post('api/ToBackendGetSessionsList' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetSessionsList',
     description: 'List the user sessions'
@@ -59,7 +58,7 @@ export class GetSessionsListController {
       archivedLimit,
       archivedLastCreatedTs,
       sessionType
-    } = body.payload;
+    } = body.input;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -106,7 +105,7 @@ export class GetSessionsListController {
 
     let allEnts: SessionEnt[] = [...sessionEnts];
 
-    let payload: ToBackendGetSessionsListResponsePayload = {
+    let payload: ToBackendGetSessionsListOutput = {
       sessions: []
     };
 

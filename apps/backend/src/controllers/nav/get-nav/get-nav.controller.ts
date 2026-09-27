@@ -8,8 +8,7 @@ import {
   ToBackendGetNavResponseDto
 } from '#backend/controllers/nav/get-nav/get-nav.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   UserTab
@@ -29,13 +28,13 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Member } from '#common/zod/backend/member';
+import type { ToBackendGetNavOutput } from '#common/zod/backend/routes/nav/get-nav/get-nav-response';
 import type { StructX } from '#common/zod/backend/struct-x';
 import type { Repo } from '#common/zod/disk/repo';
 import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
-import type { ToBackendGetNavResponsePayload } from '#common/zod/to-backend/nav/to-backend-get-nav';
 
 @ApiTags('Nav')
 @UseGuards(ThrottlerUserIdGuard)
@@ -53,7 +52,7 @@ export class GetNavController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetNav)
+  @Post('api/ToBackendGetNav' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetNav',
     description: 'Get initial navigation context for the current user'
@@ -65,7 +64,7 @@ export class GetNavController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetNavRequestDto
   ) {
-    let { orgId, projectId, getRepo } = body.payload;
+    let { orgId, projectId, getRepo } = body.input;
 
     let members = await this.db.drizzle.query.membersTable.findMany({
       where: eq(membersTable.memberId, user.userId)
@@ -182,7 +181,7 @@ export class GetNavController {
         await this.rpcService.sendToDiskUnwrapOutput({
           request: {
             operation: 'getCatalogNodes',
-            traceId: body.info.traceId,
+            traceId: body.traceId,
             input: {
               baseProject: apiResultBaseProject,
               repoId: bridge.repoId,
@@ -195,7 +194,7 @@ export class GetNavController {
       apiRepo = diskGetCatalogNodesOutput.repo;
     }
 
-    let payload: ToBackendGetNavResponsePayload = {
+    let payload: ToBackendGetNavOutput = {
       avatarSmall: avatar?.avatarSmall,
       avatarBig: avatar?.avatarBig,
       orgId: resultOrgId,

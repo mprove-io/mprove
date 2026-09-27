@@ -7,13 +7,10 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendResendUserEmailRequest,
-  ToBackendResendUserEmailResponse
-} from '#common/zod/to-backend/users/to-backend-resend-user-email';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendResendUserEmailRequest } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-request';
+import type { ToBackendResendUserEmailResponse } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-response';
 
 let testId = 'resend-user-email__ok-verified-true';
 
@@ -49,17 +46,15 @@ test('1', async t => {
       });
 
       let resendUserEmailReq: ToBackendResendUserEmailRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           userId: userId
         }
       };
 
-      resp = await sendToBackend<ToBackendResendUserEmailResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendResendUserEmail',
         httpServer: prep.httpServer,
         req: resendUserEmailReq
       });
@@ -77,9 +72,11 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-    assert.equal(resp.payload.isEmailVerified, true);
+    assert.equal(resp.result.type, 'Success');
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).isEmailVerified,
+      true
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

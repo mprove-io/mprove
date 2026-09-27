@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { GivenTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { givensTable } from '#backend/drizzle/postgres/schema/givens';
 import { ServerError } from '#common/classes/server-error/server-error';
@@ -11,10 +10,8 @@ import { getGivenValueValidationError } from '#common/functions/get-given-value-
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Given } from '#common/zod/backend/given';
-import type {
-  MemberGiven,
-  MemberGivenValue
-} from '#common/zod/to-backend/members/to-backend-get-member-givens';
+import type { MemberGiven } from '#common/zod/backend/members/member-given';
+import type { MemberGivenValue } from '#common/zod/backend/members/member-given-value';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 import { RolesService } from './roles.service';

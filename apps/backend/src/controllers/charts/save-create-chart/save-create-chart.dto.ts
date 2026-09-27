@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendSaveCreateChartRequest,
-  zToBackendSaveCreateChartResponse
-} from '#common/zod/to-backend/charts/to-backend-save-create-chart';
+import { zToBackendSaveCreateChartRequest } from '#common/zod/backend/routes/charts/save-create-chart/save-create-chart-request';
+import { zToBackendSaveCreateChartResponse } from '#common/zod/backend/routes/charts/save-create-chart/save-create-chart-response';
 
 export class ToBackendSaveCreateChartRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendSaveCreateChartRequest })

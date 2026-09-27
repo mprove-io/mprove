@@ -11,8 +11,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetUserProfileResponsePayload } from '#common/zod/to-backend/users/to-backend-get-user-profile';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetUserProfileOutput } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-response';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -24,7 +24,7 @@ export class GetUserProfileController {
     private usersService: UsersService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
+  @Post('api/ToBackendGetUserProfile' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetUserProfile',
     description: "Get the current user's profile"
@@ -36,7 +36,7 @@ export class GetUserProfileController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetUserProfileRequestDto
   ) {
-    let payload: ToBackendGetUserProfileResponsePayload = {
+    let payload: ToBackendGetUserProfileOutput = {
       user: this.usersService.tabToApi({ user: user })
     };
 

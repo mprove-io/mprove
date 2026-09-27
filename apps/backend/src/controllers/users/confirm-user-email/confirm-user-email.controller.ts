@@ -17,8 +17,7 @@ import {
   ToBackendConfirmUserEmailResponseDto
 } from '#backend/controllers/users/confirm-user-email/confirm-user-email.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
@@ -29,9 +28,9 @@ import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendConfirmUserEmailResponsePayload } from '#common/zod/to-backend/users/to-backend-confirm-user-email';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendConfirmUserEmailOutput } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-response';
 
 @ApiTags('Users')
 @SkipJwtCheck()
@@ -50,7 +49,7 @@ export class ConfirmUserEmailController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail)
+  @Post('api/ToBackendConfirmUserEmail' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'ConfirmUserEmail',
     description: "Verify the user's email using the verification token"
@@ -59,8 +58,8 @@ export class ConfirmUserEmailController {
     type: ToBackendConfirmUserEmailResponseDto
   })
   async confirmUserEmail(@Body() body: ToBackendConfirmUserEmailRequestDto) {
-    let { traceId } = body.info;
-    let { emailVerificationToken } = body.payload;
+    let { traceId } = body;
+    let { emailVerificationToken } = body.input;
 
     let hashSecret = await this.dconfigsService.getDconfigHashSecret();
 
@@ -95,7 +94,7 @@ export class ConfirmUserEmailController {
       user: user
     });
 
-    let payload: ToBackendConfirmUserEmailResponsePayload = {};
+    let payload: ToBackendConfirmUserEmailOutput = {};
 
     if (user.isEmailVerified === false) {
       user.isEmailVerified = true;

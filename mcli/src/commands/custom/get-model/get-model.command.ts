@@ -6,12 +6,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendGetModelRequestPayload,
-  ToBackendGetModelResponse
-} from '#common/zod/to-backend/models/to-backend-get-model';
+import type { ToBackendGetModelInput } from '#common/zod/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelOutput } from '#common/zod/backend/routes/models/get-model/get-model-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -95,7 +92,7 @@ export class GetModelCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getModelReqPayload: ToBackendGetModelRequestPayload = {
+    let getModelReqPayload: ToBackendGetModelInput = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
@@ -104,15 +101,15 @@ export class GetModelCommand extends CustomCommand {
       getMalloy: this.getMalloy
     };
 
-    let getModelResp = await mreq<ToBackendGetModelResponse>({
+    let getModelOutput: ToBackendGetModelOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModel,
+      route: 'api/ToBackendGetModel',
       payload: getModelReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let log = processGetModelPayload({
-      payload: getModelResp.payload
+      payload: getModelOutput
     });
 
     logToConsoleMcli({

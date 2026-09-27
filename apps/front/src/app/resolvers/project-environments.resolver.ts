@@ -8,12 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetEnvsRequestPayload,
-  ToBackendGetEnvsResponse
-} from '#common/zod/to-backend/envs/to-backend-get-envs';
+import type { ToBackendGetEnvsInput } from '#common/zod/backend/routes/envs/get-envs/get-envs-request';
+import type { ToBackendGetEnvsResponse } from '#common/zod/backend/routes/envs/get-envs/get-envs-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { EnvironmentsQuery } from '../queries/environments.query';
 import { MemberQuery } from '../queries/member.query';
@@ -59,21 +55,21 @@ export class ProjectEnvironmentsResolver
       projectId = x;
     });
 
-    let payload: ToBackendGetEnvsRequestPayload = {
+    let payload: ToBackendGetEnvsInput = {
       projectId: projectId
     };
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetEnvs,
+        route: 'api/ToBackendGetEnvs',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetEnvsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
 
-            let newSortedEnvironments = resp.payload.envs.sort((a, b) =>
+            let newSortedEnvironments = resp.result.value.envs.sort((a, b) =>
               a.envId !== PROJECT_ENV_PROD && b.envId === PROJECT_ENV_PROD
                 ? 1
                 : a.envId === PROJECT_ENV_PROD && b.envId !== PROJECT_ENV_PROD

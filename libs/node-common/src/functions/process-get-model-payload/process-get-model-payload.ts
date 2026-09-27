@@ -1,7 +1,7 @@
-import type { ToBackendGetModelResponsePayload } from '#common/zod/to-backend/models/to-backend-get-model';
+import type { ToBackendGetModelOutput } from '#common/zod/backend/routes/models/get-model/get-model-response';
 
 export function processGetModelPayload(item: {
-  payload: ToBackendGetModelResponsePayload;
+  payload: ToBackendGetModelOutput;
 }) {
   let { payload } = item;
 

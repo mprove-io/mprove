@@ -17,8 +17,7 @@ import {
   ToBackendDeleteProjectResponseDto
 } from '#backend/controllers/projects/delete-project/delete-project.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -35,7 +34,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)
@@ -52,7 +51,7 @@ export class DeleteProjectController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteProject)
+  @Post('api/ToBackendDeleteProject' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteProject',
     description: 'Delete a project and all its related data'
@@ -64,7 +63,7 @@ export class DeleteProjectController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteProjectRequestDto
   ) {
-    let { projectId } = body.payload;
+    let { projectId } = body.input;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -78,7 +77,7 @@ export class DeleteProjectController {
     await this.rpcService.sendToDiskUnwrapOutput({
       request: {
         operation: 'deleteProject',
-        traceId: body.info.traceId,
+        traceId: body.traceId,
         input: {
           orgId: project.orgId,
           projectId: projectId

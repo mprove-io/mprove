@@ -17,8 +17,7 @@ import {
   ToBackendEditDraftChartResponseDto
 } from '#backend/controllers/charts/edit-draft-chart/edit-draft-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ChartTab,
   MconfigTab,
@@ -49,11 +48,11 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendEditDraftChartOutput } from '#common/zod/backend/routes/charts/edit-draft-chart/edit-draft-chart-response';
 import type { Tile } from '#common/zod/blockml/tile';
-import type { ToBackendEditDraftChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-edit-draft-chart';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -80,7 +79,7 @@ export class EditDraftChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendEditDraftChart)
+  @Post('api/ToBackendEditDraftChart' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'EditDraftChart',
     description: 'Edit a draft chart'
@@ -92,7 +91,7 @@ export class EditDraftChartController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditDraftChartRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       mconfig: apiMconfig,
       projectId,
@@ -101,7 +100,7 @@ export class EditDraftChartController {
       envId,
       chartId,
       queryOperation
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -294,7 +293,7 @@ export class EditDraftChartController {
       spaces: struct.spaces
     });
 
-    let payload: ToBackendEditDraftChartResponsePayload = {
+    let payload: ToBackendEditDraftChartOutput = {
       chart: this.chartsService.tabToApi({
         chart: newChart,
         mconfigs: [

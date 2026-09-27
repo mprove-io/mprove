@@ -11,12 +11,9 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateConnectionRequest,
-  ToBackendCreateConnectionResponse
-} from '#common/zod/to-backend/connections/to-backend-create-connection';
+import type { ToBackendCreateConnectionRequest } from '#common/zod/backend/routes/connections/create-connection/create-connection-request';
+import type { ToBackendCreateConnectionResponse } from '#common/zod/backend/routes/connections/create-connection/create-connection-response';
 
 let testId = 'backend-create-connection__connection-already-exists';
 
@@ -99,12 +96,9 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateConnectionRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           connectionId: connectionId,
           envId: PROJECT_ENV_PROD,
           projectId: projectId,
@@ -113,7 +107,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendCreateConnectionResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCreateConnection',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -132,8 +127,9 @@ test('1', async t => {
       }
     }
 
+    assert.ok(resp.result.type === 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
     );
 

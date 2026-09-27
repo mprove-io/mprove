@@ -14,23 +14,19 @@ import { take, tap } from 'rxjs/operators';
 import { EMPTY_MCONFIG_FIELD } from '#common/constants/top-front';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { ToBackendGetModelsInput } from '#common/zod/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
 import type { Dashboard } from '#common/zod/blockml/dashboard';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelField } from '#common/zod/blockml/model-field';
 import type { DashboardX2 } from '#common/zod/front/dashboard-x-2';
 import type { TileX2 } from '#common/zod/front/tile-x-2';
-import type {
-  ToBackendGetModelsRequestPayload,
-  ToBackendGetModelsResponse
-} from '#common/zod/to-backend/models/to-backend-get-models';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -101,7 +97,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendGetModelsRequestPayload = {
+    let payload: ToBackendGetModelsInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -113,15 +109,15 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        route: 'api/ToBackendGetModels',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.spinner.hide(this.spinnerName);
 
-            this.models = resp.payload.models;
+            this.models = resp.result.value.models;
 
             (this.dashboard as DashboardX2).tiles.forEach((x, tileIndex) => {
               let model = this.models.find(m => m.modelId === x.modelId);

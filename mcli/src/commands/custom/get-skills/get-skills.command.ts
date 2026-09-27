@@ -1,10 +1,9 @@
 import path from 'node:path';
 import { Command, Option } from 'clipanion';
 import fse from 'fs-extra';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendGetSkillsOutput } from '#common/zod/backend/routes/skills/get-skills/get-skills-response';
 import type { SkillItem } from '#common/zod/backend/skill-item';
-import type { ToBackendGetSkillsResponse } from '#common/zod/to-backend/skills/to-backend-get-skills';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -35,9 +34,9 @@ export class GetSkillsCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let getSkillsResp = await mreq<ToBackendGetSkillsResponse>({
+    let getSkillsOutput: ToBackendGetSkillsOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSkills,
+      route: 'api/ToBackendGetSkills',
       payload: {},
       host: this.context.config.mproveCliHost
     });
@@ -46,7 +45,7 @@ export class GetSkillsCommand extends CustomCommand {
 
     fse.ensureDirSync(outputDir);
 
-    getSkillsResp.payload.skillItems.forEach((skill: SkillItem) => {
+    getSkillsOutput.skillItems.forEach((skill: SkillItem) => {
       let skillDir = path.join(outputDir, skill.name);
       fse.ensureDirSync(skillDir);
 

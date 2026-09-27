@@ -14,12 +14,8 @@ import {
 } from '#common/constants/top';
 import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetProjectRequestPayload,
-  ToBackendGetProjectResponse
-} from '#common/zod/to-backend/projects/to-backend-get-project';
+import type { ToBackendGetProjectInput } from '#common/zod/backend/routes/projects/get-project/get-project-request';
+import type { ToBackendGetProjectResponse } from '#common/zod/backend/routes/projects/get-project/get-project-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -57,19 +53,19 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
       nav: nav
     });
 
-    let payload: ToBackendGetProjectRequestPayload = {
+    let payload: ToBackendGetProjectInput = {
       projectId: route.params[PARAMETER_PROJECT_ID]
     };
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProject,
+        route: 'api/ToBackendGetProject',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetProjectResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let project = resp.payload.project;
+          if (resp.result?.type === 'Success') {
+            let project = resp.result.value.project;
 
             this.navQuery.updatePart({
               projectId: project.projectId,
@@ -83,7 +79,7 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
 
             localStorage.setItem(LOCAL_STORAGE_PROJECT_ID, project.projectId);
 
-            this.memberQuery.update(resp.payload.userMember);
+            this.memberQuery.update(resp.result.value.userMember);
 
             this.projectQuery.update(project);
             return true;

@@ -7,13 +7,9 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendSetOrgInfoRequest,
-  ToBackendSetOrgInfoResponse
-} from '#common/zod/to-backend/orgs/to-backend-set-org-info';
+import type { ToBackendSetOrgInfoRequest } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-request';
+import type { ToBackendSetOrgInfoResponse } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-response';
 
 let testId = 'backend-set-org-info__ok';
 
@@ -59,18 +55,16 @@ test('1', async t => {
       });
 
       let req: ToBackendSetOrgInfoRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           orgId: orgId,
           name: `2${testId}`
         }
       };
 
-      resp = await sendToBackend<ToBackendSetOrgInfoResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendSetOrgInfo',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -89,8 +83,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

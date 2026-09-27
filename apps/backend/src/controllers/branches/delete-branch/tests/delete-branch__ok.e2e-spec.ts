@@ -9,17 +9,10 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateBranchRequest,
-  ToBackendCreateBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-create-branch';
-import type {
-  ToBackendDeleteBranchRequest,
-  ToBackendDeleteBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-delete-branch';
+import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendDeleteBranchRequest } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-request';
+import type { ToBackendDeleteBranchResponse } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-response';
 
 let testId = 'backend-delete-branch__ok';
 
@@ -94,12 +87,9 @@ test('1', async t => {
       });
 
       let req1: ToBackendCreateBranchRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           fromBranchId: fromBranchId,
           newBranchId: newBranchId,
@@ -107,26 +97,25 @@ test('1', async t => {
         }
       };
 
-      let resp1 = await sendToBackend<ToBackendCreateBranchResponse>({
+      let resp1 = await sendToBackend({
+        route: 'api/ToBackendCreateBranch',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
       });
 
       let req2: ToBackendDeleteBranchRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: newBranchId
         }
       };
 
-      resp2 = await sendToBackend<ToBackendDeleteBranchResponse>({
+      resp2 = await sendToBackend({
+        route: 'api/ToBackendDeleteBranch',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req2
@@ -145,8 +134,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp2.info.error, undefined);
-    assert.equal(resp2.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp2.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

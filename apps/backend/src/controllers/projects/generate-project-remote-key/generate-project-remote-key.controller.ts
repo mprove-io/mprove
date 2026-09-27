@@ -11,26 +11,24 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import sshpk from 'sshpk';
-
-const { parseKey, parsePrivateKey } = sshpk;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendGenerateProjectRemoteKeyRequestDto,
   ToBackendGenerateProjectRemoteKeyResponseDto
 } from '#backend/controllers/projects/generate-project-remote-key/generate-project-remote-key.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { NoteTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGenerateProjectRemoteKeyResponsePayload } from '#common/zod/to-backend/projects/to-backend-generate-project-remote-key';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGenerateProjectRemoteKeyOutput } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-response';
+
+const { parseKey, parsePrivateKey } = sshpk;
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)
@@ -45,7 +43,7 @@ export class GenerateProjectRemoteKeyController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGenerateProjectRemoteKey)
+  @Post('api/ToBackendGenerateProjectRemoteKey' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GenerateProjectRemoteKey',
     description:
@@ -58,8 +56,8 @@ export class GenerateProjectRemoteKeyController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGenerateProjectRemoteKeyRequestDto
   ) {
-    let { traceId } = body.info;
-    let { orgId } = body.payload;
+    let { traceId } = body;
+    let { orgId } = body.input;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -104,7 +102,7 @@ export class GenerateProjectRemoteKeyController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendGenerateProjectRemoteKeyResponsePayload = {
+    let payload: ToBackendGenerateProjectRemoteKeyOutput = {
       noteId: note.noteId,
       publicKey: note.publicKey
     };

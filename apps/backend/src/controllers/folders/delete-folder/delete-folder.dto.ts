@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendDeleteFolderRequest,
-  zToBackendDeleteFolderResponse
-} from '#common/zod/to-backend/folders/to-backend-delete-folder';
+import { zToBackendDeleteFolderRequest } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-request';
+import { zToBackendDeleteFolderResponse } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-response';
 
 export class ToBackendDeleteFolderRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendDeleteFolderRequest })

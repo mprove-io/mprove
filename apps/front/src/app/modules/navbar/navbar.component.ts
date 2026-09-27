@@ -14,14 +14,10 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Member } from '#common/zod/backend/member';
-import type {
-  ToBackendCheckLastNavRequestPayload,
-  ToBackendCheckLastNavResponse
-} from '#common/zod/to-backend/nav/to-backend-check-last-nav';
+import type { ToBackendCheckLastNavInput } from '#common/zod/backend/routes/nav/check-last-nav/check-last-nav-request';
+import type { ToBackendCheckLastNavResponse } from '#common/zod/backend/routes/nav/check-last-nav/check-last-nav-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
@@ -197,7 +193,7 @@ export class NavbarComponent implements OnInit {
     if (isDefined(pModelLink) && isDefined(pChartLink)) {
       this.spinner.show(APP_SPINNER_NAME);
 
-      let payload: ToBackendCheckLastNavRequestPayload = {
+      let payload: ToBackendCheckLastNavInput = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
         branchId: this.nav.branchId,
@@ -208,16 +204,16 @@ export class NavbarComponent implements OnInit {
 
       this.apiService
         .req({
-          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCheckLastNav,
+          route: 'api/ToBackendCheckLastNav',
           payload: payload,
           showSpinner: false
         })
         .pipe(
           tap((resp: ToBackendCheckLastNavResponse) => {
             if (
-              resp.info?.status === ResponseInfoStatusEnum.Ok &&
-              resp.payload.modelExists === true &&
-              resp.payload.chartExists === true
+              resp.result?.type === 'Success' &&
+              resp.result.value.modelExists === true &&
+              resp.result.value.chartExists === true
             ) {
               this.navigateService.navigateToChart({
                 modelId: pModelLink.modelId,
@@ -253,7 +249,7 @@ export class NavbarComponent implements OnInit {
     if (isDefined(pLink?.dashboardId)) {
       this.spinner.show(APP_SPINNER_NAME);
 
-      let payload: ToBackendCheckLastNavRequestPayload = {
+      let payload: ToBackendCheckLastNavInput = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
         branchId: this.nav.branchId,
@@ -263,15 +259,15 @@ export class NavbarComponent implements OnInit {
 
       this.apiService
         .req({
-          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCheckLastNav,
+          route: 'api/ToBackendCheckLastNav',
           payload: payload,
           showSpinner: false
         })
         .pipe(
           tap((resp: ToBackendCheckLastNavResponse) => {
             if (
-              resp.info?.status === ResponseInfoStatusEnum.Ok &&
-              resp.payload.dashboardExists === true
+              resp.result?.type === 'Success' &&
+              resp.result.value.dashboardExists === true
             ) {
               this.navigateService.navigateToDashboard({
                 dashboardId: pLink.dashboardId
@@ -312,7 +308,7 @@ export class NavbarComponent implements OnInit {
     if (isDefined(pLink?.reportId)) {
       this.spinner.show(APP_SPINNER_NAME);
 
-      let payload: ToBackendCheckLastNavRequestPayload = {
+      let payload: ToBackendCheckLastNavInput = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
         branchId: this.nav.branchId,
@@ -322,15 +318,15 @@ export class NavbarComponent implements OnInit {
 
       this.apiService
         .req({
-          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCheckLastNav,
+          route: 'api/ToBackendCheckLastNav',
           payload: payload,
           showSpinner: false
         })
         .pipe(
           tap((resp: ToBackendCheckLastNavResponse) => {
             if (
-              resp.info?.status === ResponseInfoStatusEnum.Ok &&
-              resp.payload.reportExists === true
+              resp.result?.type === 'Success' &&
+              resp.result.value.reportExists === true
             ) {
               this.navigateService.navigateToReport({
                 reportId: pLink.reportId

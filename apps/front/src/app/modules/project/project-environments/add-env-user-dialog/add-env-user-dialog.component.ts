@@ -16,18 +16,13 @@ import {
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { Env } from '#common/zod/backend/env';
 import type { EnvUser } from '#common/zod/backend/env-user';
-import type {
-  ToBackendCreateEnvUserRequestPayload,
-  ToBackendCreateEnvUserResponse
-} from '#common/zod/to-backend/envs/to-backend-create-env-user';
-import type {
-  ToBackendGetMembersListRequestPayload,
-  ToBackendGetMembersListResponse
-} from '#common/zod/to-backend/members/to-backend-get-members-list';
+import type { ToBackendCreateEnvUserInput } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-request';
+import type { ToBackendCreateEnvUserResponse } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-response';
+import type { ToBackendGetMembersListInput } from '#common/zod/backend/routes/members/get-members-list/get-members-list-request';
+import type { ToBackendGetMembersListResponse } from '#common/zod/backend/routes/members/get-members-list/get-members-list-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -90,18 +85,19 @@ export class AddEnvUserDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendGetMembersListRequestPayload = {
+    let payload: ToBackendGetMembersListInput = {
       projectId: env.projectId
     };
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetMembersList,
+        route: 'api/ToBackendGetMembersList',
         payload: payload
       })
       .pipe(
         map(
-          (resp: ToBackendGetMembersListResponse) => resp.payload.membersList
+          (resp: ToBackendGetMembersListResponse) =>
+            unwrapToBackendResponse({ response: resp }).membersList
         ),
         tap(x => {
           this.membersList = x;
@@ -125,7 +121,7 @@ export class AddEnvUserDialogComponent implements OnInit {
 
     let dataEnv: Env = this.ref.data.env;
 
-    let payload: ToBackendCreateEnvUserRequestPayload = {
+    let payload: ToBackendCreateEnvUserInput = {
       projectId: dataEnv.projectId,
       envId: dataEnv.envId,
       envUserId: this.addEnvUserForm.value.envUserId
@@ -135,15 +131,19 @@ export class AddEnvUserDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateEnvUser,
+        route: 'api/ToBackendCreateEnvUser',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendCreateEnvUserResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.environmentsQuery.update({ environments: resp.payload.envs });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(
+              unwrapToBackendResponse({ response: resp }).userMember
+            );
+            this.environmentsQuery.update({
+              environments: unwrapToBackendResponse({ response: resp }).envs
+            });
           }
         }),
         take(1)

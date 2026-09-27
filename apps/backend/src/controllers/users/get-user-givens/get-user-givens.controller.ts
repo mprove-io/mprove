@@ -12,8 +12,8 @@ import { GivensService } from '#backend/services/db/givens.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetUserGivensResponsePayload } from '#common/zod/to-backend/users/to-backend-get-user-givens';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetUserGivensOutput } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-response';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -26,7 +26,7 @@ export class GetUserGivensController {
     private usersService: UsersService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetUserGivens)
+  @Post('api/ToBackendGetUserGivens' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetUserGivens',
     description:
@@ -39,7 +39,7 @@ export class GetUserGivensController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetUserGivensRequestDto
   ) {
-    let { projectId } = body.payload;
+    let { projectId } = body.input;
 
     let member = await this.membersService.getMemberCheckExists({
       memberId: user.userId,
@@ -56,7 +56,7 @@ export class GetUserGivensController {
       roles: member.roles
     });
 
-    let payload: ToBackendGetUserGivensResponsePayload = {
+    let payload: ToBackendGetUserGivensOutput = {
       user: this.usersService.tabToApi({ user: user }),
       memberGivens: memberGivens
     };

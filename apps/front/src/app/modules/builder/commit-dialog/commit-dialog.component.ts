@@ -20,13 +20,9 @@ import { map, switchMap, take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendCommitRepoRequestPayload,
-  ToBackendCommitRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-commit-repo';
+import type { ToBackendCommitRepoInput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
+import type { ToBackendCommitRepoResponse } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-response';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
@@ -98,7 +94,7 @@ export class CommitDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendCommitRepoRequestPayload = {
+    let payload: ToBackendCommitRepoInput = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -109,15 +105,15 @@ export class CommitDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+        route: 'api/ToBackendCommitRepo',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendCommitRepoResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
 
-            let respSession = resp.payload.session;
+            let respSession = resp.result.value.session;
 
             if (isDefined(respSession)) {
               this.sessionQuery.updatePart({

@@ -9,13 +9,9 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetStateRequest,
-  ToBackendGetStateResponse
-} from '#common/zod/to-backend/state/to-backend-get-state';
+import type { ToBackendGetStateRequest } from '#common/zod/backend/routes/state/get-state/get-state-request';
+import type { ToBackendGetStateResponse } from '#common/zod/backend/routes/state/get-state/get-state-response';
 
 let testId = 'backend-jwt-auth-guard__api-key-not-found';
 
@@ -49,12 +45,9 @@ test('1', async t => {
       });
 
       let req: ToBackendGetStateRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetState,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: 'unk',
           repoId: 'unk',
           branchId: BRANCH_MAIN,
@@ -72,7 +65,8 @@ test('1', async t => {
       };
 
       // Use an unknown API key with unknown prefix
-      resp = await sendToBackend<ToBackendGetStateResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetState',
         httpServer: prep.httpServer,
         apiKey: 'PK-ASPDLKFJASLK-UNK-FPALSDJFALPSDKJFLKDJFSLPSK',
         req: req
@@ -91,8 +85,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Error);
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_API_KEY_NOT_FOUND);
+    assert.equal(resp.result.type, 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_API_KEY_NOT_FOUND);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

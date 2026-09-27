@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendEditMemberRequest,
-  zToBackendEditMemberResponse
-} from '#common/zod/to-backend/members/to-backend-edit-member';
+import { zToBackendEditMemberRequest } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
+import { zToBackendEditMemberResponse } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
 
 export class ToBackendEditMemberRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendEditMemberRequest })

@@ -10,12 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendDeleteBranchRequest,
-  ToBackendDeleteBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-delete-branch';
+import type { ToBackendDeleteBranchRequest } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-request';
+import type { ToBackendDeleteBranchResponse } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-response';
 
 let testId = 'backend-delete-branch__branch-master-cannot-be-deleted';
 
@@ -89,19 +86,17 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteBranchRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteBranchResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteBranch',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -120,8 +115,9 @@ test('1', async t => {
       }
     }
 
+    assert.ok(resp.result.type === 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_DEFAULT_BRANCH_CANNOT_BE_DELETED
     );
 

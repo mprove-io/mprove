@@ -15,14 +15,10 @@ import {
   PATH_PROJECT
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendGetChartRequestPayload,
-  ToBackendGetChartResponse
-} from '#common/zod/to-backend/charts/to-backend-get-chart';
+import type { ToBackendGetChartInput } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
+import type { ToBackendGetChartResponse } from '#common/zod/backend/routes/charts/get-chart/get-chart-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartQuery } from '../queries/chart.query';
 import { MemberQuery } from '../queries/member.query';
@@ -126,7 +122,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    let payload: ToBackendGetChartRequestPayload = {
+    let payload: ToBackendGetChartInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -137,20 +133,20 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetChart,
+        route: 'api/ToBackendGetChart',
         payload: payload,
         showSpinner: showSpinner
       })
       .pipe(
         map((resp: ToBackendGetChartResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.chartQuery.update(resp.payload.chart);
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.chartQuery.update(resp.result.value.chart);
 
             return true;
           } else if (
-            resp.info?.status === ResponseInfoStatusEnum.Error &&
-            resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.result?.type === 'Failure' &&
+            resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
               PATH_ORG,

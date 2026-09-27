@@ -17,8 +17,7 @@ import {
   ToBackendGroupMetricByDimensionResponseDto
 } from '#backend/controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MconfigTab,
   QueryTab,
@@ -43,14 +42,14 @@ import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change/sort-chart-fields-on-select-change';
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change/sort-fields-on-select-change';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { QueryOperation } from '#common/zod/backend/query-operation';
-import type { ToBackendGroupMetricByDimensionResponsePayload } from '#common/zod/to-backend/mconfigs/to-backend-group-metric-by-dimension';
+import type { ToBackendGroupMetricByDimensionOutput } from '#common/zod/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-response';
 
 @ApiTags('Mconfigs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -76,7 +75,7 @@ export class GroupMetricByDimensionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGroupMetricByDimension)
+  @Post('api/ToBackendGroupMetricByDimension' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GroupMetricByDimension',
     description: 'Group a metric by dimension'
@@ -88,7 +87,7 @@ export class GroupMetricByDimensionController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGroupMetricByDimensionRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -99,7 +98,7 @@ export class GroupMetricByDimensionController {
       groupByFieldId,
       cellMetricsStartDateMs,
       cellMetricsEndDateMs
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -283,7 +282,7 @@ export class GroupMetricByDimensionController {
       })
       .then(x => this.tabService.queryEntToTab(x));
 
-    let payload: ToBackendGroupMetricByDimensionResponsePayload = {
+    let payload: ToBackendGroupMetricByDimensionOutput = {
       mconfig: this.mconfigsService.tabToApi({
         mconfig: newMconfig,
         modelFields: model.fields

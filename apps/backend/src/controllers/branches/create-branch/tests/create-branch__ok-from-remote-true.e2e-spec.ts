@@ -9,13 +9,9 @@ import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateBranchRequest,
-  ToBackendCreateBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-create-branch';
+import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendCreateBranchResponse } from '#common/zod/backend/routes/branches/create-branch/create-branch-response';
 
 let testId = 'backend-create-branch__ok-from-remote-true';
 
@@ -90,12 +86,9 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateBranchRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           fromBranchId: fromBranchId,
           newBranchId: newBranchId,
@@ -103,7 +96,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendCreateBranchResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCreateBranch',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -122,8 +116,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

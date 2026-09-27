@@ -3,23 +3,15 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
 import type { QueryOperation } from '#common/zod/backend/query-operation';
-import type {
-  ToBackendCreateDraftChartRequestPayload,
-  ToBackendCreateDraftChartResponse
-} from '#common/zod/to-backend/charts/to-backend-create-draft-chart';
-import type {
-  ToBackendDeleteDraftChartsRequestPayload,
-  ToBackendDeleteDraftChartsResponse
-} from '#common/zod/to-backend/charts/to-backend-delete-draft-charts';
-import type {
-  ToBackendEditDraftChartRequestPayload,
-  ToBackendEditDraftChartResponse
-} from '#common/zod/to-backend/charts/to-backend-edit-draft-chart';
+import type { ToBackendCreateDraftChartInput } from '#common/zod/backend/routes/charts/create-draft-chart/create-draft-chart-request';
+import type { ToBackendCreateDraftChartResponse } from '#common/zod/backend/routes/charts/create-draft-chart/create-draft-chart-response';
+import type { ToBackendDeleteDraftChartsInput } from '#common/zod/backend/routes/charts/delete-draft-charts/delete-draft-charts-request';
+import type { ToBackendDeleteDraftChartsResponse } from '#common/zod/backend/routes/charts/delete-draft-charts/delete-draft-charts-response';
+import type { ToBackendEditDraftChartInput } from '#common/zod/backend/routes/charts/edit-draft-chart/edit-draft-chart-request';
+import type { ToBackendEditDraftChartResponse } from '#common/zod/backend/routes/charts/edit-draft-chart/edit-draft-chart-response';
 import { ChartQuery } from '../queries/chart.query';
 import { ChartsQuery } from '../queries/charts.query';
 import { ModelQuery } from '../queries/model.query';
@@ -101,7 +93,7 @@ export class ChartService {
       queryOperation
     } = item;
 
-    let payload: ToBackendCreateDraftChartRequestPayload = {
+    let payload: ToBackendCreateDraftChartInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -115,18 +107,18 @@ export class ChartService {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateDraftChart,
+        route: 'api/ToBackendCreateDraftChart',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendCreateDraftChartResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let chart = resp.payload.chart;
+          if (resp.result?.type === 'Success') {
+            let chart = resp.result.value.chart;
 
             let chartsState = this.chartsQuery.getValue();
 
             this.chartsQuery.update({
-              chartUnitDrafts: resp.payload.chartUnitDrafts,
+              chartUnitDrafts: resp.result.value.chartUnitDrafts,
               chartSpaceNodes: chartsState.chartSpaceNodes
             });
 
@@ -150,7 +142,7 @@ export class ChartService {
 
     let { chartId, mconfig, queryOperation } = item;
 
-    let payload: ToBackendEditDraftChartRequestPayload = {
+    let payload: ToBackendEditDraftChartInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -162,22 +154,22 @@ export class ChartService {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditDraftChart,
+        route: 'api/ToBackendEditDraftChart',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendEditDraftChartResponse) => {
           this.spinner.hide(APP_SPINNER_NAME);
 
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let chart = resp.payload.chart;
+          if (resp.result?.type === 'Success') {
+            let chart = resp.result.value.chart;
 
             let chartsState = this.chartsQuery.getValue();
 
             this.chartQuery.update(chart);
 
             this.chartsQuery.update({
-              chartUnitDrafts: resp.payload.chartUnitDrafts,
+              chartUnitDrafts: resp.result.value.chartUnitDrafts,
               chartSpaceNodes: chartsState.chartSpaceNodes
             });
           }
@@ -190,7 +182,7 @@ export class ChartService {
   deleteDraftCharts(item: { chartIds: string[] }) {
     let { chartIds } = item;
 
-    let payload: ToBackendDeleteDraftChartsRequestPayload = {
+    let payload: ToBackendDeleteDraftChartsInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -200,17 +192,17 @@ export class ChartService {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteDraftCharts,
+        route: 'api/ToBackendDeleteDraftCharts',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteDraftChartsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let chartsState = this.chartsQuery.getValue();
 
             this.chartsQuery.update({
-              chartUnitDrafts: resp.payload.chartUnitDrafts,
+              chartUnitDrafts: resp.result.value.chartUnitDrafts,
               chartSpaceNodes: chartsState.chartSpaceNodes
             });
 

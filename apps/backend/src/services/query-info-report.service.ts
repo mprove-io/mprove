@@ -2,8 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   MemberTab,
@@ -20,7 +19,7 @@ import { TabService } from '#backend/services/tab.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ToBackendGetReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-get-report';
+import type { ToBackendGetReportOutput } from '#common/zod/backend/routes/reports/get-report/get-report-response';
 
 @Injectable()
 export class QueryInfoReportService {
@@ -49,7 +48,7 @@ export class QueryInfoReportService {
     timeSpec: TimeSpecEnum;
     timeRangeFractionBrick: string;
     skipUi: boolean;
-  }): Promise<ToBackendGetReportResponsePayload> {
+  }): Promise<ToBackendGetReportOutput> {
     let {
       traceId,
       user,
@@ -121,7 +120,7 @@ export class QueryInfoReportService {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendGetReportResponsePayload = {
+    let payload: ToBackendGetReportOutput = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,

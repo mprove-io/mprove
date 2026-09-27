@@ -1,7 +1,6 @@
 import { Injectable, UseFilters } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Context } from '@rekog/mcp-nest';
-import { Tool } from '@rekog/mcp-nest';
+import { type Context, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { ValidateFilesService } from '#backend/controllers/files/validate-files/validate-files.service';
@@ -20,7 +19,7 @@ import {
   type McpToolValidateFilesInput,
   zMcpToolValidateFilesInput,
   zMcpToolValidateFilesOutput
-} from '#common/zod/to-backend/mcp-tools/mcp-tool-validate-files';
+} from '#common/zod/backend/mcp-tools/mcp-tool-validate-files';
 import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload/process-validate-files-payload';
 
 @Injectable()

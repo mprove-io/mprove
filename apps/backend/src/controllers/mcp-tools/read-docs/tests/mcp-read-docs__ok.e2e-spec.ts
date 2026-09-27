@@ -10,12 +10,9 @@ import { toc } from '#backend/mprove-docs-cache/toc';
 import { MCP_TOOL_READ_DOCS } from '#common/constants/mcp-tools-registry';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGenerateUserApiKeyRequest,
-  ToBackendGenerateUserApiKeyResponse
-} from '#common/zod/to-backend/users/to-backend-generate-user-api-key';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 
 let testId = 'backend-mcp-read-docs__ok';
 
@@ -55,21 +52,18 @@ test('1', async t => {
       });
 
       let generateReq: ToBackendGenerateUserApiKeyRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {}
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {}
       };
 
-      let generateResp =
-        await sendToBackend<ToBackendGenerateUserApiKeyResponse>({
-          httpServer: prepTest.httpServer,
-          loginToken: prepareSeedResult.loginToken,
-          req: generateReq,
-          checkIsOk: true
-        });
+      let generateResp = await sendToBackend({
+        route: 'api/ToBackendGenerateUserApiKey',
+        httpServer: prepTest.httpServer,
+        loginToken: prepareSeedResult.loginToken,
+        req: generateReq,
+        checkIsOk: true
+      });
 
       response = await sendToMcp({
         httpServer: prepTest.httpServer,
@@ -80,7 +74,7 @@ test('1', async t => {
             pageIds: [toc[0]]
           }
         },
-        apiKey: generateResp.payload.apiKey
+        apiKey: unwrapToBackendResponse({ response: generateResp }).apiKey
       });
 
       await prepTest.app.close();

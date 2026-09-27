@@ -8,12 +8,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendResendUserEmailRequest,
-  ToBackendResendUserEmailResponse
-} from '#common/zod/to-backend/users/to-backend-resend-user-email';
+import type { ToBackendResendUserEmailRequest } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-request';
+import type { ToBackendResendUserEmailResponse } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-response';
 
 let testId = 'resend-user-email__user-does-not-exist';
 
@@ -39,17 +36,15 @@ test('1', async t => {
       });
 
       let resendUserEmailReq: ToBackendResendUserEmailRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           userId: userId
         }
       };
 
-      resp = await sendToBackend<ToBackendResendUserEmailResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendResendUserEmail',
         httpServer: prep.httpServer,
         req: resendUserEmailReq
       });
@@ -67,7 +62,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_USER_DOES_NOT_EXIST);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_USER_DOES_NOT_EXIST);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

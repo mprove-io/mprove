@@ -6,12 +6,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendRunRequestPayload,
-  ToBackendRunResponse
-} from '#common/zod/to-backend/run/to-backend-run';
+import type { ToBackendRunInput } from '#common/zod/backend/routes/run/run/run-request';
+import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -142,7 +139,7 @@ export class RunCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let runReqPayload: ToBackendRunRequestPayload = {
+    let runReqPayload: ToBackendRunInput = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
@@ -161,15 +158,15 @@ export class RunCommand extends CustomCommand {
       getReports: this.getReports
     };
 
-    let runResp = await mreq<ToBackendRunResponse>({
+    let runOutput: ToBackendRunOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRun,
+      route: 'api/ToBackendRun',
       payload: runReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     logToConsoleMcli({
-      log: runResp.payload,
+      log: runOutput,
       logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json

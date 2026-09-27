@@ -14,8 +14,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { QueryInfoChartService } from '#backend/services/query-info-chart.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-get-chart';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetChartOutput } from '#common/zod/backend/routes/charts/get-chart/get-chart-response';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -31,7 +31,7 @@ export class GetChartController {
     private queryInfoChartService: QueryInfoChartService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetChart)
+  @Post('api/ToBackendGetChart' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetChart',
     description: 'Get a chart'
@@ -43,9 +43,8 @@ export class GetChartController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetChartRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, envId, chartId, timezone } =
-      body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, envId, chartId, timezone } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -82,7 +81,7 @@ export class GetChartController {
       envId: envId
     });
 
-    let payload: ToBackendGetChartResponsePayload =
+    let payload: ToBackendGetChartOutput =
       await this.queryInfoChartService.getChartData({
         traceId: traceId,
         user: user,

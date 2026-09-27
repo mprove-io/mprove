@@ -14,28 +14,20 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendCreateEditorSessionRequest } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-request';
+import type { ToBackendCreateEditorSessionResponse } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-response';
+import type { ToBackendDeleteSessionRequest } from '#common/zod/backend/routes/sessions/delete-session/delete-session-request';
+import type { ToBackendSendMessageToEditorSessionRequest } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
+import type { ToBackendSendMessageToEditorSessionResponse } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-response';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
-import type {
-  ToBackendCreateEditorSessionRequest,
-  ToBackendCreateEditorSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
-import type {
-  ToBackendDeleteSessionRequest,
-  ToBackendDeleteSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-delete-session';
-import type {
-  ToBackendSendMessageToEditorSessionRequest,
-  ToBackendSendMessageToEditorSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-send-message-to-editor-session';
-import type { ToBackendSeedRecordsRequestPayloadProvidersItem } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
+import type { ToBackendSeedRecordsInputProvidersItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-providers-item';
 
 type EditorSessionProviderSeed =
-  ToBackendSeedRecordsRequestPayloadProvidersItem extends infer T
-    ? T extends ToBackendSeedRecordsRequestPayloadProvidersItem
+  ToBackendSeedRecordsInputProvidersItem extends infer T
+    ? T extends ToBackendSeedRecordsInputProvidersItem
       ? Omit<T, 'projectId'>
       : never
     : never;
@@ -135,12 +127,9 @@ export async function forTestsRunEditorSessionE2x(item: {
     // SSE must be connected before messages are sent, otherwise events
     // published to Redis pub/sub before SSE subscription are lost.
     let createSessionReq: ToBackendCreateEditorSessionRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendCreateEditorSession,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
         providerId: item.provider.providerId,
@@ -154,15 +143,17 @@ export async function forTestsRunEditorSessionE2x(item: {
       }
     };
 
-    createSessionResp =
-      await sendToBackend<ToBackendCreateEditorSessionResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: createSessionReq,
-        checkIsOk: true
-      });
+    createSessionResp = await sendToBackend({
+      route: 'api/ToBackendCreateEditorSession',
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: createSessionReq,
+      checkIsOk: true
+    });
 
-    sessionId = createSessionResp.payload.sessionId;
+    sessionId = unwrapToBackendResponse({
+      response: createSessionResp
+    }).sessionId;
     console.log(`[test] session created: ${sessionId}`);
 
     // Start listening so EventSource can connect
@@ -202,12 +193,9 @@ export async function forTestsRunEditorSessionE2x(item: {
 
     // Send 1st message (after SSE is connected)
     let sendFirstMessageReq: ToBackendSendMessageToEditorSessionRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSendMessageToEditorSession,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: {
         sessionId: sessionId,
         interactionType: InteractionTypeEnum.Message,
         message: 'hello, what model is used?',
@@ -218,13 +206,13 @@ export async function forTestsRunEditorSessionE2x(item: {
       }
     };
 
-    sendFirstMessageResp =
-      await sendToBackend<ToBackendSendMessageToEditorSessionResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: sendFirstMessageReq,
-        checkIsOk: true
-      });
+    sendFirstMessageResp = await sendToBackend({
+      route: 'api/ToBackendSendMessageToEditorSession',
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: sendFirstMessageReq,
+      checkIsOk: true
+    });
 
     console.log('[test] 1st message sent, waiting for turn to complete...');
 
@@ -241,12 +229,9 @@ export async function forTestsRunEditorSessionE2x(item: {
 
     // Send 2nd message
     let sendMessageReq: ToBackendSendMessageToEditorSessionRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSendMessageToEditorSession,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
+      traceId: traceId,
+      idempotencyKey: makeId(),
+      input: {
         sessionId: sessionId,
         interactionType: InteractionTypeEnum.Message,
         message: 'what is 2 + 2?',
@@ -257,13 +242,13 @@ export async function forTestsRunEditorSessionE2x(item: {
       }
     };
 
-    sendMessageResp =
-      await sendToBackend<ToBackendSendMessageToEditorSessionResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: sendMessageReq,
-        checkIsOk: true
-      });
+    sendMessageResp = await sendToBackend({
+      route: 'api/ToBackendSendMessageToEditorSession',
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: sendMessageReq,
+      checkIsOk: true
+    });
 
     console.log('[test] 2nd message sent, waiting for turn to complete...');
 
@@ -310,17 +295,15 @@ export async function forTestsRunEditorSessionE2x(item: {
     if (sessionId && prep) {
       try {
         let deleteSessionReq: ToBackendDeleteSessionRequest = {
-          info: {
-            name: ToBackendRequestInfoNameEnum.ToBackendDeleteSession,
-            traceId: traceId,
-            idempotencyKey: makeId()
-          },
-          payload: {
+          traceId: traceId,
+          idempotencyKey: makeId(),
+          input: {
             sessionId: sessionId
           }
         };
 
-        await sendToBackend<ToBackendDeleteSessionResponse>({
+        await sendToBackend({
+          route: 'api/ToBackendDeleteSession',
           httpServer: prep.httpServer,
           loginToken: prep.loginToken,
           req: deleteSessionReq,
@@ -344,10 +327,12 @@ export async function forTestsRunEditorSessionE2x(item: {
     }
 
     t.is(testError, undefined);
-    t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
-    t.truthy(createSessionResp.payload.sessionId);
-    t.is(sendFirstMessageResp.info.status, ResponseInfoStatusEnum.Ok);
-    t.is(sendMessageResp.info.status, ResponseInfoStatusEnum.Ok);
+    t.is(createSessionResp.result.type, 'Success');
+    t.truthy(
+      unwrapToBackendResponse({ response: createSessionResp }).sessionId
+    );
+    t.is(sendFirstMessageResp.result.type, 'Success');
+    t.is(sendMessageResp.result.type, 'Success');
 
     // Log event summary
     let eventTypeCounts: Record<string, number> = {};

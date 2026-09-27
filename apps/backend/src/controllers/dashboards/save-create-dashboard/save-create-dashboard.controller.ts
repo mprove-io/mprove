@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSaveCreateDashboardRequestDto,
   ToBackendSaveCreateDashboardResponseDto
 } from '#backend/controllers/dashboards/save-create-dashboard/save-create-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
@@ -50,14 +46,16 @@ import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
+import type { ToBackendSaveCreateDashboardOutput } from '#common/zod/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-response';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/files/create-file/create-file-response';
-import type { ToBackendSaveCreateDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-save-create-dashboard';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)
@@ -84,7 +82,7 @@ export class SaveCreateDashboardController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSaveCreateDashboard)
+  @Post('api/ToBackendSaveCreateDashboard' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SaveCreateDashboard',
     description: 'Save a new dashboard'
@@ -98,7 +96,7 @@ export class SaveCreateDashboardController {
   ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -111,7 +109,7 @@ export class SaveCreateDashboardController {
       accessRoles,
       tilesGrid,
       timezone
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -276,7 +274,7 @@ export class SaveCreateDashboardController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'createFile',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -463,7 +461,7 @@ export class SaveCreateDashboardController {
       spaces: currentStruct.spaces
     });
 
-    let payload: ToBackendSaveCreateDashboardResponsePayload = {
+    let payload: ToBackendSaveCreateDashboardOutput = {
       dashboardUnitDrafts: dashboardsCatalog.dashboardUnitDrafts,
       dashboardSpaceNodes: dashboardsCatalog.dashboardSpaceNodes
     };

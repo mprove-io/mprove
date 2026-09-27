@@ -9,29 +9,13 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateBranchRequest,
-  ToBackendCreateBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-create-branch';
-import type {
-  ToBackendSaveFileRequest,
-  ToBackendSaveFileResponse
-} from '#common/zod/to-backend/files/to-backend-save-file';
-import type {
-  ToBackendCommitRepoRequest,
-  ToBackendCommitRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-commit-repo';
-import type {
-  ToBackendMergeRepoRequest,
-  ToBackendMergeRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-merge-repo';
-import type {
-  ToBackendPushRepoRequest,
-  ToBackendPushRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-push-repo';
+import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendSaveFileRequest } from '#common/zod/backend/routes/files/save-file/save-file-request';
+import type { ToBackendCommitRepoRequest } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
+import type { ToBackendMergeRepoRequest } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-request';
+import type { ToBackendMergeRepoResponse } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-response';
+import type { ToBackendPushRepoRequest } from '#common/zod/backend/routes/repos/push-repo/push-repo-request';
 
 let testId = 'backend-merge-repo__ok-remote';
 
@@ -105,12 +89,9 @@ test('1', async t => {
       });
 
       let req1: ToBackendCreateBranchRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           fromBranchId: BRANCH_MAIN,
           newBranchId: branchId,
@@ -118,19 +99,17 @@ test('1', async t => {
         }
       };
 
-      let resp1 = await sendToBackend<ToBackendCreateBranchResponse>({
+      let resp1 = await sendToBackend({
+        route: 'api/ToBackendCreateBranch',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
       });
 
       let saveFileReq: ToBackendSaveFileRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendSaveFile,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -140,19 +119,17 @@ test('1', async t => {
         }
       };
 
-      let saveFileResp = await sendToBackend<ToBackendSaveFileResponse>({
+      let saveFileResp = await sendToBackend({
+        route: 'api/ToBackendSaveFile',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: saveFileReq
       });
 
       let commitReq: ToBackendCommitRepoRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           branchId: BRANCH_MAIN,
           repoId: userId,
@@ -160,19 +137,17 @@ test('1', async t => {
         }
       };
 
-      let commitResp = await sendToBackend<ToBackendCommitRepoResponse>({
+      let commitResp = await sendToBackend({
+        route: 'api/ToBackendCommitRepo',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: commitReq
       });
 
       let pushReq: ToBackendPushRepoRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendPushRepo,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -180,19 +155,17 @@ test('1', async t => {
         }
       };
 
-      let pushResp = await sendToBackend<ToBackendPushRepoResponse>({
+      let pushResp = await sendToBackend({
+        route: 'api/ToBackendPushRepo',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: pushReq
       });
 
       let req: ToBackendMergeRepoRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId,
@@ -202,7 +175,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendMergeRepoResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendMergeRepo',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -221,8 +195,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

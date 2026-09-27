@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSaveCreateChartRequestDto,
   ToBackendSaveCreateChartResponseDto
 } from '#backend/controllers/charts/save-create-chart/save-create-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
@@ -52,12 +48,14 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSaveCreateChartOutput } from '#common/zod/backend/routes/charts/save-create-chart/save-create-chart-response';
 import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/files/create-file/create-file-response';
-import type { ToBackendSaveCreateChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-save-create-chart';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -85,7 +83,7 @@ export class SaveCreateChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSaveCreateChart)
+  @Post('api/ToBackendSaveCreateChart' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SaveCreateChart',
     description: 'Save a draft chart'
@@ -99,7 +97,7 @@ export class SaveCreateChartController {
   ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -111,7 +109,7 @@ export class SaveCreateChartController {
       accessRoles,
       mconfig,
       envId
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -207,7 +205,7 @@ export class SaveCreateChartController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'createFile',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -393,7 +391,7 @@ export class SaveCreateChartController {
       spaces: currentStruct.spaces
     });
 
-    let payload: ToBackendSaveCreateChartResponsePayload = {
+    let payload: ToBackendSaveCreateChartOutput = {
       chart: this.chartsService.tabToApi({
         chart: chart,
         mconfigs: [],

@@ -8,13 +8,9 @@ import {
   PATH_LOGIN_SUCCESS
 } from '#common/constants/top';
 import { LOCAL_STORAGE_TOKEN } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendConfirmUserEmailRequestPayload,
-  ToBackendConfirmUserEmailResponse
-} from '#common/zod/to-backend/users/to-backend-confirm-user-email';
+import type { ToBackendConfirmUserEmailInput } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-request';
+import type { ToBackendConfirmUserEmailResponse } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { AuthService } from '#front/app/services/auth.service';
@@ -48,22 +44,22 @@ export class ConfirmEmailComponent implements OnInit {
     this.emailVerificationToken =
       this.route.snapshot.queryParamMap.get('token');
 
-    let payload: ToBackendConfirmUserEmailRequestPayload = {
+    let payload: ToBackendConfirmUserEmailInput = {
       emailVerificationToken: this.emailVerificationToken
     };
 
     setTimeout(() => {
       this.apiService
         .req({
-          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
+          route: 'api/ToBackendConfirmUserEmail',
           payload: payload,
           showSpinner: true
         })
         .pipe(
           tap((resp: ToBackendConfirmUserEmailResponse) => {
-            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              let user = resp.payload.user;
-              let token = resp.payload.token;
+            if (resp.result?.type === 'Success') {
+              let user = resp.result.value.user;
+              let token = resp.result.value.token;
 
               if (isDefined(user) && isDefined(token)) {
                 // first email verification

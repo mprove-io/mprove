@@ -1,15 +1,17 @@
 import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
-import type { ThrottlerModuleOptions } from '@nestjs/throttler';
-import { ThrottlerGuard, ThrottlerStorage } from '@nestjs/throttler';
+import {
+  ThrottlerGuard,
+  type ThrottlerModuleOptions,
+  ThrottlerStorage
+} from '@nestjs/throttler';
 import { BackendConfig } from '#backend/config/backend-config';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { RESTRICTED_USER_EMAIL } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 
@@ -32,9 +34,9 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
 
     if (
       [
-        ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces,
-        ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics,
-        ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs
+        'api/ToBackendTelemetryTraces',
+        'api/ToBackendTelemetryMetrics',
+        'api/ToBackendTelemetryLogs'
       ].indexOf(path.slice(1)) > -1 &&
       request.headers.authorization === 'Bearer null'
     ) {

@@ -21,12 +21,12 @@ import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { TimeframeEnum } from '#common/enums/timeframe.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendGetModelInput } from '#common/zod/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelResponse } from '#common/zod/backend/routes/models/get-model/get-model-response';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FractionControl } from '#common/zod/blockml/fraction-control';
 import type { FractionSubTypeOption } from '#common/zod/blockml/fraction-sub-type-option';
@@ -36,10 +36,6 @@ import type { ModelFieldY } from '#common/zod/blockml/model-field-y';
 import type { Parameter } from '#common/zod/blockml/parameter';
 import type { RowChange } from '#common/zod/blockml/row-change';
 import type { DataRow } from '#common/zod/front/data-row';
-import type {
-  ToBackendGetModelRequestPayload,
-  ToBackendGetModelResponse
-} from '#common/zod/to-backend/models/to-backend-get-model';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ReportQuery } from '#front/app/queries/report.query';
@@ -113,7 +109,7 @@ export class RowAddFilterDialogComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendGetModelRequestPayload = {
+    let payload: ToBackendGetModelInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -124,12 +120,12 @@ export class RowAddFilterDialogComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        route: 'api/ToBackendGetModel',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetModelResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let restrictedFilterFieldIds =
               metric.modelType === ModelTypeEnum.Malloy
                 ? [
@@ -154,7 +150,7 @@ export class RowAddFilterDialogComponent implements OnInit {
                     `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Time}`
                   ];
 
-            this.sortedFieldsY = resp.payload.model.fields
+            this.sortedFieldsY = resp.result.value.model.fields
               .filter(
                 (x: ModelField) =>
                   x.hidden === false &&
@@ -187,7 +183,7 @@ export class RowAddFilterDialogComponent implements OnInit {
                             : 0
               );
 
-            this.model = resp.payload.model;
+            this.model = resp.result.value.model;
 
             this.modelLoading = false;
 

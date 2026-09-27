@@ -18,8 +18,7 @@ import {
   ToBackendSpecialRebuildStructsResponseDto
 } from '#backend/controllers/special/special-rebuild-structs/special-rebuild-structs.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   MemberTab
@@ -37,15 +36,13 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSpecialRebuildStructsOutput } from '#common/zod/backend/routes/special/special-rebuild-structs/special-rebuild-structs-response';
+import type { BridgeItem } from '#common/zod/backend/special/bridge-item';
 import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-files/get-catalog-files-response';
-import type {
-  BridgeItem,
-  ToBackendSpecialRebuildStructsResponsePayload
-} from '#common/zod/to-backend/special/to-backend-special-rebuild-structs';
 
 @ApiTags('Special')
 @SkipJwtCheck()
@@ -76,7 +73,7 @@ export class SpecialRebuildStructsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStructs)
+  @Post('api/ToBackendSpecialRebuildStructs' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SpecialRebuildStructs',
     description: 'Rebuild state for projects of specified users'
@@ -87,8 +84,8 @@ export class SpecialRebuildStructsController {
   async specialRebuildStructs(
     @Body() body: ToBackendSpecialRebuildStructsRequestDto
   ) {
-    let { traceId } = body.info;
-    let { specialKey, userIds, skipRebuild, overrideTimezone } = body.payload;
+    let { traceId } = body;
+    let { specialKey, userIds, skipRebuild, overrideTimezone } = body.input;
 
     let envSpecialKey = this.cs.get<BackendConfig['specialKey']>('specialKey');
 
@@ -167,7 +164,7 @@ export class SpecialRebuildStructsController {
             await this.rpcService.sendToDiskUnwrapOutput({
               request: {
                 operation: 'getCatalogFiles',
-                traceId: body.info.traceId,
+                traceId: body.traceId,
                 input: {
                   baseProject: baseProject,
                   repoId: bridge.repoId,
@@ -232,7 +229,7 @@ export class SpecialRebuildStructsController {
       successBridgeItems.push(bridgeItem);
     });
 
-    let payload: ToBackendSpecialRebuildStructsResponsePayload = {
+    let payload: ToBackendSpecialRebuildStructsOutput = {
       notFoundProjectIds: notFoundProjectIds,
       successTotal: successBridgeItems.length,
       errorTotal: errorGetCatalogBridgeItems.length,

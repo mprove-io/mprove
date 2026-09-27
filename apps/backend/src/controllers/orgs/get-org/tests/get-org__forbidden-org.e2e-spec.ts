@@ -8,12 +8,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetOrgRequest,
-  ToBackendGetOrgResponse
-} from '#common/zod/to-backend/orgs/to-backend-get-org';
+import type { ToBackendGetOrgRequest } from '#common/zod/backend/routes/orgs/get-org/get-org-request';
+import type { ToBackendGetOrgResponse } from '#common/zod/backend/routes/orgs/get-org/get-org-response';
 
 let testId = 'backend-get-org__forbidden-org';
 
@@ -66,17 +63,15 @@ test('1', async t => {
       });
 
       let req: ToBackendGetOrgRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetOrg,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           orgId: orgId
         }
       };
 
-      resp = await sendToBackend<ToBackendGetOrgResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetOrg',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -95,7 +90,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_FORBIDDEN_ORG);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_FORBIDDEN_ORG);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

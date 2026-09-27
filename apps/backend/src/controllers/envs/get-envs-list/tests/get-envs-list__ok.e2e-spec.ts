@@ -9,13 +9,9 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetEnvsListRequest,
-  ToBackendGetEnvsListResponse
-} from '#common/zod/to-backend/envs/to-backend-get-envs-list';
+import type { ToBackendGetEnvsListRequest } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-request';
+import type { ToBackendGetEnvsListResponse } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-response';
 
 let testId = 'backend-get-envs-list__ok';
 
@@ -86,18 +82,16 @@ test('1', async t => {
       });
 
       let req: ToBackendGetEnvsListRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           isFilter: true
         }
       };
 
-      resp = await sendToBackend<ToBackendGetEnvsListResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetEnvsList',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -116,8 +110,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

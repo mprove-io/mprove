@@ -16,8 +16,7 @@ import {
   ToBackendDeleteRoleGivenResponseDto
 } from '#backend/controllers/roles/delete-role-given/delete-role-given.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -25,8 +24,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendDeleteRoleGivenResponsePayload } from '#common/zod/to-backend/roles/to-backend-delete-role-given';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDeleteRoleGivenOutput } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-response';
 
 @ApiTags('Roles')
 @UseGuards(ThrottlerUserIdGuard)
@@ -42,7 +41,7 @@ export class DeleteRoleGivenController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteRoleGiven)
+  @Post('api/ToBackendDeleteRoleGiven' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteRoleGiven',
     description: 'Delete a project role given'
@@ -54,7 +53,7 @@ export class DeleteRoleGivenController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteRoleGivenRequestDto
   ) {
-    let { projectId, roleId, givenId } = body.payload;
+    let { projectId, roleId, givenId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -90,7 +89,7 @@ export class DeleteRoleGivenController {
       projectId: projectId
     });
 
-    let payload: ToBackendDeleteRoleGivenResponsePayload = {
+    let payload: ToBackendDeleteRoleGivenOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       roles: apiRoles
     };

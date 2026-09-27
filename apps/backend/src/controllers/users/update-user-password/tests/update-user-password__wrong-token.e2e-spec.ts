@@ -8,12 +8,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendUpdateUserPasswordRequest,
-  ToBackendUpdateUserPasswordResponse
-} from '#common/zod/to-backend/users/to-backend-update-user-password';
+import type { ToBackendUpdateUserPasswordRequest } from '#common/zod/backend/routes/users/update-user-password/update-user-password-request';
+import type { ToBackendUpdateUserPasswordResponse } from '#common/zod/backend/routes/users/update-user-password/update-user-password-response';
 
 let testId = 'backend-update-user-password__wrong-token';
 
@@ -51,18 +48,16 @@ test('1', async t => {
       });
 
       let updateUserPasswordReq: ToBackendUpdateUserPasswordRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           passwordResetToken: wrongPasswordResetToken,
           newPassword
         }
       };
 
-      resp = await sendToBackend<ToBackendUpdateUserPasswordResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendUpdateUserPassword',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: updateUserPasswordReq
@@ -81,8 +76,9 @@ test('1', async t => {
       }
     }
 
+    assert.ok(resp.result.type === 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
     );
 

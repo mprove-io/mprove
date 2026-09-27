@@ -15,12 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendSetOrgInfoRequestPayload,
-  ToBackendSetOrgInfoResponse
-} from '#common/zod/to-backend/orgs/to-backend-set-org-info';
+import type { ToBackendSetOrgInfoInput } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-request';
+import type { ToBackendSetOrgInfoResponse } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
@@ -77,7 +73,7 @@ export class EditOrgNameDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendSetOrgInfoRequestPayload = {
+    let payload: ToBackendSetOrgInfoInput = {
       orgId: this.ref.data.orgId,
       name: this.editOrgNameForm.value.orgName
     };
@@ -86,14 +82,14 @@ export class EditOrgNameDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
+        route: 'api/ToBackendSetOrgInfo',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendSetOrgInfoResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let org = resp.payload.org;
+          if (resp.result?.type === 'Success') {
+            let org = resp.result.value.org;
             this.orgQuery.update(org);
             this.navQuery.updatePart({
               orgId: org.orgId,

@@ -7,14 +7,10 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { Env } from '#common/zod/backend/env';
 import type { Ev } from '#common/zod/backend/ev';
-import type {
-  ToBackendDeleteEnvVarRequestPayload,
-  ToBackendDeleteEnvVarResponse
-} from '#common/zod/to-backend/envs/to-backend-delete-env-var';
+import type { ToBackendDeleteEnvVarInput } from '#common/zod/backend/routes/envs/delete-env-var/delete-env-var-request';
+import type { ToBackendDeleteEnvVarResponse } from '#common/zod/backend/routes/envs/delete-env-var/delete-env-var-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -55,7 +51,7 @@ export class DeleteEvDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteEnvVarRequestPayload = {
+    let payload: ToBackendDeleteEnvVarInput = {
       projectId: this.dataItem.env.projectId,
       envId: this.dataItem.env.envId,
       evId: this.dataItem.ev.evId
@@ -65,15 +61,17 @@ export class DeleteEvDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteEnvVar,
+        route: 'api/ToBackendDeleteEnvVar',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteEnvVarResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.environmentsQuery.update({ environments: resp.payload.envs });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.environmentsQuery.update({
+              environments: resp.result.value.envs
+            });
           }
         }),
         take(1)

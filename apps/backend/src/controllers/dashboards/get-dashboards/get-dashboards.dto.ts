@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendGetDashboardsRequest,
-  zToBackendGetDashboardsResponse
-} from '#common/zod/to-backend/dashboards/to-backend-get-dashboards';
+import { zToBackendGetDashboardsRequest } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-request';
+import { zToBackendGetDashboardsResponse } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-response';
 
 export class ToBackendGetDashboardsRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetDashboardsRequest })

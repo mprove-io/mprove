@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendGetEnvsListRequest,
-  zToBackendGetEnvsListResponse
-} from '#common/zod/to-backend/envs/to-backend-get-envs-list';
+import { zToBackendGetEnvsListRequest } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-request';
+import { zToBackendGetEnvsListResponse } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-response';
 
 export class ToBackendGetEnvsListRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetEnvsListRequest })

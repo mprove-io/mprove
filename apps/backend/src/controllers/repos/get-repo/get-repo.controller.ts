@@ -20,9 +20,9 @@ import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetRepoOutput } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
 import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
-import type { ToBackendGetRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-get-repo';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -43,7 +43,7 @@ export class GetRepoController {
     private envsService: EnvsService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetRepo)
+  @Post('api/ToBackendGetRepo' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetRepo',
     description: 'Get repo catalog for a branch'
@@ -55,7 +55,7 @@ export class GetRepoController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetRepoRequestDto
   ) {
-    let { projectId, repoId, branchId, envId, isFetch } = body.payload;
+    let { projectId, repoId, branchId, envId, isFetch } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -100,7 +100,7 @@ export class GetRepoController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'getCatalogNodes',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -123,7 +123,7 @@ export class GetRepoController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendGetRepoResponsePayload = {
+    let payload: ToBackendGetRepoOutput = {
       userMember: apiUserMember,
       user: this.usersService.tabToApi({ user: user }),
       needValidate: bridge.needValidate,

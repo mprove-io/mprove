@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendGetRepoRequest,
-  zToBackendGetRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-get-repo';
+import { zToBackendGetRepoRequest } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
+import { zToBackendGetRepoResponse } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
 
 export class ToBackendGetRepoRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetRepoRequest })

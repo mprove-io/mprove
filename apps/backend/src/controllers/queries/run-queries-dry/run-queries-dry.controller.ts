@@ -12,9 +12,6 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -22,8 +19,7 @@ import {
   ToBackendRunQueriesDryResponseDto
 } from '#backend/controllers/queries/run-queries-dry/run-queries-dry.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { QueryTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -41,10 +37,12 @@ import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { QueryEstimate } from '#common/zod/backend/query-estimate';
-import type { ToBackendRunQueriesDryResponsePayload } from '#common/zod/to-backend/queries/to-backend-run-queries-dry';
+import type { ToBackendRunQueriesDryOutput } from '#common/zod/backend/routes/queries/run-queries-dry/run-queries-dry-response';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -68,7 +66,7 @@ export class RunQueriesDryController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry)
+  @Post('api/ToBackendRunQueriesDry' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'RunQueriesDry',
     description: 'Dry-run queries'
@@ -80,8 +78,7 @@ export class RunQueriesDryController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendRunQueriesDryRequestDto
   ) {
-    let { projectId, repoId, branchId, envId, mconfigIds, dryId } =
-      body.payload;
+    let { projectId, repoId, branchId, envId, mconfigIds, dryId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -201,7 +198,7 @@ export class RunQueriesDryController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendRunQueriesDryResponsePayload = {
+    let payload: ToBackendRunQueriesDryOutput = {
       dryId: dryId,
       errorQueries: errorQueries.map(x =>
         this.queriesService.tabToApi({ query: x })

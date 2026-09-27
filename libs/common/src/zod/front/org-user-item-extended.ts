@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zOrgUsersItem } from '#common/zod/to-backend/org-users/to-backend-get-org-users';
+import { zOrgUsersItem } from '#common/zod/backend/org-users/org-users-item';
 
 export let zOrgUserItemExtended = zOrgUsersItem
   .extend({

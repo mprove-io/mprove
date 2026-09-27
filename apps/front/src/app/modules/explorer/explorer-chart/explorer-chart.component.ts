@@ -15,21 +15,15 @@ import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
+import type { ToBackendGetQueryInput } from '#common/zod/backend/routes/queries/get-query/get-query-request';
+import type { ToBackendGetQueryResponse } from '#common/zod/backend/routes/queries/get-query/get-query-response';
+import type { ToBackendRunQueriesInput } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
+import type { ToBackendRunQueriesResponse } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { Query } from '#common/zod/blockml/query';
-import type {
-  ToBackendGetQueryRequestPayload,
-  ToBackendGetQueryResponse
-} from '#common/zod/to-backend/queries/to-backend-get-query';
-import type {
-  ToBackendRunQueriesRequestPayload,
-  ToBackendRunQueriesResponse
-} from '#common/zod/to-backend/queries/to-backend-run-queries';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { NavQuery, type NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -169,7 +163,7 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendRunQueriesRequestPayload = {
+    let payload: ToBackendRunQueriesInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -179,13 +173,13 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        route: 'api/ToBackendRunQueries',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let runningQuery = resp.payload.runningQueries[0];
+          if (resp.result?.type === 'Success') {
+            let runningQuery = resp.result.value.runningQueries[0];
 
             this.query = Object.assign(runningQuery, {
               sql: this.query.sql,
@@ -208,7 +202,7 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
           if (this.query?.status === QueryStatusEnum.Running) {
             let nav = this.navQuery.getValue();
 
-            let payload: ToBackendGetQueryRequestPayload = {
+            let payload: ToBackendGetQueryInput = {
               projectId: nav.projectId,
               branchId: nav.branchId,
               envId: nav.envId,
@@ -218,7 +212,7 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
             };
 
             return this.apiService.req({
-              pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+              route: 'api/ToBackendGetQuery',
               payload: payload
             });
           }
@@ -226,8 +220,8 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
           return of(undefined);
         }),
         tap((resp: ToBackendGetQueryResponse | undefined) => {
-          if (resp?.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.query = resp.payload.query;
+          if (resp?.result?.type === 'Success') {
+            this.query = resp.result.value.query;
             this.updateChartData();
 
             if (this.query.status !== QueryStatusEnum.Running) {

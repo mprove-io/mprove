@@ -10,21 +10,12 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateGivenRequest,
-  ToBackendCreateGivenResponse
-} from '#common/zod/to-backend/givens/to-backend-create-given';
-import type {
-  ToBackendCreateRoleRequest,
-  ToBackendCreateRoleResponse
-} from '#common/zod/to-backend/roles/to-backend-create-role';
-import type {
-  ToBackendGetRolesRequest,
-  ToBackendGetRolesResponse
-} from '#common/zod/to-backend/roles/to-backend-get-roles';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
+import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
+import type { ToBackendGetRolesRequest } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 
 let testId = 'backend-get-roles__ok';
 
@@ -96,18 +87,16 @@ test('1', async t => {
       });
 
       let createRoleBReq: ToBackendCreateRoleRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateRole,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           roleId: 'role_b'
         }
       };
 
-      await sendToBackend<ToBackendCreateRoleResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendCreateRole',
         checkIsOk: true,
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -115,18 +104,16 @@ test('1', async t => {
       });
 
       let createRoleAReq: ToBackendCreateRoleRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateRole,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           roleId: 'role_a'
         }
       };
 
-      await sendToBackend<ToBackendCreateRoleResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendCreateRole',
         checkIsOk: true,
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -134,12 +121,9 @@ test('1', async t => {
       });
 
       let createGivenBReq: ToBackendCreateGivenRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateGiven,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           givenId: 'GIVEN_B',
           type: GivenTypeEnum.String,
@@ -148,7 +132,8 @@ test('1', async t => {
         }
       };
 
-      await sendToBackend<ToBackendCreateGivenResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendCreateGiven',
         checkIsOk: true,
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -156,12 +141,9 @@ test('1', async t => {
       });
 
       let createGivenAReq: ToBackendCreateGivenRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateGiven,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           givenId: 'GIVEN_A',
           type: GivenTypeEnum.String,
@@ -170,7 +152,8 @@ test('1', async t => {
         }
       };
 
-      await sendToBackend<ToBackendCreateGivenResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendCreateGiven',
         checkIsOk: true,
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -178,17 +161,15 @@ test('1', async t => {
       });
 
       let req: ToBackendGetRolesRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetRoles,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId
         }
       };
 
-      resp = await sendToBackend<ToBackendGetRolesResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetRoles',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -207,14 +188,13 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
     assert.deepEqual(
-      resp.payload.roles.map(x => x.roleId),
+      unwrapToBackendResponse({ response: resp }).roles.map(x => x.roleId),
       ['role_a', 'role_b']
     );
     assert.deepEqual(
-      resp.payload.givens.map(x => x.givenId),
+      unwrapToBackendResponse({ response: resp }).givens.map(x => x.givenId),
       ['GIVEN_A', 'GIVEN_B']
     );
 

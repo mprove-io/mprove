@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendMergeRepoRequestDto,
   ToBackendMergeRepoResponseDto
 } from '#backend/controllers/repos/merge-repo/merge-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -42,10 +38,12 @@ import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendMergeRepoOutput } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-response';
 import type { ToDiskMergeRepoOutput } from '#common/zod/disk/routes/repos/merge-repo/merge-repo-response';
-import type { ToBackendMergeRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-merge-repo';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -68,7 +66,7 @@ export class MergeRepoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendMergeRepo)
+  @Post('api/ToBackendMergeRepo' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'MergeRepo',
     description: 'Merge another branch into the current branch'
@@ -80,7 +78,7 @@ export class MergeRepoController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendMergeRepoRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -88,7 +86,7 @@ export class MergeRepoController {
       envId,
       theirBranchId,
       isTheirBranchRemote
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -141,7 +139,7 @@ export class MergeRepoController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'mergeRepo',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -214,7 +212,7 @@ export class MergeRepoController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendMergeRepoResponsePayload = {
+    let payload: ToBackendMergeRepoOutput = {
       repo: diskMergeRepoOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,

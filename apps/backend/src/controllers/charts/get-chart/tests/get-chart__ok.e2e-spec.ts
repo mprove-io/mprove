@@ -11,14 +11,10 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetChartRequest,
-  ToBackendGetChartResponse
-} from '#common/zod/to-backend/charts/to-backend-get-chart';
-import type { ToBackendSeedRecordsRequestPayloadConnectionsItem } from '#common/zod/to-backend/test-routes/to-backend-seed-records';
+import type { ToBackendGetChartRequest } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
+import type { ToBackendGetChartResponse } from '#common/zod/backend/routes/charts/get-chart/get-chart-response';
+import type { ToBackendSeedRecordsInputConnectionsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-connections-item';
 
 let testId = 'backend-get-chart__ok';
 
@@ -47,7 +43,7 @@ test('1', async t => {
     try {
       prepTest = await prepareTest({});
 
-      let c1Postgres: ToBackendSeedRecordsRequestPayloadConnectionsItem = {
+      let c1Postgres: ToBackendSeedRecordsInputConnectionsItem = {
         envId: PROJECT_ENV_PROD,
         projectId: projectId,
         connectionId: 'c1_postgres',
@@ -121,12 +117,9 @@ test('1', async t => {
       });
 
       let req: ToBackendGetChartRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetChart,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -136,7 +129,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendGetChartResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetChart',
         httpServer: prepTest.httpServer,
         loginToken: prepareSeedResult.loginToken,
         req: req
@@ -155,8 +149,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

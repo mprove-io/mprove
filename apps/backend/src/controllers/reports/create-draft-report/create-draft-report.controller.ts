@@ -17,8 +17,7 @@ import {
   ToBackendCreateDraftReportResponseDto
 } from '#backend/controllers/reports/create-draft-report/create-draft-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
@@ -40,12 +39,12 @@ import { ReportRowService } from '#backend/services/report-row.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateDraftReportOutput } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-response';
 import type { Row } from '#common/zod/blockml/row';
 import type { Rq } from '#common/zod/blockml/rq';
-import type { ToBackendCreateDraftReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-create-draft-report';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -70,7 +69,7 @@ export class CreateDraftReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport)
+  @Post('api/ToBackendCreateDraftReport' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateDraftReport',
     description: 'Create a draft report from an existing report'
@@ -82,7 +81,7 @@ export class CreateDraftReportController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateDraftReportRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -98,7 +97,7 @@ export class CreateDraftReportController {
       newReportFields,
       listeners,
       chart
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -378,7 +377,7 @@ export class CreateDraftReportController {
       spaces: struct.spaces
     });
 
-    let payload: ToBackendCreateDraftReportResponsePayload = {
+    let payload: ToBackendCreateDraftReportOutput = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,

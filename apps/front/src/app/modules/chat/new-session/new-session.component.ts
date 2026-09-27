@@ -5,29 +5,19 @@ import { take, tap } from 'rxjs/operators';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { EnvsItem } from '#common/zod/backend/envs-item';
+import type { ToBackendGetBranchesListInput } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-request';
+import type { ToBackendGetBranchesListResponse } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-response';
+import type { ToBackendGetEnvsListInput } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-request';
+import type { ToBackendGetEnvsListResponse } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-response';
+import type { ToBackendCreateEditorSessionInput } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-request';
+import type { ToBackendCreateEditorSessionResponse } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-response';
+import type { ToBackendCreateExplorerSessionInput } from '#common/zod/backend/routes/sessions/create-explorer-session/create-explorer-session-request';
+import type { ToBackendCreateExplorerSessionResponse } from '#common/zod/backend/routes/sessions/create-explorer-session/create-explorer-session-response';
 import type { SessionApi } from '#common/zod/backend/session-api';
-import type {
-  ToBackendGetBranchesListRequestPayload,
-  ToBackendGetBranchesListResponse
-} from '#common/zod/to-backend/branches/to-backend-get-branches-list';
-import type {
-  ToBackendGetEnvsListRequestPayload,
-  ToBackendGetEnvsListResponse
-} from '#common/zod/to-backend/envs/to-backend-get-envs-list';
-import type {
-  ToBackendCreateEditorSessionRequestPayload,
-  ToBackendCreateEditorSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-create-editor-session';
-import type {
-  ToBackendCreateExplorerSessionRequestPayload,
-  ToBackendCreateExplorerSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-create-explorer-session';
 import { makeAscendingId } from '#front/app/functions/make-ascending-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { splitModelExtraId } from '#front/app/functions/split-model-extra-id';
@@ -125,19 +115,19 @@ export class NewSessionComponent implements OnInit {
     let nav = this.navQuery.getValue();
     let user = this.userQuery.getValue();
 
-    let payload: ToBackendGetBranchesListRequestPayload = {
+    let payload: ToBackendGetBranchesListInput = {
       projectId: nav.projectId
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
+        route: 'api/ToBackendGetBranchesList',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetBranchesListResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.branches = resp.payload.branchesList
+          if (resp.result?.type === 'Success') {
+            this.branches = resp.result.value.branchesList
               .filter(b => b.repoType === RepoTypeEnum.Production)
               .map(b => ({
                 branchId: b.branchId,
@@ -161,20 +151,20 @@ export class NewSessionComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendGetEnvsListRequestPayload = {
+    let payload: ToBackendGetEnvsListInput = {
       projectId: nav.projectId,
       isFilter: true
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        route: 'api/ToBackendGetEnvsList',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetEnvsListResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.envs = resp.payload.envsList;
+          if (resp.result?.type === 'Success') {
+            this.envs = resp.result.value.envsList;
           }
           this.envsLoading = false;
           this.cd.detectChanges();
@@ -242,7 +232,7 @@ export class NewSessionComponent implements OnInit {
     let partId = makeAscendingId({ prefix: 'part' });
 
     if (isSessionExplorer) {
-      let explorerPayload: ToBackendCreateExplorerSessionRequestPayload = {
+      let explorerPayload: ToBackendCreateExplorerSessionInput = {
         projectId: nav.projectId,
         repoId: nav.repoId,
         providerId: providerId,
@@ -257,8 +247,7 @@ export class NewSessionComponent implements OnInit {
 
       this.apiService
         .req({
-          pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendCreateExplorerSession,
+          route: 'api/ToBackendCreateExplorerSession',
           payload: explorerPayload
         })
         .pipe(
@@ -277,7 +266,7 @@ export class NewSessionComponent implements OnInit {
         )
         .subscribe();
     } else {
-      let editorPayload: ToBackendCreateEditorSessionRequestPayload = {
+      let editorPayload: ToBackendCreateEditorSessionInput = {
         projectId: nav.projectId,
         sandboxType: SandboxTypeEnum.E2B,
         providerId: providerId,
@@ -293,8 +282,7 @@ export class NewSessionComponent implements OnInit {
 
       this.apiService
         .req({
-          pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendCreateEditorSession,
+          route: 'api/ToBackendCreateEditorSession',
           payload: editorPayload
         })
         .pipe(
@@ -336,8 +324,8 @@ export class NewSessionComponent implements OnInit {
       partId
     } = item;
 
-    if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-      let { sessionId, repoId, branchId, envId } = resp.payload;
+    if (resp.result?.type === 'Success') {
+      let { sessionId, repoId, branchId, envId } = resp.result.value;
 
       if (!isSessionExplorer) {
         // Type Editor: add new session to the sessions list

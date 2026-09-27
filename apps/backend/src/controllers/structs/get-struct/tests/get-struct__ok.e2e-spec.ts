@@ -10,13 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetStructRequest,
-  ToBackendGetStructResponse
-} from '#common/zod/to-backend/structs/to-backend-get-struct';
+import type { ToBackendGetStructRequest } from '#common/zod/backend/routes/structs/get-struct/get-struct-request';
+import type { ToBackendGetStructResponse } from '#common/zod/backend/routes/structs/get-struct/get-struct-response';
 
 let testId = 'backend-get-struct__ok';
 
@@ -99,12 +95,9 @@ test('1', async t => {
       });
 
       let req: ToBackendGetStructRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetStruct,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId,
@@ -112,7 +105,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendGetStructResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetStruct',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -131,8 +125,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

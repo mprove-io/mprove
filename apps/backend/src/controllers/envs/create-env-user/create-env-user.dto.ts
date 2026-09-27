@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendCreateEnvUserRequest,
-  zToBackendCreateEnvUserResponse
-} from '#common/zod/to-backend/envs/to-backend-create-env-user';
+import { zToBackendCreateEnvUserRequest } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-request';
+import { zToBackendCreateEnvUserResponse } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-response';
 
 export class ToBackendCreateEnvUserRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendCreateEnvUserRequest })

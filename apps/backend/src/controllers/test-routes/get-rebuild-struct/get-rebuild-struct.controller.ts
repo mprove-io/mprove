@@ -7,8 +7,7 @@ import {
 } from '#backend/controllers/test-routes/get-rebuild-struct/get-rebuild-struct.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files';
 import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
@@ -17,8 +16,8 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBlockmlRebuildStructRequest } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-request';
 import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
 import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-files/get-catalog-files-response';
@@ -40,7 +39,7 @@ export class GetRebuildStructController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct)
+  @Post('api/ToBackendGetRebuildStruct' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetRebuildStruct',
     description: 'Rebuild a project struct for tests'
@@ -63,7 +62,7 @@ export class GetRebuildStructController {
       cachedMproveConfig,
       cachedModels,
       cachedMetrics
-    } = body.payload;
+    } = body.input;
 
     let structId = makeId();
 
@@ -81,7 +80,7 @@ export class GetRebuildStructController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'getCatalogFiles',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -100,7 +99,7 @@ export class GetRebuildStructController {
 
     let rebuildStructRequest: ToBlockmlRebuildStructRequest = {
       operation: 'rebuildStruct',
-      traceId: body.info.traceId,
+      traceId: body.traceId,
       input: {
         structId: structId,
         projectId: projectId,

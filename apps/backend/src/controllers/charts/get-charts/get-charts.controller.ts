@@ -6,8 +6,7 @@ import {
   ToBackendGetChartsResponseDto
 } from '#backend/controllers/charts/get-charts/get-charts.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
@@ -24,8 +23,8 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetChartsResponsePayload } from '#common/zod/to-backend/charts/to-backend-get-charts';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetChartsOutput } from '#common/zod/backend/routes/charts/get-charts/get-charts-response';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -45,7 +44,7 @@ export class GetChartsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetCharts)
+  @Post('api/ToBackendGetCharts' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetCharts',
     description: 'List charts the user can access'
@@ -57,7 +56,7 @@ export class GetChartsController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetChartsRequestDto
   ) {
-    let { projectId, repoId, branchId, envId } = body.payload;
+    let { projectId, repoId, branchId, envId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -132,7 +131,7 @@ export class GetChartsController {
       spaces: struct.spaces
     });
 
-    let payload: ToBackendGetChartsResponsePayload = {
+    let payload: ToBackendGetChartsOutput = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,

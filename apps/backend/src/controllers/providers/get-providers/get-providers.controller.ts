@@ -6,8 +6,7 @@ import {
   ToBackendGetProvidersResponseDto
 } from '#backend/controllers/providers/get-providers/get-providers.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MemberTab,
   ProviderTab,
@@ -22,11 +21,11 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Member } from '#common/zod/backend/member';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendGetProvidersRequestPayload } from '#common/zod/to-backend/providers/get-providers/get-providers-request-payload';
-import type { ToBackendGetProvidersResponsePayload } from '#common/zod/to-backend/providers/get-providers/get-providers-response-payload';
+import type { ToBackendGetProvidersInput } from '#common/zod/backend/routes/providers/get-providers/get-providers-request';
+import type { ToBackendGetProvidersOutput } from '#common/zod/backend/routes/providers/get-providers/get-providers-response';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -40,7 +39,7 @@ export class GetProvidersController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetProviders)
+  @Post('api/ToBackendGetProviders' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetProviders',
     description: 'Get project providers'
@@ -52,7 +51,7 @@ export class GetProvidersController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetProvidersRequestDto
   ) {
-    let bodyPayload: ToBackendGetProvidersRequestPayload = body.payload;
+    let bodyPayload: ToBackendGetProvidersInput = body.input;
 
     let { projectId } = bodyPayload;
 
@@ -92,7 +91,7 @@ export class GetProvidersController {
       member: userMember
     });
 
-    let payload: ToBackendGetProvidersResponsePayload = {
+    let payload: ToBackendGetProvidersOutput = {
       userMember: apiUserMember,
       providers: apiProviders
     };

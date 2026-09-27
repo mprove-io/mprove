@@ -17,8 +17,7 @@ import {
   ToBackendSetOrgOwnerResponseDto
 } from '#backend/controllers/orgs/set-org-owner/set-org-owner.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -30,9 +29,9 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendSetOrgOwnerResponsePayload } from '#common/zod/to-backend/orgs/to-backend-set-org-owner';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSetOrgOwnerOutput } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-response';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -49,7 +48,7 @@ export class SetOrgOwnerController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner)
+  @Post('api/ToBackendSetOrgOwner' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SetOrgOwner',
     description: 'Transfer organization ownership to another verified user'
@@ -61,7 +60,7 @@ export class SetOrgOwnerController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetOrgOwnerRequestDto
   ) {
-    let { orgId, ownerEmail } = body.payload;
+    let { orgId, ownerEmail } = body.input;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -109,7 +108,7 @@ export class SetOrgOwnerController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendSetOrgOwnerResponsePayload = {
+    let payload: ToBackendSetOrgOwnerOutput = {
       org: this.orgsService.tabToApi({ org: org })
     };
 

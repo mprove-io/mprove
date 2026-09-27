@@ -6,8 +6,7 @@ import {
   ToBackendGetDashboardsResponseDto
 } from '#backend/controllers/dashboards/get-dashboards/get-dashboards.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '#backend/functions/check-model-access';
@@ -22,8 +21,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetDashboardsResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-get-dashboards';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetDashboardsOutput } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-response';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)
@@ -43,7 +42,7 @@ export class GetDashboardsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetDashboards)
+  @Post('api/ToBackendGetDashboards' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetDashboards',
     description: 'Get dashboards'
@@ -55,7 +54,7 @@ export class GetDashboardsController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetDashboardsRequestDto
   ) {
-    let { projectId, repoId, branchId, envId } = body.payload;
+    let { projectId, repoId, branchId, envId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -126,7 +125,7 @@ export class GetDashboardsController {
       spaces: struct.spaces
     });
 
-    let payload: ToBackendGetDashboardsResponsePayload = {
+    let payload: ToBackendGetDashboardsOutput = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: struct,

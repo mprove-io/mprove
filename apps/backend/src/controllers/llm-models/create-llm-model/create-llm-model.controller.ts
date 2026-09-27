@@ -16,8 +16,7 @@ import {
   ToBackendCreateLlmModelResponseDto
 } from '#backend/controllers/llm-models/create-llm-model/create-llm-model.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   UserTab
@@ -32,14 +31,14 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendCreateLlmModelRequestPayload } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-request-payload';
-import type { ToBackendCreateLlmModelResponsePayload } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-response-payload';
+import type { ToBackendCreateLlmModelInput } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-request';
+import type { ToBackendCreateLlmModelOutput } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-response';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -56,7 +55,7 @@ export class CreateLlmModelController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateLlmModel)
+  @Post('api/ToBackendCreateLlmModel' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateLlmModel',
     description: 'Create a model in an existing provider'
@@ -65,8 +64,8 @@ export class CreateLlmModelController {
   async createLlmModel(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateLlmModelRequestDto
-  ): Promise<ToBackendCreateLlmModelResponsePayload> {
-    let bodyPayload: ToBackendCreateLlmModelRequestPayload = body.payload;
+  ): Promise<ToBackendCreateLlmModelOutput> {
+    let bodyPayload: ToBackendCreateLlmModelInput = body.input;
 
     let {
       projectId,
@@ -153,7 +152,7 @@ export class CreateLlmModelController {
       isIncludePasswords: false
     });
 
-    let payload: ToBackendCreateLlmModelResponsePayload = {
+    let payload: ToBackendCreateLlmModelOutput = {
       provider: apiProvider
     };
 

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { toc } from '#backend/mprove-docs-cache/toc';
 import { tocToContent } from '#backend/mprove-docs-cache/toc-to-content';
-import type { McpToolListDocsOutput } from '#common/zod/to-backend/mcp-tools/mcp-tool-list-docs';
-import type { McpToolReadDocsOutput } from '#common/zod/to-backend/mcp-tools/mcp-tool-read-docs';
-import type { McpToolSearchDocsOutput } from '#common/zod/to-backend/mcp-tools/mcp-tool-search-docs';
+import type { McpToolListDocsOutput } from '#common/zod/backend/mcp-tools/mcp-tool-list-docs';
+import type { McpToolReadDocsOutput } from '#common/zod/backend/mcp-tools/mcp-tool-read-docs';
+import type { McpToolSearchDocsOutput } from '#common/zod/backend/mcp-tools/mcp-tool-search-docs';
 
 const SNIPPET_RADIUS = 100;
 const MAX_SNIPPETS_PER_FILE = 5;

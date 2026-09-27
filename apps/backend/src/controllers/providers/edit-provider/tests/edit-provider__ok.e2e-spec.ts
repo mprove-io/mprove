@@ -18,11 +18,13 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendEditProviderRequest } from '#common/zod/to-backend/providers/edit-provider/edit-provider-request';
-import type { ToBackendEditProviderResponse } from '#common/zod/to-backend/providers/edit-provider/edit-provider-response';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendEditProviderRequest } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-request';
+import type {
+  ToBackendEditProviderOutput,
+  ToBackendEditProviderResponse
+} from '#common/zod/backend/routes/providers/edit-provider/edit-provider-response';
 
 let testId = 'backend-edit-provider__ok';
 
@@ -135,12 +137,9 @@ test('1', async t => {
       });
 
       let req: ToBackendEditProviderRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendEditProvider,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           providerId: providerId,
           name: 'New Provider Name',
@@ -153,7 +152,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendEditProviderResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendEditProvider',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -191,32 +191,43 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.result.type, 'Success');
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).provider.isEnabled,
+      true
+    );
 
-    assert.equal(resp.payload.provider.isEnabled, true);
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).provider.name,
+      'New Provider Name'
+    );
 
-    assert.equal(resp.payload.provider.name, 'New Provider Name');
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).provider.type,
+      ProviderTypeEnum.OpenAICompatible
+    );
 
-    assert.equal(resp.payload.provider.type, ProviderTypeEnum.OpenAICompatible);
+    let output: ToBackendEditProviderOutput = unwrapToBackendResponse({
+      response: resp
+    });
 
-    if (resp.payload.provider.type !== ProviderTypeEnum.OpenAICompatible) {
+    if (output.provider.type !== ProviderTypeEnum.OpenAICompatible) {
       throw new Error('Expected an OpenAI-compatible provider');
     }
 
+    assert.equal(output.provider.options.baseURL, 'https://new.example.com/v1');
+
     assert.equal(
-      resp.payload.provider.options.baseURL,
-      'https://new.example.com/v1'
+      unwrapToBackendResponse({ response: resp }).provider.options.apiKey,
+      ''
     );
 
-    assert.equal(resp.payload.provider.options.apiKey, '');
-
-    assert.deepEqual(resp.payload.provider.options.headers, [
+    assert.deepEqual(output.provider.options.headers, [
       { key: 'Authorization', value: '' }
     ]);
 
-    assert.deepEqual(resp.payload.provider.options.queryParams, [
+    assert.deepEqual(output.provider.options.queryParams, [
       { key: 'version', value: '' }
     ]);
 

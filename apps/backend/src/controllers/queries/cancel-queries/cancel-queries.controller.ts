@@ -13,9 +13,6 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
 import {
@@ -23,8 +20,7 @@ import {
   ToBackendCancelQueriesResponseDto
 } from '#backend/controllers/queries/cancel-queries/cancel-queries.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ConnectionTab,
   QueryTab,
@@ -53,9 +49,11 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendCancelQueriesResponsePayload } from '#common/zod/to-backend/queries/to-backend-cancel-queries';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCancelQueriesOutput } from '#common/zod/backend/routes/queries/cancel-queries/cancel-queries-response';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -78,7 +76,7 @@ export class CancelQueriesController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
+  @Post('api/ToBackendCancelQueries' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CancelQueries',
     description: 'Cancel running queries for specified mconfigs'
@@ -90,7 +88,7 @@ export class CancelQueriesController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCancelQueriesRequestDto
   ) {
-    let { projectId, repoId, branchId, envId, mconfigIds } = body.payload;
+    let { projectId, repoId, branchId, envId, mconfigIds } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -250,7 +248,7 @@ export class CancelQueriesController {
       );
     }
 
-    let payload: ToBackendCancelQueriesResponsePayload = {
+    let payload: ToBackendCancelQueriesOutput = {
       queries: canceledQueries.map(x =>
         this.queriesService.tabToApi({ query: x })
       )

@@ -6,8 +6,7 @@ import {
   ToBackendCheckLastNavResponseDto
 } from '#backend/controllers/nav/check-last-nav/check-last-nav.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
@@ -20,9 +19,9 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendCheckLastNavResponsePayload } from '#common/zod/to-backend/nav/to-backend-check-last-nav';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCheckLastNavOutput } from '#common/zod/backend/routes/nav/check-last-nav/check-last-nav-response';
 
 @ApiTags('Nav')
 @UseGuards(ThrottlerUserIdGuard)
@@ -38,7 +37,7 @@ export class CheckLastNavController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCheckLastNav)
+  @Post('api/ToBackendCheckLastNav' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CheckLastNav',
     description: 'Check if last navigated entities still exist'
@@ -59,7 +58,7 @@ export class CheckLastNavController {
       chartId,
       dashboardId,
       reportId
-    } = body.payload;
+    } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -145,7 +144,7 @@ export class CheckLastNavController {
       reportExists = isDefined(report);
     }
 
-    let payload: ToBackendCheckLastNavResponsePayload = {
+    let payload: ToBackendCheckLastNavOutput = {
       modelExists: modelExists,
       chartExists: chartExists,
       dashboardExists: dashboardExists,

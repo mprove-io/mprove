@@ -9,12 +9,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGenerateUserApiKeyRequest,
-  ToBackendGenerateUserApiKeyResponse
-} from '#common/zod/to-backend/users/to-backend-generate-user-api-key';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 
 let testId = 'backend-mcp__api-key-not-valid';
 
@@ -49,23 +46,22 @@ test('1', async t => {
       });
 
       let generateReq: ToBackendGenerateUserApiKeyRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {}
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {}
       };
 
-      let generateResp =
-        await sendToBackend<ToBackendGenerateUserApiKeyResponse>({
-          httpServer: prep.httpServer,
-          loginToken: prep.loginToken,
-          req: generateReq,
-          checkIsOk: true
-        });
+      let generateResp = await sendToBackend({
+        route: 'api/ToBackendGenerateUserApiKey',
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: generateReq,
+        checkIsOk: true
+      });
 
-      let parts = generateResp.payload.apiKey.split('-');
+      let parts = unwrapToBackendResponse({
+        response: generateResp
+      }).apiKey.split('-');
       parts[parts.length - 1] = 'wrongsecret1234567890abcdef1234567890abcdef';
       let wrongApiKey = parts.join('-');
 

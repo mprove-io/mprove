@@ -17,8 +17,7 @@ import {
   ToBackendDeleteMemberResponseDto
 } from '#backend/controllers/members/delete-member/delete-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
@@ -32,7 +31,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)
@@ -49,7 +48,7 @@ export class DeleteMemberController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteMember)
+  @Post('api/ToBackendDeleteMember' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteMember',
     description: 'Remove a member from a project'
@@ -61,8 +60,8 @@ export class DeleteMemberController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteMemberRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, memberId } = body.payload;
+    let { traceId } = body;
+    let { projectId, memberId } = body.input;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

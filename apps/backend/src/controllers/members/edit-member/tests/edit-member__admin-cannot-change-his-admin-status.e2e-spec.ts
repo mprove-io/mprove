@@ -10,12 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendEditMemberRequest,
-  ToBackendEditMemberResponse
-} from '#common/zod/to-backend/members/to-backend-edit-member';
+import type { ToBackendEditMemberRequest } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
+import type { ToBackendEditMemberResponse } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
 
 let testId = 'backend-edit-member__admin-cannot-change-his-admin-status';
 
@@ -87,12 +84,9 @@ test('1', async t => {
       });
 
       let req: ToBackendEditMemberRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendEditMember,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           memberId: userId,
           isAdmin: false,
@@ -102,7 +96,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendEditMemberResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendEditMember',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -121,8 +116,9 @@ test('1', async t => {
       }
     }
 
+    assert.ok(resp.result.type === 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS
     );
 

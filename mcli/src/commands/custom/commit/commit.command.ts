@@ -6,13 +6,10 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendCommitRepoRequestPayload,
-  ToBackendCommitRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-commit-repo';
+import type { ToBackendCommitRepoInput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
+import type { ToBackendCommitRepoOutput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -87,25 +84,25 @@ export class CommitCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let commitRepoReqPayload: ToBackendCommitRepoRequestPayload = {
+    let commitRepoReqPayload: ToBackendCommitRepoInput = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,
       commitMessage: this.commitMessage
     };
 
-    let commitRepoResp = await mreq<ToBackendCommitRepoResponse>({
+    let commitRepoOutput: ToBackendCommitRepoOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+      route: 'api/ToBackendCommitRepo',
       payload: commitRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
-      orgId: commitRepoResp.payload.repo.orgId,
+      orgId: commitRepoOutput.repo.orgId,
       projectId: this.projectId,
-      repoId: commitRepoResp.payload.repo.repoId,
+      repoId: commitRepoOutput.repo.repoId,
       branch: this.branch,
       env: PROJECT_ENV_PROD
     });
@@ -115,7 +112,7 @@ export class CommitCommand extends CustomCommand {
     };
 
     if (this.getRepo === true) {
-      let repo = commitRepoResp.payload.repo;
+      let repo = commitRepoOutput.repo;
 
       delete repo.nodes;
       delete repo.changesToCommit;

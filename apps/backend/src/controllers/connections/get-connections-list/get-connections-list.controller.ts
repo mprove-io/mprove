@@ -10,8 +10,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetConnectionsListResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connections-list';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetConnectionsListOutput } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-response';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)
@@ -20,7 +20,7 @@ import type { ToBackendGetConnectionsListResponsePayload } from '#common/zod/to-
 export class GetConnectionsListController {
   constructor(private getConnectionsListService: GetConnectionsListService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetConnectionsList)
+  @Post('api/ToBackendGetConnectionsList' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetConnectionsList',
     description:
@@ -33,9 +33,9 @@ export class GetConnectionsListController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetConnectionsListRequestDto
   ) {
-    let { projectId, envId } = body.payload;
+    let { projectId, envId } = body.input;
 
-    let payload: ToBackendGetConnectionsListResponsePayload =
+    let payload: ToBackendGetConnectionsListOutput =
       await this.getConnectionsListService.getConnectionsList({
         userId: user.userId,
         projectId: projectId,

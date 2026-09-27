@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ProjectChartLink } from '#common/zod/backend/project-chart-link';
@@ -11,11 +9,9 @@ import type { ProjectExplorerSessionLink } from '#common/zod/backend/project-exp
 import type { ProjectModelLink } from '#common/zod/backend/project-model-link';
 import type { ProjectReportLink } from '#common/zod/backend/project-report-link';
 import type { ProjectSelectedGivenLink } from '#common/zod/backend/project-selected-given-link';
+import type { ToBackendSetUserUiInput } from '#common/zod/backend/routes/users/set-user-ui/set-user-ui-request';
+import type { ToBackendSetUserUiResponse } from '#common/zod/backend/routes/users/set-user-ui/set-user-ui-response';
 import type { Ui } from '#common/zod/backend/ui';
-import type {
-  ToBackendSetUserUiRequestPayload,
-  ToBackendSetUserUiResponse
-} from '#common/zod/to-backend/users/to-backend-set-user-ui';
 import { NavQuery } from '../queries/nav.query';
 import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';
@@ -117,18 +113,18 @@ export class UiService {
         : uiState.newSessionEditorVariant
     };
 
-    let payload: ToBackendSetUserUiRequestPayload = {
+    let payload: ToBackendSetUserUiInput = {
       ui: ui
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetUserUi,
+        route: 'api/ToBackendSetUserUi',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendSetUserUiResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
           }
         }),
         take(1)

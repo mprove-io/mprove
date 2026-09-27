@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendRevertRepoToLastCommitRequestDto,
   ToBackendRevertRepoToLastCommitResponseDto
 } from '#backend/controllers/repos/revert-repo-to-last-commit/revert-repo-to-last-commit.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -39,10 +35,12 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRevertRepoToLastCommitOutput } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
 import type { ToDiskRevertRepoToLastCommitOutput } from '#common/zod/disk/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
-import type { ToBackendRevertRepoToLastCommitResponsePayload } from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -65,7 +63,7 @@ export class RevertRepoToLastCommitController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit)
+  @Post('api/ToBackendRevertRepoToLastCommit' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'RevertRepoToLastCommit',
     description: 'Discard uncommitted changes and revert to the last commit'
@@ -77,8 +75,8 @@ export class RevertRepoToLastCommitController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendRevertRepoToLastCommitRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, envId } = body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, envId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -116,7 +114,7 @@ export class RevertRepoToLastCommitController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'revertRepoToLastCommit',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -186,7 +184,7 @@ export class RevertRepoToLastCommitController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendRevertRepoToLastCommitResponsePayload = {
+    let payload: ToBackendRevertRepoToLastCommitOutput = {
       repo: diskRevertRepoToLastCommitOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,

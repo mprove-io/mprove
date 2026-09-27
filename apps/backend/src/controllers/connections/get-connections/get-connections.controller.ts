@@ -6,8 +6,7 @@ import {
   ToBackendGetConnectionsResponseDto
 } from '#backend/controllers/connections/get-connections/get-connections.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ConnectionTab,
   UserTab
@@ -20,9 +19,9 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetConnectionsResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connections';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetConnectionsOutput } from '#common/zod/backend/routes/connections/get-connections/get-connections-response';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)
@@ -37,7 +36,7 @@ export class GetConnectionsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetConnections)
+  @Post('api/ToBackendGetConnections' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetConnections',
     description: 'Get project connections for an environment'
@@ -49,7 +48,7 @@ export class GetConnectionsController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetConnectionsRequestDto
   ) {
-    let { projectId, envId } = body.payload;
+    let { projectId, envId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -96,7 +95,7 @@ export class GetConnectionsController {
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
-    let payload: ToBackendGetConnectionsResponsePayload = {
+    let payload: ToBackendGetConnectionsOutput = {
       userMember: apiUserMember,
       connections: connections
         .sort((a, b) =>

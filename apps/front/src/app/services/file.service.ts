@@ -2,13 +2,9 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
-import type {
-  ToBackendGetFileRequestPayload,
-  ToBackendGetFileResponse
-} from '#common/zod/to-backend/files/to-backend-get-file';
+import type { ToBackendGetFileInput } from '#common/zod/backend/routes/files/get-file/get-file-request';
+import type { ToBackendGetFileResponse } from '#common/zod/backend/routes/files/get-file/get-file-response';
 import { getFileIds } from '#front/app/functions/get-file-ids';
 import { FileQuery, FileState } from '../queries/file.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -82,7 +78,7 @@ export class FileService {
 
     fileName = fileNodeIdParts[fileNodeIdParts.length - 1];
 
-    let getFilePayload: ToBackendGetFileRequestPayload = {
+    let getFilePayload: ToBackendGetFileInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -93,32 +89,33 @@ export class FileService {
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetFile,
+        route: 'api/ToBackendGetFile',
         payload: getFilePayload
       })
       .pipe(
         map((resp: ToBackendGetFileResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let repoState = this.repoQuery.getValue();
-            let newRepoState: RepoState = Object.assign(resp.payload.repo, <
-              RepoState
-            >{
-              conflicts: repoState.conflicts, // getFile does not check for conflicts
-              repoStatus: repoState.repoStatus // getFile does not use git fetch
-            });
+            let newRepoState: RepoState = Object.assign(
+              resp.result.value.repo,
+              <RepoState>{
+                conflicts: repoState.conflicts, // getFile does not check for conflicts
+                repoStatus: repoState.repoStatus // getFile does not use git fetch
+              }
+            );
             this.repoQuery.update(newRepoState);
-            this.structQuery.update(resp.payload.struct);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             this.fileQuery.update({
-              originalContent: resp.payload.originalContent,
-              content: resp.payload.content,
+              originalContent: resp.result.value.originalContent,
+              content: resp.result.value.content,
               name: fileName,
               fileId: fileId,
               fileNodeId: fileNodeId,
-              isExist: resp.payload.isExist
+              isExist: resp.result.value.isExist
             });
           }
         })

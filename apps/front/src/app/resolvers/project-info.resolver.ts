@@ -7,12 +7,8 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetProjectRequestPayload,
-  ToBackendGetProjectResponse
-} from '#common/zod/to-backend/projects/to-backend-get-project';
+import type { ToBackendGetProjectInput } from '#common/zod/backend/routes/projects/get-project/get-project-request';
+import type { ToBackendGetProjectResponse } from '#common/zod/backend/routes/projects/get-project/get-project-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -56,21 +52,21 @@ export class ProjectInfoResolver implements Resolve<Observable<boolean>> {
       projectId = x;
     });
 
-    let payload: ToBackendGetProjectRequestPayload = {
+    let payload: ToBackendGetProjectInput = {
       projectId: projectId
     };
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProject,
+        route: 'api/ToBackendGetProject',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetProjectResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
 
-            this.projectQuery.update(resp.payload.project);
+            this.projectQuery.update(resp.result.value.project);
             return true;
           } else {
             return false;

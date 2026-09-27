@@ -1,15 +1,8 @@
 import { createRequire } from 'node:module';
 import { BaseContext, Cli, CommandClass } from 'clipanion';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendDeleteRecordsRequestPayload,
-  ToBackendDeleteRecordsResponse
-} from '#common/zod/to-backend/test-routes/to-backend-delete-records';
-import type {
-  ToBackendSeedRecordsRequestPayload,
-  ToBackendSeedRecordsResponse
-} from '#common/zod/to-backend/test-routes/to-backend-seed-records';
+import type { ToBackendDeleteRecordsInput } from '#common/zod/backend/routes/test-routes/delete-records/delete-records-request';
+import type { ToBackendSeedRecordsInput } from '#common/zod/backend/routes/test-routes/seed-records/seed-records-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { McliConfig } from '#mcli/config/mcli-config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -19,8 +12,8 @@ const require = createRequire(import.meta.url);
 export async function prepareTest(item: {
   command: CommandClass<CustomContext | BaseContext>;
   config: McliConfig;
-  deletePack?: ToBackendDeleteRecordsRequestPayload;
-  seedPack?: ToBackendSeedRecordsRequestPayload;
+  deletePack?: ToBackendDeleteRecordsInput;
+  seedPack?: ToBackendSeedRecordsInput;
   apiKey?: string;
 }) {
   let { command, config, deletePack, seedPack, apiKey } = item;
@@ -38,16 +31,16 @@ export async function prepareTest(item: {
   }
 
   if (isDefined(deletePack)) {
-    await mreq<ToBackendDeleteRecordsResponse>({
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
+    await mreq({
+      route: 'api/ToBackendDeleteRecords',
       payload: deletePack,
       host: config.mproveCliHost
     });
   }
 
   if (isDefined(seedPack)) {
-    await mreq<ToBackendSeedRecordsResponse>({
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
+    await mreq({
+      route: 'api/ToBackendSeedRecords',
       payload: seedPack,
       host: config.mproveCliHost
     });

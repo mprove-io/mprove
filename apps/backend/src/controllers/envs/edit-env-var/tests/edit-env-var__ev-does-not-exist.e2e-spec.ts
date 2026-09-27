@@ -10,12 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendEditEnvVarRequest,
-  ToBackendEditEnvVarResponse
-} from '#common/zod/to-backend/envs/to-backend-edit-env-var';
+import type { ToBackendEditEnvVarRequest } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-request';
+import type { ToBackendEditEnvVarResponse } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-response';
 
 let testId = 'backend-edit-env-var__ev-does-not-exist';
 
@@ -90,12 +87,9 @@ test('1', async t => {
       });
 
       let req: ToBackendEditEnvVarRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendEditEnvVar,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           envId: PROJECT_ENV_PROD,
           evId: evId,
@@ -103,7 +97,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendEditEnvVarResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendEditEnvVar',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -122,7 +117,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_EV_DOES_NOT_EXIST);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_EV_DOES_NOT_EXIST);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

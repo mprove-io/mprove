@@ -16,8 +16,7 @@ import {
   ToBackendEditLlmModelResponseDto
 } from '#backend/controllers/llm-models/edit-llm-model/edit-llm-model.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   UserTab
@@ -36,15 +35,15 @@ import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendEditLlmModelRequestPayload } from '#common/zod/to-backend/llm-models/edit-llm-model/edit-llm-model-request-payload';
-import type { ToBackendEditLlmModelResponsePayload } from '#common/zod/to-backend/llm-models/edit-llm-model/edit-llm-model-response-payload';
+import type { ToBackendEditLlmModelInput } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
+import type { ToBackendEditLlmModelOutput } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-response';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -61,7 +60,7 @@ export class EditLlmModelController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendEditLlmModel)
+  @Post('api/ToBackendEditLlmModel' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'EditLlmModel',
     description: 'Edit a model in an existing provider'
@@ -70,8 +69,8 @@ export class EditLlmModelController {
   async editLlmModel(
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditLlmModelRequestDto
-  ): Promise<ToBackendEditLlmModelResponsePayload> {
-    let bodyPayload: ToBackendEditLlmModelRequestPayload = body.payload;
+  ): Promise<ToBackendEditLlmModelOutput> {
+    let bodyPayload: ToBackendEditLlmModelInput = body.input;
 
     let {
       projectId,
@@ -225,7 +224,7 @@ export class EditLlmModelController {
       isIncludePasswords: false
     });
 
-    let payload: ToBackendEditLlmModelResponsePayload = {
+    let payload: ToBackendEditLlmModelOutput = {
       provider: apiProvider
     };
 

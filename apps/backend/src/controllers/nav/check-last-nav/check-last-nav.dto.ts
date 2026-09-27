@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendCheckLastNavRequest,
-  zToBackendCheckLastNavResponse
-} from '#common/zod/to-backend/nav/to-backend-check-last-nav';
+import { zToBackendCheckLastNavRequest } from '#common/zod/backend/routes/nav/check-last-nav/check-last-nav-request';
+import { zToBackendCheckLastNavResponse } from '#common/zod/backend/routes/nav/check-last-nav/check-last-nav-response';
 
 export class ToBackendCheckLastNavRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendCheckLastNavRequest })

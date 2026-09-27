@@ -19,9 +19,9 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetFileOutput } from '#common/zod/backend/routes/files/get-file/get-file-response';
 import type { ToDiskGetFileOutput } from '#common/zod/disk/routes/files/get-file/get-file-response';
-import type { ToBackendGetFileResponsePayload } from '#common/zod/to-backend/files/to-backend-get-file';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)
@@ -41,7 +41,7 @@ export class GetFileController {
     private envsService: EnvsService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetFile)
+  @Post('api/ToBackendGetFile' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetFile',
     description: 'Get file'
@@ -54,7 +54,7 @@ export class GetFileController {
     @Body() body: ToBackendGetFileRequestDto
   ) {
     let { projectId, repoId, branchId, envId, fileNodeId, builderLeft } =
-      body.payload;
+      body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -80,7 +80,7 @@ export class GetFileController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'getFile',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -123,7 +123,7 @@ export class GetFileController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendGetFileResponsePayload = {
+    let payload: ToBackendGetFileOutput = {
       repo: diskGetFileOutput.repo,
       originalContent: diskGetFileOutput.originalContent,
       content: diskGetFileOutput.content,

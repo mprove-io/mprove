@@ -9,19 +9,13 @@ import {
   PATH_PROJECT,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { Env } from '#common/zod/backend/env';
 import type { EnvUser } from '#common/zod/backend/env-user';
 import type { Ev } from '#common/zod/backend/ev';
-import type {
-  ToBackendDeleteEnvUserRequestPayload,
-  ToBackendDeleteEnvUserResponse
-} from '#common/zod/to-backend/envs/to-backend-delete-env-user';
-import type {
-  ToBackendEditEnvFallbacksRequestPayload,
-  ToBackendEditEnvFallbacksResponse
-} from '#common/zod/to-backend/envs/to-backend-edit-env-fallbacks';
+import type { ToBackendDeleteEnvUserInput } from '#common/zod/backend/routes/envs/delete-env-user/delete-env-user-request';
+import type { ToBackendDeleteEnvUserResponse } from '#common/zod/backend/routes/envs/delete-env-user/delete-env-user-response';
+import type { ToBackendEditEnvFallbacksInput } from '#common/zod/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-request';
+import type { ToBackendEditEnvFallbacksResponse } from '#common/zod/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -130,7 +124,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
   }
 
   removeUser(env: Env, envUser: EnvUser) {
-    let payload: ToBackendDeleteEnvUserRequestPayload = {
+    let payload: ToBackendDeleteEnvUserInput = {
       projectId: env.projectId,
       envId: env.envId,
       envUserId: envUser.userId
@@ -138,15 +132,17 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser,
+        route: 'api/ToBackendDeleteEnvUser',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteEnvUserResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.environmentsQuery.update({ environments: resp.payload.envs });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.environmentsQuery.update({
+              environments: resp.result.value.envs
+            });
 
             let nav = this.navQuery.getValue();
             let user = this.userQuery.getValue();
@@ -165,7 +161,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
   }
 
   isFallbackConnectionsChange(env: Env) {
-    let payload: ToBackendEditEnvFallbacksRequestPayload = {
+    let payload: ToBackendEditEnvFallbacksInput = {
       projectId: env.projectId,
       envId: env.envId,
       isFallbackToProdConnections: !env.isFallbackToProdConnections,
@@ -175,15 +171,17 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks,
+        route: 'api/ToBackendEditEnvFallbacks',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditEnvFallbacksResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.environmentsQuery.update({ environments: resp.payload.envs });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.environmentsQuery.update({
+              environments: resp.result.value.envs
+            });
           }
         }),
         take(1)
@@ -192,7 +190,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
   }
 
   isFallbackEnvVarsChange(env: Env) {
-    let payload: ToBackendEditEnvFallbacksRequestPayload = {
+    let payload: ToBackendEditEnvFallbacksInput = {
       projectId: env.projectId,
       envId: env.envId,
       isFallbackToProdConnections: env.isFallbackToProdConnections,
@@ -202,15 +200,17 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks,
+        route: 'api/ToBackendEditEnvFallbacks',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditEnvFallbacksResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.environmentsQuery.update({ environments: resp.payload.envs });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.environmentsQuery.update({
+              environments: resp.result.value.envs
+            });
           }
         }),
         take(1)
@@ -219,7 +219,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
   }
 
   useProdCacheChange(env: Env) {
-    let payload: ToBackendEditEnvFallbacksRequestPayload = {
+    let payload: ToBackendEditEnvFallbacksInput = {
       projectId: env.projectId,
       envId: env.envId,
       isFallbackToProdConnections: env.isFallbackToProdConnections,
@@ -229,15 +229,17 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks,
+        route: 'api/ToBackendEditEnvFallbacks',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditEnvFallbacksResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.environmentsQuery.update({ environments: resp.payload.envs });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.environmentsQuery.update({
+              environments: resp.result.value.envs
+            });
           }
         }),
         take(1)

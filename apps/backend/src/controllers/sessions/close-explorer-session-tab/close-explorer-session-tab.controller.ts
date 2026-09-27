@@ -6,15 +6,14 @@ import {
   ToBackendCloseExplorerSessionTabResponseDto
 } from '#backend/controllers/sessions/close-explorer-session-tab/close-explorer-session-tab.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -26,7 +25,7 @@ export class CloseExplorerSessionTabController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCloseExplorerSessionTab)
+  @Post('api/ToBackendCloseExplorerSessionTab' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CloseExplorerSessionTab',
     description: 'Persist hidden explorer chart tabs for a session'
@@ -38,7 +37,7 @@ export class CloseExplorerSessionTabController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCloseExplorerSessionTabRequestDto
   ) {
-    let { sessionId, closedExplorerTabIds } = body.payload;
+    let { sessionId, closedExplorerTabIds } = body.input;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId

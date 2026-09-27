@@ -3,16 +3,12 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { seconds, Throttle } from '@nestjs/throttler';
 import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import {
   ToBackendGetQueriesRequestDto,
   ToBackendGetQueriesResponseDto
 } from '#backend/controllers/queries/get-queries/get-queries.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -27,8 +23,10 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetQueriesResponsePayload } from '#common/zod/to-backend/queries/to-backend-get-queries';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetQueriesOutput } from '#common/zod/backend/routes/queries/get-queries/get-queries-response';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -64,7 +62,7 @@ export class GetQueriesController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetQueries)
+  @Post('api/ToBackendGetQueries' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetQueries',
     description: 'Get queries for specified mconfigs'
@@ -77,7 +75,7 @@ export class GetQueriesController {
     @Body() body: ToBackendGetQueriesRequestDto
   ) {
     let { projectId, repoId, branchId, envId, mconfigIds, skipData } =
-      body.payload;
+      body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -157,7 +155,7 @@ export class GetQueriesController {
             projectId: projectId
           });
 
-    let payload: ToBackendGetQueriesResponsePayload = {
+    let payload: ToBackendGetQueriesOutput = {
       queries: queries.map(x => this.queriesService.tabToApi({ query: x }))
     };
 

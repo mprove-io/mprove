@@ -6,12 +6,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendDeleteBranchRequestPayload,
-  ToBackendDeleteBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-delete-branch';
+import type { ToBackendDeleteBranchInput } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-request';
+import type { ToBackendDeleteBranchOutput } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -81,15 +78,15 @@ export class DeleteBranchCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let deleteBranchReqPayload: ToBackendDeleteBranchRequestPayload = {
+    let deleteBranchReqPayload: ToBackendDeleteBranchInput = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch
     };
 
-    let deleteBranchResp = await mreq<ToBackendDeleteBranchResponse>({
+    let deleteBranchOutput: ToBackendDeleteBranchOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
+      route: 'api/ToBackendDeleteBranch',
       payload: deleteBranchReqPayload,
       host: this.context.config.mproveCliHost
     });

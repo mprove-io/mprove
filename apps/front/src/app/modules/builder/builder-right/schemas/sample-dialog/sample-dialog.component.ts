@@ -10,10 +10,8 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { map, take } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetConnectionSampleResponse } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
+import type { ToBackendGetConnectionSampleResponse } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../../../shared/shared.module';
 
@@ -79,7 +77,7 @@ export class SampleDialogComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionSample,
+        route: 'api/ToBackendGetConnectionSample',
         payload: {
           projectId: this.dataItem.projectId,
           envId: this.dataItem.envId,
@@ -94,17 +92,17 @@ export class SampleDialogComponent implements OnInit {
         map((resp: ToBackendGetConnectionSampleResponse) => {
           setTimeout(() => {
             if (
-              resp.info?.status === ResponseInfoStatusEnum.Ok &&
-              isDefined(resp.payload.errorMessage)
+              resp.result?.type === 'Success' &&
+              isDefined(resp.result.value.errorMessage)
             ) {
-              this.dataItem.errorMessage = resp.payload.errorMessage;
-            } else if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              this.dataItem.columnNames = resp.payload.columnNames;
-              this.dataItem.rows = resp.payload.rows;
+              this.dataItem.errorMessage = resp.result.value.errorMessage;
+            } else if (resp.result?.type === 'Success') {
+              this.dataItem.columnNames = resp.result.value.columnNames;
+              this.dataItem.rows = resp.result.value.rows;
               this.dataItem.errorMessage = undefined;
               this.offset += 100;
 
-              if (resp.payload.rows.length < 100) {
+              if (resp.result.value.rows.length < 100) {
                 this.hasMore = false;
               }
             } else {

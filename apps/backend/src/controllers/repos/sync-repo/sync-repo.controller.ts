@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSyncRepoRequestDto,
   ToBackendSyncRepoResponseDto
 } from '#backend/controllers/repos/sync-repo/sync-repo.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -39,11 +35,13 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSyncRepoOutput } from '#common/zod/backend/routes/repos/sync-repo/sync-repo-response';
 import type { ToDiskSyncRepoRequest } from '#common/zod/disk/routes/repos/sync-repo/sync-repo-request';
 import type { ToDiskSyncRepoOutput } from '#common/zod/disk/routes/repos/sync-repo/sync-repo-response';
-import type { ToBackendSyncRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-sync-repo';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -66,7 +64,7 @@ export class SyncRepoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSyncRepo)
+  @Post('api/ToBackendSyncRepo' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SyncRepo',
     description: `Sync local git repo state with server git repo state`
@@ -78,12 +76,12 @@ export class SyncRepoController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSyncRepoRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, lastCommit, envId } = body.payload;
-    let getRepo = body.payload.getRepo === true;
-    let getRepoNodes = body.payload.getRepoNodes === true;
-    let getErrors = body.payload.getErrors === true;
-    let debug = body.payload.debug === true;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, lastCommit, envId } = body.input;
+    let getRepo = body.input.getRepo === true;
+    let getRepoNodes = body.input.getRepoNodes === true;
+    let getErrors = body.input.getErrors === true;
+    let debug = body.input.debug === true;
 
     await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -126,10 +124,10 @@ export class SyncRepoController {
 
     let toDiskSyncRepoRequest: ToDiskSyncRepoRequest;
 
-    if (body.payload.direction === 'to-server') {
+    if (body.input.direction === 'to-server') {
       toDiskSyncRepoRequest = {
         operation: 'syncRepo',
-        traceId: body.info.traceId,
+        traceId: body.traceId,
         input: {
           direction: 'to-server',
           baseProject: baseProject,
@@ -138,14 +136,14 @@ export class SyncRepoController {
           lastCommit: lastCommit,
           getRepo: getRepo,
           getRepoNodes: getRepoNodes,
-          changedFiles: body.payload.changedFiles,
-          deletedFiles: body.payload.deletedFiles
+          changedFiles: body.input.changedFiles,
+          deletedFiles: body.input.deletedFiles
         }
       };
     } else {
       toDiskSyncRepoRequest = {
         operation: 'syncRepo',
-        traceId: body.info.traceId,
+        traceId: body.traceId,
         input: {
           direction: 'from-server',
           baseProject: baseProject,
@@ -228,7 +226,7 @@ export class SyncRepoController {
       structId: debug === true ? struct.structId : undefined
     };
 
-    let payload: ToBackendSyncRepoResponsePayload;
+    let payload: ToBackendSyncRepoOutput;
     if (diskSyncRepoOutput.direction === 'from-server') {
       payload = {
         ...basePayload,

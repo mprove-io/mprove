@@ -13,15 +13,11 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Env } from '#common/zod/backend/env';
 import type { Ev } from '#common/zod/backend/ev';
-import type {
-  ToBackendEditEnvVarRequestPayload,
-  ToBackendEditEnvVarResponse
-} from '#common/zod/to-backend/envs/to-backend-edit-env-var';
+import type { ToBackendEditEnvVarInput } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-request';
+import type { ToBackendEditEnvVarResponse } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -76,7 +72,7 @@ export class EditEvDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendEditEnvVarRequestPayload = {
+    let payload: ToBackendEditEnvVarInput = {
       projectId: this.dataItem.env.projectId,
       envId: this.dataItem.env.envId,
       evId: this.dataItem.ev.evId,
@@ -87,15 +83,17 @@ export class EditEvDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditEnvVar,
+        route: 'api/ToBackendEditEnvVar',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditEnvVarResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.environmentsQuery.update({ environments: resp.payload.envs });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.environmentsQuery.update({
+              environments: resp.result.value.envs
+            });
           }
         }),
         take(1)

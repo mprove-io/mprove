@@ -1,22 +1,22 @@
 import { CommonModule } from '@angular/common';
-import type { ElementRef } from '@angular/core';
 import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  type ElementRef,
   HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
-import type { FormGroup } from '@angular/forms';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  type FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendCreateRoleRequestPayload,
-  ToBackendCreateRoleResponse
-} from '#common/zod/to-backend/roles/to-backend-create-role';
+import type { ToBackendCreateRoleInput } from '#common/zod/backend/routes/roles/create-role/create-role-request';
+import type { ToBackendCreateRoleResponse } from '#common/zod/backend/routes/roles/create-role/create-role-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
@@ -80,7 +80,7 @@ export class AddProjectRoleDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateRoleRequestPayload = {
+    let payload: ToBackendCreateRoleInput = {
       projectId: this.dataItem.projectId,
       roleId: this.addProjectRoleForm.value.roleId
     };
@@ -89,15 +89,15 @@ export class AddProjectRoleDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateRole,
+        route: 'api/ToBackendCreateRole',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendCreateRoleResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.rolesQuery.update({ roles: resp.payload.roles });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.rolesQuery.update({ roles: resp.result.value.roles });
           }
         }),
         take(1)

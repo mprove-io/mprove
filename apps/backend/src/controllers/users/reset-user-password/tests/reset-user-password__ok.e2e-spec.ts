@@ -7,12 +7,9 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendResetUserPasswordRequest,
-  ToBackendResetUserPasswordResponse
-} from '#common/zod/to-backend/users/to-backend-reset-user-password';
+import type { ToBackendResetUserPasswordRequest } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-request';
+import type { ToBackendResetUserPasswordResponse } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-response';
 
 let testId = 'backend-reset-user-password__ok';
 
@@ -47,15 +44,13 @@ test('1', async t => {
       });
 
       let resetUserPasswordReq: ToBackendResetUserPasswordRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: { email: email }
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: { email: email }
       };
 
-      resp = await sendToBackend<ToBackendResetUserPasswordResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendResetUserPassword',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: resetUserPasswordReq
@@ -74,7 +69,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

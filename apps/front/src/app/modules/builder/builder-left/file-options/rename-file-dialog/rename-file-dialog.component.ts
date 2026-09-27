@@ -19,15 +19,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendRenameCatalogNodeRequestPayload,
-  ToBackendRenameCatalogNodeResponse
-} from '#common/zod/to-backend/catalogs/to-backend-rename-catalog-node';
+import type { ToBackendRenameCatalogNodeInput } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-request';
+import type { ToBackendRenameCatalogNodeResponse } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -135,7 +131,7 @@ export class RenameFileDialogComponent implements OnInit {
       }
     }
 
-    let payload: ToBackendRenameCatalogNodeRequestPayload = {
+    let payload: ToBackendRenameCatalogNodeInput = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -148,17 +144,17 @@ export class RenameFileDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
+        route: 'api/ToBackendRenameCatalogNode',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendRenameCatalogNodeResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             if (isRenameSecondFile === true) {

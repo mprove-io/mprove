@@ -3,12 +3,8 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PARAMETER_SESSION_ID } from '#common/constants/top';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetSessionRequestPayload,
-  ToBackendGetSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-get-session';
+import type { ToBackendGetSessionInput } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
+import type { ToBackendGetSessionResponse } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
 import { SessionsQuery } from '../queries/sessions.query';
 import { ApiService } from '../services/api.service';
 import { SessionService } from '../services/session.service';
@@ -29,25 +25,25 @@ export class SessionResolver {
   ): Observable<boolean> {
     let sessionId = route.params[PARAMETER_SESSION_ID];
 
-    let payload: ToBackendGetSessionRequestPayload = {
+    let payload: ToBackendGetSessionInput = {
       sessionId: sessionId,
       isFetchFromOpencode: true
     };
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSession,
+        route: 'api/ToBackendGetSession',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetSessionResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.sessionEventsService.resetAll();
 
-            if (resp.payload.sessions.length > 0) {
+            if (resp.result.value.sessions.length > 0) {
               let existing = this.sessionsQuery.getValue().sessions;
               let merged = [...existing];
-              resp.payload.sessions.map(incoming => {
+              resp.result.value.sessions.map(incoming => {
                 let idx = merged.findIndex(
                   s => s.sessionId === incoming.sessionId
                 );
@@ -64,7 +60,7 @@ export class SessionResolver {
             }
 
             this.sessionService.applySessionResponse({
-              payload: resp.payload,
+              payload: resp.result.value,
               withOptimisticMerge: false
             });
 

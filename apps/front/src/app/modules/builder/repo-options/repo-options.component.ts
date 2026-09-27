@@ -6,30 +6,18 @@ import { map, switchMap, take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendValidateFilesInput } from '#common/zod/backend/routes/files/validate-files/validate-files-request';
+import type { ToBackendValidateFilesResponse } from '#common/zod/backend/routes/files/validate-files/validate-files-response';
+import type { ToBackendGetRepoInput } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
+import type { ToBackendGetRepoResponse } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
+import type { ToBackendPullRepoInput } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-request';
+import type { ToBackendPullRepoResponse } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-response';
+import type { ToBackendRevertRepoToLastCommitInput } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
+import type { ToBackendRevertRepoToLastCommitResponse } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
+import type { ToBackendRevertRepoToRemoteInput } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
+import type { ToBackendRevertRepoToRemoteResponse } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
 import type { RepoStatus } from '#common/zod/disk/repo-status';
-import type {
-  ToBackendValidateFilesRequestPayload,
-  ToBackendValidateFilesResponse
-} from '#common/zod/to-backend/files/to-backend-validate-files';
-import type {
-  ToBackendGetRepoRequestPayload,
-  ToBackendGetRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-get-repo';
-import type {
-  ToBackendPullRepoRequestPayload,
-  ToBackendPullRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-pull-repo';
-import type {
-  ToBackendRevertRepoToLastCommitRequestPayload,
-  ToBackendRevertRepoToLastCommitResponse
-} from '#common/zod/to-backend/repos/to-backend-revert-repo-to-last-commit';
-import type {
-  ToBackendRevertRepoToRemoteRequestPayload,
-  ToBackendRevertRepoToRemoteResponse
-} from '#common/zod/to-backend/repos/to-backend-revert-repo-to-remote';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
@@ -99,7 +87,7 @@ export class RepoOptionsComponent {
   revertToLastCommit(event?: MouseEvent) {
     event.stopPropagation();
 
-    let payload: ToBackendRevertRepoToLastCommitRequestPayload = {
+    let payload: ToBackendRevertRepoToLastCommitInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -110,17 +98,16 @@ export class RepoOptionsComponent {
 
     this.apiService
       .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
+        route: 'api/ToBackendRevertRepoToLastCommit',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendRevertRepoToLastCommitResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             return true;
@@ -148,7 +135,7 @@ export class RepoOptionsComponent {
   revertToRemote(event?: MouseEvent) {
     event.stopPropagation();
 
-    let payload: ToBackendRevertRepoToRemoteRequestPayload = {
+    let payload: ToBackendRevertRepoToRemoteInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -159,16 +146,16 @@ export class RepoOptionsComponent {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
+        route: 'api/ToBackendRevertRepoToRemote',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendRevertRepoToRemoteResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             return true;
@@ -196,7 +183,7 @@ export class RepoOptionsComponent {
   gitFetch(event?: MouseEvent) {
     event.stopPropagation();
 
-    let payload: ToBackendGetRepoRequestPayload = {
+    let payload: ToBackendGetRepoInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -208,16 +195,16 @@ export class RepoOptionsComponent {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        route: 'api/ToBackendGetRepo',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetRepoResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             return true;
@@ -247,7 +234,7 @@ export class RepoOptionsComponent {
 
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendPullRepoRequestPayload = {
+    let payload: ToBackendPullRepoInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -256,16 +243,16 @@ export class RepoOptionsComponent {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPullRepo,
+        route: 'api/ToBackendPullRepo',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendPullRepoResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             return true;
@@ -295,7 +282,7 @@ export class RepoOptionsComponent {
 
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendValidateFilesRequestPayload = {
+    let payload: ToBackendValidateFilesInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -304,16 +291,16 @@ export class RepoOptionsComponent {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+        route: 'api/ToBackendValidateFiles',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendValidateFilesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             return true;

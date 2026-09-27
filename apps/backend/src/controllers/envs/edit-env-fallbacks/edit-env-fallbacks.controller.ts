@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendEditEnvFallbacksRequestDto,
   ToBackendEditEnvFallbacksResponseDto
 } from '#backend/controllers/envs/edit-env-fallbacks/edit-env-fallbacks.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -32,8 +28,10 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendEditEnvFallbacksResponsePayload } from '#common/zod/to-backend/envs/to-backend-edit-env-fallbacks';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendEditEnvFallbacksOutput } from '#common/zod/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-response';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -50,7 +48,7 @@ export class EditEnvFallbacksController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks)
+  @Post('api/ToBackendEditEnvFallbacks' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'EditEnvFallbacks',
     description: 'Update production fallback for an environment'
@@ -68,7 +66,7 @@ export class EditEnvFallbacksController {
       isFallbackToProdConnections,
       isFallbackToProdVariables,
       useProdCache
-    } = body.payload;
+    } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -124,7 +122,7 @@ export class EditEnvFallbacksController {
       projectId: projectId
     });
 
-    let payload: ToBackendEditEnvFallbacksResponsePayload = {
+    let payload: ToBackendEditEnvFallbacksOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       envs: apiEnvs
     };

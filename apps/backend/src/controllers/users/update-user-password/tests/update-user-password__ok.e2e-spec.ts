@@ -7,12 +7,9 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendUpdateUserPasswordRequest,
-  ToBackendUpdateUserPasswordResponse
-} from '#common/zod/to-backend/users/to-backend-update-user-password';
+import type { ToBackendUpdateUserPasswordRequest } from '#common/zod/backend/routes/users/update-user-password/update-user-password-request';
+import type { ToBackendUpdateUserPasswordResponse } from '#common/zod/backend/routes/users/update-user-password/update-user-password-response';
 
 let testId = 'backend-update-user-password__ok';
 
@@ -49,18 +46,16 @@ test('1', async t => {
       });
 
       let updateUserPasswordReq: ToBackendUpdateUserPasswordRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           passwordResetToken,
           newPassword
         }
       };
 
-      resp = await sendToBackend<ToBackendUpdateUserPasswordResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendUpdateUserPassword',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: updateUserPasswordReq
@@ -79,7 +74,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

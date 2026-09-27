@@ -13,15 +13,11 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCommitRepoRequest,
-  ToBackendCommitRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-commit-repo';
+import type { ToBackendCommitRepoRequest } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
+import type { ToBackendCommitRepoResponse } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-response';
 
 let testId = 'backend-jwt-auth-guard__session-key-request-not-allowed';
 
@@ -119,12 +115,9 @@ test('1', async t => {
 
       // not session-allowed
       let commitReq: ToBackendCommitRepoRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: sessionId,
           branchId: BRANCH_MAIN,
@@ -132,7 +125,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendCommitRepoResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCommitRepo',
         httpServer: prep.httpServer,
         apiKey: sessionApiKey,
         req: commitReq
@@ -151,9 +145,9 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Error);
+    assert.equal(resp.result.type, 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED
     );
 

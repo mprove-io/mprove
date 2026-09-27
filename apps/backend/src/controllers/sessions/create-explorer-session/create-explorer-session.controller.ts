@@ -18,8 +18,7 @@ import {
   ToBackendCreateExplorerSessionResponseDto
 } from '#backend/controllers/sessions/create-explorer-session/create-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   SessionTab,
   UserTab
@@ -45,9 +44,9 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendCreateExplorerSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-create-explorer-session';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateExplorerSessionOutput } from '#common/zod/backend/routes/sessions/create-explorer-session/create-explorer-session-response';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -70,7 +69,7 @@ export class CreateExplorerSessionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateExplorerSession)
+  @Post('api/ToBackendCreateExplorerSession' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateExplorerSession',
     description: 'Create a new explorer session'
@@ -93,7 +92,7 @@ export class CreateExplorerSessionController {
       firstMessage,
       messageId,
       partId
-    } = body.payload;
+    } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -260,7 +259,7 @@ export class CreateExplorerSessionController {
         });
     }
 
-    let payload: ToBackendCreateExplorerSessionResponsePayload = {
+    let payload: ToBackendCreateExplorerSessionOutput = {
       sessionId: session.sessionId,
       repoId: session.repoId,
       branchId: session.branchId,

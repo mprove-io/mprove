@@ -2,15 +2,11 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { JWT } from 'google-auth-library';
+import pIteration from 'p-iteration';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ConnectionTab,
   QueryTab,
@@ -50,7 +46,9 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendRunQueriesResponsePayload } from '#common/zod/to-backend/queries/to-backend-run-queries';
+import type { ToBackendRunQueriesOutput } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class RunQueriesService {
@@ -88,7 +86,7 @@ export class RunQueriesService {
     envId: string;
     mconfigIds: string[];
     poolSize?: number;
-  }): Promise<ToBackendRunQueriesResponsePayload> {
+  }): Promise<ToBackendRunQueriesOutput> {
     let { user, projectId, repoId, branchId, envId, mconfigIds, poolSize } =
       item;
 
@@ -670,7 +668,7 @@ export class RunQueriesService {
       });
     }
 
-    let payload: ToBackendRunQueriesResponsePayload = {
+    let payload: ToBackendRunQueriesOutput = {
       runningQueries: runningQueries.map(x =>
         this.queriesService.tabToApi({ query: x })
       ),

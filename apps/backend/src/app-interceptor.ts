@@ -15,11 +15,10 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { MyResponse } from '#common/zod/to/my-response';
-import type { ToBackendRequest } from '#common/zod/to-backend/to-backend-request';
+import type { ToBackendRequest } from '#common/zod/backend/request/to-backend-request';
+import type { ToBackendResponse } from '#common/zod/backend/response/to-backend-response';
 import { WrappedError } from '#node-common/functions/wrap-error/wrap-error';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
 import { logResponseBackend } from './functions/log-response-backend';
@@ -41,7 +40,7 @@ export class AppInterceptor implements NestInterceptor {
   async intercept(
     context: ExecutionContext,
     next: CallHandler
-  ): Promise<Observable<MyResponse>> {
+  ): Promise<Observable<ToBackendResponse>> {
     let request = context.switchToHttp().getRequest();
 
     if (
@@ -49,9 +48,9 @@ export class AppInterceptor implements NestInterceptor {
       request?.originalUrl?.startsWith('/api/full-mcp.json') ||
       request?.originalUrl?.startsWith('/' + SSE_SESSION_EVENTS_PATH) ||
       [
-        ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs,
-        ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics,
-        ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces
+        'api/ToBackendTelemetryLogs',
+        'api/ToBackendTelemetryMetrics',
+        'api/ToBackendTelemetryTraces'
       ].indexOf(request?.originalUrl.substring(1)) > -1
     ) {
       return next.handle();
@@ -62,7 +61,7 @@ export class AppInterceptor implements NestInterceptor {
     let req: ToBackendRequest = request.body;
     let user: UserTab = request.user;
 
-    let iKey = req?.info?.idempotencyKey;
+    let iKey = req?.idempotencyKey;
     let stId = isDefined(user?.userId) ? user.userId : UNK_ST_ID;
 
     let idemp = isUndefined(iKey)
@@ -191,7 +190,7 @@ export class AppInterceptor implements NestInterceptor {
               });
             }
 
-            resp.info.duration = Date.now() - request.start_ts; // update
+            resp.duration = Date.now() - request.start_ts; // update
 
             return resp;
           }),
@@ -207,9 +206,9 @@ export class AppInterceptor implements NestInterceptor {
       : isDefined(idemp.resp)
         ? of(idemp.resp).pipe(
             map(x => {
-              (x as MyResponse).info.duration = Date.now() - request.start_ts; // update
+              (x as ToBackendResponse).duration = Date.now() - request.start_ts; // update
 
-              return x as unknown as MyResponse;
+              return x as unknown as ToBackendResponse;
             }),
             tap(x =>
               logResponseBackend({
@@ -222,7 +221,7 @@ export class AppInterceptor implements NestInterceptor {
           )
         : of({ respX: respX, wrappedError: wrappedError }).pipe(
             map(x => {
-              x.respX.info.duration = Date.now() - request.start_ts; // update
+              x.respX.duration = Date.now() - request.start_ts; // update
               return x.respX;
             }),
             tap(y =>

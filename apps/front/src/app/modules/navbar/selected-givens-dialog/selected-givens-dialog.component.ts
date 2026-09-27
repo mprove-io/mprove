@@ -7,9 +7,9 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import type { MemberGiven } from '#common/zod/backend/members/member-given';
 import type { ProjectSelectedGivenLink } from '#common/zod/backend/project-selected-given-link';
 import type { SelectedGiven } from '#common/zod/backend/selected-given';
-import type { MemberGiven } from '#common/zod/to-backend/members/to-backend-get-member-givens';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UiService } from '#front/app/services/ui.service';

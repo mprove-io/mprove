@@ -16,21 +16,13 @@ import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendGetRepoRequestPayload,
-  ToBackendGetRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-get-repo';
-import type {
-  ToBackendPullRepoRequestPayload,
-  ToBackendPullRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-pull-repo';
-import type {
-  ToBackendPushRepoRequestPayload,
-  ToBackendPushRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-push-repo';
+import type { ToBackendGetRepoInput } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
+import type { ToBackendGetRepoResponse } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
+import type { ToBackendPullRepoInput } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-request';
+import type { ToBackendPullRepoResponse } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-response';
+import type { ToBackendPushRepoInput } from '#common/zod/backend/routes/repos/push-repo/push-repo-request';
+import type { ToBackendPushRepoResponse } from '#common/zod/backend/routes/repos/push-repo/push-repo-response';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -354,7 +346,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   }
 
   push() {
-    let payload: ToBackendPushRepoRequestPayload = {
+    let payload: ToBackendPushRepoInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -365,16 +357,16 @@ export class BuilderComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPushRepo,
+        route: 'api/ToBackendPushRepo',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendPushRepoResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             return true;
@@ -400,7 +392,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   }
 
   pull() {
-    let payload: ToBackendPullRepoRequestPayload = {
+    let payload: ToBackendPullRepoInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -411,16 +403,16 @@ export class BuilderComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPullRepo,
+        route: 'api/ToBackendPullRepo',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendPullRepoResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             return true;
@@ -446,7 +438,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   }
 
   refresh() {
-    let payload: ToBackendGetRepoRequestPayload = {
+    let payload: ToBackendGetRepoInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -458,16 +450,16 @@ export class BuilderComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        route: 'api/ToBackendGetRepo',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetRepoResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             return true;

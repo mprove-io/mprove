@@ -17,8 +17,7 @@ import {
   ToBackendRegisterUserResponseDto
 } from '#backend/controllers/users/register-user/register-user.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -35,12 +34,12 @@ import {
   THROTTLE_MULTIPLIER
 } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendRegisterUserResponsePayload } from '#common/zod/to-backend/users/to-backend-register-user';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRegisterUserOutput } from '#common/zod/backend/routes/users/register-user/register-user-response';
 
 @ApiTags('Users')
 @SkipJwtCheck()
@@ -74,7 +73,7 @@ export class RegisterUserController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
+  @Post('api/ToBackendRegisterUser' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'RegisterUser',
     description: 'Register a new user and send an email verification'
@@ -83,7 +82,7 @@ export class RegisterUserController {
     type: ToBackendRegisterUserResponseDto
   })
   async registerUser(@Body() body: ToBackendRegisterUserRequestDto) {
-    let { email, password } = body.payload;
+    let { email, password } = body.input;
 
     let newUser: UserTab;
 
@@ -185,7 +184,7 @@ export class RegisterUserController {
       emailVerificationToken: newUser.emailVerificationToken
     });
 
-    let payload: ToBackendRegisterUserResponsePayload = {
+    let payload: ToBackendRegisterUserOutput = {
       user: this.usersService.tabToApi({ user: newUser })
     };
 

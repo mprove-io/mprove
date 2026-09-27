@@ -1,6 +1,5 @@
 import { Injectable, UseFilters } from '@nestjs/common';
-import type { Context } from '@rekog/mcp-nest';
-import { Tool } from '@rekog/mcp-nest';
+import { type Context, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
@@ -14,7 +13,7 @@ import {
   type McpToolReadDocsInput,
   zMcpToolReadDocsInput,
   zMcpToolReadDocsOutput
-} from '#common/zod/to-backend/mcp-tools/mcp-tool-read-docs';
+} from '#common/zod/backend/mcp-tools/mcp-tool-read-docs';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

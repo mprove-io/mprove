@@ -16,8 +16,7 @@ import {
   ToBackendCreateProviderResponseDto
 } from '#backend/controllers/providers/create-provider/create-provider.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   ProviderTab,
   UserTab
@@ -30,11 +29,11 @@ import { ProvidersService } from '#backend/services/db/providers.service';
 import { UrlService } from '#backend/services/url.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendCreateProviderRequestPayload } from '#common/zod/to-backend/providers/create-provider/create-provider-request-payload';
-import type { ToBackendCreateProviderResponsePayload } from '#common/zod/to-backend/providers/create-provider/create-provider-response-payload';
+import type { ToBackendCreateProviderInput } from '#common/zod/backend/routes/providers/create-provider/create-provider-request';
+import type { ToBackendCreateProviderOutput } from '#common/zod/backend/routes/providers/create-provider/create-provider-response';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -51,7 +50,7 @@ export class CreateProviderController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateProvider)
+  @Post('api/ToBackendCreateProvider' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateProvider',
     description: 'Create a provider in a project'
@@ -63,7 +62,7 @@ export class CreateProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateProviderRequestDto
   ) {
-    let bodyPayload: ToBackendCreateProviderRequestPayload = body.payload;
+    let bodyPayload: ToBackendCreateProviderInput = body.input;
 
     let { projectId, providerId, type, options } = bodyPayload;
 
@@ -118,7 +117,7 @@ export class CreateProviderController {
       isIncludePasswords: false
     });
 
-    let payload: ToBackendCreateProviderResponsePayload = {
+    let payload: ToBackendCreateProviderOutput = {
       provider: provider
     };
 

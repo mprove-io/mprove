@@ -15,17 +15,11 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetDashboardRequest,
-  ToBackendGetDashboardResponse
-} from '#common/zod/to-backend/dashboards/to-backend-get-dashboard';
-import type {
-  ToBackendSaveModifyDashboardRequest,
-  ToBackendSaveModifyDashboardResponse
-} from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
+import type { ToBackendSaveModifyDashboardRequest } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
+import type { ToBackendSaveModifyDashboardResponse } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
 
 let testId = 'backend-save-modify-dashboard__save-dashboard-ok';
 
@@ -115,12 +109,9 @@ test('1', async t => {
       });
 
       let req1: ToBackendGetDashboardRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -130,21 +121,21 @@ test('1', async t => {
         }
       };
 
-      let resp1 = await sendToBackend<ToBackendGetDashboardResponse>({
+      let resp1 = await sendToBackend({
+        route: 'api/ToBackendGetDashboard',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
       });
 
-      let fromDashboard = resp1.payload.dashboard;
+      let fromDashboard = unwrapToBackendResponse({
+        response: resp1
+      }).dashboard;
 
       let req: ToBackendSaveModifyDashboardRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -158,7 +149,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendSaveModifyDashboardResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendSaveModifyDashboard',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -177,8 +169,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

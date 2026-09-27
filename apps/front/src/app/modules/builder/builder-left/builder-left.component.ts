@@ -28,20 +28,16 @@ import {
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendMoveCatalogNodeInput } from '#common/zod/backend/routes/catalogs/move-catalog-node/move-catalog-node-request';
+import type { ToBackendMoveCatalogNodeResponse } from '#common/zod/backend/routes/catalogs/move-catalog-node/move-catalog-node-response';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
 import type { RepoStatus } from '#common/zod/disk/repo-status';
 import type { FileItem } from '#common/zod/file-item';
-import type {
-  ToBackendMoveCatalogNodeRequestPayload,
-  ToBackendMoveCatalogNodeResponse
-} from '#common/zod/to-backend/catalogs/to-backend-move-catalog-node';
 import { getFileItems } from '#front/app/functions/get-file-items';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -332,7 +328,7 @@ export class BuilderLeftComponent implements OnDestroy {
     let fromNodeId = event.node.id;
     let toNodeId = parentId + '/' + event.node.name;
 
-    let payload: ToBackendMoveCatalogNodeRequestPayload = {
+    let payload: ToBackendMoveCatalogNodeInput = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -369,19 +365,19 @@ export class BuilderLeftComponent implements OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
+        route: 'api/ToBackendMoveCatalogNode',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendMoveCatalogNodeResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             isMoveSuccess = true;
 
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             if (isDefined(newFileId)) {

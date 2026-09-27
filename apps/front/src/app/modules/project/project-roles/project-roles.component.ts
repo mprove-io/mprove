@@ -2,15 +2,11 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_ROLES_PAGE_TITLE } from '#common/constants/page-titles';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { Given } from '#common/zod/backend/given';
 import type { Gv } from '#common/zod/backend/gv';
 import type { Role } from '#common/zod/backend/role';
-import type {
-  ToBackendDeleteRoleGivenRequestPayload,
-  ToBackendDeleteRoleGivenResponse
-} from '#common/zod/to-backend/roles/to-backend-delete-role-given';
+import type { ToBackendDeleteRoleGivenInput } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-request';
+import type { ToBackendDeleteRoleGivenResponse } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-response';
 import { GivensQuery } from '#front/app/queries/givens.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, type NavState } from '#front/app/queries/nav.query';
@@ -109,7 +105,7 @@ export class ProjectRolesComponent implements OnInit {
   }
 
   deleteRoleGiven(role: Role, gv: Gv) {
-    let payload: ToBackendDeleteRoleGivenRequestPayload = {
+    let payload: ToBackendDeleteRoleGivenInput = {
       projectId: role.projectId,
       roleId: role.roleId,
       givenId: gv.givenId
@@ -117,15 +113,15 @@ export class ProjectRolesComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteRoleGiven,
+        route: 'api/ToBackendDeleteRoleGiven',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteRoleGivenResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.rolesQuery.update({ roles: resp.payload.roles });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.rolesQuery.update({ roles: resp.result.value.roles });
           }
         }),
         take(1)

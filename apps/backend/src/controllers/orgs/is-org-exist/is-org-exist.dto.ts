@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendIsOrgExistRequest,
-  zToBackendIsOrgExistResponse
-} from '#common/zod/to-backend/orgs/to-backend-is-org-exist';
+import { zToBackendIsOrgExistRequest } from '#common/zod/backend/routes/orgs/is-org-exist/is-org-exist-request';
+import { zToBackendIsOrgExistResponse } from '#common/zod/backend/routes/orgs/is-org-exist/is-org-exist-response';
 
 export class ToBackendIsOrgExistRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendIsOrgExistRequest })

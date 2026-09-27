@@ -12,8 +12,8 @@ import { FavoritesService } from '#backend/services/db/favorites.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendSetFavoriteResponsePayload } from '#common/zod/to-backend/favorites/to-backend-set-favorite';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSetFavoriteOutput } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-response';
 
 @ApiTags('Favorites')
 @UseGuards(ThrottlerUserIdGuard)
@@ -26,7 +26,7 @@ export class SetFavoriteController {
     private projectsService: ProjectsService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSetFavorite)
+  @Post('api/ToBackendSetFavorite' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SetFavorite',
     description: 'Set or unset a user favorite Report/Dashboard/Chart'
@@ -38,7 +38,7 @@ export class SetFavoriteController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetFavoriteRequestDto
   ) {
-    let { projectId, type, targetId, isFavorite } = body.payload;
+    let { projectId, type, targetId, isFavorite } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -57,7 +57,7 @@ export class SetFavoriteController {
       isFavorite: isFavorite
     });
 
-    let payload: ToBackendSetFavoriteResponsePayload = {};
+    let payload: ToBackendSetFavoriteOutput = {};
 
     return payload;
   }

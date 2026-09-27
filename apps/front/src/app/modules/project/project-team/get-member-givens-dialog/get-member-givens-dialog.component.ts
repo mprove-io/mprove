@@ -9,13 +9,9 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  MemberGiven,
-  ToBackendGetMemberGivensRequestPayload,
-  ToBackendGetMemberGivensResponse
-} from '#common/zod/to-backend/members/to-backend-get-member-givens';
+import type { MemberGiven } from '#common/zod/backend/members/member-given';
+import type { ToBackendGetMemberGivensInput } from '#common/zod/backend/routes/members/get-member-givens/get-member-givens-request';
+import type { ToBackendGetMemberGivensResponse } from '#common/zod/backend/routes/members/get-member-givens/get-member-givens-response';
 import { ApiService } from '#front/app/services/api.service';
 
 export interface GetMemberGivensDialogData {
@@ -46,21 +42,21 @@ export class GetMemberGivensDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let payload: ToBackendGetMemberGivensRequestPayload = {
+    let payload: ToBackendGetMemberGivensInput = {
       projectId: this.ref.data.projectId,
       memberId: this.ref.data.memberId
     };
 
     this.ref.data.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetMemberGivens,
+        route: 'api/ToBackendGetMemberGivens',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendGetMemberGivensResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberGivens = resp.payload.memberGivens;
+          if (resp.result?.type === 'Success') {
+            this.memberGivens = resp.result.value.memberGivens;
             this.cd.detectChanges();
           }
         }),

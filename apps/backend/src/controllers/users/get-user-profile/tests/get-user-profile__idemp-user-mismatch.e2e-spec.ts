@@ -8,17 +8,11 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetUserProfileRequest,
-  ToBackendGetUserProfileResponse
-} from '#common/zod/to-backend/users/to-backend-get-user-profile';
-import type {
-  ToBackendLoginUserRequest,
-  ToBackendLoginUserResponse
-} from '#common/zod/to-backend/users/to-backend-login-user';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGetUserProfileRequest } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-request';
+import type { ToBackendGetUserProfileResponse } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-response';
+import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
 
 let testId = 'backend-get-user-profile__idemp-user-mismatch';
 
@@ -61,40 +55,39 @@ test('1', async t => {
       let idempotencyKey = makeId();
 
       let getUserProfileReq: ToBackendGetUserProfileRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
-          traceId: traceId,
-          idempotencyKey: idempotencyKey
-        },
-        payload: {}
+        traceId: traceId,
+        idempotencyKey: idempotencyKey,
+        input: {}
       };
 
-      await sendToBackend<ToBackendGetUserProfileResponse>({
+      await sendToBackend({
+        route: 'api/ToBackendGetUserProfile',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: getUserProfileReq
       });
 
       let loginUserBReq: ToBackendLoginUserRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           email: emailB,
           password: password
         }
       };
 
-      let loginUserBResp = await sendToBackend<ToBackendLoginUserResponse>({
+      let loginUserBResp = await sendToBackend({
+        route: 'api/ToBackendLoginUser',
         httpServer: prep.httpServer,
         req: loginUserBReq
       });
 
-      let loginTokenB = loginUserBResp.payload.token;
+      let loginTokenB = unwrapToBackendResponse({
+        response: loginUserBResp
+      }).token;
 
-      resp2 = await sendToBackend<ToBackendGetUserProfileResponse>({
+      resp2 = await sendToBackend({
+        route: 'api/ToBackendGetUserProfile',
         httpServer: prep.httpServer,
         loginToken: loginTokenB,
         req: getUserProfileReq
@@ -113,8 +106,12 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp2.info.status, ResponseInfoStatusEnum.Error);
-    assert.equal(resp2.info.error?.message, ErEnum.BACKEND_IDEMP_USER_MISMATCH);
+    assert.equal(resp2.result.type, 'Failure');
+    assert.ok(resp2.result.type === 'Failure');
+    assert.equal(
+      resp2.result.error?.message,
+      ErEnum.BACKEND_IDEMP_USER_MISMATCH
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

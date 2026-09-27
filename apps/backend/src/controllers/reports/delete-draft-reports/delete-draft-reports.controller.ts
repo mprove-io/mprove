@@ -17,8 +17,7 @@ import {
   ToBackendDeleteDraftReportsResponseDto
 } from '#backend/controllers/reports/delete-draft-reports/delete-draft-reports.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -33,7 +32,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -55,7 +54,7 @@ export class DeleteDraftReportsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports)
+  @Post('api/ToBackendDeleteDraftReports' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteDraftReports',
     description: "Delete the user's draft reports"
@@ -67,8 +66,8 @@ export class DeleteDraftReportsController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteDraftReportsRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, envId, reportIds } = body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, envId, reportIds } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,

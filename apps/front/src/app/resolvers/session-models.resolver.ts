@@ -2,13 +2,9 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetLlmModelsWithProviderRequestPayload,
-  ToBackendGetLlmModelsWithProviderResponse
-} from '#common/zod/to-backend/llm-models/get-llm-models-with-provider/get-llm-models-with-provider';
+import type { ToBackendGetLlmModelsWithProviderInput } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
+import type { ToBackendGetLlmModelsWithProviderResponse } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
 import { NavQuery } from '../queries/nav.query';
 import { SessionModelsQuery } from '../queries/session-models.query';
 import { ApiService } from '../services/api.service';
@@ -33,23 +29,22 @@ export class SessionModelsResolver {
         nav = x;
       });
 
-    let payload: ToBackendGetLlmModelsWithProviderRequestPayload = {
+    let payload: ToBackendGetLlmModelsWithProviderInput = {
       projectId: nav.projectId,
       sessionTypes: [SessionTypeEnum.Explorer, SessionTypeEnum.Editor]
     };
 
     return this.apiService
       .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendGetLlmModelsWithProvider,
+        route: 'api/ToBackendGetLlmModelsWithProvider',
         payload: payload
       })
       .pipe(
         map((resp: ToBackendGetLlmModelsWithProviderResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.sessionModelsQuery.update({
-              modelsOpencode: resp.payload.modelsOpencode,
-              modelsAi: resp.payload.modelsAi
+              modelsOpencode: resp.result.value.modelsOpencode,
+              modelsAi: resp.result.value.modelsAi
             });
 
             return true;

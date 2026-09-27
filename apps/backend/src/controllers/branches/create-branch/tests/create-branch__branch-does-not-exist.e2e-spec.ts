@@ -10,12 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateBranchRequest,
-  ToBackendCreateBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-create-branch';
+import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendCreateBranchResponse } from '#common/zod/backend/routes/branches/create-branch/create-branch-response';
 
 let testId = 'backend-create-branch__branch-does-not-exist';
 
@@ -90,12 +87,9 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateBranchRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           fromBranchId: fromBranchId,
           newBranchId: newBranchId,
@@ -103,7 +97,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendCreateBranchResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCreateBranch',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -122,7 +117,11 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(
+      resp.result.error.message,
+      ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

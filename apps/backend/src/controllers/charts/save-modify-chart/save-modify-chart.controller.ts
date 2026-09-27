@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSaveModifyChartRequestDto,
   ToBackendSaveModifyChartResponseDto
 } from '#backend/controllers/charts/save-modify-chart/save-modify-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MconfigTab,
   QueryTab,
@@ -60,12 +56,14 @@ import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSaveModifyChartOutput } from '#common/zod/backend/routes/charts/save-modify-chart/save-modify-chart-response';
 import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-response';
-import type { ToBackendSaveModifyChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-save-modify-chart';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -93,7 +91,7 @@ export class SaveModifyChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart)
+  @Post('api/ToBackendSaveModifyChart' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SaveModifyChart',
     description: 'Save changes to an existing chart'
@@ -107,7 +105,7 @@ export class SaveModifyChartController {
   ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -119,7 +117,7 @@ export class SaveModifyChartController {
       space,
       accessRoles,
       timezone
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -258,7 +256,7 @@ export class SaveModifyChartController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'moveCatalogNode',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -274,7 +272,7 @@ export class SaveModifyChartController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'saveFile',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -506,7 +504,7 @@ export class SaveModifyChartController {
       spaces: currentStruct.spaces
     });
 
-    let payload: ToBackendSaveModifyChartResponsePayload = {
+    let payload: ToBackendSaveModifyChartOutput = {
       chart: this.chartsService.tabToApi({
         chart: chart,
         mconfigs: [

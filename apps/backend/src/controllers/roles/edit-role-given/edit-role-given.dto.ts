@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendEditRoleGivenRequest,
-  zToBackendEditRoleGivenResponse
-} from '#common/zod/to-backend/roles/to-backend-edit-role-given';
+import { zToBackendEditRoleGivenRequest } from '#common/zod/backend/routes/roles/edit-role-given/edit-role-given-request';
+import { zToBackendEditRoleGivenResponse } from '#common/zod/backend/routes/roles/edit-role-given/edit-role-given-response';
 
 export class ToBackendEditRoleGivenRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendEditRoleGivenRequest })

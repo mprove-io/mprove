@@ -3,8 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   MconfigTab,
   MemberTab,
@@ -29,7 +28,7 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { QueryOperation } from '#common/zod/backend/query-operation';
-import type { ToBackendGetChartResponsePayload } from '#common/zod/to-backend/charts/to-backend-get-chart';
+import type { ToBackendGetChartOutput } from '#common/zod/backend/routes/charts/get-chart/get-chart-response';
 
 @Injectable()
 export class QueryInfoChartService {
@@ -58,7 +57,7 @@ export class QueryInfoChartService {
     chartId: string;
     timezone: string;
     skipUi: boolean;
-  }): Promise<ToBackendGetChartResponsePayload> {
+  }): Promise<ToBackendGetChartOutput> {
     let {
       traceId,
       user,
@@ -204,7 +203,7 @@ export class QueryInfoChartService {
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
-    let payload: ToBackendGetChartResponsePayload = {
+    let payload: ToBackendGetChartOutput = {
       userMember: apiUserMember,
       chart: this.chartsService.tabToApi({
         chart: chart,

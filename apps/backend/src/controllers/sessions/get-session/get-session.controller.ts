@@ -7,8 +7,7 @@ import {
   ToBackendGetSessionResponseDto
 } from '#backend/controllers/sessions/get-session/get-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
@@ -24,12 +23,12 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
 import type { SessionPartApi } from '#common/zod/backend/session-part-api';
-import type { ToBackendGetSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-get-session';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -45,7 +44,7 @@ export class GetSessionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetSession)
+  @Post('api/ToBackendGetSession' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetSession',
     description: 'Get a session with its messages, parts, and events'
@@ -57,7 +56,7 @@ export class GetSessionController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetSessionRequestDto
   ) {
-    let { sessionId, isFetchFromOpencode } = body.payload;
+    let { sessionId, isFetchFromOpencode } = body.input;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId
@@ -208,7 +207,7 @@ export class GetSessionController {
       currentSessionId: sessionId
     });
 
-    let payload: ToBackendGetSessionResponsePayload = {
+    let payload: ToBackendGetSessionOutput = {
       session: sessionApi,
       ocSession: ocSessionApi,
       lastEventIndex: lastEventIndex,

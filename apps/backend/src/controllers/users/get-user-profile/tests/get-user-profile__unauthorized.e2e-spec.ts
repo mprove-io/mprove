@@ -8,12 +8,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetUserProfileRequest,
-  ToBackendGetUserProfileResponse
-} from '#common/zod/to-backend/users/to-backend-get-user-profile';
+import type { ToBackendGetUserProfileRequest } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-request';
+import type { ToBackendGetUserProfileResponse } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-response';
 
 let testId = 'backend-get-user-profile__unauthorized';
 
@@ -47,15 +44,13 @@ test('1', async t => {
       });
 
       let getUserProfileReq: ToBackendGetUserProfileRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {}
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {}
       };
 
-      resp = await sendToBackend<ToBackendGetUserProfileResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetUserProfile',
         httpServer: prep.httpServer,
         req: getUserProfileReq
       });
@@ -73,7 +68,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp?.info?.error?.message, ErEnum.BACKEND_UNAUTHORIZED);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp?.result?.error?.message, ErEnum.BACKEND_UNAUTHORIZED);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

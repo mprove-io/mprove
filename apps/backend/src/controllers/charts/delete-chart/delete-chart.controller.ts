@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteChartRequestDto,
   ToBackendDeleteChartResponseDto
 } from '#backend/controllers/charts/delete-chart/delete-chart.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
@@ -44,7 +40,9 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -68,7 +66,7 @@ export class DeleteChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteChart)
+  @Post('api/ToBackendDeleteChart' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteChart',
     description: 'Delete a saved chart'
@@ -80,8 +78,8 @@ export class DeleteChartController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteChartRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, envId, chartId } = body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, envId, chartId } = body.input;
 
     this.usersService.checkUserIsNotRestricted({ user: user });
 
@@ -158,7 +156,7 @@ export class DeleteChartController {
     await this.rpcService.sendToDiskUnwrapOutput({
       request: {
         operation: 'deleteFile',
-        traceId: body.info.traceId,
+        traceId: body.traceId,
         input: {
           baseProject: baseProject,
           repoId: repoId,

@@ -7,14 +7,10 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendDeleteFileRequestPayload,
-  ToBackendDeleteFileResponse
-} from '#common/zod/to-backend/files/to-backend-delete-file';
+import type { ToBackendDeleteFileInput } from '#common/zod/backend/routes/files/delete-file/delete-file-request';
+import type { ToBackendDeleteFileResponse } from '#common/zod/backend/routes/files/delete-file/delete-file-response';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -87,7 +83,7 @@ export class DeleteFileDialogComponent implements OnInit {
       }
     }
 
-    let payload: ToBackendDeleteFileRequestPayload = {
+    let payload: ToBackendDeleteFileInput = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -99,17 +95,17 @@ export class DeleteFileDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
+        route: 'api/ToBackendDeleteFile',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteFileResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             if (isRemoveSecondFile === true) {

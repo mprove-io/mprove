@@ -5,15 +5,12 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type {
-  ToBackendSyncRepoRequestPayload,
-  ToBackendSyncRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-sync-repo';
+import type { ToBackendSyncRepoInput } from '#common/zod/backend/routes/repos/sync-repo/sync-repo-request';
+import type { ToBackendSyncRepoOutput } from '#common/zod/backend/routes/repos/sync-repo/sync-repo-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -132,7 +129,7 @@ export class SyncCommand extends CustomCommand {
       ? apiKey.split('-')[2].toLowerCase()
       : apiKey.split('-')[2];
 
-    let syncRepoReqPayload: ToBackendSyncRepoRequestPayload;
+    let syncRepoReqPayload: ToBackendSyncRepoInput;
     if (this.fromServer === true) {
       syncRepoReqPayload = {
         direction: 'from-server',
@@ -163,9 +160,9 @@ export class SyncCommand extends CustomCommand {
       };
     }
 
-    let syncRepoResp = await mreq<ToBackendSyncRepoResponse>({
+    let syncRepoOutput: ToBackendSyncRepoOutput = await mreq({
       apiKey: this.context.config.mproveCliApiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSyncRepo,
+      route: 'api/ToBackendSyncRepo',
       payload: syncRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
@@ -173,13 +170,13 @@ export class SyncCommand extends CustomCommand {
     let appliedChangesOnLocal: string[] = [];
     let appliedChangesOnServer: string[] = [];
 
-    if (syncRepoResp.payload.direction === 'from-server') {
+    if (syncRepoOutput.direction === 'from-server') {
       appliedChangesOnLocal = await Result.unwrap(
         Result.pipe(
           getSyncAppliedChanges({
             repoDir: repoDir,
-            changedFiles: syncRepoResp.payload.changedFiles,
-            deletedFiles: syncRepoResp.payload.deletedFiles,
+            changedFiles: syncRepoOutput.changedFiles,
+            deletedFiles: syncRepoOutput.deletedFiles,
             statusResult: statusResult
           }),
           Result.mapError(
@@ -213,8 +210,8 @@ export class SyncCommand extends CustomCommand {
         Result.pipe(
           applySyncPayload({
             repoDir: repoDir,
-            changedFiles: syncRepoResp.payload.changedFiles,
-            deletedFiles: syncRepoResp.payload.deletedFiles
+            changedFiles: syncRepoOutput.changedFiles,
+            deletedFiles: syncRepoOutput.deletedFiles
           }),
           Result.mapError(
             error =>
@@ -227,7 +224,7 @@ export class SyncCommand extends CustomCommand {
         )
       );
     } else {
-      appliedChangesOnServer = syncRepoResp.payload.appliedChangesOnServer;
+      appliedChangesOnServer = syncRepoOutput.appliedChangesOnServer;
     }
 
     //
@@ -243,7 +240,7 @@ export class SyncCommand extends CustomCommand {
       )
     );
 
-    let devChangesToCommit = syncRepoResp.payload.devChangesToCommit;
+    let devChangesToCommit = syncRepoOutput.devChangesToCommit;
     let syncSuccess = deepEqual(localChangesToCommit, devChangesToCommit);
 
     if (syncSuccess === false) {
@@ -265,9 +262,9 @@ export class SyncCommand extends CustomCommand {
 
     let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
-      orgId: syncRepoResp.payload.orgId,
+      orgId: syncRepoOutput.orgId,
       projectId: this.projectId,
-      repoId: syncRepoResp.payload.repoId,
+      repoId: syncRepoOutput.repoId,
       branch: currentBranchName,
       env: this.env
     });
@@ -276,18 +273,18 @@ export class SyncCommand extends CustomCommand {
       message: `Sync completed`,
       appliedChangesOnLocal: appliedChangesOnLocal,
       appliedChangesOnServer: appliedChangesOnServer,
-      validationErrorsTotal: syncRepoResp.payload.validationErrorsTotal
+      validationErrorsTotal: syncRepoOutput.validationErrorsTotal
     };
 
     if (this.getRepo === true) {
-      let repo = syncRepoResp.payload.repo;
+      let repo = syncRepoOutput.repo;
 
       log.repo = repo;
     }
 
     if (this.getErrors === true) {
       log.validationErrors = mapBmlErrorsToMproveValidationErrors({
-        errors: syncRepoResp.payload.validationErrors ?? []
+        errors: syncRepoOutput.validationErrors ?? []
       });
     }
 
@@ -297,17 +294,17 @@ export class SyncCommand extends CustomCommand {
         changedFiles: changedFiles,
         deletedFiles: deletedFiles,
         responseChangedFiles:
-          syncRepoResp.payload.direction === 'from-server'
-            ? syncRepoResp.payload.changedFiles
+          syncRepoOutput.direction === 'from-server'
+            ? syncRepoOutput.changedFiles
             : [],
         responseDeletedFiles:
-          syncRepoResp.payload.direction === 'from-server'
-            ? syncRepoResp.payload.deletedFiles
+          syncRepoOutput.direction === 'from-server'
+            ? syncRepoOutput.deletedFiles
             : [],
         localChangesToCommit: localChangesToCommit,
         devChangesToCommit: devChangesToCommit,
-        needValidate: syncRepoResp.payload.needValidate,
-        structId: syncRepoResp.payload.structId
+        needValidate: syncRepoOutput.needValidate,
+        structId: syncRepoOutput.structId
       };
     }
 

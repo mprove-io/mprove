@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendDeleteSessionRequest,
-  zToBackendDeleteSessionResponse
-} from '#common/zod/to-backend/sessions/to-backend-delete-session';
+import { zToBackendDeleteSessionRequest } from '#common/zod/backend/routes/sessions/delete-session/delete-session-request';
+import { zToBackendDeleteSessionResponse } from '#common/zod/backend/routes/sessions/delete-session/delete-session-response';
 
 export class ToBackendDeleteSessionRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendDeleteSessionRequest })

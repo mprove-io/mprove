@@ -4,7 +4,7 @@ import {
   zRawSchemaForeignKey,
   zRawSchemaIndex
 } from '#common/zod/backend/connection-schemas/raw-schema';
-import { zCachedColumn } from '#common/zod/to-backend/connections/cached-column';
+import { zCachedColumn } from '#common/zod/backend/connections/cached-column';
 
 export let zColumnCombinedReference = z
   .object({

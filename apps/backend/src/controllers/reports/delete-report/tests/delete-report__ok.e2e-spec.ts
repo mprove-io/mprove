@@ -14,13 +14,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendDeleteReportRequest,
-  ToBackendDeleteReportResponse
-} from '#common/zod/to-backend/reports/to-backend-delete-report';
+import type { ToBackendDeleteReportRequest } from '#common/zod/backend/routes/reports/delete-report/delete-report-request';
+import type { ToBackendDeleteReportResponse } from '#common/zod/backend/routes/reports/delete-report/delete-report-response';
 
 let testId = 'backend-delete-report__ok';
 
@@ -105,12 +101,9 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteReportRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteReport,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: BRANCH_MAIN,
@@ -119,7 +112,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteReportResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteReport',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -138,8 +132,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

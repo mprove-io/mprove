@@ -15,12 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendCreateMemberRequestPayload,
-  ToBackendCreateMemberResponse
-} from '#common/zod/to-backend/members/to-backend-create-member';
+import type { ToBackendCreateMemberInput } from '#common/zod/backend/routes/members/create-member/create-member-request';
+import type { ToBackendCreateMemberResponse } from '#common/zod/backend/routes/members/create-member/create-member-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -75,7 +71,7 @@ export class InviteMemberDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateMemberRequestPayload = {
+    let payload: ToBackendCreateMemberInput = {
       projectId: this.ref.data.projectId,
       email: this.inviteMemberForm.value.email
     };
@@ -84,14 +80,14 @@ export class InviteMemberDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateMember,
+        route: 'api/ToBackendCreateMember',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendCreateMemberResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let member = resp.payload.member;
+          if (resp.result?.type === 'Success') {
+            let member = resp.result.value.member;
             let teamState = this.teamQuery.getValue();
 
             this.teamQuery.update({

@@ -17,13 +17,9 @@ import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_TOKEN
 } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ToBackendLoginUserRequestPayload,
-  ToBackendLoginUserResponse
-} from '#common/zod/to-backend/users/to-backend-login-user';
+import type { ToBackendLoginUserInput } from '#common/zod/backend/routes/users/login-user/login-user-request';
+import type { ToBackendLoginUserResponse } from '#common/zod/backend/routes/users/login-user/login-user-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { AuthService } from '#front/app/services/auth.service';
@@ -105,21 +101,21 @@ export class LoginComponent implements OnInit {
 
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendLoginUserRequestPayload = {
+    let payload: ToBackendLoginUserInput = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        route: 'api/ToBackendLoginUser',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendLoginUserResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let user = resp.payload.user;
-            let token = resp.payload.token;
+          if (resp.result?.type === 'Success') {
+            let user = resp.result.value.user;
+            let token = resp.result.value.token;
 
             this.userQuery.update(user);
 

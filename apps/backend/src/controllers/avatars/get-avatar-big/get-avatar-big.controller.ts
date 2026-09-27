@@ -6,14 +6,13 @@ import {
   ToBackendGetAvatarBigResponseDto
 } from '#backend/controllers/avatars/get-avatar-big/get-avatar-big.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { TabService } from '#backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetAvatarBigResponsePayload } from '#common/zod/to-backend/avatars/to-backend-get-avatar-big';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetAvatarBigOutput } from '#common/zod/backend/routes/avatars/get-avatar-big/get-avatar-big-response';
 
 @ApiTags('Avatars')
 @UseGuards(ThrottlerUserIdGuard)
@@ -24,7 +23,7 @@ export class GetAvatarBigController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig)
+  @Post('api/ToBackendGetAvatarBig' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetAvatarBig',
     description: "Get a user's avatar image"
@@ -36,7 +35,7 @@ export class GetAvatarBigController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetAvatarBigRequestDto
   ) {
-    let { avatarUserId } = body.payload;
+    let { avatarUserId } = body.input;
 
     let avatar = await this.db.drizzle.query.avatarsTable
       .findFirst({
@@ -44,7 +43,7 @@ export class GetAvatarBigController {
       })
       .then(x => this.tabService.avatarEntToTab(x));
 
-    let payload: ToBackendGetAvatarBigResponsePayload = {
+    let payload: ToBackendGetAvatarBigOutput = {
       avatarSmall: avatar?.avatarSmall,
       avatarBig: avatar?.avatarBig
     };

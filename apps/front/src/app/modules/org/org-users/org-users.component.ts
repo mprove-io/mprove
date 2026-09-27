@@ -3,13 +3,9 @@ import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { ORGANIZATION_USERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendGetOrgUsersInput } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
+import type { ToBackendGetOrgUsersResponse } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
 import type { OrgUserItemExtended } from '#common/zod/front/org-user-item-extended';
-import type {
-  ToBackendGetOrgUsersRequestPayload,
-  ToBackendGetOrgUsersResponse
-} from '#common/zod/to-backend/org-users/to-backend-get-org-users';
 import { makeInitials } from '#front/app/functions/make-initials';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
@@ -75,7 +71,7 @@ export class OrgUsersComponent implements OnInit {
   }
 
   getUsers(pageNum: number) {
-    let payload: ToBackendGetOrgUsersRequestPayload = {
+    let payload: ToBackendGetOrgUsersInput = {
       orgId: this.orgId,
       pageNum: pageNum,
       perPage: this.perPage
@@ -83,15 +79,15 @@ export class OrgUsersComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
+        route: 'api/ToBackendGetOrgUsers',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetOrgUsersResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.usersQuery.update({
-              users: resp.payload.orgUsersList,
-              total: resp.payload.total
+              users: resp.result.value.orgUsersList,
+              total: resp.result.value.total
             });
             this.currentPage = pageNum;
 

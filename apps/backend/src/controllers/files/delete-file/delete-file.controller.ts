@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteFileRequestDto,
   ToBackendDeleteFileResponseDto
 } from '#backend/controllers/files/delete-file/delete-file.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -39,10 +35,12 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDeleteFileOutput } from '#common/zod/backend/routes/files/delete-file/delete-file-response';
 import type { ToDiskDeleteFileOutput } from '#common/zod/disk/routes/files/delete-file/delete-file-response';
-import type { ToBackendDeleteFileResponsePayload } from '#common/zod/to-backend/files/to-backend-delete-file';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)
@@ -65,7 +63,7 @@ export class DeleteFileController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteFile)
+  @Post('api/ToBackendDeleteFile' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteFile',
     description: 'Delete a file'
@@ -77,8 +75,8 @@ export class DeleteFileController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteFileRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, envId, fileNodeId } = body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, envId, fileNodeId } = body.input;
 
     await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -116,7 +114,7 @@ export class DeleteFileController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'deleteFile',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -188,7 +186,7 @@ export class DeleteFileController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendDeleteFileResponsePayload = {
+    let payload: ToBackendDeleteFileOutput = {
       repo: diskDeleteFileOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,

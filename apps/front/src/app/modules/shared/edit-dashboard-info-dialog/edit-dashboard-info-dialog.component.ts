@@ -26,22 +26,16 @@ import {
 } from '#common/constants/top-front';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { Role } from '#common/zod/backend/role';
+import type { ToBackendSaveModifyDashboardInput } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
+import type { ToBackendSaveModifyDashboardResponse } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
+import type { ToBackendGetRolesInput } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/zod/blockml/space';
-import type {
-  ToBackendSaveModifyDashboardRequestPayload,
-  ToBackendSaveModifyDashboardResponse
-} from '#common/zod/to-backend/dashboards/to-backend-save-modify-dashboard';
-import type {
-  ToBackendGetRolesRequestPayload,
-  ToBackendGetRolesResponse
-} from '#common/zod/to-backend/roles/to-backend-get-roles';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
@@ -236,7 +230,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
       let newTitle: string = this.titleForm.controls['title'].value;
       let roles = [...this.selectedAccessRoles];
 
-      let payload: ToBackendSaveModifyDashboardRequestPayload = {
+      let payload: ToBackendSaveModifyDashboardInput = {
         projectId: this.ref.data.projectId,
         repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
@@ -257,20 +251,19 @@ export class EditDashboardInfoDialogComponent implements OnInit {
 
       apiService
         .req({
-          pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard,
+          route: 'api/ToBackendSaveModifyDashboard',
           payload: payload,
           showSpinner: true
         })
         .pipe(
           tap(async (resp: ToBackendSaveModifyDashboardResponse) => {
-            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              let newDashboard = resp.payload.dashboard;
+            if (resp.result?.type === 'Success') {
+              let newDashboard = resp.result.value.dashboard;
 
               if (isDefined(newDashboard)) {
                 this.dashboardUnitsQuery.update({
-                  dashboardUnitDrafts: resp.payload.dashboardUnitDrafts,
-                  dashboardSpaceNodes: resp.payload.dashboardSpaceNodes
+                  dashboardUnitDrafts: resp.result.value.dashboardUnitDrafts,
+                  dashboardSpaceNodes: resp.result.value.dashboardSpaceNodes
                 });
 
                 let currentDashboard = this.dashboardQuery.getValue();
@@ -288,7 +281,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
   }
 
   loadRoles() {
-    let payload: ToBackendGetRolesRequestPayload = {
+    let payload: ToBackendGetRolesInput = {
       projectId: this.ref.data.projectId
     };
 
@@ -296,13 +289,13 @@ export class EditDashboardInfoDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRoles,
+        route: 'api/ToBackendGetRoles',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.roles = resp.payload.roles.sort((a, b) =>
+          if (resp.result?.type === 'Success') {
+            this.roles = resp.result.value.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
             this.cd.detectChanges();

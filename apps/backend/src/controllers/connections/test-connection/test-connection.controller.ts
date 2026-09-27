@@ -15,8 +15,7 @@ import {
   ToBackendTestConnectionResponseDto
 } from '#backend/controllers/connections/test-connection/test-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ConnectionsService } from '#backend/services/db/connections.service';
@@ -36,11 +35,11 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendTestConnectionResponsePayload } from '#common/zod/to-backend/connections/to-backend-test-connection';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendTestConnectionOutput } from '#common/zod/backend/routes/connections/test-connection/test-connection-response';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)
@@ -66,7 +65,7 @@ export class TestConnectionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendTestConnection)
+  @Post('api/ToBackendTestConnection' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'TestConnection',
     description: 'Verify that a SQL connection can be established'
@@ -79,7 +78,7 @@ export class TestConnectionController {
     @Body() body: ToBackendTestConnectionRequestDto
   ) {
     let { projectId, envId, connectionId, type, options, storeMethod } =
-      body.payload;
+      body.input;
 
     if (isDefined(options.motherduck)) {
       let wrongChars: string[] = getMotherduckDatabaseWrongChars({
@@ -159,7 +158,7 @@ export class TestConnectionController {
       });
     }
 
-    let payload: ToBackendTestConnectionResponsePayload = {
+    let payload: ToBackendTestConnectionOutput = {
       testConnectionResult: testConnectionResult
     };
 

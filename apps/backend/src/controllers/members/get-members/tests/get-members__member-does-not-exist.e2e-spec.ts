@@ -10,12 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetMembersRequest,
-  ToBackendGetMembersResponse
-} from '#common/zod/to-backend/members/to-backend-get-members';
+import type { ToBackendGetMembersRequest } from '#common/zod/backend/routes/members/get-members/get-members-request';
+import type { ToBackendGetMembersResponse } from '#common/zod/backend/routes/members/get-members/get-members-response';
 
 let testId = 'backend-get-members__member-does-not-exist';
 
@@ -96,19 +93,17 @@ test('1', async t => {
       });
 
       let req: ToBackendGetMembersRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetMembers,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           perPage: 10,
           pageNum: 1
         }
       };
 
-      resp = await sendToBackend<ToBackendGetMembersResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetMembers',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -127,7 +122,11 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(
+      resp.result.error.message,
+      ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

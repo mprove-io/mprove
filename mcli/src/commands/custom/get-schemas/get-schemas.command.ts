@@ -6,12 +6,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type {
-  ToBackendGetConnectionSchemasRequestPayload,
-  ToBackendGetConnectionSchemasResponse
-} from '#common/zod/to-backend/connections/to-backend-get-connection-schemas';
+import type { ToBackendGetConnectionSchemasInput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
+import type { ToBackendGetConnectionSchemasOutput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-response';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -91,7 +88,7 @@ export class GetSchemasCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getSchemasReqPayload: ToBackendGetConnectionSchemasRequestPayload = {
+    let getSchemasReqPayload: ToBackendGetConnectionSchemasInput = {
       projectId: this.projectId,
       envId: this.env,
       repoId: repoId,
@@ -99,15 +96,15 @@ export class GetSchemasCommand extends CustomCommand {
       isRefreshExistingCache: this.isRefreshExistingCache
     };
 
-    let getSchemasResp = await mreq<ToBackendGetConnectionSchemasResponse>({
+    let getSchemasOutput: ToBackendGetConnectionSchemasOutput = await mreq({
       apiKey: apiKey,
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionSchemas,
+      route: 'api/ToBackendGetConnectionSchemas',
       payload: getSchemasReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let log = processGetConnectionSchemasPayload({
-      payload: getSchemasResp.payload
+      payload: getSchemasOutput
     });
 
     logToConsoleMcli({

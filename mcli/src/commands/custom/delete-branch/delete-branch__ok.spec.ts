@@ -6,12 +6,9 @@ import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateBranchRequestPayload,
-  ToBackendCreateBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-create-branch';
+import type { ToBackendCreateBranchInput } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendCreateBranchOutput } from '#common/zod/backend/routes/branches/create-branch/create-branch-response';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
@@ -117,16 +114,16 @@ test('1', async () => {
           ? PROD_REPO_ID
           : userId;
 
-      let createBranchReqPayload: ToBackendCreateBranchRequestPayload = {
+      let createBranchReqPayload: ToBackendCreateBranchInput = {
         projectId: projectId,
         repoId: repoId,
         newBranchId: branch,
         fromBranchId: defaultBranch
       };
 
-      let createBranchResp = await mreq<ToBackendCreateBranchResponse>({
+      let createBranchOutput: ToBackendCreateBranchOutput = await mreq({
         apiKey: context.config.mproveCliApiKey,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+        route: 'api/ToBackendCreateBranch',
         payload: createBranchReqPayload,
         host: config.mproveCliHost
       });

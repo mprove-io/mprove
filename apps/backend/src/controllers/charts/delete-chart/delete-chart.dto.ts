@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendDeleteChartRequest,
-  zToBackendDeleteChartResponse
-} from '#common/zod/to-backend/charts/to-backend-delete-chart';
+import { zToBackendDeleteChartRequest } from '#common/zod/backend/routes/charts/delete-chart/delete-chart-request';
+import { zToBackendDeleteChartResponse } from '#common/zod/backend/routes/charts/delete-chart/delete-chart-response';
 
 export class ToBackendDeleteChartRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendDeleteChartRequest })

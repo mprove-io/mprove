@@ -8,8 +8,7 @@ import {
   ToBackendGetServerUsersResponseDto
 } from '#backend/controllers/users/get-server-users/get-server-users.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import {
   type AvatarEnt,
@@ -24,12 +23,10 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ServerUsersItem,
-  ServerUsersMembershipItem,
-  ToBackendGetServerUsersResponsePayload
-} from '#common/zod/to-backend/users/to-backend-get-server-users';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetServerUsersOutput } from '#common/zod/backend/routes/users/get-server-users/get-server-users-response';
+import type { ServerUsersItem } from '#common/zod/backend/users/server-users-item';
+import type { ServerUsersMembershipItem } from '#common/zod/backend/users/server-users-membership-item';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -41,7 +38,7 @@ export class GetServerUsersController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetServerUsers)
+  @Post('api/ToBackendGetServerUsers' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetServerUsers',
     description: 'Get a paginated list of all users across all organizations'
@@ -53,7 +50,7 @@ export class GetServerUsersController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetServerUsersRequestDto
   ) {
-    let { pageNum, perPage } = body.payload;
+    let { pageNum, perPage } = body.input;
 
     let mproveAdminEmail =
       this.cs.get<BackendConfig['mproveAdminEmail']>('mproveAdminEmail');
@@ -161,7 +158,7 @@ export class GetServerUsersController {
       serverUserItems.push(serverUsersItem);
     });
 
-    let payload: ToBackendGetServerUsersResponsePayload = {
+    let payload: ToBackendGetServerUsersOutput = {
       serverUsersList: serverUserItems,
       total: total
     };

@@ -9,17 +9,10 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateBranchRequest,
-  ToBackendCreateBranchResponse
-} from '#common/zod/to-backend/branches/to-backend-create-branch';
-import type {
-  ToBackendMergeRepoRequest,
-  ToBackendMergeRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-merge-repo';
+import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendMergeRepoRequest } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-request';
+import type { ToBackendMergeRepoResponse } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-response';
 
 let testId = 'backend-merge-repo__ok';
 
@@ -95,12 +88,9 @@ test('1', async t => {
       });
 
       let req1: ToBackendCreateBranchRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           fromBranchId: branchId,
           newBranchId: theirBranchId,
@@ -108,19 +98,17 @@ test('1', async t => {
         }
       };
 
-      let resp1 = await sendToBackend<ToBackendCreateBranchResponse>({
+      let resp1 = await sendToBackend({
+        route: 'api/ToBackendCreateBranch',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
       });
 
       let req: ToBackendMergeRepoRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId,
@@ -130,7 +118,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendMergeRepoResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendMergeRepo',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -149,8 +138,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

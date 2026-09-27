@@ -8,12 +8,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCompleteUserRegistrationRequest,
-  ToBackendCompleteUserRegistrationResponse
-} from '#common/zod/to-backend/users/to-backend-complete-user-registration';
+import type { ToBackendCompleteUserRegistrationRequest } from '#common/zod/backend/routes/users/complete-user-registration/complete-user-registration-request';
+import type { ToBackendCompleteUserRegistrationResponse } from '#common/zod/backend/routes/users/complete-user-registration/complete-user-registration-response';
 
 let testId = 'backend-confirm-user-email__user-does-not-exist';
 
@@ -37,18 +34,16 @@ test('1', async t => {
 
       let completeUserRegistrationRequest: ToBackendCompleteUserRegistrationRequest =
         {
-          info: {
-            name: ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration,
-            traceId: traceId,
-            idempotencyKey: makeId()
-          },
-          payload: {
+          traceId: traceId,
+          idempotencyKey: makeId(),
+          input: {
             emailVerificationToken: emailToken,
             newPassword: newPassword
           }
         };
 
-      resp = await sendToBackend<ToBackendCompleteUserRegistrationResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendCompleteUserRegistration',
         httpServer: prep.httpServer,
         req: completeUserRegistrationRequest
       });
@@ -66,7 +61,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_USER_DOES_NOT_EXIST);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_USER_DOES_NOT_EXIST);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

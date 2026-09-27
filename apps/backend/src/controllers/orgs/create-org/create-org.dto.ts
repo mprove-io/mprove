@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendCreateOrgRequest,
-  zToBackendCreateOrgResponse
-} from '#common/zod/to-backend/orgs/to-backend-create-org';
+import { zToBackendCreateOrgRequest } from '#common/zod/backend/routes/orgs/create-org/create-org-request';
+import { zToBackendCreateOrgResponse } from '#common/zod/backend/routes/orgs/create-org/create-org-response';
 
 export class ToBackendCreateOrgRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendCreateOrgRequest })

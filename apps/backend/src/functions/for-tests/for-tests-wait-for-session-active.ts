@@ -1,8 +1,7 @@
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetSessionResponse } from '#common/zod/to-backend/sessions/to-backend-get-session';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 
 export async function forTestsWaitForSessionActive(item: {
   httpServer: any;
@@ -14,16 +13,14 @@ export async function forTestsWaitForSessionActive(item: {
   let maxRetries = item.maxRetries ?? 60;
 
   for (let i = 0; i < maxRetries; i++) {
-    let resp = await sendToBackend<ToBackendGetSessionResponse>({
+    let resp = await sendToBackend({
+      route: 'api/ToBackendGetSession',
       httpServer: item.httpServer,
       loginToken: item.loginToken,
       req: {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetSession,
-          traceId: item.traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: item.traceId,
+        idempotencyKey: makeId(),
+        input: {
           sessionId: item.sessionId,
           isFetchFromOpencode: false
         }
@@ -31,11 +28,17 @@ export async function forTestsWaitForSessionActive(item: {
       checkIsOk: true
     });
 
-    if (resp.payload.session.status === SessionStatusEnum.Active) {
+    if (
+      unwrapToBackendResponse({ response: resp }).session.status ===
+      SessionStatusEnum.Active
+    ) {
       return;
     }
 
-    if (resp.payload.session.status === SessionStatusEnum.Error) {
+    if (
+      unwrapToBackendResponse({ response: resp }).session.status ===
+      SessionStatusEnum.Error
+    ) {
       throw new Error(
         `forTestsWaitForSessionActive: session ${item.sessionId} entered Error status`
       );

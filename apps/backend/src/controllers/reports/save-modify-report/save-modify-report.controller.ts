@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendSaveModifyReportRequestDto,
   ToBackendSaveModifyReportResponseDto
 } from '#backend/controllers/reports/save-modify-report/save-modify-report.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
@@ -51,13 +47,15 @@ import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSaveModifyReportOutput } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-response';
-import type { ToBackendSaveModifyReportResponsePayload } from '#common/zod/to-backend/reports/to-backend-save-modify-report';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)
@@ -84,7 +82,7 @@ export class SaveModifyReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport)
+  @Post('api/ToBackendSaveModifyReport' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SaveModifyReport',
     description: 'Save changes to an existing report'
@@ -98,7 +96,7 @@ export class SaveModifyReportController {
   ) {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -114,7 +112,7 @@ export class SaveModifyReportController {
       timezone,
       newReportFields,
       chart
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -280,7 +278,7 @@ export class SaveModifyReportController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'moveCatalogNode',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -296,7 +294,7 @@ export class SaveModifyReportController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'saveFile',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -466,7 +464,7 @@ export class SaveModifyReportController {
       spaces: currentStruct.spaces
     });
 
-    let payload: ToBackendSaveModifyReportResponsePayload = {
+    let payload: ToBackendSaveModifyReportOutput = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({
         struct: currentStruct,

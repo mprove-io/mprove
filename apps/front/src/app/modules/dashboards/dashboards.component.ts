@@ -26,8 +26,6 @@ import {
 import { REFRESH_LIST } from '#common/constants/top-front';
 import { FavoriteTypeEnum } from '#common/enums/favorite-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getTimezones } from '#common/functions/get-timezones/get-timezones';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
@@ -37,22 +35,16 @@ import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-un
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Member } from '#common/zod/backend/member';
+import type { ToBackendSetFavoriteInput } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-request';
+import type { ToBackendSetFavoriteResponse } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-response';
+import type { ToBackendGetQueriesInput } from '#common/zod/backend/routes/queries/get-queries/get-queries-request';
+import type { ToBackendGetQueriesResponse } from '#common/zod/backend/routes/queries/get-queries/get-queries-response';
+import type { ToBackendRunQueriesInput } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
+import type { ToBackendRunQueriesResponse } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
 import type { SpaceNode } from '#common/zod/backend/space-node';
 import type { SpaceNodeX } from '#common/zod/backend/space-node-x';
 import type { Query } from '#common/zod/blockml/query';
 import type { RefreshItem } from '#common/zod/front/refresh-item';
-import type {
-  ToBackendSetFavoriteRequestPayload,
-  ToBackendSetFavoriteResponse
-} from '#common/zod/to-backend/favorites/to-backend-set-favorite';
-import type {
-  ToBackendGetQueriesRequestPayload,
-  ToBackendGetQueriesResponse
-} from '#common/zod/to-backend/queries/to-backend-get-queries';
-import type {
-  ToBackendRunQueriesRequestPayload,
-  ToBackendRunQueriesResponse
-} from '#common/zod/to-backend/queries/to-backend-run-queries';
 import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
 import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
@@ -646,7 +638,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendSetFavoriteRequestPayload = {
+    let payload: ToBackendSetFavoriteInput = {
       projectId: nav.projectId,
       type: FavoriteTypeEnum.Dashboard,
       targetId: dashboardId,
@@ -655,12 +647,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetFavorite,
+        route: 'api/ToBackendSetFavorite',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp.info?.status === ResponseInfoStatusEnum.Ok;
+          let isOk = resp.result?.type === 'Success';
 
           if (isOk === false) {
             this.dashboardUnitsQuery.updatePart({
@@ -927,7 +919,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    let payload: ToBackendRunQueriesRequestPayload = {
+    let payload: ToBackendRunQueriesInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -937,13 +929,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        route: 'api/ToBackendRunQueries',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let { runningQueries } = resp.payload;
+          if (resp.result?.type === 'Success') {
+            let { runningQueries } = resp.result.value;
 
             let newDashboard = Object.assign({}, this.dashboard, {
               tiles: this.dashboard.tiles.map(x => {
@@ -976,7 +968,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       return of(1);
     }
 
-    let payload: ToBackendGetQueriesRequestPayload = {
+    let payload: ToBackendGetQueriesInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -987,13 +979,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQueries,
+        route: 'api/ToBackendGetQueries',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetQueriesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let { queries } = resp.payload;
+          if (resp.result?.type === 'Success') {
+            let { queries } = resp.result.value;
 
             let newDashboard = Object.assign({}, this.dashboard, {
               tiles: this.dashboard.tiles.map(x => {

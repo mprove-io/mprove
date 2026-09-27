@@ -10,17 +10,11 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendCreateGivenRequest,
-  ToBackendCreateGivenResponse
-} from '#common/zod/to-backend/givens/to-backend-create-given';
-import type {
-  ToBackendEditGivenRequest,
-  ToBackendEditGivenResponse
-} from '#common/zod/to-backend/givens/to-backend-edit-given';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
+import type { ToBackendEditGivenRequest } from '#common/zod/backend/routes/givens/edit-given/edit-given-request';
+import type { ToBackendEditGivenResponse } from '#common/zod/backend/routes/givens/edit-given/edit-given-response';
 
 let testId = 'backend-edit-given__ok';
 
@@ -93,12 +87,9 @@ test('1', async t => {
         loginUserPayload: { email: email, password: password }
       });
       let createReq: ToBackendCreateGivenRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendCreateGiven,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           givenId: givenId,
           type: GivenTypeEnum.String,
@@ -107,29 +98,27 @@ test('1', async t => {
         }
       };
 
-      let createResp = await sendToBackend<ToBackendCreateGivenResponse>({
+      let createResp = await sendToBackend({
+        route: 'api/ToBackendCreateGiven',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: createReq
       });
 
-      assert.equal(createResp.info.error, undefined);
-      assert.equal(createResp.info.status, ResponseInfoStatusEnum.Ok);
+      assert.equal(createResp.result.type, 'Success');
 
       let req: ToBackendEditGivenRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendEditGiven,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           givenId: givenId,
           values: ['edited']
         }
       };
 
-      resp = await sendToBackend<ToBackendEditGivenResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendEditGiven',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -148,12 +137,20 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-    assert.equal(resp.payload.givens.length, 1);
-    assert.equal(resp.payload.givens[0].type, GivenTypeEnum.String);
-    assert.equal(resp.payload.givens[0].isMultiple, true);
-    assert.deepEqual(resp.payload.givens[0].values, ['edited']);
+    assert.equal(resp.result.type, 'Success');
+    assert.equal(unwrapToBackendResponse({ response: resp }).givens.length, 1);
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).givens[0].type,
+      GivenTypeEnum.String
+    );
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).givens[0].isMultiple,
+      true
+    );
+    assert.deepEqual(
+      unwrapToBackendResponse({ response: resp }).givens[0].values,
+      ['edited']
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

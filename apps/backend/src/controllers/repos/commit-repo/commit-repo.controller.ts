@@ -20,9 +20,9 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCommitRepoOutput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-response';
 import type { ToDiskCommitRepoOutput } from '#common/zod/disk/routes/repos/commit-repo/commit-repo-response';
-import type { ToBackendCommitRepoResponsePayload } from '#common/zod/to-backend/repos/to-backend-commit-repo';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)
@@ -39,7 +39,7 @@ export class CommitRepoController {
     private sessionArchiveService: SessionArchiveService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
+  @Post('api/ToBackendCommitRepo' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CommitRepo',
     description: 'Commit local changes in a repo branch'
@@ -51,7 +51,7 @@ export class CommitRepoController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCommitRepoRequestDto
   ) {
-    let { projectId, branchId, repoId, commitMessage } = body.payload;
+    let { projectId, branchId, repoId, commitMessage } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -95,7 +95,7 @@ export class CommitRepoController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'commitRepo',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -106,7 +106,7 @@ export class CommitRepoController {
         }
       });
 
-    let payload: ToBackendCommitRepoResponsePayload = {
+    let payload: ToBackendCommitRepoOutput = {
       repo: diskCommitRepoOutput.repo
     };
 

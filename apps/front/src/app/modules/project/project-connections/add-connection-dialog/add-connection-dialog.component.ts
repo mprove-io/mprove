@@ -22,25 +22,18 @@ import { map, take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { DatabricksAuthTypeEnum } from '#common/enums/databricks-auth-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
+import type { TestConnectionResult } from '#common/zod/backend/connections/test-connection-result';
 import type { EnvsItem } from '#common/zod/backend/envs-item';
-import type {
-  ToBackendCreateConnectionRequestPayload,
-  ToBackendCreateConnectionResponse
-} from '#common/zod/to-backend/connections/to-backend-create-connection';
-import type {
-  TestConnectionResult,
-  ToBackendTestConnectionRequestPayload,
-  ToBackendTestConnectionResponse
-} from '#common/zod/to-backend/connections/to-backend-test-connection';
-import type {
-  ToBackendGetEnvsListRequestPayload,
-  ToBackendGetEnvsListResponse
-} from '#common/zod/to-backend/envs/to-backend-get-envs-list';
+import type { ToBackendCreateConnectionInput } from '#common/zod/backend/routes/connections/create-connection/create-connection-request';
+import type { ToBackendCreateConnectionResponse } from '#common/zod/backend/routes/connections/create-connection/create-connection-response';
+import type { ToBackendTestConnectionInput } from '#common/zod/backend/routes/connections/test-connection/test-connection-request';
+import type { ToBackendTestConnectionResponse } from '#common/zod/backend/routes/connections/test-connection/test-connection-response';
+import type { ToBackendGetEnvsListInput } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-request';
+import type { ToBackendGetEnvsListResponse } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -443,7 +436,7 @@ export class AddConnectionDialogComponent implements OnInit {
   openEnvSelect() {
     this.envsListLoading = true;
 
-    let payload: ToBackendGetEnvsListRequestPayload = {
+    let payload: ToBackendGetEnvsListInput = {
       projectId: this.ref.data.projectId,
       isFilter: false
     };
@@ -452,11 +445,14 @@ export class AddConnectionDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        route: 'api/ToBackendGetEnvsList',
         payload: payload
       })
       .pipe(
-        map((resp: ToBackendGetEnvsListResponse) => resp.payload.envsList),
+        map(
+          (resp: ToBackendGetEnvsListResponse) =>
+            unwrapToBackendResponse({ response: resp }).envsList
+        ),
         tap(x => {
           this.envsList = x;
           this.envsListLoading = false;
@@ -913,7 +909,7 @@ export class AddConnectionDialogComponent implements OnInit {
       options.presto.internalPort = undefined;
     }
 
-    let payload: ToBackendTestConnectionRequestPayload = {
+    let payload: ToBackendTestConnectionInput = {
       projectId: this.ref.data.projectId,
       connectionId: this.addForm.value.connectionId,
       envId: this.addForm.value.envId,
@@ -926,14 +922,16 @@ export class AddConnectionDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendTestConnection,
+        route: 'api/ToBackendTestConnection',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.testConnectionResult = resp.payload.testConnectionResult;
+          if (resp.result?.type === 'Success') {
+            this.testConnectionResult = unwrapToBackendResponse({
+              response: resp
+            }).testConnectionResult;
             this.cd.detectChanges();
           }
         }),
@@ -951,7 +949,7 @@ export class AddConnectionDialogComponent implements OnInit {
       return;
     }
 
-    let payload: ToBackendTestConnectionRequestPayload = {
+    let payload: ToBackendTestConnectionInput = {
       projectId: this.ref.data.projectId,
       connectionId: this.addForm.value.connectionId,
       envId: this.addForm.value.envId,
@@ -964,14 +962,16 @@ export class AddConnectionDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendTestConnection,
+        route: 'api/ToBackendTestConnection',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.testInternalHostResult = resp.payload.testConnectionResult;
+          if (resp.result?.type === 'Success') {
+            this.testInternalHostResult = unwrapToBackendResponse({
+              response: resp
+            }).testConnectionResult;
             this.cd.detectChanges();
           }
         }),
@@ -989,7 +989,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateConnectionRequestPayload = {
+    let payload: ToBackendCreateConnectionInput = {
       projectId: this.ref.data.projectId,
       connectionId: this.addForm.value.connectionId,
       envId: this.addForm.value.envId,
@@ -1001,14 +1001,16 @@ export class AddConnectionDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
+        route: 'api/ToBackendCreateConnection',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendCreateConnectionResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let connection = resp.payload.connection;
+          if (resp.result?.type === 'Success') {
+            let connection = unwrapToBackendResponse({
+              response: resp
+            }).connection;
 
             let connections = this.connectionsQuery.getValue();
 

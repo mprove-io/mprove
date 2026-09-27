@@ -10,13 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendEditMemberRequest,
-  ToBackendEditMemberResponse
-} from '#common/zod/to-backend/members/to-backend-edit-member';
+import type { ToBackendEditMemberRequest } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
+import type { ToBackendEditMemberResponse } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
 
 let testId = 'backend-edit-member__roles-do-not-exist';
 
@@ -105,12 +101,9 @@ test('1', async t => {
       });
 
       let req: ToBackendEditMemberRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendEditMember,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           memberId: memberUserId,
           isAdmin: false,
@@ -120,7 +113,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendEditMemberResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendEditMember',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -139,9 +133,9 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Error);
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_ROLES_DO_NOT_EXIST);
-    assert.deepEqual(resp.info.error.displayData.roles, ['a', 'b', 'c']);
+    assert.equal(resp.result.type, 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_ROLES_DO_NOT_EXIST);
+    assert.deepEqual(resp.result.error.displayData.roles, ['a', 'b', 'c']);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

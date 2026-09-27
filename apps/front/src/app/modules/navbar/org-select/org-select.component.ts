@@ -14,9 +14,9 @@ import {
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
 import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { OrgsItem } from '#common/zod/backend/orgs-item';
-import type { ToBackendGetOrgsListResponse } from '#common/zod/to-backend/orgs/to-backend-get-orgs-list';
+import type { ToBackendGetOrgsListResponse } from '#common/zod/backend/routes/orgs/get-orgs-list/get-orgs-list-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
@@ -78,11 +78,14 @@ export class OrgSelectComponent {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetOrgsList,
+        route: 'api/ToBackendGetOrgsList',
         payload: {}
       })
       .pipe(
-        map((resp: ToBackendGetOrgsListResponse) => resp.payload.orgsList),
+        map(
+          (resp: ToBackendGetOrgsListResponse) =>
+            unwrapToBackendResponse({ response: resp }).orgsList
+        ),
         tap(x => {
           this.orgsList = x;
           this.orgsListLoading = false;

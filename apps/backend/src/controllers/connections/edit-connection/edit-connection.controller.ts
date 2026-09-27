@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendEditConnectionRequestDto,
   ToBackendEditConnectionResponseDto
 } from '#backend/controllers/connections/edit-connection/edit-connection.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -38,10 +34,12 @@ import {
   THROTTLE_CUSTOM
 } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendEditConnectionResponsePayload } from '#common/zod/to-backend/connections/to-backend-edit-connection';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendEditConnectionOutput } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-response';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)
@@ -59,7 +57,7 @@ export class EditConnectionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendEditConnection)
+  @Post('api/ToBackendEditConnection' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'EditConnection',
     description: 'Update options of an existing connection'
@@ -71,7 +69,7 @@ export class EditConnectionController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditConnectionRequestDto
   ) {
-    let { projectId, envId, connectionId, options } = body.payload;
+    let { projectId, envId, connectionId, options } = body.input;
 
     if (isDefined(options.storeApi)) {
       await this.urlService.checkApiUrl({
@@ -163,7 +161,7 @@ export class EditConnectionController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendEditConnectionResponsePayload = {
+    let payload: ToBackendEditConnectionOutput = {
       connection: this.connectionsService.tabToApiProjectConnection({
         connection: connection,
         isIncludePasswords: false

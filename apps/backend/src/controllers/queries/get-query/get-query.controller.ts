@@ -21,8 +21,8 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetQueryResponsePayload } from '#common/zod/to-backend/queries/to-backend-get-query';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetQueryOutput } from '#common/zod/backend/routes/queries/get-query/get-query-response';
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)
@@ -58,7 +58,7 @@ export class GetQueryController {
     private envsService: EnvsService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetQuery)
+  @Post('api/ToBackendGetQuery' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetQuery',
     description: 'Get a query'
@@ -70,8 +70,7 @@ export class GetQueryController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetQueryRequestDto
   ) {
-    let { queryId, mconfigId, projectId, repoId, branchId, envId } =
-      body.payload;
+    let { queryId, mconfigId, projectId, repoId, branchId, envId } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -134,7 +133,7 @@ export class GetQueryController {
       projectId: projectId
     });
 
-    let payload: ToBackendGetQueryResponsePayload = {
+    let payload: ToBackendGetQueryOutput = {
       query: this.queriesService.tabToApi({ query: query })
     };
 

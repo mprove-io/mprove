@@ -20,13 +20,11 @@ import {
   PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ProjectsItem } from '#common/zod/backend/projects-item';
-import type {
-  ToBackendGetProjectsListRequestPayload,
-  ToBackendGetProjectsListResponse
-} from '#common/zod/to-backend/projects/to-backend-get-projects-list';
+import type { ToBackendGetProjectsListInput } from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-request';
+import type { ToBackendGetProjectsListResponse } from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
@@ -104,18 +102,19 @@ export class ProjectSelectComponent {
   openProjectSelect() {
     this.projectsListLoading = true;
 
-    let payload: ToBackendGetProjectsListRequestPayload = {
+    let payload: ToBackendGetProjectsListInput = {
       orgId: this.selectedOrgId
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProjectsList,
+        route: 'api/ToBackendGetProjectsList',
         payload: payload
       })
       .pipe(
         map(
-          (resp: ToBackendGetProjectsListResponse) => resp.payload.projectsList
+          (resp: ToBackendGetProjectsListResponse) =>
+            unwrapToBackendResponse({ response: resp }).projectsList
         ),
         tap(x => {
           this.projectsList = x;

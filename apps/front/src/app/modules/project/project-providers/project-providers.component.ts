@@ -3,12 +3,11 @@ import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_PROVIDERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendToggleProviderRequestPayload } from '#common/zod/to-backend/providers/toggle-provider/toggle-provider-request-payload';
-import type { ToBackendToggleProviderResponse } from '#common/zod/to-backend/providers/toggle-provider/toggle-provider-response';
+import type { ToBackendToggleProviderInput } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
+import type { ToBackendToggleProviderResponse } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
@@ -139,7 +138,7 @@ export class ProjectProvidersComponent implements OnInit {
       return;
     }
 
-    let payload: ToBackendToggleProviderRequestPayload = {
+    let payload: ToBackendToggleProviderInput = {
       projectId: provider.projectId,
       providerId: provider.providerId,
       isEnabled: !provider.isEnabled
@@ -147,21 +146,22 @@ export class ProjectProvidersComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendToggleProvider,
+        route: 'api/ToBackendToggleProvider',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendToggleProviderResponse) => {
-          if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type !== 'Success') {
             return;
           }
 
           let providers = this.providersQuery
             .getValue()
             .providers.map(x =>
-              x.providerId === resp.payload.provider.providerId
-                ? resp.payload.provider
+              x.providerId ===
+              unwrapToBackendResponse({ response: resp }).provider.providerId
+                ? unwrapToBackendResponse({ response: resp }).provider
                 : x
             );
 

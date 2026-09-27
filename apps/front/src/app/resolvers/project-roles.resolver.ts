@@ -7,12 +7,8 @@ import {
 } from '@angular/router';
 import type { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendGetRolesRequestPayload,
-  ToBackendGetRolesResponse
-} from '#common/zod/to-backend/roles/to-backend-get-roles';
+import type { ToBackendGetRolesInput } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { GivensQuery } from '../queries/givens.query';
 import { MemberQuery } from '../queries/member.query';
@@ -58,25 +54,25 @@ export class ProjectRolesResolver implements Resolve<Observable<boolean>> {
       projectId = x;
     });
 
-    let getRolesPayload: ToBackendGetRolesRequestPayload = {
+    let getRolesPayload: ToBackendGetRolesInput = {
       projectId: projectId
     };
 
     return this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRoles,
+        route: 'api/ToBackendGetRoles',
         payload: getRolesPayload
       })
       .pipe(
         map((resp: ToBackendGetRolesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
 
-            let newSortedRoles = resp.payload.roles.sort((a, b) =>
+            let newSortedRoles = resp.result.value.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
 
-            let newSortedGivens = resp.payload.givens.sort((a, b) =>
+            let newSortedGivens = resp.result.value.givens.sort((a, b) =>
               a.givenId > b.givenId ? 1 : b.givenId > a.givenId ? -1 : 0
             );
 

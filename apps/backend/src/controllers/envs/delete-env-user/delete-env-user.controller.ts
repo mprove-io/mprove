@@ -16,8 +16,7 @@ import {
   ToBackendDeleteEnvUserResponseDto
 } from '#backend/controllers/envs/delete-env-user/delete-env-user.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -26,8 +25,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendDeleteEnvUserResponsePayload } from '#common/zod/to-backend/envs/to-backend-delete-env-user';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDeleteEnvUserOutput } from '#common/zod/backend/routes/envs/delete-env-user/delete-env-user-response';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -44,7 +43,7 @@ export class DeleteEnvUserController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser)
+  @Post('api/ToBackendDeleteEnvUser' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteEnvUser',
     description: 'Revoke a team member access to an environment'
@@ -56,7 +55,7 @@ export class DeleteEnvUserController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteEnvUserRequestDto
   ) {
-    let { projectId, envId, envUserId } = body.payload;
+    let { projectId, envId, envUserId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -92,7 +91,7 @@ export class DeleteEnvUserController {
       projectId: projectId
     });
 
-    let payload: ToBackendDeleteEnvUserResponsePayload = {
+    let payload: ToBackendDeleteEnvUserOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       envs: apiEnvs
     };

@@ -8,8 +8,8 @@ import { GetModelService } from '#backend/controllers/models/get-model/get-model
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetModelResponsePayload } from '#common/zod/to-backend/models/to-backend-get-model';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetModelOutput } from '#common/zod/backend/routes/models/get-model/get-model-response';
 
 @ApiTags('Models')
 @UseGuards(ThrottlerUserIdGuard)
@@ -17,7 +17,7 @@ import type { ToBackendGetModelResponsePayload } from '#common/zod/to-backend/mo
 export class GetModelController {
   constructor(private getModelService: GetModelService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetModel)
+  @Post('api/ToBackendGetModel' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetModel',
     description: 'Get a model'
@@ -29,19 +29,17 @@ export class GetModelController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetModelRequestDto
   ) {
-    let { projectId, repoId, branchId, modelId, envId, getMalloy } =
-      body.payload;
+    let { projectId, repoId, branchId, modelId, envId, getMalloy } = body.input;
 
-    let payload: ToBackendGetModelResponsePayload =
-      await this.getModelService.getModel({
-        userId: user.userId,
-        projectId: projectId,
-        repoId: repoId,
-        branchId: branchId,
-        envId: envId,
-        modelId: modelId,
-        getMalloy: getMalloy
-      });
+    let payload: ToBackendGetModelOutput = await this.getModelService.getModel({
+      userId: user.userId,
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId,
+      envId: envId,
+      modelId: modelId,
+      getMalloy: getMalloy
+    });
 
     return payload;
   }

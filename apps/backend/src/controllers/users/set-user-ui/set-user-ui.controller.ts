@@ -16,8 +16,7 @@ import {
   ToBackendSetUserUiResponseDto
 } from '#backend/controllers/users/set-user-ui/set-user-ui.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -25,8 +24,8 @@ import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendSetUserUiResponsePayload } from '#common/zod/to-backend/users/to-backend-set-user-ui';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSetUserUiOutput } from '#common/zod/backend/routes/users/set-user-ui/set-user-ui-response';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)
@@ -41,7 +40,7 @@ export class SetUserUiController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSetUserUi)
+  @Post('api/ToBackendSetUserUi' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SetUserUi',
     description: "Update the user's UI preferences"
@@ -53,7 +52,7 @@ export class SetUserUiController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetUserUiRequestDto
   ) {
-    let { ui } = body.payload;
+    let { ui } = body.input;
 
     if (user.alias !== RESTRICTED_USER_ALIAS) {
       user.ui = ui;
@@ -73,7 +72,7 @@ export class SetUserUiController {
       );
     }
 
-    let payload: ToBackendSetUserUiResponsePayload = {
+    let payload: ToBackendSetUserUiOutput = {
       user: this.usersService.tabToApi({ user: user })
     };
 

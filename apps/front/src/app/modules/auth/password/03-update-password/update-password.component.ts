@@ -7,12 +7,8 @@ import { take, tap } from 'rxjs/operators';
 import { SET_NEW_PASSWORD_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_NEW_PASSWORD_WAS_SET } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendUpdateUserPasswordRequestPayload,
-  ToBackendUpdateUserPasswordResponse
-} from '#common/zod/to-backend/users/to-backend-update-user-password';
+import type { ToBackendUpdateUserPasswordInput } from '#common/zod/backend/routes/users/update-user-password/update-user-password-request';
+import type { ToBackendUpdateUserPasswordResponse } from '#common/zod/backend/routes/users/update-user-password/update-user-password-response';
 import { ApiService } from '#front/app/services/api.service';
 import { AuthService } from '#front/app/services/auth.service';
 import { ValidationService } from '#front/app/services/validation.service';
@@ -71,19 +67,19 @@ export class UpdatePasswordComponent implements OnInit {
 
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendUpdateUserPasswordRequestPayload = {
+    let payload: ToBackendUpdateUserPasswordInput = {
       passwordResetToken: this.passwordResetToken,
       newPassword: this.setPasswordForm.value.newPassword
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
+        route: 'api/ToBackendUpdateUserPassword',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendUpdateUserPasswordResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.router.navigate([PATH_NEW_PASSWORD_WAS_SET]);
           }
         }),

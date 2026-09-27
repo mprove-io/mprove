@@ -20,18 +20,17 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { delay, take, tap } from 'rxjs/operators';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { Extend } from '#common/types/extend';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendCreateLlmModelRequestPayload } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-request-payload';
-import type { ToBackendCreateLlmModelResponse } from '#common/zod/to-backend/llm-models/create-llm-model/create-llm-model-response';
-import type { ToBackendGetLlmModelPartsRequestPayload } from '#common/zod/to-backend/llm-models/get-llm-model-parts/get-llm-model-parts-request-payload';
-import type { ToBackendGetLlmModelPartsResponse } from '#common/zod/to-backend/llm-models/get-llm-model-parts/get-llm-model-parts-response';
+import type { ToBackendCreateLlmModelInput } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-request';
+import type { ToBackendCreateLlmModelResponse } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-response';
+import type { ToBackendGetLlmModelPartsInput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
+import type { ToBackendGetLlmModelPartsResponse } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-response';
 import { getLlmModelVariantsError } from '#front/app/functions/get-llm-model-variants-error';
 import { LlmModelVariantsComponent } from '#front/app/modules/project/project-providers/llm-model-variants/llm-model-variants.component';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -335,7 +334,7 @@ export class AddLlmModelDialogComponent implements OnInit {
 
   loadModelParts() {
     let provider = this.ref.data.provider;
-    let payload: ToBackendGetLlmModelPartsRequestPayload = {
+    let payload: ToBackendGetLlmModelPartsInput = {
       projectId: provider.projectId,
       providerId: provider.providerId
     };
@@ -343,7 +342,7 @@ export class AddLlmModelDialogComponent implements OnInit {
     this.modelsLoading = true;
     this.ref.data.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetLlmModelParts,
+        route: 'api/ToBackendGetLlmModelParts',
         payload: payload
       })
       .pipe(
@@ -354,18 +353,19 @@ export class AddLlmModelDialogComponent implements OnInit {
           );
 
           let modelParts: SelectableLlmModelPart[] =
-            resp.info?.status === ResponseInfoStatusEnum.Ok
-              ? resp.payload.modelParts.map(modelPart => {
-                  let isAlreadySelected: boolean = configuredModelIds.includes(
-                    modelPart.modelId
-                  );
+            resp.result?.type === 'Success'
+              ? unwrapToBackendResponse({ response: resp }).modelParts.map(
+                  modelPart => {
+                    let isAlreadySelected: boolean =
+                      configuredModelIds.includes(modelPart.modelId);
 
-                  return {
-                    ...modelPart,
-                    disabled: isAlreadySelected,
-                    isAlreadySelected: isAlreadySelected
-                  };
-                })
+                    return {
+                      ...modelPart,
+                      disabled: isAlreadySelected,
+                      isAlreadySelected: isAlreadySelected
+                    };
+                  }
+                )
               : [];
 
           modelParts.sort((a, b) => {
@@ -383,8 +383,8 @@ export class AddLlmModelDialogComponent implements OnInit {
           this.modelParts = modelParts;
 
           this.modelsErrorMessage =
-            resp.info?.status === ResponseInfoStatusEnum.Ok
-              ? resp.payload.errorMessage
+            resp.result?.type === 'Success'
+              ? unwrapToBackendResponse({ response: resp }).errorMessage
               : undefined;
 
           this.modelsLoading = false;
@@ -447,7 +447,7 @@ export class AddLlmModelDialogComponent implements OnInit {
       return;
     }
 
-    let payload: ToBackendCreateLlmModelRequestPayload = {
+    let payload: ToBackendCreateLlmModelInput = {
       projectId: provider.projectId,
       providerId: provider.providerId,
       modelId: value.modelId.trim(),
@@ -466,18 +466,19 @@ export class AddLlmModelDialogComponent implements OnInit {
 
     this.ref.data.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateLlmModel,
+        route: 'api/ToBackendCreateLlmModel',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendCreateLlmModelResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let providers = this.providersQuery
               .getValue()
               .providers.map(x =>
-                x.providerId === resp.payload.provider.providerId
-                  ? resp.payload.provider
+                x.providerId ===
+                unwrapToBackendResponse({ response: resp }).provider.providerId
+                  ? unwrapToBackendResponse({ response: resp }).provider
                   : x
               );
 

@@ -7,12 +7,8 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendDeleteConnectionRequestPayload,
-  ToBackendDeleteConnectionResponse
-} from '#common/zod/to-backend/connections/to-backend-delete-connection';
+import type { ToBackendDeleteConnectionInput } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-request';
+import type { ToBackendDeleteConnectionResponse } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-response';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
 
@@ -52,7 +48,7 @@ export class DeleteConnectionDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteConnectionRequestPayload = {
+    let payload: ToBackendDeleteConnectionInput = {
       projectId: this.dataItem.projectId,
       envId: this.dataItem.envId,
       connectionId: this.dataItem.connectionId
@@ -62,13 +58,13 @@ export class DeleteConnectionDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
+        route: 'api/ToBackendDeleteConnection',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteConnectionResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let connectionsState = this.connectionsQuery.getValue();
             this.connectionsQuery.update({
               connections: connectionsState.connections.filter(

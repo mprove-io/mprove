@@ -18,11 +18,10 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDeleteLlmModelRequest } from '#common/zod/to-backend/llm-models/delete-llm-model/delete-llm-model-request';
-import type { ToBackendDeleteLlmModelResponse } from '#common/zod/to-backend/llm-models/delete-llm-model/delete-llm-model-response';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendDeleteLlmModelRequest } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
+import type { ToBackendDeleteLlmModelResponse } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
 
 let testId = 'backend-delete-llm-model__ok';
 
@@ -133,19 +132,17 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteLlmModelRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendDeleteLlmModel,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           providerId: providerId,
           modelId: 'model-1'
         }
       };
 
-      resp = await sendToBackend<ToBackendDeleteLlmModelResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendDeleteLlmModel',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -181,11 +178,11 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.result.type, 'Success');
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-
-    let { serverTs, ...providerWithoutServerTs } = resp.payload.provider;
+    let { serverTs, ...providerWithoutServerTs } = unwrapToBackendResponse({
+      response: resp
+    }).provider;
 
     assert.deepEqual(providerWithoutServerTs, {
       projectId: projectId,

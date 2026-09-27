@@ -18,13 +18,9 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendMergeRepoInput } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-request';
+import type { ToBackendMergeRepoResponse } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-response';
 import type { BranchItem } from '#common/zod/front/branch-item';
-import type {
-  ToBackendMergeRepoRequestPayload,
-  ToBackendMergeRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-merge-repo';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -108,7 +104,7 @@ export class MergeBranchDialogComponent implements OnInit {
     let isTheirBranchRemote =
       this.selectedBranchItem.repoType === RepoTypeEnum.Production;
 
-    let payload: ToBackendMergeRepoRequestPayload = {
+    let payload: ToBackendMergeRepoInput = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.currentBranchId,
@@ -122,17 +118,17 @@ export class MergeBranchDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
+        route: 'api/ToBackendMergeRepo',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendMergeRepoResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
+          if (resp.result?.type === 'Success') {
+            this.repoQuery.update(resp.result.value.repo);
+            this.structQuery.update(resp.result.value.struct);
             this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
+              needValidate: resp.result.value.needValidate
             });
 
             this.navigateService.navigateToBuilder();

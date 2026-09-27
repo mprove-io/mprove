@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendGetConnectionsListRequest,
-  zToBackendGetConnectionsListResponse
-} from '#common/zod/to-backend/connections/to-backend-get-connections-list';
+import { zToBackendGetConnectionsListRequest } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-request';
+import { zToBackendGetConnectionsListResponse } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-response';
 
 export class ToBackendGetConnectionsListRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetConnectionsListRequest })

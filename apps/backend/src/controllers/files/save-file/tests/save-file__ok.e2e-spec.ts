@@ -9,13 +9,9 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendSaveFileRequest,
-  ToBackendSaveFileResponse
-} from '#common/zod/to-backend/files/to-backend-save-file';
+import type { ToBackendSaveFileRequest } from '#common/zod/backend/routes/files/save-file/save-file-request';
+import type { ToBackendSaveFileResponse } from '#common/zod/backend/routes/files/save-file/save-file-response';
 
 let testId = 'backend-save-file__ok';
 
@@ -89,12 +85,9 @@ test('1', async t => {
       });
 
       let req: ToBackendSaveFileRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendSaveFile,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId,
           repoId: userId,
           branchId: branchId,
@@ -104,7 +97,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendSaveFileResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendSaveFile',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -123,8 +117,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

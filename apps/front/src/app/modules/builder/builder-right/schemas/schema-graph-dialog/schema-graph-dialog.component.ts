@@ -13,11 +13,9 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Edge, Node, Vflow, VflowComponent } from 'ngx-vflow';
 import { map, take } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CombinedSchemaItem } from '#common/zod/backend/connection-schemas/combined-schema';
-import type { ToBackendGetConnectionSampleResponse } from '#common/zod/to-backend/connections/to-backend-get-connection-sample';
+import type { ToBackendGetConnectionSampleResponse } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import {
@@ -663,7 +661,7 @@ export class SchemaGraphDialogComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionSample,
+        route: 'api/ToBackendGetConnectionSample',
         payload: {
           projectId: this.dataItem.projectId,
           envId: this.dataItem.envId,
@@ -677,13 +675,13 @@ export class SchemaGraphDialogComponent implements OnInit {
         map((resp: ToBackendGetConnectionSampleResponse) => {
           setTimeout(() => {
             if (
-              resp.info?.status === ResponseInfoStatusEnum.Ok &&
-              isDefined(resp.payload.errorMessage)
+              resp.result?.type === 'Success' &&
+              isDefined(resp.result.value.errorMessage)
             ) {
-              this.sampleErrorMessage = resp.payload.errorMessage;
-            } else if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              this.sampleColumnNames = resp.payload.columnNames;
-              this.sampleRows = resp.payload.rows;
+              this.sampleErrorMessage = resp.result.value.errorMessage;
+            } else if (resp.result?.type === 'Success') {
+              this.sampleColumnNames = resp.result.value.columnNames;
+              this.sampleRows = resp.result.value.rows;
               this.sampleErrorMessage = undefined;
             } else {
               this.sampleErrorMessage = 'Failed to fetch sample data';

@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendDeleteFolderRequestDto,
   ToBackendDeleteFolderResponseDto
 } from '#backend/controllers/folders/delete-folder/delete-folder.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -40,10 +36,12 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendDeleteFolderOutput } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-response';
 import type { ToDiskDeleteFolderOutput } from '#common/zod/disk/routes/folders/delete-folder/delete-folder-response';
-import type { ToBackendDeleteFolderResponsePayload } from '#common/zod/to-backend/folders/to-backend-delete-folder';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Folders')
 @UseGuards(ThrottlerUserIdGuard)
@@ -67,7 +65,7 @@ export class DeleteFolderController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteFolder)
+  @Post('api/ToBackendDeleteFolder' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'DeleteFolder',
     description: 'Delete a folder'
@@ -79,8 +77,8 @@ export class DeleteFolderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteFolderRequestDto
   ) {
-    let { traceId } = body.info;
-    let { projectId, repoId, branchId, envId, folderNodeId } = body.payload;
+    let { traceId } = body;
+    let { projectId, repoId, branchId, envId, folderNodeId } = body.input;
 
     await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -125,7 +123,7 @@ export class DeleteFolderController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'deleteFolder',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -196,7 +194,7 @@ export class DeleteFolderController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendDeleteFolderResponsePayload = {
+    let payload: ToBackendDeleteFolderOutput = {
       repo: diskDeleteFolderOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,

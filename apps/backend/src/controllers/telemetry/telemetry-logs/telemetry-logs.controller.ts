@@ -21,7 +21,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_TELEMETRY } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import type { ToBackendTelemetryRoute } from '#common/types/to-backend-telemetry-route';
 
 @ApiTags('Telemetry')
 @UseGuards(ThrottlerUserIdGuard)
@@ -33,7 +33,7 @@ export class TelemetryLogsController {
     private logger: Logger
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs)
+  @Post('api/ToBackendTelemetryLogs' satisfies ToBackendTelemetryRoute)
   @ApiOperation({
     summary: 'TelemetryLogs',
     description: 'Forward OTLP log payloads to the telemetry collector'

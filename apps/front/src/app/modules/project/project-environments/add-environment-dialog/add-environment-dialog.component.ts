@@ -15,12 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendCreateEnvRequestPayload,
-  ToBackendCreateEnvResponse
-} from '#common/zod/to-backend/envs/to-backend-create-env';
+import type { ToBackendCreateEnvInput } from '#common/zod/backend/routes/envs/create-env/create-env-request';
+import type { ToBackendCreateEnvResponse } from '#common/zod/backend/routes/envs/create-env/create-env-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -76,7 +72,7 @@ export class AddEnvironmentDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateEnvRequestPayload = {
+    let payload: ToBackendCreateEnvInput = {
       projectId: this.dataItem.projectId,
       envId: this.addEnvironmentForm.value.envId
     };
@@ -85,15 +81,17 @@ export class AddEnvironmentDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateEnv,
+        route: 'api/ToBackendCreateEnv',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendCreateEnvResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.environmentsQuery.update({ environments: resp.payload.envs });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.environmentsQuery.update({
+              environments: resp.result.value.envs
+            });
           }
         }),
         take(1)

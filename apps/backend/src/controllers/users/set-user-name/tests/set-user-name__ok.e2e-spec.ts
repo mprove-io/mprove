@@ -7,12 +7,10 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendSetUserNameRequest,
-  ToBackendSetUserNameResponse
-} from '#common/zod/to-backend/users/to-backend-set-user-name';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendSetUserNameRequest } from '#common/zod/backend/routes/users/set-user-name/set-user-name-request';
+import type { ToBackendSetUserNameResponse } from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
 
 let testId = 'backend-set-user-name__ok';
 
@@ -49,18 +47,16 @@ test('1', async t => {
       });
 
       let setUserNameReq: ToBackendSetUserNameRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendSetUserName,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           firstName: firstName,
           lastName: lastName
         }
       };
 
-      resp = await sendToBackend<ToBackendSetUserNameResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendSetUserName',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: setUserNameReq
@@ -79,9 +75,15 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.payload.user.firstName, firstName);
-    assert.equal(resp.payload.user.lastName, lastName);
+    assert.equal(resp.result.type, 'Success');
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).user.firstName,
+      firstName
+    );
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).user.lastName,
+      lastName
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

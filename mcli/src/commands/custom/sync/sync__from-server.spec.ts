@@ -7,25 +7,11 @@ import { MCLI_E2E_RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendRenameCatalogNodeRequestPayload,
-  ToBackendRenameCatalogNodeResponse
-} from '#common/zod/to-backend/catalogs/to-backend-rename-catalog-node';
-import type {
-  ToBackendCreateFileRequestPayload,
-  ToBackendCreateFileResponse
-} from '#common/zod/to-backend/files/to-backend-create-file';
-import type {
-  ToBackendSaveFileRequestPayload,
-  ToBackendSaveFileResponse
-} from '#common/zod/to-backend/files/to-backend-save-file';
-import type {
-  ToBackendCreateFolderRequestPayload,
-  ToBackendCreateFolderResponse
-} from '#common/zod/to-backend/folders/to-backend-create-folder';
-import type { ToBackendCloneTestRepoResponse } from '#common/zod/to-backend/test-routes/to-backend-clone-test-repo';
+import type { ToBackendRenameCatalogNodeInput } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-request';
+import type { ToBackendCreateFileInput } from '#common/zod/backend/routes/files/create-file/create-file-request';
+import type { ToBackendSaveFileInput } from '#common/zod/backend/routes/files/save-file/save-file-request';
+import type { ToBackendCreateFolderInput } from '#common/zod/backend/routes/folders/create-folder/create-folder-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token/get-test-login-token';
@@ -50,8 +36,8 @@ test('1', async () => {
     repoPath = `${config.mproveCliTestReposPath}/${testId}`;
     let orgId = `t${testId}`;
 
-    await mreq<ToBackendCloneTestRepoResponse>({
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCloneTestRepo,
+    await mreq({
+      route: 'api/ToBackendCloneTestRepo',
       payload: {
         testId: testId
       },
@@ -159,7 +145,7 @@ test('1', async () => {
         host: config.mproveCliHost
       });
 
-      let saveFileReqPayload: ToBackendSaveFileRequestPayload = {
+      let saveFileReqPayload: ToBackendSaveFileInput = {
         projectId: projectId,
         repoId: userId,
         branchId: BRANCH_MAIN,
@@ -168,14 +154,14 @@ test('1', async () => {
         content: 'server source content'
       };
 
-      await mreq<ToBackendSaveFileResponse>({
+      await mreq({
         apiKey: loginToken,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+        route: 'api/ToBackendSaveFile',
         payload: saveFileReqPayload,
         host: config.mproveCliHost
       });
 
-      let createFolderReqPayload: ToBackendCreateFolderRequestPayload = {
+      let createFolderReqPayload: ToBackendCreateFolderInput = {
         projectId: projectId,
         repoId: userId,
         branchId: BRANCH_MAIN,
@@ -184,14 +170,14 @@ test('1', async () => {
         folderName: 'server-folder'
       };
 
-      await mreq<ToBackendCreateFolderResponse>({
+      await mreq({
         apiKey: loginToken,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
+        route: 'api/ToBackendCreateFolder',
         payload: createFolderReqPayload,
         host: config.mproveCliHost
       });
 
-      let createFolderFileReqPayload: ToBackendCreateFileRequestPayload = {
+      let createFolderFileReqPayload: ToBackendCreateFileInput = {
         projectId: projectId,
         repoId: userId,
         branchId: BRANCH_MAIN,
@@ -201,14 +187,14 @@ test('1', async () => {
         modelInfo: undefined
       };
 
-      await mreq<ToBackendCreateFileResponse>({
+      await mreq({
         apiKey: loginToken,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+        route: 'api/ToBackendCreateFile',
         payload: createFolderFileReqPayload,
         host: config.mproveCliHost
       });
 
-      let saveFolderFileReqPayload: ToBackendSaveFileRequestPayload = {
+      let saveFolderFileReqPayload: ToBackendSaveFileInput = {
         projectId: projectId,
         repoId: userId,
         branchId: BRANCH_MAIN,
@@ -217,32 +203,31 @@ test('1', async () => {
         content: 'ab'
       };
 
-      await mreq<ToBackendSaveFileResponse>({
+      await mreq({
         apiKey: loginToken,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+        route: 'api/ToBackendSaveFile',
         payload: saveFolderFileReqPayload,
         host: config.mproveCliHost
       });
 
-      let createExistingFolderFileReqPayload: ToBackendCreateFileRequestPayload =
-        {
-          projectId: projectId,
-          repoId: userId,
-          branchId: BRANCH_MAIN,
-          envId: PROJECT_ENV_PROD,
-          parentNodeId: `${projectId}/f`,
-          fileName: 'server-added.md',
-          modelInfo: undefined
-        };
+      let createExistingFolderFileReqPayload: ToBackendCreateFileInput = {
+        projectId: projectId,
+        repoId: userId,
+        branchId: BRANCH_MAIN,
+        envId: PROJECT_ENV_PROD,
+        parentNodeId: `${projectId}/f`,
+        fileName: 'server-added.md',
+        modelInfo: undefined
+      };
 
-      await mreq<ToBackendCreateFileResponse>({
+      await mreq({
         apiKey: loginToken,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+        route: 'api/ToBackendCreateFile',
         payload: createExistingFolderFileReqPayload,
         host: config.mproveCliHost
       });
 
-      let saveExistingFolderFileReqPayload: ToBackendSaveFileRequestPayload = {
+      let saveExistingFolderFileReqPayload: ToBackendSaveFileInput = {
         projectId: projectId,
         repoId: userId,
         branchId: BRANCH_MAIN,
@@ -251,14 +236,14 @@ test('1', async () => {
         content: 'server nested added'
       };
 
-      await mreq<ToBackendSaveFileResponse>({
+      await mreq({
         apiKey: loginToken,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+        route: 'api/ToBackendSaveFile',
         payload: saveExistingFolderFileReqPayload,
         host: config.mproveCliHost
       });
 
-      let renameFolderReqPayload: ToBackendRenameCatalogNodeRequestPayload = {
+      let renameFolderReqPayload: ToBackendRenameCatalogNodeInput = {
         projectId: projectId,
         repoId: userId,
         branchId: BRANCH_MAIN,
@@ -267,9 +252,9 @@ test('1', async () => {
         newName: 'f-server-renamed'
       };
 
-      await mreq<ToBackendRenameCatalogNodeResponse>({
+      await mreq({
         apiKey: loginToken,
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
+        route: 'api/ToBackendRenameCatalogNode',
         payload: renameFolderReqPayload,
         host: config.mproveCliHost
       });

@@ -14,14 +14,10 @@ import {
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { Member } from '#common/zod/backend/member';
 import type { Role } from '#common/zod/backend/role';
-import type {
-  ToBackendEditMemberRequestPayload,
-  ToBackendEditMemberResponse
-} from '#common/zod/to-backend/members/to-backend-edit-member';
+import type { ToBackendEditMemberInput } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
+import type { ToBackendEditMemberResponse } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import { TeamQuery } from '#front/app/queries/team.query';
@@ -84,7 +80,7 @@ export class AddRoleDialogComponent implements OnInit {
 
     let member: Member = this.ref.data.member;
 
-    let payload: ToBackendEditMemberRequestPayload = {
+    let payload: ToBackendEditMemberInput = {
       projectId: member.projectId,
       memberId: member.memberId,
       isAdmin: member.isAdmin,
@@ -97,16 +93,16 @@ export class AddRoleDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        route: 'api/ToBackendEditMember',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditMemberResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let teamState = this.teamQuery.getValue();
 
-            teamState.members[this.ref.data.i] = resp.payload.member;
+            teamState.members[this.ref.data.i] = resp.result.value.member;
 
             this.teamQuery.update({
               members: [...teamState.members],

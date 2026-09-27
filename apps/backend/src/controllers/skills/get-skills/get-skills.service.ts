@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { SKILLS_DATA } from '#backend/mprove-docs-cache/skills';
-import type { ToBackendGetSkillsResponsePayload } from '#common/zod/to-backend/skills/to-backend-get-skills';
+import type { ToBackendGetSkillsOutput } from '#common/zod/backend/routes/skills/get-skills/get-skills-response';
 
 @Injectable()
 export class GetSkillsService {
-  async getSkills(): Promise<ToBackendGetSkillsResponsePayload> {
-    let payload: ToBackendGetSkillsResponsePayload = {
+  async getSkills(): Promise<ToBackendGetSkillsOutput> {
+    let payload: ToBackendGetSkillsOutput = {
       skillItems: SKILLS_DATA
     };
 

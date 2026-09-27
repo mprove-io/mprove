@@ -17,8 +17,7 @@ import {
   ToBackendEditMemberResponseDto
 } from '#backend/controllers/members/edit-member/edit-member.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import {
   AvatarEnt,
@@ -33,9 +32,9 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendEditMemberResponsePayload } from '#common/zod/to-backend/members/to-backend-edit-member';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendEditMemberOutput } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)
@@ -52,7 +51,7 @@ export class EditMemberController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendEditMember)
+  @Post('api/ToBackendEditMember' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'EditMember',
     description: "Update a member's roles"
@@ -65,7 +64,7 @@ export class EditMemberController {
     @Body() body: ToBackendEditMemberRequestDto
   ) {
     let { projectId, memberId, isAdmin, isEditor, isExplorer, roles } =
-      body.payload;
+      body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -130,7 +129,7 @@ export class EditMemberController {
       apiMember.avatarSmall = avatar.avatarSmall;
     }
 
-    let payload: ToBackendEditMemberResponsePayload = {
+    let payload: ToBackendEditMemberOutput = {
       member: apiMember
     };
 

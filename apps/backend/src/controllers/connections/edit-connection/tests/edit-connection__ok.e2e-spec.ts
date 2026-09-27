@@ -10,13 +10,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendEditConnectionRequest,
-  ToBackendEditConnectionResponse
-} from '#common/zod/to-backend/connections/to-backend-edit-connection';
+import type { ToBackendEditConnectionRequest } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-request';
+import type { ToBackendEditConnectionResponse } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-response';
 
 let testId = 'backend-edit-connection__ok';
 
@@ -99,12 +95,9 @@ test('1', async t => {
       });
 
       let req: ToBackendEditConnectionRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendEditConnection,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           connectionId: connectionId,
           envId: PROJECT_ENV_PROD,
           projectId: projectId,
@@ -112,7 +105,8 @@ test('1', async t => {
         }
       };
 
-      resp = await sendToBackend<ToBackendEditConnectionResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendEditConnection',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -131,8 +125,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
+    assert.equal(resp.result.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

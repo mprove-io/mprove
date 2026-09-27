@@ -17,8 +17,7 @@ import {
   ToBackendCreateEnvResponseDto
 } from '#backend/controllers/envs/create-env/create-env.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BridgeTab,
   UserTab
@@ -33,8 +32,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendCreateEnvResponsePayload } from '#common/zod/to-backend/envs/to-backend-create-env';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateEnvOutput } from '#common/zod/backend/routes/envs/create-env/create-env-response';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -52,7 +51,7 @@ export class CreateEnvController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateEnv)
+  @Post('api/ToBackendCreateEnv' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateEnv',
     description: 'Create a new environment for a project'
@@ -64,7 +63,7 @@ export class CreateEnvController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateEnvRequestDto
   ) {
-    let { projectId, envId } = body.payload;
+    let { projectId, envId } = body.input;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -124,7 +123,7 @@ export class CreateEnvController {
       projectId: projectId
     });
 
-    let payload: ToBackendCreateEnvResponsePayload = {
+    let payload: ToBackendCreateEnvOutput = {
       userMember: this.membersService.tabToApi({ member: userMember }),
       envs: apiEnvs
     };

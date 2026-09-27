@@ -12,17 +12,13 @@ import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-
-const { forEachSeries } = pIteration;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import {
   ToBackendCreateFolderRequestDto,
   ToBackendCreateFolderResponseDto
 } from '#backend/controllers/folders/create-folder/create-folder.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -40,10 +36,12 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateFolderOutput } from '#common/zod/backend/routes/folders/create-folder/create-folder-response';
 import type { ToDiskCreateFolderOutput } from '#common/zod/disk/routes/folders/create-folder/create-folder-response';
-import type { ToBackendCreateFolderResponsePayload } from '#common/zod/to-backend/folders/to-backend-create-folder';
+
+const { forEachSeries } = pIteration;
 
 @ApiTags('Folders')
 @UseGuards(ThrottlerUserIdGuard)
@@ -67,7 +65,7 @@ export class CreateFolderController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateFolder)
+  @Post('api/ToBackendCreateFolder' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateFolder',
     description: 'Create a new folder'
@@ -79,9 +77,9 @@ export class CreateFolderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateFolderRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let { projectId, repoId, branchId, parentNodeId, folderName, envId } =
-      body.payload;
+      body.input;
 
     await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -126,7 +124,7 @@ export class CreateFolderController {
       await this.rpcService.sendToDiskUnwrapOutput({
         request: {
           operation: 'createFolder',
-          traceId: body.info.traceId,
+          traceId: body.traceId,
           input: {
             baseProject: baseProject,
             repoId: repoId,
@@ -198,7 +196,7 @@ export class CreateFolderController {
       apiUserMember: apiUserMember
     });
 
-    let payload: ToBackendCreateFolderResponsePayload = {
+    let payload: ToBackendCreateFolderOutput = {
       repo: diskCreateFolderOutput.repo,
       struct: this.structsService.tabToApi({
         struct: struct,

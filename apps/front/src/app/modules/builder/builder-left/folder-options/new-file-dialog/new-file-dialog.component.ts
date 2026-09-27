@@ -17,17 +17,11 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
-import type {
-  ToBackendCreateFileRequestPayload,
-  ToBackendCreateFileResponse
-} from '#common/zod/to-backend/files/to-backend-create-file';
-import type {
-  ToBackendCreateFolderRequestPayload,
-  ToBackendCreateFolderResponse
-} from '#common/zod/to-backend/folders/to-backend-create-folder';
+import type { ToBackendCreateFileInput } from '#common/zod/backend/routes/files/create-file/create-file-request';
+import type { ToBackendCreateFileResponse } from '#common/zod/backend/routes/files/create-file/create-file-response';
+import type { ToBackendCreateFolderInput } from '#common/zod/backend/routes/folders/create-folder/create-folder-request';
+import type { ToBackendCreateFolderResponse } from '#common/zod/backend/routes/folders/create-folder/create-folder-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -118,7 +112,7 @@ export class NewFileDialogComponent implements OnInit {
     let parentNodeId = struct.projectId;
 
     if (this.isFolder === true) {
-      let payload: ToBackendCreateFolderRequestPayload = {
+      let payload: ToBackendCreateFolderInput = {
         projectId: this.ref.data.projectId,
         repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
@@ -129,17 +123,17 @@ export class NewFileDialogComponent implements OnInit {
 
       apiService
         .req({
-          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
+          route: 'api/ToBackendCreateFolder',
           payload: payload,
           showSpinner: true
         })
         .pipe(
           tap((resp: ToBackendCreateFolderResponse) => {
-            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              this.repoQuery.update(resp.payload.repo);
-              this.structQuery.update(resp.payload.struct);
+            if (resp.result?.type === 'Success') {
+              this.repoQuery.update(resp.result.value.repo);
+              this.structQuery.update(resp.result.value.struct);
               this.navQuery.updatePart({
-                needValidate: resp.payload.needValidate
+                needValidate: resp.result.value.needValidate
               });
             }
           }),
@@ -147,7 +141,7 @@ export class NewFileDialogComponent implements OnInit {
         )
         .subscribe();
     } else {
-      let payload: ToBackendCreateFileRequestPayload = {
+      let payload: ToBackendCreateFileInput = {
         projectId: this.ref.data.projectId,
         repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
@@ -158,17 +152,17 @@ export class NewFileDialogComponent implements OnInit {
 
       apiService
         .req({
-          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+          route: 'api/ToBackendCreateFile',
           payload: payload,
           showSpinner: true
         })
         .pipe(
           tap((resp: ToBackendCreateFileResponse) => {
-            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              this.repoQuery.update(resp.payload.repo);
-              this.structQuery.update(resp.payload.struct);
+            if (resp.result?.type === 'Success') {
+              this.repoQuery.update(resp.result.value.repo);
+              this.structQuery.update(resp.result.value.struct);
               this.navQuery.updatePart({
-                needValidate: resp.payload.needValidate
+                needValidate: resp.result.value.needValidate
               });
 
               let fId = parentNodeId + '/' + name;

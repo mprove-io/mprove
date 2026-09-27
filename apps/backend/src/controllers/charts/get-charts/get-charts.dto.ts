@@ -1,9 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import {
-  zToBackendGetChartsRequest,
-  zToBackendGetChartsResponse
-} from '#common/zod/to-backend/charts/to-backend-get-charts';
+import { zToBackendGetChartsRequest } from '#common/zod/backend/routes/charts/get-charts/get-charts-request';
+import { zToBackendGetChartsResponse } from '#common/zod/backend/routes/charts/get-charts/get-charts-response';
 
 export class ToBackendGetChartsRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetChartsRequest })

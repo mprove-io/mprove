@@ -17,8 +17,7 @@ import {
   ToBackendCreateDraftDashboardResponseDto
 } from '#backend/controllers/dashboards/create-draft-dashboard/create-draft-dashboard.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
@@ -50,13 +49,13 @@ import {
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendCreateDraftDashboardOutput } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-response';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
-import type { ToBackendCreateDraftDashboardResponsePayload } from '#common/zod/to-backend/dashboards/to-backend-create-draft-dashboard';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)
@@ -84,7 +83,7 @@ export class CreateDraftDashboardController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard)
+  @Post('api/ToBackendCreateDraftDashboard' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'CreateDraftDashboard',
     description: 'Create a draft dashboard from an existing dashboard'
@@ -96,7 +95,7 @@ export class CreateDraftDashboardController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateDraftDashboardRequestDto
   ) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -109,7 +108,7 @@ export class CreateDraftDashboardController {
       timezone,
       isQueryCache,
       cachedQueryMconfigIds
-    } = body.payload;
+    } = body.input;
 
     let repoType = await this.sessionsService.checkRepoId({
       repoId: repoId,
@@ -379,7 +378,7 @@ export class CreateDraftDashboardController {
       spaces: currentStruct.spaces
     });
 
-    let payload: ToBackendCreateDraftDashboardResponsePayload = {
+    let payload: ToBackendCreateDraftDashboardOutput = {
       dashboard: newDashboardX,
       dashboardUnitDrafts: dashboardsCatalog.dashboardUnitDrafts
     };

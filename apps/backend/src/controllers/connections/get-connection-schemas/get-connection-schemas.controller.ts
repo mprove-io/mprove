@@ -10,8 +10,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendGetConnectionSchemasResponsePayload } from '#common/zod/to-backend/connections/to-backend-get-connection-schemas';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendGetConnectionSchemasOutput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-response';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)
@@ -22,7 +22,7 @@ export class GetConnectionSchemasController {
     private getConnectionSchemasService: GetConnectionSchemasService
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGetConnectionSchemas)
+  @Post('api/ToBackendGetConnectionSchemas' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'GetConnectionSchemas',
     description: 'Get database schemas available through a SQL connection'
@@ -35,9 +35,9 @@ export class GetConnectionSchemasController {
     @Body() body: ToBackendGetConnectionSchemasRequestDto
   ) {
     let { projectId, envId, repoId, branchId, isRefreshExistingCache } =
-      body.payload;
+      body.input;
 
-    let payload: ToBackendGetConnectionSchemasResponsePayload =
+    let payload: ToBackendGetConnectionSchemasOutput =
       await this.getConnectionSchemasService.getConnectionSchemas({
         userId: user.userId,
         projectId: projectId,

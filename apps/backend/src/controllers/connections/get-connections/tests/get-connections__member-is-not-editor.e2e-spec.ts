@@ -11,12 +11,9 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetConnectionsRequest,
-  ToBackendGetConnectionsResponse
-} from '#common/zod/to-backend/connections/to-backend-get-connections';
+import type { ToBackendGetConnectionsRequest } from '#common/zod/backend/routes/connections/get-connections/get-connections-request';
+import type { ToBackendGetConnectionsResponse } from '#common/zod/backend/routes/connections/get-connections/get-connections-response';
 
 let testId = 'backend-get-connections__member-is-not-editor';
 
@@ -97,17 +94,15 @@ test('1', async t => {
       });
 
       let req: ToBackendGetConnectionsRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetConnections,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId
         }
       };
 
-      resp = await sendToBackend<ToBackendGetConnectionsResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetConnections',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -126,8 +121,9 @@ test('1', async t => {
       }
     }
 
+    assert.ok(resp.result.type === 'Failure');
     assert.equal(
-      resp.info.error.message,
+      resp.result.error.message,
       ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
     );
 

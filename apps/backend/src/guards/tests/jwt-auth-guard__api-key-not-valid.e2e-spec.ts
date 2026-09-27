@@ -9,17 +9,11 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendGetRepoRequest,
-  ToBackendGetRepoResponse
-} from '#common/zod/to-backend/repos/to-backend-get-repo';
-import type {
-  ToBackendGenerateUserApiKeyRequest,
-  ToBackendGenerateUserApiKeyResponse
-} from '#common/zod/to-backend/users/to-backend-generate-user-api-key';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGetRepoRequest } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
+import type { ToBackendGetRepoResponse } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 
 let testId = 'backend-jwt-auth-guard__api-key-not-valid';
 
@@ -54,29 +48,23 @@ test('1', async t => {
       });
 
       let generateReq: ToBackendGenerateUserApiKeyRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {}
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {}
       };
 
-      let generateResp =
-        await sendToBackend<ToBackendGenerateUserApiKeyResponse>({
-          httpServer: prep.httpServer,
-          loginToken: prep.loginToken,
-          req: generateReq,
-          checkIsOk: true
-        });
+      let generateResp = await sendToBackend({
+        route: 'api/ToBackendGenerateUserApiKey',
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: generateReq,
+        checkIsOk: true
+      });
 
       let req: ToBackendGetRepoRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: 'unk',
           repoId: 'unk',
           branchId: BRANCH_MAIN,
@@ -85,11 +73,14 @@ test('1', async t => {
         }
       };
 
-      let parts = generateResp.payload.apiKey.split('-');
+      let parts = unwrapToBackendResponse({
+        response: generateResp
+      }).apiKey.split('-');
       parts[parts.length - 1] = 'wrongsecret1234567890abcdef1234567890abcdef';
       let wrongApiKey = parts.join('-');
 
-      resp = await sendToBackend<ToBackendGetRepoResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetRepo',
         httpServer: prep.httpServer,
         apiKey: wrongApiKey,
         req: req
@@ -108,8 +99,9 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Error);
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_API_KEY_NOT_VALID);
+    assert.equal(resp.result.type, 'Failure');
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_API_KEY_NOT_VALID);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

@@ -18,8 +18,7 @@ import {
   ToBackendSendMessageToExplorerSessionResponseDto
 } from '#backend/controllers/sessions/send-message-to-explorer-session/send-message-to-explorer-session.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   OcMessageTab,
   UserTab
@@ -42,10 +41,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold/get-explorer-context-block-threshold';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendSendMessageToExplorerSessionResponsePayload } from '#common/zod/to-backend/sessions/to-backend-send-message-to-explorer-session';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSendMessageToExplorerSessionOutput } from '#common/zod/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-response';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)
@@ -64,7 +63,7 @@ export class SendMessageToExplorerSessionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSendMessageToExplorerSession)
+  @Post('api/ToBackendSendMessageToExplorerSession' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SendMessageToExplorerSession',
     description: 'Send a message or interaction to an explorer session'
@@ -85,7 +84,7 @@ export class SendMessageToExplorerSessionController {
       variant,
       messageId,
       partId
-    } = body.payload;
+    } = body.input;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId
@@ -279,7 +278,7 @@ export class SendMessageToExplorerSessionController {
       ocSession: ocSession
     });
 
-    let payload: ToBackendSendMessageToExplorerSessionResponsePayload = {
+    let payload: ToBackendSendMessageToExplorerSessionOutput = {
       session: sessionApi
     };
 

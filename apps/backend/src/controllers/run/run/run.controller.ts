@@ -10,8 +10,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type { ToBackendRunResponsePayload } from '#common/zod/to-backend/run/to-backend-run';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-response';
 
 @ApiTags('Run')
 @UseGuards(ThrottlerUserIdGuard)
@@ -20,7 +20,7 @@ import type { ToBackendRunResponsePayload } from '#common/zod/to-backend/run/to-
 export class RunController {
   constructor(private runService: RunService) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendRun)
+  @Post('api/ToBackendRun' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'Run',
     description: 'Run dashboards, charts, and reports in batch'
@@ -29,7 +29,7 @@ export class RunController {
     type: ToBackendRunResponseDto
   })
   async run(@AttachUser() user: UserTab, @Body() body: ToBackendRunRequestDto) {
-    let { traceId } = body.info;
+    let { traceId } = body;
     let {
       projectId,
       repoId,
@@ -47,9 +47,9 @@ export class RunController {
       reportIds,
       noReports,
       getReports
-    } = body.payload;
+    } = body.input;
 
-    let payload: ToBackendRunResponsePayload = await this.runService.run({
+    let payload: ToBackendRunOutput = await this.runService.run({
       traceId: traceId,
       user: user,
       projectId: projectId,

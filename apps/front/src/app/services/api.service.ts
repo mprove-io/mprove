@@ -1,7 +1,8 @@
 import {
   HttpClient,
   HttpErrorResponse,
-  HttpHeaders
+  HttpHeaders,
+  type HttpResponse
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
@@ -27,16 +28,17 @@ import {
 } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendInputForRoute } from '#common/types/to-backend-input-for-route';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRequest } from '#common/zod/backend/request/to-backend-request';
+import type { ToBackendResponse } from '#common/zod/backend/response/to-backend-response';
+import type { ToBackendResponseForRoute } from '#common/zod/backend/response/to-backend-response-for-route';
+import type { ToBackendGetReportsInput } from '#common/zod/backend/routes/reports/get-reports/get-reports-request';
+import type { ToBackendGetReportsResponse } from '#common/zod/backend/routes/reports/get-reports/get-reports-response';
 import type { ErrorData } from '#common/zod/front/error-data';
-import type {
-  ToBackendGetReportsRequestPayload,
-  ToBackendGetReportsResponse
-} from '#common/zod/to-backend/reports/to-backend-get-reports';
-import type { ToBackendRequest } from '#common/zod/to-backend/to-backend-request';
 import { environment } from '#front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';
@@ -67,51 +69,51 @@ export class ApiService {
     private memberQuery: MemberQuery
   ) {}
 
-  req(item: {
-    pathInfoName: ToBackendRequestInfoNameEnum;
-    payload: any;
+  req<TRoute extends ToBackendRoute>(item: {
+    route: TRoute;
+    payload: ToBackendInputForRoute<NoInfer<TRoute>>;
     showSpinner?: boolean;
-  }): Observable<any> {
-    let { pathInfoName, payload, showSpinner } = item;
+  }): Observable<ToBackendResponseForRoute<TRoute>> {
+    let { route, payload, showSpinner } = item;
 
-    let bypassAuth = [ToBackendRequestInfoNameEnum.ToBackendLoginUser];
+    let bypassAuth: string[] = ['api/ToBackendLoginUser'];
 
     let headers: HttpHeaders = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization:
-        bypassAuth.indexOf(pathInfoName) < 0
+        bypassAuth.indexOf(route) < 0
           ? `Bearer ${localStorage.getItem(LOCAL_STORAGE_TOKEN)}`
           : ''
     });
 
-    let url = environment.httpUrl + '/' + pathInfoName;
+    let url: string = environment.httpUrl + '/' + route;
 
     let body: ToBackendRequest = {
-      info: {
-        traceId: makeId(),
-        name: pathInfoName,
-        idempotencyKey: makeId()
-      },
-      payload: payload
-    };
-
-    let options = {
-      headers: headers,
-      body: body, // https://github.com/angular/angular/issues/10612
-      observe: <any>'response'
+      traceId: makeId(),
+      idempotencyKey: makeId(),
+      input: payload
     };
 
     if (showSpinner === true) {
       this.spinner.show(APP_SPINNER_NAME);
     }
 
-    return combineLatest([
-      timer(showSpinner === true ? MIN_TIME_TO_SPIN : 0),
-      this.authHttpClient.request('post', url, options)
-    ]).pipe(
+    let response: Observable<ToBackendResponseForRoute<TRoute>> = combineLatest(
+      [
+        timer(showSpinner === true ? MIN_TIME_TO_SPIN : 0),
+        this.authHttpClient.request<ToBackendResponseForRoute<TRoute>>(
+          'post',
+          url,
+          {
+            headers: headers,
+            body: body,
+            observe: 'response'
+          }
+        )
+      ]
+    ).pipe(
       map(x =>
         this.mapRes({
-          pathInfoName: pathInfoName,
           res: x[1],
           req: {
             url: url,
@@ -127,18 +129,21 @@ export class ApiService {
         }
       })
     );
+
+    return response;
   }
 
-  private mapRes(item: {
-    pathInfoName: ToBackendRequestInfoNameEnum;
-    res: any;
+  private mapRes<TResponse extends ToBackendResponse>(item: {
+    res: HttpResponse<TResponse>;
     req: {
       url: string;
-      headers: any;
-      body: any;
+      headers: HttpHeaders;
+      body: ToBackendRequest;
     };
-  }) {
-    let { res, req, pathInfoName } = item;
+  }): TResponse {
+    let { res, req } = item;
+
+    let requestInput: unknown = req.body.input;
 
     let nav = this.navQuery.getValue();
 
@@ -146,23 +151,29 @@ export class ApiService {
 
     let errorData: ErrorData = {
       reqUrl: req.url,
-      reqBody: isDefined(req.body?.payload?.password)
-        ? Object.assign({}, req.body, {
-            payload: Object.assign({}, req.body.payload, {
-              password: undefined
+      reqBody:
+        typeof requestInput === 'object' &&
+        requestInput !== null &&
+        'password' in requestInput
+          ? Object.assign({}, req.body, {
+              input: Object.assign({}, requestInput, {
+                password: undefined
+              })
             })
-          })
-        : req.body,
+          : req.body,
       response: Object.assign({}, res, { headers: undefined }),
       message:
         res.status !== 201
           ? ErEnum.FRONT_RESPONSE_CODE_IS_NOT_201
-          : res.body?.info?.status !== ResponseInfoStatusEnum.Ok
+          : res.body?.result?.type !== 'Success'
             ? ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK
             : undefined
     };
 
-    let infoErrorMessage = res?.body?.info?.error?.message;
+    let infoErrorMessage: string =
+      res.body?.result?.type === 'Failure'
+        ? res.body.result.error.message
+        : undefined;
 
     if (
       isDefined(errorData.message) &&
@@ -173,18 +184,18 @@ export class ApiService {
           ErEnum.BACKEND_UNAUTHORIZED,
           ErEnum.BACKEND_NOT_AUTHORIZED,
           ErEnum.BACKEND_USER_DOES_NOT_EXIST
-        ].indexOf(infoErrorMessage) > -1
+        ].some(message => message === infoErrorMessage)
       ) {
         this.authService.logout();
       }
 
       if (
         infoErrorMessage === ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK &&
-        errorData.response.body.info.error.originalError?.message ===
+        errorData.response.body.result.error.originalError?.message ===
           'DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH'
       ) {
         let errorCurrentBranch =
-          errorData.response.body?.info?.error?.originalError?.displayData
+          errorData.response.body?.result?.error?.originalError?.displayData
             ?.currentBranch;
 
         if (isDefined(errorCurrentBranch)) {
@@ -231,9 +242,7 @@ export class ApiService {
             });
           }, 0);
         }
-      } else if (
-        [ErEnum.BACKEND_FORBIDDEN_DASHBOARD].indexOf(infoErrorMessage) > -1
-      ) {
+      } else if (infoErrorMessage === ErEnum.BACKEND_FORBIDDEN_DASHBOARD) {
         errorData.description = `Check dashboard access rules`;
         errorData.leftButtonText = 'Go to dashboards';
         errorData.leftOnClickFnBindThis = (() => {
@@ -245,9 +254,7 @@ export class ApiService {
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (
-        [ErEnum.BACKEND_FORBIDDEN_REPORT].indexOf(infoErrorMessage) > -1
-      ) {
+      } else if (infoErrorMessage === ErEnum.BACKEND_FORBIDDEN_REPORT) {
         errorData.description = `Check report access rules`;
         errorData.leftButtonText = 'Go to reports';
         errorData.leftOnClickFnBindThis = (() => {
@@ -259,9 +266,7 @@ export class ApiService {
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (
-        [ErEnum.BACKEND_FORBIDDEN_MODEL].indexOf(infoErrorMessage) > -1
-      ) {
+      } else if (infoErrorMessage === ErEnum.BACKEND_FORBIDDEN_MODEL) {
         errorData.description = `Check model access rules`;
         errorData.leftButtonText = 'Go to charts';
         errorData.leftOnClickFnBindThis = (() => {
@@ -273,9 +278,7 @@ export class ApiService {
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (
-        [ErEnum.BACKEND_FORBIDDEN_REPO_ID].indexOf(infoErrorMessage) > -1
-      ) {
+      } else if (infoErrorMessage === ErEnum.BACKEND_FORBIDDEN_REPO_ID) {
         errorData.message = 'Session is not found';
         errorData.leftButtonText = 'Ok';
         errorData.leftOnClickFnBindThis = (() => {
@@ -304,7 +307,7 @@ export class ApiService {
         [
           ErEnum.BACKEND_REPORT_DOES_NOT_EXIST,
           ErEnum.BACKEND_REPORT_NOT_FOUND
-        ].indexOf(infoErrorMessage) > -1
+        ].some(message => message === infoErrorMessage)
       ) {
         let uiState = this.uiQuery.getValue();
 
@@ -317,27 +320,21 @@ export class ApiService {
           .then(() => {
             this.navigateService.navigateToReports();
           });
-      } else if (
-        [ErEnum.BACKEND_MODEL_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
-      ) {
+      } else if (infoErrorMessage === ErEnum.BACKEND_MODEL_DOES_NOT_EXIST) {
         // console.log(infoErrorMessage);
         this.router
           .navigateByUrl(orgProjectPath, { skipLocationChange: true })
           .then(() => {
             this.navigateService.navigateToModels();
           });
-      } else if (
-        [ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
-      ) {
+      } else if (infoErrorMessage === ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST) {
         // console.log(infoErrorMessage);
         this.router
           .navigateByUrl(orgProjectPath, { skipLocationChange: true })
           .then(() => {
             this.navigateService.navigateToDashboards();
           });
-      } else if (
-        [ErEnum.BACKEND_CHART_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
-      ) {
+      } else if (infoErrorMessage === ErEnum.BACKEND_CHART_DOES_NOT_EXIST) {
         // console.log(infoErrorMessage);
         this.router
           .navigateByUrl(orgProjectPath, { skipLocationChange: true })
@@ -350,7 +347,7 @@ export class ApiService {
           ErEnum.BACKEND_QUERY_DOES_NOT_EXIST,
           ErEnum.BACKEND_STRUCT_ID_CHANGED,
           ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
-        ].indexOf(infoErrorMessage) > -1
+        ].some(message => message === infoErrorMessage)
       ) {
         errorData.description = `Reload to get changes`;
         errorData.leftButtonText = 'Reload';
@@ -387,7 +384,7 @@ export class ApiService {
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (infoErrorMessage === ErEnum.BACKEND_ROLES_DO_NOT_EXIST) {
         let missingRoles =
-          errorData.response.body.info.error.displayData?.roles;
+          errorData.response.body.result.error.displayData?.roles;
 
         let missingRolesText = Array.isArray(missingRoles)
           ? missingRoles.join(', ')
@@ -407,7 +404,7 @@ export class ApiService {
           ErEnum.BACKEND_MODIFY_CHART_FAIL,
           ErEnum.BACKEND_CREATE_REPORT_FAIL,
           ErEnum.BACKEND_MODIFY_REPORT_FAIL
-        ].indexOf(infoErrorMessage) > -1
+        ].some(message => message === infoErrorMessage)
       ) {
         errorData.description = `The changes were saved to the file, but it failed the validation. It's probably a bug.`;
         errorData.leftButtonText = 'Go to File';
@@ -416,7 +413,7 @@ export class ApiService {
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
               let encodedFileId =
-                errorData?.response?.body?.info?.error?.displayData
+                errorData?.response?.body?.result?.error?.displayData
                   ?.encodedFileId;
 
               if (isDefined(encodedFileId)) {
@@ -437,17 +434,21 @@ export class ApiService {
         this.myDialogService.showError({ errorData, isThrow: false });
       }
 
-      return { errorData: errorData };
+      let response: TResponse = res.body;
+
+      return response;
     } else if (
       isDefined(errorData.message) &&
       errorData.message !== ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK
     ) {
       this.myDialogService.showError({ errorData, isThrow: true });
 
-      return { errorData: errorData };
+      throw new Error(SPECIAL_ERROR);
     }
 
-    return res.body;
+    let response: TResponse = res.body;
+
+    return response;
   }
 
   private navigateToLastModelChart(nav: NavState) {
@@ -501,7 +502,7 @@ export class ApiService {
         nav = x;
       });
 
-    let payload: ToBackendGetReportsRequestPayload = {
+    let payload: ToBackendGetReportsInput = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -509,33 +510,42 @@ export class ApiService {
     };
 
     return this.req({
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetReports,
+      route: 'api/ToBackendGetReports',
       payload: payload,
       showSpinner: showSpinner
     }).pipe(
       map((resp: ToBackendGetReportsResponse) => {
-        if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-          this.memberQuery.update(resp.payload.userMember);
+        if (resp.result?.type === 'Success') {
+          this.memberQuery.update(
+            unwrapToBackendResponse({ response: resp }).userMember
+          );
 
-          this.structQuery.update(resp.payload.struct);
+          this.structQuery.update(
+            unwrapToBackendResponse({ response: resp }).struct
+          );
 
           this.navQuery.updatePart({
-            needValidate: resp.payload.needValidate
+            needValidate: unwrapToBackendResponse({ response: resp })
+              .needValidate
           });
 
           this.reportsQuery.update({
-            reportUnitDrafts: resp.payload.reportUnitDrafts,
-            reportSpaceNodes: resp.payload.reportSpaceNodes
+            reportUnitDrafts: unwrapToBackendResponse({ response: resp })
+              .reportUnitDrafts,
+            reportSpaceNodes: unwrapToBackendResponse({ response: resp })
+              .reportSpaceNodes
           });
 
-          this.modelsQuery.update({ models: resp.payload.storeModels });
+          this.modelsQuery.update({
+            models: unwrapToBackendResponse({ response: resp }).storeModels
+          });
 
           this.uiQuery.updatePart({ metricsLoadedTs: Date.now() });
 
           return true;
         } else if (
-          resp.info?.status === ResponseInfoStatusEnum.Error &&
-          resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+          resp.result?.type === 'Failure' &&
+          resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
         ) {
           this.router.navigate([
             PATH_ORG,

@@ -3,19 +3,13 @@ import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_TEAM_PAGE_TITLE } from '#common/constants/page-titles';
 import { MEMBERS_PER_PAGE } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { Member } from '#common/zod/backend/member';
 import type { Role } from '#common/zod/backend/role';
+import type { ToBackendEditMemberInput } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
+import type { ToBackendEditMemberResponse } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
+import type { ToBackendGetMembersInput } from '#common/zod/backend/routes/members/get-members/get-members-request';
+import type { ToBackendGetMembersResponse } from '#common/zod/backend/routes/members/get-members/get-members-response';
 import type { MemberExtended } from '#common/zod/front/member-extended';
-import type {
-  ToBackendEditMemberRequestPayload,
-  ToBackendEditMemberResponse
-} from '#common/zod/to-backend/members/to-backend-edit-member';
-import type {
-  ToBackendGetMembersRequestPayload,
-  ToBackendGetMembersResponse
-} from '#common/zod/to-backend/members/to-backend-get-members';
 import { makeInitials } from '#front/app/functions/make-initials';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -109,7 +103,7 @@ export class ProjectTeamComponent implements OnInit {
   }
 
   getMembers(pageNum: number) {
-    let payload: ToBackendGetMembersRequestPayload = {
+    let payload: ToBackendGetMembersInput = {
       projectId: this.projectId,
       pageNum: pageNum,
       perPage: this.perPage
@@ -117,15 +111,15 @@ export class ProjectTeamComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetMembers,
+        route: 'api/ToBackendGetMembers',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetMembersResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.teamQuery.update(resp.payload);
+          if (resp.result?.type === 'Success') {
+            this.teamQuery.update(resp.result.value);
             this.rolesQuery.update({
-              roles: resp.payload.roles
+              roles: resp.result.value.roles
             });
             this.currentPage = pageNum;
           }
@@ -197,7 +191,7 @@ export class ProjectTeamComponent implements OnInit {
   }
 
   apiEditMember(member: Member, i: number) {
-    let payload: ToBackendEditMemberRequestPayload = {
+    let payload: ToBackendEditMemberInput = {
       projectId: member.projectId,
       memberId: member.memberId,
       isAdmin: member.isAdmin,
@@ -208,22 +202,22 @@ export class ProjectTeamComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        route: 'api/ToBackendEditMember',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditMemberResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let teamState = this.teamQuery.getValue();
-            teamState.members[i] = resp.payload.member;
+            teamState.members[i] = resp.result.value.member;
             this.teamQuery.update({
               members: [...teamState.members],
               total: teamState.total
             });
 
-            if (resp.payload.member.memberId === this.userId) {
-              this.memberQuery.update(resp.payload.member);
+            if (resp.result.value.member.memberId === this.userId) {
+              this.memberQuery.update(resp.result.value.member);
             }
           }
         }),
@@ -253,7 +247,7 @@ export class ProjectTeamComponent implements OnInit {
     let newRoles = [...member.roles];
     newRoles.splice(n, 1);
 
-    let payload: ToBackendEditMemberRequestPayload = {
+    let payload: ToBackendEditMemberInput = {
       projectId: member.projectId,
       memberId: member.memberId,
       isAdmin: member.isAdmin,
@@ -264,15 +258,15 @@ export class ProjectTeamComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        route: 'api/ToBackendEditMember',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendEditMemberResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             let teamState = this.teamQuery.getValue();
-            teamState.members[i] = resp.payload.member;
+            teamState.members[i] = resp.result.value.member;
 
             this.teamQuery.update({
               members: [...teamState.members],

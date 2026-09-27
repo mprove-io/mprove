@@ -10,12 +10,11 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendGetProvidersRequest } from '#common/zod/to-backend/providers/get-providers/get-providers-request';
-import type { ToBackendGetProvidersResponse } from '#common/zod/to-backend/providers/get-providers/get-providers-response';
+import type { ToBackendGetProvidersRequest } from '#common/zod/backend/routes/providers/get-providers/get-providers-request';
+import type { ToBackendGetProvidersResponse } from '#common/zod/backend/routes/providers/get-providers/get-providers-response';
 
 let testId = 'backend-get-providers__ok';
 
@@ -138,17 +137,15 @@ test('1', async t => {
       });
 
       let req: ToBackendGetProvidersRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendGetProviders,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           projectId: projectId
         }
       };
 
-      resp = await sendToBackend<ToBackendGetProvidersResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendGetProviders',
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
@@ -168,19 +165,21 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error, undefined);
+    assert.equal(resp.result.type, 'Success');
 
-    assert.equal(resp.info.status, ResponseInfoStatusEnum.Ok);
-
-    assert.equal(resp.payload.userMember.memberId, userId);
-
-    let providerIds: string[] = resp.payload.providers.map(
-      provider => provider.providerId
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).userMember.memberId,
+      userId
     );
+
+    let providerIds: string[] = unwrapToBackendResponse({
+      response: resp
+    }).providers.map(provider => provider.providerId);
 
     assert.deepEqual(providerIds, ['alpha', 'zeta']);
 
-    let alphaProvider: Provider = resp.payload.providers[0];
+    let alphaProvider: Provider = unwrapToBackendResponse({ response: resp })
+      .providers[0];
 
     assert.equal(alphaProvider.type, ProviderTypeEnum.OpenAICompatible);
 
@@ -202,7 +201,10 @@ test('1', async t => {
 
     assert.equal(alphaProvider.options.baseURL, 'https://alpha.example.com/v1');
 
-    assert.equal(resp.payload.providers[1].isEnabled, false);
+    assert.equal(
+      unwrapToBackendResponse({ response: resp }).providers[1].isEnabled,
+      false
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: unknown) => {

@@ -3,13 +3,9 @@ import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { SERVER_USERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ServerUsersItem,
-  ToBackendGetServerUsersRequestPayload,
-  ToBackendGetServerUsersResponse
-} from '#common/zod/to-backend/users/to-backend-get-server-users';
+import type { ToBackendGetServerUsersInput } from '#common/zod/backend/routes/users/get-server-users/get-server-users-request';
+import type { ToBackendGetServerUsersResponse } from '#common/zod/backend/routes/users/get-server-users/get-server-users-response';
+import type { ServerUsersItem } from '#common/zod/backend/users/server-users-item';
 import { makeInitials } from '#front/app/functions/make-initials';
 import { ServerUsersQuery } from '#front/app/queries/server-users.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -80,22 +76,22 @@ export class ServerUsersComponent implements OnInit {
   }
 
   getUsers(pageNum: number) {
-    let payload: ToBackendGetServerUsersRequestPayload = {
+    let payload: ToBackendGetServerUsersInput = {
       pageNum: pageNum,
       perPage: this.perPage
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetServerUsers,
+        route: 'api/ToBackendGetServerUsers',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetServerUsersResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.serverUsersQuery.update({
-              serverUsers: resp.payload.serverUsersList,
-              total: resp.payload.total
+              serverUsers: resp.result.value.serverUsersList,
+              total: resp.result.value.total
             });
             this.currentPage = pageNum;
             this.cd.detectChanges();

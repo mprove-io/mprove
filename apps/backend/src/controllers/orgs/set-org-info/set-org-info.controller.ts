@@ -16,8 +16,7 @@ import {
   ToBackendSetOrgInfoResponseDto
 } from '#backend/controllers/orgs/set-org-info/set-org-info.dto';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -27,9 +26,9 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendSetOrgInfoResponsePayload } from '#common/zod/to-backend/orgs/to-backend-set-org-info';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendSetOrgInfoOutput } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-response';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)
@@ -44,7 +43,7 @@ export class SetOrgInfoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo)
+  @Post('api/ToBackendSetOrgInfo' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SetOrgInfo',
     description: "Update an organization's name"
@@ -56,7 +55,7 @@ export class SetOrgInfoController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendSetOrgInfoRequestDto
   ) {
-    let { orgId, name } = body.payload;
+    let { orgId, name } = body.input;
 
     let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
@@ -89,7 +88,7 @@ export class SetOrgInfoController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendSetOrgInfoResponsePayload = {
+    let payload: ToBackendSetOrgInfoOutput = {
       org: this.orgsService.tabToApi({ org: org })
     };
 

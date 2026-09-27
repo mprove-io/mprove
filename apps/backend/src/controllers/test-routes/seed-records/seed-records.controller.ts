@@ -18,8 +18,7 @@ import {
   ToBackendSeedRecordsResponseDto
 } from '#backend/controllers/test-routes/seed-records/seed-records.dto';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { type Db, DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
   BranchTab,
   BridgeTab,
@@ -76,24 +75,22 @@ import {
   PASSWORD_EXPIRES_OFFSET
 } from '#common/constants/top-backend';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { BaseProject } from '#common/zod/backend/base-project';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
+import type { ToBackendSeedRecordsOutput } from '#common/zod/backend/routes/test-routes/seed-records/seed-records-response';
+import type { ToBackendSeedRecordsInputCachedColumnsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-cached-columns-item';
+import type { ToBackendSeedRecordsInputCachedPartsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-cached-parts-item';
+import type { ToBackendSeedRecordsInputMembersItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-members-item';
+import type { ToBackendSeedRecordsInputModelFieldLeafsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-model-field-leafs-item';
+import type { ToBackendSeedRecordsInputOrgsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-orgs-item';
+import type { ToBackendSeedRecordsInputProjectsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-projects-item';
+import type { ToBackendSeedRecordsInputSessionsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-sessions-item';
+import type { ToBackendSeedRecordsInputUsersItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-users-item';
 import type { ToDiskSeedProjectOutput } from '#common/zod/disk/routes/seed/seed-project/seed-project-response';
-import type {
-  ToBackendSeedRecordsRequestPayloadCachedColumnsItem,
-  ToBackendSeedRecordsRequestPayloadCachedPartsItem,
-  ToBackendSeedRecordsRequestPayloadMembersItem,
-  ToBackendSeedRecordsRequestPayloadModelFieldLeafsItem,
-  ToBackendSeedRecordsRequestPayloadOrgsItem,
-  ToBackendSeedRecordsRequestPayloadProjectsItem,
-  ToBackendSeedRecordsRequestPayloadSessionsItem,
-  ToBackendSeedRecordsRequestPayloadUsersItem,
-  ToBackendSeedRecordsResponse
-} from '#common/zod/to-backend/test-routes/to-backend-seed-records';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()
@@ -125,7 +122,7 @@ export class SeedRecordsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
+  @Post('api/ToBackendSeedRecords' satisfies ToBackendRoute)
   @ApiOperation({
     summary: 'SeedRecords',
     description: 'Seed users, orgs, projects and related records for tests'
@@ -134,19 +131,19 @@ export class SeedRecordsController {
     type: ToBackendSeedRecordsResponseDto
   })
   async seedRecords(@Body() body: ToBackendSeedRecordsRequestDto) {
-    let payloadUsers = body.payload.users;
-    let payloadMembers = body.payload.members;
-    let payloadOrgs = body.payload.orgs;
-    let payloadProjects = body.payload.projects;
-    let payloadConnections = body.payload.connections;
-    let payloadProviders = body.payload.providers;
-    let payloadEnvs = body.payload.envs;
-    let payloadSessions = body.payload.sessions;
-    let payloadQueries = body.payload.queries;
-    let payloadMconfigs = body.payload.mconfigs;
-    let payloadCachedColumns = body.payload.cachedColumns;
-    let payloadCachedParts = body.payload.cachedParts;
-    let payloadModelFieldLeafs = body.payload.modelFieldLeafs;
+    let payloadUsers = body.input.users;
+    let payloadMembers = body.input.members;
+    let payloadOrgs = body.input.orgs;
+    let payloadProjects = body.input.projects;
+    let payloadConnections = body.input.connections;
+    let payloadProviders = body.input.providers;
+    let payloadEnvs = body.input.envs;
+    let payloadSessions = body.input.sessions;
+    let payloadQueries = body.input.queries;
+    let payloadMconfigs = body.input.mconfigs;
+    let payloadCachedColumns = body.input.cachedColumns;
+    let payloadCachedParts = body.input.cachedParts;
+    let payloadModelFieldLeafs = body.input.modelFieldLeafs;
 
     //
 
@@ -178,7 +175,7 @@ export class SeedRecordsController {
       await asyncPool(
         1,
         payloadUsers,
-        async (x: ToBackendSeedRecordsRequestPayloadUsersItem) => {
+        async (x: ToBackendSeedRecordsInputUsersItem) => {
           let alias = await this.usersService.makeAlias(x.email);
 
           let passwordHS = isDefined(x.password)
@@ -237,7 +234,7 @@ export class SeedRecordsController {
       await asyncPool(
         1,
         payloadSessions,
-        async (x: ToBackendSeedRecordsRequestPayloadSessionsItem) => {
+        async (x: ToBackendSeedRecordsInputSessionsItem) => {
           let newSession: SessionTab = {
             sessionId: x.sessionId,
             type: x.type,
@@ -285,7 +282,7 @@ export class SeedRecordsController {
       await asyncPool(
         1,
         payloadOrgs,
-        async (x: ToBackendSeedRecordsRequestPayloadOrgsItem) => {
+        async (x: ToBackendSeedRecordsInputOrgsItem) => {
           let newOrg: OrgTab = {
             orgId: x.orgId,
             name: x.name,
@@ -300,7 +297,7 @@ export class SeedRecordsController {
           await this.rpcService.sendToDiskUnwrapOutput({
             request: {
               operation: 'createOrg',
-              traceId: body.info.traceId,
+              traceId: body.traceId,
               input: {
                 orgId: newOrg.orgId
               }
@@ -379,7 +376,7 @@ export class SeedRecordsController {
       await asyncPool(
         1,
         payloadProjects,
-        async (x: ToBackendSeedRecordsRequestPayloadProjectsItem) => {
+        async (x: ToBackendSeedRecordsInputProjectsItem) => {
           let newProject: ProjectTab = {
             orgId: x.orgId,
             projectId: x.projectId || makeId(),
@@ -414,7 +411,7 @@ export class SeedRecordsController {
             await this.rpcService.sendToDiskUnwrapOutput({
               request: {
                 operation: 'seedProject',
-                traceId: body.info.traceId,
+                traceId: body.traceId,
                 input: {
                   baseProject: baseProject,
                   seedProjectId: x.seedProjectId,
@@ -442,7 +439,7 @@ export class SeedRecordsController {
             mconfigs: devMconfigsApi,
             queries: devQueriesApi
           } = await this.blockmlService.rebuildStruct({
-            traceId: body.info.traceId,
+            traceId: body.traceId,
             orgId: newProject.orgId,
             projectId: newProject.projectId,
             repoId: users[0].userId,
@@ -467,7 +464,7 @@ export class SeedRecordsController {
             mconfigs: prodMconfigsApi,
             queries: prodQueriesApi
           } = await this.blockmlService.rebuildStruct({
-            traceId: body.info.traceId,
+            traceId: body.traceId,
             orgId: newProject.orgId,
             projectId: newProject.projectId,
             repoId: PROD_REPO_ID,
@@ -602,7 +599,7 @@ export class SeedRecordsController {
       await asyncPool(
         1,
         payloadMembers,
-        async (x: ToBackendSeedRecordsRequestPayloadMembersItem) => {
+        async (x: ToBackendSeedRecordsInputMembersItem) => {
           let user = users.find(u => u.email === x.email);
 
           let newMember = this.membersService.makeMember({
@@ -639,7 +636,7 @@ export class SeedRecordsController {
 
     if (isDefined(payloadCachedColumns)) {
       payloadCachedColumns.forEach(
-        (x: ToBackendSeedRecordsRequestPayloadCachedColumnsItem) => {
+        (x: ToBackendSeedRecordsInputCachedColumnsItem) => {
           let newCachedColumn: CachedColumnTab = {
             cachedColumnFullId: undefined, // tab-to-ent
             projectId: x.projectId,
@@ -669,7 +666,7 @@ export class SeedRecordsController {
 
     if (isDefined(payloadCachedParts)) {
       payloadCachedParts.forEach(
-        (x: ToBackendSeedRecordsRequestPayloadCachedPartsItem) => {
+        (x: ToBackendSeedRecordsInputCachedPartsItem) => {
           let newCachedPart: CachedPartTab = {
             cachedPartFullId: undefined, // tab-to-ent
             projectId: x.projectId,
@@ -692,7 +689,7 @@ export class SeedRecordsController {
 
     if (isDefined(payloadModelFieldLeafs)) {
       payloadModelFieldLeafs.forEach(
-        (x: ToBackendSeedRecordsRequestPayloadModelFieldLeafsItem) => {
+        (x: ToBackendSeedRecordsInputModelFieldLeafsItem) => {
           let newModelFieldLeaf: ModelFieldLeafTab = {
             structId: x.structId,
             modelId: x.modelId,
@@ -766,7 +763,7 @@ export class SeedRecordsController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendSeedRecordsResponse['payload'] = {};
+    let payload: ToBackendSeedRecordsOutput = {};
 
     return payload;
   }

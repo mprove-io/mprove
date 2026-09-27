@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { MyResponse } from '#common/zod/to/my-response';
+import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendResponse } from '#common/zod/backend/response/to-backend-response';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 import { wrapError } from '#node-common/functions/wrap-error/wrap-error';
 
@@ -36,14 +36,13 @@ export function makeErrorResponse(item: {
 
   let wError = wrapError(e);
 
-  let response: MyResponse = {
-    info: {
-      path: path,
-      method: method,
-      mproveVersion: mproveVersion,
-      duration: duration,
-      traceId: body?.info?.traceId,
-      status: ResponseInfoStatusEnum.Error,
+  let response: ToBackendResponse = {
+    method: method,
+    mproveVersion: mproveVersion,
+    duration: Number.isFinite(duration) ? Math.max(0, duration) : 0,
+    traceId: typeof body?.traceId === 'string' ? body.traceId : makeId(),
+    result: {
+      type: 'Failure',
       error:
         isRemoveErrorData === true
           ? {
@@ -79,13 +78,12 @@ export function makeErrorResponse(item: {
                 : undefined
             }
           : wError
-    },
-    payload: {}
+    }
   };
 
   if (logResponseError === true) {
     let log = {
-      response: Object.assign({}, response, { payload: undefined })
+      response: response
     };
     logToConsole({
       log: log,

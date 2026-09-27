@@ -28,12 +28,8 @@ import {
   LOCAL_STORAGE_PROJECT_ID
 } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendCreateOrgRequestPayload,
-  ToBackendCreateOrgResponse
-} from '#common/zod/to-backend/orgs/to-backend-create-org';
+import type { ToBackendCreateOrgInput } from '#common/zod/backend/routes/orgs/create-org/create-org-request';
+import type { ToBackendCreateOrgResponse } from '#common/zod/backend/routes/orgs/create-org/create-org-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -90,7 +86,7 @@ export class CreateOrgDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateOrgRequestPayload = {
+    let payload: ToBackendCreateOrgInput = {
       name: this.createOrgForm.value.orgName
     };
 
@@ -98,15 +94,15 @@ export class CreateOrgDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
+        route: 'api/ToBackendCreateOrg',
         payload: payload
       })
       .pipe(
         tap((resp: ToBackendCreateOrgResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
-              resp.payload.org.orgId,
+              resp.result.value.org.orgId,
               PATH_ACCOUNT
             ]);
 

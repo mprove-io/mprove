@@ -8,12 +8,8 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendDeleteEnvRequestPayload,
-  ToBackendDeleteEnvResponse
-} from '#common/zod/to-backend/envs/to-backend-delete-env';
+import type { ToBackendDeleteEnvInput } from '#common/zod/backend/routes/envs/delete-env/delete-env-request';
+import type { ToBackendDeleteEnvResponse } from '#common/zod/backend/routes/envs/delete-env/delete-env-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -56,7 +52,7 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteEnvRequestPayload = {
+    let payload: ToBackendDeleteEnvInput = {
       projectId: this.dataItem.projectId,
       envId: this.dataItem.envId
     };
@@ -65,15 +61,17 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteEnv,
+        route: 'api/ToBackendDeleteEnv',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteEnvResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.environmentsQuery.update({ environments: resp.payload.envs });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.environmentsQuery.update({
+              environments: resp.result.value.envs
+            });
 
             let nav = this.navQuery.getValue();
 

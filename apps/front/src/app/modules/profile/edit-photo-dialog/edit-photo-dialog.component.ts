@@ -9,12 +9,8 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import type {
-  ToBackendSetAvatarRequestPayload,
-  ToBackendSetAvatarResponse
-} from '#common/zod/to-backend/avatars/to-backend-set-avatar';
+import type { ToBackendSetAvatarInput } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-request';
+import type { ToBackendSetAvatarResponse } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 
@@ -89,7 +85,7 @@ export class EditPhotoDialogComponent implements OnInit {
   save() {
     this.ref.close();
 
-    let payload: ToBackendSetAvatarRequestPayload = {
+    let payload: ToBackendSetAvatarInput = {
       avatarSmall: this.compressedImage,
       avatarBig: undefined
     };
@@ -98,16 +94,16 @@ export class EditPhotoDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
+        route: 'api/ToBackendSetAvatar',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendSetAvatarResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (resp.result?.type === 'Success') {
             this.navQuery.updatePart({
-              avatarSmall: resp.payload.avatarSmall,
-              avatarBig: resp.payload.avatarBig
+              avatarSmall: resp.result.value.avatarSmall,
+              avatarBig: resp.result.value.avatarBig
             });
           }
         }),

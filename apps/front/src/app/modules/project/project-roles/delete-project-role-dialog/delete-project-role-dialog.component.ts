@@ -7,13 +7,9 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import type { Role } from '#common/zod/backend/role';
-import type {
-  ToBackendDeleteRoleRequestPayload,
-  ToBackendDeleteRoleResponse
-} from '#common/zod/to-backend/roles/to-backend-delete-role';
+import type { ToBackendDeleteRoleInput } from '#common/zod/backend/routes/roles/delete-role/delete-role-request';
+import type { ToBackendDeleteRoleResponse } from '#common/zod/backend/routes/roles/delete-role/delete-role-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import type { ApiService } from '#front/app/services/api.service';
@@ -53,7 +49,7 @@ export class DeleteProjectRoleDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteRoleRequestPayload = {
+    let payload: ToBackendDeleteRoleInput = {
       projectId: this.dataItem.role.projectId,
       roleId: this.dataItem.role.roleId
     };
@@ -62,15 +58,15 @@ export class DeleteProjectRoleDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteRole,
+        route: 'api/ToBackendDeleteRole',
         payload: payload,
         showSpinner: true
       })
       .pipe(
         tap((resp: ToBackendDeleteRoleResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-            this.rolesQuery.update({ roles: resp.payload.roles });
+          if (resp.result?.type === 'Success') {
+            this.memberQuery.update(resp.result.value.userMember);
+            this.rolesQuery.update({ roles: resp.result.value.roles });
           }
         }),
         take(1)

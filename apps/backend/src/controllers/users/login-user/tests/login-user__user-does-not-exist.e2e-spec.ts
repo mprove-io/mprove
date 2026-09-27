@@ -8,12 +8,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendLoginUserRequest,
-  ToBackendLoginUserResponse
-} from '#common/zod/to-backend/users/to-backend-login-user';
+import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
+import type { ToBackendLoginUserResponse } from '#common/zod/backend/routes/users/login-user/login-user-response';
 
 let testId = 'backend-login-user__user-does-not-exist';
 
@@ -38,18 +35,16 @@ test('1', async t => {
       });
 
       let loginUserReq: ToBackendLoginUserRequest = {
-        info: {
-          name: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
+        traceId: traceId,
+        idempotencyKey: makeId(),
+        input: {
           email: email,
           password: password
         }
       };
 
-      resp = await sendToBackend<ToBackendLoginUserResponse>({
+      resp = await sendToBackend({
+        route: 'api/ToBackendLoginUser',
         httpServer: prep.httpServer,
         req: loginUserReq
       });
@@ -67,7 +62,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.info.error.message, ErEnum.BACKEND_USER_DOES_NOT_EXIST);
+    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.result.error.message, ErEnum.BACKEND_USER_DOES_NOT_EXIST);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {
