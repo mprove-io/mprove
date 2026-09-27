@@ -10,7 +10,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendSetUserNameRequest } from '#common/zod/backend/routes/users/set-user-name/set-user-name-request';
-import type { ToBackendSetUserNameResponse } from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
+import type {
+  ToBackendSetUserNameOutput,
+  ToBackendSetUserNameResponse
+} from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
 
 let testId = 'backend-set-user-name__ok';
 
@@ -76,14 +79,14 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).user.firstName,
-      firstName
-    );
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).user.lastName,
-      lastName
-    );
+
+    let output: ToBackendSetUserNameOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    assert.equal(output.user.firstName, firstName);
+
+    assert.equal(output.user.lastName, lastName);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

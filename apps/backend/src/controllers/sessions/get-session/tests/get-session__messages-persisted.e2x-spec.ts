@@ -20,6 +20,7 @@ import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-res
 import type { ToBackendCreateEditorSessionRequest } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-request';
 import type { ToBackendDeleteSessionRequest } from '#common/zod/backend/routes/sessions/delete-session/delete-session-request';
 import type { ToBackendGetSessionRequest } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
+import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
 import type { ToBackendSendMessageToEditorSessionRequest } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
 
 test('1', async t => {
@@ -232,8 +233,13 @@ test('1', async t => {
       checkIsOk: true
     });
 
-    messages = unwrapToBackendResponse({ response: getResp }).messages;
-    parts = unwrapToBackendResponse({ response: getResp }).parts;
+    let output: ToBackendGetSessionOutput = unwrapToBackendResponse({
+      response: getResp
+    });
+
+    messages = output.messages;
+
+    parts = output.parts;
 
     console.log(
       `[test] GetSession: messages=${messages?.length}, parts=${parts?.length}`

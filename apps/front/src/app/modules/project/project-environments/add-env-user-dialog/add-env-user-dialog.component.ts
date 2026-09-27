@@ -20,7 +20,10 @@ import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-res
 import type { Env } from '#common/zod/backend/env';
 import type { EnvUser } from '#common/zod/backend/env-user';
 import type { ToBackendCreateEnvUserInput } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-request';
-import type { ToBackendCreateEnvUserResponse } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-response';
+import type {
+  ToBackendCreateEnvUserOutput,
+  ToBackendCreateEnvUserResponse
+} from '#common/zod/backend/routes/envs/create-env-user/create-env-user-response';
 import type { ToBackendGetMembersListInput } from '#common/zod/backend/routes/members/get-members-list/get-members-list-request';
 import type { ToBackendGetMembersListResponse } from '#common/zod/backend/routes/members/get-members-list/get-members-list-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -138,11 +141,12 @@ export class AddEnvUserDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendCreateEnvUserResponse) => {
           if (resp.result?.type === 'Success') {
-            this.memberQuery.update(
-              unwrapToBackendResponse({ response: resp }).userMember
-            );
+            let output: ToBackendCreateEnvUserOutput = resp.result.value;
+
+            this.memberQuery.update(output.userMember);
+
             this.environmentsQuery.update({
-              environments: unwrapToBackendResponse({ response: resp }).envs
+              environments: output.envs
             });
           }
         }),

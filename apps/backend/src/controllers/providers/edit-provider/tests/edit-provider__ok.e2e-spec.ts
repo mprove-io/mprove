@@ -193,24 +193,15 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).provider.isEnabled,
-      true
-    );
-
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).provider.name,
-      'New Provider Name'
-    );
-
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).provider.type,
-      ProviderTypeEnum.OpenAICompatible
-    );
-
     let output: ToBackendEditProviderOutput = unwrapToBackendResponse({
       response: resp
     });
+
+    assert.equal(output.provider.isEnabled, true);
+
+    assert.equal(output.provider.name, 'New Provider Name');
+
+    assert.equal(output.provider.type, ProviderTypeEnum.OpenAICompatible);
 
     if (output.provider.type !== ProviderTypeEnum.OpenAICompatible) {
       throw new Error('Expected an OpenAI-compatible provider');
@@ -218,10 +209,7 @@ test('1', async t => {
 
     assert.equal(output.provider.options.baseURL, 'https://new.example.com/v1');
 
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).provider.options.apiKey,
-      ''
-    );
+    assert.equal(output.provider.options.apiKey, '');
 
     assert.deepEqual(output.provider.options.headers, [
       { key: 'Authorization', value: '' }

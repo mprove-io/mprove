@@ -16,7 +16,10 @@ import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/giv
 import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
 import type { ToBackendCreateRoleGivenRequest } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
 import type { ToBackendDeleteRoleGivenRequest } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-request';
-import type { ToBackendDeleteRoleGivenResponse } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-response';
+import type {
+  ToBackendDeleteRoleGivenOutput,
+  ToBackendDeleteRoleGivenResponse
+} from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-response';
 
 let testId = 'backend-delete-role-given__ok';
 
@@ -177,15 +180,16 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
-    assert.equal(unwrapToBackendResponse({ response: resp }).roles.length, 1);
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).roles[0].roleId,
-      roleId
-    );
-    assert.deepEqual(
-      unwrapToBackendResponse({ response: resp }).roles[0].gvs,
-      []
-    );
+
+    let output: ToBackendDeleteRoleGivenOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    assert.equal(output.roles.length, 1);
+
+    assert.equal(output.roles[0].roleId, roleId);
+
+    assert.deepEqual(output.roles[0].gvs, []);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

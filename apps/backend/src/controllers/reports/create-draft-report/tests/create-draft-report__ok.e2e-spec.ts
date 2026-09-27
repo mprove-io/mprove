@@ -22,7 +22,10 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
-import type { ToBackendCreateDraftReportResponse } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-response';
+import type {
+  ToBackendCreateDraftReportOutput,
+  ToBackendCreateDraftReportResponse
+} from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-response';
 
 let testId = 'backend-create-draft-report__ok';
 
@@ -147,18 +150,16 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).report.space,
-      undefined
-    );
-    assert.deepEqual(
-      unwrapToBackendResponse({ response: resp }).report.accessRoles,
-      []
-    );
-    assert.deepEqual(
-      unwrapToBackendResponse({ response: resp }).report.accessRolesCombined,
-      []
-    );
+
+    let output: ToBackendCreateDraftReportOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    assert.equal(output.report.space, undefined);
+
+    assert.deepEqual(output.report.accessRoles, []);
+
+    assert.deepEqual(output.report.accessRolesCombined, []);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

@@ -21,7 +21,6 @@ import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
@@ -29,7 +28,10 @@ import type { Provider } from '#common/zod/backend/provider';
 import type { ToBackendEditLlmModelInput } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
 import type { ToBackendEditLlmModelResponse } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-response';
 import type { ToBackendGetLlmModelPartsInput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
-import type { ToBackendGetLlmModelPartsResponse } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-response';
+import type {
+  ToBackendGetLlmModelPartsOutput,
+  ToBackendGetLlmModelPartsResponse
+} from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-response';
 import { getLlmModelVariantsError } from '#front/app/functions/get-llm-model-variants-error';
 import { LlmModelVariantsComponent } from '#front/app/modules/project/project-providers/llm-model-variants/llm-model-variants.component';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -166,13 +168,15 @@ export class EditLlmModelDialogComponent implements OnInit {
             return;
           }
 
-          let modelPart: LlmModelPart | undefined = unwrapToBackendResponse({
-            response: resp
-          }).modelParts.find(item => item.modelId === this.model.modelId);
+          let output: ToBackendGetLlmModelPartsOutput = resp.result.value;
 
-          if (!isDefined(modelPart)) {
+          let modelPart: LlmModelPart = output.modelParts.find(
+            item => item.modelId === this.model.modelId
+          );
+
+          if (isUndefined(modelPart)) {
             this.variantsDiscoveryErrorMessage =
-              unwrapToBackendResponse({ response: resp }).errorMessage ??
+              output.errorMessage ??
               'Could not refresh the model from the provider.';
 
             return;
@@ -461,13 +465,12 @@ export class EditLlmModelDialogComponent implements OnInit {
             return;
           }
 
-          let providers = this.providersQuery
+          let provider: Provider = resp.result.value.provider;
+
+          let providers: Provider[] = this.providersQuery
             .getValue()
             .providers.map(x =>
-              x.providerId ===
-              unwrapToBackendResponse({ response: resp }).provider.providerId
-                ? unwrapToBackendResponse({ response: resp }).provider
-                : x
+              x.providerId === provider.providerId ? provider : x
             );
 
           this.providersQuery.updatePart({

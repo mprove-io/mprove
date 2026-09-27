@@ -19,6 +19,7 @@ import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-res
 import type { ToBackendCreateDraftDashboardRequest } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-request';
 import type { ToBackendCreateDraftDashboardResponse } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-response';
 import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
+import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-response';
 
 let testId = 'backend-create-draft-dashboard__ok';
 
@@ -124,6 +125,9 @@ test('1', async t => {
         req: req1
       });
 
+      let getDashboardOutput: ToBackendGetDashboardOutput =
+        unwrapToBackendResponse({ response: resp1 });
+
       let req: ToBackendCreateDraftDashboardRequest = {
         traceId: traceId,
         idempotencyKey: makeId(),
@@ -134,9 +138,8 @@ test('1', async t => {
           envId: PROJECT_ENV_PROD,
           oldDashboardId: oldDashboardId,
           newDashboardId: makeId(),
-          newDashboardFields: unwrapToBackendResponse({ response: resp1 })
-            .dashboard.fields,
-          tiles: unwrapToBackendResponse({ response: resp1 }).dashboard.tiles,
+          newDashboardFields: getDashboardOutput.dashboard.fields,
+          tiles: getDashboardOutput.dashboard.tiles,
           timezone: 'UTC',
           isQueryCache: false,
           cachedQueryMconfigIds: []

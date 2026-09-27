@@ -22,6 +22,7 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
+import type { ToBackendCreateDraftReportOutput } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-response';
 import type { ToBackendSaveModifyReportRequest } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-request';
 import type { ToBackendSaveModifyReportResponse } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
 
@@ -134,6 +135,9 @@ test('1', async t => {
         req: req1
       });
 
+      let createDraftReportOutput: ToBackendCreateDraftReportOutput =
+        unwrapToBackendResponse({ response: resp1 });
+
       let req2: ToBackendSaveModifyReportRequest = {
         traceId: traceId,
         idempotencyKey: makeId(),
@@ -142,8 +146,7 @@ test('1', async t => {
           repoId: userId,
           branchId: BRANCH_MAIN,
           envId: PROJECT_ENV_PROD,
-          fromReportId: unwrapToBackendResponse({ response: resp1 }).report
-            .reportId,
+          fromReportId: createDraftReportOutput.report.reportId,
           modReportId: 'r1',
           title: 'new title',
           space: undefined,
@@ -152,7 +155,7 @@ test('1', async t => {
           timeSpec: TimeSpecEnum.Months,
           timeRangeFractionBrick: 'f`last 5 months`',
           newReportFields: [],
-          chart: unwrapToBackendResponse({ response: resp1 }).report.chart
+          chart: createDraftReportOutput.report.chart
         }
       };
 

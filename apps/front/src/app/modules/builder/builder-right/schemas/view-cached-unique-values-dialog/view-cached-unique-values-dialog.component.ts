@@ -11,9 +11,11 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { map, take } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { CachedColumn } from '#common/zod/backend/connections/cached-column';
-import type { ToBackendViewCachedColumnResponse } from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-response';
+import type {
+  ToBackendViewCachedColumnOutput,
+  ToBackendViewCachedColumnResponse
+} from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-response';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../../../shared/shared.module';
 
@@ -94,34 +96,25 @@ export class ViewCachedUniqueValuesDialogComponent implements OnInit {
       .pipe(
         map((resp: ToBackendViewCachedColumnResponse) => {
           setTimeout(() => {
-            let isRespPayloadErrorMessageDefined = isDefined(
-              unwrapToBackendResponse({ response: resp }).errorMessage
-            );
+            if (resp.result?.type === 'Success') {
+              let output: ToBackendViewCachedColumnOutput = resp.result.value;
 
-            if (
-              resp.result?.type === 'Success' &&
-              isRespPayloadErrorMessageDefined
-            ) {
-              this.dataItem.errorMessage = unwrapToBackendResponse({
-                response: resp
-              }).errorMessage;
-            } else if (resp.result?.type === 'Success') {
-              this.dataItem.columnNames = unwrapToBackendResponse({
-                response: resp
-              }).columnNames;
-              this.dataItem.rows = unwrapToBackendResponse({
-                response: resp
-              }).rows;
-              this.dataItem.cachedColumn = unwrapToBackendResponse({
-                response: resp
-              }).cachedColumn;
-              this.dataItem.errorMessage = undefined;
-              this.offset += 100;
+              if (isDefined(output.errorMessage)) {
+                this.dataItem.errorMessage = output.errorMessage;
+              } else {
+                this.dataItem.columnNames = output.columnNames;
 
-              if (
-                unwrapToBackendResponse({ response: resp }).rows.length < 100
-              ) {
-                this.hasMore = false;
+                this.dataItem.rows = output.rows;
+
+                this.dataItem.cachedColumn = output.cachedColumn;
+
+                this.dataItem.errorMessage = undefined;
+
+                this.offset += 100;
+
+                if (output.rows.length < 100) {
+                  this.hasMore = false;
+                }
               }
             } else {
               this.dataItem.errorMessage = 'Failed to fetch cached column';

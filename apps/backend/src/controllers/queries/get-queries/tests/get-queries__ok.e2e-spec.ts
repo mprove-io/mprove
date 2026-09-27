@@ -17,6 +17,7 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
+import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-response';
 import type { ToBackendGetQueriesRequest } from '#common/zod/backend/routes/queries/get-queries/get-queries-request';
 import type { ToBackendGetQueriesResponse } from '#common/zod/backend/routes/queries/get-queries/get-queries-response';
 
@@ -122,6 +123,9 @@ test('1', async t => {
         req: req1
       });
 
+      let getDashboardOutput: ToBackendGetDashboardOutput =
+        unwrapToBackendResponse({ response: resp1 });
+
       let req2: ToBackendGetQueriesRequest = {
         traceId: traceId,
         idempotencyKey: makeId(),
@@ -131,10 +135,8 @@ test('1', async t => {
           branchId: BRANCH_MAIN,
           envId: PROJECT_ENV_PROD,
           mconfigIds: [
-            unwrapToBackendResponse({ response: resp1 }).dashboard.tiles[0]
-              .mconfigId,
-            unwrapToBackendResponse({ response: resp1 }).dashboard.tiles[1]
-              .mconfigId
+            getDashboardOutput.dashboard.tiles[0].mconfigId,
+            getDashboardOutput.dashboard.tiles[1].mconfigId
           ],
           skipData: true
         }

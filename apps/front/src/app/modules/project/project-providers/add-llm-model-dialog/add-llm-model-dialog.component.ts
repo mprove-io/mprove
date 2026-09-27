@@ -22,7 +22,6 @@ import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { Extend } from '#common/types/extend';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
@@ -354,18 +353,17 @@ export class AddLlmModelDialogComponent implements OnInit {
 
           let modelParts: SelectableLlmModelPart[] =
             resp.result?.type === 'Success'
-              ? unwrapToBackendResponse({ response: resp }).modelParts.map(
-                  modelPart => {
-                    let isAlreadySelected: boolean =
-                      configuredModelIds.includes(modelPart.modelId);
+              ? resp.result.value.modelParts.map(modelPart => {
+                  let isAlreadySelected: boolean = configuredModelIds.includes(
+                    modelPart.modelId
+                  );
 
-                    return {
-                      ...modelPart,
-                      disabled: isAlreadySelected,
-                      isAlreadySelected: isAlreadySelected
-                    };
-                  }
-                )
+                  return {
+                    ...modelPart,
+                    disabled: isAlreadySelected,
+                    isAlreadySelected: isAlreadySelected
+                  };
+                })
               : [];
 
           modelParts.sort((a, b) => {
@@ -384,7 +382,7 @@ export class AddLlmModelDialogComponent implements OnInit {
 
           this.modelsErrorMessage =
             resp.result?.type === 'Success'
-              ? unwrapToBackendResponse({ response: resp }).errorMessage
+              ? resp.result.value.errorMessage
               : undefined;
 
           this.modelsLoading = false;
@@ -473,13 +471,12 @@ export class AddLlmModelDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendCreateLlmModelResponse) => {
           if (resp.result?.type === 'Success') {
-            let providers = this.providersQuery
+            let provider: Provider = resp.result.value.provider;
+
+            let providers: Provider[] = this.providersQuery
               .getValue()
               .providers.map(x =>
-                x.providerId ===
-                unwrapToBackendResponse({ response: resp }).provider.providerId
-                  ? unwrapToBackendResponse({ response: resp }).provider
-                  : x
+                x.providerId === provider.providerId ? provider : x
               );
 
             this.providersQuery.updatePart({

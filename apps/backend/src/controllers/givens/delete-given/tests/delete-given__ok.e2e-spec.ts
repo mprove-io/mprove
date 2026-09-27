@@ -14,11 +14,17 @@ import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
 import type { ToBackendDeleteGivenRequest } from '#common/zod/backend/routes/givens/delete-given/delete-given-request';
-import type { ToBackendDeleteGivenResponse } from '#common/zod/backend/routes/givens/delete-given/delete-given-response';
+import type {
+  ToBackendDeleteGivenOutput,
+  ToBackendDeleteGivenResponse
+} from '#common/zod/backend/routes/givens/delete-given/delete-given-response';
 import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
 import type { ToBackendCreateRoleGivenRequest } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
 import type { ToBackendGetRolesRequest } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
-import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
+import type {
+  ToBackendGetRolesOutput,
+  ToBackendGetRolesResponse
+} from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 
 let testId = 'backend-delete-given__ok';
 
@@ -235,29 +241,31 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
-    assert.equal(unwrapToBackendResponse({ response: resp }).givens.length, 1);
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).givens[0].givenId,
-      givenId2
-    );
+
+    let output: ToBackendDeleteGivenOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    assert.equal(output.givens.length, 1);
+
+    assert.equal(output.givens[0].givenId, givenId2);
+
     assert.equal(getRolesResp.result.type, 'Success');
-    assert.equal(
-      unwrapToBackendResponse({ response: getRolesResp }).roles.length,
-      1
-    );
-    assert.equal(
-      unwrapToBackendResponse({ response: getRolesResp }).roles[0].roleId,
-      roleId
-    );
-    assert.deepEqual(
-      unwrapToBackendResponse({ response: getRolesResp }).roles[0].gvs,
-      [
-        {
-          givenId: givenId2,
-          values: ['c']
-        }
-      ]
-    );
+
+    let rolesOutput: ToBackendGetRolesOutput = unwrapToBackendResponse({
+      response: getRolesResp
+    });
+
+    assert.equal(rolesOutput.roles.length, 1);
+
+    assert.equal(rolesOutput.roles[0].roleId, roleId);
+
+    assert.deepEqual(rolesOutput.roles[0].gvs, [
+      {
+        givenId: givenId2,
+        values: ['c']
+      }
+    ]);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

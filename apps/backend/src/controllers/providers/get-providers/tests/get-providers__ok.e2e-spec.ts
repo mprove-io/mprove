@@ -14,7 +14,10 @@ import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ToBackendGetProvidersRequest } from '#common/zod/backend/routes/providers/get-providers/get-providers-request';
-import type { ToBackendGetProvidersResponse } from '#common/zod/backend/routes/providers/get-providers/get-providers-response';
+import type {
+  ToBackendGetProvidersOutput,
+  ToBackendGetProvidersResponse
+} from '#common/zod/backend/routes/providers/get-providers/get-providers-response';
 
 let testId = 'backend-get-providers__ok';
 
@@ -167,19 +170,19 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).userMember.memberId,
-      userId
-    );
-
-    let providerIds: string[] = unwrapToBackendResponse({
+    let output: ToBackendGetProvidersOutput = unwrapToBackendResponse({
       response: resp
-    }).providers.map(provider => provider.providerId);
+    });
+
+    assert.equal(output.userMember.memberId, userId);
+
+    let providerIds: string[] = output.providers.map(
+      provider => provider.providerId
+    );
 
     assert.deepEqual(providerIds, ['alpha', 'zeta']);
 
-    let alphaProvider: Provider = unwrapToBackendResponse({ response: resp })
-      .providers[0];
+    let alphaProvider: Provider = output.providers[0];
 
     assert.equal(alphaProvider.type, ProviderTypeEnum.OpenAICompatible);
 
@@ -201,10 +204,7 @@ test('1', async t => {
 
     assert.equal(alphaProvider.options.baseURL, 'https://alpha.example.com/v1');
 
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).providers[1].isEnabled,
-      false
-    );
+    assert.equal(output.providers[1].isEnabled, false);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: unknown) => {

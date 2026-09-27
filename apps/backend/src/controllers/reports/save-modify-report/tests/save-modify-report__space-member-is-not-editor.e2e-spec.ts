@@ -153,6 +153,10 @@ test('1', async t => {
         req: saveCreateReq
       });
 
+      let saveCreateReportId: string = unwrapToBackendResponse({
+        response: saveCreateResp
+      }).report.reportId;
+
       let createSecondDraftReq: ToBackendCreateDraftReportRequest = {
         traceId: traceId,
         idempotencyKey: makeId(),
@@ -163,8 +167,7 @@ test('1', async t => {
           envId: PROJECT_ENV_PROD,
           rowIds: undefined,
           changeType: ChangeTypeEnum.AddEmpty,
-          fromReportId: unwrapToBackendResponse({ response: saveCreateResp })
-            .report.reportId,
+          fromReportId: saveCreateReportId,
           rowChange: { rowType: RowTypeEnum.Empty, showChart: false },
           timeRangeFractionBrick: 'f`last 5 months`',
           timeSpec: TimeSpecEnum.Months,
@@ -204,8 +207,7 @@ test('1', async t => {
           fromReportId: unwrapToBackendResponse({
             response: createSecondDraftResp
           }).report.reportId,
-          modReportId: unwrapToBackendResponse({ response: saveCreateResp })
-            .report.reportId,
+          modReportId: saveCreateReportId,
           title: 'Modified Space',
           space: 's1',
           accessRoles: [],

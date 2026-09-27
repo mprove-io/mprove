@@ -2,7 +2,6 @@ import axios, { type AxiosResponse } from 'axios';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendInputForRoute } from '#common/types/to-backend-input-for-route';
 import type { ToBackendOutputForRoute } from '#common/types/to-backend-output-for-route';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
@@ -45,9 +44,7 @@ export async function mreq<TRoute extends ToBackendRoute>(item: {
     });
   }
 
-  let output: ToBackendOutputForRoute<TRoute> = unwrapToBackendResponse({
-    response: resp.data
-  });
+  let output: ToBackendOutputForRoute<TRoute> = resp.data.result.value;
 
   return output;
 }

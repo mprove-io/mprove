@@ -11,7 +11,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
-import type { ToBackendGenerateUserApiKeyResponse } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
+import type {
+  ToBackendGenerateUserApiKeyOutput,
+  ToBackendGenerateUserApiKeyResponse
+} from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
 
 let testId = 'backend-generate-user-api-key__ok';
 
@@ -72,13 +75,16 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
-    t.truthy(unwrapToBackendResponse({ response: resp }).apiKey);
-    t.truthy(unwrapToBackendResponse({ response: resp }).apiKeyPrefix);
-    t.true(
-      unwrapToBackendResponse({ response: resp }).apiKey.startsWith(
-        `${ApiKeyTypeEnum.PK}-`
-      )
-    );
+
+    let output: ToBackendGenerateUserApiKeyOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    t.truthy(output.apiKey);
+
+    t.truthy(output.apiKeyPrefix);
+
+    t.true(output.apiKey.startsWith(`${ApiKeyTypeEnum.PK}-`));
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

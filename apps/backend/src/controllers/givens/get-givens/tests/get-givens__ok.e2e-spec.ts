@@ -14,7 +14,10 @@ import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
 import type { ToBackendGetGivensRequest } from '#common/zod/backend/routes/givens/get-givens/get-givens-request';
-import type { ToBackendGetGivensResponse } from '#common/zod/backend/routes/givens/get-givens/get-givens-response';
+import type {
+  ToBackendGetGivensOutput,
+  ToBackendGetGivensResponse
+} from '#common/zod/backend/routes/givens/get-givens/get-givens-response';
 
 let testId = 'backend-get-givens__ok';
 
@@ -136,15 +139,16 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
-    assert.equal(unwrapToBackendResponse({ response: resp }).givens.length, 1);
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).givens[0].givenId,
-      givenId
-    );
-    assert.deepEqual(
-      unwrapToBackendResponse({ response: resp }).givens[0].values,
-      ['a', 'b']
-    );
+
+    let output: ToBackendGetGivensOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    assert.equal(output.givens.length, 1);
+
+    assert.equal(output.givens[0].givenId, givenId);
+
+    assert.deepEqual(output.givens[0].values, ['a', 'b']);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

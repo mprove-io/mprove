@@ -328,9 +328,9 @@ export async function forTestsRunEditorSessionE2x(item: {
 
     t.is(testError, undefined);
     t.is(createSessionResp.result.type, 'Success');
-    t.truthy(
-      unwrapToBackendResponse({ response: createSessionResp }).sessionId
-    );
+
+    t.truthy(sessionId);
+
     t.is(sendFirstMessageResp.result.type, 'Success');
     t.is(sendMessageResp.result.type, 'Success');
 

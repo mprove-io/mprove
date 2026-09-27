@@ -15,7 +15,10 @@ import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-res
 import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
 import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
 import type { ToBackendCreateRoleGivenRequest } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
-import type { ToBackendCreateRoleGivenResponse } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-response';
+import type {
+  ToBackendCreateRoleGivenOutput,
+  ToBackendCreateRoleGivenResponse
+} from '#common/zod/backend/routes/roles/create-role-given/create-role-given-response';
 
 let testId = 'backend-create-role-given__ok';
 
@@ -158,12 +161,16 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
-    assert.equal(unwrapToBackendResponse({ response: resp }).roles.length, 1);
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).roles[0].roleId,
-      roleId
-    );
-    assert.deepEqual(unwrapToBackendResponse({ response: resp }).roles[0].gvs, [
+
+    let output: ToBackendCreateRoleGivenOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    assert.equal(output.roles.length, 1);
+
+    assert.equal(output.roles[0].roleId, roleId);
+
+    assert.deepEqual(output.roles[0].gvs, [
       {
         givenId: givenId,
         values: ['a', 'b']

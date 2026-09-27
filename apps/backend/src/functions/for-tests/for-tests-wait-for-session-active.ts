@@ -2,6 +2,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
 
 export async function forTestsWaitForSessionActive(item: {
   httpServer: any;
@@ -28,17 +29,15 @@ export async function forTestsWaitForSessionActive(item: {
       checkIsOk: true
     });
 
-    if (
-      unwrapToBackendResponse({ response: resp }).session.status ===
-      SessionStatusEnum.Active
-    ) {
+    let output: ToBackendGetSessionOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    if (output.session.status === SessionStatusEnum.Active) {
       return;
     }
 
-    if (
-      unwrapToBackendResponse({ response: resp }).session.status ===
-      SessionStatusEnum.Error
-    ) {
+    if (output.session.status === SessionStatusEnum.Error) {
       throw new Error(
         `forTestsWaitForSessionActive: session ${item.sessionId} entered Error status`
       );

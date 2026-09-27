@@ -12,7 +12,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendGetOrgUsersRequest } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
-import type { ToBackendGetOrgUsersResponse } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
+import type {
+  ToBackendGetOrgUsersOutput,
+  ToBackendGetOrgUsersResponse
+} from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
 
 let testId = 'backend-get-org-users__ok-1';
 
@@ -114,11 +117,14 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
-    assert.equal(unwrapToBackendResponse({ response: resp }).total, 1);
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).orgUsersList.length,
-      1
-    );
+
+    let output: ToBackendGetOrgUsersOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    assert.equal(output.total, 1);
+
+    assert.equal(output.orgUsersList.length, 1);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

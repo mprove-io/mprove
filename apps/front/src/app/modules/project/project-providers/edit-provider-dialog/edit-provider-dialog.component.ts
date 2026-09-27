@@ -17,7 +17,6 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PROVIDER_TYPE_NAME_BY_TYPE } from '#common/constants/providers';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ProviderOptionsOpenAICompatible } from '#common/zod/backend/provider-options/provider-options-openai-compatible';
 import type { ToBackendEditProviderInput } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-request';
@@ -226,14 +225,14 @@ export class EditProviderDialogComponent implements OnInit {
             return;
           }
 
-          let providers = this.providersQuery
+          let provider: Provider = resp.result.value.provider;
+
+          let providers: Provider[] = this.providersQuery
             .getValue()
             .providers.map(x =>
-              x.providerId ===
-              unwrapToBackendResponse({ response: resp }).provider.providerId
-                ? unwrapToBackendResponse({ response: resp }).provider
-                : x
+              x.providerId === provider.providerId ? provider : x
             );
+
           this.providersQuery.updatePart({
             providers: providers
           });

@@ -18,7 +18,10 @@ import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
 import type { ToBackendSaveModifyReportRequest } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-request';
-import type { ToBackendSaveModifyReportResponse } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
+import type {
+  ToBackendSaveModifyReportOutput,
+  ToBackendSaveModifyReportResponse
+} from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
 
 let testId = 'backend-save-modify-report__space-path-user';
 
@@ -161,23 +164,18 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
+
+    let output: ToBackendSaveModifyReportOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    assert.equal(output.report.space, undefined);
+
+    assert.equal(output.report.filePath.endsWith('/r2.report'), true);
+
     assert.equal(
-      unwrapToBackendResponse({ response: resp }).report.space,
-      undefined
-    );
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).report.filePath.endsWith(
-        '/r2.report'
-      ),
-      true
-    );
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).report.filePath.includes(
-        '/data/mprove-users/'
-      ) &&
-        unwrapToBackendResponse({ response: resp }).report.filePath.includes(
-          '/reports/'
-        ),
+      output.report.filePath.includes('/data/mprove-users/') &&
+        output.report.filePath.includes('/reports/'),
       true
     );
 

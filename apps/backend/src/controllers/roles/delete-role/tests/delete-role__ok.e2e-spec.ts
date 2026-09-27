@@ -11,10 +11,15 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import type { Member } from '#common/zod/backend/member';
 import type { ToBackendGetMembersRequest } from '#common/zod/backend/routes/members/get-members/get-members-request';
+import type { ToBackendGetMembersOutput } from '#common/zod/backend/routes/members/get-members/get-members-response';
 import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
 import type { ToBackendDeleteRoleRequest } from '#common/zod/backend/routes/roles/delete-role/delete-role-request';
-import type { ToBackendDeleteRoleResponse } from '#common/zod/backend/routes/roles/delete-role/delete-role-response';
+import type {
+  ToBackendDeleteRoleOutput,
+  ToBackendDeleteRoleResponse
+} from '#common/zod/backend/routes/roles/delete-role/delete-role-response';
 
 let testId = 'backend-delete-role__ok';
 
@@ -173,12 +178,19 @@ test('1', async t => {
 
       assert.equal(getMembersResp.result.type, 'Success');
 
-      let adminMember = unwrapToBackendResponse({
-        response: getMembersResp
-      }).members.find(member => member.memberId === userId);
-      let projectMember = unwrapToBackendResponse({
-        response: getMembersResp
-      }).members.find(member => member.memberId === memberUserId);
+      let getMembersOutput: ToBackendGetMembersOutput = unwrapToBackendResponse(
+        {
+          response: getMembersResp
+        }
+      );
+
+      let adminMember: Member = getMembersOutput.members.find(
+        member => member.memberId === userId
+      );
+
+      let projectMember: Member = getMembersOutput.members.find(
+        member => member.memberId === memberUserId
+      );
 
       assert.ok(adminMember);
       assert.ok(projectMember);
@@ -199,12 +211,15 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
+
+    let output: ToBackendDeleteRoleOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    assert.deepEqual(output.userMember.roles, ['role_two']);
+
     assert.deepEqual(
-      unwrapToBackendResponse({ response: resp }).userMember.roles,
-      ['role_two']
-    );
-    assert.deepEqual(
-      unwrapToBackendResponse({ response: resp }).roles.map(x => x.roleId),
+      output.roles.map(x => x.roleId),
       ['role_two']
     );
 

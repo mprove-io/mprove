@@ -12,7 +12,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
-import type { ToBackendCreateRoleResponse } from '#common/zod/backend/routes/roles/create-role/create-role-response';
+import type {
+  ToBackendCreateRoleOutput,
+  ToBackendCreateRoleResponse
+} from '#common/zod/backend/routes/roles/create-role/create-role-response';
 
 let testId = 'backend-create-role__ok';
 
@@ -115,15 +118,16 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
-    assert.equal(unwrapToBackendResponse({ response: resp }).roles.length, 1);
-    assert.equal(
-      unwrapToBackendResponse({ response: resp }).roles[0].roleId,
-      roleId
-    );
-    assert.deepEqual(
-      unwrapToBackendResponse({ response: resp }).roles[0].gvs,
-      []
-    );
+
+    let output: ToBackendCreateRoleOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
+    assert.equal(output.roles.length, 1);
+
+    assert.equal(output.roles[0].roleId, roleId);
+
+    assert.deepEqual(output.roles[0].gvs, []);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

@@ -15,7 +15,10 @@ import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-res
 import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
 import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
 import type { ToBackendGetRolesRequest } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
-import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
+import type {
+  ToBackendGetRolesOutput,
+  ToBackendGetRolesResponse
+} from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 
 let testId = 'backend-get-roles__ok';
 
@@ -189,12 +192,18 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
+
+    let output: ToBackendGetRolesOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
     assert.deepEqual(
-      unwrapToBackendResponse({ response: resp }).roles.map(x => x.roleId),
+      output.roles.map(x => x.roleId),
       ['role_a', 'role_b']
     );
+
     assert.deepEqual(
-      unwrapToBackendResponse({ response: resp }).givens.map(x => x.givenId),
+      output.givens.map(x => x.givenId),
       ['GIVEN_A', 'GIVEN_B']
     );
 

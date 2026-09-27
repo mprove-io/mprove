@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ToBackendDeleteLlmModelInput } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
@@ -68,13 +67,12 @@ export class DeleteLlmModelDialogComponent implements OnInit {
             return;
           }
 
-          let providers = this.providersQuery
+          let provider: Provider = resp.result.value.provider;
+
+          let providers: Provider[] = this.providersQuery
             .getValue()
             .providers.map(x =>
-              x.providerId ===
-              unwrapToBackendResponse({ response: resp }).provider.providerId
-                ? unwrapToBackendResponse({ response: resp }).provider
-                : x
+              x.providerId === provider.providerId ? provider : x
             );
 
           this.providersQuery.updatePart({

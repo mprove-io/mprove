@@ -30,14 +30,16 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendInputForRoute } from '#common/types/to-backend-input-for-route';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendRequest } from '#common/zod/backend/request/to-backend-request';
 import type { ToBackendResponse } from '#common/zod/backend/response/to-backend-response';
 import type { ToBackendResponseForRoute } from '#common/zod/backend/response/to-backend-response-for-route';
 import type { ToBackendGetReportsInput } from '#common/zod/backend/routes/reports/get-reports/get-reports-request';
-import type { ToBackendGetReportsResponse } from '#common/zod/backend/routes/reports/get-reports/get-reports-response';
+import type {
+  ToBackendGetReportsOutput,
+  ToBackendGetReportsResponse
+} from '#common/zod/backend/routes/reports/get-reports/get-reports-response';
 import type { ErrorData } from '#common/zod/front/error-data';
 import { environment } from '#front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
@@ -516,28 +518,23 @@ export class ApiService {
     }).pipe(
       map((resp: ToBackendGetReportsResponse) => {
         if (resp.result?.type === 'Success') {
-          this.memberQuery.update(
-            unwrapToBackendResponse({ response: resp }).userMember
-          );
+          let output: ToBackendGetReportsOutput = resp.result.value;
 
-          this.structQuery.update(
-            unwrapToBackendResponse({ response: resp }).struct
-          );
+          this.memberQuery.update(output.userMember);
+
+          this.structQuery.update(output.struct);
 
           this.navQuery.updatePart({
-            needValidate: unwrapToBackendResponse({ response: resp })
-              .needValidate
+            needValidate: output.needValidate
           });
 
           this.reportsQuery.update({
-            reportUnitDrafts: unwrapToBackendResponse({ response: resp })
-              .reportUnitDrafts,
-            reportSpaceNodes: unwrapToBackendResponse({ response: resp })
-              .reportSpaceNodes
+            reportUnitDrafts: output.reportUnitDrafts,
+            reportSpaceNodes: output.reportSpaceNodes
           });
 
           this.modelsQuery.update({
-            models: unwrapToBackendResponse({ response: resp }).storeModels
+            models: output.storeModels
           });
 
           this.uiQuery.updatePart({ metricsLoadedTs: Date.now() });

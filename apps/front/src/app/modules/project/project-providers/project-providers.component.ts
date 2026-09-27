@@ -3,7 +3,6 @@ import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_PROVIDERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ToBackendToggleProviderInput } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
@@ -156,13 +155,12 @@ export class ProjectProvidersComponent implements OnInit {
             return;
           }
 
-          let providers = this.providersQuery
+          let provider: Provider = resp.result.value.provider;
+
+          let providers: Provider[] = this.providersQuery
             .getValue()
             .providers.map(x =>
-              x.providerId ===
-              unwrapToBackendResponse({ response: resp }).provider.providerId
-                ? unwrapToBackendResponse({ response: resp }).provider
-                : x
+              x.providerId === provider.providerId ? provider : x
             );
 
           this.providersQuery.updatePart({

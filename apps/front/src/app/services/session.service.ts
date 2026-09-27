@@ -3,7 +3,6 @@ import { interval, Subscription } from 'rxjs';
 import { exhaustMap, take, tap } from 'rxjs/operators';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendCreateSessionSseTicketInput } from '#common/zod/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-request';
 import type { ToBackendCreateSessionSseTicketResponse } from '#common/zod/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-response';
 import type { ToBackendGetSessionInput } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
@@ -355,21 +354,19 @@ export class SessionService {
         ),
         tap((resp: ToBackendGetSessionResponse) => {
           if (resp.result?.type === 'Success') {
+            let output: ToBackendGetSessionOutput = resp.result.value;
+
             this.applySessionResponse({
-              payload: unwrapToBackendResponse({ response: resp }),
+              payload: output,
               withOptimisticMerge: true
             });
 
-            this.lastProcessedEventIndex = unwrapToBackendResponse({
-              response: resp
-            }).lastEventIndex;
+            this.lastProcessedEventIndex = output.lastEventIndex;
 
             let sessions = this.sessionsQuery.getValue().sessions;
 
             let updated = sessions.map(s =>
-              s.sessionId === sessionId
-                ? unwrapToBackendResponse({ response: resp }).session
-                : s
+              s.sessionId === sessionId ? output.session : s
             );
 
             this.sessionsQuery.updatePart({ sessions: updated });
@@ -412,7 +409,7 @@ export class SessionService {
 
             this.connectSseWithTicket({
               sessionId: sessionId,
-              sseTicket: unwrapToBackendResponse({ response: resp }).sseTicket,
+              sseTicket: resp.result.value.sseTicket,
               initId: initId
             });
           } else {
@@ -565,22 +562,19 @@ export class SessionService {
           this.ssePhase = 'idle';
 
           if (resp.result?.type === 'Success') {
-            this.lastProcessedEventIndex = unwrapToBackendResponse({
-              response: resp
-            }).lastEventIndex;
+            let output: ToBackendGetSessionOutput = resp.result.value;
+
+            this.lastProcessedEventIndex = output.lastEventIndex;
 
             // Connect SSE BEFORE store updates to prevent re-entry
             // (store updates trigger managePollingAndSse synchronously;
             //  connectSse sets ssePhase='fetching-ticket' which blocks re-entry)
-            if (
-              unwrapToBackendResponse({ response: resp }).session.status ===
-              SessionStatusEnum.Active
-            ) {
+            if (output.session.status === SessionStatusEnum.Active) {
               this.connectSse({ sessionId: sessionId });
             }
 
             this.applySessionResponse({
-              payload: unwrapToBackendResponse({ response: resp }),
+              payload: output,
               withOptimisticMerge: true
             });
 
@@ -588,9 +582,7 @@ export class SessionService {
 
             this.sessionsQuery.updatePart({
               sessions: sessions.map(x =>
-                x.sessionId === sessionId
-                  ? unwrapToBackendResponse({ response: resp }).session
-                  : x
+                x.sessionId === sessionId ? output.session : x
               )
             });
 

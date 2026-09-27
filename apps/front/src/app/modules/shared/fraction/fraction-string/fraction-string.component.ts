@@ -18,8 +18,7 @@ import {
   distinctUntilChanged,
   Subscription,
   switchMap,
-  take,
-  tap
+  take
 } from 'rxjs';
 import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MALLOY_FILTER_ANY } from '#common/constants/top';
@@ -30,7 +29,10 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendSuggestDimensionValuesInput } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-request';
-import type { ToBackendSuggestDimensionValuesResponse } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
+import type {
+  ToBackendSuggestDimensionValuesOutput,
+  ToBackendSuggestDimensionValuesResponse
+} from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -231,26 +233,21 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 cellMetricsEndDateMs: undefined
               };
 
-              let q1Resp = await this.apiService
-                .req({
-                  route: 'api/ToBackendSuggestDimensionValues',
-                  payload: payload
-                })
-                .pipe(
-                  tap((resp: ToBackendSuggestDimensionValuesResponse) => {
-                    if (resp.result?.type === 'Success') {
-                      return resp;
-                    }
-                  }),
-                  take(1)
-                )
-                .toPromise();
+              let q1Resp: ToBackendSuggestDimensionValuesResponse =
+                await this.apiService
+                  .req({
+                    route: 'api/ToBackendSuggestDimensionValues',
+                    payload: payload
+                  })
+                  .pipe(take(1))
+                  .toPromise();
 
-              if (
-                isDefined(
-                  unwrapToBackendResponse({ response: q1Resp }).errorMessage
-                )
-              ) {
+              let output: ToBackendSuggestDimensionValuesOutput =
+                unwrapToBackendResponse({
+                  response: q1Resp
+                });
+
+              if (isDefined(output.errorMessage)) {
                 this.items = isDefinedAndNotEmpty(this.searchValue)
                   ? [
                       {
@@ -260,9 +257,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                       {
                         id: 1,
                         name: 'Error: Suggest Values Failed',
-                        errorMessage: unwrapToBackendResponse({
-                          response: q1Resp
-                        }).errorMessage,
+                        errorMessage: output.errorMessage,
                         disabled: true
                       }
                     ]
@@ -270,18 +265,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                       {
                         id: 0,
                         name: 'Error: Suggest Values Failed',
-                        errorMessage: unwrapToBackendResponse({
-                          response: q1Resp
-                        }).errorMessage,
+                        errorMessage: output.errorMessage,
                         disabled: true
                       }
                     ];
-              } else if (
-                isDefined(
-                  unwrapToBackendResponse({ response: q1Resp })
-                    .matchedValuesMessage
-                )
-              ) {
+              } else if (isDefined(output.matchedValuesMessage)) {
                 this.items = isDefinedAndNotEmpty(this.searchValue)
                   ? [
                       {
@@ -290,24 +278,19 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                       },
                       {
                         id: 1,
-                        name: unwrapToBackendResponse({ response: q1Resp })
-                          .matchedValuesMessage,
+                        name: output.matchedValuesMessage,
                         disabled: true
                       }
                     ]
                   : [
                       {
                         id: 0,
-                        name: unwrapToBackendResponse({ response: q1Resp })
-                          .matchedValuesMessage,
+                        name: output.matchedValuesMessage,
                         disabled: true
                       }
                     ];
               } else {
-                this.items = (
-                  unwrapToBackendResponse({ response: q1Resp }).matchedValues ??
-                  []
-                ).map((x, i) => ({
+                this.items = (output.matchedValues ?? []).map((x, i) => ({
                   id: i,
                   name: x.value
                 }));

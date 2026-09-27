@@ -17,7 +17,6 @@ import { exhaustMap, finalize, map, take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type {
   ColumnCombinedReference,
   CombinedSchemaItem
@@ -25,12 +24,24 @@ import type {
 import type { RawSchemaForeignKey } from '#common/zod/backend/connection-schemas/raw-schema';
 import type { CachedColumn } from '#common/zod/backend/connections/cached-column';
 import type { ToBackendClearCachedColumnResponse } from '#common/zod/backend/routes/connections/clear-cached-column/clear-cached-column-response';
-import type { ToBackendGetCachedColumnsResponse } from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-response';
-import type { ToBackendGetConnectionSampleResponse } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
+import type {
+  ToBackendGetCachedColumnsOutput,
+  ToBackendGetCachedColumnsResponse
+} from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-response';
+import type {
+  ToBackendGetConnectionSampleOutput,
+  ToBackendGetConnectionSampleResponse
+} from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
 import type { ToBackendGetConnectionSchemasInput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
 import type { ToBackendGetConnectionSchemasResponse } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-response';
-import type { ToBackendRefreshCachedColumnResponse } from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-response';
-import type { ToBackendViewCachedColumnResponse } from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-response';
+import type {
+  ToBackendRefreshCachedColumnOutput,
+  ToBackendRefreshCachedColumnResponse
+} from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-response';
+import type {
+  ToBackendViewCachedColumnOutput,
+  ToBackendViewCachedColumnResponse
+} from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
@@ -173,9 +184,8 @@ export class SchemasComponent implements OnInit, OnDestroy {
       .pipe(
         map((resp: ToBackendGetConnectionSchemasResponse) => {
           if (resp.result?.type === 'Success') {
-            this.combinedSchemaItems = unwrapToBackendResponse({
-              response: resp
-            }).combinedSchemaItems;
+            this.combinedSchemaItems = resp.result.value.combinedSchemaItems;
+
             this.treeNodes = this.buildTreeNodes({
               combinedSchemaItems: this.combinedSchemaItems
             });
@@ -588,34 +598,34 @@ export class SchemasComponent implements OnInit, OnDestroy {
       .pipe(
         map((resp: ToBackendGetCachedColumnsResponse) => {
           if (resp.result?.type === 'Success') {
-            let returnedColumnIds = new Set(
-              unwrapToBackendResponse({ response: resp }).cachedColumns.map(
+            let output: ToBackendGetCachedColumnsOutput = resp.result.value;
+
+            let returnedColumnIds: Set<string> = new Set(
+              output.cachedColumns.map(
                 cachedColumn =>
                   `${cachedColumn.connectionId}__${cachedColumn.schemaName}__${cachedColumn.tableName}__${cachedColumn.columnName}`
               )
             );
 
-            unwrapToBackendResponse({ response: resp }).cachedColumns.forEach(
-              cachedColumn => {
-                let node = runningNodes.find(
-                  x =>
-                    x.connectionId === cachedColumn.connectionId &&
-                    x.schemaDisplayName === cachedColumn.schemaName &&
-                    x.tableName === cachedColumn.tableName &&
-                    x.columnName === cachedColumn.columnName
-                );
+            output.cachedColumns.forEach(cachedColumn => {
+              let node = runningNodes.find(
+                x =>
+                  x.connectionId === cachedColumn.connectionId &&
+                  x.schemaDisplayName === cachedColumn.schemaName &&
+                  x.tableName === cachedColumn.tableName &&
+                  x.columnName === cachedColumn.columnName
+              );
 
-                let isNodeDefined = isDefined(node);
+              let isNodeDefined = isDefined(node);
 
-                if (isNodeDefined === true) {
-                  node.cachedColumn = cachedColumn;
+              if (isNodeDefined === true) {
+                node.cachedColumn = cachedColumn;
 
-                  if (cachedColumn.status !== 'running') {
-                    this.removeCachedColumnSpinner({ nodeId: node.id });
-                  }
+                if (cachedColumn.status !== 'running') {
+                  this.removeCachedColumnSpinner({ nodeId: node.id });
                 }
               }
-            );
+            });
 
             runningNodes.forEach(node => {
               let returnedColumnId = `${node.connectionId}__${node.schemaDisplayName}__${node.tableName}__${node.columnName}`;
@@ -722,31 +732,25 @@ export class SchemasComponent implements OnInit, OnDestroy {
             tableName: data.tableName
           };
 
-          let isRespPayloadErrorMessageDefined = isDefined(
-            unwrapToBackendResponse({ response: resp }).errorMessage
-          );
+          if (resp.result?.type === 'Success') {
+            let output: ToBackendViewCachedColumnOutput = resp.result.value;
 
-          if (
-            resp.result?.type === 'Success' &&
-            isRespPayloadErrorMessageDefined
-          ) {
-            dialogData.errorMessage = unwrapToBackendResponse({
-              response: resp
-            }).errorMessage;
-          } else if (resp.result?.type === 'Success') {
-            dialogData.cachedColumn = unwrapToBackendResponse({
-              response: resp
-            }).cachedColumn;
-            dialogData.columnNames = unwrapToBackendResponse({
-              response: resp
-            }).columnNames;
-            dialogData.rows = unwrapToBackendResponse({ response: resp }).rows;
-            this.updateCachedColumn({
-              nodeId: data.id,
-              cachedColumn: unwrapToBackendResponse({ response: resp })
-                .cachedColumn
-            });
-            this.applyFilter();
+            if (isDefined(output.errorMessage)) {
+              dialogData.errorMessage = output.errorMessage;
+            } else {
+              dialogData.cachedColumn = output.cachedColumn;
+
+              dialogData.columnNames = output.columnNames;
+
+              dialogData.rows = output.rows;
+
+              this.updateCachedColumn({
+                nodeId: data.id,
+                cachedColumn: output.cachedColumn
+              });
+
+              this.applyFilter();
+            }
           } else {
             dialogData.errorMessage = 'Failed to fetch cached column';
           }
@@ -791,17 +795,16 @@ export class SchemasComponent implements OnInit, OnDestroy {
       .pipe(
         map((resp: ToBackendRefreshCachedColumnResponse) => {
           if (resp.result?.type === 'Success') {
+            let output: ToBackendRefreshCachedColumnOutput = resp.result.value;
+
             this.updateCachedColumn({
               nodeId: data.id,
-              cachedColumn: unwrapToBackendResponse({ response: resp })
-                .cachedColumn
+              cachedColumn: output.cachedColumn
             });
+
             this.applyFilter();
 
-            if (
-              unwrapToBackendResponse({ response: resp }).cachedColumn
-                ?.status === 'running'
-            ) {
+            if (output.cachedColumn?.status === 'running') {
               this.startCachedColumnsPolling();
             } else {
               this.removeCachedColumnSpinner({ nodeId: data.id });
@@ -929,18 +932,16 @@ export class SchemasComponent implements OnInit, OnDestroy {
             columnName: isColumn ? data.columnName : undefined
           };
 
-          if (
-            resp.result?.type === 'Success' &&
-            isDefined(unwrapToBackendResponse({ response: resp }).errorMessage)
-          ) {
-            dialogData.errorMessage = unwrapToBackendResponse({
-              response: resp
-            }).errorMessage;
-          } else if (resp.result?.type === 'Success') {
-            dialogData.columnNames = unwrapToBackendResponse({
-              response: resp
-            }).columnNames;
-            dialogData.rows = unwrapToBackendResponse({ response: resp }).rows;
+          if (resp.result?.type === 'Success') {
+            let output: ToBackendGetConnectionSampleOutput = resp.result.value;
+
+            if (isDefined(output.errorMessage)) {
+              dialogData.errorMessage = output.errorMessage;
+            } else {
+              dialogData.columnNames = output.columnNames;
+
+              dialogData.rows = output.rows;
+            }
           } else {
             dialogData.errorMessage = 'Failed to fetch sample data';
           }

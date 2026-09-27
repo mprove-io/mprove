@@ -19,7 +19,10 @@ import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-un
 import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
 import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
 import type { ToBackendSaveCreateReportRequest } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-request';
-import type { ToBackendSaveCreateReportResponse } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-response';
+import type {
+  ToBackendSaveCreateReportOutput,
+  ToBackendSaveCreateReportResponse
+} from '#common/zod/backend/routes/reports/save-create-report/save-create-report-response';
 
 let testId = 'backend-save-create-report__space-path';
 
@@ -132,8 +135,7 @@ test('1', async t => {
           branchId: BRANCH_MAIN,
           envId: PROJECT_ENV_PROD,
           newReportId: 'created_space',
-          fromReportId: unwrapToBackendResponse({ response: resp1 }).report
-            .reportId,
+          fromReportId: draftReportId,
           title: 'Created Space',
           space: 's1',
           accessRoles: [],
@@ -166,18 +168,22 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
+
+    let output: ToBackendSaveCreateReportOutput = unwrapToBackendResponse({
+      response: resp
+    });
+
     assert.equal(
-      unwrapToBackendResponse({ response: resp }).report.filePath,
+      output.report.filePath,
       `${projectId}/data/s1/reports/created_space.report`
     );
 
-    let draftReportIds = unwrapToBackendResponse({
-      response: resp
-    }).reportUnitDrafts.map(x => x.reportId);
+    let draftReportIds: string[] = output.reportUnitDrafts.map(x => x.reportId);
+
     assert.equal(draftReportIds.indexOf(draftReportId), -1);
 
     let reportSpaceUnits = makeSpaceUnits({
-      spaceNodes: unwrapToBackendResponse({ response: resp }).reportSpaceNodes
+      spaceNodes: output.reportSpaceNodes
     });
     let createdSpaceUnit = reportSpaceUnits.find(
       x => x.unitId === 'created_space'

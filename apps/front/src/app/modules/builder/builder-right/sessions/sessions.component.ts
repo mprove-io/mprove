@@ -10,7 +10,10 @@ import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-res
 import type { ToBackendArchiveSessionInput } from '#common/zod/backend/routes/sessions/archive-session/archive-session-request';
 import type { ToBackendArchiveSessionResponse } from '#common/zod/backend/routes/sessions/archive-session/archive-session-response';
 import type { ToBackendGetSessionsListInput } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
-import type { ToBackendGetSessionsListResponse } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
+import type {
+  ToBackendGetSessionsListOutput,
+  ToBackendGetSessionsListResponse
+} from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
 import type { ToBackendPauseEditorSessionInput } from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-request';
 import type { ToBackendPauseEditorSessionResponse } from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-response';
 import type { SessionApi } from '#common/zod/backend/session-api';
@@ -134,7 +137,9 @@ export class SessionsComponent implements OnInit {
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
           if (resp.result?.type === 'Success') {
-            let sessions = unwrapToBackendResponse({ response: resp }).sessions;
+            let output: ToBackendGetSessionsListOutput = resp.result.value;
+
+            let sessions = output.sessions;
 
             if (currentSessionId) {
               let freshCurrentSession = sessions.find(
@@ -145,9 +150,7 @@ export class SessionsComponent implements OnInit {
               }
             }
 
-            let hasMoreArchived =
-              unwrapToBackendResponse({ response: resp }).hasMoreArchived ??
-              false;
+            let hasMoreArchived = output.hasMoreArchived ?? false;
 
             this.sessionsQuery.updatePart({
               sessions: sessions,
@@ -354,7 +357,9 @@ export class SessionsComponent implements OnInit {
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
           if (resp.result?.type === 'Success') {
-            let sessions = unwrapToBackendResponse({ response: resp }).sessions;
+            let output: ToBackendGetSessionsListOutput = resp.result.value;
+
+            let sessions = output.sessions;
 
             if (this.currentSession?.sessionId) {
               let freshCurrentSession = sessions.find(
@@ -365,21 +370,19 @@ export class SessionsComponent implements OnInit {
               }
             }
 
-            let hasMoreArchived =
-              unwrapToBackendResponse({ response: resp }).hasMoreArchived ??
-              false;
+            let hasMoreArchived = output.hasMoreArchived ?? false;
 
             this.sessionsQuery.updatePart({
               sessions: sessions,
               hasMoreArchived: hasMoreArchived
             });
-            let archivedSessions = unwrapToBackendResponse({
-              response: resp
-            }).sessions.filter(
+
+            let archivedSessions: SessionApi[] = sessions.filter(
               s =>
                 s.status === SessionStatusEnum.Archived &&
                 s.sessionId !== this.currentSession?.sessionId
             );
+
             if (archivedSessions.length > 0) {
               this.archivedLastCreatedTs =
                 archivedSessions[archivedSessions.length - 1].createdTs;
