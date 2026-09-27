@@ -4,8 +4,7 @@ import { Queue, Worker } from 'groupmq';
 import Redis from 'ioredis';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
-import type { ToBlockmlInvalidRequestErrorResponse } from '#common/zod/blockml/response/to-blockml-invalid-request-error-response';
-import type { ToBlockmlOperationResponse } from '#common/zod/blockml/response/to-blockml-operation-response';
+import type { ToBlockmlResponse } from '#common/zod/blockml/response/to-blockml-response';
 import { MessageService } from '../message/message.service';
 @Injectable()
 export class ConsumerService {
@@ -62,12 +61,9 @@ export class ConsumerService {
         ? data.replyTo
         : undefined;
 
-    let response:
-      | ToBlockmlOperationResponse
-      | ToBlockmlInvalidRequestErrorResponse =
-      await this.messageService.handleMessage({
-        message: message
-      });
+    let response: ToBlockmlResponse = await this.messageService.handleMessage({
+      message: message
+    });
 
     if (typeof replyTo === 'string' && replyTo.length > 0) {
       await this.redisClient.publish(replyTo, JSON.stringify(response));

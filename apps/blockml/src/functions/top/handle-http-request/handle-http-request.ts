@@ -2,11 +2,11 @@ import type { Logger } from '@nestjs/common';
 import { z } from 'zod';
 import { makeInvalidRequestResponse } from '#blockml/functions/top/make-invalid-request-response/make-invalid-request-response';
 import { processValidatedRequest } from '#blockml/functions/top/process-validated-request/process-validated-request';
+import type { BlockmlOperationResult } from '#blockml/types/blockml-operation-result';
 import type { ToBlockmlOperation } from '#common/zod/blockml/request/to-blockml-operation';
 import { zToBlockmlOperationRegistry } from '#common/zod/blockml/request/to-blockml-operation-registry';
 import type { ToBlockmlRequestForOperation } from '#common/zod/blockml/request/to-blockml-request-for-operation';
 import type { ToBlockmlResponseForOperation } from '#common/zod/blockml/response/to-blockml-response-for-operation';
-import type { ToBlockmlResponseResultForOperation } from '#common/zod/blockml/response/to-blockml-response-result-for-operation';
 
 export async function handleHttpRequest<
   TOperation extends ToBlockmlOperation
@@ -16,7 +16,7 @@ export async function handleHttpRequest<
   method: string;
   process: (
     input: ToBlockmlRequestForOperation<TOperation>['input']
-  ) => Promise<ToBlockmlResponseResultForOperation<TOperation>>;
+  ) => Promise<BlockmlOperationResult<TOperation>>;
   logger: Logger;
 }): Promise<ToBlockmlResponseForOperation<TOperation>> {
   let { operation, body, method, process, logger } = item;

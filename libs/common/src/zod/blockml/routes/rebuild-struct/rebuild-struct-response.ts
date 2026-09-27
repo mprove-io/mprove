@@ -24,14 +24,20 @@ import type { Report } from '#common/zod/blockml/report';
 import { zReport } from '#common/zod/blockml/report';
 import {
   makeToBlockmlResponseSchema,
-  type ToBlockmlResponse
-} from '#common/zod/blockml/response/to-blockml-response';
+  type ToBlockmlResponseBase
+} from '#common/zod/blockml/response/to-blockml-response-base';
 import type { Space } from '#common/zod/blockml/space';
 import { zSpace } from '#common/zod/blockml/space';
 import {
   type ToBlockmlRebuildStructError,
   zToBlockmlRebuildStructError
 } from './rebuild-struct-error';
+
+export type ToBlockmlRebuildStructResponse = ToBlockmlResponseBase<
+  'rebuildStruct',
+  ToBlockmlRebuildStructOutput,
+  ToBlockmlRebuildStructError
+>;
 
 export type ToBlockmlRebuildStructOutput = {
   extraSchemas: ExtraSchema[];
@@ -48,12 +54,6 @@ export type ToBlockmlRebuildStructOutput = {
   mconfigs: Mconfig[];
   queries: Query[];
 };
-
-export type ToBlockmlRebuildStructResponse = ToBlockmlResponse<
-  'rebuildStruct',
-  ToBlockmlRebuildStructOutput,
-  ToBlockmlRebuildStructError
->;
 
 export let zToBlockmlRebuildStructOutput = z
   .object({
@@ -75,7 +75,7 @@ export let zToBlockmlRebuildStructOutput = z
 
 export let zToBlockmlRebuildStructResponse = makeToBlockmlResponseSchema({
   operation: 'rebuildStruct',
-  success: zToBlockmlRebuildStructOutput,
+  output: zToBlockmlRebuildStructOutput,
   error: zToBlockmlRebuildStructError
 });
 

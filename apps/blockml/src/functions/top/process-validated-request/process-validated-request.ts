@@ -1,8 +1,10 @@
 import type { Logger } from '@nestjs/common';
+import { Result } from '@praha/byethrow';
+import type { BlockmlOperationResult } from '#blockml/types/blockml-operation-result';
 import type { ToBlockmlOperation } from '#common/zod/blockml/request/to-blockml-operation';
 import type { ToBlockmlRequestForOperation } from '#common/zod/blockml/request/to-blockml-request-for-operation';
 import type { ToBlockmlResponseForOperation } from '#common/zod/blockml/response/to-blockml-response-for-operation';
-import type { ToBlockmlResponseResultForOperation } from '#common/zod/blockml/response/to-blockml-response-result-for-operation';
+import type { ToBlockmlResponseMetadata } from '#common/zod/blockml/response/to-blockml-response-metadata';
 
 export async function processValidatedRequest<
   TOperation extends ToBlockmlOperation
@@ -12,7 +14,7 @@ export async function processValidatedRequest<
   method: string;
   process: (
     input: ToBlockmlRequestForOperation<TOperation>['input']
-  ) => Promise<ToBlockmlResponseResultForOperation<TOperation>>;
+  ) => Promise<BlockmlOperationResult<TOperation>>;
   logger: Logger;
   startTs?: number;
 }): Promise<ToBlockmlResponseForOperation<TOperation>> {
@@ -21,28 +23,34 @@ export async function processValidatedRequest<
   let startTs: number = item.startTs ?? Date.now();
 
   try {
-    let result: ToBlockmlResponseResultForOperation<TOperation> = await process(
+    let result: BlockmlOperationResult<TOperation> = await process(
       request.input
     );
 
-    let response: ToBlockmlResponseForOperation<TOperation> = {
+    let metadata: ToBlockmlResponseMetadata<TOperation> = {
       operation: operation,
       method: method,
       duration: Date.now() - startTs,
-      traceId: request.traceId,
-      result: result
+      traceId: request.traceId
     };
+
+    let response: ToBlockmlResponseForOperation<TOperation> = Result.isSuccess(
+      result
+    )
+      ? { type: 'Success', ...metadata, output: result.value }
+      : { type: 'Failure', ...metadata, error: result.error };
 
     return response;
   } catch (error) {
     logger.error(error);
 
     let response: ToBlockmlResponseForOperation<TOperation> = {
+      type: 'Failure',
       operation: operation,
       method: method,
       duration: Date.now() - startTs,
       traceId: request.traceId,
-      result: { type: 'Failure', error: { code: 'BLOCKML_INTERNAL' } }
+      error: { code: 'BLOCKML_INTERNAL' }
     };
 
     return response;

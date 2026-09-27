@@ -10,9 +10,9 @@ import {
 } from '#common/zod/blockml/request/to-blockml-operation';
 import { zToBlockmlOperationRegistry } from '#common/zod/blockml/request/to-blockml-operation-registry';
 import type { ToBlockmlRequest } from '#common/zod/blockml/request/to-blockml-request';
-import type { ToBlockmlInvalidRequestErrorResponse } from '#common/zod/blockml/response/to-blockml-invalid-request-error-response';
-import type { ToBlockmlOperationResponse } from '#common/zod/blockml/response/to-blockml-operation-response';
+import type { ToBlockmlResponse } from '#common/zod/blockml/response/to-blockml-response';
 import type { ToBlockmlResponseForOperation } from '#common/zod/blockml/response/to-blockml-response-for-operation';
+import type { ToBlockmlUnknownOperationResponse } from '#common/zod/blockml/response/to-blockml-unknown-operation-response';
 
 @Injectable()
 export class MessageService {
@@ -23,21 +23,18 @@ export class MessageService {
 
   async processRequest(item: {
     request: ToBlockmlRequest;
-  }): Promise<ToBlockmlOperationResponse> {
+  }): Promise<ToBlockmlResponseForOperation<ToBlockmlOperation>> {
     let { request } = item;
 
-    let response: ToBlockmlOperationResponse = await this.dispatch({
-      request: request
-    });
+    let response: ToBlockmlResponseForOperation<ToBlockmlOperation> =
+      await this.dispatch({
+        request: request
+      });
 
     return response;
   }
 
-  async handleMessage(item: {
-    message: unknown;
-  }): Promise<
-    ToBlockmlOperationResponse | ToBlockmlInvalidRequestErrorResponse
-  > {
+  async handleMessage(item: { message: unknown }): Promise<ToBlockmlResponse> {
     let { message } = item;
 
     let startTs: number = Date.now();
@@ -56,23 +53,21 @@ export class MessageService {
           ? message.traceId
           : undefined;
 
-      let response: ToBlockmlInvalidRequestErrorResponse = {
+      let response: ToBlockmlUnknownOperationResponse = {
+        type: 'Failure',
         operation: typeof operationValue === 'string' ? operationValue : '',
         method: METHOD_RPC,
         duration: Date.now() - startTs,
         traceId: typeof traceIdValue === 'string' ? traceIdValue : '',
-        result: {
-          type: 'Failure',
-          error: {
-            code: 'BLOCKML_INVALID_REQUEST',
-            displayData: [
-              {
-                path: 'operation',
-                message: 'Missing or unknown blockml request discriminator',
-                code: 'invalid_value'
-              }
-            ]
-          }
+        error: {
+          code: 'BLOCKML_INVALID_REQUEST',
+          displayData: [
+            {
+              path: 'operation',
+              message: 'Missing or unknown blockml request discriminator',
+              code: 'invalid_value'
+            }
+          ]
         }
       };
 
@@ -85,27 +80,29 @@ export class MessageService {
       zToBlockmlOperationRegistry[operation].request.safeParse(message);
 
     if (requestResult.success === false) {
-      let response: ToBlockmlOperationResponse = makeInvalidRequestResponse({
-        operation: operation,
-        message: message,
-        error: requestResult.error,
-        startTs: startTs,
-        method: METHOD_RPC
-      });
+      let response: ToBlockmlResponseForOperation<ToBlockmlOperation> =
+        makeInvalidRequestResponse({
+          operation: operation,
+          message: message,
+          error: requestResult.error,
+          startTs: startTs,
+          method: METHOD_RPC
+        });
 
       return response;
     }
 
-    let response: ToBlockmlOperationResponse = await this.dispatch({
-      request: requestResult.data
-    });
+    let response: ToBlockmlResponseForOperation<ToBlockmlOperation> =
+      await this.dispatch({
+        request: requestResult.data
+      });
 
     return response;
   }
 
   private async dispatch(item: {
     request: ToBlockmlRequest;
-  }): Promise<ToBlockmlOperationResponse> {
+  }): Promise<ToBlockmlResponseForOperation<ToBlockmlOperation>> {
     let { request } = item;
 
     let response: ToBlockmlResponseForOperation<'rebuildStruct'> =

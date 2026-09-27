@@ -25,8 +25,10 @@ import { buildExplorer } from './build-explorer/build-explorer';
 import type { BuildVisualizationsOutput } from './build-visualizations/build-visualizations';
 import { buildVisualizations } from './build-visualizations/build-visualizations';
 import { finalizeRebuildStruct } from './finalize-rebuild-struct/finalize-rebuild-struct';
-import type { MalloyPayload } from './prepare-malloy-payload/prepare-malloy-payload';
-import { prepareMalloyPayload } from './prepare-malloy-payload/prepare-malloy-payload';
+import {
+  type MalloyPreparation,
+  prepareMalloy
+} from './prepare-malloy/prepare-malloy';
 
 export function rebuildConfiguredStruct(item: {
   files: BmlFile[];
@@ -73,9 +75,9 @@ export function rebuildConfiguredStruct(item: {
       return Result.succeed();
     }),
     Result.bind(
-      'malloyPayload',
-      (v): Result.ResultAsync<MalloyPayload, never> =>
-        prepareMalloyPayload({
+      'malloyPreparation',
+      (v): Result.ResultAsync<MalloyPreparation, never> =>
+        prepareMalloy({
           files: v.files,
           isUseCache: v.isUseCache,
           projectConnections: v.projectConnections,
@@ -87,11 +89,11 @@ export function rebuildConfiguredStruct(item: {
       (v): Result.ResultAsync<BuildCompiledModelsOutput, never> =>
         buildCompiledModels({
           files: v.files,
-          malloyConnections: v.malloyPayload.malloyConnections,
+          malloyConnections: v.malloyPreparation.malloyConnections,
           projectConnections: v.projectConnections,
-          mods: v.malloyPayload.mods,
+          mods: v.malloyPreparation.mods,
           spaces: v.spaces,
-          tempDir: v.malloyPayload.tempDir,
+          tempDir: v.malloyPreparation.tempDir,
           projectId: v.projectId,
           errors: v.errors,
           structId: v.structId,
@@ -120,7 +122,7 @@ export function rebuildConfiguredStruct(item: {
           projectId: v.projectId,
           envId: v.envId,
           apiModels: v.compiledModels.apiModels,
-          malloyConnections: v.malloyPayload.malloyConnections,
+          malloyConnections: v.malloyPreparation.malloyConnections,
           projectConnections: v.projectConnections,
           selectedGivens: v.selectedGivens,
           metrics: v.compiledModels.metrics
@@ -138,8 +140,8 @@ export function rebuildConfiguredStruct(item: {
           structId: v.structId,
           cs: v.cs,
           isTest: v.isTest,
-          tempDir: v.malloyPayload.tempDir,
-          malloyConnections: v.malloyPayload.malloyConnections,
+          tempDir: v.malloyPreparation.tempDir,
+          malloyConnections: v.malloyPreparation.malloyConnections,
           logger: v.logger,
           presets: v.presets,
           spaces: v.spaces,

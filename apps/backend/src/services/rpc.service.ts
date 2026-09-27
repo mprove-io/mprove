@@ -25,9 +25,9 @@ type BlockmlSendItem<TRequest extends ToBlockmlRequest> = {
 };
 
 type BlockmlSuccessOutput<TRequest extends ToBlockmlRequest> = Extract<
-  ToBlockmlResponseForOperation<TRequest['operation']>['result'],
+  ToBlockmlResponseForOperation<TRequest['operation']>,
   { type: 'Success' }
->['value'];
+>['output'];
 
 type DiskSendItem<TRequest extends ToDiskRequest> = {
   request: TRequest;
@@ -218,9 +218,8 @@ export class RpcService implements OnModuleDestroy {
         repoId: item.repoId
       });
 
-    if (response.result.type === 'Failure') {
-      let error: { code: string; displayData?: unknown } =
-        response.result.error;
+    if (response.type === 'Failure') {
+      let error: { code: string; displayData?: unknown } = response.error;
 
       throw new ServerError({
         message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
@@ -231,7 +230,7 @@ export class RpcService implements OnModuleDestroy {
       });
     }
 
-    let output: BlockmlSuccessOutput<TRequest> = response.result.value;
+    let output: BlockmlSuccessOutput<TRequest> = response.output;
 
     return output;
   }

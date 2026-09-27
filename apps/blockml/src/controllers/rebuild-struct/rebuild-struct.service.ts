@@ -25,7 +25,6 @@ import type { BlockmlInternalError } from '#common/zod/blockml/errors/blockml-in
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { Preset } from '#common/zod/blockml/preset';
-import type { ToBlockmlResponseResultForOperation } from '#common/zod/blockml/response/to-blockml-response-result-for-operation';
 import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
 import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
 import { getMproveDir } from '#node-common/functions/get-mprove-dir/get-mprove-dir';
@@ -54,7 +53,9 @@ export class RebuildStructService {
     cachedMproveConfig?: MproveConfig;
     cachedModels: Model[];
     cachedMetrics: ModelMetric[];
-  }): Promise<ToBlockmlResponseResultForOperation<'rebuildStruct'>> {
+  }): Promise<
+    Result.Result<ToBlockmlRebuildStructOutput, BlockmlInternalError>
+  > {
     let {
       structId,
       projectId,

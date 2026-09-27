@@ -1,7 +1,7 @@
 import type { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
-import { prePopulateMalloySchemaCache } from '#blockml/controllers/rebuild-struct/rebuild-struct-stateless/rebuild-configured-struct/prepare-malloy-payload/pre-populate-malloy-schema-cache/pre-populate-malloy-schema-cache';
+import { prePopulateMalloySchemaCache } from '#blockml/controllers/rebuild-struct/rebuild-struct-stateless/rebuild-configured-struct/prepare-malloy/pre-populate-malloy-schema-cache/pre-populate-malloy-schema-cache';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
 import type { BmlFile } from '#common/zod/blockml/bml-file';
@@ -12,18 +12,18 @@ import {
 } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { prepareMalloyFile } from './prepare-malloy-file/prepare-malloy-file';
 
-export type MalloyPayload = {
+export type MalloyPreparation = {
   mods: FileMod[];
   tempDir: string;
   malloyConnections: MalloyConnection[];
 };
 
-export async function prepareMalloyPayload(item: {
+export async function prepareMalloy(item: {
   files: BmlFile[];
   isUseCache: boolean;
   projectConnections: ProjectConnection[];
   cs: ConfigService<BlockmlConfig>;
-}): Result.ResultAsync<MalloyPayload, never> {
+}): Result.ResultAsync<MalloyPreparation, never> {
   let blockmlDataPath: string =
     item.cs.get<BlockmlConfig['blockmlData']>('blockmlData');
 
@@ -56,11 +56,11 @@ export async function prepareMalloyPayload(item: {
     projectConnections: item.projectConnections
   });
 
-  let output: MalloyPayload = {
+  let malloyPreparation: MalloyPreparation = {
     mods: mods,
     tempDir: tempDir,
     malloyConnections: malloyConnections
   };
 
-  return Result.succeed(output);
+  return Result.succeed(malloyPreparation);
 }

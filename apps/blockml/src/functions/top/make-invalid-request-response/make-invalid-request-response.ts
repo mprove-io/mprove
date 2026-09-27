@@ -18,20 +18,18 @@ export function makeInvalidRequestResponse<
     .safeParse(message);
 
   let response: ToBlockmlResponseForOperation<TOperation> = {
+    type: 'Failure',
     operation: operation,
     method: method,
     duration: Date.now() - startTs,
     traceId: metadata.success ? metadata.data.traceId : '',
-    result: {
-      type: 'Failure',
-      error: {
-        code: 'BLOCKML_INVALID_REQUEST',
-        displayData: error.issues.map(issue => ({
-          path: issue.path.join('.'),
-          message: issue.message,
-          code: issue.code
-        }))
-      }
+    error: {
+      code: 'BLOCKML_INVALID_REQUEST',
+      displayData: error.issues.map(issue => ({
+        path: issue.path.join('.'),
+        message: issue.message,
+        code: issue.code
+      }))
     }
   };
 
