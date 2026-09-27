@@ -22,7 +22,7 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendGetRepoOutput } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
-import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
+import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

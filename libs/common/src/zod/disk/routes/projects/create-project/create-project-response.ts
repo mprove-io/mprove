@@ -1,9 +1,5 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import {
-  type DiskCatalogFile,
-  zDiskCatalogFile
-} from '#common/zod/disk/disk-catalog-file';
 import {
   makeToDiskResponseSchema,
   type ToDiskResponseBase
@@ -12,6 +8,10 @@ import {
   type ToDiskCreateProjectError,
   zToDiskCreateProjectError
 } from './create-project-error';
+import {
+  type ToDiskCreateProjectOutput,
+  zToDiskCreateProjectOutput
+} from './create-project-output';
 
 export type ToDiskCreateProjectResponse = ToDiskResponseBase<
   'createProject',
@@ -19,34 +19,11 @@ export type ToDiskCreateProjectResponse = ToDiskResponseBase<
   ToDiskCreateProjectError
 >;
 
-export type ToDiskCreateProjectOutput = {
-  orgId: string;
-  projectId: string;
-  defaultBranch: string;
-  prodFiles: DiskCatalogFile[];
-  mproveDir: string;
-};
-
-export let zToDiskCreateProjectOutput = z
-  .object({
-    orgId: z.string(),
-    projectId: z.string(),
-    defaultBranch: z.string(),
-    prodFiles: z.array(zDiskCatalogFile),
-    mproveDir: z.string()
-  })
-  .meta({ id: 'ToDiskCreateProjectOutput' });
-
 export let zToDiskCreateProjectResponse = makeToDiskResponseSchema({
   operation: 'createProject',
   output: zToDiskCreateProjectOutput,
   error: zToDiskCreateProjectError
 });
-
-assertTypesEqual<
-  ToDiskCreateProjectOutput,
-  z.infer<typeof zToDiskCreateProjectOutput>
->({ value: true });
 
 assertTypesEqual<
   ToDiskCreateProjectResponse,

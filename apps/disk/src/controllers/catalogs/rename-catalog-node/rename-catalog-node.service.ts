@@ -10,7 +10,7 @@ import type { DiskOldPathIsNotExistError } from '#common/zod/disk/errors/disk-ol
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskRenameCatalogNodeOutput } from '#common/zod/disk/routes/catalogs/rename-catalog-node/rename-catalog-node-response';
+import type { ToDiskRenameCatalogNodeOutput } from '#common/zod/disk/routes/catalogs/rename-catalog-node/rename-catalog-node-output';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';

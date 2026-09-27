@@ -1,10 +1,5 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import {
-  type DiskCatalogFile,
-  zDiskCatalogFile
-} from '#common/zod/disk/disk-catalog-file';
-import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
   type ToDiskResponseBase
@@ -13,6 +8,10 @@ import {
   type ToDiskMergeRepoError,
   zToDiskMergeRepoError
 } from './merge-repo-error';
+import {
+  type ToDiskMergeRepoOutput,
+  zToDiskMergeRepoOutput
+} from './merge-repo-output';
 
 export type ToDiskMergeRepoResponse = ToDiskResponseBase<
   'mergeRepo',
@@ -20,29 +19,11 @@ export type ToDiskMergeRepoResponse = ToDiskResponseBase<
   ToDiskMergeRepoError
 >;
 
-export type ToDiskMergeRepoOutput = {
-  repo: Repo;
-  files: DiskCatalogFile[];
-  mproveDir: string;
-};
-
-export let zToDiskMergeRepoOutput = z
-  .object({
-    repo: zRepo,
-    files: z.array(zDiskCatalogFile),
-    mproveDir: z.string()
-  })
-  .meta({ id: 'ToDiskMergeRepoOutput' });
-
 export let zToDiskMergeRepoResponse = makeToDiskResponseSchema({
   operation: 'mergeRepo',
   output: zToDiskMergeRepoOutput,
   error: zToDiskMergeRepoError
 });
-
-assertTypesEqual<ToDiskMergeRepoOutput, z.infer<typeof zToDiskMergeRepoOutput>>(
-  { value: true }
-);
 
 assertTypesEqual<
   ToDiskMergeRepoResponse,

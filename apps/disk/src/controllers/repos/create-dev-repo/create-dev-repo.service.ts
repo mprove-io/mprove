@@ -9,7 +9,7 @@ import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
 import type { DiskGetInitialCommitHashError } from '#common/zod/disk/function-errors/disk-get-initial-commit-hash-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
+import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-output';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getInitialCommitHash } from '#disk/controllers/repos/create-dev-repo/get-initial-commit-hash/get-initial-commit-hash';

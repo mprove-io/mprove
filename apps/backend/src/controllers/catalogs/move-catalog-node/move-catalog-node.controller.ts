@@ -38,7 +38,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendMoveCatalogNodeOutput } from '#common/zod/backend/routes/catalogs/move-catalog-node/move-catalog-node-response';
-import type { ToDiskMoveCatalogNodeOutput } from '#common/zod/disk/routes/catalogs/move-catalog-node/move-catalog-node-response';
+import type { ToDiskMoveCatalogNodeOutput } from '#common/zod/disk/routes/catalogs/move-catalog-node/move-catalog-node-output';
 
 const { forEachSeries } = pIteration;
 

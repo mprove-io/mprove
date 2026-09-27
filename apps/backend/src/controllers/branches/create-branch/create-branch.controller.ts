@@ -41,7 +41,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToDiskCreateBranchOutput } from '#common/zod/disk/routes/branches/create-branch/create-branch-response';
+import type { ToDiskCreateBranchOutput } from '#common/zod/disk/routes/branches/create-branch/create-branch-output';
 
 const { forEachSeries } = pIteration;
 

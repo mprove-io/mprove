@@ -9,7 +9,7 @@ import type { DiskTheirBranchIsNotExistError } from '#common/zod/disk/errors/dis
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskMergeRepoOutput } from '#common/zod/disk/routes/repos/merge-repo/merge-repo-response';
+import type { ToDiskMergeRepoOutput } from '#common/zod/disk/routes/repos/merge-repo/merge-repo-output';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';

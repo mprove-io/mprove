@@ -45,7 +45,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendPushRepoOutput } from '#common/zod/backend/routes/repos/push-repo/push-repo-response';
-import type { ToDiskPushRepoOutput } from '#common/zod/disk/routes/repos/push-repo/push-repo-response';
+import type { ToDiskPushRepoOutput } from '#common/zod/disk/routes/repos/push-repo/push-repo-output';
 
 const { forEachSeries } = pIteration;
 

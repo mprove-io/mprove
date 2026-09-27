@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { ToDiskCreateOrgOutput } from '#common/zod/disk/routes/orgs/create-org/create-org-response';
+import type { ToDiskCreateOrgOutput } from '#common/zod/disk/routes/orgs/create-org/create-org-output';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
 import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';

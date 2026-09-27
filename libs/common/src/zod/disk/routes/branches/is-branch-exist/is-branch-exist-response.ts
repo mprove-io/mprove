@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToDiskResponseSchema,
@@ -8,6 +8,10 @@ import {
   type ToDiskIsBranchExistError,
   zToDiskIsBranchExistError
 } from './is-branch-exist-error';
+import {
+  type ToDiskIsBranchExistOutput,
+  zToDiskIsBranchExistOutput
+} from './is-branch-exist-output';
 
 export type ToDiskIsBranchExistResponse = ToDiskResponseBase<
   'isBranchExist',
@@ -15,36 +19,11 @@ export type ToDiskIsBranchExistResponse = ToDiskResponseBase<
   ToDiskIsBranchExistError
 >;
 
-export type ToDiskIsBranchExistOutput = {
-  orgId: string;
-  projectId: string;
-  repoId: string;
-  branch: string;
-  isRemote: boolean;
-  isBranchExist: boolean;
-};
-
-export let zToDiskIsBranchExistOutput = z
-  .object({
-    orgId: z.string(),
-    projectId: z.string(),
-    repoId: z.string(),
-    branch: z.string(),
-    isRemote: z.boolean(),
-    isBranchExist: z.boolean()
-  })
-  .meta({ id: 'ToDiskIsBranchExistOutput' });
-
 export let zToDiskIsBranchExistResponse = makeToDiskResponseSchema({
   operation: 'isBranchExist',
   output: zToDiskIsBranchExistOutput,
   error: zToDiskIsBranchExistError
 });
-
-assertTypesEqual<
-  ToDiskIsBranchExistOutput,
-  z.infer<typeof zToDiskIsBranchExistOutput>
->({ value: true });
 
 assertTypesEqual<
   ToDiskIsBranchExistResponse,

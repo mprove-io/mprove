@@ -39,7 +39,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendCreateFolderOutput } from '#common/zod/backend/routes/folders/create-folder/create-folder-response';
-import type { ToDiskCreateFolderOutput } from '#common/zod/disk/routes/folders/create-folder/create-folder-response';
+import type { ToDiskCreateFolderOutput } from '#common/zod/disk/routes/folders/create-folder/create-folder-output';
 
 const { forEachSeries } = pIteration;
 

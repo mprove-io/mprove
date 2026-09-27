@@ -25,7 +25,7 @@ import type { BlockmlInternalError } from '#common/zod/blockml/errors/blockml-in
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { Preset } from '#common/zod/blockml/preset';
-import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
+import type { ToBlockmlRebuildStructOutput } from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-output';
 import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
 import { getMproveDir } from '#node-common/functions/get-mprove-dir/get-mprove-dir';
 import { rebuildStructStateless } from './rebuild-struct-stateless/rebuild-struct-stateless';

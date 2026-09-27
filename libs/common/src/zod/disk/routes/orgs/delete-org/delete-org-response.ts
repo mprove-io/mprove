@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToDiskResponseSchema,
@@ -8,6 +8,10 @@ import {
   type ToDiskDeleteOrgError,
   zToDiskDeleteOrgError
 } from './delete-org-error';
+import {
+  type ToDiskDeleteOrgOutput,
+  zToDiskDeleteOrgOutput
+} from './delete-org-output';
 
 export type ToDiskDeleteOrgResponse = ToDiskResponseBase<
   'deleteOrg',
@@ -15,25 +19,11 @@ export type ToDiskDeleteOrgResponse = ToDiskResponseBase<
   ToDiskDeleteOrgError
 >;
 
-export type ToDiskDeleteOrgOutput = {
-  deletedOrgId: string;
-};
-
-export let zToDiskDeleteOrgOutput = z
-  .object({
-    deletedOrgId: z.string()
-  })
-  .meta({ id: 'ToDiskDeleteOrgOutput' });
-
 export let zToDiskDeleteOrgResponse = makeToDiskResponseSchema({
   operation: 'deleteOrg',
   output: zToDiskDeleteOrgOutput,
   error: zToDiskDeleteOrgError
 });
-
-assertTypesEqual<ToDiskDeleteOrgOutput, z.infer<typeof zToDiskDeleteOrgOutput>>(
-  { value: true }
-);
 
 assertTypesEqual<
   ToDiskDeleteOrgResponse,

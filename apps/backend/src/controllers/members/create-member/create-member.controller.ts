@@ -70,7 +70,7 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendCreateMemberOutput } from '#common/zod/backend/routes/members/create-member/create-member-response';
-import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
+import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-output';
 
 const { forEachSeries } = pIteration;
 

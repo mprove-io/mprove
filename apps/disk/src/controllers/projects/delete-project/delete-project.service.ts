@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { ToDiskDeleteProjectOutput } from '#common/zod/disk/routes/projects/delete-project/delete-project-response';
+import type { ToDiskDeleteProjectOutput } from '#common/zod/disk/routes/projects/delete-project/delete-project-output';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path/remove-path';

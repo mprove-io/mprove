@@ -1,10 +1,5 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import {
-  type DiskCatalogFile,
-  zDiskCatalogFile
-} from '#common/zod/disk/disk-catalog-file';
-import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
   type ToDiskResponseBase
@@ -13,6 +8,10 @@ import {
   type ToDiskRevertRepoToLastCommitError,
   zToDiskRevertRepoToLastCommitError
 } from './revert-repo-to-last-commit-error';
+import {
+  type ToDiskRevertRepoToLastCommitOutput,
+  zToDiskRevertRepoToLastCommitOutput
+} from './revert-repo-to-last-commit-output';
 
 export type ToDiskRevertRepoToLastCommitResponse = ToDiskResponseBase<
   'revertRepoToLastCommit',
@@ -20,30 +19,11 @@ export type ToDiskRevertRepoToLastCommitResponse = ToDiskResponseBase<
   ToDiskRevertRepoToLastCommitError
 >;
 
-export type ToDiskRevertRepoToLastCommitOutput = {
-  repo: Repo;
-  files: DiskCatalogFile[];
-  mproveDir: string;
-};
-
-export let zToDiskRevertRepoToLastCommitOutput = z
-  .object({
-    repo: zRepo,
-    files: z.array(zDiskCatalogFile),
-    mproveDir: z.string()
-  })
-  .meta({ id: 'ToDiskRevertRepoToLastCommitOutput' });
-
 export let zToDiskRevertRepoToLastCommitResponse = makeToDiskResponseSchema({
   operation: 'revertRepoToLastCommit',
   output: zToDiskRevertRepoToLastCommitOutput,
   error: zToDiskRevertRepoToLastCommitError
 });
-
-assertTypesEqual<
-  ToDiskRevertRepoToLastCommitOutput,
-  z.infer<typeof zToDiskRevertRepoToLastCommitOutput>
->({ value: true });
 
 assertTypesEqual<
   ToDiskRevertRepoToLastCommitResponse,

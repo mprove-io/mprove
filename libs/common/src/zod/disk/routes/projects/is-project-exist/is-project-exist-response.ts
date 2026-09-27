@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToDiskResponseSchema,
@@ -8,6 +8,10 @@ import {
   type ToDiskIsProjectExistError,
   zToDiskIsProjectExistError
 } from './is-project-exist-error';
+import {
+  type ToDiskIsProjectExistOutput,
+  zToDiskIsProjectExistOutput
+} from './is-project-exist-output';
 
 export type ToDiskIsProjectExistResponse = ToDiskResponseBase<
   'isProjectExist',
@@ -15,30 +19,11 @@ export type ToDiskIsProjectExistResponse = ToDiskResponseBase<
   ToDiskIsProjectExistError
 >;
 
-export type ToDiskIsProjectExistOutput = {
-  orgId: string;
-  projectId: string;
-  isProjectExist: boolean;
-};
-
-export let zToDiskIsProjectExistOutput = z
-  .object({
-    orgId: z.string(),
-    projectId: z.string(),
-    isProjectExist: z.boolean()
-  })
-  .meta({ id: 'ToDiskIsProjectExistOutput' });
-
 export let zToDiskIsProjectExistResponse = makeToDiskResponseSchema({
   operation: 'isProjectExist',
   output: zToDiskIsProjectExistOutput,
   error: zToDiskIsProjectExistError
 });
-
-assertTypesEqual<
-  ToDiskIsProjectExistOutput,
-  z.infer<typeof zToDiskIsProjectExistOutput>
->({ value: true });
 
 assertTypesEqual<
   ToDiskIsProjectExistResponse,

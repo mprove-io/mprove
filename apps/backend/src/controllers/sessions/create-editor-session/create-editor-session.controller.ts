@@ -63,7 +63,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendCreateEditorSessionOutput } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-response';
-import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-response';
+import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-output';
 
 const { forEachSeries } = pIteration;
 

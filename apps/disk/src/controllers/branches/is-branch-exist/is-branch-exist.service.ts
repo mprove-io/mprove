@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import type { BaseProject } from '#common/zod/backend/base-project';
-import type { ToDiskIsBranchExistOutput } from '#common/zod/disk/routes/branches/is-branch-exist/is-branch-exist-response';
+import type { ToDiskIsBranchExistOutput } from '#common/zod/disk/routes/branches/is-branch-exist/is-branch-exist-output';
 import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { createGit } from '#disk/functions/git/create-git/create-git';

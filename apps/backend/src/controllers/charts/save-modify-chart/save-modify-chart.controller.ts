@@ -61,7 +61,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendSaveModifyChartOutput } from '#common/zod/backend/routes/charts/save-modify-chart/save-modify-chart-response';
-import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-response';
+import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-output';
 
 const { forEachSeries } = pIteration;
 

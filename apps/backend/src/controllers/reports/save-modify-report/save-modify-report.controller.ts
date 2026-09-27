@@ -53,7 +53,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendSaveModifyReportOutput } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
-import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-response';
+import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-output';
 
 const { forEachSeries } = pIteration;
 

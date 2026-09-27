@@ -41,7 +41,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendCreateFileOutput } from '#common/zod/backend/routes/files/create-file/create-file-response';
-import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/files/create-file/create-file-response';
+import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/files/create-file/create-file-output';
 
 const { forEachSeries } = pIteration;
 

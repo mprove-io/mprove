@@ -54,7 +54,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendSaveModifyDashboardOutput } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
 import type { TileX } from '#common/zod/backend/tile-x';
-import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-response';
+import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-output';
 
 const { forEachSeries } = pIteration;
 

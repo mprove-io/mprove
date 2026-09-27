@@ -90,7 +90,7 @@ import type { ToBackendSeedRecordsInputOrgsItem } from '#common/zod/backend/test
 import type { ToBackendSeedRecordsInputProjectsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-projects-item';
 import type { ToBackendSeedRecordsInputSessionsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-sessions-item';
 import type { ToBackendSeedRecordsInputUsersItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-users-item';
-import type { ToDiskSeedProjectOutput } from '#common/zod/disk/routes/seed/seed-project/seed-project-response';
+import type { ToDiskSeedProjectOutput } from '#common/zod/disk/routes/seed/seed-project/seed-project-output';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()

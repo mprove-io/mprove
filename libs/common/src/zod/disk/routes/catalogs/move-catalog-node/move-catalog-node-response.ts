@@ -1,10 +1,5 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import {
-  type DiskCatalogFile,
-  zDiskCatalogFile
-} from '#common/zod/disk/disk-catalog-file';
-import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
   type ToDiskResponseBase
@@ -13,6 +8,10 @@ import {
   type ToDiskMoveCatalogNodeError,
   zToDiskMoveCatalogNodeError
 } from './move-catalog-node-error';
+import {
+  type ToDiskMoveCatalogNodeOutput,
+  zToDiskMoveCatalogNodeOutput
+} from './move-catalog-node-output';
 
 export type ToDiskMoveCatalogNodeResponse = ToDiskResponseBase<
   'moveCatalogNode',
@@ -20,30 +19,11 @@ export type ToDiskMoveCatalogNodeResponse = ToDiskResponseBase<
   ToDiskMoveCatalogNodeError
 >;
 
-export type ToDiskMoveCatalogNodeOutput = {
-  repo: Repo;
-  files: DiskCatalogFile[];
-  mproveDir: string;
-};
-
-export let zToDiskMoveCatalogNodeOutput = z
-  .object({
-    repo: zRepo,
-    files: z.array(zDiskCatalogFile),
-    mproveDir: z.string()
-  })
-  .meta({ id: 'ToDiskMoveCatalogNodeOutput' });
-
 export let zToDiskMoveCatalogNodeResponse = makeToDiskResponseSchema({
   operation: 'moveCatalogNode',
   output: zToDiskMoveCatalogNodeOutput,
   error: zToDiskMoveCatalogNodeError
 });
-
-assertTypesEqual<
-  ToDiskMoveCatalogNodeOutput,
-  z.infer<typeof zToDiskMoveCatalogNodeOutput>
->({ value: true });
 
 assertTypesEqual<
   ToDiskMoveCatalogNodeResponse,

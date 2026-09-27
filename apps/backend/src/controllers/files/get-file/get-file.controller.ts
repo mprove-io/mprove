@@ -21,7 +21,7 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendGetFileOutput } from '#common/zod/backend/routes/files/get-file/get-file-response';
-import type { ToDiskGetFileOutput } from '#common/zod/disk/routes/files/get-file/get-file-response';
+import type { ToDiskGetFileOutput } from '#common/zod/disk/routes/files/get-file/get-file-output';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)

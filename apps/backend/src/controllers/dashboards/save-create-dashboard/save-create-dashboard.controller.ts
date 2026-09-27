@@ -53,7 +53,7 @@ import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { ToBackendSaveCreateDashboardOutput } from '#common/zod/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-response';
 import type { TileX } from '#common/zod/backend/tile-x';
-import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/files/create-file/create-file-response';
+import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/files/create-file/create-file-output';
 
 const { forEachSeries } = pIteration;
 

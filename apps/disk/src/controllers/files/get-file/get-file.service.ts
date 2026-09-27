@@ -10,7 +10,7 @@ import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk
 import type { DiskGetFileContentError } from '#common/zod/disk/function-errors/disk-get-file-content-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskGetFileOutput } from '#common/zod/disk/routes/files/get-file/get-file-response';
+import type { ToDiskGetFileOutput } from '#common/zod/disk/routes/files/get-file/get-file-output';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getFileContent } from '#disk/controllers/files/get-file/get-file-content/get-file-content';

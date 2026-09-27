@@ -1,6 +1,5 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Repo, zRepo } from '#common/zod/disk/repo';
 import {
   makeToDiskResponseSchema,
   type ToDiskResponseBase
@@ -9,6 +8,10 @@ import {
   type ToDiskGetCatalogNodesError,
   zToDiskGetCatalogNodesError
 } from './get-catalog-nodes-error';
+import {
+  type ToDiskGetCatalogNodesOutput,
+  zToDiskGetCatalogNodesOutput
+} from './get-catalog-nodes-output';
 
 export type ToDiskGetCatalogNodesResponse = ToDiskResponseBase<
   'getCatalogNodes',
@@ -16,24 +19,11 @@ export type ToDiskGetCatalogNodesResponse = ToDiskResponseBase<
   ToDiskGetCatalogNodesError
 >;
 
-export type ToDiskGetCatalogNodesOutput = {
-  repo: Repo;
-};
-
-export let zToDiskGetCatalogNodesOutput = z
-  .object({ repo: zRepo })
-  .meta({ id: 'ToDiskGetCatalogNodesOutput' });
-
 export let zToDiskGetCatalogNodesResponse = makeToDiskResponseSchema({
   operation: 'getCatalogNodes',
   output: zToDiskGetCatalogNodesOutput,
   error: zToDiskGetCatalogNodesError
 });
-
-assertTypesEqual<
-  ToDiskGetCatalogNodesOutput,
-  z.infer<typeof zToDiskGetCatalogNodesOutput>
->({ value: true });
 
 assertTypesEqual<
   ToDiskGetCatalogNodesResponse,

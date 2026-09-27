@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToDiskResponseSchema,
@@ -8,6 +8,10 @@ import {
   type ToDiskCloneTestRepoError,
   zToDiskCloneTestRepoError
 } from './clone-test-repo-error';
+import {
+  type ToDiskCloneTestRepoOutput,
+  zToDiskCloneTestRepoOutput
+} from './clone-test-repo-output';
 
 export type ToDiskCloneTestRepoResponse = ToDiskResponseBase<
   'cloneTestRepo',
@@ -15,22 +19,11 @@ export type ToDiskCloneTestRepoResponse = ToDiskResponseBase<
   ToDiskCloneTestRepoError
 >;
 
-export type ToDiskCloneTestRepoOutput = Record<string, never>;
-
-export let zToDiskCloneTestRepoOutput = z
-  .object({})
-  .meta({ id: 'ToDiskCloneTestRepoOutput' });
-
 export let zToDiskCloneTestRepoResponse = makeToDiskResponseSchema({
   operation: 'cloneTestRepo',
   output: zToDiskCloneTestRepoOutput,
   error: zToDiskCloneTestRepoError
 });
-
-assertTypesEqual<
-  ToDiskCloneTestRepoOutput,
-  z.infer<typeof zToDiskCloneTestRepoOutput>
->({ value: true });
 
 assertTypesEqual<
   ToDiskCloneTestRepoResponse,

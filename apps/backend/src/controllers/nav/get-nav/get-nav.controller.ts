@@ -34,7 +34,7 @@ import type { Member } from '#common/zod/backend/member';
 import type { ToBackendGetNavOutput } from '#common/zod/backend/routes/nav/get-nav/get-nav-response';
 import type { StructX } from '#common/zod/backend/struct-x';
 import type { Repo } from '#common/zod/disk/repo';
-import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
+import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
 
 @ApiTags('Nav')
 @UseGuards(ThrottlerUserIdGuard)

@@ -9,7 +9,7 @@ import type { DiskFolderIsNotExistError } from '#common/zod/disk/errors/disk-fol
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskDeleteFolderOutput } from '#common/zod/disk/routes/folders/delete-folder/delete-folder-response';
+import type { ToDiskDeleteFolderOutput } from '#common/zod/disk/routes/folders/delete-folder/delete-folder-output';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';

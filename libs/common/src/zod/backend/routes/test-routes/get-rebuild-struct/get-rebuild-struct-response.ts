@@ -7,7 +7,7 @@ import {
 import {
   type ToBlockmlRebuildStructOutput,
   zToBlockmlRebuildStructOutput
-} from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-response';
+} from '#common/zod/blockml/routes/rebuild-struct/rebuild-struct-output';
 import {
   type ToBackendGetRebuildStructError,
   zToBackendGetRebuildStructError

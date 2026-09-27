@@ -10,7 +10,7 @@ import type { DiskParentPathIsNotExistError } from '#common/zod/disk/errors/disk
 import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { ToDiskCreateFolderOutput } from '#common/zod/disk/routes/folders/create-folder/create-folder-response';
+import type { ToDiskCreateFolderOutput } from '#common/zod/disk/routes/folders/create-folder/create-folder-output';
 import type { ProjectLt } from '#common/zod/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { ensureDir } from '#disk/functions/disk/ensure-dir/ensure-dir';
