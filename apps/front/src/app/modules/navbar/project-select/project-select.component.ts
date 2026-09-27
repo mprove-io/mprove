@@ -21,7 +21,7 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ProjectsItem } from '#common/zod/backend/projects-item';
 import type { ToBackendGetProjectsListInput } from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-request';
 import type { ToBackendGetProjectsListResponse } from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-response';
@@ -114,7 +114,7 @@ export class ProjectSelectComponent {
       .pipe(
         map(
           (resp: ToBackendGetProjectsListResponse) =>
-            unwrapToBackendResponse({ response: resp }).projectsList
+            unwrapBackendResponseOutput({ response: resp }).projectsList
         ),
         tap(x => {
           this.projectsList = x;

@@ -14,7 +14,7 @@ import {
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
 import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { OrgsItem } from '#common/zod/backend/orgs-item';
 import type { ToBackendGetOrgsListResponse } from '#common/zod/backend/routes/orgs/get-orgs-list/get-orgs-list-response';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -84,7 +84,7 @@ export class OrgSelectComponent {
       .pipe(
         map(
           (resp: ToBackendGetOrgsListResponse) =>
-            unwrapToBackendResponse({ response: resp }).orgsList
+            unwrapBackendResponseOutput({ response: resp }).orgsList
         ),
         tap(x => {
           this.orgsList = x;

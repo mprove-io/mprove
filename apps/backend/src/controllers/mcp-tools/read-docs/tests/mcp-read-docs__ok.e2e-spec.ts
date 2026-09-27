@@ -11,7 +11,7 @@ import { MCP_TOOL_READ_DOCS } from '#common/constants/mcp-tools-registry';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 
 let testId = 'backend-mcp-read-docs__ok';
@@ -74,7 +74,7 @@ test('1', async t => {
             pageIds: [toc[0]]
           }
         },
-        apiKey: unwrapToBackendResponse({ response: generateResp }).apiKey
+        apiKey: unwrapBackendResponseOutput({ response: generateResp }).apiKey
       });
 
       await prepTest.app.close();

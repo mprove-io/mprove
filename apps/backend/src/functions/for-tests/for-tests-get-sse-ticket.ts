@@ -1,6 +1,6 @@
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 
 export async function forTestsGetSseTicket(item: {
   httpServer: any;
@@ -22,5 +22,5 @@ export async function forTestsGetSseTicket(item: {
     checkIsOk: true
   });
 
-  return unwrapToBackendResponse({ response: resp }).sseTicket;
+  return unwrapBackendResponseOutput({ response: resp }).sseTicket;
 }

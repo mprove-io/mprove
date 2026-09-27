@@ -1,7 +1,7 @@
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
 
 export async function forTestsWaitForSessionActive(item: {
@@ -29,7 +29,7 @@ export async function forTestsWaitForSessionActive(item: {
       checkIsOk: true
     });
 
-    let output: ToBackendGetSessionOutput = unwrapToBackendResponse({
+    let output: ToBackendGetSessionOutput = unwrapBackendResponseOutput({
       response: resp
     });
 

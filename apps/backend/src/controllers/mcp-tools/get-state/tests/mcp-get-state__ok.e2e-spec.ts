@@ -14,7 +14,7 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 import type { ToBackendSeedRecordsInputConnectionsItem } from '#common/zod/backend/test-routes/to-backend-seed-records-input-connections-item';
 
@@ -151,7 +151,7 @@ test('1', async t => {
             getReports: false
           }
         },
-        apiKey: unwrapToBackendResponse({ response: generateResp }).apiKey
+        apiKey: unwrapBackendResponseOutput({ response: generateResp }).apiKey
       });
 
       await prepTest.app.close();

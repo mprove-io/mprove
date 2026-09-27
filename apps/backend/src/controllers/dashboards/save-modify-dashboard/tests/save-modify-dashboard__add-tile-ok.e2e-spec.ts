@@ -17,7 +17,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
 import type { ToBackendSaveModifyDashboardRequest } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
 import type { ToBackendSaveModifyDashboardResponse } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
@@ -126,7 +126,7 @@ test('1', async t => {
         req: req1
       });
 
-      let fromDashboard = unwrapToBackendResponse({
+      let fromDashboard = unwrapBackendResponseOutput({
         response: resp1
       }).dashboard;
 

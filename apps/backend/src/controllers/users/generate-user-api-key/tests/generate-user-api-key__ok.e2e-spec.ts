@@ -9,7 +9,7 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 import type {
   ToBackendGenerateUserApiKeyOutput,
@@ -76,9 +76,11 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    let output: ToBackendGenerateUserApiKeyOutput = unwrapToBackendResponse({
-      response: resp
-    });
+    let output: ToBackendGenerateUserApiKeyOutput = unwrapBackendResponseOutput(
+      {
+        response: resp
+      }
+    );
 
     t.truthy(output.apiKey);
 

@@ -2,7 +2,7 @@ import type { ExecutionContext } from 'ava';
 import { Prep } from '#backend/interfaces/prep';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateEditorSessionResponse } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-response';
 
 export async function forTestsInspectUi(item: {
@@ -19,7 +19,8 @@ export async function forTestsInspectUi(item: {
   if (item.createSessionResp) {
     console.log(
       'sessionId:',
-      unwrapToBackendResponse({ response: item.createSessionResp }).sessionId
+      unwrapBackendResponseOutput({ response: item.createSessionResp })
+        .sessionId
     );
   }
 

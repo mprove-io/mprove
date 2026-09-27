@@ -10,7 +10,7 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 
 let testId = 'backend-mcp__api-key-not-valid';
@@ -59,7 +59,7 @@ test('1', async t => {
         checkIsOk: true
       });
 
-      let parts = unwrapToBackendResponse({
+      let parts = unwrapBackendResponseOutput({
         response: generateResp
       }).apiKey.split('-');
       parts[parts.length - 1] = 'wrongsecret1234567890abcdef1234567890abcdef';

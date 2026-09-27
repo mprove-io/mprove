@@ -20,7 +20,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 import type { ToBackendCreateLlmModelRequest } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-request';
 import type { ToBackendCreateLlmModelResponse } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-response';
@@ -294,7 +294,7 @@ test('1', async t => {
       serverTs,
       models: responseModels,
       ...providerWithoutServerTsAndModels
-    } = unwrapToBackendResponse({ response: resp }).provider;
+    } = unwrapBackendResponseOutput({ response: resp }).provider;
 
     let responseModelParts: ResponseModelPart[] = responseModels.map(model => ({
       modelId: model.modelId,
@@ -414,7 +414,7 @@ test('1', async t => {
     ];
 
     assert.deepEqual(
-      unwrapToBackendResponse({ response: codexResp }).provider.models[0]
+      unwrapBackendResponseOutput({ response: codexResp }).provider.models[0]
         .variants,
       expectedCodexVariants
     );

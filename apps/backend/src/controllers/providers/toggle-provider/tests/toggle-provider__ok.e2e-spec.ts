@@ -19,7 +19,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ToBackendToggleProviderRequest } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
 import type { ToBackendToggleProviderResponse } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-response';
@@ -194,7 +194,7 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    let provider: Provider = unwrapToBackendResponse({
+    let provider: Provider = unwrapBackendResponseOutput({
       response: resp
     }).provider;
 

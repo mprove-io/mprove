@@ -9,7 +9,7 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetUserProfileRequest } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-request';
 import type { ToBackendGetUserProfileResponse } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-response';
 import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
@@ -82,7 +82,7 @@ test('1', async t => {
         req: loginUserBReq
       });
 
-      let loginTokenB = unwrapToBackendResponse({
+      let loginTokenB = unwrapBackendResponseOutput({
         response: loginUserBResp
       }).token;
 

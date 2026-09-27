@@ -11,7 +11,7 @@ import { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
 import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
 import type { ToBackendCreateRoleGivenRequest } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
@@ -181,7 +181,7 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    let output: ToBackendDeleteRoleGivenOutput = unwrapToBackendResponse({
+    let output: ToBackendDeleteRoleGivenOutput = unwrapBackendResponseOutput({
       response: resp
     });
 

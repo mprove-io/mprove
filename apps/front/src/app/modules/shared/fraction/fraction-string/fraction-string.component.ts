@@ -27,7 +27,7 @@ import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.e
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendSuggestDimensionValuesInput } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-request';
 import type {
   ToBackendSuggestDimensionValuesOutput,
@@ -243,7 +243,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                   .toPromise();
 
               let output: ToBackendSuggestDimensionValuesOutput =
-                unwrapToBackendResponse({
+                unwrapBackendResponseOutput({
                   response: q1Resp
                 });
 

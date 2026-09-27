@@ -15,7 +15,7 @@ import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
 import type { ToBackendSaveModifyReportRequest } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-request';
 import type {
@@ -129,7 +129,7 @@ test('1', async t => {
           repoId: userId,
           branchId: BRANCH_MAIN,
           envId: PROJECT_ENV_PROD,
-          fromReportId: unwrapToBackendResponse({ response: resp1 }).report
+          fromReportId: unwrapBackendResponseOutput({ response: resp1 }).report
             .reportId,
           modReportId: 'r2',
           title: 'Modified Space',
@@ -165,7 +165,7 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    let output: ToBackendSaveModifyReportOutput = unwrapToBackendResponse({
+    let output: ToBackendSaveModifyReportOutput = unwrapBackendResponseOutput({
       response: resp
     });
 

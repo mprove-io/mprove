@@ -20,7 +20,7 @@ import {
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { EnvsItem } from '#common/zod/backend/envs-item';
 import type { ToBackendGetEnvsListInput } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-request';
 import type { ToBackendGetEnvsListResponse } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-response';
@@ -117,7 +117,7 @@ export class EnvSelectComponent {
       .pipe(
         map(
           (resp: ToBackendGetEnvsListResponse) =>
-            unwrapToBackendResponse({ response: resp }).envsList
+            unwrapBackendResponseOutput({ response: resp }).envsList
         ),
         tap(x => {
           this.envsList = x;

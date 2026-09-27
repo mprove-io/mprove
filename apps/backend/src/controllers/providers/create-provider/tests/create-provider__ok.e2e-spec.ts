@@ -19,7 +19,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateProviderRequest } from '#common/zod/backend/routes/providers/create-provider/create-provider-request';
 import type { ToBackendCreateProviderResponse } from '#common/zod/backend/routes/providers/create-provider/create-provider-response';
 
@@ -176,7 +176,7 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    assert.deepEqual(unwrapToBackendResponse({ response: resp }).provider, {
+    assert.deepEqual(unwrapBackendResponseOutput({ response: resp }).provider, {
       projectId: projectId,
       providerId: providerId,
       type: ProviderTypeEnum.OpenAICompatible,

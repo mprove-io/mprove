@@ -24,7 +24,7 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { DatabricksAuthTypeEnum } from '#common/enums/databricks-auth-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
 import type { TestConnectionResult } from '#common/zod/backend/connections/test-connection-result';
 import type { EnvsItem } from '#common/zod/backend/envs-item';
@@ -451,7 +451,7 @@ export class AddConnectionDialogComponent implements OnInit {
       .pipe(
         map(
           (resp: ToBackendGetEnvsListResponse) =>
-            unwrapToBackendResponse({ response: resp }).envsList
+            unwrapBackendResponseOutput({ response: resp }).envsList
         ),
         tap(x => {
           this.envsList = x;

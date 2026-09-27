@@ -14,7 +14,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendDeleteProviderRequest } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-request';
 import type { ToBackendDeleteProviderResponse } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-response';
 
@@ -161,7 +161,7 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    assert.deepEqual(unwrapToBackendResponse({ response: resp }), {});
+    assert.deepEqual(unwrapBackendResponseOutput({ response: resp }), {});
 
     assert.equal(deletedProvider, undefined);
 

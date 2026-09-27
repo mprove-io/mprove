@@ -9,7 +9,7 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 import type { ToBackendSetUserNameRequest } from '#common/zod/backend/routes/users/set-user-name/set-user-name-request';
 import type { ToBackendSetUserNameResponse } from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
@@ -73,7 +73,7 @@ test('1', async t => {
       resp = await sendToBackend({
         route: 'api/ToBackendSetUserName',
         httpServer: prep.httpServer,
-        apiKey: unwrapToBackendResponse({ response: generateResp }).apiKey,
+        apiKey: unwrapBackendResponseOutput({ response: generateResp }).apiKey,
         req: setNameReq
       });
 

@@ -16,7 +16,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateEditorSessionRequest } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-request';
 import type { ToBackendCreateEditorSessionResponse } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-response';
 import type { ToBackendDeleteSessionRequest } from '#common/zod/backend/routes/sessions/delete-session/delete-session-request';
@@ -151,7 +151,7 @@ export async function forTestsRunEditorSessionE2x(item: {
       checkIsOk: true
     });
 
-    sessionId = unwrapToBackendResponse({
+    sessionId = unwrapBackendResponseOutput({
       response: createSessionResp
     }).sessionId;
     console.log(`[test] session created: ${sessionId}`);

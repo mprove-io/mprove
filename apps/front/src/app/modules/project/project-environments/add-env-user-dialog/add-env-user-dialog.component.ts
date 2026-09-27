@@ -16,7 +16,7 @@ import {
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { map, take, tap } from 'rxjs/operators';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { Env } from '#common/zod/backend/env';
 import type { EnvUser } from '#common/zod/backend/env-user';
 import type { ToBackendCreateEnvUserInput } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-request';
@@ -100,7 +100,7 @@ export class AddEnvUserDialogComponent implements OnInit {
       .pipe(
         map(
           (resp: ToBackendGetMembersListResponse) =>
-            unwrapToBackendResponse({ response: resp }).membersList
+            unwrapBackendResponseOutput({ response: resp }).membersList
         ),
         tap(x => {
           this.membersList = x;

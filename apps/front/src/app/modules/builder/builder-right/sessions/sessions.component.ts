@@ -6,7 +6,7 @@ import { PROVIDER_NAME_BY_ID } from '#common/constants/providers';
 import { PATH_NEW_SESSION } from '#common/constants/top';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendArchiveSessionInput } from '#common/zod/backend/routes/sessions/archive-session/archive-session-request';
 import type { ToBackendArchiveSessionResponse } from '#common/zod/backend/routes/sessions/archive-session/archive-session-response';
 import type { ToBackendGetSessionsListInput } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
@@ -209,7 +209,9 @@ export class SessionsComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendPauseEditorSessionResponse) => {
-          let respSession = unwrapToBackendResponse({ response: resp }).session;
+          let respSession = unwrapBackendResponseOutput({
+            response: resp
+          }).session;
 
           if (respSession.status === 'Archived') {
             this.updatedArchivedSessions({
@@ -264,7 +266,9 @@ export class SessionsComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendArchiveSessionResponse) => {
-          let respSession = unwrapToBackendResponse({ response: resp }).session;
+          let respSession = unwrapBackendResponseOutput({
+            response: resp
+          }).session;
 
           this.updatedArchivedSessions({
             session: session,

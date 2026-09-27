@@ -15,7 +15,7 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import { spaceUnitToChartUnit } from '#common/functions/space-unit-to-chart-unit/space-unit-to-chart-unit';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetChartRequest } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
 import type { ToBackendGetChartsRequest } from '#common/zod/backend/routes/charts/get-charts/get-charts-request';
 import type { ToBackendGetQueryRequest } from '#common/zod/backend/routes/queries/get-query/get-query-request';
@@ -142,7 +142,8 @@ test('1', async t => {
       });
 
       let chartUnit = makeSpaceUnits({
-        spaceNodes: unwrapToBackendResponse({ response: resp1 }).chartSpaceNodes
+        spaceNodes: unwrapBackendResponseOutput({ response: resp1 })
+          .chartSpaceNodes
       })
         .map(spaceUnit => spaceUnitToChartUnit({ spaceUnit: spaceUnit }))
         .find(x => x.chartId === chartId);
@@ -169,7 +170,7 @@ test('1', async t => {
         req: reqGetChart
       });
 
-      let chart = unwrapToBackendResponse({ response: respGetChart }).chart;
+      let chart = unwrapBackendResponseOutput({ response: respGetChart }).chart;
 
       let req2: ToBackendRunQueriesRequest = {
         traceId: traceId,
@@ -191,7 +192,7 @@ test('1', async t => {
       });
 
       // Wait for query to complete before closing to avoid "pool closed" error
-      let queryId = unwrapToBackendResponse({ response: resp2 })
+      let queryId = unwrapBackendResponseOutput({ response: resp2 })
         .runningQueries[0]?.queryId;
       if (queryId) {
         let maxWaitMs = 10000;
@@ -217,8 +218,8 @@ test('1', async t => {
             req: reqGetQuery
           });
 
-          let status = unwrapToBackendResponse({ response: respGetQuery }).query
-            ?.status;
+          let status = unwrapBackendResponseOutput({ response: respGetQuery })
+            .query?.status;
           if (status !== QueryStatusEnum.Running) {
             break;
           }

@@ -8,7 +8,7 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendIsOrgExistRequest } from '#common/zod/backend/routes/orgs/is-org-exist/is-org-exist-request';
 import type { ToBackendIsOrgExistResponse } from '#common/zod/backend/routes/orgs/is-org-exist/is-org-exist-response';
 
@@ -75,7 +75,10 @@ test('1', async t => {
     }
 
     assert.equal(resp.result.type, 'Success');
-    assert.equal(unwrapToBackendResponse({ response: resp }).isExist, false);
+    assert.equal(
+      unwrapBackendResponseOutput({ response: resp }).isExist,
+      false
+    );
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

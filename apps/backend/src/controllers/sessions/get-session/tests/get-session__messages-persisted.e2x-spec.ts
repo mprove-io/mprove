@@ -16,7 +16,7 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateEditorSessionRequest } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-request';
 import type { ToBackendDeleteSessionRequest } from '#common/zod/backend/routes/sessions/delete-session/delete-session-request';
 import type { ToBackendGetSessionRequest } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
@@ -144,7 +144,9 @@ test('1', async t => {
       checkIsOk: true
     });
 
-    let sessionId = unwrapToBackendResponse({ response: createResp }).sessionId;
+    let sessionId = unwrapBackendResponseOutput({
+      response: createResp
+    }).sessionId;
     console.log(`[test] session created: ${sessionId}`);
 
     await new Promise<void>(resolve => {
@@ -233,7 +235,7 @@ test('1', async t => {
       checkIsOk: true
     });
 
-    let output: ToBackendGetSessionOutput = unwrapToBackendResponse({
+    let output: ToBackendGetSessionOutput = unwrapBackendResponseOutput({
       response: getResp
     });
 

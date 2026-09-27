@@ -10,7 +10,7 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetStateRequest } from '#common/zod/backend/routes/state/get-state/get-state-request';
 import type { ToBackendGetStateResponse } from '#common/zod/backend/routes/state/get-state/get-state-response';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
@@ -121,7 +121,7 @@ test('1', async t => {
       resp = await sendToBackend({
         route: 'api/ToBackendGetState',
         httpServer: prep.httpServer,
-        apiKey: unwrapToBackendResponse({ response: generateResp }).apiKey,
+        apiKey: unwrapBackendResponseOutput({ response: generateResp }).apiKey,
         req: getStateReq
       });
 

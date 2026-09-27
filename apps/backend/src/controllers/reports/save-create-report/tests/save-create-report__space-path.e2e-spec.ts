@@ -16,7 +16,7 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
 import type { ToBackendSaveCreateReportRequest } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-request';
 import type {
@@ -123,7 +123,7 @@ test('1', async t => {
         req: req1
       });
 
-      draftReportId = unwrapToBackendResponse({ response: resp1 }).report
+      draftReportId = unwrapBackendResponseOutput({ response: resp1 }).report
         .reportId;
 
       let req2: ToBackendSaveCreateReportRequest = {
@@ -169,7 +169,7 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    let output: ToBackendSaveCreateReportOutput = unwrapToBackendResponse({
+    let output: ToBackendSaveCreateReportOutput = unwrapBackendResponseOutput({
       response: resp
     });
 

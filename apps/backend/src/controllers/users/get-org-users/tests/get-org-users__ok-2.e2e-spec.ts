@@ -10,7 +10,7 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetOrgUsersRequest } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
 import type {
   ToBackendGetOrgUsersOutput,
@@ -136,7 +136,7 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    let output: ToBackendGetOrgUsersOutput = unwrapToBackendResponse({
+    let output: ToBackendGetOrgUsersOutput = unwrapBackendResponseOutput({
       response: resp
     });
 

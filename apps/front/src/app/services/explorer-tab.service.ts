@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { interval, type Observable, type Subscription } from 'rxjs';
 import { exhaustMap, tap } from 'rxjs/operators';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendGetExplorerChartTabInput } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
 import type {
   ToBackendGetExplorerChartTabOutput,
@@ -40,7 +40,7 @@ export class ExplorerTabService {
             sessionId: sessionId,
             tabId: tabId,
             chartId: chartId,
-            respPayload: unwrapToBackendResponse({ response: resp })
+            respPayload: unwrapBackendResponseOutput({ response: resp })
           });
         })
       )
@@ -177,7 +177,7 @@ export class ExplorerTabService {
             sessionId: sessionId,
             tabId: tabId,
             chartId: chartId,
-            respPayload: unwrapToBackendResponse({ response: resp })
+            respPayload: unwrapBackendResponseOutput({ response: resp })
           });
         })
       )

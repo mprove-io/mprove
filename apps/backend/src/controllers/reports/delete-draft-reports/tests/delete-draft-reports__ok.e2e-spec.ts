@@ -20,7 +20,7 @@ import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
 import type { ToBackendDeleteDraftReportsRequest } from '#common/zod/backend/routes/reports/delete-draft-reports/delete-draft-reports-request';
 import type { ToBackendDeleteDraftReportsResponse } from '#common/zod/backend/routes/reports/delete-draft-reports/delete-draft-reports-response';
@@ -143,7 +143,7 @@ test('1', async t => {
           branchId: BRANCH_MAIN,
           envId: PROJECT_ENV_PROD,
           reportIds: [
-            unwrapToBackendResponse({ response: resp1 }).report.reportId
+            unwrapBackendResponseOutput({ response: resp1 }).report.reportId
           ]
         }
       };

@@ -10,7 +10,7 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { Member } from '#common/zod/backend/member';
 import type { ToBackendGetMembersRequest } from '#common/zod/backend/routes/members/get-members/get-members-request';
 import type { ToBackendGetMembersOutput } from '#common/zod/backend/routes/members/get-members/get-members-response';
@@ -178,11 +178,10 @@ test('1', async t => {
 
       assert.equal(getMembersResp.result.type, 'Success');
 
-      let getMembersOutput: ToBackendGetMembersOutput = unwrapToBackendResponse(
-        {
+      let getMembersOutput: ToBackendGetMembersOutput =
+        unwrapBackendResponseOutput({
           response: getMembersResp
-        }
-      );
+        });
 
       let adminMember: Member = getMembersOutput.members.find(
         member => member.memberId === userId
@@ -212,7 +211,7 @@ test('1', async t => {
 
     assert.equal(resp.result.type, 'Success');
 
-    let output: ToBackendDeleteRoleOutput = unwrapToBackendResponse({
+    let output: ToBackendDeleteRoleOutput = unwrapBackendResponseOutput({
       response: resp
     });
 

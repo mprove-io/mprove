@@ -15,7 +15,7 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import { unwrapToBackendResponse } from '#common/functions/unwrap-to-backend-response/unwrap-to-backend-response';
+import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateDraftDashboardRequest } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-request';
 import type { ToBackendCreateDraftDashboardResponse } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-response';
 import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
@@ -126,7 +126,7 @@ test('1', async t => {
       });
 
       let getDashboardOutput: ToBackendGetDashboardOutput =
-        unwrapToBackendResponse({ response: resp1 });
+        unwrapBackendResponseOutput({ response: resp1 });
 
       let req: ToBackendCreateDraftDashboardRequest = {
         traceId: traceId,
