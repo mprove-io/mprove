@@ -1,6 +1,6 @@
 import type { Logger } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import type { BlockmlOperationResult } from '#blockml/types/blockml-operation-result';
+import type { BlockmlResultForOperation } from '#blockml/types/blockml-result-for-operation';
 import type { ToBlockmlOperation } from '#common/zod/blockml/request/to-blockml-operation';
 import type { ToBlockmlRequestForOperation } from '#common/zod/blockml/request/to-blockml-request-for-operation';
 import type { ToBlockmlResponseForOperation } from '#common/zod/blockml/response/to-blockml-response-for-operation';
@@ -14,7 +14,7 @@ export async function processValidatedRequest<
   method: string;
   process: (
     input: ToBlockmlRequestForOperation<TOperation>['input']
-  ) => Promise<BlockmlOperationResult<TOperation>>;
+  ) => Promise<BlockmlResultForOperation<TOperation>>;
   logger: Logger;
   startTs?: number;
 }): Promise<ToBlockmlResponseForOperation<TOperation>> {
@@ -23,7 +23,7 @@ export async function processValidatedRequest<
   let startTs: number = item.startTs ?? Date.now();
 
   try {
-    let result: BlockmlOperationResult<TOperation> = await process(
+    let result: BlockmlResultForOperation<TOperation> = await process(
       request.input
     );
 
