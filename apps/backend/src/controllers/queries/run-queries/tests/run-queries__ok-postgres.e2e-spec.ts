@@ -124,6 +124,7 @@ test('1', async t => {
       });
 
       let req1: ToBackendGetChartsRequest = {
+        operation: 'getCharts',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -151,6 +152,7 @@ test('1', async t => {
       assert.ok(chartUnit);
 
       let reqGetChart: ToBackendGetChartRequest = {
+        operation: 'getChart',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -173,6 +175,7 @@ test('1', async t => {
       let chart = unwrapBackendResponseOutput({ response: respGetChart }).chart;
 
       let req2: ToBackendRunQueriesRequest = {
+        operation: 'runQueries',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -199,6 +202,7 @@ test('1', async t => {
         let waited = 0;
         while (waited < maxWaitMs) {
           let reqGetQuery: ToBackendGetQueryRequest = {
+            operation: 'getQuery',
             traceId: traceId,
             idempotencyKey: makeId(),
             input: {
@@ -242,7 +246,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp2.result.type, 'Success');
+    assert.equal(resp2.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

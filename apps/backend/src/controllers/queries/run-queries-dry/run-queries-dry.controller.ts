@@ -40,7 +40,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { QueryEstimate } from '#common/zod/backend/query-estimate';
-import type { ToBackendRunQueriesDryOutput } from '#common/zod/backend/routes/queries/run-queries-dry/run-queries-dry-response';
+import type { ToBackendRunQueriesDryOutput } from '#common/zod/backend/routes/queries/run-queries-dry/run-queries-dry-output';
 
 const { forEachSeries } = pIteration;
 

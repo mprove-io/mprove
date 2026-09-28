@@ -23,7 +23,7 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ProjectsItem } from '#common/zod/backend/projects-item';
-import type { ToBackendGetProjectsListInput } from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-request';
+import type { ToBackendGetProjectsListRequest } from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-request';
 import type { ToBackendGetProjectsListResponse } from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -102,7 +102,7 @@ export class ProjectSelectComponent {
   openProjectSelect() {
     this.projectsListLoading = true;
 
-    let payload: ToBackendGetProjectsListInput = {
+    let payload: ToBackendGetProjectsListRequest['input'] = {
       orgId: this.selectedOrgId
     };
 

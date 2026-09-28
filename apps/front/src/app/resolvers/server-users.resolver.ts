@@ -7,7 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
-import type { ToBackendGetServerUsersInput } from '#common/zod/backend/routes/users/get-server-users/get-server-users-request';
+import type { ToBackendGetServerUsersRequest } from '#common/zod/backend/routes/users/get-server-users/get-server-users-request';
 import type { ToBackendGetServerUsersResponse } from '#common/zod/backend/routes/users/get-server-users/get-server-users-response';
 import { ServerUsersQuery } from '../queries/server-users.query';
 import { ApiService } from '../services/api.service';
@@ -23,7 +23,7 @@ export class ServerUsersResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let payload: ToBackendGetServerUsersInput = {
+    let payload: ToBackendGetServerUsersRequest['input'] = {
       pageNum: 1,
       perPage: USERS_PER_PAGE
     };
@@ -35,10 +35,10 @@ export class ServerUsersResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetServerUsersResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.serverUsersQuery.update({
-              serverUsers: resp.result.value.serverUsersList,
-              total: resp.result.value.total
+              serverUsers: resp.output.serverUsersList,
+              total: resp.output.total
             });
             return true;
           } else {

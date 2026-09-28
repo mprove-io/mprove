@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendDeleteConnectionInput } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-request';
+import type { ToBackendDeleteConnectionRequest } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-request';
 import type { ToBackendDeleteConnectionResponse } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-response';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -48,7 +48,7 @@ export class DeleteConnectionDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteConnectionInput = {
+    let payload: ToBackendDeleteConnectionRequest['input'] = {
       projectId: this.dataItem.projectId,
       envId: this.dataItem.envId,
       connectionId: this.dataItem.connectionId
@@ -64,7 +64,7 @@ export class DeleteConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteConnectionResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             let connectionsState = this.connectionsQuery.getValue();
             this.connectionsQuery.update({
               connections: connectionsState.connections.filter(

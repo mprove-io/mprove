@@ -46,6 +46,7 @@ test('1', async t => {
       });
 
       let generateReq: ToBackendGenerateUserApiKeyRequest = {
+        operation: 'generateUserApiKey',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {}

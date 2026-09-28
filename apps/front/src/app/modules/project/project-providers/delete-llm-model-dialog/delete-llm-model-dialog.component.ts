@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendDeleteLlmModelInput } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
+import type { ToBackendDeleteLlmModelRequest } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
 import type { ToBackendDeleteLlmModelResponse } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -47,7 +47,7 @@ export class DeleteLlmModelDialogComponent implements OnInit {
   delete() {
     let provider = this.ref.data.provider;
 
-    let payload: ToBackendDeleteLlmModelInput = {
+    let payload: ToBackendDeleteLlmModelRequest['input'] = {
       projectId: provider.projectId,
       providerId: provider.providerId,
       modelId: this.ref.data.model.modelId
@@ -63,11 +63,11 @@ export class DeleteLlmModelDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteLlmModelResponse) => {
-          if (resp.result?.type !== 'Success') {
+          if (resp?.type !== 'Success') {
             return;
           }
 
-          let provider: Provider = resp.result.value.provider;
+          let provider: Provider = resp.output.provider;
 
           let providers: Provider[] = this.providersQuery
             .getValue()

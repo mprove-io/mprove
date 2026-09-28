@@ -8,7 +8,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { Given } from '#common/zod/backend/given';
-import type { ToBackendDeleteGivenInput } from '#common/zod/backend/routes/givens/delete-given/delete-given-request';
+import type { ToBackendDeleteGivenRequest } from '#common/zod/backend/routes/givens/delete-given/delete-given-request';
 import type { ToBackendDeleteGivenResponse } from '#common/zod/backend/routes/givens/delete-given/delete-given-response';
 import { GivensQuery } from '#front/app/queries/givens.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -49,7 +49,7 @@ export class DeleteGivenDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteGivenInput = {
+    let payload: ToBackendDeleteGivenRequest['input'] = {
       projectId: this.dataItem.given.projectId,
       givenId: this.dataItem.given.givenId
     };
@@ -64,9 +64,9 @@ export class DeleteGivenDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteGivenResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
-            this.givensQuery.update({ givens: resp.result.value.givens });
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
+            this.givensQuery.update({ givens: resp.output.givens });
           }
         }),
         take(1)

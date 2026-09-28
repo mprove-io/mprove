@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type ChartUnit, zChartUnit } from '#common/zod/backend/chart-unit';
-import { type ChartX, zChartX } from '#common/zod/backend/chart-x';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendEditDraftChartOutput,
+  zToBackendEditDraftChartOutput
+} from '#common/zod/backend/routes/charts/edit-draft-chart/edit-draft-chart-output';
 import {
   type ToBackendEditDraftChartError,
   zToBackendEditDraftChartError
 } from './edit-draft-chart-error';
 
-export type ToBackendEditDraftChartOutput = {
-  chart: ChartX;
-  chartUnitDrafts: ChartUnit[];
-};
-
-export type ToBackendEditDraftChartResponse = ToBackendResponse<
+export type ToBackendEditDraftChartResponse = ToBackendResponseBase<
+  'editDraftChart',
   ToBackendEditDraftChartOutput,
   ToBackendEditDraftChartError
 >;
 
-export let zToBackendEditDraftChartOutput = z
-  .object({
-    chart: zChartX,
-    chartUnitDrafts: z.array(zChartUnit)
-  })
-  .meta({ id: 'ToBackendEditDraftChartOutput' });
-
 export let zToBackendEditDraftChartResponse = makeToBackendResponseSchema({
-  success: zToBackendEditDraftChartOutput,
+  operation: 'editDraftChart',
+  output: zToBackendEditDraftChartOutput,
   error: zToBackendEditDraftChartError
 }).meta({ id: 'ToBackendEditDraftChartResponse' });
-
-assertTypesEqual<
-  ToBackendEditDraftChartOutput,
-  z.infer<typeof zToBackendEditDraftChartOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendEditDraftChartResponse,

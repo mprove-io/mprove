@@ -48,6 +48,7 @@ test('1', async t => {
       let badFormatKey = 'PK-WRONG-FORMAT';
 
       let req: ToBackendGetStateRequest = {
+        operation: 'getState',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -87,11 +88,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Failure');
-    assert.equal(
-      resp.result.error.message,
-      ErEnum.BACKEND_WRONG_API_KEY_FORMAT
-    );
+    assert.equal(resp.type, 'Failure');
+    assert.equal(resp.error.code, ErEnum.BACKEND_WRONG_API_KEY_FORMAT);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

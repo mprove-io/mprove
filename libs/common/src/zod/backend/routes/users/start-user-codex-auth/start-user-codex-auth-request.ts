@@ -1,30 +1,21 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendStartUserCodexAuthInput = Record<string, never>;
-
 export type ToBackendStartUserCodexAuthRequest = {
+  operation: 'startUserCodexAuth';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendStartUserCodexAuthInput;
+  input: Record<string, never>;
 };
-
-export let zToBackendStartUserCodexAuthInput = z
-  .object({})
-  .meta({ id: 'ToBackendStartUserCodexAuthInput' });
 
 export let zToBackendStartUserCodexAuthRequest = z
   .strictObject({
+    operation: z.literal('startUserCodexAuth'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendStartUserCodexAuthInput
+    input: z.object({}).meta({ id: 'ToBackendStartUserCodexAuthInput' })
   })
   .meta({ id: 'ToBackendStartUserCodexAuthRequest' });
-
-assertTypesEqual<
-  ToBackendStartUserCodexAuthInput,
-  z.infer<typeof zToBackendStartUserCodexAuthInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendStartUserCodexAuthRequest,

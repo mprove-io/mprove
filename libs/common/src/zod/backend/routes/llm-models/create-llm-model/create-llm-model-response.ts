@@ -1,37 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Provider, zProvider } from '#common/zod/backend/provider';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCreateLlmModelOutput,
+  zToBackendCreateLlmModelOutput
+} from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-output';
 import {
   type ToBackendCreateLlmModelError,
   zToBackendCreateLlmModelError
 } from './create-llm-model-error';
 
-export type ToBackendCreateLlmModelOutput = {
-  provider?: Provider;
-};
-
-export type ToBackendCreateLlmModelResponse = ToBackendResponse<
+export type ToBackendCreateLlmModelResponse = ToBackendResponseBase<
+  'createLlmModel',
   ToBackendCreateLlmModelOutput,
   ToBackendCreateLlmModelError
 >;
 
-export let zToBackendCreateLlmModelOutput = z
-  .object({ provider: zProvider })
-  .meta({ id: 'ToBackendCreateLlmModelOutput' });
-
 export let zToBackendCreateLlmModelResponse = makeToBackendResponseSchema({
-  success: zToBackendCreateLlmModelOutput,
+  operation: 'createLlmModel',
+  output: zToBackendCreateLlmModelOutput,
   error: zToBackendCreateLlmModelError
 }).meta({ id: 'ToBackendCreateLlmModelResponse' });
-
-assertTypesEqual<
-  ToBackendCreateLlmModelOutput,
-  z.infer<typeof zToBackendCreateLlmModelOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateLlmModelResponse,

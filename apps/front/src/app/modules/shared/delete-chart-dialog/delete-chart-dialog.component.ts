@@ -10,7 +10,7 @@ import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
-import type { ToBackendDeleteChartInput } from '#common/zod/backend/routes/charts/delete-chart/delete-chart-request';
+import type { ToBackendDeleteChartRequest } from '#common/zod/backend/routes/charts/delete-chart/delete-chart-request';
 import type { ToBackendDeleteChartResponse } from '#common/zod/backend/routes/charts/delete-chart/delete-chart-response';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ChartsQuery } from '#front/app/queries/charts.query';
@@ -63,7 +63,7 @@ export class DeleteChartDialogComponent implements OnInit {
     let chart = this.ref.data.chart;
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendDeleteChartInput = {
+    let payload: ToBackendDeleteChartRequest['input'] = {
       projectId: projectId,
       branchId: branchId,
       envId: this.ref.data.envId,
@@ -79,10 +79,10 @@ export class DeleteChartDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteChartResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.chartsQuery.update({
-              chartUnitDrafts: resp.result.value.chartUnitDrafts,
-              chartSpaceNodes: resp.result.value.chartSpaceNodes
+              chartUnitDrafts: resp.output.chartUnitDrafts,
+              chartSpaceNodes: resp.output.chartSpaceNodes
             });
 
             let currentChart = this.chartQuery.getValue();

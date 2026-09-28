@@ -1,13 +1,9 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import {
-  type BackendError,
-  zBackendError
-} from '#common/zod/backend/errors/backend-error';
 
-export type ToBackendSetProjectAllowTimezonesError = BackendError;
+export type ToBackendSetProjectAllowTimezonesError = never;
 
-export let zToBackendSetProjectAllowTimezonesError = zBackendError;
+export let zToBackendSetProjectAllowTimezonesError = z.never();
 
 assertTypesEqual<
   ToBackendSetProjectAllowTimezonesError,

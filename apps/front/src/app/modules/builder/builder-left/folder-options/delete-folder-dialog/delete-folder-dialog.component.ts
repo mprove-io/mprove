@@ -10,7 +10,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendDeleteFolderInput } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-request';
+import type { ToBackendDeleteFolderRequest } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-request';
 import type { ToBackendDeleteFolderResponse } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-response';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -85,7 +85,7 @@ export class DeleteFolderDialogComponent implements OnInit {
       }
     }
 
-    let payload: ToBackendDeleteFolderInput = {
+    let payload: ToBackendDeleteFolderRequest['input'] = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -103,11 +103,11 @@ export class DeleteFolderDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteFolderResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             if (isRemoveSecondFile === true) {

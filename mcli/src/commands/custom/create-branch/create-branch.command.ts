@@ -7,8 +7,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendCreateBranchInput } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
-import type { ToBackendCreateBranchOutput } from '#common/zod/backend/routes/branches/create-branch/create-branch-response';
+import type { ToBackendCreateBranchOutput } from '#common/zod/backend/routes/branches/create-branch/create-branch-output';
+import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -83,7 +83,7 @@ export class CreateBranchCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let createBranchReqPayload: ToBackendCreateBranchInput = {
+    let createBranchReqPayload: ToBackendCreateBranchRequest['input'] = {
       projectId: this.projectId,
       repoId: repoId,
       newBranchId: this.newBranch,

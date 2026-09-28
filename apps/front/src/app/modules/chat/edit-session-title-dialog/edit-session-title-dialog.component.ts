@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendSetSessionTitleInput } from '#common/zod/backend/routes/sessions/set-session-title/set-session-title-request';
+import type { ToBackendSetSessionTitleRequest } from '#common/zod/backend/routes/sessions/set-session-title/set-session-title-request';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
@@ -79,7 +79,7 @@ export class EditSessionTitleDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendSetSessionTitleInput = {
+    let payload: ToBackendSetSessionTitleRequest['input'] = {
       sessionId: this.ref.data.sessionId,
       title: newTitle
     };

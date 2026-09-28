@@ -14,7 +14,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendCreateEnvVarInput } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-request';
+import type { ToBackendCreateEnvVarRequest } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-request';
 import type { ToBackendCreateEnvVarResponse } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
@@ -79,7 +79,7 @@ export class AddEvDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateEnvVarInput = {
+    let payload: ToBackendCreateEnvVarRequest['input'] = {
       projectId: this.dataItem.projectId,
       envId: this.dataItem.envId,
       evId: this.addEvForm.value.evId,
@@ -96,10 +96,10 @@ export class AddEvDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateEnvVarResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
-              environments: resp.result.value.envs
+              environments: resp.output.envs
             });
           }
         }),

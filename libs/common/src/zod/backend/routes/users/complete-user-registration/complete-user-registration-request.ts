@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendCompleteUserRegistrationInput = {
-  emailVerificationToken: string;
-  newPassword: string;
-};
-
 export type ToBackendCompleteUserRegistrationRequest = {
+  operation: 'completeUserRegistration';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendCompleteUserRegistrationInput;
+  input: {
+    emailVerificationToken: string;
+    newPassword: string;
+  };
 };
-
-export let zToBackendCompleteUserRegistrationInput = z
-  .object({
-    emailVerificationToken: z.string(),
-    newPassword: z.string()
-  })
-  .meta({ id: 'ToBackendCompleteUserRegistrationInput' });
 
 export let zToBackendCompleteUserRegistrationRequest = z
   .strictObject({
+    operation: z.literal('completeUserRegistration'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendCompleteUserRegistrationInput
+    input: z
+      .object({
+        emailVerificationToken: z.string(),
+        newPassword: z.string()
+      })
+      .meta({ id: 'ToBackendCompleteUserRegistrationInput' })
   })
   .meta({ id: 'ToBackendCompleteUserRegistrationRequest' });
-
-assertTypesEqual<
-  ToBackendCompleteUserRegistrationInput,
-  z.infer<typeof zToBackendCompleteUserRegistrationInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCompleteUserRegistrationRequest,

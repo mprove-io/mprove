@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type MemberGiven,
-  zMemberGiven
-} from '#common/zod/backend/members/member-given';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetMemberGivensOutput,
+  zToBackendGetMemberGivensOutput
+} from '#common/zod/backend/routes/members/get-member-givens/get-member-givens-output';
 import {
   type ToBackendGetMemberGivensError,
   zToBackendGetMemberGivensError
 } from './get-member-givens-error';
 
-export type ToBackendGetMemberGivensOutput = {
-  memberGivens: MemberGiven[];
-};
-
-export type ToBackendGetMemberGivensResponse = ToBackendResponse<
+export type ToBackendGetMemberGivensResponse = ToBackendResponseBase<
+  'getMemberGivens',
   ToBackendGetMemberGivensOutput,
   ToBackendGetMemberGivensError
 >;
 
-export let zToBackendGetMemberGivensOutput = z
-  .object({
-    memberGivens: z.array(zMemberGiven)
-  })
-  .meta({ id: 'ToBackendGetMemberGivensOutput' });
-
 export let zToBackendGetMemberGivensResponse = makeToBackendResponseSchema({
-  success: zToBackendGetMemberGivensOutput,
+  operation: 'getMemberGivens',
+  output: zToBackendGetMemberGivensOutput,
   error: zToBackendGetMemberGivensError
 }).meta({ id: 'ToBackendGetMemberGivensResponse' });
-
-assertTypesEqual<
-  ToBackendGetMemberGivensOutput,
-  z.infer<typeof zToBackendGetMemberGivensOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetMemberGivensResponse,

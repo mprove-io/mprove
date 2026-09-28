@@ -15,7 +15,7 @@ import {
   PATH_TEAM,
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
-import type { ToBackendGetUserGivensInput } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-request';
+import type { ToBackendGetUserGivensRequest } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-request';
 import type { ToBackendGetUserGivensResponse } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -184,7 +184,7 @@ export class ProjectMenuComponent implements OnInit {
   }
 
   showSelectedGivens() {
-    let payload: ToBackendGetUserGivensInput = {
+    let payload: ToBackendGetUserGivensRequest['input'] = {
       projectId: this.nav.projectId
     };
 
@@ -196,11 +196,11 @@ export class ProjectMenuComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetUserGivensResponse) => {
-          if (resp.result?.type !== 'Success') {
+          if (resp?.type !== 'Success') {
             return;
           }
 
-          let user = resp.result.value.user;
+          let user = resp.output.user;
 
           this.userQuery.update(user);
           this.uiQuery.updatePart({ ...user.ui });
@@ -208,7 +208,7 @@ export class ProjectMenuComponent implements OnInit {
           this.myDialogService.showSelectedGivens({
             projectId: this.nav.projectId,
             userId: user.userId,
-            memberGivens: resp.result.value.memberGivens
+            memberGivens: resp.output.memberGivens
           });
         }),
         take(1)

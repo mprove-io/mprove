@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCreateMemberOutput,
+  zToBackendCreateMemberOutput
+} from '#common/zod/backend/routes/members/create-member/create-member-output';
 import {
   type ToBackendCreateMemberError,
   zToBackendCreateMemberError
 } from './create-member-error';
 
-export type ToBackendCreateMemberOutput = {
-  member: Member;
-};
-
-export type ToBackendCreateMemberResponse = ToBackendResponse<
+export type ToBackendCreateMemberResponse = ToBackendResponseBase<
+  'createMember',
   ToBackendCreateMemberOutput,
   ToBackendCreateMemberError
 >;
 
-export let zToBackendCreateMemberOutput = z
-  .object({
-    member: zMember
-  })
-  .meta({ id: 'ToBackendCreateMemberOutput' });
-
 export let zToBackendCreateMemberResponse = makeToBackendResponseSchema({
-  success: zToBackendCreateMemberOutput,
+  operation: 'createMember',
+  output: zToBackendCreateMemberOutput,
   error: zToBackendCreateMemberError
 }).meta({ id: 'ToBackendCreateMemberResponse' });
-
-assertTypesEqual<
-  ToBackendCreateMemberOutput,
-  z.infer<typeof zToBackendCreateMemberOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateMemberResponse,

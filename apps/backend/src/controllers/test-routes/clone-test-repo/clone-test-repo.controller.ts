@@ -9,7 +9,7 @@ import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
 import { RpcService } from '#backend/services/rpc.service';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCloneTestRepoOutput } from '#common/zod/backend/routes/test-routes/clone-test-repo/clone-test-repo-response';
+import type { ToBackendCloneTestRepoOutput } from '#common/zod/backend/routes/test-routes/clone-test-repo/clone-test-repo-output';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()

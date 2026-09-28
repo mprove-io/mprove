@@ -28,7 +28,7 @@ import {
   LOCAL_STORAGE_PROJECT_ID
 } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ToBackendCreateOrgInput } from '#common/zod/backend/routes/orgs/create-org/create-org-request';
+import type { ToBackendCreateOrgRequest } from '#common/zod/backend/routes/orgs/create-org/create-org-request';
 import type { ToBackendCreateOrgResponse } from '#common/zod/backend/routes/orgs/create-org/create-org-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -86,7 +86,7 @@ export class CreateOrgDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateOrgInput = {
+    let payload: ToBackendCreateOrgRequest['input'] = {
       name: this.createOrgForm.value.orgName
     };
 
@@ -99,10 +99,10 @@ export class CreateOrgDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateOrgResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
-              resp.result.value.org.orgId,
+              resp.output.org.orgId,
               PATH_ACCOUNT
             ]);
 

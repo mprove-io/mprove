@@ -15,7 +15,7 @@ import {
 } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { ToBackendGetSessionsListInput } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
+import type { ToBackendGetSessionsListRequest } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
 import type { ToBackendGetSessionsListResponse } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { SessionApiX } from '#common/zod/front/session-api-x';
@@ -175,7 +175,7 @@ export class ExplorerHistoryComponent implements OnInit {
     let currentSessionId =
       this.currentSession?.sessionId ?? this.sessionQuery.getValue()?.sessionId;
 
-    let payload: ToBackendGetSessionsListInput = {
+    let payload: ToBackendGetSessionsListRequest['input'] = {
       projectId: projectId,
       currentSessionId: currentSessionId,
       sessionType: SessionTypeEnum.Explorer
@@ -194,8 +194,8 @@ export class ExplorerHistoryComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
-          if (resp.result?.type === 'Success') {
-            let sessions = resp.result.value.sessions;
+          if (resp?.type === 'Success') {
+            let sessions = resp.output.sessions;
 
             if (currentSessionId) {
               let freshCurrentSession = sessions.find(
@@ -209,7 +209,7 @@ export class ExplorerHistoryComponent implements OnInit {
             this.sessionsQuery.updatePart({
               sessions: sessions,
               isListLoaded: true,
-              hasMoreArchived: resp.result.value.hasMoreArchived ?? false
+              hasMoreArchived: resp.output.hasMoreArchived ?? false
             });
           }
 

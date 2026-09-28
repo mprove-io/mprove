@@ -19,20 +19,17 @@ export function logResponseBackend(item: {
 
   let isLogOk =
     cs.get<BackendConfig['backendLogResponseOk']>('backendLogResponseOk') ===
-      true && response.result.type === 'Success';
+      true && response.type === 'Success';
 
   let isLogError =
     cs.get<BackendConfig['backendLogResponseError']>(
       'backendLogResponseError'
-    ) === true && response.result.type === 'Failure';
+    ) === true && response.type === 'Failure';
 
   if (isLogOk === true || isLogError === true) {
     let log = {
       response: Object.assign({}, response, {
-        result:
-          response.result.type === 'Success'
-            ? { type: 'Success' }
-            : response.result
+        output: undefined
       })
     };
 

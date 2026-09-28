@@ -25,11 +25,11 @@ import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Role } from '#common/zod/backend/role';
-import type { ToBackendSaveCreateDashboardInput } from '#common/zod/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-request';
+import type { ToBackendSaveCreateDashboardRequest } from '#common/zod/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-request';
 import type { ToBackendSaveCreateDashboardResponse } from '#common/zod/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-response';
-import type { ToBackendSaveModifyDashboardInput } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
+import type { ToBackendSaveModifyDashboardRequest } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
 import type { ToBackendSaveModifyDashboardResponse } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
-import type { ToBackendGetRolesInput } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesRequest } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 import type { Dashboard } from '#common/zod/blockml/dashboard';
 import type { Space } from '#common/zod/blockml/space';
@@ -334,7 +334,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
     let { newTitle, roles } = item;
 
-    let payload: ToBackendSaveCreateDashboardInput = {
+    let payload: ToBackendSaveCreateDashboardRequest['input'] = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
@@ -365,15 +365,15 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSaveCreateDashboardResponse) => {
-          if (resp.result?.type === 'Success') {
-            if (isUndefined(resp.result.value.dashboardSpaceNodes)) {
+          if (resp?.type === 'Success') {
+            if (isUndefined(resp.output.dashboardSpaceNodes)) {
               this.spinner.hide(APP_SPINNER_NAME);
               return;
             }
 
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.result.value.dashboardUnitDrafts,
-              dashboardSpaceNodes: resp.result.value.dashboardSpaceNodes
+              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.output.dashboardSpaceNodes
             });
 
             this.navigateService.navigateToDashboard({
@@ -391,7 +391,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
     let { newTitle, roles } = item;
 
-    let payload: ToBackendSaveModifyDashboardInput = {
+    let payload: ToBackendSaveModifyDashboardRequest['input'] = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
@@ -422,15 +422,15 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSaveModifyDashboardResponse) => {
-          if (resp.result?.type === 'Success') {
-            if (isUndefined(resp.result.value.dashboardSpaceNodes)) {
+          if (resp?.type === 'Success') {
+            if (isUndefined(resp.output.dashboardSpaceNodes)) {
               this.spinner.hide(APP_SPINNER_NAME);
               return;
             }
 
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.result.value.dashboardUnitDrafts,
-              dashboardSpaceNodes: resp.result.value.dashboardSpaceNodes
+              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.output.dashboardSpaceNodes
             });
 
             this.navigateService.navigateToDashboard({
@@ -514,7 +514,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   loadRoles() {
-    let payload: ToBackendGetRolesInput = {
+    let payload: ToBackendGetRolesRequest['input'] = {
       projectId: this.nav.projectId
     };
 
@@ -527,8 +527,8 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.roles = resp.result.value.roles.sort((a, b) =>
+          if (resp?.type === 'Success') {
+            this.roles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
             this.cd.detectChanges();

@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendDeleteMemberInput } from '#common/zod/backend/routes/members/delete-member/delete-member-request';
+import type { ToBackendDeleteMemberRequest } from '#common/zod/backend/routes/members/delete-member/delete-member-request';
 import type { ToBackendDeleteMemberResponse } from '#common/zod/backend/routes/members/delete-member/delete-member-response';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -46,7 +46,7 @@ export class RemoveMemberDialogComponent implements OnInit {
   remove() {
     this.ref.close();
 
-    let payload: ToBackendDeleteMemberInput = {
+    let payload: ToBackendDeleteMemberRequest['input'] = {
       projectId: this.ref.data.projectId,
       memberId: this.ref.data.memberId
     };
@@ -61,7 +61,7 @@ export class RemoveMemberDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteMemberResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             let teamState = this.teamQuery.getValue();
 
             this.teamQuery.update({

@@ -32,8 +32,8 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendEditProviderInput } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-request';
-import type { ToBackendEditProviderOutput } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-response';
+import type { ToBackendEditProviderOutput } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-output';
+import type { ToBackendEditProviderRequest } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -62,7 +62,7 @@ export class EditProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditProviderRequestDto
   ) {
-    let bodyPayload: ToBackendEditProviderInput = body.input;
+    let bodyPayload: ToBackendEditProviderRequest['input'] = body.input;
 
     let { projectId, providerId, options } = bodyPayload;
 

@@ -1,4 +1,4 @@
-import type { ToBackendGetModelOutput } from '#common/zod/backend/routes/models/get-model/get-model-response';
+import type { ToBackendGetModelOutput } from '#common/zod/backend/routes/models/get-model/get-model-output';
 
 export function processGetModelPayload(item: {
   payload: ToBackendGetModelOutput;

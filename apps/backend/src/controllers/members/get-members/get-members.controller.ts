@@ -24,7 +24,7 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetMembersOutput } from '#common/zod/backend/routes/members/get-members/get-members-response';
+import type { ToBackendGetMembersOutput } from '#common/zod/backend/routes/members/get-members/get-members-output';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)

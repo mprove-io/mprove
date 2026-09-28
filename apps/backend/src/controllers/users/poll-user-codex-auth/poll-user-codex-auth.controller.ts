@@ -13,7 +13,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { CodexDeviceAuthStatusEnum } from '#common/enums/codex-device-auth-status.enum';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendPollUserCodexAuthOutput } from '#common/zod/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-response';
+import type { ToBackendPollUserCodexAuthOutput } from '#common/zod/backend/routes/users/poll-user-codex-auth/poll-user-codex-auth-output';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

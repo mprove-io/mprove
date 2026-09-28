@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type EnvUser, zEnvUser } from '#common/zod/backend/env-user';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetMembersListOutput,
+  zToBackendGetMembersListOutput
+} from '#common/zod/backend/routes/members/get-members-list/get-members-list-output';
 import {
   type ToBackendGetMembersListError,
   zToBackendGetMembersListError
 } from './get-members-list-error';
 
-export type ToBackendGetMembersListOutput = {
-  userMember: Member;
-  membersList: EnvUser[];
-};
-
-export type ToBackendGetMembersListResponse = ToBackendResponse<
+export type ToBackendGetMembersListResponse = ToBackendResponseBase<
+  'getMembersList',
   ToBackendGetMembersListOutput,
   ToBackendGetMembersListError
 >;
 
-export let zToBackendGetMembersListOutput = z
-  .object({
-    userMember: zMember,
-    membersList: z.array(zEnvUser)
-  })
-  .meta({ id: 'ToBackendGetMembersListOutput' });
-
 export let zToBackendGetMembersListResponse = makeToBackendResponseSchema({
-  success: zToBackendGetMembersListOutput,
+  operation: 'getMembersList',
+  output: zToBackendGetMembersListOutput,
   error: zToBackendGetMembersListError
 }).meta({ id: 'ToBackendGetMembersListResponse' });
-
-assertTypesEqual<
-  ToBackendGetMembersListOutput,
-  z.infer<typeof zToBackendGetMembersListOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetMembersListResponse,

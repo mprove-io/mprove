@@ -179,6 +179,7 @@ test('1', async t => {
       });
 
       let addVariantsReq: ToBackendEditLlmModelRequest = {
+        operation: 'editLlmModel',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -217,9 +218,10 @@ test('1', async t => {
         req: addVariantsReq
       });
 
-      assert.equal(addVariantsResp.result.type, 'Success');
+      assert.equal(addVariantsResp.type, 'Success');
 
       let req: ToBackendEditLlmModelRequest = {
+        operation: 'editLlmModel',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -259,6 +261,7 @@ test('1', async t => {
       });
 
       let codexReq: ToBackendEditLlmModelRequest = {
+        operation: 'editLlmModel',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -341,7 +344,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let {
       serverTs,
@@ -454,7 +457,7 @@ test('1', async t => {
       }
     ];
 
-    assert.equal(codexResp.result.type, 'Success');
+    assert.equal(codexResp.type, 'Success');
 
     assert.deepEqual(
       unwrapBackendResponseOutput({ response: codexResp }).provider.models[0]

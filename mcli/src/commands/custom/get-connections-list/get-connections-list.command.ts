@@ -3,8 +3,8 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendGetConnectionsListInput } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-request';
-import type { ToBackendGetConnectionsListOutput } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-response';
+import type { ToBackendGetConnectionsListOutput } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-output';
+import type { ToBackendGetConnectionsListRequest } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -60,10 +60,11 @@ export class GetConnectionsListCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let getConnectionsListReqPayload: ToBackendGetConnectionsListInput = {
-      projectId: this.projectId,
-      envId: this.env
-    };
+    let getConnectionsListReqPayload: ToBackendGetConnectionsListRequest['input'] =
+      {
+        projectId: this.projectId,
+        envId: this.env
+      };
 
     let getConnectionsListOutput: ToBackendGetConnectionsListOutput =
       await mreq({

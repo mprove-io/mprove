@@ -1,45 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Given, zGiven } from '#common/zod/backend/given';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type Role, zRole } from '#common/zod/backend/role';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetRolesOutput,
+  zToBackendGetRolesOutput
+} from '#common/zod/backend/routes/roles/get-roles/get-roles-output';
 import {
   type ToBackendGetRolesError,
   zToBackendGetRolesError
 } from './get-roles-error';
 
-export type ToBackendGetRolesOutput = {
-  userMember: Member;
-  roles: Role[];
-  givens: Given[];
-};
-
-export type ToBackendGetRolesResponse = ToBackendResponse<
+export type ToBackendGetRolesResponse = ToBackendResponseBase<
+  'getRoles',
   ToBackendGetRolesOutput,
   ToBackendGetRolesError
 >;
 
-export let zToBackendGetRolesOutput = z
-  .object({
-    userMember: zMember,
-    roles: z.array(zRole),
-    givens: z.array(zGiven)
-  })
-  .meta({ id: 'ToBackendGetRolesOutput' });
-
 export let zToBackendGetRolesResponse = makeToBackendResponseSchema({
-  success: zToBackendGetRolesOutput,
+  operation: 'getRoles',
+  output: zToBackendGetRolesOutput,
   error: zToBackendGetRolesError
 }).meta({ id: 'ToBackendGetRolesResponse' });
-
-assertTypesEqual<
-  ToBackendGetRolesOutput,
-  z.infer<typeof zToBackendGetRolesOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetRolesResponse,

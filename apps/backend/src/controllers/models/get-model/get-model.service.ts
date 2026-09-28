@@ -10,7 +10,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelX } from '#common/zod/backend/model-x';
-import type { ToBackendGetModelOutput } from '#common/zod/backend/routes/models/get-model/get-model-response';
+import type { ToBackendGetModelOutput } from '#common/zod/backend/routes/models/get-model/get-model-output';
 import type { StructX } from '#common/zod/backend/struct-x';
 
 @Injectable()

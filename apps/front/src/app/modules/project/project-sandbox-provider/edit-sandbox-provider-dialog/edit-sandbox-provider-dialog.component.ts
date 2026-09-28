@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendSetProjectSandboxProviderInput } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-request';
+import type { ToBackendSetProjectSandboxProviderRequest } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-request';
 import type { ToBackendSetProjectSandboxProviderResponse } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProjectQuery } from '#front/app/queries/project.query';
@@ -63,7 +63,7 @@ export class EditSandboxProviderDialogComponent implements OnInit {
     }
 
     this.ref.close();
-    let payload: ToBackendSetProjectSandboxProviderInput = {
+    let payload: ToBackendSetProjectSandboxProviderRequest['input'] = {
       projectId: this.ref.data.projectId,
       e2bApiKey: value
     };
@@ -75,8 +75,8 @@ export class EditSandboxProviderDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetProjectSandboxProviderResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.projectQuery.update(resp.result.value.project);
+          if (resp?.type === 'Success') {
+            this.projectQuery.update(resp.output.project);
           }
         }),
         take(1)

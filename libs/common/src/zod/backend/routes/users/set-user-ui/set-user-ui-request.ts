@@ -2,34 +2,27 @@ import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import { type Ui, zUi } from '#common/zod/backend/ui';
 
-export type ToBackendSetUserUiInput = {
-  ui: Ui;
-};
-
 export type ToBackendSetUserUiRequest = {
+  operation: 'setUserUi';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendSetUserUiInput;
+  input: {
+    ui: Ui;
+  };
 };
-
-export let zToBackendSetUserUiInput = z
-  .object({
-    ui: zUi
-  })
-  .meta({ id: 'ToBackendSetUserUiInput' });
 
 export let zToBackendSetUserUiRequest = z
   .strictObject({
+    operation: z.literal('setUserUi'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendSetUserUiInput
+    input: z
+      .object({
+        ui: zUi
+      })
+      .meta({ id: 'ToBackendSetUserUiInput' })
   })
   .meta({ id: 'ToBackendSetUserUiRequest' });
-
-assertTypesEqual<
-  ToBackendSetUserUiInput,
-  z.infer<typeof zToBackendSetUserUiInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetUserUiRequest,

@@ -10,7 +10,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { take, tap } from 'rxjs/operators';
 import type { MemberGiven } from '#common/zod/backend/members/member-given';
-import type { ToBackendGetMemberGivensInput } from '#common/zod/backend/routes/members/get-member-givens/get-member-givens-request';
+import type { ToBackendGetMemberGivensRequest } from '#common/zod/backend/routes/members/get-member-givens/get-member-givens-request';
 import type { ToBackendGetMemberGivensResponse } from '#common/zod/backend/routes/members/get-member-givens/get-member-givens-response';
 import { ApiService } from '#front/app/services/api.service';
 
@@ -42,7 +42,7 @@ export class GetMemberGivensDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let payload: ToBackendGetMemberGivensInput = {
+    let payload: ToBackendGetMemberGivensRequest['input'] = {
       projectId: this.ref.data.projectId,
       memberId: this.ref.data.memberId
     };
@@ -55,8 +55,8 @@ export class GetMemberGivensDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetMemberGivensResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberGivens = resp.result.value.memberGivens;
+          if (resp?.type === 'Success') {
+            this.memberGivens = resp.output.memberGivens;
             this.cd.detectChanges();
           }
         }),

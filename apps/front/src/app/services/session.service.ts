@@ -3,13 +3,11 @@ import { interval, Subscription } from 'rxjs';
 import { exhaustMap, take, tap } from 'rxjs/operators';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import type { ToBackendCreateSessionSseTicketInput } from '#common/zod/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-request';
+import type { ToBackendCreateSessionSseTicketRequest } from '#common/zod/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-request';
 import type { ToBackendCreateSessionSseTicketResponse } from '#common/zod/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-response';
-import type { ToBackendGetSessionInput } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
-import type {
-  ToBackendGetSessionOutput,
-  ToBackendGetSessionResponse
-} from '#common/zod/backend/routes/sessions/get-session/get-session-response';
+import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-output';
+import type { ToBackendGetSessionRequest } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
+import type { ToBackendGetSessionResponse } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
 import type { SessionPartApi } from '#common/zod/backend/session-part-api';
@@ -339,7 +337,7 @@ export class SessionService {
   private startPolling(item: { sessionId: string }) {
     let { sessionId } = item;
 
-    let payload: ToBackendGetSessionInput = {
+    let payload: ToBackendGetSessionRequest['input'] = {
       sessionId: sessionId,
       isFetchFromOpencode: false
     };
@@ -353,8 +351,8 @@ export class SessionService {
           })
         ),
         tap((resp: ToBackendGetSessionResponse) => {
-          if (resp.result?.type === 'Success') {
-            let output: ToBackendGetSessionOutput = resp.result.value;
+          if (resp?.type === 'Success') {
+            let output: ToBackendGetSessionOutput = resp.output;
 
             this.applySessionResponse({
               payload: output,
@@ -387,7 +385,7 @@ export class SessionService {
 
     this.ssePhase = 'fetching-ticket';
 
-    let payload: ToBackendCreateSessionSseTicketInput = {
+    let payload: ToBackendCreateSessionSseTicketRequest['input'] = {
       sessionId: sessionId
     };
 
@@ -404,12 +402,12 @@ export class SessionService {
 
           this.ssePhase = 'idle';
 
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             console.log('connectSse - get ticket - ok');
 
             this.connectSseWithTicket({
               sessionId: sessionId,
-              sseTicket: resp.result.value.sseTicket,
+              sseTicket: resp.output.sseTicket,
               initId: initId
             });
           } else {
@@ -543,7 +541,7 @@ export class SessionService {
 
     this.ssePhase = 'fetching-ticket';
 
-    let payload: ToBackendGetSessionInput = {
+    let payload: ToBackendGetSessionRequest['input'] = {
       sessionId: sessionId,
       isFetchFromOpencode: false
     };
@@ -561,8 +559,8 @@ export class SessionService {
 
           this.ssePhase = 'idle';
 
-          if (resp.result?.type === 'Success') {
-            let output: ToBackendGetSessionOutput = resp.result.value;
+          if (resp?.type === 'Success') {
+            let output: ToBackendGetSessionOutput = resp.output;
 
             this.lastProcessedEventIndex = output.lastEventIndex;
 

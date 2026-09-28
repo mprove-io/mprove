@@ -108,6 +108,7 @@ test('1', async t => {
       });
 
       let req1: ToBackendCreateDraftReportRequest = {
+        operation: 'createDraftReport',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -135,6 +136,7 @@ test('1', async t => {
       });
 
       let req2: ToBackendDeleteDraftReportsRequest = {
+        operation: 'deleteDraftReports',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -168,7 +170,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp2.result.type, 'Success');
+    assert.equal(resp2.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

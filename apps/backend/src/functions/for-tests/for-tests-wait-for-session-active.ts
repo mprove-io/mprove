@@ -2,7 +2,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
+import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-output';
 
 export async function forTestsWaitForSessionActive(item: {
   httpServer: any;
@@ -19,6 +19,7 @@ export async function forTestsWaitForSessionActive(item: {
       httpServer: item.httpServer,
       loginToken: item.loginToken,
       req: {
+        operation: 'getSession',
         traceId: item.traceId,
         idempotencyKey: makeId(),
         input: {

@@ -33,7 +33,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendGetExplorerChartTabOutput } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-response';
+import type { ToBackendGetExplorerChartTabOutput } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-output';
 
 type GetExplorerChartTabErrors = Extract<
   ToBackendGetExplorerChartTabOutput,

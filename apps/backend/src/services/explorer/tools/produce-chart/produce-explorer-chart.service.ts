@@ -14,7 +14,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendProduceExplorerChartOutput } from '#common/zod/backend/routes/charts/produce-explorer-chart/produce-explorer-chart-response';
+import type { ToBackendProduceExplorerChartOutput } from '#common/zod/backend/routes/charts/produce-explorer-chart/produce-explorer-chart-output';
 
 export const CHART_ID_PLACEHOLDER = '<chart-id-placeholder>';
 

@@ -8,7 +8,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetConnectionSchemasInput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
+import type { ToBackendGetConnectionSchemasRequest } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
@@ -135,7 +135,7 @@ test('1', async () => {
           repoId: repoId,
           branchId: defaultBranch,
           isRefreshExistingCache: true
-        } as ToBackendGetConnectionSchemasInput,
+        } as ToBackendGetConnectionSchemasRequest['input'],
         host: config.mproveCliHost
       });
 

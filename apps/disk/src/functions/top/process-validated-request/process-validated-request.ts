@@ -1,7 +1,6 @@
 import type { Logger } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
-import { zToDiskOperationRegistry } from '#common/zod/disk/request/to-disk-operation-registry';
 import type { ToDiskRequestForOperation } from '#common/zod/disk/request/to-disk-request-for-operation';
 import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
 import type { ToDiskResponseMetadata } from '#common/zod/disk/response/to-disk-response-metadata';
@@ -35,26 +34,24 @@ export async function processValidatedRequest<
       traceId: request.traceId
     };
 
-    let response: ToDiskResponseForOperation<TOperation> =
-      zToDiskOperationRegistry[operation].response.parse(
-        Result.isSuccess(result)
-          ? { type: 'Success', ...metadata, output: result.value }
-          : { type: 'Failure', ...metadata, error: result.error }
-      );
+    let response: ToDiskResponseForOperation<TOperation> = (
+      Result.isSuccess(result)
+        ? { type: 'Success', ...metadata, output: result.value }
+        : { type: 'Failure', ...metadata, error: result.error }
+    ) as ToDiskResponseForOperation<TOperation>;
 
     return response;
   } catch (error) {
     logger.error(error);
 
-    let response: ToDiskResponseForOperation<TOperation> =
-      zToDiskOperationRegistry[operation].response.parse({
-        type: 'Failure',
-        operation: operation,
-        method: method,
-        duration: Date.now() - startTs,
-        traceId: request.traceId,
-        error: { code: 'DISK_INTERNAL' }
-      });
+    let response: ToDiskResponseForOperation<TOperation> = {
+      type: 'Failure',
+      operation: operation,
+      method: method,
+      duration: Date.now() - startTs,
+      traceId: request.traceId,
+      error: { code: 'DISK_INTERNAL' }
+    } as ToDiskResponseForOperation<TOperation>;
 
     return response;
   }

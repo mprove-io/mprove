@@ -38,11 +38,11 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ReportX } from '#common/zod/backend/report-x';
-import type { ToBackendGetModelInput } from '#common/zod/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelRequest } from '#common/zod/backend/routes/models/get-model/get-model-request';
 import type { ToBackendGetModelResponse } from '#common/zod/backend/routes/models/get-model/get-model-response';
-import type { ToBackendGetModelsInput } from '#common/zod/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsRequest } from '#common/zod/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
-import type { ToBackendGetSuggestFieldsInput } from '#common/zod/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-request';
+import type { ToBackendGetSuggestFieldsRequest } from '#common/zod/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-request';
 import type { ToBackendGetSuggestFieldsResponse } from '#common/zod/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-response';
 import type { SuggestField } from '#common/zod/backend/suggest-field';
 import type { Fraction } from '#common/zod/blockml/fraction';
@@ -375,7 +375,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     this.spinner.show(this.storeModelsSpinnerName);
 
-    let payload: ToBackendGetModelsInput = {
+    let payload: ToBackendGetModelsRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -389,8 +389,8 @@ export class ReportAddFilterDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.storeModels = resp.result.value.models.filter(
+          if (resp?.type === 'Success') {
+            this.storeModels = resp.output.models.filter(
               model => model.type === ModelTypeEnum.Store
             );
 
@@ -433,7 +433,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     this.spinner.show(this.storeFiltersSpinnerName);
 
-    let payload: ToBackendGetModelInput = {
+    let payload: ToBackendGetModelRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -449,10 +449,10 @@ export class ReportAddFilterDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.storeModel = resp.result.value.model;
+          if (resp?.type === 'Success') {
+            this.storeModel = resp.output.model;
 
-            this.storeFiltersList = resp.result.value.model.fields
+            this.storeFiltersList = resp.output.model.fields
               .filter(x => x.fieldClass === FieldClassEnum.Filter)
               .map(field => {
                 let storeFiltersItem: StoreFiltersItem = {
@@ -464,7 +464,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
               });
 
             this.storeResultsList =
-              resp.result.value.model.storeContent.results?.map(
+              resp.output.model.storeContent.results?.map(
                 result => result.result
               ) || [];
 
@@ -493,7 +493,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
       )
       .subscribe();
 
-    let payload: ToBackendGetSuggestFieldsInput = {
+    let payload: ToBackendGetSuggestFieldsRequest['input'] = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       repoId: nav.repoId,
@@ -513,10 +513,10 @@ export class ReportAddFilterDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetSuggestFieldsResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.suggestFields = [
               this.emptySuggestField,
-              ...resp.result.value.suggestFields
+              ...resp.output.suggestFields
             ];
 
             this.suggestFieldsLoading = false;

@@ -1,54 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type QueryInfoChart,
-  zQueryInfoChart
-} from '#common/zod/backend/query-info/query-info-chart';
-import {
-  type QueryInfoDashboard,
-  zQueryInfoDashboard
-} from '#common/zod/backend/query-info/query-info-dashboard';
-import {
-  type QueryInfoReport,
-  zQueryInfoReport
-} from '#common/zod/backend/query-info/query-info-report';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetQueryInfoOutput,
+  zToBackendGetQueryInfoOutput
+} from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-output';
 import {
   type ToBackendGetQueryInfoError,
   zToBackendGetQueryInfoError
 } from './get-query-info-error';
 
-export type ToBackendGetQueryInfoOutput = {
-  chart?: QueryInfoChart;
-  dashboard?: QueryInfoDashboard;
-  report?: QueryInfoReport;
-};
-
-export type ToBackendGetQueryInfoResponse = ToBackendResponse<
+export type ToBackendGetQueryInfoResponse = ToBackendResponseBase<
+  'getQueryInfo',
   ToBackendGetQueryInfoOutput,
   ToBackendGetQueryInfoError
 >;
 
-export let zToBackendGetQueryInfoOutput = z
-  .object({
-    chart: zQueryInfoChart.nullish(),
-    dashboard: zQueryInfoDashboard.nullish(),
-    report: zQueryInfoReport.nullish()
-  })
-  .meta({ id: 'ToBackendGetQueryInfoOutput' });
-
 export let zToBackendGetQueryInfoResponse = makeToBackendResponseSchema({
-  success: zToBackendGetQueryInfoOutput,
+  operation: 'getQueryInfo',
+  output: zToBackendGetQueryInfoOutput,
   error: zToBackendGetQueryInfoError
 }).meta({ id: 'ToBackendGetQueryInfoResponse' });
-
-assertTypesEqual<
-  ToBackendGetQueryInfoOutput,
-  z.infer<typeof zToBackendGetQueryInfoOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetQueryInfoResponse,

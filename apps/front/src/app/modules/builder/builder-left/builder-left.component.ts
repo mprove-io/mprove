@@ -33,7 +33,7 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendMoveCatalogNodeInput } from '#common/zod/backend/routes/catalogs/move-catalog-node/move-catalog-node-request';
+import type { ToBackendMoveCatalogNodeRequest } from '#common/zod/backend/routes/catalogs/move-catalog-node/move-catalog-node-request';
 import type { ToBackendMoveCatalogNodeResponse } from '#common/zod/backend/routes/catalogs/move-catalog-node/move-catalog-node-response';
 import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
 import type { RepoStatus } from '#common/zod/disk/repo-status';
@@ -328,7 +328,7 @@ export class BuilderLeftComponent implements OnDestroy {
     let fromNodeId = event.node.id;
     let toNodeId = parentId + '/' + event.node.name;
 
-    let payload: ToBackendMoveCatalogNodeInput = {
+    let payload: ToBackendMoveCatalogNodeRequest['input'] = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -371,13 +371,13 @@ export class BuilderLeftComponent implements OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendMoveCatalogNodeResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             isMoveSuccess = true;
 
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             if (isDefined(newFileId)) {

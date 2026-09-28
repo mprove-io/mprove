@@ -21,7 +21,7 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ReportX } from '#common/zod/backend/report-x';
-import type { ToBackendGetModelsInput } from '#common/zod/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsRequest } from '#common/zod/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
 import type { Listener } from '#common/zod/blockml/listener';
 import type { Model } from '#common/zod/blockml/model';
@@ -106,7 +106,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendGetModelsInput = {
+    let payload: ToBackendGetModelsRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -121,10 +121,10 @@ export class ReportEditListenersDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.spinner.hide(this.spinnerName);
 
-            this.models = resp.result.value.models;
+            this.models = resp.output.models;
 
             this.reportRows.forEach((x, rowIndex) => {
               let model = this.models.find(

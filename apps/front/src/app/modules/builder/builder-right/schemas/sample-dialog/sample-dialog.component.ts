@@ -92,17 +92,17 @@ export class SampleDialogComponent implements OnInit {
         map((resp: ToBackendGetConnectionSampleResponse) => {
           setTimeout(() => {
             if (
-              resp.result?.type === 'Success' &&
-              isDefined(resp.result.value.errorMessage)
+              resp?.type === 'Success' &&
+              isDefined(resp.output.errorMessage)
             ) {
-              this.dataItem.errorMessage = resp.result.value.errorMessage;
-            } else if (resp.result?.type === 'Success') {
-              this.dataItem.columnNames = resp.result.value.columnNames;
-              this.dataItem.rows = resp.result.value.rows;
+              this.dataItem.errorMessage = resp.output.errorMessage;
+            } else if (resp?.type === 'Success') {
+              this.dataItem.columnNames = resp.output.columnNames;
+              this.dataItem.rows = resp.output.rows;
               this.dataItem.errorMessage = undefined;
               this.offset += 100;
 
-              if (resp.result.value.rows.length < 100) {
+              if (resp.output.rows.length < 100) {
                 this.hasMore = false;
               }
             } else {

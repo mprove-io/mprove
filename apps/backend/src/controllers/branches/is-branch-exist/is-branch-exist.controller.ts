@@ -16,7 +16,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendIsBranchExistOutput } from '#common/zod/backend/routes/branches/is-branch-exist/is-branch-exist-response';
+import type { ToBackendIsBranchExistOutput } from '#common/zod/backend/routes/branches/is-branch-exist/is-branch-exist-output';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)

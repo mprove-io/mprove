@@ -32,15 +32,15 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
-import type { ToBackendDuplicateMconfigAndQueryInput } from '#common/zod/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-request';
+import type { ToBackendDuplicateMconfigAndQueryRequest } from '#common/zod/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-request';
 import type { ToBackendDuplicateMconfigAndQueryResponse } from '#common/zod/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-response';
-import type { ToBackendGroupMetricByDimensionInput } from '#common/zod/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-request';
+import type { ToBackendGroupMetricByDimensionRequest } from '#common/zod/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-request';
 import type { ToBackendGroupMetricByDimensionResponse } from '#common/zod/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-response';
-import type { ToBackendGetModelInput } from '#common/zod/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelRequest } from '#common/zod/backend/routes/models/get-model/get-model-request';
 import type { ToBackendGetModelResponse } from '#common/zod/backend/routes/models/get-model/get-model-response';
-import type { ToBackendGetQueryInput } from '#common/zod/backend/routes/queries/get-query/get-query-request';
+import type { ToBackendGetQueryRequest } from '#common/zod/backend/routes/queries/get-query/get-query-request';
 import type { ToBackendGetQueryResponse } from '#common/zod/backend/routes/queries/get-query/get-query-response';
-import type { ToBackendRunQueriesInput } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
+import type { ToBackendRunQueriesRequest } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
 import type { ToBackendRunQueriesResponse } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
 import type { Model } from '#common/zod/blockml/model';
 import type { ModelFieldY } from '#common/zod/blockml/model-field-y';
@@ -175,7 +175,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     if (this.ref.data.isToDuplicateQuery === true) {
       let oldMconfigId = this.ref.data.mconfig.mconfigId;
 
-      let payload: ToBackendDuplicateMconfigAndQueryInput = {
+      let payload: ToBackendDuplicateMconfigAndQueryRequest['input'] = {
         projectId: nav.projectId,
         repoId: nav.repoId,
         branchId: nav.branchId,
@@ -194,8 +194,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         })
         .pipe(
           tap((resp: ToBackendDuplicateMconfigAndQueryResponse) => {
-            if (resp.result?.type === 'Success') {
-              let { mconfig, query } = resp.result.value;
+            if (resp?.type === 'Success') {
+              let { mconfig, query } = resp.output;
 
               this.mconfig = mconfig;
               this.emptyGroupMconfig = makeCopy(mconfig);
@@ -240,7 +240,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
           let nav = this.navQuery.getValue();
 
           if (this.query?.status === QueryStatusEnum.Running) {
-            let payload: ToBackendGetQueryInput = {
+            let payload: ToBackendGetQueryRequest['input'] = {
               projectId: nav.projectId,
               branchId: nav.branchId,
               envId: nav.envId,
@@ -258,8 +258,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               })
               .pipe(
                 tap((resp: ToBackendGetQueryResponse) => {
-                  if (resp.result?.type === 'Success') {
-                    this.query = resp.result.value.query;
+                  if (resp?.type === 'Success') {
+                    this.query = resp.output.query;
 
                     this.qData =
                       this.mconfig.queryId === this.query.queryId
@@ -351,7 +351,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    let payload: ToBackendRunQueriesInput = {
+    let payload: ToBackendRunQueriesRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -368,8 +368,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.result?.type === 'Success') {
-            let { runningQueries } = resp.result.value;
+          if (resp?.type === 'Success') {
+            let { runningQueries } = resp.output;
 
             this.query = Object.assign(runningQueries[0], {
               sql: this.query.sql,
@@ -450,7 +450,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     this.fieldsListLoading = true;
 
-    let payload: ToBackendGetModelInput = {
+    let payload: ToBackendGetModelRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -472,10 +472,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendGetModelResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.dimensionsPlusEmpty = [
               emptyField,
-              ...resp.result.value.model.fields
+              ...resp.output.model.fields
                 .filter(
                   x =>
                     x.result !== FieldResultEnum.Ts &&
@@ -498,7 +498,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                 )
             ];
 
-            this.model = resp.result.value.model;
+            this.model = resp.output.model;
 
             this.fieldsListLoading = false;
 
@@ -518,7 +518,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     let groupByFieldId = this.groupByFieldForm.controls['groupByField'].value;
 
     if (isDefined(groupByFieldId)) {
-      let payload: ToBackendGroupMetricByDimensionInput = {
+      let payload: ToBackendGroupMetricByDimensionRequest['input'] = {
         projectId: nav.projectId,
         repoId: nav.repoId,
         branchId: nav.branchId,
@@ -539,8 +539,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         })
         .pipe(
           tap((resp: ToBackendGroupMetricByDimensionResponse) => {
-            if (resp.result?.type === 'Success') {
-              let { mconfig, query } = resp.result.value;
+            if (resp?.type === 'Success') {
+              let { mconfig, query } = resp.output;
 
               this.mconfig = this.setGroupMetricChartType({
                 mconfig: mconfig,
@@ -572,7 +572,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         newChartType: this.groupMetricChartType
       });
 
-      let payload: ToBackendGetQueryInput = {
+      let payload: ToBackendGetQueryRequest['input'] = {
         projectId: nav.projectId,
         branchId: nav.branchId,
         envId: nav.envId,
@@ -590,9 +590,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         })
         .pipe(
           tap((resp: ToBackendGetQueryResponse) => {
-            if (resp.result?.type === 'Success') {
+            if (resp?.type === 'Success') {
               this.mconfig = newMconfig;
-              this.query = resp.result.value.query;
+              this.query = resp.output.query;
 
               this.qData =
                 this.mconfig.queryId === this.query.queryId

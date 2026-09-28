@@ -1,34 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSeedRecordsOutput,
+  zToBackendSeedRecordsOutput
+} from '#common/zod/backend/routes/test-routes/seed-records/seed-records-output';
 import {
   type ToBackendSeedRecordsError,
   zToBackendSeedRecordsError
 } from './seed-records-error';
 
-export type ToBackendSeedRecordsOutput = Record<string, never>;
-
-export type ToBackendSeedRecordsResponse = ToBackendResponse<
+export type ToBackendSeedRecordsResponse = ToBackendResponseBase<
+  'seedRecords',
   ToBackendSeedRecordsOutput,
   ToBackendSeedRecordsError
 >;
 
-export let zToBackendSeedRecordsOutput = z
-  .object({})
-  .meta({ id: 'ToBackendSeedRecordsOutput' });
-
 export let zToBackendSeedRecordsResponse = makeToBackendResponseSchema({
-  success: zToBackendSeedRecordsOutput,
+  operation: 'seedRecords',
+  output: zToBackendSeedRecordsOutput,
   error: zToBackendSeedRecordsError
 }).meta({ id: 'ToBackendSeedRecordsResponse' });
-
-assertTypesEqual<
-  ToBackendSeedRecordsOutput,
-  z.infer<typeof zToBackendSeedRecordsOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSeedRecordsResponse,

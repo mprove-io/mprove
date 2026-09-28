@@ -96,6 +96,7 @@ test('1', async t => {
       });
 
       let createDraftReq: ToBackendCreateDraftReportRequest = {
+        operation: 'createDraftReport',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -135,6 +136,7 @@ test('1', async t => {
         );
 
       let saveCreateReq: ToBackendSaveCreateReportRequest = {
+        operation: 'saveCreateReport',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -177,11 +179,8 @@ test('1', async t => {
       }
     }
 
-    assert.ok(resp.result.type === 'Failure');
-    assert.equal(
-      resp.result.error.message,
-      ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
-    );
+    assert.ok(resp.type === 'Failure');
+    assert.equal(resp.error.code, ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

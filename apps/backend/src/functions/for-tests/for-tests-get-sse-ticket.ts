@@ -13,6 +13,7 @@ export async function forTestsGetSseTicket(item: {
     httpServer: item.httpServer,
     loginToken: item.loginToken,
     req: {
+      operation: 'createSessionSseTicket',
       traceId: item.traceId,
       idempotencyKey: makeId(),
       input: {

@@ -1,34 +1,27 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendGenerateProjectRemoteKeyInput = {
-  orgId: string;
-};
-
 export type ToBackendGenerateProjectRemoteKeyRequest = {
+  operation: 'generateProjectRemoteKey';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGenerateProjectRemoteKeyInput;
+  input: {
+    orgId: string;
+  };
 };
-
-export let zToBackendGenerateProjectRemoteKeyInput = z
-  .object({
-    orgId: z.string()
-  })
-  .meta({ id: 'ToBackendGenerateProjectRemoteKeyInput' });
 
 export let zToBackendGenerateProjectRemoteKeyRequest = z
   .strictObject({
+    operation: z.literal('generateProjectRemoteKey'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGenerateProjectRemoteKeyInput
+    input: z
+      .object({
+        orgId: z.string()
+      })
+      .meta({ id: 'ToBackendGenerateProjectRemoteKeyInput' })
   })
   .meta({ id: 'ToBackendGenerateProjectRemoteKeyRequest' });
-
-assertTypesEqual<
-  ToBackendGenerateProjectRemoteKeyInput,
-  z.infer<typeof zToBackendGenerateProjectRemoteKeyInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGenerateProjectRemoteKeyRequest,

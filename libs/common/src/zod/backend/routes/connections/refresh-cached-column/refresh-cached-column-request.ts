@@ -1,48 +1,41 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendRefreshCachedColumnInput = {
-  projectId: string;
-  envId: string;
-  connectionId: string;
-  schemaName: string;
-  tableName: string;
-  columnName: string;
-  refreshType: 'full' | 'sample';
-  sampleSize?: number;
-};
-
 export type ToBackendRefreshCachedColumnRequest = {
+  operation: 'refreshCachedColumn';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendRefreshCachedColumnInput;
+  input: {
+    projectId: string;
+    envId: string;
+    connectionId: string;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    refreshType: 'full' | 'sample';
+    sampleSize?: number;
+  };
 };
-
-export let zToBackendRefreshCachedColumnInput = z
-  .object({
-    projectId: z.string(),
-    envId: z.string(),
-    connectionId: z.string(),
-    schemaName: z.string(),
-    tableName: z.string(),
-    columnName: z.string(),
-    refreshType: z.enum(['full', 'sample']),
-    sampleSize: z.number().nullish()
-  })
-  .meta({ id: 'ToBackendRefreshCachedColumnInput' });
 
 export let zToBackendRefreshCachedColumnRequest = z
   .strictObject({
+    operation: z.literal('refreshCachedColumn'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendRefreshCachedColumnInput
+    input: z
+      .object({
+        projectId: z.string(),
+        envId: z.string(),
+        connectionId: z.string(),
+        schemaName: z.string(),
+        tableName: z.string(),
+        columnName: z.string(),
+        refreshType: z.enum(['full', 'sample']),
+        sampleSize: z.number().nullish()
+      })
+      .meta({ id: 'ToBackendRefreshCachedColumnInput' })
   })
   .meta({ id: 'ToBackendRefreshCachedColumnRequest' });
-
-assertTypesEqual<
-  ToBackendRefreshCachedColumnInput,
-  z.infer<typeof zToBackendRefreshCachedColumnInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendRefreshCachedColumnRequest,

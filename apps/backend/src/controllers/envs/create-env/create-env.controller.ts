@@ -33,7 +33,7 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCreateEnvOutput } from '#common/zod/backend/routes/envs/create-env/create-env-response';
+import type { ToBackendCreateEnvOutput } from '#common/zod/backend/routes/envs/create-env/create-env-output';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)

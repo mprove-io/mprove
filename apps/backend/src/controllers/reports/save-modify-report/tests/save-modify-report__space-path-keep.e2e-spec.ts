@@ -92,6 +92,7 @@ test('1', async t => {
       });
 
       let req1: ToBackendCreateDraftReportRequest = {
+        operation: 'createDraftReport',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -119,6 +120,7 @@ test('1', async t => {
       });
 
       let req2: ToBackendSaveModifyReportRequest = {
+        operation: 'saveModifyReport',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -160,7 +162,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
     assert.equal(
       unwrapBackendResponseOutput({ response: resp }).report.filePath,
       `${projectId}/data/s1/s2/unk/s3/r2.report`

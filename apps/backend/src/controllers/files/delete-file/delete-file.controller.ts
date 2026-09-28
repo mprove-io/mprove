@@ -37,7 +37,7 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteFileOutput } from '#common/zod/backend/routes/files/delete-file/delete-file-response';
+import type { ToBackendDeleteFileOutput } from '#common/zod/backend/routes/files/delete-file/delete-file-output';
 import type { ToDiskDeleteFileOutput } from '#common/zod/disk/routes/files/delete-file/delete-file-output';
 
 const { forEachSeries } = pIteration;

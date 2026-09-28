@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Env, zEnv } from '#common/zod/backend/env';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteEnvOutput,
+  zToBackendDeleteEnvOutput
+} from '#common/zod/backend/routes/envs/delete-env/delete-env-output';
 import {
   type ToBackendDeleteEnvError,
   zToBackendDeleteEnvError
 } from './delete-env-error';
 
-export type ToBackendDeleteEnvOutput = {
-  userMember: Member;
-  envs: Env[];
-};
-
-export type ToBackendDeleteEnvResponse = ToBackendResponse<
+export type ToBackendDeleteEnvResponse = ToBackendResponseBase<
+  'deleteEnv',
   ToBackendDeleteEnvOutput,
   ToBackendDeleteEnvError
 >;
 
-export let zToBackendDeleteEnvOutput = z
-  .object({
-    userMember: zMember,
-    envs: z.array(zEnv)
-  })
-  .meta({ id: 'ToBackendDeleteEnvOutput' });
-
 export let zToBackendDeleteEnvResponse = makeToBackendResponseSchema({
-  success: zToBackendDeleteEnvOutput,
+  operation: 'deleteEnv',
+  output: zToBackendDeleteEnvOutput,
   error: zToBackendDeleteEnvError
 }).meta({ id: 'ToBackendDeleteEnvResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteEnvOutput,
-  z.infer<typeof zToBackendDeleteEnvOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteEnvResponse,

@@ -50,7 +50,7 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSuggestDimensionValuesOutput } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
+import type { ToBackendSuggestDimensionValuesOutput } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-output';
 import type { Mconfig } from '#common/zod/blockml/mconfig';
 
 type CachedMatchedValueRow = {

@@ -28,7 +28,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCreateEnvUserOutput } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-response';
+import type { ToBackendCreateEnvUserOutput } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-output';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)

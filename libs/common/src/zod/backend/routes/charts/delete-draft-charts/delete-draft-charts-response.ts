@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type ChartUnit, zChartUnit } from '#common/zod/backend/chart-unit';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteDraftChartsOutput,
+  zToBackendDeleteDraftChartsOutput
+} from '#common/zod/backend/routes/charts/delete-draft-charts/delete-draft-charts-output';
 import {
   type ToBackendDeleteDraftChartsError,
   zToBackendDeleteDraftChartsError
 } from './delete-draft-charts-error';
 
-export type ToBackendDeleteDraftChartsOutput = {
-  chartUnitDrafts: ChartUnit[];
-};
-
-export type ToBackendDeleteDraftChartsResponse = ToBackendResponse<
+export type ToBackendDeleteDraftChartsResponse = ToBackendResponseBase<
+  'deleteDraftCharts',
   ToBackendDeleteDraftChartsOutput,
   ToBackendDeleteDraftChartsError
 >;
 
-export let zToBackendDeleteDraftChartsOutput = z
-  .object({
-    chartUnitDrafts: z.array(zChartUnit)
-  })
-  .meta({ id: 'ToBackendDeleteDraftChartsOutput' });
-
 export let zToBackendDeleteDraftChartsResponse = makeToBackendResponseSchema({
-  success: zToBackendDeleteDraftChartsOutput,
+  operation: 'deleteDraftCharts',
+  output: zToBackendDeleteDraftChartsOutput,
   error: zToBackendDeleteDraftChartsError
 }).meta({ id: 'ToBackendDeleteDraftChartsResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteDraftChartsOutput,
-  z.infer<typeof zToBackendDeleteDraftChartsOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteDraftChartsResponse,

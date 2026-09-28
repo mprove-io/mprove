@@ -47,6 +47,7 @@ test('1', async t => {
       });
 
       let generateReq: ToBackendGenerateUserApiKeyRequest = {
+        operation: 'generateUserApiKey',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {}
@@ -62,6 +63,7 @@ test('1', async t => {
 
       // non-MCLI endpoint
       let setNameReq: ToBackendSetUserNameRequest = {
+        operation: 'setUserName',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -90,10 +92,10 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Failure');
-    assert.ok(resp.result.type === 'Failure');
+    assert.equal(resp.type, 'Failure');
+    assert.ok(resp.type === 'Failure');
     assert.equal(
-      resp.result.error.message,
+      resp.error.code,
       ErEnum.BACKEND_USER_API_KEY_REQUEST_NOT_ALLOWED
     );
 

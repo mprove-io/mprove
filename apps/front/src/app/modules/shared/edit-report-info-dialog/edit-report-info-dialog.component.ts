@@ -32,9 +32,9 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { Role } from '#common/zod/backend/role';
-import type { ToBackendSaveModifyReportInput } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-request';
+import type { ToBackendSaveModifyReportRequest } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-request';
 import type { ToBackendSaveModifyReportResponse } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
-import type { ToBackendGetRolesInput } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesRequest } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/zod/blockml/space';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
@@ -231,7 +231,7 @@ export class EditReportInfoDialogComponent implements OnInit {
       let newTitle: string = this.titleForm.controls['title'].value;
       let roles = [...this.selectedAccessRoles];
 
-      let payload: ToBackendSaveModifyReportInput = {
+      let payload: ToBackendSaveModifyReportRequest['input'] = {
         projectId: this.ref.data.projectId,
         repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
@@ -261,18 +261,18 @@ export class EditReportInfoDialogComponent implements OnInit {
         })
         .pipe(
           tap(async (resp: ToBackendSaveModifyReportResponse) => {
-            if (resp.result?.type === 'Success') {
-              if (isUndefined(resp.result.value.reportSpaceNodes)) {
+            if (resp?.type === 'Success') {
+              if (isUndefined(resp.output.reportSpaceNodes)) {
                 this.spinner.hide(APP_SPINNER_NAME);
                 return;
               }
 
-              let newReport = resp.result.value.report;
+              let newReport = resp.output.report;
 
               if (isDefined(newReport)) {
                 this.reportsQuery.update({
-                  reportUnitDrafts: resp.result.value.reportUnitDrafts,
-                  reportSpaceNodes: resp.result.value.reportSpaceNodes
+                  reportUnitDrafts: resp.output.reportUnitDrafts,
+                  reportSpaceNodes: resp.output.reportSpaceNodes
                 });
 
                 let currentReport = this.reportQuery.getValue();
@@ -290,7 +290,7 @@ export class EditReportInfoDialogComponent implements OnInit {
   }
 
   loadRoles() {
-    let payload: ToBackendGetRolesInput = {
+    let payload: ToBackendGetRolesRequest['input'] = {
       projectId: this.ref.data.projectId
     };
 
@@ -303,8 +303,8 @@ export class EditReportInfoDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.roles = resp.result.value.roles.sort((a, b) =>
+          if (resp?.type === 'Success') {
+            this.roles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
             this.cd.detectChanges();

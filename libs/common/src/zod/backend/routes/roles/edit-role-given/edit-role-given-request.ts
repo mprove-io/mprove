@@ -1,40 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendEditRoleGivenInput = {
-  projectId: string;
-  roleId: string;
-  givenId: string;
-  values: string[];
-};
-
 export type ToBackendEditRoleGivenRequest = {
+  operation: 'editRoleGiven';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendEditRoleGivenInput;
+  input: {
+    projectId: string;
+    roleId: string;
+    givenId: string;
+    values: string[];
+  };
 };
-
-export let zToBackendEditRoleGivenInput = z
-  .object({
-    projectId: z.string(),
-    roleId: z.string(),
-    givenId: z.string(),
-    values: z.array(z.string())
-  })
-  .meta({ id: 'ToBackendEditRoleGivenInput' });
 
 export let zToBackendEditRoleGivenRequest = z
   .strictObject({
+    operation: z.literal('editRoleGiven'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendEditRoleGivenInput
+    input: z
+      .object({
+        projectId: z.string(),
+        roleId: z.string(),
+        givenId: z.string(),
+        values: z.array(z.string())
+      })
+      .meta({ id: 'ToBackendEditRoleGivenInput' })
   })
   .meta({ id: 'ToBackendEditRoleGivenRequest' });
-
-assertTypesEqual<
-  ToBackendEditRoleGivenInput,
-  z.infer<typeof zToBackendEditRoleGivenInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendEditRoleGivenRequest,

@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendCreateMemberInput } from '#common/zod/backend/routes/members/create-member/create-member-request';
+import type { ToBackendCreateMemberRequest } from '#common/zod/backend/routes/members/create-member/create-member-request';
 import type { ToBackendCreateMemberResponse } from '#common/zod/backend/routes/members/create-member/create-member-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { TeamQuery } from '#front/app/queries/team.query';
@@ -71,7 +71,7 @@ export class InviteMemberDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateMemberInput = {
+    let payload: ToBackendCreateMemberRequest['input'] = {
       projectId: this.ref.data.projectId,
       email: this.inviteMemberForm.value.email
     };
@@ -86,8 +86,8 @@ export class InviteMemberDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateMemberResponse) => {
-          if (resp.result?.type === 'Success') {
-            let member = resp.result.value.member;
+          if (resp?.type === 'Success') {
+            let member = resp.output.member;
             let teamState = this.teamQuery.getValue();
 
             this.teamQuery.update({

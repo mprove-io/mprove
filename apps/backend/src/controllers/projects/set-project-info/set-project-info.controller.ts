@@ -26,7 +26,7 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSetProjectInfoOutput } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-response';
+import type { ToBackendSetProjectInfoOutput } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-output';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)

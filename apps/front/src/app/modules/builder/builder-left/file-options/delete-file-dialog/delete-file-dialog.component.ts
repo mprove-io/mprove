@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendDeleteFileInput } from '#common/zod/backend/routes/files/delete-file/delete-file-request';
+import type { ToBackendDeleteFileRequest } from '#common/zod/backend/routes/files/delete-file/delete-file-request';
 import type { ToBackendDeleteFileResponse } from '#common/zod/backend/routes/files/delete-file/delete-file-response';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -83,7 +83,7 @@ export class DeleteFileDialogComponent implements OnInit {
       }
     }
 
-    let payload: ToBackendDeleteFileInput = {
+    let payload: ToBackendDeleteFileRequest['input'] = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -101,11 +101,11 @@ export class DeleteFileDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteFileResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             if (isRemoveSecondFile === true) {

@@ -1,34 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteProviderOutput,
+  zToBackendDeleteProviderOutput
+} from '#common/zod/backend/routes/providers/delete-provider/delete-provider-output';
 import {
   type ToBackendDeleteProviderError,
   zToBackendDeleteProviderError
 } from './delete-provider-error';
 
-export type ToBackendDeleteProviderOutput = Record<string, never>;
-
-export type ToBackendDeleteProviderResponse = ToBackendResponse<
+export type ToBackendDeleteProviderResponse = ToBackendResponseBase<
+  'deleteProvider',
   ToBackendDeleteProviderOutput,
   ToBackendDeleteProviderError
 >;
 
-export let zToBackendDeleteProviderOutput = z
-  .object({})
-  .meta({ id: 'ToBackendDeleteProviderOutput' });
-
 export let zToBackendDeleteProviderResponse = makeToBackendResponseSchema({
-  success: zToBackendDeleteProviderOutput,
+  operation: 'deleteProvider',
+  output: zToBackendDeleteProviderOutput,
   error: zToBackendDeleteProviderError
 }).meta({ id: 'ToBackendDeleteProviderResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteProviderOutput,
-  z.infer<typeof zToBackendDeleteProviderOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteProviderResponse,

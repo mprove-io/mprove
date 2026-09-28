@@ -1,47 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type QueryEstimate,
-  zQueryEstimate
-} from '#common/zod/backend/query-estimate';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type Query, zQuery } from '#common/zod/blockml/query';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendRunQueriesDryOutput,
+  zToBackendRunQueriesDryOutput
+} from '#common/zod/backend/routes/queries/run-queries-dry/run-queries-dry-output';
 import {
   type ToBackendRunQueriesDryError,
   zToBackendRunQueriesDryError
 } from './run-queries-dry-error';
 
-export type ToBackendRunQueriesDryOutput = {
-  dryId: string;
-  validQueryEstimates: QueryEstimate[];
-  errorQueries: Query[];
-};
-
-export type ToBackendRunQueriesDryResponse = ToBackendResponse<
+export type ToBackendRunQueriesDryResponse = ToBackendResponseBase<
+  'runQueriesDry',
   ToBackendRunQueriesDryOutput,
   ToBackendRunQueriesDryError
 >;
 
-export let zToBackendRunQueriesDryOutput = z
-  .object({
-    dryId: z.string(),
-    validQueryEstimates: z.array(zQueryEstimate),
-    errorQueries: z.array(zQuery)
-  })
-  .meta({ id: 'ToBackendRunQueriesDryOutput' });
-
 export let zToBackendRunQueriesDryResponse = makeToBackendResponseSchema({
-  success: zToBackendRunQueriesDryOutput,
+  operation: 'runQueriesDry',
+  output: zToBackendRunQueriesDryOutput,
   error: zToBackendRunQueriesDryError
 }).meta({ id: 'ToBackendRunQueriesDryResponse' });
-
-assertTypesEqual<
-  ToBackendRunQueriesDryOutput,
-  z.infer<typeof zToBackendRunQueriesDryOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendRunQueriesDryResponse,

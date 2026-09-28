@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendCloseExplorerSessionTabInput = {
-  sessionId: string;
-  closedExplorerTabIds: string[];
-};
-
 export type ToBackendCloseExplorerSessionTabRequest = {
+  operation: 'closeExplorerSessionTab';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendCloseExplorerSessionTabInput;
+  input: {
+    sessionId: string;
+    closedExplorerTabIds: string[];
+  };
 };
-
-export let zToBackendCloseExplorerSessionTabInput = z
-  .object({
-    sessionId: z.string(),
-    closedExplorerTabIds: z.array(z.string())
-  })
-  .meta({ id: 'ToBackendCloseExplorerSessionTabInput' });
 
 export let zToBackendCloseExplorerSessionTabRequest = z
   .strictObject({
+    operation: z.literal('closeExplorerSessionTab'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendCloseExplorerSessionTabInput
+    input: z
+      .object({
+        sessionId: z.string(),
+        closedExplorerTabIds: z.array(z.string())
+      })
+      .meta({ id: 'ToBackendCloseExplorerSessionTabInput' })
   })
   .meta({ id: 'ToBackendCloseExplorerSessionTabRequest' });
-
-assertTypesEqual<
-  ToBackendCloseExplorerSessionTabInput,
-  z.infer<typeof zToBackendCloseExplorerSessionTabInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCloseExplorerSessionTabRequest,

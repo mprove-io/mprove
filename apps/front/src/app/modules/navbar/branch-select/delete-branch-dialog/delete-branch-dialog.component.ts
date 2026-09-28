@@ -20,7 +20,7 @@ import {
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ToBackendDeleteBranchInput } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-request';
+import type { ToBackendDeleteBranchRequest } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-request';
 import type { ToBackendDeleteBranchResponse } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-response';
 import { ApiService } from '#front/app/services/api.service';
 
@@ -75,7 +75,7 @@ export class DeleteBranchDialogComponent implements OnInit {
 
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendDeleteBranchInput = {
+    let payload: ToBackendDeleteBranchRequest['input'] = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId
@@ -90,7 +90,7 @@ export class DeleteBranchDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteBranchResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
               this.ref.data.orgId,

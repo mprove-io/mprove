@@ -19,7 +19,7 @@ import { PROVIDER_TYPE_NAME_BY_TYPE } from '#common/constants/providers';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import type { Provider } from '#common/zod/backend/provider';
 import type { ProviderOptionsOpenAICompatible } from '#common/zod/backend/provider-options/provider-options-openai-compatible';
-import type { ToBackendEditProviderInput } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-request';
+import type { ToBackendEditProviderRequest } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-request';
 import type { ToBackendEditProviderResponse } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
@@ -163,7 +163,7 @@ export class EditProviderDialogComponent implements OnInit {
 
     let provider = this.ref.data.provider;
 
-    let payload: ToBackendEditProviderInput;
+    let payload: ToBackendEditProviderRequest['input'];
 
     if (provider.type === ProviderTypeEnum.OpenAICompatible) {
       payload = {
@@ -221,11 +221,11 @@ export class EditProviderDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditProviderResponse) => {
-          if (resp.result?.type !== 'Success') {
+          if (resp?.type !== 'Success') {
             return;
           }
 
-          let provider: Provider = resp.result.value.provider;
+          let provider: Provider = resp.output.provider;
 
           let providers: Provider[] = this.providersQuery
             .getValue()

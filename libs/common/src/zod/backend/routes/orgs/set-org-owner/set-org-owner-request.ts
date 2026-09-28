@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendSetOrgOwnerInput = {
-  orgId: string;
-  ownerEmail: string;
-};
-
 export type ToBackendSetOrgOwnerRequest = {
+  operation: 'setOrgOwner';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendSetOrgOwnerInput;
+  input: {
+    orgId: string;
+    ownerEmail: string;
+  };
 };
-
-export let zToBackendSetOrgOwnerInput = z
-  .object({
-    orgId: z.string(),
-    ownerEmail: z.string()
-  })
-  .meta({ id: 'ToBackendSetOrgOwnerInput' });
 
 export let zToBackendSetOrgOwnerRequest = z
   .strictObject({
+    operation: z.literal('setOrgOwner'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendSetOrgOwnerInput
+    input: z
+      .object({
+        orgId: z.string(),
+        ownerEmail: z.string()
+      })
+      .meta({ id: 'ToBackendSetOrgOwnerInput' })
   })
   .meta({ id: 'ToBackendSetOrgOwnerRequest' });
-
-assertTypesEqual<
-  ToBackendSetOrgOwnerInput,
-  z.infer<typeof zToBackendSetOrgOwnerInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetOrgOwnerRequest,

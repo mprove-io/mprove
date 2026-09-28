@@ -11,7 +11,7 @@ import { GivensService } from '#backend/services/db/givens.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetGivensOutput } from '#common/zod/backend/routes/givens/get-givens/get-givens-response';
+import type { ToBackendGetGivensOutput } from '#common/zod/backend/routes/givens/get-givens/get-givens-output';
 
 @ApiTags('Givens')
 @UseGuards(ThrottlerUserIdGuard)

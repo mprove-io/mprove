@@ -1,39 +1,30 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCreateSessionSseTicketOutput,
+  zToBackendCreateSessionSseTicketOutput
+} from '#common/zod/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-output';
 import {
   type ToBackendCreateSessionSseTicketError,
   zToBackendCreateSessionSseTicketError
 } from './create-session-sse-ticket-error';
 
-export type ToBackendCreateSessionSseTicketOutput = {
-  sseTicket: string;
-};
-
-export type ToBackendCreateSessionSseTicketResponse = ToBackendResponse<
+export type ToBackendCreateSessionSseTicketResponse = ToBackendResponseBase<
+  'createSessionSseTicket',
   ToBackendCreateSessionSseTicketOutput,
   ToBackendCreateSessionSseTicketError
 >;
 
-export let zToBackendCreateSessionSseTicketOutput = z
-  .object({
-    sseTicket: z.string()
-  })
-  .meta({ id: 'ToBackendCreateSessionSseTicketOutput' });
-
 export let zToBackendCreateSessionSseTicketResponse =
   makeToBackendResponseSchema({
-    success: zToBackendCreateSessionSseTicketOutput,
+    operation: 'createSessionSseTicket',
+    output: zToBackendCreateSessionSseTicketOutput,
     error: zToBackendCreateSessionSseTicketError
   }).meta({ id: 'ToBackendCreateSessionSseTicketResponse' });
-
-assertTypesEqual<
-  ToBackendCreateSessionSseTicketOutput,
-  z.infer<typeof zToBackendCreateSessionSseTicketOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateSessionSseTicketResponse,

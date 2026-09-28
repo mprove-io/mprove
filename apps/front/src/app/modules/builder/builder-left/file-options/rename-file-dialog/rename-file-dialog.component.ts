@@ -22,7 +22,7 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendRenameCatalogNodeInput } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-request';
+import type { ToBackendRenameCatalogNodeRequest } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-request';
 import type { ToBackendRenameCatalogNodeResponse } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { FileQuery } from '#front/app/queries/file.query';
@@ -131,7 +131,7 @@ export class RenameFileDialogComponent implements OnInit {
       }
     }
 
-    let payload: ToBackendRenameCatalogNodeInput = {
+    let payload: ToBackendRenameCatalogNodeRequest['input'] = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -150,11 +150,11 @@ export class RenameFileDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendRenameCatalogNodeResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             if (isRenameSecondFile === true) {

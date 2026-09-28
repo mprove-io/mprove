@@ -87,6 +87,7 @@ test('1', async t => {
 
       // Generate API key via JWT auth
       let generateReq: ToBackendGenerateUserApiKeyRequest = {
+        operation: 'generateUserApiKey',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {}
@@ -102,6 +103,7 @@ test('1', async t => {
 
       // doesn't match userId, isn't PROD_REPO_ID
       let getStateReq: ToBackendGetStateRequest = {
+        operation: 'getState',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -141,12 +143,9 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Failure');
-    assert.ok(resp.result.type === 'Failure');
-    assert.equal(
-      resp.result.error.message,
-      ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_USER
-    );
+    assert.equal(resp.type, 'Failure');
+    assert.ok(resp.type === 'Failure');
+    assert.equal(resp.error.code, ErEnum.BACKEND_REPO_ID_DOES_NOT_MATCH_USER);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

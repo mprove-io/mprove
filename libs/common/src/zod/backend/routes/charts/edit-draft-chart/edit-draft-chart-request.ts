@@ -6,46 +6,39 @@ import {
   zQueryOperation
 } from '#common/zod/backend/query-operation';
 
-export type ToBackendEditDraftChartInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-  chartId: string;
-  mconfig: MconfigX;
-  queryOperation?: QueryOperation;
-};
-
 export type ToBackendEditDraftChartRequest = {
+  operation: 'editDraftChart';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendEditDraftChartInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    chartId: string;
+    mconfig: MconfigX;
+    queryOperation?: QueryOperation;
+  };
 };
-
-export let zToBackendEditDraftChartInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string(),
-    chartId: z.string(),
-    mconfig: zMconfigX,
-    queryOperation: zQueryOperation.nullish()
-  })
-  .meta({ id: 'ToBackendEditDraftChartInput' });
 
 export let zToBackendEditDraftChartRequest = z
   .strictObject({
+    operation: z.literal('editDraftChart'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendEditDraftChartInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string(),
+        chartId: z.string(),
+        mconfig: zMconfigX,
+        queryOperation: zQueryOperation.nullish()
+      })
+      .meta({ id: 'ToBackendEditDraftChartInput' })
   })
   .meta({ id: 'ToBackendEditDraftChartRequest' });
-
-assertTypesEqual<
-  ToBackendEditDraftChartInput,
-  z.infer<typeof zToBackendEditDraftChartInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendEditDraftChartRequest,

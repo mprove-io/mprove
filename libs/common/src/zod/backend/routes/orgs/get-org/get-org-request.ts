@@ -1,33 +1,27 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendGetOrgInput = {
-  orgId: string;
-};
-
 export type ToBackendGetOrgRequest = {
+  operation: 'getOrg';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetOrgInput;
+  input: {
+    orgId: string;
+  };
 };
-
-export let zToBackendGetOrgInput = z
-  .object({
-    orgId: z.string()
-  })
-  .meta({ id: 'ToBackendGetOrgInput' });
 
 export let zToBackendGetOrgRequest = z
   .strictObject({
+    operation: z.literal('getOrg'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetOrgInput
+    input: z
+      .object({
+        orgId: z.string()
+      })
+      .meta({ id: 'ToBackendGetOrgInput' })
   })
   .meta({ id: 'ToBackendGetOrgRequest' });
-
-assertTypesEqual<ToBackendGetOrgInput, z.infer<typeof zToBackendGetOrgInput>>({
-  value: true
-});
 
 assertTypesEqual<
   ToBackendGetOrgRequest,

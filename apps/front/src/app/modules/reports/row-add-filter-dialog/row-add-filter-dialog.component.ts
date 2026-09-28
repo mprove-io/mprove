@@ -25,7 +25,7 @@ import { TimeframeEnum } from '#common/enums/timeframe.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendGetModelInput } from '#common/zod/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelRequest } from '#common/zod/backend/routes/models/get-model/get-model-request';
 import type { ToBackendGetModelResponse } from '#common/zod/backend/routes/models/get-model/get-model-response';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { FractionControl } from '#common/zod/blockml/fraction-control';
@@ -109,7 +109,7 @@ export class RowAddFilterDialogComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendGetModelInput = {
+    let payload: ToBackendGetModelRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -125,7 +125,7 @@ export class RowAddFilterDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             let restrictedFilterFieldIds =
               metric.modelType === ModelTypeEnum.Malloy
                 ? [
@@ -150,7 +150,7 @@ export class RowAddFilterDialogComponent implements OnInit {
                     `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Time}`
                   ];
 
-            this.sortedFieldsY = resp.result.value.model.fields
+            this.sortedFieldsY = resp.output.model.fields
               .filter(
                 (x: ModelField) =>
                   x.hidden === false &&
@@ -183,7 +183,7 @@ export class RowAddFilterDialogComponent implements OnInit {
                             : 0
               );
 
-            this.model = resp.result.value.model;
+            this.model = resp.output.model;
 
             this.modelLoading = false;
 

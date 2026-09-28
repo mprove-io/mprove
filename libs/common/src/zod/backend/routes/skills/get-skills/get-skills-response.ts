@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type SkillItem, zSkillItem } from '#common/zod/backend/skill-item';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetSkillsOutput,
+  zToBackendGetSkillsOutput
+} from '#common/zod/backend/routes/skills/get-skills/get-skills-output';
 import {
   type ToBackendGetSkillsError,
   zToBackendGetSkillsError
 } from './get-skills-error';
 
-export type ToBackendGetSkillsOutput = {
-  skillItems: SkillItem[];
-};
-
-export type ToBackendGetSkillsResponse = ToBackendResponse<
+export type ToBackendGetSkillsResponse = ToBackendResponseBase<
+  'getSkills',
   ToBackendGetSkillsOutput,
   ToBackendGetSkillsError
 >;
 
-export let zToBackendGetSkillsOutput = z
-  .object({
-    skillItems: z.array(zSkillItem)
-  })
-  .meta({ id: 'ToBackendGetSkillsOutput' });
-
 export let zToBackendGetSkillsResponse = makeToBackendResponseSchema({
-  success: zToBackendGetSkillsOutput,
+  operation: 'getSkills',
+  output: zToBackendGetSkillsOutput,
   error: zToBackendGetSkillsError
 }).meta({ id: 'ToBackendGetSkillsResponse' });
-
-assertTypesEqual<
-  ToBackendGetSkillsOutput,
-  z.infer<typeof zToBackendGetSkillsOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetSkillsResponse,

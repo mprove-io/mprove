@@ -58,17 +58,18 @@ export class ErrorDialogComponent implements OnInit {
     this.rightButtonText = this.ref.data.rightButtonText;
 
     this.message =
-      this.ref.data?.response?.body?.result?.error?.message ||
+      this.ref.data?.response?.body?.error?.code ||
       this.ref.data?.message ||
       this.ref.data;
 
-    let displayData = this.ref.data?.response?.body?.result?.error?.displayData;
+    let displayData = this.ref.data?.response?.body?.error?.displayData;
     if (isDefined(displayData)) {
       this.displayData = JSON.stringify(displayData, undefined, 2);
     }
 
     this.originalErrorMessage =
-      this.ref.data?.response?.body?.result?.error?.originalError?.message;
+      this.ref.data?.response?.body?.error?.originalError?.code ||
+      this.ref.data?.response?.body?.error?.originalError?.message;
 
     this.path = this.ref.data?.reqUrl;
     this.traceId = this.ref.data?.reqBody?.traceId;

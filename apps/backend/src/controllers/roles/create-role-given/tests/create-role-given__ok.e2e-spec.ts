@@ -14,11 +14,9 @@ import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
 import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
+import type { ToBackendCreateRoleGivenOutput } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-output';
 import type { ToBackendCreateRoleGivenRequest } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
-import type {
-  ToBackendCreateRoleGivenOutput,
-  ToBackendCreateRoleGivenResponse
-} from '#common/zod/backend/routes/roles/create-role-given/create-role-given-response';
+import type { ToBackendCreateRoleGivenResponse } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-response';
 
 let testId = 'backend-create-role-given__ok';
 
@@ -93,6 +91,7 @@ test('1', async t => {
       });
 
       let createGivenReq: ToBackendCreateGivenRequest = {
+        operation: 'createGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -113,6 +112,7 @@ test('1', async t => {
       });
 
       let createRoleReq: ToBackendCreateRoleRequest = {
+        operation: 'createRole',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -130,6 +130,7 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateRoleGivenRequest = {
+        operation: 'createRoleGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -160,7 +161,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let output: ToBackendCreateRoleGivenOutput = unwrapBackendResponseOutput({
       response: resp

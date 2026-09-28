@@ -37,7 +37,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendEditConnectionOutput } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-response';
+import type { ToBackendEditConnectionOutput } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-output';
 
 const { forEachSeries } = pIteration;
 

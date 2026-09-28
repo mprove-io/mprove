@@ -9,10 +9,10 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type { ToBackendRevertRepoToLastCommitInput } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
-import type { ToBackendRevertRepoToLastCommitOutput } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
-import type { ToBackendRevertRepoToRemoteInput } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
-import type { ToBackendRevertRepoToRemoteOutput } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
+import type { ToBackendRevertRepoToLastCommitOutput } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-output';
+import type { ToBackendRevertRepoToLastCommitRequest } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-request';
+import type { ToBackendRevertRepoToRemoteOutput } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-output';
+import type { ToBackendRevertRepoToRemoteRequest } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -111,7 +111,7 @@ export class RevertCommand extends CustomCommand {
       | ToBackendRevertRepoToRemoteOutput;
 
     if (this.to === ToEnum.LastCommit) {
-      let revertRepoToLastCommitReqPayload: ToBackendRevertRepoToLastCommitInput =
+      let revertRepoToLastCommitReqPayload: ToBackendRevertRepoToLastCommitRequest['input'] =
         {
           projectId: this.projectId,
           repoId: repoId,
@@ -126,12 +126,13 @@ export class RevertCommand extends CustomCommand {
         host: this.context.config.mproveCliHost
       });
     } else {
-      let revertRepoToRemoteReqPayload: ToBackendRevertRepoToRemoteInput = {
-        projectId: this.projectId,
-        repoId: repoId,
-        branchId: this.branch,
-        envId: this.env
-      };
+      let revertRepoToRemoteReqPayload: ToBackendRevertRepoToRemoteRequest['input'] =
+        {
+          projectId: this.projectId,
+          repoId: repoId,
+          branchId: this.branch,
+          envId: this.env
+        };
 
       revertRepoOutput = await mreq({
         apiKey: apiKey,

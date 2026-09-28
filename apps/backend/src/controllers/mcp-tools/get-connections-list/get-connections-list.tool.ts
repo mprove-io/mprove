@@ -17,7 +17,7 @@ import {
   zMcpToolGetConnectionsListInput,
   zMcpToolGetConnectionsListOutput
 } from '#common/zod/backend/mcp-tools/mcp-tool-get-connections-list';
-import type { ToBackendGetConnectionsListOutput } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-response';
+import type { ToBackendGetConnectionsListOutput } from '#common/zod/backend/routes/connections/get-connections-list/get-connections-list-output';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

@@ -1,13 +1,46 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendError,
-  zBackendError
-} from '#common/zod/backend/errors/backend-error';
+  type BackendDatabricksFailedToCloseConnectionError,
+  zBackendDatabricksFailedToCloseConnectionError
+} from '#common/zod/backend/errors/backend-databricks-failed-to-close-connection-error';
+import {
+  type BackendMemberDoesNotExistError,
+  zBackendMemberDoesNotExistError
+} from '#common/zod/backend/errors/backend-member-does-not-exist-error';
+import {
+  type BackendMemberIsNotAdminError,
+  zBackendMemberIsNotAdminError
+} from '#common/zod/backend/errors/backend-member-is-not-admin-error';
+import {
+  type BackendProjectDoesNotExistError,
+  zBackendProjectDoesNotExistError
+} from '#common/zod/backend/errors/backend-project-does-not-exist-error';
+import {
+  type BackendTestConnectionResultIsNotDefinedError,
+  zBackendTestConnectionResultIsNotDefinedError
+} from '#common/zod/backend/errors/backend-test-connection-result-is-not-defined-error';
+import {
+  type BackendWrongMotherduckDatabaseCharactersError,
+  zBackendWrongMotherduckDatabaseCharactersError
+} from '#common/zod/backend/errors/backend-wrong-motherduck-database-characters-error';
 
-export type ToBackendTestConnectionError = BackendError;
+export type ToBackendTestConnectionError =
+  | BackendDatabricksFailedToCloseConnectionError
+  | BackendMemberDoesNotExistError
+  | BackendMemberIsNotAdminError
+  | BackendProjectDoesNotExistError
+  | BackendTestConnectionResultIsNotDefinedError
+  | BackendWrongMotherduckDatabaseCharactersError;
 
-export let zToBackendTestConnectionError = zBackendError;
+export let zToBackendTestConnectionError = z.discriminatedUnion('code', [
+  zBackendDatabricksFailedToCloseConnectionError,
+  zBackendMemberDoesNotExistError,
+  zBackendMemberIsNotAdminError,
+  zBackendProjectDoesNotExistError,
+  zBackendTestConnectionResultIsNotDefinedError,
+  zBackendWrongMotherduckDatabaseCharactersError
+]);
 
 assertTypesEqual<
   ToBackendTestConnectionError,

@@ -17,11 +17,9 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
+import type { ToBackendSaveModifyReportOutput } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-output';
 import type { ToBackendSaveModifyReportRequest } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-request';
-import type {
-  ToBackendSaveModifyReportOutput,
-  ToBackendSaveModifyReportResponse
-} from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
+import type { ToBackendSaveModifyReportResponse } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
 
 let testId = 'backend-save-modify-report__space-path-user';
 
@@ -95,6 +93,7 @@ test('1', async t => {
       });
 
       let req1: ToBackendCreateDraftReportRequest = {
+        operation: 'createDraftReport',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -122,6 +121,7 @@ test('1', async t => {
       });
 
       let req2: ToBackendSaveModifyReportRequest = {
+        operation: 'saveModifyReport',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -163,7 +163,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let output: ToBackendSaveModifyReportOutput = unwrapBackendResponseOutput({
       response: resp

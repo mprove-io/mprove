@@ -15,7 +15,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { QueryInfoChartService } from '#backend/services/query-info-chart.service';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetChartOutput } from '#common/zod/backend/routes/charts/get-chart/get-chart-response';
+import type { ToBackendGetChartOutput } from '#common/zod/backend/routes/charts/get-chart/get-chart-output';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)

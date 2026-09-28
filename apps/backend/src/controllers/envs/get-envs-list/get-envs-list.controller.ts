@@ -16,7 +16,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetEnvsListOutput } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-response';
+import type { ToBackendGetEnvsListOutput } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-output';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)

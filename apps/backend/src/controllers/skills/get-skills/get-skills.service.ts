@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SKILLS_DATA } from '#backend/mprove-docs-cache/skills';
-import type { ToBackendGetSkillsOutput } from '#common/zod/backend/routes/skills/get-skills/get-skills-response';
+import type { ToBackendGetSkillsOutput } from '#common/zod/backend/routes/skills/get-skills/get-skills-output';
 
 @Injectable()
 export class GetSkillsService {

@@ -1,40 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendGetChartsInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-};
-
 export type ToBackendGetChartsRequest = {
+  operation: 'getCharts';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetChartsInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+  };
 };
-
-export let zToBackendGetChartsInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string()
-  })
-  .meta({ id: 'ToBackendGetChartsInput' });
 
 export let zToBackendGetChartsRequest = z
   .strictObject({
+    operation: z.literal('getCharts'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetChartsInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string()
+      })
+      .meta({ id: 'ToBackendGetChartsInput' })
   })
   .meta({ id: 'ToBackendGetChartsRequest' });
-
-assertTypesEqual<
-  ToBackendGetChartsInput,
-  z.infer<typeof zToBackendGetChartsInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetChartsRequest,

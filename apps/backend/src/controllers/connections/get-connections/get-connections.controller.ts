@@ -21,7 +21,7 @@ import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetConnectionsOutput } from '#common/zod/backend/routes/connections/get-connections/get-connections-response';
+import type { ToBackendGetConnectionsOutput } from '#common/zod/backend/routes/connections/get-connections/get-connections-output';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)

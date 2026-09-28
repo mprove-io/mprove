@@ -11,7 +11,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetExplorerChartTabInput } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
+import type { ToBackendGetExplorerChartTabRequest } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)
@@ -35,7 +35,8 @@ export class GetExplorerChartTabController {
   ) {
     let { traceId } = body;
 
-    let { sessionId, chartId }: ToBackendGetExplorerChartTabInput = body.input;
+    let { sessionId, chartId }: ToBackendGetExplorerChartTabRequest['input'] =
+      body.input;
 
     let payload = await this.getExplorerChartTabService.getExplorerChartTab({
       user: user,

@@ -1,40 +1,30 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Project, zProject } from '#common/zod/backend/project';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSetProjectAllowTimezonesOutput,
+  zToBackendSetProjectAllowTimezonesOutput
+} from '#common/zod/backend/routes/projects/set-project-allow-timezones/set-project-allow-timezones-output';
 import {
   type ToBackendSetProjectAllowTimezonesError,
   zToBackendSetProjectAllowTimezonesError
 } from './set-project-allow-timezones-error';
 
-export type ToBackendSetProjectAllowTimezonesOutput = {
-  project: Project;
-};
-
-export type ToBackendSetProjectAllowTimezonesResponse = ToBackendResponse<
+export type ToBackendSetProjectAllowTimezonesResponse = ToBackendResponseBase<
+  'setProjectAllowTimezones',
   ToBackendSetProjectAllowTimezonesOutput,
   ToBackendSetProjectAllowTimezonesError
 >;
 
-export let zToBackendSetProjectAllowTimezonesOutput = z
-  .object({
-    project: zProject
-  })
-  .meta({ id: 'ToBackendSetProjectAllowTimezonesOutput' });
-
 export let zToBackendSetProjectAllowTimezonesResponse =
   makeToBackendResponseSchema({
-    success: zToBackendSetProjectAllowTimezonesOutput,
+    operation: 'setProjectAllowTimezones',
+    output: zToBackendSetProjectAllowTimezonesOutput,
     error: zToBackendSetProjectAllowTimezonesError
   }).meta({ id: 'ToBackendSetProjectAllowTimezonesResponse' });
-
-assertTypesEqual<
-  ToBackendSetProjectAllowTimezonesOutput,
-  z.infer<typeof zToBackendSetProjectAllowTimezonesOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetProjectAllowTimezonesResponse,

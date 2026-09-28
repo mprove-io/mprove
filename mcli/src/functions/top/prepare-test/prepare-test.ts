@@ -1,8 +1,8 @@
 import { createRequire } from 'node:module';
 import { BaseContext, Cli, CommandClass } from 'clipanion';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendDeleteRecordsInput } from '#common/zod/backend/routes/test-routes/delete-records/delete-records-request';
-import type { ToBackendSeedRecordsInput } from '#common/zod/backend/routes/test-routes/seed-records/seed-records-request';
+import type { ToBackendDeleteRecordsRequest } from '#common/zod/backend/routes/test-routes/delete-records/delete-records-request';
+import type { ToBackendSeedRecordsRequest } from '#common/zod/backend/routes/test-routes/seed-records/seed-records-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { McliConfig } from '#mcli/config/mcli-config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -12,8 +12,8 @@ const require = createRequire(import.meta.url);
 export async function prepareTest(item: {
   command: CommandClass<CustomContext | BaseContext>;
   config: McliConfig;
-  deletePack?: ToBackendDeleteRecordsInput;
-  seedPack?: ToBackendSeedRecordsInput;
+  deletePack?: ToBackendDeleteRecordsRequest['input'];
+  seedPack?: ToBackendSeedRecordsRequest['input'];
   apiKey?: string;
 }) {
   let { command, config, deletePack, seedPack, apiKey } = item;

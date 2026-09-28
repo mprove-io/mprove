@@ -7,8 +7,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendRunInput } from '#common/zod/backend/routes/run/run/run-request';
-import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-response';
+import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-output';
+import type { ToBackendRunRequest } from '#common/zod/backend/routes/run/run/run-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -139,7 +139,7 @@ export class RunCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let runReqPayload: ToBackendRunInput = {
+    let runReqPayload: ToBackendRunRequest['input'] = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,

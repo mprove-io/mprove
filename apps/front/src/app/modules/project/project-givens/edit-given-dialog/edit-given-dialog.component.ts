@@ -14,7 +14,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { Given } from '#common/zod/backend/given';
-import type { ToBackendEditGivenInput } from '#common/zod/backend/routes/givens/edit-given/edit-given-request';
+import type { ToBackendEditGivenRequest } from '#common/zod/backend/routes/givens/edit-given/edit-given-request';
 import type { ToBackendEditGivenResponse } from '#common/zod/backend/routes/givens/edit-given/edit-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { GivensQuery } from '#front/app/queries/givens.query';
@@ -79,7 +79,7 @@ export class EditGivenDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendEditGivenInput = {
+    let payload: ToBackendEditGivenRequest['input'] = {
       projectId: this.dataItem.given.projectId,
       givenId: this.dataItem.given.givenId,
       values: ValidationService.parseGivenValues({
@@ -97,9 +97,9 @@ export class EditGivenDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditGivenResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
-            this.givensQuery.update({ givens: resp.result.value.givens });
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
+            this.givensQuery.update({ givens: resp.output.givens });
           }
         }),
         take(1)

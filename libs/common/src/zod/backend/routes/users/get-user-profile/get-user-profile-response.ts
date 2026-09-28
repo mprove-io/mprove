@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type User, zUser } from '#common/zod/backend/user';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetUserProfileOutput,
+  zToBackendGetUserProfileOutput
+} from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-output';
 import {
   type ToBackendGetUserProfileError,
   zToBackendGetUserProfileError
 } from './get-user-profile-error';
 
-export type ToBackendGetUserProfileOutput = {
-  user: User;
-};
-
-export type ToBackendGetUserProfileResponse = ToBackendResponse<
+export type ToBackendGetUserProfileResponse = ToBackendResponseBase<
+  'getUserProfile',
   ToBackendGetUserProfileOutput,
   ToBackendGetUserProfileError
 >;
 
-export let zToBackendGetUserProfileOutput = z
-  .object({
-    user: zUser
-  })
-  .meta({ id: 'ToBackendGetUserProfileOutput' });
-
 export let zToBackendGetUserProfileResponse = makeToBackendResponseSchema({
-  success: zToBackendGetUserProfileOutput,
+  operation: 'getUserProfile',
+  output: zToBackendGetUserProfileOutput,
   error: zToBackendGetUserProfileError
 }).meta({ id: 'ToBackendGetUserProfileResponse' });
-
-assertTypesEqual<
-  ToBackendGetUserProfileOutput,
-  z.infer<typeof zToBackendGetUserProfileOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetUserProfileResponse,

@@ -16,7 +16,7 @@ import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendIsProjectExistOutput } from '#common/zod/backend/routes/projects/is-project-exist/is-project-exist-response';
+import type { ToBackendIsProjectExistOutput } from '#common/zod/backend/routes/projects/is-project-exist/is-project-exist-output';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)

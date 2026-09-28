@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type ProjectConnection,
-  zProjectConnection
-} from '#common/zod/backend/project-connection';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCreateConnectionOutput,
+  zToBackendCreateConnectionOutput
+} from '#common/zod/backend/routes/connections/create-connection/create-connection-output';
 import {
   type ToBackendCreateConnectionError,
   zToBackendCreateConnectionError
 } from './create-connection-error';
 
-export type ToBackendCreateConnectionOutput = {
-  connection: ProjectConnection;
-};
-
-export type ToBackendCreateConnectionResponse = ToBackendResponse<
+export type ToBackendCreateConnectionResponse = ToBackendResponseBase<
+  'createConnection',
   ToBackendCreateConnectionOutput,
   ToBackendCreateConnectionError
 >;
 
-export let zToBackendCreateConnectionOutput = z
-  .object({
-    connection: zProjectConnection
-  })
-  .meta({ id: 'ToBackendCreateConnectionOutput' });
-
 export let zToBackendCreateConnectionResponse = makeToBackendResponseSchema({
-  success: zToBackendCreateConnectionOutput,
+  operation: 'createConnection',
+  output: zToBackendCreateConnectionOutput,
   error: zToBackendCreateConnectionError
 }).meta({ id: 'ToBackendCreateConnectionResponse' });
-
-assertTypesEqual<
-  ToBackendCreateConnectionOutput,
-  z.infer<typeof zToBackendCreateConnectionOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateConnectionResponse,

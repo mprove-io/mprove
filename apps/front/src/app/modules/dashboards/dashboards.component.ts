@@ -35,11 +35,11 @@ import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-un
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
 import type { Member } from '#common/zod/backend/member';
-import type { ToBackendSetFavoriteInput } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-request';
+import type { ToBackendSetFavoriteRequest } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-request';
 import type { ToBackendSetFavoriteResponse } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-response';
-import type { ToBackendGetQueriesInput } from '#common/zod/backend/routes/queries/get-queries/get-queries-request';
+import type { ToBackendGetQueriesRequest } from '#common/zod/backend/routes/queries/get-queries/get-queries-request';
 import type { ToBackendGetQueriesResponse } from '#common/zod/backend/routes/queries/get-queries/get-queries-response';
-import type { ToBackendRunQueriesInput } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
+import type { ToBackendRunQueriesRequest } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
 import type { ToBackendRunQueriesResponse } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
 import type { SpaceNode } from '#common/zod/backend/space-node';
 import type { SpaceNodeX } from '#common/zod/backend/space-node-x';
@@ -638,7 +638,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendSetFavoriteInput = {
+    let payload: ToBackendSetFavoriteRequest['input'] = {
       projectId: nav.projectId,
       type: FavoriteTypeEnum.Dashboard,
       targetId: dashboardId,
@@ -652,7 +652,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp.result?.type === 'Success';
+          let isOk = resp?.type === 'Success';
 
           if (isOk === false) {
             this.dashboardUnitsQuery.updatePart({
@@ -919,7 +919,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    let payload: ToBackendRunQueriesInput = {
+    let payload: ToBackendRunQueriesRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -934,8 +934,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.result?.type === 'Success') {
-            let { runningQueries } = resp.result.value;
+          if (resp?.type === 'Success') {
+            let { runningQueries } = resp.output;
 
             let newDashboard = Object.assign({}, this.dashboard, {
               tiles: this.dashboard.tiles.map(x => {
@@ -968,7 +968,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       return of(1);
     }
 
-    let payload: ToBackendGetQueriesInput = {
+    let payload: ToBackendGetQueriesRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -984,8 +984,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendGetQueriesResponse) => {
-          if (resp.result?.type === 'Success') {
-            let { queries } = resp.result.value;
+          if (resp?.type === 'Success') {
+            let { queries } = resp.output;
 
             let newDashboard = Object.assign({}, this.dashboard, {
               tiles: this.dashboard.tiles.map(x => {

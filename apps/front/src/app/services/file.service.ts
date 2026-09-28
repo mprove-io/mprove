@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
-import type { ToBackendGetFileInput } from '#common/zod/backend/routes/files/get-file/get-file-request';
+import type { ToBackendGetFileRequest } from '#common/zod/backend/routes/files/get-file/get-file-request';
 import type { ToBackendGetFileResponse } from '#common/zod/backend/routes/files/get-file/get-file-response';
 import { getFileIds } from '#front/app/functions/get-file-ids';
 import { FileQuery, FileState } from '../queries/file.query';
@@ -78,7 +78,7 @@ export class FileService {
 
     fileName = fileNodeIdParts[fileNodeIdParts.length - 1];
 
-    let getFilePayload: ToBackendGetFileInput = {
+    let getFilePayload: ToBackendGetFileRequest['input'] = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -94,28 +94,27 @@ export class FileService {
       })
       .pipe(
         map((resp: ToBackendGetFileResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             let repoState = this.repoQuery.getValue();
-            let newRepoState: RepoState = Object.assign(
-              resp.result.value.repo,
-              <RepoState>{
-                conflicts: repoState.conflicts, // getFile does not check for conflicts
-                repoStatus: repoState.repoStatus // getFile does not use git fetch
-              }
-            );
+            let newRepoState: RepoState = Object.assign(resp.output.repo, <
+              RepoState
+            >{
+              conflicts: repoState.conflicts, // getFile does not check for conflicts
+              repoStatus: repoState.repoStatus // getFile does not use git fetch
+            });
             this.repoQuery.update(newRepoState);
-            this.structQuery.update(resp.result.value.struct);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             this.fileQuery.update({
-              originalContent: resp.result.value.originalContent,
-              content: resp.result.value.content,
+              originalContent: resp.output.originalContent,
+              content: resp.output.content,
               name: fileName,
               fileId: fileId,
               fileNodeId: fileNodeId,
-              isExist: resp.result.value.isExist
+              isExist: resp.output.isExist
             });
           }
         })

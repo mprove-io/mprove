@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Env, zEnv } from '#common/zod/backend/env';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCreateEnvVarOutput,
+  zToBackendCreateEnvVarOutput
+} from '#common/zod/backend/routes/envs/create-env-var/create-env-var-output';
 import {
   type ToBackendCreateEnvVarError,
   zToBackendCreateEnvVarError
 } from './create-env-var-error';
 
-export type ToBackendCreateEnvVarOutput = {
-  userMember: Member;
-  envs: Env[];
-};
-
-export type ToBackendCreateEnvVarResponse = ToBackendResponse<
+export type ToBackendCreateEnvVarResponse = ToBackendResponseBase<
+  'createEnvVar',
   ToBackendCreateEnvVarOutput,
   ToBackendCreateEnvVarError
 >;
 
-export let zToBackendCreateEnvVarOutput = z
-  .object({
-    userMember: zMember,
-    envs: z.array(zEnv)
-  })
-  .meta({ id: 'ToBackendCreateEnvVarOutput' });
-
 export let zToBackendCreateEnvVarResponse = makeToBackendResponseSchema({
-  success: zToBackendCreateEnvVarOutput,
+  operation: 'createEnvVar',
+  output: zToBackendCreateEnvVarOutput,
   error: zToBackendCreateEnvVarError
 }).meta({ id: 'ToBackendCreateEnvVarResponse' });
-
-assertTypesEqual<
-  ToBackendCreateEnvVarOutput,
-  z.infer<typeof zToBackendCreateEnvVarOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateEnvVarResponse,

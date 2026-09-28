@@ -1,34 +1,27 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendGetAvatarBigInput = {
-  avatarUserId: string;
-};
-
 export type ToBackendGetAvatarBigRequest = {
+  operation: 'getAvatarBig';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetAvatarBigInput;
+  input: {
+    avatarUserId: string;
+  };
 };
-
-export let zToBackendGetAvatarBigInput = z
-  .object({
-    avatarUserId: z.string()
-  })
-  .meta({ id: 'ToBackendGetAvatarBigInput' });
 
 export let zToBackendGetAvatarBigRequest = z
   .strictObject({
+    operation: z.literal('getAvatarBig'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetAvatarBigInput
+    input: z
+      .object({
+        avatarUserId: z.string()
+      })
+      .meta({ id: 'ToBackendGetAvatarBigInput' })
   })
   .meta({ id: 'ToBackendGetAvatarBigRequest' });
-
-assertTypesEqual<
-  ToBackendGetAvatarBigInput,
-  z.infer<typeof zToBackendGetAvatarBigInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetAvatarBigRequest,

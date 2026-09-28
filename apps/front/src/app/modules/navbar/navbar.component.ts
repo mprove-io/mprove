@@ -16,7 +16,7 @@ import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Member } from '#common/zod/backend/member';
-import type { ToBackendCheckLastNavInput } from '#common/zod/backend/routes/nav/check-last-nav/check-last-nav-request';
+import type { ToBackendCheckLastNavRequest } from '#common/zod/backend/routes/nav/check-last-nav/check-last-nav-request';
 import type { ToBackendCheckLastNavResponse } from '#common/zod/backend/routes/nav/check-last-nav/check-last-nav-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -193,7 +193,7 @@ export class NavbarComponent implements OnInit {
     if (isDefined(pModelLink) && isDefined(pChartLink)) {
       this.spinner.show(APP_SPINNER_NAME);
 
-      let payload: ToBackendCheckLastNavInput = {
+      let payload: ToBackendCheckLastNavRequest['input'] = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
         branchId: this.nav.branchId,
@@ -211,9 +211,9 @@ export class NavbarComponent implements OnInit {
         .pipe(
           tap((resp: ToBackendCheckLastNavResponse) => {
             if (
-              resp.result?.type === 'Success' &&
-              resp.result.value.modelExists === true &&
-              resp.result.value.chartExists === true
+              resp?.type === 'Success' &&
+              resp.output.modelExists === true &&
+              resp.output.chartExists === true
             ) {
               this.navigateService.navigateToChart({
                 modelId: pModelLink.modelId,
@@ -249,7 +249,7 @@ export class NavbarComponent implements OnInit {
     if (isDefined(pLink?.dashboardId)) {
       this.spinner.show(APP_SPINNER_NAME);
 
-      let payload: ToBackendCheckLastNavInput = {
+      let payload: ToBackendCheckLastNavRequest['input'] = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
         branchId: this.nav.branchId,
@@ -266,8 +266,8 @@ export class NavbarComponent implements OnInit {
         .pipe(
           tap((resp: ToBackendCheckLastNavResponse) => {
             if (
-              resp.result?.type === 'Success' &&
-              resp.result.value.dashboardExists === true
+              resp?.type === 'Success' &&
+              resp.output.dashboardExists === true
             ) {
               this.navigateService.navigateToDashboard({
                 dashboardId: pLink.dashboardId
@@ -308,7 +308,7 @@ export class NavbarComponent implements OnInit {
     if (isDefined(pLink?.reportId)) {
       this.spinner.show(APP_SPINNER_NAME);
 
-      let payload: ToBackendCheckLastNavInput = {
+      let payload: ToBackendCheckLastNavRequest['input'] = {
         projectId: this.nav.projectId,
         repoId: this.nav.repoId,
         branchId: this.nav.branchId,
@@ -324,10 +324,7 @@ export class NavbarComponent implements OnInit {
         })
         .pipe(
           tap((resp: ToBackendCheckLastNavResponse) => {
-            if (
-              resp.result?.type === 'Success' &&
-              resp.result.value.reportExists === true
-            ) {
+            if (resp?.type === 'Success' && resp.output.reportExists === true) {
               this.navigateService.navigateToReport({
                 reportId: pLink.reportId
               });

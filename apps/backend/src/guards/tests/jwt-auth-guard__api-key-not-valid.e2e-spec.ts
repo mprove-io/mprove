@@ -48,6 +48,7 @@ test('1', async t => {
       });
 
       let generateReq: ToBackendGenerateUserApiKeyRequest = {
+        operation: 'generateUserApiKey',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {}
@@ -62,6 +63,7 @@ test('1', async t => {
       });
 
       let req: ToBackendGetRepoRequest = {
+        operation: 'getRepo',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -99,9 +101,9 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Failure');
-    assert.ok(resp.result.type === 'Failure');
-    assert.equal(resp.result.error.message, ErEnum.BACKEND_API_KEY_NOT_VALID);
+    assert.equal(resp.type, 'Failure');
+    assert.ok(resp.type === 'Failure');
+    assert.equal(resp.error.code, ErEnum.BACKEND_API_KEY_NOT_VALID);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

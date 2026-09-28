@@ -52,7 +52,7 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSendMessageToEditorSessionOutput } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-response';
+import type { ToBackendSendMessageToEditorSessionOutput } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-output';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

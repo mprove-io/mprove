@@ -1,5 +1,5 @@
-import type { ToBackendLoginUserInput } from '#common/zod/backend/routes/users/login-user/login-user-request';
-import type { ToBackendLoginUserOutput } from '#common/zod/backend/routes/users/login-user/login-user-response';
+import type { ToBackendLoginUserOutput } from '#common/zod/backend/routes/users/login-user/login-user-output';
+import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
 import { mreq } from '#mcli/functions/mreq/mreq';
 
 export async function getTestLoginToken(item: {
@@ -7,7 +7,7 @@ export async function getTestLoginToken(item: {
   password: string;
   host: string;
 }): Promise<string> {
-  let loginUserReqPayload: ToBackendLoginUserInput = {
+  let loginUserReqPayload: ToBackendLoginUserRequest['input'] = {
     email: item.email,
     password: item.password
   };

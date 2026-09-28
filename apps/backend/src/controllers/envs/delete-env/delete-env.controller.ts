@@ -34,7 +34,7 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteEnvOutput } from '#common/zod/backend/routes/envs/delete-env/delete-env-response';
+import type { ToBackendDeleteEnvOutput } from '#common/zod/backend/routes/envs/delete-env/delete-env-output';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)

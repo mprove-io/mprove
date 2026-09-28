@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type ChartUnit, zChartUnit } from '#common/zod/backend/chart-unit';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type SpaceNode, zSpaceNode } from '#common/zod/backend/space-node';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteChartOutput,
+  zToBackendDeleteChartOutput
+} from '#common/zod/backend/routes/charts/delete-chart/delete-chart-output';
 import {
   type ToBackendDeleteChartError,
   zToBackendDeleteChartError
 } from './delete-chart-error';
 
-export type ToBackendDeleteChartOutput = {
-  chartUnitDrafts: ChartUnit[];
-  chartSpaceNodes: SpaceNode[];
-};
-
-export type ToBackendDeleteChartResponse = ToBackendResponse<
+export type ToBackendDeleteChartResponse = ToBackendResponseBase<
+  'deleteChart',
   ToBackendDeleteChartOutput,
   ToBackendDeleteChartError
 >;
 
-export let zToBackendDeleteChartOutput = z
-  .object({
-    chartUnitDrafts: z.array(zChartUnit),
-    chartSpaceNodes: z.array(zSpaceNode)
-  })
-  .meta({ id: 'ToBackendDeleteChartOutput' });
-
 export let zToBackendDeleteChartResponse = makeToBackendResponseSchema({
-  success: zToBackendDeleteChartOutput,
+  operation: 'deleteChart',
+  output: zToBackendDeleteChartOutput,
   error: zToBackendDeleteChartError
 }).meta({ id: 'ToBackendDeleteChartResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteChartOutput,
-  z.infer<typeof zToBackendDeleteChartOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteChartResponse,

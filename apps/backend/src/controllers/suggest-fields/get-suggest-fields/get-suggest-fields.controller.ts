@@ -27,7 +27,7 @@ import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetSuggestFieldsOutput } from '#common/zod/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-response';
+import type { ToBackendGetSuggestFieldsOutput } from '#common/zod/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-output';
 import type { SuggestField } from '#common/zod/backend/suggest-field';
 
 @ApiTags('SuggestFields')

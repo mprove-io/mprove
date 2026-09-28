@@ -27,8 +27,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteProviderInput } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-request';
-import type { ToBackendDeleteProviderOutput } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-response';
+import type { ToBackendDeleteProviderOutput } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-output';
+import type { ToBackendDeleteProviderRequest } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -56,7 +56,7 @@ export class DeleteProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteProviderRequestDto
   ) {
-    let bodyPayload: ToBackendDeleteProviderInput = body.input;
+    let bodyPayload: ToBackendDeleteProviderRequest['input'] = body.input;
 
     let { projectId, providerId } = bodyPayload;
 

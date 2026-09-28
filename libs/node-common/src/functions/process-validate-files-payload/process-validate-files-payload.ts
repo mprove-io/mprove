@@ -1,6 +1,6 @@
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type { ToBackendValidateFilesOutput } from '#common/zod/backend/routes/files/validate-files/validate-files-response';
+import type { ToBackendValidateFilesOutput } from '#common/zod/backend/routes/files/validate-files/validate-files-output';
 
 export function processValidateFilesPayload(item: {
   payload: ToBackendValidateFilesOutput;

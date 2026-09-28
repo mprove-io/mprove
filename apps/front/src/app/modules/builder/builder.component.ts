@@ -17,11 +17,11 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetRepoInput } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
+import type { ToBackendGetRepoRequest } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
 import type { ToBackendGetRepoResponse } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
-import type { ToBackendPullRepoInput } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-request';
+import type { ToBackendPullRepoRequest } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-request';
 import type { ToBackendPullRepoResponse } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-response';
-import type { ToBackendPushRepoInput } from '#common/zod/backend/routes/repos/push-repo/push-repo-request';
+import type { ToBackendPushRepoRequest } from '#common/zod/backend/routes/repos/push-repo/push-repo-request';
 import type { ToBackendPushRepoResponse } from '#common/zod/backend/routes/repos/push-repo/push-repo-response';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -346,7 +346,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   }
 
   push() {
-    let payload: ToBackendPushRepoInput = {
+    let payload: ToBackendPushRepoRequest['input'] = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -362,11 +362,11 @@ export class BuilderComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendPushRepoResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             return true;
@@ -392,7 +392,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   }
 
   pull() {
-    let payload: ToBackendPullRepoInput = {
+    let payload: ToBackendPullRepoRequest['input'] = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -408,11 +408,11 @@ export class BuilderComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendPullRepoResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             return true;
@@ -438,7 +438,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   }
 
   refresh() {
-    let payload: ToBackendGetRepoInput = {
+    let payload: ToBackendGetRepoRequest['input'] = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -455,11 +455,11 @@ export class BuilderComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendGetRepoResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             return true;

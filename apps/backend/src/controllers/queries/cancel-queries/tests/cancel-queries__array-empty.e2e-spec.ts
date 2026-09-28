@@ -14,7 +14,6 @@ import {
 } from '#common/constants/top';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
@@ -171,6 +170,7 @@ test('1', async t => {
       });
 
       let req1: ToBackendCancelQueriesRequest = {
+        operation: 'cancelQueries',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -202,16 +202,13 @@ test('1', async t => {
       }
     }
 
-    assert.ok(resp1.result.type === 'Failure');
+    assert.ok(resp1.type === 'Failure');
 
-    assert.equal(
-      resp1.result.error.message,
-      ErEnum.BACKEND_WRONG_REQUEST_PARAMS
-    );
+    assert.equal(resp1.error.code, 'BACKEND_INVALID_REQUEST');
 
-    assert.equal(resp1.result.error.displayData[0].code, 'too_small');
+    assert.equal(resp1.error.displayData[0].code, 'too_small');
 
-    assert.equal(resp1.result.error.displayData[0].path, 'input.mconfigIds');
+    assert.equal(resp1.error.displayData[0].path, 'input.mconfigIds');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

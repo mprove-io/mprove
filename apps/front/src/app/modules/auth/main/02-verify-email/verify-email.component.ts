@@ -9,7 +9,7 @@ import { PATH_LOGIN } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendResendUserEmailInput } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-request';
+import type { ToBackendResendUserEmailRequest } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-request';
 import type { ToBackendResendUserEmailResponse } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -60,7 +60,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
   resendEmail() {
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendResendUserEmailInput = {
+    let payload: ToBackendResendUserEmailRequest['input'] = {
       userId: this.userId
     };
 
@@ -71,8 +71,8 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendResendUserEmailResponse) => {
-          if (resp.result?.type === 'Success') {
-            let isEmailVerified = resp.result.value.isEmailVerified;
+          if (resp?.type === 'Success') {
+            let isEmailVerified = resp.output.isEmailVerified;
 
             if (isEmailVerified === true) {
               this.router.navigate([PATH_LOGIN]);

@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { ToBackendDeleteSessionInput } from '#common/zod/backend/routes/sessions/delete-session/delete-session-request';
+import type { ToBackendDeleteSessionRequest } from '#common/zod/backend/routes/sessions/delete-session/delete-session-request';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -56,7 +56,7 @@ export class DeleteSessionDialogComponent implements OnInit {
 
     let sessionId = this.ref.data.sessionId;
 
-    let payload: ToBackendDeleteSessionInput = {
+    let payload: ToBackendDeleteSessionRequest['input'] = {
       sessionId: sessionId
     };
 

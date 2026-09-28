@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Env, zEnv } from '#common/zod/backend/env';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetEnvsOutput,
+  zToBackendGetEnvsOutput
+} from '#common/zod/backend/routes/envs/get-envs/get-envs-output';
 import {
   type ToBackendGetEnvsError,
   zToBackendGetEnvsError
 } from './get-envs-error';
 
-export type ToBackendGetEnvsOutput = {
-  userMember: Member;
-  envs: Env[];
-};
-
-export type ToBackendGetEnvsResponse = ToBackendResponse<
+export type ToBackendGetEnvsResponse = ToBackendResponseBase<
+  'getEnvs',
   ToBackendGetEnvsOutput,
   ToBackendGetEnvsError
 >;
 
-export let zToBackendGetEnvsOutput = z
-  .object({
-    userMember: zMember,
-    envs: z.array(zEnv)
-  })
-  .meta({ id: 'ToBackendGetEnvsOutput' });
-
 export let zToBackendGetEnvsResponse = makeToBackendResponseSchema({
-  success: zToBackendGetEnvsOutput,
+  operation: 'getEnvs',
+  output: zToBackendGetEnvsOutput,
   error: zToBackendGetEnvsError
 }).meta({ id: 'ToBackendGetEnvsResponse' });
-
-assertTypesEqual<
-  ToBackendGetEnvsOutput,
-  z.infer<typeof zToBackendGetEnvsOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetEnvsResponse,

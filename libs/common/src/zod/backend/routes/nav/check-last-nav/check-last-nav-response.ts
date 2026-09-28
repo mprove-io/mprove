@@ -1,44 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCheckLastNavOutput,
+  zToBackendCheckLastNavOutput
+} from '#common/zod/backend/routes/nav/check-last-nav/check-last-nav-output';
 import {
   type ToBackendCheckLastNavError,
   zToBackendCheckLastNavError
 } from './check-last-nav-error';
 
-export type ToBackendCheckLastNavOutput = {
-  modelExists: boolean;
-  chartExists: boolean;
-  dashboardExists: boolean;
-  reportExists: boolean;
-};
-
-export type ToBackendCheckLastNavResponse = ToBackendResponse<
+export type ToBackendCheckLastNavResponse = ToBackendResponseBase<
+  'checkLastNav',
   ToBackendCheckLastNavOutput,
   ToBackendCheckLastNavError
 >;
 
-export let zToBackendCheckLastNavOutput = z
-  .object({
-    modelExists: z.boolean(),
-    chartExists: z.boolean(),
-    dashboardExists: z.boolean(),
-    reportExists: z.boolean()
-  })
-  .meta({ id: 'ToBackendCheckLastNavOutput' });
-
 export let zToBackendCheckLastNavResponse = makeToBackendResponseSchema({
-  success: zToBackendCheckLastNavOutput,
+  operation: 'checkLastNav',
+  output: zToBackendCheckLastNavOutput,
   error: zToBackendCheckLastNavError
 }).meta({ id: 'ToBackendCheckLastNavResponse' });
-
-assertTypesEqual<
-  ToBackendCheckLastNavOutput,
-  z.infer<typeof zToBackendCheckLastNavOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCheckLastNavResponse,

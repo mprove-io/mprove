@@ -1,45 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DashboardUnit,
-  zDashboardUnit
-} from '#common/zod/backend/dashboard-unit';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type SpaceNode, zSpaceNode } from '#common/zod/backend/space-node';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteDashboardOutput,
+  zToBackendDeleteDashboardOutput
+} from '#common/zod/backend/routes/dashboards/delete-dashboard/delete-dashboard-output';
 import {
   type ToBackendDeleteDashboardError,
   zToBackendDeleteDashboardError
 } from './delete-dashboard-error';
 
-export type ToBackendDeleteDashboardOutput = {
-  dashboardUnitDrafts: DashboardUnit[];
-  dashboardSpaceNodes: SpaceNode[];
-};
-
-export type ToBackendDeleteDashboardResponse = ToBackendResponse<
+export type ToBackendDeleteDashboardResponse = ToBackendResponseBase<
+  'deleteDashboard',
   ToBackendDeleteDashboardOutput,
   ToBackendDeleteDashboardError
 >;
 
-export let zToBackendDeleteDashboardOutput = z
-  .object({
-    dashboardUnitDrafts: z.array(zDashboardUnit),
-    dashboardSpaceNodes: z.array(zSpaceNode)
-  })
-  .meta({ id: 'ToBackendDeleteDashboardOutput' });
-
 export let zToBackendDeleteDashboardResponse = makeToBackendResponseSchema({
-  success: zToBackendDeleteDashboardOutput,
+  operation: 'deleteDashboard',
+  output: zToBackendDeleteDashboardOutput,
   error: zToBackendDeleteDashboardError
 }).meta({ id: 'ToBackendDeleteDashboardResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteDashboardOutput,
-  z.infer<typeof zToBackendDeleteDashboardOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteDashboardResponse,

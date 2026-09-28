@@ -1,34 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCreateBranchOutput,
+  zToBackendCreateBranchOutput
+} from '#common/zod/backend/routes/branches/create-branch/create-branch-output';
 import {
   type ToBackendCreateBranchError,
   zToBackendCreateBranchError
 } from './create-branch-error';
 
-export type ToBackendCreateBranchOutput = Record<string, never>;
-
-export type ToBackendCreateBranchResponse = ToBackendResponse<
+export type ToBackendCreateBranchResponse = ToBackendResponseBase<
+  'createBranch',
   ToBackendCreateBranchOutput,
   ToBackendCreateBranchError
 >;
 
-export let zToBackendCreateBranchOutput = z
-  .object({})
-  .meta({ id: 'ToBackendCreateBranchOutput' });
-
 export let zToBackendCreateBranchResponse = makeToBackendResponseSchema({
-  success: zToBackendCreateBranchOutput,
+  operation: 'createBranch',
+  output: zToBackendCreateBranchOutput,
   error: zToBackendCreateBranchError
 }).meta({ id: 'ToBackendCreateBranchResponse' });
-
-assertTypesEqual<
-  ToBackendCreateBranchOutput,
-  z.infer<typeof zToBackendCreateBranchOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateBranchResponse,

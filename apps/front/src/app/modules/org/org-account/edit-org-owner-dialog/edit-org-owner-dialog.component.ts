@@ -19,7 +19,7 @@ import {
   LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
   LOCAL_STORAGE_NEW_ORG_OWNER
 } from '#common/constants/top-front';
-import type { ToBackendSetOrgOwnerInput } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-request';
+import type { ToBackendSetOrgOwnerRequest } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-request';
 import type { ToBackendSetOrgOwnerResponse } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -81,7 +81,7 @@ export class EditOrgOwnerDialogComponent implements OnInit {
 
     let newOwnerEmail = this.editOrgOwnerForm.value.ownerEmail;
 
-    let payload: ToBackendSetOrgOwnerInput = {
+    let payload: ToBackendSetOrgOwnerRequest['input'] = {
       orgId: this.ref.data.orgId,
       ownerEmail: newOwnerEmail
     };
@@ -96,8 +96,8 @@ export class EditOrgOwnerDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetOrgOwnerResponse) => {
-          if (resp.result?.type === 'Success') {
-            let org = resp.result.value.org;
+          if (resp?.type === 'Success') {
+            let org = resp.output.org;
             localStorage.setItem(
               LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
               org.name

@@ -1,34 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendResetUserPasswordOutput,
+  zToBackendResetUserPasswordOutput
+} from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-output';
 import {
   type ToBackendResetUserPasswordError,
   zToBackendResetUserPasswordError
 } from './reset-user-password-error';
 
-export type ToBackendResetUserPasswordOutput = Record<string, never>;
-
-export type ToBackendResetUserPasswordResponse = ToBackendResponse<
+export type ToBackendResetUserPasswordResponse = ToBackendResponseBase<
+  'resetUserPassword',
   ToBackendResetUserPasswordOutput,
   ToBackendResetUserPasswordError
 >;
 
-export let zToBackendResetUserPasswordOutput = z
-  .object({})
-  .meta({ id: 'ToBackendResetUserPasswordOutput' });
-
 export let zToBackendResetUserPasswordResponse = makeToBackendResponseSchema({
-  success: zToBackendResetUserPasswordOutput,
+  operation: 'resetUserPassword',
+  output: zToBackendResetUserPasswordOutput,
   error: zToBackendResetUserPasswordError
 }).meta({ id: 'ToBackendResetUserPasswordResponse' });
-
-assertTypesEqual<
-  ToBackendResetUserPasswordOutput,
-  z.infer<typeof zToBackendResetUserPasswordOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendResetUserPasswordResponse,

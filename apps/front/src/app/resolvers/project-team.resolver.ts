@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { MEMBERS_PER_PAGE } from '#common/constants/top-front';
-import type { ToBackendGetMembersInput } from '#common/zod/backend/routes/members/get-members/get-members-request';
+import type { ToBackendGetMembersRequest } from '#common/zod/backend/routes/members/get-members/get-members-request';
 import type { ToBackendGetMembersResponse } from '#common/zod/backend/routes/members/get-members/get-members-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
@@ -55,7 +55,7 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
       projectId = x;
     });
 
-    let payload: ToBackendGetMembersInput = {
+    let payload: ToBackendGetMembersRequest['input'] = {
       projectId: projectId,
       pageNum: 1,
       perPage: MEMBERS_PER_PAGE
@@ -68,13 +68,13 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetMembersResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
 
-            this.teamQuery.update(resp.result.value);
+            this.teamQuery.update(resp.output);
 
             this.rolesQuery.update({
-              roles: resp.result.value.roles
+              roles: resp.output.roles
             });
 
             return true;

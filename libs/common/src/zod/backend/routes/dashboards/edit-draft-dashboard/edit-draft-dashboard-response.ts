@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type DashboardX, zDashboardX } from '#common/zod/backend/dashboard-x';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendEditDraftDashboardOutput,
+  zToBackendEditDraftDashboardOutput
+} from '#common/zod/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-output';
 import {
   type ToBackendEditDraftDashboardError,
   zToBackendEditDraftDashboardError
 } from './edit-draft-dashboard-error';
 
-export type ToBackendEditDraftDashboardOutput = {
-  dashboard: DashboardX;
-};
-
-export type ToBackendEditDraftDashboardResponse = ToBackendResponse<
+export type ToBackendEditDraftDashboardResponse = ToBackendResponseBase<
+  'editDraftDashboard',
   ToBackendEditDraftDashboardOutput,
   ToBackendEditDraftDashboardError
 >;
 
-export let zToBackendEditDraftDashboardOutput = z
-  .object({
-    dashboard: zDashboardX
-  })
-  .meta({ id: 'ToBackendEditDraftDashboardOutput' });
-
 export let zToBackendEditDraftDashboardResponse = makeToBackendResponseSchema({
-  success: zToBackendEditDraftDashboardOutput,
+  operation: 'editDraftDashboard',
+  output: zToBackendEditDraftDashboardOutput,
   error: zToBackendEditDraftDashboardError
 }).meta({ id: 'ToBackendEditDraftDashboardResponse' });
-
-assertTypesEqual<
-  ToBackendEditDraftDashboardOutput,
-  z.infer<typeof zToBackendEditDraftDashboardOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendEditDraftDashboardResponse,

@@ -18,7 +18,7 @@ import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendResendUserEmailOutput } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-response';
+import type { ToBackendResendUserEmailOutput } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-output';
 
 @ApiTags('Users')
 @SkipJwtCheck()

@@ -1,37 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Provider, zProvider } from '#common/zod/backend/provider';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteLlmModelOutput,
+  zToBackendDeleteLlmModelOutput
+} from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-output';
 import {
   type ToBackendDeleteLlmModelError,
   zToBackendDeleteLlmModelError
 } from './delete-llm-model-error';
 
-export type ToBackendDeleteLlmModelOutput = {
-  provider?: Provider;
-};
-
-export type ToBackendDeleteLlmModelResponse = ToBackendResponse<
+export type ToBackendDeleteLlmModelResponse = ToBackendResponseBase<
+  'deleteLlmModel',
   ToBackendDeleteLlmModelOutput,
   ToBackendDeleteLlmModelError
 >;
 
-export let zToBackendDeleteLlmModelOutput = z
-  .object({ provider: zProvider })
-  .meta({ id: 'ToBackendDeleteLlmModelOutput' });
-
 export let zToBackendDeleteLlmModelResponse = makeToBackendResponseSchema({
-  success: zToBackendDeleteLlmModelOutput,
+  operation: 'deleteLlmModel',
+  output: zToBackendDeleteLlmModelOutput,
   error: zToBackendDeleteLlmModelError
 }).meta({ id: 'ToBackendDeleteLlmModelResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteLlmModelOutput,
-  z.infer<typeof zToBackendDeleteLlmModelOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteLlmModelResponse,

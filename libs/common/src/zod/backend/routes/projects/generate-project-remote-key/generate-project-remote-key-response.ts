@@ -1,41 +1,30 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGenerateProjectRemoteKeyOutput,
+  zToBackendGenerateProjectRemoteKeyOutput
+} from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-output';
 import {
   type ToBackendGenerateProjectRemoteKeyError,
   zToBackendGenerateProjectRemoteKeyError
 } from './generate-project-remote-key-error';
 
-export type ToBackendGenerateProjectRemoteKeyOutput = {
-  noteId: string;
-  publicKey: string;
-};
-
-export type ToBackendGenerateProjectRemoteKeyResponse = ToBackendResponse<
+export type ToBackendGenerateProjectRemoteKeyResponse = ToBackendResponseBase<
+  'generateProjectRemoteKey',
   ToBackendGenerateProjectRemoteKeyOutput,
   ToBackendGenerateProjectRemoteKeyError
 >;
 
-export let zToBackendGenerateProjectRemoteKeyOutput = z
-  .object({
-    noteId: z.string(),
-    publicKey: z.string()
-  })
-  .meta({ id: 'ToBackendGenerateProjectRemoteKeyOutput' });
-
 export let zToBackendGenerateProjectRemoteKeyResponse =
   makeToBackendResponseSchema({
-    success: zToBackendGenerateProjectRemoteKeyOutput,
+    operation: 'generateProjectRemoteKey',
+    output: zToBackendGenerateProjectRemoteKeyOutput,
     error: zToBackendGenerateProjectRemoteKeyError
   }).meta({ id: 'ToBackendGenerateProjectRemoteKeyResponse' });
-
-assertTypesEqual<
-  ToBackendGenerateProjectRemoteKeyOutput,
-  z.infer<typeof zToBackendGenerateProjectRemoteKeyOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGenerateProjectRemoteKeyResponse,

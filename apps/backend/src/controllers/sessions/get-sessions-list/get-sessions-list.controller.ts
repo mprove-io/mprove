@@ -23,7 +23,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetSessionsListOutput } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
+import type { ToBackendGetSessionsListOutput } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-output';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

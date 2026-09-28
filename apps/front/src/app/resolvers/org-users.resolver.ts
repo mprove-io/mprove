@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
-import type { ToBackendGetOrgUsersInput } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
+import type { ToBackendGetOrgUsersRequest } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
 import type { ToBackendGetOrgUsersResponse } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -51,7 +51,7 @@ export class OrgUsersResolver implements Resolve<Observable<boolean>> {
       orgId = x;
     });
 
-    let payload: ToBackendGetOrgUsersInput = {
+    let payload: ToBackendGetOrgUsersRequest['input'] = {
       orgId: orgId,
       pageNum: 1,
       perPage: USERS_PER_PAGE
@@ -64,10 +64,10 @@ export class OrgUsersResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetOrgUsersResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.usersQuery.update({
-              users: resp.result.value.orgUsersList,
-              total: resp.result.value.total
+              users: resp.output.orgUsersList,
+              total: resp.output.total
             });
             return true;
           } else {

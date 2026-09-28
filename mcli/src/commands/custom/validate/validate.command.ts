@@ -7,8 +7,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendValidateFilesInput } from '#common/zod/backend/routes/files/validate-files/validate-files-request';
-import type { ToBackendValidateFilesOutput } from '#common/zod/backend/routes/files/validate-files/validate-files-response';
+import type { ToBackendValidateFilesOutput } from '#common/zod/backend/routes/files/validate-files/validate-files-output';
+import type { ToBackendValidateFilesRequest } from '#common/zod/backend/routes/files/validate-files/validate-files-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -83,7 +83,7 @@ export class ValidateCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let validateFilesReqPayload: ToBackendValidateFilesInput = {
+    let validateFilesReqPayload: ToBackendValidateFilesRequest['input'] = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,

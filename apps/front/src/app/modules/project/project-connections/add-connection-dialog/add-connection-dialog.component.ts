@@ -28,11 +28,11 @@ import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-re
 import type { ConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
 import type { TestConnectionResult } from '#common/zod/backend/connections/test-connection-result';
 import type { EnvsItem } from '#common/zod/backend/envs-item';
-import type { ToBackendCreateConnectionInput } from '#common/zod/backend/routes/connections/create-connection/create-connection-request';
+import type { ToBackendCreateConnectionRequest } from '#common/zod/backend/routes/connections/create-connection/create-connection-request';
 import type { ToBackendCreateConnectionResponse } from '#common/zod/backend/routes/connections/create-connection/create-connection-response';
-import type { ToBackendTestConnectionInput } from '#common/zod/backend/routes/connections/test-connection/test-connection-request';
+import type { ToBackendTestConnectionRequest } from '#common/zod/backend/routes/connections/test-connection/test-connection-request';
 import type { ToBackendTestConnectionResponse } from '#common/zod/backend/routes/connections/test-connection/test-connection-response';
-import type { ToBackendGetEnvsListInput } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-request';
+import type { ToBackendGetEnvsListRequest } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-request';
 import type { ToBackendGetEnvsListResponse } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
@@ -436,7 +436,7 @@ export class AddConnectionDialogComponent implements OnInit {
   openEnvSelect() {
     this.envsListLoading = true;
 
-    let payload: ToBackendGetEnvsListInput = {
+    let payload: ToBackendGetEnvsListRequest['input'] = {
       projectId: this.ref.data.projectId,
       isFilter: false
     };
@@ -909,7 +909,7 @@ export class AddConnectionDialogComponent implements OnInit {
       options.presto.internalPort = undefined;
     }
 
-    let payload: ToBackendTestConnectionInput = {
+    let payload: ToBackendTestConnectionRequest['input'] = {
       projectId: this.ref.data.projectId,
       connectionId: this.addForm.value.connectionId,
       envId: this.addForm.value.envId,
@@ -928,8 +928,8 @@ export class AddConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.testConnectionResult = resp.result.value.testConnectionResult;
+          if (resp?.type === 'Success') {
+            this.testConnectionResult = resp.output.testConnectionResult;
 
             this.cd.detectChanges();
           }
@@ -948,7 +948,7 @@ export class AddConnectionDialogComponent implements OnInit {
       return;
     }
 
-    let payload: ToBackendTestConnectionInput = {
+    let payload: ToBackendTestConnectionRequest['input'] = {
       projectId: this.ref.data.projectId,
       connectionId: this.addForm.value.connectionId,
       envId: this.addForm.value.envId,
@@ -967,9 +967,8 @@ export class AddConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.testInternalHostResult =
-              resp.result.value.testConnectionResult;
+          if (resp?.type === 'Success') {
+            this.testInternalHostResult = resp.output.testConnectionResult;
 
             this.cd.detectChanges();
           }
@@ -988,7 +987,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateConnectionInput = {
+    let payload: ToBackendCreateConnectionRequest['input'] = {
       projectId: this.ref.data.projectId,
       connectionId: this.addForm.value.connectionId,
       envId: this.addForm.value.envId,
@@ -1006,8 +1005,8 @@ export class AddConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateConnectionResponse) => {
-          if (resp.result?.type === 'Success') {
-            let connection = resp.result.value.connection;
+          if (resp?.type === 'Success') {
+            let connection = resp.output.connection;
 
             let connections = this.connectionsQuery.getValue();
 

@@ -7,8 +7,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendDeleteBranchInput } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-request';
-import type { ToBackendDeleteBranchOutput } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-response';
+import type { ToBackendDeleteBranchOutput } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-output';
+import type { ToBackendDeleteBranchRequest } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -78,7 +78,7 @@ export class DeleteBranchCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let deleteBranchReqPayload: ToBackendDeleteBranchInput = {
+    let deleteBranchReqPayload: ToBackendDeleteBranchRequest['input'] = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch

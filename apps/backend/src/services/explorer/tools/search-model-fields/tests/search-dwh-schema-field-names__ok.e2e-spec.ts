@@ -132,6 +132,7 @@ test('1', async t => {
       });
 
       let seedLeafsReq: ToBackendSeedRecordsRequest = {
+        operation: 'seedRecords',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {

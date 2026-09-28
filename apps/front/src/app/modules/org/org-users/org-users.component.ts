@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { ORGANIZATION_USERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
-import type { ToBackendGetOrgUsersInput } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
+import type { ToBackendGetOrgUsersRequest } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
 import type { ToBackendGetOrgUsersResponse } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
 import type { OrgUserItemExtended } from '#common/zod/front/org-user-item-extended';
 import { makeInitials } from '#front/app/functions/make-initials';
@@ -71,7 +71,7 @@ export class OrgUsersComponent implements OnInit {
   }
 
   getUsers(pageNum: number) {
-    let payload: ToBackendGetOrgUsersInput = {
+    let payload: ToBackendGetOrgUsersRequest['input'] = {
       orgId: this.orgId,
       pageNum: pageNum,
       perPage: this.perPage
@@ -84,10 +84,10 @@ export class OrgUsersComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetOrgUsersResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.usersQuery.update({
-              users: resp.result.value.orgUsersList,
-              total: resp.result.value.total
+              users: resp.output.orgUsersList,
+              total: resp.output.total
             });
             this.currentPage = pageNum;
 

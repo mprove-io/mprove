@@ -12,7 +12,7 @@ import {
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import type { ToBackendCheckSignUpResponse } from '#common/zod/backend/routes/check/check-sign-up/check-sign-up-response';
-import type { ToBackendRegisterUserInput } from '#common/zod/backend/routes/users/register-user/register-user-request';
+import type { ToBackendRegisterUserRequest } from '#common/zod/backend/routes/users/register-user/register-user-request';
 import type { ToBackendRegisterUserResponse } from '#common/zod/backend/routes/users/register-user/register-user-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -78,9 +78,9 @@ export class RegisterComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCheckSignUpResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.isRegisterOnlyInvitedUsers =
-              resp.result.value.isRegisterOnlyInvitedUsers;
+              resp.output.isRegisterOnlyInvitedUsers;
 
             this.checkLoaded = true;
             this.cd.detectChanges();
@@ -110,7 +110,7 @@ export class RegisterComponent implements OnInit {
 
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendRegisterUserInput = {
+    let payload: ToBackendRegisterUserRequest['input'] = {
       email: this.registerForm.value.email,
       password: this.registerForm.value.password
     };
@@ -122,8 +122,8 @@ export class RegisterComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendRegisterUserResponse) => {
-          if (resp.result?.type === 'Success') {
-            let user = resp.result.value.user;
+          if (resp?.type === 'Success') {
+            let user = resp.output.user;
 
             this.userQuery.update(user);
 

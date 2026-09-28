@@ -1,40 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendProduceExplorerChartInput = {
-  sessionId: string;
-  modelId: string;
-  chartYaml: string;
-  title: string;
-};
-
 export type ToBackendProduceExplorerChartRequest = {
+  operation: 'produceExplorerChart';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendProduceExplorerChartInput;
+  input: {
+    sessionId: string;
+    modelId: string;
+    chartYaml: string;
+    title: string;
+  };
 };
-
-export let zToBackendProduceExplorerChartInput = z
-  .object({
-    sessionId: z.string(),
-    modelId: z.string(),
-    chartYaml: z.string(),
-    title: z.string()
-  })
-  .meta({ id: 'ToBackendProduceExplorerChartInput' });
 
 export let zToBackendProduceExplorerChartRequest = z
   .strictObject({
+    operation: z.literal('produceExplorerChart'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendProduceExplorerChartInput
+    input: z
+      .object({
+        sessionId: z.string(),
+        modelId: z.string(),
+        chartYaml: z.string(),
+        title: z.string()
+      })
+      .meta({ id: 'ToBackendProduceExplorerChartInput' })
   })
   .meta({ id: 'ToBackendProduceExplorerChartRequest' });
-
-assertTypesEqual<
-  ToBackendProduceExplorerChartInput,
-  z.infer<typeof zToBackendProduceExplorerChartInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendProduceExplorerChartRequest,

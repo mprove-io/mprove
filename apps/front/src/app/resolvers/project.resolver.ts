@@ -14,7 +14,7 @@ import {
 } from '#common/constants/top';
 import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ToBackendGetProjectInput } from '#common/zod/backend/routes/projects/get-project/get-project-request';
+import type { ToBackendGetProjectRequest } from '#common/zod/backend/routes/projects/get-project/get-project-request';
 import type { ToBackendGetProjectResponse } from '#common/zod/backend/routes/projects/get-project/get-project-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { MemberQuery } from '../queries/member.query';
@@ -53,7 +53,7 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
       nav: nav
     });
 
-    let payload: ToBackendGetProjectInput = {
+    let payload: ToBackendGetProjectRequest['input'] = {
       projectId: route.params[PARAMETER_PROJECT_ID]
     };
 
@@ -64,8 +64,8 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetProjectResponse) => {
-          if (resp.result?.type === 'Success') {
-            let project = resp.result.value.project;
+          if (resp?.type === 'Success') {
+            let project = resp.output.project;
 
             this.navQuery.updatePart({
               projectId: project.projectId,
@@ -79,7 +79,7 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
 
             localStorage.setItem(LOCAL_STORAGE_PROJECT_ID, project.projectId);
 
-            this.memberQuery.update(resp.result.value.userMember);
+            this.memberQuery.update(resp.output.userMember);
 
             this.projectQuery.update(project);
             return true;

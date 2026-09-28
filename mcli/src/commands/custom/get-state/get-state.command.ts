@@ -7,8 +7,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendGetStateInput } from '#common/zod/backend/routes/state/get-state/get-state-request';
-import type { ToBackendGetStateOutput } from '#common/zod/backend/routes/state/get-state/get-state-response';
+import type { ToBackendGetStateOutput } from '#common/zod/backend/routes/state/get-state/get-state-output';
+import type { ToBackendGetStateRequest } from '#common/zod/backend/routes/state/get-state/get-state-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -115,7 +115,7 @@ export class GetStateCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getStateReqPayload: ToBackendGetStateInput = {
+    let getStateReqPayload: ToBackendGetStateRequest['input'] = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,

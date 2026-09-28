@@ -11,69 +11,62 @@ import {
 } from '#common/zod/blockml/report-field';
 import { zTimezone } from '#common/zod/z-timezone';
 
-export type ToBackendSaveCreateReportInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-  fromReportId: string;
-  newReportId: string;
-  title: string;
-  space?: string;
-  accessRoles: string[];
-  timezone: string;
-  timeSpec:
-    | TimeSpecEnum.Timestamps
-    | TimeSpecEnum.Seconds
-    | TimeSpecEnum.Minutes
-    | TimeSpecEnum.Hours
-    | TimeSpecEnum.Days
-    | TimeSpecEnum.Weeks
-    | TimeSpecEnum.Months
-    | TimeSpecEnum.Quarters
-    | TimeSpecEnum.Years;
-  timeRangeFractionBrick: string;
-  newReportFields: ReportField[];
-  chart: MconfigChart;
-};
-
 export type ToBackendSaveCreateReportRequest = {
+  operation: 'saveCreateReport';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendSaveCreateReportInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    fromReportId: string;
+    newReportId: string;
+    title: string;
+    space?: string;
+    accessRoles: string[];
+    timezone: string;
+    timeSpec:
+      | TimeSpecEnum.Timestamps
+      | TimeSpecEnum.Seconds
+      | TimeSpecEnum.Minutes
+      | TimeSpecEnum.Hours
+      | TimeSpecEnum.Days
+      | TimeSpecEnum.Weeks
+      | TimeSpecEnum.Months
+      | TimeSpecEnum.Quarters
+      | TimeSpecEnum.Years;
+    timeRangeFractionBrick: string;
+    newReportFields: ReportField[];
+    chart: MconfigChart;
+  };
 };
-
-export let zToBackendSaveCreateReportInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string(),
-    fromReportId: z.string(),
-    newReportId: z.string(),
-    title: z.string(),
-    space: z.string().nullish(),
-    accessRoles: z.array(z.string()),
-    timezone: zTimezone,
-    timeSpec: z.enum(TimeSpecEnum),
-    timeRangeFractionBrick: z.string(),
-    newReportFields: z.array(zReportField),
-    chart: zMconfigChart
-  })
-  .meta({ id: 'ToBackendSaveCreateReportInput' });
 
 export let zToBackendSaveCreateReportRequest = z
   .strictObject({
+    operation: z.literal('saveCreateReport'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendSaveCreateReportInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string(),
+        fromReportId: z.string(),
+        newReportId: z.string(),
+        title: z.string(),
+        space: z.string().nullish(),
+        accessRoles: z.array(z.string()),
+        timezone: zTimezone,
+        timeSpec: z.enum(TimeSpecEnum),
+        timeRangeFractionBrick: z.string(),
+        newReportFields: z.array(zReportField),
+        chart: zMconfigChart
+      })
+      .meta({ id: 'ToBackendSaveCreateReportInput' })
   })
   .meta({ id: 'ToBackendSaveCreateReportRequest' });
-
-assertTypesEqual<
-  ToBackendSaveCreateReportInput,
-  z.infer<typeof zToBackendSaveCreateReportInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSaveCreateReportRequest,

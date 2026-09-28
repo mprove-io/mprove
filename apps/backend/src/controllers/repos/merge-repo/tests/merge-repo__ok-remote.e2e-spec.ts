@@ -89,6 +89,7 @@ test('1', async t => {
       });
 
       let req1: ToBackendCreateBranchRequest = {
+        operation: 'createBranch',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -107,6 +108,7 @@ test('1', async t => {
       });
 
       let saveFileReq: ToBackendSaveFileRequest = {
+        operation: 'saveFile',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -127,6 +129,7 @@ test('1', async t => {
       });
 
       let commitReq: ToBackendCommitRepoRequest = {
+        operation: 'commitRepo',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -145,6 +148,7 @@ test('1', async t => {
       });
 
       let pushReq: ToBackendPushRepoRequest = {
+        operation: 'pushRepo',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -163,6 +167,7 @@ test('1', async t => {
       });
 
       let req: ToBackendMergeRepoRequest = {
+        operation: 'mergeRepo',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -195,7 +200,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

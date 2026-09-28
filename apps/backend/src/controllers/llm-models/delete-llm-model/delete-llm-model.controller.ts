@@ -29,8 +29,8 @@ import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendDeleteLlmModelInput } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
-import type { ToBackendDeleteLlmModelOutput } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
+import type { ToBackendDeleteLlmModelOutput } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-output';
+import type { ToBackendDeleteLlmModelRequest } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -56,7 +56,7 @@ export class DeleteLlmModelController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendDeleteLlmModelRequestDto
   ): Promise<ToBackendDeleteLlmModelOutput> {
-    let bodyPayload: ToBackendDeleteLlmModelInput = body.input;
+    let bodyPayload: ToBackendDeleteLlmModelRequest['input'] = body.input;
 
     let { projectId, providerId, modelId } = bodyPayload;
 

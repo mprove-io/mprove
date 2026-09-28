@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type User, zUser } from '#common/zod/backend/user';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSetUserUiOutput,
+  zToBackendSetUserUiOutput
+} from '#common/zod/backend/routes/users/set-user-ui/set-user-ui-output';
 import {
   type ToBackendSetUserUiError,
   zToBackendSetUserUiError
 } from './set-user-ui-error';
 
-export type ToBackendSetUserUiOutput = {
-  user: User;
-};
-
-export type ToBackendSetUserUiResponse = ToBackendResponse<
+export type ToBackendSetUserUiResponse = ToBackendResponseBase<
+  'setUserUi',
   ToBackendSetUserUiOutput,
   ToBackendSetUserUiError
 >;
 
-export let zToBackendSetUserUiOutput = z
-  .object({
-    user: zUser
-  })
-  .meta({ id: 'ToBackendSetUserUiOutput' });
-
 export let zToBackendSetUserUiResponse = makeToBackendResponseSchema({
-  success: zToBackendSetUserUiOutput,
+  operation: 'setUserUi',
+  output: zToBackendSetUserUiOutput,
   error: zToBackendSetUserUiError
 }).meta({ id: 'ToBackendSetUserUiResponse' });
-
-assertTypesEqual<
-  ToBackendSetUserUiOutput,
-  z.infer<typeof zToBackendSetUserUiOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetUserUiResponse,

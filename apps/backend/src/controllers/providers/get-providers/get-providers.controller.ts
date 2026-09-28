@@ -24,8 +24,8 @@ import { TabService } from '#backend/services/tab.service';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Member } from '#common/zod/backend/member';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendGetProvidersInput } from '#common/zod/backend/routes/providers/get-providers/get-providers-request';
-import type { ToBackendGetProvidersOutput } from '#common/zod/backend/routes/providers/get-providers/get-providers-response';
+import type { ToBackendGetProvidersOutput } from '#common/zod/backend/routes/providers/get-providers/get-providers-output';
+import type { ToBackendGetProvidersRequest } from '#common/zod/backend/routes/providers/get-providers/get-providers-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -51,7 +51,7 @@ export class GetProvidersController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetProvidersRequestDto
   ) {
-    let bodyPayload: ToBackendGetProvidersInput = body.input;
+    let bodyPayload: ToBackendGetProvidersRequest['input'] = body.input;
 
     let { projectId } = bodyPayload;
 

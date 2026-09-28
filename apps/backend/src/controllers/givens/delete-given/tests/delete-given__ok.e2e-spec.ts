@@ -13,18 +13,14 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
+import type { ToBackendDeleteGivenOutput } from '#common/zod/backend/routes/givens/delete-given/delete-given-output';
 import type { ToBackendDeleteGivenRequest } from '#common/zod/backend/routes/givens/delete-given/delete-given-request';
-import type {
-  ToBackendDeleteGivenOutput,
-  ToBackendDeleteGivenResponse
-} from '#common/zod/backend/routes/givens/delete-given/delete-given-response';
+import type { ToBackendDeleteGivenResponse } from '#common/zod/backend/routes/givens/delete-given/delete-given-response';
 import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
 import type { ToBackendCreateRoleGivenRequest } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
+import type { ToBackendGetRolesOutput } from '#common/zod/backend/routes/roles/get-roles/get-roles-output';
 import type { ToBackendGetRolesRequest } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
-import type {
-  ToBackendGetRolesOutput,
-  ToBackendGetRolesResponse
-} from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
+import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 
 let testId = 'backend-delete-given__ok';
 
@@ -101,6 +97,7 @@ test('1', async t => {
       });
 
       let createReq: ToBackendCreateGivenRequest = {
+        operation: 'createGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -119,9 +116,10 @@ test('1', async t => {
         req: createReq
       });
 
-      assert.equal(createResp.result.type, 'Success');
+      assert.equal(createResp.type, 'Success');
 
       let createReq2: ToBackendCreateGivenRequest = {
+        operation: 'createGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -142,6 +140,7 @@ test('1', async t => {
       });
 
       let createRoleReq: ToBackendCreateRoleRequest = {
+        operation: 'createRole',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -159,6 +158,7 @@ test('1', async t => {
       });
 
       let createRoleGivenReq: ToBackendCreateRoleGivenRequest = {
+        operation: 'createRoleGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -178,6 +178,7 @@ test('1', async t => {
       });
 
       let createRoleGivenReq2: ToBackendCreateRoleGivenRequest = {
+        operation: 'createRoleGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -197,6 +198,7 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteGivenRequest = {
+        operation: 'deleteGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -213,6 +215,7 @@ test('1', async t => {
       });
 
       let getRolesReq: ToBackendGetRolesRequest = {
+        operation: 'getRoles',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -240,7 +243,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let output: ToBackendDeleteGivenOutput = unwrapBackendResponseOutput({
       response: resp
@@ -250,7 +253,7 @@ test('1', async t => {
 
     assert.equal(output.givens[0].givenId, givenId2);
 
-    assert.equal(getRolesResp.result.type, 'Success');
+    assert.equal(getRolesResp.type, 'Success');
 
     let rolesOutput: ToBackendGetRolesOutput = unwrapBackendResponseOutput({
       response: getRolesResp

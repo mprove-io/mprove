@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendCreateEnvInput } from '#common/zod/backend/routes/envs/create-env/create-env-request';
+import type { ToBackendCreateEnvRequest } from '#common/zod/backend/routes/envs/create-env/create-env-request';
 import type { ToBackendCreateEnvResponse } from '#common/zod/backend/routes/envs/create-env/create-env-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
@@ -72,7 +72,7 @@ export class AddEnvironmentDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateEnvInput = {
+    let payload: ToBackendCreateEnvRequest['input'] = {
       projectId: this.dataItem.projectId,
       envId: this.addEnvironmentForm.value.envId
     };
@@ -87,10 +87,10 @@ export class AddEnvironmentDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateEnvResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
-              environments: resp.result.value.envs
+              environments: resp.output.envs
             });
           }
         }),

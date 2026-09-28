@@ -1,41 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type User, zUser } from '#common/zod/backend/user';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendLoginUserOutput,
+  zToBackendLoginUserOutput
+} from '#common/zod/backend/routes/users/login-user/login-user-output';
 import {
   type ToBackendLoginUserError,
   zToBackendLoginUserError
 } from './login-user-error';
 
-export type ToBackendLoginUserOutput = {
-  token: string;
-  user: User;
-};
-
-export type ToBackendLoginUserResponse = ToBackendResponse<
+export type ToBackendLoginUserResponse = ToBackendResponseBase<
+  'loginUser',
   ToBackendLoginUserOutput,
   ToBackendLoginUserError
 >;
 
-export let zToBackendLoginUserOutput = z
-  .object({
-    token: z.string(),
-    user: zUser
-  })
-  .meta({ id: 'ToBackendLoginUserOutput' });
-
 export let zToBackendLoginUserResponse = makeToBackendResponseSchema({
-  success: zToBackendLoginUserOutput,
+  operation: 'loginUser',
+  output: zToBackendLoginUserOutput,
   error: zToBackendLoginUserError
 }).meta({ id: 'ToBackendLoginUserResponse' });
-
-assertTypesEqual<
-  ToBackendLoginUserOutput,
-  z.infer<typeof zToBackendLoginUserOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendLoginUserResponse,

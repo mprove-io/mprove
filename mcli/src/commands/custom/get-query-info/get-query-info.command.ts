@@ -8,8 +8,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendGetQueryInfoInput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-request';
-import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-response';
+import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-output';
+import type { ToBackendGetQueryInfoRequest } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -136,7 +136,7 @@ export class GetQueryInfoCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getQueryInfoReqPayload: ToBackendGetQueryInfoInput = {
+    let getQueryInfoReqPayload: ToBackendGetQueryInfoRequest['input'] = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,

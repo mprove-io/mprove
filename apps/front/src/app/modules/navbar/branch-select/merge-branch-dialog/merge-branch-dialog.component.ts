@@ -18,7 +18,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ToBackendMergeRepoInput } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-request';
+import type { ToBackendMergeRepoRequest } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-request';
 import type { ToBackendMergeRepoResponse } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-response';
 import type { BranchItem } from '#common/zod/front/branch-item';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -104,7 +104,7 @@ export class MergeBranchDialogComponent implements OnInit {
     let isTheirBranchRemote =
       this.selectedBranchItem.repoType === RepoTypeEnum.Production;
 
-    let payload: ToBackendMergeRepoInput = {
+    let payload: ToBackendMergeRepoRequest['input'] = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.currentBranchId,
@@ -124,11 +124,11 @@ export class MergeBranchDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendMergeRepoResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             this.navigateService.navigateToBuilder();

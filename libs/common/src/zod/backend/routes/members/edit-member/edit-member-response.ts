@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendEditMemberOutput,
+  zToBackendEditMemberOutput
+} from '#common/zod/backend/routes/members/edit-member/edit-member-output';
 import {
   type ToBackendEditMemberError,
   zToBackendEditMemberError
 } from './edit-member-error';
 
-export type ToBackendEditMemberOutput = {
-  member: Member;
-};
-
-export type ToBackendEditMemberResponse = ToBackendResponse<
+export type ToBackendEditMemberResponse = ToBackendResponseBase<
+  'editMember',
   ToBackendEditMemberOutput,
   ToBackendEditMemberError
 >;
 
-export let zToBackendEditMemberOutput = z
-  .object({
-    member: zMember
-  })
-  .meta({ id: 'ToBackendEditMemberOutput' });
-
 export let zToBackendEditMemberResponse = makeToBackendResponseSchema({
-  success: zToBackendEditMemberOutput,
+  operation: 'editMember',
+  output: zToBackendEditMemberOutput,
   error: zToBackendEditMemberError
 }).meta({ id: 'ToBackendEditMemberResponse' });
-
-assertTypesEqual<
-  ToBackendEditMemberOutput,
-  z.infer<typeof zToBackendEditMemberOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendEditMemberResponse,

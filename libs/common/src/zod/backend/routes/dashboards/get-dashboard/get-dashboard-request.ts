@@ -2,44 +2,37 @@ import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import { zTimezone } from '#common/zod/z-timezone';
 
-export type ToBackendGetDashboardInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-  dashboardId: string;
-  timezone: string;
-};
-
 export type ToBackendGetDashboardRequest = {
+  operation: 'getDashboard';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetDashboardInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    dashboardId: string;
+    timezone: string;
+  };
 };
-
-export let zToBackendGetDashboardInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string(),
-    dashboardId: z.string(),
-    timezone: zTimezone
-  })
-  .meta({ id: 'ToBackendGetDashboardInput' });
 
 export let zToBackendGetDashboardRequest = z
   .strictObject({
+    operation: z.literal('getDashboard'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetDashboardInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string(),
+        dashboardId: z.string(),
+        timezone: zTimezone
+      })
+      .meta({ id: 'ToBackendGetDashboardInput' })
   })
   .meta({ id: 'ToBackendGetDashboardRequest' });
-
-assertTypesEqual<
-  ToBackendGetDashboardInput,
-  z.infer<typeof zToBackendGetDashboardInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetDashboardRequest,

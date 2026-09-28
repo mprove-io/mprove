@@ -10,11 +10,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { ToBackendGenerateUserApiKeyOutput } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-output';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
-import type {
-  ToBackendGenerateUserApiKeyOutput,
-  ToBackendGenerateUserApiKeyResponse
-} from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
+import type { ToBackendGenerateUserApiKeyResponse } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
 
 let testId = 'backend-generate-user-api-key__ok';
 
@@ -49,6 +47,7 @@ test('1', async t => {
       });
 
       let req: ToBackendGenerateUserApiKeyRequest = {
+        operation: 'generateUserApiKey',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {}
@@ -74,7 +73,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let output: ToBackendGenerateUserApiKeyOutput = unwrapBackendResponseOutput(
       {

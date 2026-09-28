@@ -46,7 +46,7 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendRunQueriesOutput } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
+import type { ToBackendRunQueriesOutput } from '#common/zod/backend/routes/queries/run-queries/run-queries-output';
 
 const { forEachSeries } = pIteration;
 

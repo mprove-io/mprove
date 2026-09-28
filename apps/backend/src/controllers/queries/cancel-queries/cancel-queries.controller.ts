@@ -51,7 +51,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCancelQueriesOutput } from '#common/zod/backend/routes/queries/cancel-queries/cancel-queries-response';
+import type { ToBackendCancelQueriesOutput } from '#common/zod/backend/routes/queries/cancel-queries/cancel-queries-output';
 
 const { forEachSeries } = pIteration;
 

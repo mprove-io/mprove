@@ -1,43 +1,30 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type MconfigX, zMconfigX } from '#common/zod/backend/mconfig-x';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type Query, zQuery } from '#common/zod/blockml/query';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDuplicateMconfigAndQueryOutput,
+  zToBackendDuplicateMconfigAndQueryOutput
+} from '#common/zod/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-output';
 import {
   type ToBackendDuplicateMconfigAndQueryError,
   zToBackendDuplicateMconfigAndQueryError
 } from './duplicate-mconfig-and-query-error';
 
-export type ToBackendDuplicateMconfigAndQueryOutput = {
-  mconfig: MconfigX;
-  query: Query;
-};
-
-export type ToBackendDuplicateMconfigAndQueryResponse = ToBackendResponse<
+export type ToBackendDuplicateMconfigAndQueryResponse = ToBackendResponseBase<
+  'duplicateMconfigAndQuery',
   ToBackendDuplicateMconfigAndQueryOutput,
   ToBackendDuplicateMconfigAndQueryError
 >;
 
-export let zToBackendDuplicateMconfigAndQueryOutput = z
-  .object({
-    mconfig: zMconfigX,
-    query: zQuery
-  })
-  .meta({ id: 'ToBackendDuplicateMconfigAndQueryOutput' });
-
 export let zToBackendDuplicateMconfigAndQueryResponse =
   makeToBackendResponseSchema({
-    success: zToBackendDuplicateMconfigAndQueryOutput,
+    operation: 'duplicateMconfigAndQuery',
+    output: zToBackendDuplicateMconfigAndQueryOutput,
     error: zToBackendDuplicateMconfigAndQueryError
   }).meta({ id: 'ToBackendDuplicateMconfigAndQueryResponse' });
-
-assertTypesEqual<
-  ToBackendDuplicateMconfigAndQueryOutput,
-  z.infer<typeof zToBackendDuplicateMconfigAndQueryOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDuplicateMconfigAndQueryResponse,

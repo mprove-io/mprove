@@ -1,42 +1,30 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type User, zUser } from '#common/zod/backend/user';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCompleteUserRegistrationOutput,
+  zToBackendCompleteUserRegistrationOutput
+} from '#common/zod/backend/routes/users/complete-user-registration/complete-user-registration-output';
 import {
   type ToBackendCompleteUserRegistrationError,
   zToBackendCompleteUserRegistrationError
 } from './complete-user-registration-error';
 
-export type ToBackendCompleteUserRegistrationOutput = {
-  token?: string;
-  user?: User;
-};
-
-export type ToBackendCompleteUserRegistrationResponse = ToBackendResponse<
+export type ToBackendCompleteUserRegistrationResponse = ToBackendResponseBase<
+  'completeUserRegistration',
   ToBackendCompleteUserRegistrationOutput,
   ToBackendCompleteUserRegistrationError
 >;
 
-export let zToBackendCompleteUserRegistrationOutput = z
-  .object({
-    token: z.string().nullish(),
-    user: zUser.nullish()
-  })
-  .meta({ id: 'ToBackendCompleteUserRegistrationOutput' });
-
 export let zToBackendCompleteUserRegistrationResponse =
   makeToBackendResponseSchema({
-    success: zToBackendCompleteUserRegistrationOutput,
+    operation: 'completeUserRegistration',
+    output: zToBackendCompleteUserRegistrationOutput,
     error: zToBackendCompleteUserRegistrationError
   }).meta({ id: 'ToBackendCompleteUserRegistrationResponse' });
-
-assertTypesEqual<
-  ToBackendCompleteUserRegistrationOutput,
-  z.infer<typeof zToBackendCompleteUserRegistrationOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCompleteUserRegistrationResponse,

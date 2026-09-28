@@ -2,42 +2,35 @@ import { z } from 'zod';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendCreateProjectInput = {
-  orgId: string;
-  name: string;
-  remoteType: ProjectRemoteTypeEnum.Managed | ProjectRemoteTypeEnum.GitClone;
-  gitUrl?: string;
-  noteId?: string;
-};
-
 export type ToBackendCreateProjectRequest = {
+  operation: 'createProject';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendCreateProjectInput;
+  input: {
+    orgId: string;
+    name: string;
+    remoteType: ProjectRemoteTypeEnum.Managed | ProjectRemoteTypeEnum.GitClone;
+    gitUrl?: string;
+    noteId?: string;
+  };
 };
-
-export let zToBackendCreateProjectInput = z
-  .object({
-    orgId: z.string(),
-    name: z.string(),
-    remoteType: z.enum(ProjectRemoteTypeEnum),
-    gitUrl: z.string().nullish(),
-    noteId: z.string().nullish()
-  })
-  .meta({ id: 'ToBackendCreateProjectInput' });
 
 export let zToBackendCreateProjectRequest = z
   .strictObject({
+    operation: z.literal('createProject'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendCreateProjectInput
+    input: z
+      .object({
+        orgId: z.string(),
+        name: z.string(),
+        remoteType: z.enum(ProjectRemoteTypeEnum),
+        gitUrl: z.string().nullish(),
+        noteId: z.string().nullish()
+      })
+      .meta({ id: 'ToBackendCreateProjectInput' })
   })
   .meta({ id: 'ToBackendCreateProjectRequest' });
-
-assertTypesEqual<
-  ToBackendCreateProjectInput,
-  z.infer<typeof zToBackendCreateProjectInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateProjectRequest,

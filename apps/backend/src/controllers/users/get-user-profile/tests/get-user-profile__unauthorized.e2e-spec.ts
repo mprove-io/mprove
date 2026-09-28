@@ -44,6 +44,7 @@ test('1', async t => {
       });
 
       let getUserProfileReq: ToBackendGetUserProfileRequest = {
+        operation: 'getUserProfile',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {}
@@ -68,8 +69,8 @@ test('1', async t => {
       }
     }
 
-    assert.ok(resp.result.type === 'Failure');
-    assert.equal(resp?.result?.error?.message, ErEnum.BACKEND_UNAUTHORIZED);
+    assert.ok(resp.type === 'Failure');
+    assert.equal(resp?.error?.code, ErEnum.BACKEND_UNAUTHORIZED);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

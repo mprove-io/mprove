@@ -52,7 +52,7 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSaveModifyDashboardOutput } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
+import type { ToBackendSaveModifyDashboardOutput } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-output';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-output';
 

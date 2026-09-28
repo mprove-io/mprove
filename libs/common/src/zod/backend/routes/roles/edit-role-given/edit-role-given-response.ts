@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type Role, zRole } from '#common/zod/backend/role';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendEditRoleGivenOutput,
+  zToBackendEditRoleGivenOutput
+} from '#common/zod/backend/routes/roles/edit-role-given/edit-role-given-output';
 import {
   type ToBackendEditRoleGivenError,
   zToBackendEditRoleGivenError
 } from './edit-role-given-error';
 
-export type ToBackendEditRoleGivenOutput = {
-  userMember: Member;
-  roles: Role[];
-};
-
-export type ToBackendEditRoleGivenResponse = ToBackendResponse<
+export type ToBackendEditRoleGivenResponse = ToBackendResponseBase<
+  'editRoleGiven',
   ToBackendEditRoleGivenOutput,
   ToBackendEditRoleGivenError
 >;
 
-export let zToBackendEditRoleGivenOutput = z
-  .object({
-    userMember: zMember,
-    roles: z.array(zRole)
-  })
-  .meta({ id: 'ToBackendEditRoleGivenOutput' });
-
 export let zToBackendEditRoleGivenResponse = makeToBackendResponseSchema({
-  success: zToBackendEditRoleGivenOutput,
+  operation: 'editRoleGiven',
+  output: zToBackendEditRoleGivenOutput,
   error: zToBackendEditRoleGivenError
 }).meta({ id: 'ToBackendEditRoleGivenResponse' });
-
-assertTypesEqual<
-  ToBackendEditRoleGivenOutput,
-  z.infer<typeof zToBackendEditRoleGivenOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendEditRoleGivenResponse,

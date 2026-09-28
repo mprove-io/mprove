@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type SessionApi, zSessionApi } from '#common/zod/backend/session-api';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendPauseEditorSessionOutput,
+  zToBackendPauseEditorSessionOutput
+} from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-output';
 import {
   type ToBackendPauseEditorSessionError,
   zToBackendPauseEditorSessionError
 } from './pause-editor-session-error';
 
-export type ToBackendPauseEditorSessionOutput = {
-  session: SessionApi;
-};
-
-export type ToBackendPauseEditorSessionResponse = ToBackendResponse<
+export type ToBackendPauseEditorSessionResponse = ToBackendResponseBase<
+  'pauseEditorSession',
   ToBackendPauseEditorSessionOutput,
   ToBackendPauseEditorSessionError
 >;
 
-export let zToBackendPauseEditorSessionOutput = z
-  .object({
-    session: zSessionApi
-  })
-  .meta({ id: 'ToBackendPauseEditorSessionOutput' });
-
 export let zToBackendPauseEditorSessionResponse = makeToBackendResponseSchema({
-  success: zToBackendPauseEditorSessionOutput,
+  operation: 'pauseEditorSession',
+  output: zToBackendPauseEditorSessionOutput,
   error: zToBackendPauseEditorSessionError
 }).meta({ id: 'ToBackendPauseEditorSessionResponse' });
-
-assertTypesEqual<
-  ToBackendPauseEditorSessionOutput,
-  z.infer<typeof zToBackendPauseEditorSessionOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendPauseEditorSessionResponse,

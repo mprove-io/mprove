@@ -7,8 +7,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendGetConnectionSchemasInput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
-import type { ToBackendGetConnectionSchemasOutput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-response';
+import type { ToBackendGetConnectionSchemasOutput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-output';
+import type { ToBackendGetConnectionSchemasRequest } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -88,7 +88,7 @@ export class GetSchemasCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getSchemasReqPayload: ToBackendGetConnectionSchemasInput = {
+    let getSchemasReqPayload: ToBackendGetConnectionSchemasRequest['input'] = {
       projectId: this.projectId,
       envId: this.env,
       repoId: repoId,

@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Project, zProject } from '#common/zod/backend/project';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSetProjectWeekStartOutput,
+  zToBackendSetProjectWeekStartOutput
+} from '#common/zod/backend/routes/projects/set-project-week-start/set-project-week-start-output';
 import {
   type ToBackendSetProjectWeekStartError,
   zToBackendSetProjectWeekStartError
 } from './set-project-week-start-error';
 
-export type ToBackendSetProjectWeekStartOutput = {
-  project: Project;
-};
-
-export type ToBackendSetProjectWeekStartResponse = ToBackendResponse<
+export type ToBackendSetProjectWeekStartResponse = ToBackendResponseBase<
+  'setProjectWeekStart',
   ToBackendSetProjectWeekStartOutput,
   ToBackendSetProjectWeekStartError
 >;
 
-export let zToBackendSetProjectWeekStartOutput = z
-  .object({
-    project: zProject
-  })
-  .meta({ id: 'ToBackendSetProjectWeekStartOutput' });
-
 export let zToBackendSetProjectWeekStartResponse = makeToBackendResponseSchema({
-  success: zToBackendSetProjectWeekStartOutput,
+  operation: 'setProjectWeekStart',
+  output: zToBackendSetProjectWeekStartOutput,
   error: zToBackendSetProjectWeekStartError
 }).meta({ id: 'ToBackendSetProjectWeekStartResponse' });
-
-assertTypesEqual<
-  ToBackendSetProjectWeekStartOutput,
-  z.infer<typeof zToBackendSetProjectWeekStartOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetProjectWeekStartResponse,

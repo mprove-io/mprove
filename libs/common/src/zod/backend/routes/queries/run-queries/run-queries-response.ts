@@ -1,41 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type Query, zQuery } from '#common/zod/blockml/query';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendRunQueriesOutput,
+  zToBackendRunQueriesOutput
+} from '#common/zod/backend/routes/queries/run-queries/run-queries-output';
 import {
   type ToBackendRunQueriesError,
   zToBackendRunQueriesError
 } from './run-queries-error';
 
-export type ToBackendRunQueriesOutput = {
-  runningQueries: Query[];
-  startedQueryIds: string[];
-};
-
-export type ToBackendRunQueriesResponse = ToBackendResponse<
+export type ToBackendRunQueriesResponse = ToBackendResponseBase<
+  'runQueries',
   ToBackendRunQueriesOutput,
   ToBackendRunQueriesError
 >;
 
-export let zToBackendRunQueriesOutput = z
-  .object({
-    runningQueries: z.array(zQuery),
-    startedQueryIds: z.array(z.string())
-  })
-  .meta({ id: 'ToBackendRunQueriesOutput' });
-
 export let zToBackendRunQueriesResponse = makeToBackendResponseSchema({
-  success: zToBackendRunQueriesOutput,
+  operation: 'runQueries',
+  output: zToBackendRunQueriesOutput,
   error: zToBackendRunQueriesError
 }).meta({ id: 'ToBackendRunQueriesResponse' });
-
-assertTypesEqual<
-  ToBackendRunQueriesOutput,
-  z.infer<typeof zToBackendRunQueriesOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendRunQueriesResponse,

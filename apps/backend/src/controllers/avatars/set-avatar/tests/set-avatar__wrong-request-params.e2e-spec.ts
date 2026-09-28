@@ -6,7 +6,6 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendSetAvatarRequest } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-request';
@@ -47,6 +46,7 @@ test('1', async t => {
       });
 
       let req: ToBackendSetAvatarRequest = {
+        operation: 'setAvatar',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: <any>{
@@ -74,16 +74,13 @@ test('1', async t => {
       }
     }
 
-    assert.ok(resp.result.type === 'Failure');
+    assert.ok(resp.type === 'Failure');
 
-    assert.equal(
-      resp.result.error.message,
-      ErEnum.BACKEND_WRONG_REQUEST_PARAMS
-    );
+    assert.equal(resp.error.code, 'BACKEND_INVALID_REQUEST');
 
-    assert.equal(resp.result.error.displayData[0].code, 'invalid_type');
+    assert.equal(resp.error.displayData[0].code, 'invalid_type');
 
-    assert.equal(resp.result.error.displayData[0].path, 'input.avatarSmall');
+    assert.equal(resp.error.displayData[0].path, 'input.avatarSmall');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

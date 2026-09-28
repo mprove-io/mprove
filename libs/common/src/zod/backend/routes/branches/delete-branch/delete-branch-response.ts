@@ -1,34 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteBranchOutput,
+  zToBackendDeleteBranchOutput
+} from '#common/zod/backend/routes/branches/delete-branch/delete-branch-output';
 import {
   type ToBackendDeleteBranchError,
   zToBackendDeleteBranchError
 } from './delete-branch-error';
 
-export type ToBackendDeleteBranchOutput = Record<string, never>;
-
-export type ToBackendDeleteBranchResponse = ToBackendResponse<
+export type ToBackendDeleteBranchResponse = ToBackendResponseBase<
+  'deleteBranch',
   ToBackendDeleteBranchOutput,
   ToBackendDeleteBranchError
 >;
 
-export let zToBackendDeleteBranchOutput = z
-  .object({})
-  .meta({ id: 'ToBackendDeleteBranchOutput' });
-
 export let zToBackendDeleteBranchResponse = makeToBackendResponseSchema({
-  success: zToBackendDeleteBranchOutput,
+  operation: 'deleteBranch',
+  output: zToBackendDeleteBranchOutput,
   error: zToBackendDeleteBranchError
 }).meta({ id: 'ToBackendDeleteBranchResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteBranchOutput,
-  z.infer<typeof zToBackendDeleteBranchOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteBranchResponse,

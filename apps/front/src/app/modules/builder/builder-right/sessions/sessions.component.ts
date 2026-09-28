@@ -7,14 +7,12 @@ import { PATH_NEW_SESSION } from '#common/constants/top';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendArchiveSessionInput } from '#common/zod/backend/routes/sessions/archive-session/archive-session-request';
+import type { ToBackendArchiveSessionRequest } from '#common/zod/backend/routes/sessions/archive-session/archive-session-request';
 import type { ToBackendArchiveSessionResponse } from '#common/zod/backend/routes/sessions/archive-session/archive-session-response';
-import type { ToBackendGetSessionsListInput } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
-import type {
-  ToBackendGetSessionsListOutput,
-  ToBackendGetSessionsListResponse
-} from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
-import type { ToBackendPauseEditorSessionInput } from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-request';
+import type { ToBackendGetSessionsListOutput } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-output';
+import type { ToBackendGetSessionsListRequest } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
+import type { ToBackendGetSessionsListResponse } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
+import type { ToBackendPauseEditorSessionRequest } from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-request';
 import type { ToBackendPauseEditorSessionResponse } from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-response';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { SessionApiX } from '#common/zod/front/session-api-x';
@@ -119,7 +117,7 @@ export class SessionsComponent implements OnInit {
     let currentSessionId =
       this.currentSession?.sessionId ?? this.sessionQuery.getValue()?.sessionId;
 
-    let payload: ToBackendGetSessionsListInput = {
+    let payload: ToBackendGetSessionsListRequest['input'] = {
       projectId: projectId,
       currentSessionId: currentSessionId,
       sessionType: SessionTypeEnum.Editor
@@ -136,8 +134,8 @@ export class SessionsComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
-          if (resp.result?.type === 'Success') {
-            let output: ToBackendGetSessionsListOutput = resp.result.value;
+          if (resp?.type === 'Success') {
+            let output: ToBackendGetSessionsListOutput = resp.output;
 
             let sessions = output.sessions;
 
@@ -197,7 +195,7 @@ export class SessionsComponent implements OnInit {
 
     let sessionId = session.sessionId;
 
-    let payload: ToBackendPauseEditorSessionInput = {
+    let payload: ToBackendPauseEditorSessionRequest['input'] = {
       sessionId: sessionId
     };
 
@@ -254,7 +252,7 @@ export class SessionsComponent implements OnInit {
 
     let sessionId = session.sessionId;
 
-    let payload: ToBackendArchiveSessionInput = {
+    let payload: ToBackendArchiveSessionRequest['input'] = {
       sessionId: sessionId
     };
 
@@ -341,7 +339,7 @@ export class SessionsComponent implements OnInit {
       projectId = x;
     });
 
-    let payload: ToBackendGetSessionsListInput = {
+    let payload: ToBackendGetSessionsListRequest['input'] = {
       projectId: projectId,
       includeArchived: true,
       archivedLimit: 10,
@@ -360,8 +358,8 @@ export class SessionsComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendGetSessionsListResponse) => {
-          if (resp.result?.type === 'Success') {
-            let output: ToBackendGetSessionsListOutput = resp.result.value;
+          if (resp?.type === 'Success') {
+            let output: ToBackendGetSessionsListOutput = resp.output;
 
             let sessions = output.sessions;
 

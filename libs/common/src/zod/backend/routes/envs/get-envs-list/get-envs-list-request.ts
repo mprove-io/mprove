@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendGetEnvsListInput = {
-  projectId: string;
-  isFilter: boolean;
-};
-
 export type ToBackendGetEnvsListRequest = {
+  operation: 'getEnvsList';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetEnvsListInput;
+  input: {
+    projectId: string;
+    isFilter: boolean;
+  };
 };
-
-export let zToBackendGetEnvsListInput = z
-  .object({
-    projectId: z.string(),
-    isFilter: z.boolean()
-  })
-  .meta({ id: 'ToBackendGetEnvsListInput' });
 
 export let zToBackendGetEnvsListRequest = z
   .strictObject({
+    operation: z.literal('getEnvsList'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetEnvsListInput
+    input: z
+      .object({
+        projectId: z.string(),
+        isFilter: z.boolean()
+      })
+      .meta({ id: 'ToBackendGetEnvsListInput' })
   })
   .meta({ id: 'ToBackendGetEnvsListRequest' });
-
-assertTypesEqual<
-  ToBackendGetEnvsListInput,
-  z.infer<typeof zToBackendGetEnvsListInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetEnvsListRequest,

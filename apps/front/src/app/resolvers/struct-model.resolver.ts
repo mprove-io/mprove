@@ -15,7 +15,7 @@ import {
   PATH_PROJECT
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import type { ToBackendGetModelInput } from '#common/zod/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelRequest } from '#common/zod/backend/routes/models/get-model/get-model-request';
 import type { ToBackendGetModelResponse } from '#common/zod/backend/routes/models/get-model/get-model-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
@@ -88,7 +88,7 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    let payload: ToBackendGetModelInput = {
+    let payload: ToBackendGetModelRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -104,20 +104,17 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetModelResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
 
-            this.structQuery.update(resp.result.value.struct);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
-            this.modelQuery.update(resp.result.value.model);
+            this.modelQuery.update(resp.output.model);
 
-            if (
-              resp.result.value.model.hasAccess === true ||
-              isChartRoute === true
-            ) {
+            if (resp.output.model.hasAccess === true || isChartRoute === true) {
               return true;
             } else {
               this.navigateService.navigateToModels();
@@ -125,8 +122,8 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
               return false;
             }
           } else if (
-            resp.result?.type === 'Failure' &&
-            resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp?.type === 'Failure' &&
+            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
               PATH_ORG,

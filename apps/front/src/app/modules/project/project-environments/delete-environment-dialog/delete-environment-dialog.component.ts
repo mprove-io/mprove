@@ -8,7 +8,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import type { ToBackendDeleteEnvInput } from '#common/zod/backend/routes/envs/delete-env/delete-env-request';
+import type { ToBackendDeleteEnvRequest } from '#common/zod/backend/routes/envs/delete-env/delete-env-request';
 import type { ToBackendDeleteEnvResponse } from '#common/zod/backend/routes/envs/delete-env/delete-env-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -52,7 +52,7 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteEnvInput = {
+    let payload: ToBackendDeleteEnvRequest['input'] = {
       projectId: this.dataItem.projectId,
       envId: this.dataItem.envId
     };
@@ -67,10 +67,10 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteEnvResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
-              environments: resp.result.value.envs
+              environments: resp.output.envs
             });
 
             let nav = this.navQuery.getValue();

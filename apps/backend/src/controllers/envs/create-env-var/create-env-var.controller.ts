@@ -33,7 +33,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Ev } from '#common/zod/backend/ev';
-import type { ToBackendCreateEnvVarOutput } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-response';
+import type { ToBackendCreateEnvVarOutput } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-output';
 
 const { forEachSeries } = pIteration;
 

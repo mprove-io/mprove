@@ -1,38 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Org, zOrg } from '#common/zod/backend/org';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetOrgOutput,
+  zToBackendGetOrgOutput
+} from '#common/zod/backend/routes/orgs/get-org/get-org-output';
 import {
   type ToBackendGetOrgError,
   zToBackendGetOrgError
 } from './get-org-error';
 
-export type ToBackendGetOrgOutput = {
-  org: Org;
-};
-
-export type ToBackendGetOrgResponse = ToBackendResponse<
+export type ToBackendGetOrgResponse = ToBackendResponseBase<
+  'getOrg',
   ToBackendGetOrgOutput,
   ToBackendGetOrgError
 >;
 
-export let zToBackendGetOrgOutput = z
-  .object({
-    org: zOrg
-  })
-  .meta({ id: 'ToBackendGetOrgOutput' });
-
 export let zToBackendGetOrgResponse = makeToBackendResponseSchema({
-  success: zToBackendGetOrgOutput,
+  operation: 'getOrg',
+  output: zToBackendGetOrgOutput,
   error: zToBackendGetOrgError
 }).meta({ id: 'ToBackendGetOrgResponse' });
-
-assertTypesEqual<ToBackendGetOrgOutput, z.infer<typeof zToBackendGetOrgOutput>>(
-  { value: true }
-);
 
 assertTypesEqual<
   ToBackendGetOrgResponse,

@@ -30,16 +30,15 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import { makeToBackendRequest } from '#common/functions/make-to-backend-request/make-to-backend-request';
 import type { ToBackendInputForRoute } from '#common/types/to-backend-input-for-route';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendRequest } from '#common/zod/backend/request/to-backend-request';
 import type { ToBackendResponse } from '#common/zod/backend/response/to-backend-response';
 import type { ToBackendResponseForRoute } from '#common/zod/backend/response/to-backend-response-for-route';
-import type { ToBackendGetReportsInput } from '#common/zod/backend/routes/reports/get-reports/get-reports-request';
-import type {
-  ToBackendGetReportsOutput,
-  ToBackendGetReportsResponse
-} from '#common/zod/backend/routes/reports/get-reports/get-reports-response';
+import type { ToBackendGetReportsOutput } from '#common/zod/backend/routes/reports/get-reports/get-reports-output';
+import type { ToBackendGetReportsRequest } from '#common/zod/backend/routes/reports/get-reports/get-reports-request';
+import type { ToBackendGetReportsResponse } from '#common/zod/backend/routes/reports/get-reports/get-reports-response';
 import type { ErrorData } from '#common/zod/front/error-data';
 import { environment } from '#front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
@@ -90,11 +89,12 @@ export class ApiService {
 
     let url: string = environment.httpUrl + '/' + route;
 
-    let body: ToBackendRequest = {
+    let body: ToBackendRequest = makeToBackendRequest({
+      route: route,
       traceId: makeId(),
       idempotencyKey: makeId(),
       input: payload
-    };
+    });
 
     if (showSpinner === true) {
       this.spinner.show(APP_SPINNER_NAME);
@@ -167,15 +167,13 @@ export class ApiService {
       message:
         res.status !== 201
           ? ErEnum.FRONT_RESPONSE_CODE_IS_NOT_201
-          : res.body?.result?.type !== 'Success'
+          : res.body?.type !== 'Success'
             ? ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK
             : undefined
     };
 
     let infoErrorMessage: string =
-      res.body?.result?.type === 'Failure'
-        ? res.body.result.error.message
-        : undefined;
+      res.body?.type === 'Failure' ? res.body.error.code : undefined;
 
     if (
       isDefined(errorData.message) &&
@@ -193,11 +191,11 @@ export class ApiService {
 
       if (
         infoErrorMessage === ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK &&
-        errorData.response.body.result.error.originalError?.message ===
+        errorData.response.body.error.originalError?.code ===
           'DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH'
       ) {
         let errorCurrentBranch =
-          errorData.response.body?.result?.error?.originalError?.displayData
+          errorData.response.body?.error?.originalError?.displayData
             ?.currentBranch;
 
         if (isDefined(errorCurrentBranch)) {
@@ -385,8 +383,7 @@ export class ApiService {
         errorData.description = `Some actions of Demo project are restricted. Switch organization project to remove restrictions.`;
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (infoErrorMessage === ErEnum.BACKEND_ROLES_DO_NOT_EXIST) {
-        let missingRoles =
-          errorData.response.body.result.error.displayData?.roles;
+        let missingRoles = errorData.response.body.error.displayData?.roles;
 
         let missingRolesText = Array.isArray(missingRoles)
           ? missingRoles.join(', ')
@@ -415,8 +412,7 @@ export class ApiService {
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
               let encodedFileId =
-                errorData?.response?.body?.result?.error?.displayData
-                  ?.encodedFileId;
+                errorData?.response?.body?.error?.displayData?.encodedFileId;
 
               if (isDefined(encodedFileId)) {
                 this.navigateService.navigateToFileLine({
@@ -504,7 +500,7 @@ export class ApiService {
         nav = x;
       });
 
-    let payload: ToBackendGetReportsInput = {
+    let payload: ToBackendGetReportsRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -517,8 +513,8 @@ export class ApiService {
       showSpinner: showSpinner
     }).pipe(
       map((resp: ToBackendGetReportsResponse) => {
-        if (resp.result?.type === 'Success') {
-          let output: ToBackendGetReportsOutput = resp.result.value;
+        if (resp?.type === 'Success') {
+          let output: ToBackendGetReportsOutput = resp.output;
 
           this.memberQuery.update(output.userMember);
 
@@ -541,8 +537,8 @@ export class ApiService {
 
           return true;
         } else if (
-          resp.result?.type === 'Failure' &&
-          resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+          resp?.type === 'Failure' &&
+          resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
         ) {
           this.router.navigate([
             PATH_ORG,

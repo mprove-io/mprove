@@ -1,34 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSetFavoriteOutput,
+  zToBackendSetFavoriteOutput
+} from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-output';
 import {
   type ToBackendSetFavoriteError,
   zToBackendSetFavoriteError
 } from './set-favorite-error';
 
-export type ToBackendSetFavoriteOutput = Record<string, never>;
-
-export type ToBackendSetFavoriteResponse = ToBackendResponse<
+export type ToBackendSetFavoriteResponse = ToBackendResponseBase<
+  'setFavorite',
   ToBackendSetFavoriteOutput,
   ToBackendSetFavoriteError
 >;
 
-export let zToBackendSetFavoriteOutput = z
-  .object({})
-  .meta({ id: 'ToBackendSetFavoriteOutput' });
-
 export let zToBackendSetFavoriteResponse = makeToBackendResponseSchema({
-  success: zToBackendSetFavoriteOutput,
+  operation: 'setFavorite',
+  output: zToBackendSetFavoriteOutput,
   error: zToBackendSetFavoriteError
 }).meta({ id: 'ToBackendSetFavoriteResponse' });
-
-assertTypesEqual<
-  ToBackendSetFavoriteOutput,
-  z.infer<typeof zToBackendSetFavoriteOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetFavoriteResponse,

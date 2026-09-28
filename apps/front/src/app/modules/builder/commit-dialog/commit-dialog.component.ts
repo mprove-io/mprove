@@ -21,7 +21,7 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendCommitRepoInput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
+import type { ToBackendCommitRepoRequest } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
 import type { ToBackendCommitRepoResponse } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-response';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -94,7 +94,7 @@ export class CommitDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendCommitRepoInput = {
+    let payload: ToBackendCommitRepoRequest['input'] = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -110,10 +110,10 @@ export class CommitDialogComponent implements OnInit {
       })
       .pipe(
         map((resp: ToBackendCommitRepoResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
 
-            let respSession = resp.result.value.session;
+            let respSession = resp.output.session;
 
             if (isDefined(respSession)) {
               this.sessionQuery.updatePart({

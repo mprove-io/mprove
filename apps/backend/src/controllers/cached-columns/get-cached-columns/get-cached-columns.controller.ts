@@ -20,7 +20,7 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { CachedColumn } from '#common/zod/backend/connections/cached-column';
-import type { ToBackendGetCachedColumnsOutput } from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-response';
+import type { ToBackendGetCachedColumnsOutput } from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-output';
 
 @ApiTags('CachedColumns')
 @UseGuards(ThrottlerUserIdGuard)

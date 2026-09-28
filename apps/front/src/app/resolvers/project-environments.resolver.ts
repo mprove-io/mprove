@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import type { ToBackendGetEnvsInput } from '#common/zod/backend/routes/envs/get-envs/get-envs-request';
+import type { ToBackendGetEnvsRequest } from '#common/zod/backend/routes/envs/get-envs/get-envs-request';
 import type { ToBackendGetEnvsResponse } from '#common/zod/backend/routes/envs/get-envs/get-envs-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { EnvironmentsQuery } from '../queries/environments.query';
@@ -55,7 +55,7 @@ export class ProjectEnvironmentsResolver
       projectId = x;
     });
 
-    let payload: ToBackendGetEnvsInput = {
+    let payload: ToBackendGetEnvsRequest['input'] = {
       projectId: projectId
     };
 
@@ -66,10 +66,10 @@ export class ProjectEnvironmentsResolver
       })
       .pipe(
         map((resp: ToBackendGetEnvsResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
 
-            let newSortedEnvironments = resp.result.value.envs.sort((a, b) =>
+            let newSortedEnvironments = resp.output.envs.sort((a, b) =>
               a.envId !== PROJECT_ENV_PROD && b.envId === PROJECT_ENV_PROD
                 ? 1
                 : a.envId === PROJECT_ENV_PROD && b.envId !== PROJECT_ENV_PROD

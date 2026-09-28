@@ -22,7 +22,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetQueryOutput } from '#common/zod/backend/routes/queries/get-query/get-query-response';
+import type { ToBackendGetQueryOutput } from '#common/zod/backend/routes/queries/get-query/get-query-output';
 
 @ApiTags('Queries')
 @UseGuards(ThrottlerUserIdGuard)

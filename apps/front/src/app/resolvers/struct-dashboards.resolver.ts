@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import type { ToBackendGetDashboardsInput } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-request';
+import type { ToBackendGetDashboardsRequest } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-request';
 import type { ToBackendGetDashboardsResponse } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardUnitsQuery } from '../queries/dashboard-units.query';
@@ -62,7 +62,7 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let payload: ToBackendGetDashboardsInput = {
+    let payload: ToBackendGetDashboardsRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -76,24 +76,24 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetDashboardsResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
 
-            this.structQuery.update(resp.result.value.struct);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
-            this.modelsQuery.update({ models: resp.result.value.models });
+            this.modelsQuery.update({ models: resp.output.models });
 
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.result.value.dashboardUnitDrafts,
-              dashboardSpaceNodes: resp.result.value.dashboardSpaceNodes
+              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.output.dashboardSpaceNodes
             });
 
             return true;
           } else if (
-            resp.result?.type === 'Failure' &&
-            resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp?.type === 'Failure' &&
+            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
               PATH_ORG,

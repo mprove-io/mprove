@@ -1,4 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
+import { createBackendResponseDto } from '#backend/functions/create-backend-response-dto';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
 import { zToBackendGetUserGivensRequest } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-request';
 import { zToBackendGetUserGivensResponse } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-response';
@@ -7,6 +8,6 @@ export class ToBackendGetUserGivensRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetUserGivensRequest })
 ) {}
 
-export class ToBackendGetUserGivensResponseDto extends createZodDto(
-  zodStripCustom({ schema: zToBackendGetUserGivensResponse })
+export class ToBackendGetUserGivensResponseDto extends createBackendResponseDto(
+  { schema: zToBackendGetUserGivensResponse }
 ) {}

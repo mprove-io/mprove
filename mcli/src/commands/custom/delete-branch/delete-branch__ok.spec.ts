@@ -7,8 +7,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateBranchInput } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
-import type { ToBackendCreateBranchOutput } from '#common/zod/backend/routes/branches/create-branch/create-branch-response';
+import type { ToBackendCreateBranchOutput } from '#common/zod/backend/routes/branches/create-branch/create-branch-output';
+import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';
@@ -114,7 +114,7 @@ test('1', async () => {
           ? PROD_REPO_ID
           : userId;
 
-      let createBranchReqPayload: ToBackendCreateBranchInput = {
+      let createBranchReqPayload: ToBackendCreateBranchRequest['input'] = {
         projectId: projectId,
         repoId: repoId,
         newBranchId: branch,

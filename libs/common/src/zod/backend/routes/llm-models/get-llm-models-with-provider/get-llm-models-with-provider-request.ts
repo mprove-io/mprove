@@ -2,36 +2,29 @@ import { z } from 'zod';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendGetLlmModelsWithProviderInput = {
-  projectId: string;
-  sessionTypes: (SessionTypeEnum.Explorer | SessionTypeEnum.Editor)[];
-};
-
 export type ToBackendGetLlmModelsWithProviderRequest = {
+  operation: 'getLlmModelsWithProvider';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetLlmModelsWithProviderInput;
+  input: {
+    projectId: string;
+    sessionTypes: (SessionTypeEnum.Explorer | SessionTypeEnum.Editor)[];
+  };
 };
-
-export let zToBackendGetLlmModelsWithProviderInput = z
-  .object({
-    projectId: z.string(),
-    sessionTypes: z.array(z.enum(SessionTypeEnum))
-  })
-  .meta({ id: 'ToBackendGetLlmModelsWithProviderInput' });
 
 export let zToBackendGetLlmModelsWithProviderRequest = z
   .strictObject({
+    operation: z.literal('getLlmModelsWithProvider'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetLlmModelsWithProviderInput
+    input: z
+      .object({
+        projectId: z.string(),
+        sessionTypes: z.array(z.enum(SessionTypeEnum))
+      })
+      .meta({ id: 'ToBackendGetLlmModelsWithProviderInput' })
   })
   .meta({ id: 'ToBackendGetLlmModelsWithProviderRequest' });
-
-assertTypesEqual<
-  ToBackendGetLlmModelsWithProviderInput,
-  z.infer<typeof zToBackendGetLlmModelsWithProviderInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetLlmModelsWithProviderRequest,

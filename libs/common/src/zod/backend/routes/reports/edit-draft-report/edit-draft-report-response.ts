@@ -1,47 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/zod/backend/member';
-import { type ReportX, zReportX } from '#common/zod/backend/report-x';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type StructX, zStructX } from '#common/zod/backend/struct-x';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendEditDraftReportOutput,
+  zToBackendEditDraftReportOutput
+} from '#common/zod/backend/routes/reports/edit-draft-report/edit-draft-report-output';
 import {
   type ToBackendEditDraftReportError,
   zToBackendEditDraftReportError
 } from './edit-draft-report-error';
 
-export type ToBackendEditDraftReportOutput = {
-  needValidate: boolean;
-  struct: StructX;
-  userMember: Member;
-  report: ReportX;
-};
-
-export type ToBackendEditDraftReportResponse = ToBackendResponse<
+export type ToBackendEditDraftReportResponse = ToBackendResponseBase<
+  'editDraftReport',
   ToBackendEditDraftReportOutput,
   ToBackendEditDraftReportError
 >;
 
-export let zToBackendEditDraftReportOutput = z
-  .object({
-    needValidate: z.boolean(),
-    struct: zStructX,
-    userMember: zMember,
-    report: zReportX
-  })
-  .meta({ id: 'ToBackendEditDraftReportOutput' });
-
 export let zToBackendEditDraftReportResponse = makeToBackendResponseSchema({
-  success: zToBackendEditDraftReportOutput,
+  operation: 'editDraftReport',
+  output: zToBackendEditDraftReportOutput,
   error: zToBackendEditDraftReportError
 }).meta({ id: 'ToBackendEditDraftReportResponse' });
-
-assertTypesEqual<
-  ToBackendEditDraftReportOutput,
-  z.infer<typeof zToBackendEditDraftReportOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendEditDraftReportResponse,

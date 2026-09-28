@@ -9,7 +9,7 @@ import {
 } from '#common/constants/top';
 import { LOCAL_STORAGE_TOKEN } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendConfirmUserEmailInput } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-request';
+import type { ToBackendConfirmUserEmailRequest } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-request';
 import type { ToBackendConfirmUserEmailResponse } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -44,7 +44,7 @@ export class ConfirmEmailComponent implements OnInit {
     this.emailVerificationToken =
       this.route.snapshot.queryParamMap.get('token');
 
-    let payload: ToBackendConfirmUserEmailInput = {
+    let payload: ToBackendConfirmUserEmailRequest['input'] = {
       emailVerificationToken: this.emailVerificationToken
     };
 
@@ -57,9 +57,9 @@ export class ConfirmEmailComponent implements OnInit {
         })
         .pipe(
           tap((resp: ToBackendConfirmUserEmailResponse) => {
-            if (resp.result?.type === 'Success') {
-              let user = resp.result.value.user;
-              let token = resp.result.value.token;
+            if (resp?.type === 'Success') {
+              let user = resp.output.user;
+              let token = resp.output.token;
 
               if (isDefined(user) && isDefined(token)) {
                 // first email verification

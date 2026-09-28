@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import type { ToBackendGetConnectionsInput } from '#common/zod/backend/routes/connections/get-connections/get-connections-request';
+import type { ToBackendGetConnectionsRequest } from '#common/zod/backend/routes/connections/get-connections/get-connections-request';
 import type { ToBackendGetConnectionsResponse } from '#common/zod/backend/routes/connections/get-connections/get-connections-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { ConnectionsQuery } from '../queries/connections.query';
@@ -54,7 +54,7 @@ export class ProjectConnectionsResolver
       projectId = x;
     });
 
-    let payload: ToBackendGetConnectionsInput = {
+    let payload: ToBackendGetConnectionsRequest['input'] = {
       projectId: projectId
     };
 
@@ -65,11 +65,11 @@ export class ProjectConnectionsResolver
       })
       .pipe(
         map((resp: ToBackendGetConnectionsResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
 
             this.connectionsQuery.update({
-              connections: resp.result.value.connections
+              connections: resp.output.connections
             });
 
             return true;

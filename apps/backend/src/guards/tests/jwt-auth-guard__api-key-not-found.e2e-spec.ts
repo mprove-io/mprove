@@ -45,6 +45,7 @@ test('1', async t => {
       });
 
       let req: ToBackendGetStateRequest = {
+        operation: 'getState',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -85,8 +86,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Failure');
-    assert.equal(resp.result.error.message, ErEnum.BACKEND_API_KEY_NOT_FOUND);
+    assert.equal(resp.type, 'Failure');
+    assert.equal(resp.error.code, ErEnum.BACKEND_API_KEY_NOT_FOUND);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

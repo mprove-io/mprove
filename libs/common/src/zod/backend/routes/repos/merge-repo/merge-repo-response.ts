@@ -1,44 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type StructX, zStructX } from '#common/zod/backend/struct-x';
-import { type Repo, zRepo } from '#common/zod/disk/repo';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendMergeRepoOutput,
+  zToBackendMergeRepoOutput
+} from '#common/zod/backend/routes/repos/merge-repo/merge-repo-output';
 import {
   type ToBackendMergeRepoError,
   zToBackendMergeRepoError
 } from './merge-repo-error';
 
-export type ToBackendMergeRepoOutput = {
-  repo: Repo;
-  struct: StructX;
-  needValidate: boolean;
-};
-
-export type ToBackendMergeRepoResponse = ToBackendResponse<
+export type ToBackendMergeRepoResponse = ToBackendResponseBase<
+  'mergeRepo',
   ToBackendMergeRepoOutput,
   ToBackendMergeRepoError
 >;
 
-export let zToBackendMergeRepoOutput = z
-  .object({
-    repo: zRepo,
-    struct: zStructX,
-    needValidate: z.boolean()
-  })
-  .meta({ id: 'ToBackendMergeRepoOutput' });
-
 export let zToBackendMergeRepoResponse = makeToBackendResponseSchema({
-  success: zToBackendMergeRepoOutput,
+  operation: 'mergeRepo',
+  output: zToBackendMergeRepoOutput,
   error: zToBackendMergeRepoError
 }).meta({ id: 'ToBackendMergeRepoResponse' });
-
-assertTypesEqual<
-  ToBackendMergeRepoOutput,
-  z.infer<typeof zToBackendMergeRepoOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendMergeRepoResponse,

@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/zod/backend/member';
-import { type Provider, zProvider } from '#common/zod/backend/provider';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetProvidersOutput,
+  zToBackendGetProvidersOutput
+} from '#common/zod/backend/routes/providers/get-providers/get-providers-output';
 import {
   type ToBackendGetProvidersError,
   zToBackendGetProvidersError
 } from './get-providers-error';
 
-export type ToBackendGetProvidersOutput = {
-  userMember: Member;
-  providers: Provider[];
-};
-
-export type ToBackendGetProvidersResponse = ToBackendResponse<
+export type ToBackendGetProvidersResponse = ToBackendResponseBase<
+  'getProviders',
   ToBackendGetProvidersOutput,
   ToBackendGetProvidersError
 >;
 
-export let zToBackendGetProvidersOutput = z
-  .object({
-    userMember: zMember,
-    providers: z.array(zProvider)
-  })
-  .meta({ id: 'ToBackendGetProvidersOutput' });
-
 export let zToBackendGetProvidersResponse = makeToBackendResponseSchema({
-  success: zToBackendGetProvidersOutput,
+  operation: 'getProviders',
+  output: zToBackendGetProvidersOutput,
   error: zToBackendGetProvidersError
 }).meta({ id: 'ToBackendGetProvidersResponse' });
-
-assertTypesEqual<
-  ToBackendGetProvidersOutput,
-  z.infer<typeof zToBackendGetProvidersOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetProvidersResponse,

@@ -1,44 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type OrgUsersItem,
-  zOrgUsersItem
-} from '#common/zod/backend/org-users/org-users-item';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetOrgUsersOutput,
+  zToBackendGetOrgUsersOutput
+} from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-output';
 import {
   type ToBackendGetOrgUsersError,
   zToBackendGetOrgUsersError
 } from './get-org-users-error';
 
-export type ToBackendGetOrgUsersOutput = {
-  orgUsersList: OrgUsersItem[];
-  total: number;
-};
-
-export type ToBackendGetOrgUsersResponse = ToBackendResponse<
+export type ToBackendGetOrgUsersResponse = ToBackendResponseBase<
+  'getOrgUsers',
   ToBackendGetOrgUsersOutput,
   ToBackendGetOrgUsersError
 >;
 
-export let zToBackendGetOrgUsersOutput = z
-  .object({
-    orgUsersList: z.array(zOrgUsersItem),
-    total: z.number()
-  })
-  .meta({ id: 'ToBackendGetOrgUsersOutput' });
-
 export let zToBackendGetOrgUsersResponse = makeToBackendResponseSchema({
-  success: zToBackendGetOrgUsersOutput,
+  operation: 'getOrgUsers',
+  output: zToBackendGetOrgUsersOutput,
   error: zToBackendGetOrgUsersError
 }).meta({ id: 'ToBackendGetOrgUsersResponse' });
-
-assertTypesEqual<
-  ToBackendGetOrgUsersOutput,
-  z.infer<typeof zToBackendGetOrgUsersOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetOrgUsersResponse,

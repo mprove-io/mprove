@@ -7,8 +7,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendSaveFileInput } from '#common/zod/backend/routes/files/save-file/save-file-request';
-import type { ToBackendSaveFileOutput } from '#common/zod/backend/routes/files/save-file/save-file-response';
+import type { ToBackendSaveFileOutput } from '#common/zod/backend/routes/files/save-file/save-file-output';
+import type { ToBackendSaveFileRequest } from '#common/zod/backend/routes/files/save-file/save-file-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { getTestLoginToken } from '#mcli/functions/get-test-login-token/get-test-login-token';
@@ -114,7 +114,7 @@ test('1', async () => {
         host: config.mproveCliHost
       });
 
-      let saveFileReqPayload: ToBackendSaveFileInput = {
+      let saveFileReqPayload: ToBackendSaveFileRequest['input'] = {
         projectId: projectId,
         repoId: userId,
         branchId: branch,

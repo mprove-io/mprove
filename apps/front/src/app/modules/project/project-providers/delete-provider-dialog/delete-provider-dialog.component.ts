@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendDeleteProviderInput } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-request';
+import type { ToBackendDeleteProviderRequest } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-request';
 import type { ToBackendDeleteProviderResponse } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-response';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -45,7 +45,7 @@ export class DeleteProviderDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteProviderInput = {
+    let payload: ToBackendDeleteProviderRequest['input'] = {
       projectId: this.ref.data.projectId,
       providerId: this.ref.data.providerId
     };
@@ -58,7 +58,7 @@ export class DeleteProviderDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteProviderResponse) => {
-          if (resp.result?.type !== 'Success') {
+          if (resp?.type !== 'Success') {
             return;
           }
 

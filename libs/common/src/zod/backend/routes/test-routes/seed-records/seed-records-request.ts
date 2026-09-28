@@ -47,62 +47,59 @@ import {
 import { type Mconfig, zMconfig } from '#common/zod/blockml/mconfig';
 import { type Query, zQuery } from '#common/zod/blockml/query';
 
-export type ToBackendSeedRecordsInput = {
-  users?: ToBackendSeedRecordsInputUsersItem[];
-  orgs?: ToBackendSeedRecordsInputOrgsItem[];
-  projects?: ToBackendSeedRecordsInputProjectsItem[];
-  members?: ToBackendSeedRecordsInputMembersItem[];
-  connections?: ToBackendSeedRecordsInputConnectionsItem[];
-  providers?: ToBackendSeedRecordsInputProvidersItem[];
-  envs?: ToBackendSeedRecordsInputEnvsItem[];
-  sessions?: ToBackendSeedRecordsInputSessionsItem[];
-  queries?: Query[];
-  mconfigs?: Mconfig[];
-  cachedColumns?: ToBackendSeedRecordsInputCachedColumnsItem[];
-  cachedParts?: ToBackendSeedRecordsInputCachedPartsItem[];
-  modelFieldLeafs?: ToBackendSeedRecordsInputModelFieldLeafsItem[];
-};
-
 export type ToBackendSeedRecordsRequest = {
+  operation: 'seedRecords';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendSeedRecordsInput;
+  input: {
+    users?: ToBackendSeedRecordsInputUsersItem[];
+    orgs?: ToBackendSeedRecordsInputOrgsItem[];
+    projects?: ToBackendSeedRecordsInputProjectsItem[];
+    members?: ToBackendSeedRecordsInputMembersItem[];
+    connections?: ToBackendSeedRecordsInputConnectionsItem[];
+    providers?: ToBackendSeedRecordsInputProvidersItem[];
+    envs?: ToBackendSeedRecordsInputEnvsItem[];
+    sessions?: ToBackendSeedRecordsInputSessionsItem[];
+    queries?: Query[];
+    mconfigs?: Mconfig[];
+    cachedColumns?: ToBackendSeedRecordsInputCachedColumnsItem[];
+    cachedParts?: ToBackendSeedRecordsInputCachedPartsItem[];
+    modelFieldLeafs?: ToBackendSeedRecordsInputModelFieldLeafsItem[];
+  };
 };
-
-export let zToBackendSeedRecordsInput = z
-  .object({
-    users: z.array(zToBackendSeedRecordsInputUsersItem).nullish(),
-    orgs: z.array(zToBackendSeedRecordsInputOrgsItem).nullish(),
-    projects: z.array(zToBackendSeedRecordsInputProjectsItem).nullish(),
-    members: z.array(zToBackendSeedRecordsInputMembersItem).nullish(),
-    connections: z.array(zToBackendSeedRecordsInputConnectionsItem).nullish(),
-    providers: z.array(zToBackendSeedRecordsInputProvidersItem).nullish(),
-    envs: z.array(zToBackendSeedRecordsInputEnvsItem).nullish(),
-    sessions: z.array(zToBackendSeedRecordsInputSessionsItem).nullish(),
-    queries: z.array(zQuery).nullish(),
-    mconfigs: z.array(zMconfig).nullish(),
-    cachedColumns: z
-      .array(zToBackendSeedRecordsInputCachedColumnsItem)
-      .nullish(),
-    cachedParts: z.array(zToBackendSeedRecordsInputCachedPartsItem).nullish(),
-    modelFieldLeafs: z
-      .array(zToBackendSeedRecordsInputModelFieldLeafsItem)
-      .nullish()
-  })
-  .meta({ id: 'ToBackendSeedRecordsInput' });
 
 export let zToBackendSeedRecordsRequest = z
   .strictObject({
+    operation: z.literal('seedRecords'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendSeedRecordsInput
+    input: z
+      .object({
+        users: z.array(zToBackendSeedRecordsInputUsersItem).nullish(),
+        orgs: z.array(zToBackendSeedRecordsInputOrgsItem).nullish(),
+        projects: z.array(zToBackendSeedRecordsInputProjectsItem).nullish(),
+        members: z.array(zToBackendSeedRecordsInputMembersItem).nullish(),
+        connections: z
+          .array(zToBackendSeedRecordsInputConnectionsItem)
+          .nullish(),
+        providers: z.array(zToBackendSeedRecordsInputProvidersItem).nullish(),
+        envs: z.array(zToBackendSeedRecordsInputEnvsItem).nullish(),
+        sessions: z.array(zToBackendSeedRecordsInputSessionsItem).nullish(),
+        queries: z.array(zQuery).nullish(),
+        mconfigs: z.array(zMconfig).nullish(),
+        cachedColumns: z
+          .array(zToBackendSeedRecordsInputCachedColumnsItem)
+          .nullish(),
+        cachedParts: z
+          .array(zToBackendSeedRecordsInputCachedPartsItem)
+          .nullish(),
+        modelFieldLeafs: z
+          .array(zToBackendSeedRecordsInputModelFieldLeafsItem)
+          .nullish()
+      })
+      .meta({ id: 'ToBackendSeedRecordsInput' })
   })
   .meta({ id: 'ToBackendSeedRecordsRequest' });
-
-assertTypesEqual<
-  ToBackendSeedRecordsInput,
-  z.infer<typeof zToBackendSeedRecordsInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSeedRecordsRequest,

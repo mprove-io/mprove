@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type OrgsItem, zOrgsItem } from '#common/zod/backend/orgs-item';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetOrgsListOutput,
+  zToBackendGetOrgsListOutput
+} from '#common/zod/backend/routes/orgs/get-orgs-list/get-orgs-list-output';
 import {
   type ToBackendGetOrgsListError,
   zToBackendGetOrgsListError
 } from './get-orgs-list-error';
 
-export type ToBackendGetOrgsListOutput = {
-  orgsList: OrgsItem[];
-};
-
-export type ToBackendGetOrgsListResponse = ToBackendResponse<
+export type ToBackendGetOrgsListResponse = ToBackendResponseBase<
+  'getOrgsList',
   ToBackendGetOrgsListOutput,
   ToBackendGetOrgsListError
 >;
 
-export let zToBackendGetOrgsListOutput = z
-  .object({
-    orgsList: z.array(zOrgsItem)
-  })
-  .meta({ id: 'ToBackendGetOrgsListOutput' });
-
 export let zToBackendGetOrgsListResponse = makeToBackendResponseSchema({
-  success: zToBackendGetOrgsListOutput,
+  operation: 'getOrgsList',
+  output: zToBackendGetOrgsListOutput,
   error: zToBackendGetOrgsListError
 }).meta({ id: 'ToBackendGetOrgsListResponse' });
-
-assertTypesEqual<
-  ToBackendGetOrgsListOutput,
-  z.infer<typeof zToBackendGetOrgsListOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetOrgsListResponse,

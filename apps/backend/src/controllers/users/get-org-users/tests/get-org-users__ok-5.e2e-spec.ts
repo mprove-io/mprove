@@ -9,11 +9,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { ToBackendGetOrgUsersOutput } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-output';
 import type { ToBackendGetOrgUsersRequest } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
-import type {
-  ToBackendGetOrgUsersOutput,
-  ToBackendGetOrgUsersResponse
-} from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
+import type { ToBackendGetOrgUsersResponse } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
 
 let testId = 'backend-get-org-users__ok-5';
 
@@ -65,6 +63,7 @@ test('1', async t => {
       });
 
       let req: ToBackendGetOrgUsersRequest = {
+        operation: 'getOrgUsers',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -94,7 +93,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let output: ToBackendGetOrgUsersOutput = unwrapBackendResponseOutput({
       response: resp

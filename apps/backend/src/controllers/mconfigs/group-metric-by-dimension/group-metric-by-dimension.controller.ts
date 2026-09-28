@@ -49,7 +49,7 @@ import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fiel
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change/sort-fields-on-select-change';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { QueryOperation } from '#common/zod/backend/query-operation';
-import type { ToBackendGroupMetricByDimensionOutput } from '#common/zod/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-response';
+import type { ToBackendGroupMetricByDimensionOutput } from '#common/zod/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-output';
 
 @ApiTags('Mconfigs')
 @UseGuards(ThrottlerUserIdGuard)

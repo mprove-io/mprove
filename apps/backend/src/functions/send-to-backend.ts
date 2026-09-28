@@ -34,10 +34,10 @@ export async function sendToBackend<TRoute extends ToBackendRoute>(item: {
     });
   }
 
-  if (checkIsOk === true && response.body.result.type !== 'Success') {
+  if (checkIsOk === true && response.body.type !== 'Success') {
     throw new ServerError({
       message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_BACKEND,
-      originalError: response.body.result.error
+      originalError: response.body.error
     });
   }
 

@@ -16,7 +16,7 @@ import { take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Env } from '#common/zod/backend/env';
 import type { Ev } from '#common/zod/backend/ev';
-import type { ToBackendEditEnvVarInput } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-request';
+import type { ToBackendEditEnvVarRequest } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-request';
 import type { ToBackendEditEnvVarResponse } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
@@ -72,7 +72,7 @@ export class EditEvDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendEditEnvVarInput = {
+    let payload: ToBackendEditEnvVarRequest['input'] = {
       projectId: this.dataItem.env.projectId,
       envId: this.dataItem.env.envId,
       evId: this.dataItem.ev.evId,
@@ -89,10 +89,10 @@ export class EditEvDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditEnvVarResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
-              environments: resp.result.value.envs
+              environments: resp.output.envs
             });
           }
         }),

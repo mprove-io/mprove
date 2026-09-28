@@ -1,4 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
+import { createBackendResponseDto } from '#backend/functions/create-backend-response-dto';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
 import { zToBackendGetLlmModelsWithProviderRequest } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
 import { zToBackendGetLlmModelsWithProviderResponse } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
@@ -7,6 +8,6 @@ export class ToBackendGetLlmModelsWithProviderRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetLlmModelsWithProviderRequest })
 ) {}
 
-export class ToBackendGetLlmModelsWithProviderResponseDto extends createZodDto(
-  zodStripCustom({ schema: zToBackendGetLlmModelsWithProviderResponse })
+export class ToBackendGetLlmModelsWithProviderResponseDto extends createBackendResponseDto(
+  { schema: zToBackendGetLlmModelsWithProviderResponse }
 ) {}

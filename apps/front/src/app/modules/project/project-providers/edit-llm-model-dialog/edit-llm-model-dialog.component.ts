@@ -25,13 +25,11 @@ import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendEditLlmModelInput } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
+import type { ToBackendEditLlmModelRequest } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
 import type { ToBackendEditLlmModelResponse } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-response';
-import type { ToBackendGetLlmModelPartsInput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
-import type {
-  ToBackendGetLlmModelPartsOutput,
-  ToBackendGetLlmModelPartsResponse
-} from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-response';
+import type { ToBackendGetLlmModelPartsOutput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-output';
+import type { ToBackendGetLlmModelPartsRequest } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
+import type { ToBackendGetLlmModelPartsResponse } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-response';
 import { getLlmModelVariantsError } from '#front/app/functions/get-llm-model-variants-error';
 import { LlmModelVariantsComponent } from '#front/app/modules/project/project-providers/llm-model-variants/llm-model-variants.component';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -144,7 +142,7 @@ export class EditLlmModelDialogComponent implements OnInit {
   refreshModel() {
     let provider: Provider = this.ref.data.provider;
 
-    let payload: ToBackendGetLlmModelPartsInput = {
+    let payload: ToBackendGetLlmModelPartsRequest['input'] = {
       projectId: provider.projectId,
       providerId: provider.providerId
     };
@@ -164,11 +162,11 @@ export class EditLlmModelDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetLlmModelPartsResponse) => {
-          if (resp.result?.type !== 'Success') {
+          if (resp?.type !== 'Success') {
             return;
           }
 
-          let output: ToBackendGetLlmModelPartsOutput = resp.result.value;
+          let output: ToBackendGetLlmModelPartsOutput = resp.output;
 
           let modelPart: LlmModelPart = output.modelParts.find(
             item => item.modelId === this.model.modelId
@@ -435,7 +433,7 @@ export class EditLlmModelDialogComponent implements OnInit {
       return;
     }
 
-    let payload: ToBackendEditLlmModelInput = {
+    let payload: ToBackendEditLlmModelRequest['input'] = {
       projectId: provider.projectId,
       providerId: provider.providerId,
       modelId: this.ref.data.model.modelId,
@@ -461,11 +459,11 @@ export class EditLlmModelDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditLlmModelResponse) => {
-          if (resp.result?.type !== 'Success') {
+          if (resp?.type !== 'Success') {
             return;
           }
 
-          let provider: Provider = resp.result.value.provider;
+          let provider: Provider = resp.output.provider;
 
           let providers: Provider[] = this.providersQuery
             .getValue()

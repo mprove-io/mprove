@@ -14,80 +14,73 @@ import {
 import { type RowChange, zRowChange } from '#common/zod/blockml/row-change';
 import { zTimezone } from '#common/zod/z-timezone';
 
-export type ToBackendCreateDraftReportInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-  fromReportId: string;
-  changeType:
-    | ChangeTypeEnum.AddEmpty
-    | ChangeTypeEnum.AddMetric
-    | ChangeTypeEnum.AddHeader
-    | ChangeTypeEnum.AddFormula
-    | ChangeTypeEnum.EditInfo
-    | ChangeTypeEnum.EditChart
-    | ChangeTypeEnum.EditFormula
-    | ChangeTypeEnum.EditParameters
-    | ChangeTypeEnum.EditListeners
-    | ChangeTypeEnum.Delete
-    | ChangeTypeEnum.Move;
-  rowChange?: RowChange;
-  rowIds?: string[];
-  timezone: string;
-  timeSpec:
-    | TimeSpecEnum.Timestamps
-    | TimeSpecEnum.Seconds
-    | TimeSpecEnum.Minutes
-    | TimeSpecEnum.Hours
-    | TimeSpecEnum.Days
-    | TimeSpecEnum.Weeks
-    | TimeSpecEnum.Months
-    | TimeSpecEnum.Quarters
-    | TimeSpecEnum.Years;
-  timeRangeFractionBrick: string;
-  newReportFields: ReportField[];
-  listeners?: Listener[];
-  chart: MconfigChart;
-};
-
 export type ToBackendCreateDraftReportRequest = {
+  operation: 'createDraftReport';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendCreateDraftReportInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    fromReportId: string;
+    changeType:
+      | ChangeTypeEnum.AddEmpty
+      | ChangeTypeEnum.AddMetric
+      | ChangeTypeEnum.AddHeader
+      | ChangeTypeEnum.AddFormula
+      | ChangeTypeEnum.EditInfo
+      | ChangeTypeEnum.EditChart
+      | ChangeTypeEnum.EditFormula
+      | ChangeTypeEnum.EditParameters
+      | ChangeTypeEnum.EditListeners
+      | ChangeTypeEnum.Delete
+      | ChangeTypeEnum.Move;
+    rowChange?: RowChange;
+    rowIds?: string[];
+    timezone: string;
+    timeSpec:
+      | TimeSpecEnum.Timestamps
+      | TimeSpecEnum.Seconds
+      | TimeSpecEnum.Minutes
+      | TimeSpecEnum.Hours
+      | TimeSpecEnum.Days
+      | TimeSpecEnum.Weeks
+      | TimeSpecEnum.Months
+      | TimeSpecEnum.Quarters
+      | TimeSpecEnum.Years;
+    timeRangeFractionBrick: string;
+    newReportFields: ReportField[];
+    listeners?: Listener[];
+    chart: MconfigChart;
+  };
 };
-
-export let zToBackendCreateDraftReportInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string(),
-    fromReportId: z.string(),
-    changeType: z.enum(ChangeTypeEnum),
-    rowChange: zRowChange.nullish(),
-    rowIds: z.array(z.string()).nullish(),
-    timezone: zTimezone,
-    timeSpec: z.enum(TimeSpecEnum),
-    timeRangeFractionBrick: z.string(),
-    newReportFields: z.array(zReportField),
-    listeners: z.array(zListener).nullish(),
-    chart: zMconfigChart
-  })
-  .meta({ id: 'ToBackendCreateDraftReportInput' });
 
 export let zToBackendCreateDraftReportRequest = z
   .strictObject({
+    operation: z.literal('createDraftReport'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendCreateDraftReportInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string(),
+        fromReportId: z.string(),
+        changeType: z.enum(ChangeTypeEnum),
+        rowChange: zRowChange.nullish(),
+        rowIds: z.array(z.string()).nullish(),
+        timezone: zTimezone,
+        timeSpec: z.enum(TimeSpecEnum),
+        timeRangeFractionBrick: z.string(),
+        newReportFields: z.array(zReportField),
+        listeners: z.array(zListener).nullish(),
+        chart: zMconfigChart
+      })
+      .meta({ id: 'ToBackendCreateDraftReportInput' })
   })
   .meta({ id: 'ToBackendCreateDraftReportRequest' });
-
-assertTypesEqual<
-  ToBackendCreateDraftReportInput,
-  z.infer<typeof zToBackendCreateDraftReportInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateDraftReportRequest,

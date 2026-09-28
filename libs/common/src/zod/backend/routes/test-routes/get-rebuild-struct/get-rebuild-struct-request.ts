@@ -10,52 +10,45 @@ import {
   zModelMetric
 } from '#common/zod/blockml/model-metric';
 
-export type ToBackendGetRebuildStructInput = {
-  orgId: string;
-  projectId: string;
-  repoId: string;
-  branch: string;
-  envId: string;
-  overrideTimezone?: string;
-  isUseCache: boolean;
-  cachedMproveConfig?: MproveConfig;
-  cachedModels: Model[];
-  cachedMetrics: ModelMetric[];
-};
-
 export type ToBackendGetRebuildStructRequest = {
+  operation: 'getRebuildStruct';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetRebuildStructInput;
+  input: {
+    orgId: string;
+    projectId: string;
+    repoId: string;
+    branch: string;
+    envId: string;
+    overrideTimezone?: string;
+    isUseCache: boolean;
+    cachedMproveConfig?: MproveConfig;
+    cachedModels: Model[];
+    cachedMetrics: ModelMetric[];
+  };
 };
-
-export let zToBackendGetRebuildStructInput = z
-  .object({
-    orgId: z.string(),
-    projectId: z.string(),
-    repoId: z.string(),
-    branch: z.string(),
-    envId: z.string(),
-    overrideTimezone: z.string().nullish(),
-    isUseCache: z.boolean(),
-    cachedMproveConfig: zMproveConfig.nullish(),
-    cachedModels: z.array(zModel),
-    cachedMetrics: z.array(zModelMetric)
-  })
-  .meta({ id: 'ToBackendGetRebuildStructInput' });
 
 export let zToBackendGetRebuildStructRequest = z
   .strictObject({
+    operation: z.literal('getRebuildStruct'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetRebuildStructInput
+    input: z
+      .object({
+        orgId: z.string(),
+        projectId: z.string(),
+        repoId: z.string(),
+        branch: z.string(),
+        envId: z.string(),
+        overrideTimezone: z.string().nullish(),
+        isUseCache: z.boolean(),
+        cachedMproveConfig: zMproveConfig.nullish(),
+        cachedModels: z.array(zModel),
+        cachedMetrics: z.array(zModelMetric)
+      })
+      .meta({ id: 'ToBackendGetRebuildStructInput' })
   })
   .meta({ id: 'ToBackendGetRebuildStructRequest' });
-
-assertTypesEqual<
-  ToBackendGetRebuildStructInput,
-  z.infer<typeof zToBackendGetRebuildStructInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetRebuildStructRequest,

@@ -11,7 +11,7 @@ import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
-import type { ToBackendDeleteReportInput } from '#common/zod/backend/routes/reports/delete-report/delete-report-request';
+import type { ToBackendDeleteReportRequest } from '#common/zod/backend/routes/reports/delete-report/delete-report-request';
 import type { ToBackendDeleteReportResponse } from '#common/zod/backend/routes/reports/delete-report/delete-report-response';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { ReportsQuery } from '#front/app/queries/reports.query';
@@ -70,7 +70,7 @@ export class DeleteReportDialogComponent implements OnInit {
     let report: ReportUnit = this.ref.data.report;
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendDeleteReportInput = {
+    let payload: ToBackendDeleteReportRequest['input'] = {
       projectId: projectId,
       branchId: branchId,
       envId: this.ref.data.envId,
@@ -86,10 +86,10 @@ export class DeleteReportDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteReportResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.reportsQuery.update({
-              reportUnitDrafts: resp.result.value.reportUnitDrafts,
-              reportSpaceNodes: resp.result.value.reportSpaceNodes
+              reportUnitDrafts: resp.output.reportUnitDrafts,
+              reportSpaceNodes: resp.output.reportSpaceNodes
             });
 
             let currentReport = this.reportQuery.getValue();

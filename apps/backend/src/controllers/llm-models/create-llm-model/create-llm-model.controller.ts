@@ -37,8 +37,8 @@ import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-u
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendCreateLlmModelInput } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-request';
-import type { ToBackendCreateLlmModelOutput } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-response';
+import type { ToBackendCreateLlmModelOutput } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-output';
+import type { ToBackendCreateLlmModelRequest } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-request';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -65,7 +65,7 @@ export class CreateLlmModelController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendCreateLlmModelRequestDto
   ): Promise<ToBackendCreateLlmModelOutput> {
-    let bodyPayload: ToBackendCreateLlmModelInput = body.input;
+    let bodyPayload: ToBackendCreateLlmModelRequest['input'] = body.input;
 
     let {
       projectId,

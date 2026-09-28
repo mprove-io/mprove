@@ -44,6 +44,7 @@ test('1', async t => {
       });
 
       let resetUserPasswordReq: ToBackendResetUserPasswordRequest = {
+        operation: 'resetUserPassword',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: { email: email }
@@ -69,7 +70,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

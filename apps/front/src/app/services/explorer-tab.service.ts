@@ -3,12 +3,10 @@ import { interval, type Observable, type Subscription } from 'rxjs';
 import { exhaustMap, tap } from 'rxjs/operators';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendGetExplorerChartTabInput } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
-import type {
-  ToBackendGetExplorerChartTabOutput,
-  ToBackendGetExplorerChartTabResponse
-} from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-response';
-import type { ToBackendCloseExplorerSessionTabInput } from '#common/zod/backend/routes/sessions/close-explorer-session-tab/close-explorer-session-tab-request';
+import type { ToBackendGetExplorerChartTabOutput } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-output';
+import type { ToBackendGetExplorerChartTabRequest } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-request';
+import type { ToBackendGetExplorerChartTabResponse } from '#common/zod/backend/routes/charts/get-explorer-chart-tab/get-explorer-chart-tab-response';
+import type { ToBackendCloseExplorerSessionTabRequest } from '#common/zod/backend/routes/sessions/close-explorer-session-tab/close-explorer-session-tab-request';
 import { ExplorerTabsQuery } from '#front/app/queries/explorer-tabs.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -75,7 +73,7 @@ export class ExplorerTabService {
     sessionId: string;
     closedExplorerTabIds: string[];
   }) {
-    let payload: ToBackendCloseExplorerSessionTabInput = {
+    let payload: ToBackendCloseExplorerSessionTabRequest['input'] = {
       sessionId: item.sessionId,
       closedExplorerTabIds: item.closedExplorerTabIds
     };
@@ -107,7 +105,7 @@ export class ExplorerTabService {
     sessionId: string;
     chartId: string;
   }): Observable<ToBackendGetExplorerChartTabResponse> {
-    let payload: ToBackendGetExplorerChartTabInput = {
+    let payload: ToBackendGetExplorerChartTabRequest['input'] = {
       sessionId: item.sessionId,
       chartId: item.chartId
     };

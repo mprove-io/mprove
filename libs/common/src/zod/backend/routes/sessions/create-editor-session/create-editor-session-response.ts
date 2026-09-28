@@ -1,44 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCreateEditorSessionOutput,
+  zToBackendCreateEditorSessionOutput
+} from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-output';
 import {
   type ToBackendCreateEditorSessionError,
   zToBackendCreateEditorSessionError
 } from './create-editor-session-error';
 
-export type ToBackendCreateEditorSessionOutput = {
-  sessionId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-};
-
-export type ToBackendCreateEditorSessionResponse = ToBackendResponse<
+export type ToBackendCreateEditorSessionResponse = ToBackendResponseBase<
+  'createEditorSession',
   ToBackendCreateEditorSessionOutput,
   ToBackendCreateEditorSessionError
 >;
 
-export let zToBackendCreateEditorSessionOutput = z
-  .object({
-    sessionId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string()
-  })
-  .meta({ id: 'ToBackendCreateEditorSessionOutput' });
-
 export let zToBackendCreateEditorSessionResponse = makeToBackendResponseSchema({
-  success: zToBackendCreateEditorSessionOutput,
+  operation: 'createEditorSession',
+  output: zToBackendCreateEditorSessionOutput,
   error: zToBackendCreateEditorSessionError
 }).meta({ id: 'ToBackendCreateEditorSessionResponse' });
-
-assertTypesEqual<
-  ToBackendCreateEditorSessionOutput,
-  z.infer<typeof zToBackendCreateEditorSessionOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateEditorSessionResponse,

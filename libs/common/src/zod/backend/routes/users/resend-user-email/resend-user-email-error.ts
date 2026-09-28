@@ -1,13 +1,13 @@
 import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendError,
-  zBackendError
-} from '#common/zod/backend/errors/backend-error';
+  type BackendRestrictedUserError,
+  zBackendRestrictedUserError
+} from '#common/zod/backend/errors/backend-restricted-user-error';
 
-export type ToBackendResendUserEmailError = BackendError;
+export type ToBackendResendUserEmailError = BackendRestrictedUserError;
 
-export let zToBackendResendUserEmailError = zBackendError;
+export let zToBackendResendUserEmailError = zBackendRestrictedUserError;
 
 assertTypesEqual<
   ToBackendResendUserEmailError,

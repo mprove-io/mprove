@@ -28,11 +28,9 @@ import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendSuggestDimensionValuesInput } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-request';
-import type {
-  ToBackendSuggestDimensionValuesOutput,
-  ToBackendSuggestDimensionValuesResponse
-} from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
+import type { ToBackendSuggestDimensionValuesOutput } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-output';
+import type { ToBackendSuggestDimensionValuesRequest } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-request';
+import type { ToBackendSuggestDimensionValuesResponse } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
 import type { Fraction } from '#common/zod/blockml/fraction';
 import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -216,7 +214,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
               let nav = this.navQuery.getValue();
 
-              let payload: ToBackendSuggestDimensionValuesInput = {
+              let payload: ToBackendSuggestDimensionValuesRequest['input'] = {
                 projectId: nav.projectId,
                 repoId: nav.repoId,
                 branchId: nav.branchId,

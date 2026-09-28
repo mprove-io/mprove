@@ -1,34 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSetSessionTitleOutput,
+  zToBackendSetSessionTitleOutput
+} from '#common/zod/backend/routes/sessions/set-session-title/set-session-title-output';
 import {
   type ToBackendSetSessionTitleError,
   zToBackendSetSessionTitleError
 } from './set-session-title-error';
 
-export type ToBackendSetSessionTitleOutput = Record<string, never>;
-
-export type ToBackendSetSessionTitleResponse = ToBackendResponse<
+export type ToBackendSetSessionTitleResponse = ToBackendResponseBase<
+  'setSessionTitle',
   ToBackendSetSessionTitleOutput,
   ToBackendSetSessionTitleError
 >;
 
-export let zToBackendSetSessionTitleOutput = z
-  .object({})
-  .meta({ id: 'ToBackendSetSessionTitleOutput' });
-
 export let zToBackendSetSessionTitleResponse = makeToBackendResponseSchema({
-  success: zToBackendSetSessionTitleOutput,
+  operation: 'setSessionTitle',
+  output: zToBackendSetSessionTitleOutput,
   error: zToBackendSetSessionTitleError
 }).meta({ id: 'ToBackendSetSessionTitleResponse' });
-
-assertTypesEqual<
-  ToBackendSetSessionTitleOutput,
-  z.infer<typeof zToBackendSetSessionTitleOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetSessionTitleResponse,

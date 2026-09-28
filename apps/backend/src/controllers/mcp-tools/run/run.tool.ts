@@ -18,7 +18,7 @@ import {
   zMcpToolRunInput,
   zMcpToolRunOutput
 } from '#common/zod/backend/mcp-tools/mcp-tool-run';
-import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-response';
+import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-output';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

@@ -40,7 +40,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendRevertRepoToRemoteOutput } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
+import type { ToBackendRevertRepoToRemoteOutput } from '#common/zod/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-output';
 import type { ToDiskRevertRepoToRemoteOutput } from '#common/zod/disk/routes/repos/revert-repo-to-remote/revert-repo-to-remote-output';
 
 const { forEachSeries } = pIteration;

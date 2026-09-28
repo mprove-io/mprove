@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Provider, zProvider } from '#common/zod/backend/provider';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCreateProviderOutput,
+  zToBackendCreateProviderOutput
+} from '#common/zod/backend/routes/providers/create-provider/create-provider-output';
 import {
   type ToBackendCreateProviderError,
   zToBackendCreateProviderError
 } from './create-provider-error';
 
-export type ToBackendCreateProviderOutput = {
-  provider?: Provider;
-};
-
-export type ToBackendCreateProviderResponse = ToBackendResponse<
+export type ToBackendCreateProviderResponse = ToBackendResponseBase<
+  'createProvider',
   ToBackendCreateProviderOutput,
   ToBackendCreateProviderError
 >;
 
-export let zToBackendCreateProviderOutput = z
-  .object({
-    provider: zProvider
-  })
-  .meta({ id: 'ToBackendCreateProviderOutput' });
-
 export let zToBackendCreateProviderResponse = makeToBackendResponseSchema({
-  success: zToBackendCreateProviderOutput,
+  operation: 'createProvider',
+  output: zToBackendCreateProviderOutput,
   error: zToBackendCreateProviderError
 }).meta({ id: 'ToBackendCreateProviderResponse' });
-
-assertTypesEqual<
-  ToBackendCreateProviderOutput,
-  z.infer<typeof zToBackendCreateProviderOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateProviderResponse,

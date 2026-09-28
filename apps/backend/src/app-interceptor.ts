@@ -11,6 +11,7 @@ import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { BackendConfig } from '#backend/config/backend-config';
 import { SSE_SESSION_EVENTS_PATH } from '#backend/controllers/sessions/get-session-events-sse/get-session-events-sse.controller';
+import { validateToBackendRequest } from '#backend/functions/validate-to-backend-request';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { UNK_ST_ID } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -58,7 +59,10 @@ export class AppInterceptor implements NestInterceptor {
 
     request.start_ts = Date.now();
 
-    let req: ToBackendRequest = request.body;
+    let req: ToBackendRequest = validateToBackendRequest({
+      path: request.url,
+      body: request.body
+    });
     let user: UserTab = request.user;
 
     let iKey = req?.idempotencyKey;
@@ -66,7 +70,9 @@ export class AppInterceptor implements NestInterceptor {
 
     let idemp = isUndefined(iKey)
       ? undefined
-      : await this.redisService.find({ id: iKey }); // stId
+      : await this.redisService.find({
+          id: `backend-api:${req.operation}:${iKey}`
+        });
 
     if (isDefined(idemp) && !!idemp.stId && idemp.stId !== stId) {
       throw new ServerError({
@@ -84,7 +90,7 @@ export class AppInterceptor implements NestInterceptor {
       };
 
       await this.redisService.write({
-        id: idempWr.idempotencyKey,
+        id: `backend-api:${req.operation}:${idempWr.idempotencyKey}`,
         data: idempWr
       });
     }
@@ -96,7 +102,9 @@ export class AppInterceptor implements NestInterceptor {
       try {
         await retry(
           async (bail: any, num: number) => {
-            let idempX = await this.redisService.find({ id: iKey }); // stId
+            let idempX = await this.redisService.find({
+              id: `backend-api:${req.operation}:${iKey}`
+            });
 
             if (isUndefined(idempX.resp)) {
               bail(new Error(`Idemp resp is still empty, attempt ${num}`));
@@ -152,7 +160,7 @@ export class AppInterceptor implements NestInterceptor {
         };
 
         await this.redisService.write({
-          id: idempA.idempotencyKey,
+          id: `backend-api:${req.operation}:${idempA.idempotencyKey}`,
           data: idempA
         });
       }
@@ -185,7 +193,7 @@ export class AppInterceptor implements NestInterceptor {
               };
 
               await this.redisService.write({
-                id: idempB.idempotencyKey,
+                id: `backend-api:${req.operation}:${idempB.idempotencyKey}`,
                 data: idempB
               });
             }

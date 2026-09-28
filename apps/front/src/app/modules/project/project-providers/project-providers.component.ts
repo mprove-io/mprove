@@ -5,7 +5,7 @@ import { PROJECT_PROVIDERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendToggleProviderInput } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
+import type { ToBackendToggleProviderRequest } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
 import type { ToBackendToggleProviderResponse } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -137,7 +137,7 @@ export class ProjectProvidersComponent implements OnInit {
       return;
     }
 
-    let payload: ToBackendToggleProviderInput = {
+    let payload: ToBackendToggleProviderRequest['input'] = {
       projectId: provider.projectId,
       providerId: provider.providerId,
       isEnabled: !provider.isEnabled
@@ -151,11 +151,11 @@ export class ProjectProvidersComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendToggleProviderResponse) => {
-          if (resp.result?.type !== 'Success') {
+          if (resp?.type !== 'Success') {
             return;
           }
 
-          let provider: Provider = resp.result.value.provider;
+          let provider: Provider = resp.output.provider;
 
           let providers: Provider[] = this.providersQuery
             .getValue()

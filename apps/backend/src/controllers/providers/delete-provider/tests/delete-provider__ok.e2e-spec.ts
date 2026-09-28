@@ -121,6 +121,7 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteProviderRequest = {
+        operation: 'deleteProvider',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -159,7 +160,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     assert.deepEqual(unwrapBackendResponseOutput({ response: resp }), {});
 

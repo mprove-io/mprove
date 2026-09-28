@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendCreateRoleInput } from '#common/zod/backend/routes/roles/create-role/create-role-request';
+import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
 import type { ToBackendCreateRoleResponse } from '#common/zod/backend/routes/roles/create-role/create-role-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -80,7 +80,7 @@ export class AddProjectRoleDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateRoleInput = {
+    let payload: ToBackendCreateRoleRequest['input'] = {
       projectId: this.dataItem.projectId,
       roleId: this.addProjectRoleForm.value.roleId
     };
@@ -95,9 +95,9 @@ export class AddProjectRoleDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateRoleResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
-            this.rolesQuery.update({ roles: resp.result.value.roles });
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
+            this.rolesQuery.update({ roles: resp.output.roles });
           }
         }),
         take(1)

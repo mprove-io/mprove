@@ -11,7 +11,7 @@ import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
-import type { ToBackendDeleteDashboardInput } from '#common/zod/backend/routes/dashboards/delete-dashboard/delete-dashboard-request';
+import type { ToBackendDeleteDashboardRequest } from '#common/zod/backend/routes/dashboards/delete-dashboard/delete-dashboard-request';
 import type { ToBackendDeleteDashboardResponse } from '#common/zod/backend/routes/dashboards/delete-dashboard/delete-dashboard-response';
 import { DashboardQuery } from '#front/app/queries/dashboard.query';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
@@ -70,7 +70,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
     let dashboardUnit: DashboardUnit = this.ref.data.dashboardUnit;
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendDeleteDashboardInput = {
+    let payload: ToBackendDeleteDashboardRequest['input'] = {
       projectId: projectId,
       branchId: branchId,
       envId: this.ref.data.envId,
@@ -86,10 +86,10 @@ export class DeleteDashboardDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteDashboardResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.result.value.dashboardUnitDrafts,
-              dashboardSpaceNodes: resp.result.value.dashboardSpaceNodes
+              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
+              dashboardSpaceNodes: resp.output.dashboardSpaceNodes
             });
 
             let currentDashboard = this.dashboardQuery.getValue();

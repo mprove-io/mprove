@@ -26,7 +26,7 @@ import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGenerateProjectRemoteKeyOutput } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-response';
+import type { ToBackendGenerateProjectRemoteKeyOutput } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-output';
 
 const { parseKey, parsePrivateKey } = sshpk;
 

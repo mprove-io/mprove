@@ -115,6 +115,7 @@ test('1', async t => {
       };
 
       let firstReq: ToBackendCreateProviderRequest = {
+        operation: 'createProvider',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: payload
@@ -128,6 +129,7 @@ test('1', async t => {
       });
 
       let duplicateReq: ToBackendCreateProviderRequest = {
+        operation: 'createProvider',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: payload
@@ -154,11 +156,11 @@ test('1', async t => {
       }
     }
 
-    assert.equal(firstResp.result.type, 'Success');
+    assert.equal(firstResp.type, 'Success');
 
-    assert.ok(duplicateResp.result.type === 'Failure');
+    assert.ok(duplicateResp.type === 'Failure');
     assert.equal(
-      duplicateResp.result.error.message,
+      duplicateResp.error.code,
       ErEnum.BACKEND_PROVIDER_ALREADY_EXISTS
     );
 

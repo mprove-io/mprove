@@ -18,7 +18,7 @@ import {
   zMcpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoOutput
 } from '#common/zod/backend/mcp-tools/mcp-tool-get-query-info';
-import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-response';
+import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-output';
 
 @Injectable()
 @UseFilters(McpExceptionFilter)

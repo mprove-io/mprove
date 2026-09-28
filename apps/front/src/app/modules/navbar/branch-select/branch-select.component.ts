@@ -22,7 +22,7 @@ import {
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetBranchesListInput } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-request';
+import type { ToBackendGetBranchesListRequest } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-request';
 import type { ToBackendGetBranchesListResponse } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-response';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { RepoStatus } from '#common/zod/disk/repo-status';
@@ -183,7 +183,7 @@ export class BranchSelectComponent {
 
     this.branchesListLoading = true;
 
-    let payload: ToBackendGetBranchesListInput = {
+    let payload: ToBackendGetBranchesListRequest['input'] = {
       projectId: this.selectedProjectId
     };
 
@@ -194,11 +194,11 @@ export class BranchSelectComponent {
       })
       .pipe(
         tap((resp: ToBackendGetBranchesListResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
-            this.sessionsList = resp.result.value.sessionsList;
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
+            this.sessionsList = resp.output.sessionsList;
 
-            this.branchesList = resp.result.value.branchesList.map(y =>
+            this.branchesList = resp.output.branchesList.map(y =>
               this.makeBranchItem({
                 branchId: y.branchId,
                 repoId: y.repoId,

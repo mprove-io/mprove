@@ -40,8 +40,8 @@ import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
-import type { ToBackendGetLlmModelPartsInput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
-import type { ToBackendGetLlmModelPartsOutput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-response';
+import type { ToBackendGetLlmModelPartsOutput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-output';
+import type { ToBackendGetLlmModelPartsRequest } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -68,7 +68,7 @@ export class GetLlmModelPartsController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendGetLlmModelPartsRequestDto
   ): Promise<ToBackendGetLlmModelPartsOutput> {
-    let bodyPayload: ToBackendGetLlmModelPartsInput = body.input;
+    let bodyPayload: ToBackendGetLlmModelPartsRequest['input'] = body.input;
 
     let { projectId, providerId } = bodyPayload;
 

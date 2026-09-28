@@ -6,8 +6,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type { ToBackendMergeRepoInput } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-request';
-import type { ToBackendMergeRepoOutput } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-response';
+import type { ToBackendMergeRepoOutput } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-output';
+import type { ToBackendMergeRepoRequest } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -86,7 +86,7 @@ export class MergeCommand extends CustomCommand {
       ? apiKey.split('-')[2].toLowerCase()
       : apiKey.split('-')[2];
 
-    let mergeRepoReqPayload: ToBackendMergeRepoInput = {
+    let mergeRepoReqPayload: ToBackendMergeRepoRequest['input'] = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,

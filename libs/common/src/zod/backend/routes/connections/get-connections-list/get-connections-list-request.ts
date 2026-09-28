@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendGetConnectionsListInput = {
-  projectId: string;
-  envId: string;
-};
-
 export type ToBackendGetConnectionsListRequest = {
+  operation: 'getConnectionsList';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetConnectionsListInput;
+  input: {
+    projectId: string;
+    envId: string;
+  };
 };
-
-export let zToBackendGetConnectionsListInput = z
-  .object({
-    projectId: z.string(),
-    envId: z.string()
-  })
-  .meta({ id: 'ToBackendGetConnectionsListInput' });
 
 export let zToBackendGetConnectionsListRequest = z
   .strictObject({
+    operation: z.literal('getConnectionsList'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetConnectionsListInput
+    input: z
+      .object({
+        projectId: z.string(),
+        envId: z.string()
+      })
+      .meta({ id: 'ToBackendGetConnectionsListInput' })
   })
   .meta({ id: 'ToBackendGetConnectionsListRequest' });
-
-assertTypesEqual<
-  ToBackendGetConnectionsListInput,
-  z.infer<typeof zToBackendGetConnectionsListInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetConnectionsListRequest,

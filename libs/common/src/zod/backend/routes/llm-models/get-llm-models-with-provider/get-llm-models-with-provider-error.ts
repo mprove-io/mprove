@@ -1,13 +1,22 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendError,
-  zBackendError
-} from '#common/zod/backend/errors/backend-error';
+  type BackendMemberDoesNotExistError,
+  zBackendMemberDoesNotExistError
+} from '#common/zod/backend/errors/backend-member-does-not-exist-error';
+import {
+  type BackendProjectDoesNotExistError,
+  zBackendProjectDoesNotExistError
+} from '#common/zod/backend/errors/backend-project-does-not-exist-error';
 
-export type ToBackendGetLlmModelsWithProviderError = BackendError;
+export type ToBackendGetLlmModelsWithProviderError =
+  | BackendMemberDoesNotExistError
+  | BackendProjectDoesNotExistError;
 
-export let zToBackendGetLlmModelsWithProviderError = zBackendError;
+export let zToBackendGetLlmModelsWithProviderError = z.discriminatedUnion(
+  'code',
+  [zBackendMemberDoesNotExistError, zBackendProjectDoesNotExistError]
+);
 
 assertTypesEqual<
   ToBackendGetLlmModelsWithProviderError,

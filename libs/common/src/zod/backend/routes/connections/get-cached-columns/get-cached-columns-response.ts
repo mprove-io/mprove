@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type CachedColumn,
-  zCachedColumn
-} from '#common/zod/backend/connections/cached-column';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetCachedColumnsOutput,
+  zToBackendGetCachedColumnsOutput
+} from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-output';
 import {
   type ToBackendGetCachedColumnsError,
   zToBackendGetCachedColumnsError
 } from './get-cached-columns-error';
 
-export type ToBackendGetCachedColumnsOutput = {
-  cachedColumns: CachedColumn[];
-};
-
-export type ToBackendGetCachedColumnsResponse = ToBackendResponse<
+export type ToBackendGetCachedColumnsResponse = ToBackendResponseBase<
+  'getCachedColumns',
   ToBackendGetCachedColumnsOutput,
   ToBackendGetCachedColumnsError
 >;
 
-export let zToBackendGetCachedColumnsOutput = z
-  .object({
-    cachedColumns: z.array(zCachedColumn)
-  })
-  .meta({ id: 'ToBackendGetCachedColumnsOutput' });
-
 export let zToBackendGetCachedColumnsResponse = makeToBackendResponseSchema({
-  success: zToBackendGetCachedColumnsOutput,
+  operation: 'getCachedColumns',
+  output: zToBackendGetCachedColumnsOutput,
   error: zToBackendGetCachedColumnsError
 }).meta({ id: 'ToBackendGetCachedColumnsResponse' });
-
-assertTypesEqual<
-  ToBackendGetCachedColumnsOutput,
-  z.infer<typeof zToBackendGetCachedColumnsOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetCachedColumnsResponse,

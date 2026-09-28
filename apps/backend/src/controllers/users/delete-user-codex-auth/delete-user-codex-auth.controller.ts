@@ -23,7 +23,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteUserCodexAuthOutput } from '#common/zod/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-response';
+import type { ToBackendDeleteUserCodexAuthOutput } from '#common/zod/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-output';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

@@ -12,11 +12,9 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { ToBackendCreateGivenOutput } from '#common/zod/backend/routes/givens/create-given/create-given-output';
 import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
-import type {
-  ToBackendCreateGivenOutput,
-  ToBackendCreateGivenResponse
-} from '#common/zod/backend/routes/givens/create-given/create-given-response';
+import type { ToBackendCreateGivenResponse } from '#common/zod/backend/routes/givens/create-given/create-given-response';
 
 let testId = 'backend-create-given__ok';
 
@@ -90,6 +88,7 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateGivenRequest = {
+        operation: 'createGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -121,7 +120,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let output: ToBackendCreateGivenOutput = unwrapBackendResponseOutput({
       response: resp

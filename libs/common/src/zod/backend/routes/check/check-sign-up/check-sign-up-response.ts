@@ -1,38 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCheckSignUpOutput,
+  zToBackendCheckSignUpOutput
+} from '#common/zod/backend/routes/check/check-sign-up/check-sign-up-output';
 import {
   type ToBackendCheckSignUpError,
   zToBackendCheckSignUpError
 } from './check-sign-up-error';
 
-export type ToBackendCheckSignUpOutput = {
-  isRegisterOnlyInvitedUsers: boolean;
-};
-
-export type ToBackendCheckSignUpResponse = ToBackendResponse<
+export type ToBackendCheckSignUpResponse = ToBackendResponseBase<
+  'checkSignUp',
   ToBackendCheckSignUpOutput,
   ToBackendCheckSignUpError
 >;
 
-export let zToBackendCheckSignUpOutput = z
-  .object({
-    isRegisterOnlyInvitedUsers: z.boolean()
-  })
-  .meta({ id: 'ToBackendCheckSignUpOutput' });
-
 export let zToBackendCheckSignUpResponse = makeToBackendResponseSchema({
-  success: zToBackendCheckSignUpOutput,
+  operation: 'checkSignUp',
+  output: zToBackendCheckSignUpOutput,
   error: zToBackendCheckSignUpError
 }).meta({ id: 'ToBackendCheckSignUpResponse' });
-
-assertTypesEqual<
-  ToBackendCheckSignUpOutput,
-  z.infer<typeof zToBackendCheckSignUpOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCheckSignUpResponse,

@@ -12,10 +12,8 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { map, take } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { CachedColumn } from '#common/zod/backend/connections/cached-column';
-import type {
-  ToBackendViewCachedColumnOutput,
-  ToBackendViewCachedColumnResponse
-} from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-response';
+import type { ToBackendViewCachedColumnOutput } from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-output';
+import type { ToBackendViewCachedColumnResponse } from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-response';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../../../shared/shared.module';
 
@@ -96,8 +94,8 @@ export class ViewCachedUniqueValuesDialogComponent implements OnInit {
       .pipe(
         map((resp: ToBackendViewCachedColumnResponse) => {
           setTimeout(() => {
-            if (resp.result?.type === 'Success') {
-              let output: ToBackendViewCachedColumnOutput = resp.result.value;
+            if (resp?.type === 'Success') {
+              let output: ToBackendViewCachedColumnOutput = resp.output;
 
               if (isDefined(output.errorMessage)) {
                 this.dataItem.errorMessage = output.errorMessage;

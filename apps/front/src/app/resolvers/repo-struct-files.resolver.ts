@@ -10,7 +10,7 @@ import {
   PATH_PROJECT
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import type { ToBackendGetRepoInput } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
+import type { ToBackendGetRepoRequest } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
 import type { ToBackendGetRepoResponse } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
@@ -50,7 +50,7 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
     let branchId = route.params[PARAMETER_BRANCH_ID];
     let envId = route.params[PARAMETER_ENV_ID];
 
-    let payload: ToBackendGetRepoInput = {
+    let payload: ToBackendGetRepoRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: branchId,
@@ -65,23 +65,23 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetRepoResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
 
-            this.uiQuery.updatePart({ ...resp.result.value.user.ui });
+            this.uiQuery.updatePart({ ...resp.output.user.ui });
 
-            this.structQuery.update(resp.result.value.struct);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
               branchId: branchId,
               envId: envId,
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
-            this.repoQuery.update(resp.result.value.repo);
+            this.repoQuery.update(resp.output.repo);
 
             return true;
           } else if (
-            resp.result?.type === 'Failure' &&
-            resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp?.type === 'Failure' &&
+            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
               PATH_ORG,

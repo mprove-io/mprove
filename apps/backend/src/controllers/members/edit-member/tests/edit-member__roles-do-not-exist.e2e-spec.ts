@@ -101,6 +101,7 @@ test('1', async t => {
       });
 
       let req: ToBackendEditMemberRequest = {
+        operation: 'editMember',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -133,9 +134,9 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Failure');
-    assert.equal(resp.result.error.message, ErEnum.BACKEND_ROLES_DO_NOT_EXIST);
-    assert.deepEqual(resp.result.error.displayData.roles, ['a', 'b', 'c']);
+    assert.equal(resp.type, 'Failure');
+    assert.equal(resp.error.code, ErEnum.BACKEND_ROLES_DO_NOT_EXIST);
+    assert.deepEqual(resp.error.displayData.roles, ['a', 'b', 'c']);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

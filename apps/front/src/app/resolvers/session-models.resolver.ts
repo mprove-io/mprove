@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { ToBackendGetLlmModelsWithProviderInput } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
+import type { ToBackendGetLlmModelsWithProviderRequest } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
 import type { ToBackendGetLlmModelsWithProviderResponse } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
 import { NavQuery } from '../queries/nav.query';
 import { SessionModelsQuery } from '../queries/session-models.query';
@@ -29,7 +29,7 @@ export class SessionModelsResolver {
         nav = x;
       });
 
-    let payload: ToBackendGetLlmModelsWithProviderInput = {
+    let payload: ToBackendGetLlmModelsWithProviderRequest['input'] = {
       projectId: nav.projectId,
       sessionTypes: [SessionTypeEnum.Explorer, SessionTypeEnum.Editor]
     };
@@ -41,10 +41,10 @@ export class SessionModelsResolver {
       })
       .pipe(
         map((resp: ToBackendGetLlmModelsWithProviderResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.sessionModelsQuery.update({
-              modelsOpencode: resp.result.value.modelsOpencode,
-              modelsAi: resp.result.value.modelsAi
+              modelsOpencode: resp.output.modelsOpencode,
+              modelsAi: resp.output.modelsAi
             });
 
             return true;

@@ -20,11 +20,9 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { ToBackendEditProviderOutput } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-output';
 import type { ToBackendEditProviderRequest } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-request';
-import type {
-  ToBackendEditProviderOutput,
-  ToBackendEditProviderResponse
-} from '#common/zod/backend/routes/providers/edit-provider/edit-provider-response';
+import type { ToBackendEditProviderResponse } from '#common/zod/backend/routes/providers/edit-provider/edit-provider-response';
 
 let testId = 'backend-edit-provider__ok';
 
@@ -137,6 +135,7 @@ test('1', async t => {
       });
 
       let req: ToBackendEditProviderRequest = {
+        operation: 'editProvider',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -191,7 +190,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let output: ToBackendEditProviderOutput = unwrapBackendResponseOutput({
       response: resp

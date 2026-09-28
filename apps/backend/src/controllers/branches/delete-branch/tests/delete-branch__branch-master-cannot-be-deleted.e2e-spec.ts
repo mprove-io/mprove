@@ -86,6 +86,7 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteBranchRequest = {
+        operation: 'deleteBranch',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -115,9 +116,9 @@ test('1', async t => {
       }
     }
 
-    assert.ok(resp.result.type === 'Failure');
+    assert.ok(resp.type === 'Failure');
     assert.equal(
-      resp.result.error.message,
+      resp.error.code,
       ErEnum.BACKEND_DEFAULT_BRANCH_CANNOT_BE_DELETED
     );
 

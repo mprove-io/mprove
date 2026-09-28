@@ -39,7 +39,7 @@ import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduc
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendTestConnectionOutput } from '#common/zod/backend/routes/connections/test-connection/test-connection-response';
+import type { ToBackendTestConnectionOutput } from '#common/zod/backend/routes/connections/test-connection/test-connection-output';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)

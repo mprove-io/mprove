@@ -31,9 +31,9 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
 import type { Role } from '#common/zod/backend/role';
-import type { ToBackendSaveModifyDashboardInput } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
+import type { ToBackendSaveModifyDashboardRequest } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
 import type { ToBackendSaveModifyDashboardResponse } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
-import type { ToBackendGetRolesInput } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesRequest } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/zod/blockml/space';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
@@ -230,7 +230,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
       let newTitle: string = this.titleForm.controls['title'].value;
       let roles = [...this.selectedAccessRoles];
 
-      let payload: ToBackendSaveModifyDashboardInput = {
+      let payload: ToBackendSaveModifyDashboardRequest['input'] = {
         projectId: this.ref.data.projectId,
         repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
@@ -257,13 +257,13 @@ export class EditDashboardInfoDialogComponent implements OnInit {
         })
         .pipe(
           tap(async (resp: ToBackendSaveModifyDashboardResponse) => {
-            if (resp.result?.type === 'Success') {
-              let newDashboard = resp.result.value.dashboard;
+            if (resp?.type === 'Success') {
+              let newDashboard = resp.output.dashboard;
 
               if (isDefined(newDashboard)) {
                 this.dashboardUnitsQuery.update({
-                  dashboardUnitDrafts: resp.result.value.dashboardUnitDrafts,
-                  dashboardSpaceNodes: resp.result.value.dashboardSpaceNodes
+                  dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
+                  dashboardSpaceNodes: resp.output.dashboardSpaceNodes
                 });
 
                 let currentDashboard = this.dashboardQuery.getValue();
@@ -281,7 +281,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
   }
 
   loadRoles() {
-    let payload: ToBackendGetRolesInput = {
+    let payload: ToBackendGetRolesRequest['input'] = {
       projectId: this.ref.data.projectId
     };
 
@@ -294,8 +294,8 @@ export class EditDashboardInfoDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.roles = resp.result.value.roles.sort((a, b) =>
+          if (resp?.type === 'Success') {
+            this.roles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
             this.cd.detectChanges();

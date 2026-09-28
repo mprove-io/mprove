@@ -1,38 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendIsProjectExistOutput,
+  zToBackendIsProjectExistOutput
+} from '#common/zod/backend/routes/projects/is-project-exist/is-project-exist-output';
 import {
   type ToBackendIsProjectExistError,
   zToBackendIsProjectExistError
 } from './is-project-exist-error';
 
-export type ToBackendIsProjectExistOutput = {
-  isExist: boolean;
-};
-
-export type ToBackendIsProjectExistResponse = ToBackendResponse<
+export type ToBackendIsProjectExistResponse = ToBackendResponseBase<
+  'isProjectExist',
   ToBackendIsProjectExistOutput,
   ToBackendIsProjectExistError
 >;
 
-export let zToBackendIsProjectExistOutput = z
-  .object({
-    isExist: z.boolean()
-  })
-  .meta({ id: 'ToBackendIsProjectExistOutput' });
-
 export let zToBackendIsProjectExistResponse = makeToBackendResponseSchema({
-  success: zToBackendIsProjectExistOutput,
+  operation: 'isProjectExist',
+  output: zToBackendIsProjectExistOutput,
   error: zToBackendIsProjectExistError
 }).meta({ id: 'ToBackendIsProjectExistResponse' });
-
-assertTypesEqual<
-  ToBackendIsProjectExistOutput,
-  z.infer<typeof zToBackendIsProjectExistOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendIsProjectExistResponse,

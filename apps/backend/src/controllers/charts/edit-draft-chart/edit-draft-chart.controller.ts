@@ -51,7 +51,7 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendEditDraftChartOutput } from '#common/zod/backend/routes/charts/edit-draft-chart/edit-draft-chart-response';
+import type { ToBackendEditDraftChartOutput } from '#common/zod/backend/routes/charts/edit-draft-chart/edit-draft-chart-output';
 import type { Tile } from '#common/zod/blockml/tile';
 
 @ApiTags('Charts')

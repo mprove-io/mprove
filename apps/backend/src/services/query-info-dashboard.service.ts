@@ -32,7 +32,7 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-response';
+import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-output';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 import { UsersService } from './db/users.service';
 

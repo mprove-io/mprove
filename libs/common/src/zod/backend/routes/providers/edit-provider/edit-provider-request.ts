@@ -19,112 +19,106 @@ import {
   zProviderOptionsOpenAI
 } from '#common/zod/backend/provider-options/provider-options-openai';
 
-export type ToBackendEditProviderInput =
-  | {
-      projectId: string;
-      providerId: typeof OPENAI_PROVIDER_ID;
-      options: ProviderOptionsOpenAI;
-    }
-  | {
-      projectId: string;
-      providerId: typeof ANTHROPIC_PROVIDER_ID;
-      options: ProviderOptionsAnthropic;
-    }
-  | {
-      name: string;
-      projectId: string;
-      providerId: string;
-      options: {
-        baseURL: string;
-        apiKey?: string;
-        headers?: {
-          key: string;
-          value: string;
-        }[];
-        queryParams?: {
-          key: string;
-          value: string;
-        }[];
-      };
-    }
-  | {
-      projectId: string;
-      providerId: typeof CODEX_PROVIDER_ID;
-      options: ProviderOptionsCodex;
-    };
-
 export type ToBackendEditProviderRequest = {
+  operation: 'editProvider';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendEditProviderInput;
+  input:
+    | {
+        projectId: string;
+        providerId: typeof OPENAI_PROVIDER_ID;
+        options: ProviderOptionsOpenAI;
+      }
+    | {
+        projectId: string;
+        providerId: typeof ANTHROPIC_PROVIDER_ID;
+        options: ProviderOptionsAnthropic;
+      }
+    | {
+        name: string;
+        projectId: string;
+        providerId: string;
+        options: {
+          baseURL: string;
+          apiKey?: string;
+          headers?: {
+            key: string;
+            value: string;
+          }[];
+          queryParams?: {
+            key: string;
+            value: string;
+          }[];
+        };
+      }
+    | {
+        projectId: string;
+        providerId: typeof CODEX_PROVIDER_ID;
+        options: ProviderOptionsCodex;
+      };
 };
-
-export let zToBackendEditProviderInput = z
-  .union([
-    z.strictObject({
-      projectId: z.string(),
-      providerId: z.literal(OPENAI_PROVIDER_ID),
-      options: zProviderOptionsOpenAI
-    }),
-    z.strictObject({
-      projectId: z.string(),
-      providerId: z.literal(ANTHROPIC_PROVIDER_ID),
-      options: zProviderOptionsAnthropic
-    }),
-    z.strictObject({
-      name: z.string().trim().min(1).max(100),
-      projectId: z.string(),
-      providerId: z
-        .string()
-        .refine(value => !RESERVED_PROVIDER_IDS.includes(value), {
-          message: 'providerId is reserved for a built-in provider'
-        }),
-      options: z.strictObject({
-        baseURL: z.string().trim().min(1),
-        apiKey: z.string().nullish(),
-        headers: z
-          .array(
-            z.strictObject({
-              key: z.string().trim().min(1),
-              value: z.string()
-            })
-          )
-          .nullish(),
-        queryParams: z
-          .array(
-            z.strictObject({
-              key: z.string().trim().min(1),
-              value: z.string()
-            })
-          )
-          .nullish()
-      })
-    }),
-    z.strictObject({
-      projectId: z.string(),
-      providerId: z.literal(CODEX_PROVIDER_ID),
-      options: zProviderOptionsCodex
-    })
-  ])
-  .meta({ id: 'ToBackendEditProviderInput' });
 
 export let zToBackendEditProviderRequest = z
   .strictObject({
+    operation: z.literal('editProvider'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendEditProviderInput
+    input: z
+      .union([
+        z.strictObject({
+          projectId: z.string(),
+          providerId: z.literal(OPENAI_PROVIDER_ID),
+          options: zProviderOptionsOpenAI
+        }),
+        z.strictObject({
+          projectId: z.string(),
+          providerId: z.literal(ANTHROPIC_PROVIDER_ID),
+          options: zProviderOptionsAnthropic
+        }),
+        z.strictObject({
+          name: z.string().trim().min(1).max(100),
+          projectId: z.string(),
+          providerId: z
+            .string()
+            .refine(value => !RESERVED_PROVIDER_IDS.includes(value), {
+              message: 'providerId is reserved for a built-in provider'
+            }),
+          options: z.strictObject({
+            baseURL: z.string().trim().min(1),
+            apiKey: z.string().nullish(),
+            headers: z
+              .array(
+                z.strictObject({
+                  key: z.string().trim().min(1),
+                  value: z.string()
+                })
+              )
+              .nullish(),
+            queryParams: z
+              .array(
+                z.strictObject({
+                  key: z.string().trim().min(1),
+                  value: z.string()
+                })
+              )
+              .nullish()
+          })
+        }),
+        z.strictObject({
+          projectId: z.string(),
+          providerId: z.literal(CODEX_PROVIDER_ID),
+          options: zProviderOptionsCodex
+        })
+      ])
+      .meta({ id: 'ToBackendEditProviderInput' })
   })
   .transform(item => ({
+    operation: item.operation,
     traceId: item.traceId,
     idempotencyKey: item.idempotencyKey,
     input: item.input
   }))
   .meta({ id: 'ToBackendEditProviderRequest' });
-
-assertTypesEqual<
-  ToBackendEditProviderInput,
-  z.infer<typeof zToBackendEditProviderInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendEditProviderRequest,

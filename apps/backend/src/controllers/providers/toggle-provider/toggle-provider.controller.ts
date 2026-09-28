@@ -29,8 +29,8 @@ import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendToggleProviderInput } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
-import type { ToBackendToggleProviderOutput } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-response';
+import type { ToBackendToggleProviderOutput } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-output';
+import type { ToBackendToggleProviderRequest } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)
@@ -56,7 +56,7 @@ export class ToggleProviderController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendToggleProviderRequestDto
   ) {
-    let bodyPayload: ToBackendToggleProviderInput = body.input;
+    let bodyPayload: ToBackendToggleProviderRequest['input'] = body.input;
 
     let { projectId, providerId, isEnabled } = bodyPayload;
 

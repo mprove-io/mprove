@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendSetProjectAllowTimezonesInput = {
-  projectId: string;
-  allowTimezones: boolean;
-};
-
 export type ToBackendSetProjectAllowTimezonesRequest = {
+  operation: 'setProjectAllowTimezones';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendSetProjectAllowTimezonesInput;
+  input: {
+    projectId: string;
+    allowTimezones: boolean;
+  };
 };
-
-export let zToBackendSetProjectAllowTimezonesInput = z
-  .object({
-    projectId: z.string(),
-    allowTimezones: z.boolean()
-  })
-  .meta({ id: 'ToBackendSetProjectAllowTimezonesInput' });
 
 export let zToBackendSetProjectAllowTimezonesRequest = z
   .strictObject({
+    operation: z.literal('setProjectAllowTimezones'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendSetProjectAllowTimezonesInput
+    input: z
+      .object({
+        projectId: z.string(),
+        allowTimezones: z.boolean()
+      })
+      .meta({ id: 'ToBackendSetProjectAllowTimezonesInput' })
   })
   .meta({ id: 'ToBackendSetProjectAllowTimezonesRequest' });
-
-assertTypesEqual<
-  ToBackendSetProjectAllowTimezonesInput,
-  z.infer<typeof zToBackendSetProjectAllowTimezonesInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetProjectAllowTimezonesRequest,

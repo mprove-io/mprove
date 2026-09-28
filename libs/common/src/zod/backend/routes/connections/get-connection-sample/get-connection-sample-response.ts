@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetConnectionSampleOutput,
+  zToBackendGetConnectionSampleOutput
+} from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 import {
   type ToBackendGetConnectionSampleError,
   zToBackendGetConnectionSampleError
 } from './get-connection-sample-error';
 
-export type ToBackendGetConnectionSampleOutput = {
-  columnNames: string[];
-  rows: string[][];
-  errorMessage?: string;
-};
-
-export type ToBackendGetConnectionSampleResponse = ToBackendResponse<
+export type ToBackendGetConnectionSampleResponse = ToBackendResponseBase<
+  'getConnectionSample',
   ToBackendGetConnectionSampleOutput,
   ToBackendGetConnectionSampleError
 >;
 
-export let zToBackendGetConnectionSampleOutput = z
-  .object({
-    columnNames: z.array(z.string()),
-    rows: z.array(z.array(z.string())),
-    errorMessage: z.string().nullish()
-  })
-  .meta({ id: 'ToBackendGetConnectionSampleOutput' });
-
 export let zToBackendGetConnectionSampleResponse = makeToBackendResponseSchema({
-  success: zToBackendGetConnectionSampleOutput,
+  operation: 'getConnectionSample',
+  output: zToBackendGetConnectionSampleOutput,
   error: zToBackendGetConnectionSampleError
 }).meta({ id: 'ToBackendGetConnectionSampleResponse' });
-
-assertTypesEqual<
-  ToBackendGetConnectionSampleOutput,
-  z.infer<typeof zToBackendGetConnectionSampleOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetConnectionSampleResponse,

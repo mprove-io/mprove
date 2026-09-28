@@ -1,40 +1,30 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type SessionApi, zSessionApi } from '#common/zod/backend/session-api';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSendMessageToEditorSessionOutput,
+  zToBackendSendMessageToEditorSessionOutput
+} from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-output';
 import {
   type ToBackendSendMessageToEditorSessionError,
   zToBackendSendMessageToEditorSessionError
 } from './send-message-to-editor-session-error';
 
-export type ToBackendSendMessageToEditorSessionOutput = {
-  session: SessionApi;
-};
-
-export type ToBackendSendMessageToEditorSessionResponse = ToBackendResponse<
+export type ToBackendSendMessageToEditorSessionResponse = ToBackendResponseBase<
+  'sendMessageToEditorSession',
   ToBackendSendMessageToEditorSessionOutput,
   ToBackendSendMessageToEditorSessionError
 >;
 
-export let zToBackendSendMessageToEditorSessionOutput = z
-  .object({
-    session: zSessionApi
-  })
-  .meta({ id: 'ToBackendSendMessageToEditorSessionOutput' });
-
 export let zToBackendSendMessageToEditorSessionResponse =
   makeToBackendResponseSchema({
-    success: zToBackendSendMessageToEditorSessionOutput,
+    operation: 'sendMessageToEditorSession',
+    output: zToBackendSendMessageToEditorSessionOutput,
     error: zToBackendSendMessageToEditorSessionError
   }).meta({ id: 'ToBackendSendMessageToEditorSessionResponse' });
-
-assertTypesEqual<
-  ToBackendSendMessageToEditorSessionOutput,
-  z.infer<typeof zToBackendSendMessageToEditorSessionOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSendMessageToEditorSessionResponse,

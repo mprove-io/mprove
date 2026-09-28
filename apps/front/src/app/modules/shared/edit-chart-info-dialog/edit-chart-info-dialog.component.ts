@@ -31,9 +31,9 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { ChartUnit } from '#common/zod/backend/chart-unit';
 import type { Role } from '#common/zod/backend/role';
-import type { ToBackendSaveModifyChartInput } from '#common/zod/backend/routes/charts/save-modify-chart/save-modify-chart-request';
+import type { ToBackendSaveModifyChartRequest } from '#common/zod/backend/routes/charts/save-modify-chart/save-modify-chart-request';
 import type { ToBackendSaveModifyChartResponse } from '#common/zod/backend/routes/charts/save-modify-chart/save-modify-chart-response';
-import type { ToBackendGetRolesInput } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesRequest } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/zod/blockml/space';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
@@ -229,7 +229,7 @@ export class EditChartInfoDialogComponent implements OnInit {
 
       let uiState = this.uiQuery.getValue();
 
-      let payload: ToBackendSaveModifyChartInput = {
+      let payload: ToBackendSaveModifyChartRequest['input'] = {
         projectId: this.ref.data.projectId,
         repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
@@ -255,13 +255,13 @@ export class EditChartInfoDialogComponent implements OnInit {
         })
         .pipe(
           tap(async (resp: ToBackendSaveModifyChartResponse) => {
-            if (resp.result?.type === 'Success') {
-              let newChart = resp.result.value.chart;
+            if (resp?.type === 'Success') {
+              let newChart = resp.output.chart;
 
               if (isDefined(newChart)) {
                 this.chartsQuery.update({
-                  chartUnitDrafts: resp.result.value.chartUnitDrafts,
-                  chartSpaceNodes: resp.result.value.chartSpaceNodes
+                  chartUnitDrafts: resp.output.chartUnitDrafts,
+                  chartSpaceNodes: resp.output.chartSpaceNodes
                 });
 
                 let currentChart = this.chartQuery.getValue();
@@ -279,7 +279,7 @@ export class EditChartInfoDialogComponent implements OnInit {
   }
 
   loadRoles() {
-    let payload: ToBackendGetRolesInput = {
+    let payload: ToBackendGetRolesRequest['input'] = {
       projectId: this.ref.data.projectId
     };
 
@@ -292,8 +292,8 @@ export class EditChartInfoDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.roles = resp.result.value.roles.sort((a, b) =>
+          if (resp?.type === 'Success') {
+            this.roles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
             this.cd.detectChanges();

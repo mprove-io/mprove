@@ -4,8 +4,8 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendGetConnectionSampleInput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-request';
-import type { ToBackendGetConnectionSampleOutput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
+import type { ToBackendGetConnectionSampleOutput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-output';
+import type { ToBackendGetConnectionSampleRequest } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -86,7 +86,7 @@ export class GetSampleCommand extends CustomCommand {
 
     let apiKey = this.context.config.mproveCliApiKey;
 
-    let getSampleReqPayload: ToBackendGetConnectionSampleInput = {
+    let getSampleReqPayload: ToBackendGetConnectionSampleRequest['input'] = {
       projectId: this.projectId,
       envId: this.env,
       connectionId: this.connectionId,

@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type Query, zQuery } from '#common/zod/blockml/query';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetQueryOutput,
+  zToBackendGetQueryOutput
+} from '#common/zod/backend/routes/queries/get-query/get-query-output';
 import {
   type ToBackendGetQueryError,
   zToBackendGetQueryError
 } from './get-query-error';
 
-export type ToBackendGetQueryOutput = {
-  query: Query;
-};
-
-export type ToBackendGetQueryResponse = ToBackendResponse<
+export type ToBackendGetQueryResponse = ToBackendResponseBase<
+  'getQuery',
   ToBackendGetQueryOutput,
   ToBackendGetQueryError
 >;
 
-export let zToBackendGetQueryOutput = z
-  .object({
-    query: zQuery
-  })
-  .meta({ id: 'ToBackendGetQueryOutput' });
-
 export let zToBackendGetQueryResponse = makeToBackendResponseSchema({
-  success: zToBackendGetQueryOutput,
+  operation: 'getQuery',
+  output: zToBackendGetQueryOutput,
   error: zToBackendGetQueryError
 }).meta({ id: 'ToBackendGetQueryResponse' });
-
-assertTypesEqual<
-  ToBackendGetQueryOutput,
-  z.infer<typeof zToBackendGetQueryOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetQueryResponse,

@@ -24,7 +24,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCreateOrgOutput } from '#common/zod/backend/routes/orgs/create-org/create-org-response';
+import type { ToBackendCreateOrgOutput } from '#common/zod/backend/routes/orgs/create-org/create-org-output';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)

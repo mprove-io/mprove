@@ -13,7 +13,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetEnvsOutput } from '#common/zod/backend/routes/envs/get-envs/get-envs-response';
+import type { ToBackendGetEnvsOutput } from '#common/zod/backend/routes/envs/get-envs/get-envs-output';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)

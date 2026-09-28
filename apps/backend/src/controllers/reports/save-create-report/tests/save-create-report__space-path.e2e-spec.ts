@@ -18,11 +18,9 @@ import { makeId } from '#common/functions/make-id/make-id';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
+import type { ToBackendSaveCreateReportOutput } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-output';
 import type { ToBackendSaveCreateReportRequest } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-request';
-import type {
-  ToBackendSaveCreateReportOutput,
-  ToBackendSaveCreateReportResponse
-} from '#common/zod/backend/routes/reports/save-create-report/save-create-report-response';
+import type { ToBackendSaveCreateReportResponse } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-response';
 
 let testId = 'backend-save-create-report__space-path';
 
@@ -97,6 +95,7 @@ test('1', async t => {
       });
 
       let req1: ToBackendCreateDraftReportRequest = {
+        operation: 'createDraftReport',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -127,6 +126,7 @@ test('1', async t => {
         .reportId;
 
       let req2: ToBackendSaveCreateReportRequest = {
+        operation: 'saveCreateReport',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -167,7 +167,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let output: ToBackendSaveCreateReportOutput = unwrapBackendResponseOutput({
       response: resp

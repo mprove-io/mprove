@@ -21,7 +21,7 @@ import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { OrgUsersItem } from '#common/zod/backend/org-users/org-users-item';
-import type { ToBackendGetOrgUsersOutput } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
+import type { ToBackendGetOrgUsersOutput } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-output';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

@@ -1,40 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendCommitRepoInput = {
-  projectId: string;
-  branchId: string;
-  repoId: string;
-  commitMessage: string;
-};
-
 export type ToBackendCommitRepoRequest = {
+  operation: 'commitRepo';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendCommitRepoInput;
+  input: {
+    projectId: string;
+    branchId: string;
+    repoId: string;
+    commitMessage: string;
+  };
 };
-
-export let zToBackendCommitRepoInput = z
-  .object({
-    projectId: z.string(),
-    branchId: z.string(),
-    repoId: z.string(),
-    commitMessage: z.string()
-  })
-  .meta({ id: 'ToBackendCommitRepoInput' });
 
 export let zToBackendCommitRepoRequest = z
   .strictObject({
+    operation: z.literal('commitRepo'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendCommitRepoInput
+    input: z
+      .object({
+        projectId: z.string(),
+        branchId: z.string(),
+        repoId: z.string(),
+        commitMessage: z.string()
+      })
+      .meta({ id: 'ToBackendCommitRepoInput' })
   })
   .meta({ id: 'ToBackendCommitRepoRequest' });
-
-assertTypesEqual<
-  ToBackendCommitRepoInput,
-  z.infer<typeof zToBackendCommitRepoInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCommitRepoRequest,

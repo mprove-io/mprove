@@ -18,7 +18,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendPauseEditorSessionOutput } from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-response';
+import type { ToBackendPauseEditorSessionOutput } from '#common/zod/backend/routes/sessions/pause-editor-session/pause-editor-session-output';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

@@ -132,6 +132,7 @@ test('1', async t => {
       // to backend
 
       let getRebuildStructReq: ToBackendGetRebuildStructRequest = {
+        operation: 'getRebuildStruct',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -166,7 +167,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

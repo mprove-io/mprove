@@ -1,13 +1,58 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendError,
-  zBackendError
-} from '#common/zod/backend/errors/backend-error';
+  type BackendErrorResponseFromDiskError,
+  zBackendErrorResponseFromDiskError
+} from '#common/zod/backend/errors/backend-error-response-from-disk-error';
+import {
+  type BackendMemberDoesNotExistError,
+  zBackendMemberDoesNotExistError
+} from '#common/zod/backend/errors/backend-member-does-not-exist-error';
+import {
+  type BackendMemberIsNotAdminError,
+  zBackendMemberIsNotAdminError
+} from '#common/zod/backend/errors/backend-member-is-not-admin-error';
+import {
+  type BackendProjectDoesNotExistError,
+  zBackendProjectDoesNotExistError
+} from '#common/zod/backend/errors/backend-project-does-not-exist-error';
+import {
+  type BackendRpcInvalidResponseFormatError,
+  zBackendRpcInvalidResponseFormatError
+} from '#common/zod/backend/errors/backend-rpc-invalid-response-format-error';
+import {
+  type BackendRpcTimeoutError,
+  zBackendRpcTimeoutError
+} from '#common/zod/backend/errors/backend-rpc-timeout-error';
+import {
+  type BackendTransactionRetryError,
+  zBackendTransactionRetryError
+} from '#common/zod/backend/errors/backend-transaction-retry-error';
+import {
+  type BackendWrongTotalDiskShardsError,
+  zBackendWrongTotalDiskShardsError
+} from '#common/zod/backend/errors/backend-wrong-total-disk-shards-error';
 
-export type ToBackendDeleteProjectError = BackendError;
+export type ToBackendDeleteProjectError =
+  | BackendErrorResponseFromDiskError
+  | BackendMemberDoesNotExistError
+  | BackendMemberIsNotAdminError
+  | BackendProjectDoesNotExistError
+  | BackendRpcInvalidResponseFormatError
+  | BackendRpcTimeoutError
+  | BackendTransactionRetryError
+  | BackendWrongTotalDiskShardsError;
 
-export let zToBackendDeleteProjectError = zBackendError;
+export let zToBackendDeleteProjectError = z.discriminatedUnion('code', [
+  zBackendErrorResponseFromDiskError,
+  zBackendMemberDoesNotExistError,
+  zBackendMemberIsNotAdminError,
+  zBackendProjectDoesNotExistError,
+  zBackendRpcInvalidResponseFormatError,
+  zBackendRpcTimeoutError,
+  zBackendTransactionRetryError,
+  zBackendWrongTotalDiskShardsError
+]);
 
 assertTypesEqual<
   ToBackendDeleteProjectError,

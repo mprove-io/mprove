@@ -1,38 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendIsOrgExistOutput,
+  zToBackendIsOrgExistOutput
+} from '#common/zod/backend/routes/orgs/is-org-exist/is-org-exist-output';
 import {
   type ToBackendIsOrgExistError,
   zToBackendIsOrgExistError
 } from './is-org-exist-error';
 
-export type ToBackendIsOrgExistOutput = {
-  isExist: boolean;
-};
-
-export type ToBackendIsOrgExistResponse = ToBackendResponse<
+export type ToBackendIsOrgExistResponse = ToBackendResponseBase<
+  'isOrgExist',
   ToBackendIsOrgExistOutput,
   ToBackendIsOrgExistError
 >;
 
-export let zToBackendIsOrgExistOutput = z
-  .object({
-    isExist: z.boolean()
-  })
-  .meta({ id: 'ToBackendIsOrgExistOutput' });
-
 export let zToBackendIsOrgExistResponse = makeToBackendResponseSchema({
-  success: zToBackendIsOrgExistOutput,
+  operation: 'isOrgExist',
+  output: zToBackendIsOrgExistOutput,
   error: zToBackendIsOrgExistError
 }).meta({ id: 'ToBackendIsOrgExistResponse' });
-
-assertTypesEqual<
-  ToBackendIsOrgExistOutput,
-  z.infer<typeof zToBackendIsOrgExistOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendIsOrgExistResponse,

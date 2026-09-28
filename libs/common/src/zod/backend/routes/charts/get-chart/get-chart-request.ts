@@ -2,44 +2,37 @@ import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import { zTimezone } from '#common/zod/z-timezone';
 
-export type ToBackendGetChartInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-  chartId: string;
-  timezone: string;
-};
-
 export type ToBackendGetChartRequest = {
+  operation: 'getChart';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetChartInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    chartId: string;
+    timezone: string;
+  };
 };
-
-export let zToBackendGetChartInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string(),
-    chartId: z.string(),
-    timezone: zTimezone
-  })
-  .meta({ id: 'ToBackendGetChartInput' });
 
 export let zToBackendGetChartRequest = z
   .strictObject({
+    operation: z.literal('getChart'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetChartInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string(),
+        chartId: z.string(),
+        timezone: zTimezone
+      })
+      .meta({ id: 'ToBackendGetChartInput' })
   })
   .meta({ id: 'ToBackendGetChartRequest' });
-
-assertTypesEqual<
-  ToBackendGetChartInput,
-  z.infer<typeof zToBackendGetChartInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetChartRequest,

@@ -30,7 +30,7 @@ import {
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ToBackendCreateBranchInput } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
 import type { ToBackendCreateBranchResponse } from '#common/zod/backend/routes/branches/create-branch/create-branch-response';
 import type { BranchItem } from '#common/zod/front/branch-item';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
@@ -169,7 +169,7 @@ export class CreateBranchDialogComponent implements OnInit {
     let repoId =
       this.targetRepoType === RepoTypeEnum.Production ? PROD_REPO_ID : userId;
 
-    let payload: ToBackendCreateBranchInput = {
+    let payload: ToBackendCreateBranchRequest['input'] = {
       projectId: this.ref.data.projectId,
       newBranchId: this.createBranchForm.value.branchId,
       fromBranchId: this.selectedBranchItem.branchId,
@@ -185,7 +185,7 @@ export class CreateBranchDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateBranchResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
               this.ref.data.orgId,

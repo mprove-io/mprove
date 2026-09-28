@@ -26,7 +26,7 @@ import type { QueryInfoQuery } from '#common/zod/backend/query-info/query-info-q
 import type { QueryInfoReport } from '#common/zod/backend/query-info/query-info-report';
 import type { QueryInfoRow } from '#common/zod/backend/query-info/query-info-row';
 import type { QueryInfoTile } from '#common/zod/backend/query-info/query-info-tile';
-import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-response';
+import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-output';
 
 @Injectable()
 export class GetQueryInfoService {

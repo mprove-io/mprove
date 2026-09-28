@@ -1,35 +1,30 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCloseExplorerSessionTabOutput,
+  zToBackendCloseExplorerSessionTabOutput
+} from '#common/zod/backend/routes/sessions/close-explorer-session-tab/close-explorer-session-tab-output';
 import {
   type ToBackendCloseExplorerSessionTabError,
   zToBackendCloseExplorerSessionTabError
 } from './close-explorer-session-tab-error';
 
-export type ToBackendCloseExplorerSessionTabOutput = Record<string, never>;
-
-export type ToBackendCloseExplorerSessionTabResponse = ToBackendResponse<
+export type ToBackendCloseExplorerSessionTabResponse = ToBackendResponseBase<
+  'closeExplorerSessionTab',
   ToBackendCloseExplorerSessionTabOutput,
   ToBackendCloseExplorerSessionTabError
 >;
 
-export let zToBackendCloseExplorerSessionTabOutput = z
-  .object({})
-  .meta({ id: 'ToBackendCloseExplorerSessionTabOutput' });
-
 export let zToBackendCloseExplorerSessionTabResponse =
   makeToBackendResponseSchema({
-    success: zToBackendCloseExplorerSessionTabOutput,
+    operation: 'closeExplorerSessionTab',
+    output: zToBackendCloseExplorerSessionTabOutput,
     error: zToBackendCloseExplorerSessionTabError
   }).meta({ id: 'ToBackendCloseExplorerSessionTabResponse' });
-
-assertTypesEqual<
-  ToBackendCloseExplorerSessionTabOutput,
-  z.infer<typeof zToBackendCloseExplorerSessionTabOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCloseExplorerSessionTabResponse,

@@ -18,9 +18,9 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { MconfigX } from '#common/zod/backend/mconfig-x';
-import type { ToBackendGetQueryInput } from '#common/zod/backend/routes/queries/get-query/get-query-request';
+import type { ToBackendGetQueryRequest } from '#common/zod/backend/routes/queries/get-query/get-query-request';
 import type { ToBackendGetQueryResponse } from '#common/zod/backend/routes/queries/get-query/get-query-response';
-import type { ToBackendRunQueriesInput } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
+import type { ToBackendRunQueriesRequest } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
 import type { ToBackendRunQueriesResponse } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { Query } from '#common/zod/blockml/query';
@@ -163,7 +163,7 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendRunQueriesInput = {
+    let payload: ToBackendRunQueriesRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -178,8 +178,8 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.result?.type === 'Success') {
-            let runningQuery = resp.result.value.runningQueries[0];
+          if (resp?.type === 'Success') {
+            let runningQuery = resp.output.runningQueries[0];
 
             this.query = Object.assign(runningQuery, {
               sql: this.query.sql,
@@ -202,7 +202,7 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
           if (this.query?.status === QueryStatusEnum.Running) {
             let nav = this.navQuery.getValue();
 
-            let payload: ToBackendGetQueryInput = {
+            let payload: ToBackendGetQueryRequest['input'] = {
               projectId: nav.projectId,
               branchId: nav.branchId,
               envId: nav.envId,
@@ -220,8 +220,8 @@ export class ExplorerChartComponent implements OnInit, OnChanges, OnDestroy {
           return of(undefined);
         }),
         tap((resp: ToBackendGetQueryResponse | undefined) => {
-          if (resp?.result?.type === 'Success') {
-            this.query = resp.result.value.query;
+          if (resp?.type === 'Success') {
+            this.query = resp.output.query;
             this.updateChartData();
 
             if (this.query.status !== QueryStatusEnum.Running) {

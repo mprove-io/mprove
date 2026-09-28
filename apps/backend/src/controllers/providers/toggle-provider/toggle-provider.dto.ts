@@ -1,4 +1,5 @@
 import { createZodDto } from 'nestjs-zod';
+import { createBackendResponseDto } from '#backend/functions/create-backend-response-dto';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
 import { zToBackendToggleProviderRequest } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
 import { zToBackendToggleProviderResponse } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-response';
@@ -7,6 +8,6 @@ export class ToBackendToggleProviderRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendToggleProviderRequest })
 ) {}
 
-export class ToBackendToggleProviderResponseDto extends createZodDto(
-  zodStripCustom({ schema: zToBackendToggleProviderResponse })
+export class ToBackendToggleProviderResponseDto extends createBackendResponseDto(
+  { schema: zToBackendToggleProviderResponse }
 ) {}

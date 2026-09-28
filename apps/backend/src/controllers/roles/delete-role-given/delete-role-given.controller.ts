@@ -25,7 +25,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteRoleGivenOutput } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-response';
+import type { ToBackendDeleteRoleGivenOutput } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-output';
 
 @ApiTags('Roles')
 @UseGuards(ThrottlerUserIdGuard)

@@ -39,7 +39,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendRegisterUserOutput } from '#common/zod/backend/routes/users/register-user/register-user-response';
+import type { ToBackendRegisterUserOutput } from '#common/zod/backend/routes/users/register-user/register-user-output';
 
 @ApiTags('Users')
 @SkipJwtCheck()

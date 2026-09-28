@@ -132,6 +132,7 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteLlmModelRequest = {
+        operation: 'deleteLlmModel',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -178,7 +179,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let { serverTs, ...providerWithoutServerTs } = unwrapBackendResponseOutput({
       response: resp

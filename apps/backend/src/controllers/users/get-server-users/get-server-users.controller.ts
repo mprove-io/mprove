@@ -24,7 +24,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetServerUsersOutput } from '#common/zod/backend/routes/users/get-server-users/get-server-users-response';
+import type { ToBackendGetServerUsersOutput } from '#common/zod/backend/routes/users/get-server-users/get-server-users-output';
 import type { ServerUsersItem } from '#common/zod/backend/users/server-users-item';
 import type { ServerUsersMembershipItem } from '#common/zod/backend/users/server-users-membership-item';
 

@@ -14,7 +14,7 @@ import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_DELETED_PROJECT_NAME
 } from '#common/constants/top-front';
-import type { ToBackendDeleteProjectInput } from '#common/zod/backend/routes/projects/delete-project/delete-project-request';
+import type { ToBackendDeleteProjectRequest } from '#common/zod/backend/routes/projects/delete-project/delete-project-request';
 import type { ToBackendDeleteProjectResponse } from '#common/zod/backend/routes/projects/delete-project/delete-project-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
@@ -58,7 +58,7 @@ export class DeleteProjectDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendDeleteProjectInput = {
+    let payload: ToBackendDeleteProjectRequest['input'] = {
       projectId: this.ref.data.projectId
     };
 
@@ -71,7 +71,7 @@ export class DeleteProjectDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteProjectResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             localStorage.setItem(
               LOCAL_STORAGE_DELETED_PROJECT_NAME,
               this.ref.data.projectName

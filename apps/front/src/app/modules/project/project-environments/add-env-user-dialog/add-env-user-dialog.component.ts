@@ -19,12 +19,10 @@ import { map, take, tap } from 'rxjs/operators';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { Env } from '#common/zod/backend/env';
 import type { EnvUser } from '#common/zod/backend/env-user';
-import type { ToBackendCreateEnvUserInput } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-request';
-import type {
-  ToBackendCreateEnvUserOutput,
-  ToBackendCreateEnvUserResponse
-} from '#common/zod/backend/routes/envs/create-env-user/create-env-user-response';
-import type { ToBackendGetMembersListInput } from '#common/zod/backend/routes/members/get-members-list/get-members-list-request';
+import type { ToBackendCreateEnvUserOutput } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-output';
+import type { ToBackendCreateEnvUserRequest } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-request';
+import type { ToBackendCreateEnvUserResponse } from '#common/zod/backend/routes/envs/create-env-user/create-env-user-response';
+import type { ToBackendGetMembersListRequest } from '#common/zod/backend/routes/members/get-members-list/get-members-list-request';
 import type { ToBackendGetMembersListResponse } from '#common/zod/backend/routes/members/get-members-list/get-members-list-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
@@ -88,7 +86,7 @@ export class AddEnvUserDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendGetMembersListInput = {
+    let payload: ToBackendGetMembersListRequest['input'] = {
       projectId: env.projectId
     };
 
@@ -124,7 +122,7 @@ export class AddEnvUserDialogComponent implements OnInit {
 
     let dataEnv: Env = this.ref.data.env;
 
-    let payload: ToBackendCreateEnvUserInput = {
+    let payload: ToBackendCreateEnvUserRequest['input'] = {
       projectId: dataEnv.projectId,
       envId: dataEnv.envId,
       envUserId: this.addEnvUserForm.value.envUserId
@@ -140,8 +138,8 @@ export class AddEnvUserDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateEnvUserResponse) => {
-          if (resp.result?.type === 'Success') {
-            let output: ToBackendCreateEnvUserOutput = resp.result.value;
+          if (resp?.type === 'Success') {
+            let output: ToBackendCreateEnvUserOutput = resp.output;
 
             this.memberQuery.update(output.userMember);
 

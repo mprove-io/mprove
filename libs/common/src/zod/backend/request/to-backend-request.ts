@@ -1,18 +1,4 @@
-import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import type { ToBackendOperation } from './to-backend-operation';
+import type { ToBackendRequestForOperation } from './to-backend-request-for-operation';
 
-export type ToBackendRequest = {
-  traceId: string;
-  idempotencyKey: string;
-  input: unknown;
-};
-
-export let zToBackendRequest = z.strictObject({
-  traceId: z.string(),
-  idempotencyKey: z.string(),
-  input: z.unknown()
-});
-
-assertTypesEqual<ToBackendRequest, z.infer<typeof zToBackendRequest>>({
-  value: true
-});
+export type ToBackendRequest = ToBackendRequestForOperation<ToBackendOperation>;

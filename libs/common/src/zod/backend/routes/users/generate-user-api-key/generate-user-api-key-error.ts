@@ -1,13 +1,28 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendError,
-  zBackendError
-} from '#common/zod/backend/errors/backend-error';
+  type BackendHashSecretIsNotDefinedError,
+  zBackendHashSecretIsNotDefinedError
+} from '#common/zod/backend/errors/backend-hash-secret-is-not-defined-error';
+import {
+  type BackendRestrictedUserError,
+  zBackendRestrictedUserError
+} from '#common/zod/backend/errors/backend-restricted-user-error';
+import {
+  type BackendTransactionRetryError,
+  zBackendTransactionRetryError
+} from '#common/zod/backend/errors/backend-transaction-retry-error';
 
-export type ToBackendGenerateUserApiKeyError = BackendError;
+export type ToBackendGenerateUserApiKeyError =
+  | BackendHashSecretIsNotDefinedError
+  | BackendRestrictedUserError
+  | BackendTransactionRetryError;
 
-export let zToBackendGenerateUserApiKeyError = zBackendError;
+export let zToBackendGenerateUserApiKeyError = z.discriminatedUnion('code', [
+  zBackendHashSecretIsNotDefinedError,
+  zBackendRestrictedUserError,
+  zBackendTransactionRetryError
+]);
 
 assertTypesEqual<
   ToBackendGenerateUserApiKeyError,

@@ -1,38 +1,31 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendCreateEnvUserInput = {
-  projectId: string;
-  envId: string;
-  envUserId: string;
-};
-
 export type ToBackendCreateEnvUserRequest = {
+  operation: 'createEnvUser';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendCreateEnvUserInput;
+  input: {
+    projectId: string;
+    envId: string;
+    envUserId: string;
+  };
 };
-
-export let zToBackendCreateEnvUserInput = z
-  .object({
-    projectId: z.string(),
-    envId: z.string(),
-    envUserId: z.string()
-  })
-  .meta({ id: 'ToBackendCreateEnvUserInput' });
 
 export let zToBackendCreateEnvUserRequest = z
   .strictObject({
+    operation: z.literal('createEnvUser'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendCreateEnvUserInput
+    input: z
+      .object({
+        projectId: z.string(),
+        envId: z.string(),
+        envUserId: z.string()
+      })
+      .meta({ id: 'ToBackendCreateEnvUserInput' })
   })
   .meta({ id: 'ToBackendCreateEnvUserRequest' });
-
-assertTypesEqual<
-  ToBackendCreateEnvUserInput,
-  z.infer<typeof zToBackendCreateEnvUserInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateEnvUserRequest,

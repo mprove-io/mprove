@@ -17,7 +17,7 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { LlmModelWithProvider } from '#common/zod/backend/llm-models/llm-model-with-provider';
-import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
+import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-output';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)

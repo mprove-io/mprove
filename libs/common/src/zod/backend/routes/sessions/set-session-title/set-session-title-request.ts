@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendSetSessionTitleInput = {
-  sessionId: string;
-  title: string;
-};
-
 export type ToBackendSetSessionTitleRequest = {
+  operation: 'setSessionTitle';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendSetSessionTitleInput;
+  input: {
+    sessionId: string;
+    title: string;
+  };
 };
-
-export let zToBackendSetSessionTitleInput = z
-  .object({
-    sessionId: z.string(),
-    title: z.string()
-  })
-  .meta({ id: 'ToBackendSetSessionTitleInput' });
 
 export let zToBackendSetSessionTitleRequest = z
   .strictObject({
+    operation: z.literal('setSessionTitle'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendSetSessionTitleInput
+    input: z
+      .object({
+        sessionId: z.string(),
+        title: z.string()
+      })
+      .meta({ id: 'ToBackendSetSessionTitleInput' })
   })
   .meta({ id: 'ToBackendSetSessionTitleRequest' });
-
-assertTypesEqual<
-  ToBackendSetSessionTitleInput,
-  z.infer<typeof zToBackendSetSessionTitleInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetSessionTitleRequest,

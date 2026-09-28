@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Org, zOrg } from '#common/zod/backend/org';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSetOrgOwnerOutput,
+  zToBackendSetOrgOwnerOutput
+} from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-output';
 import {
   type ToBackendSetOrgOwnerError,
   zToBackendSetOrgOwnerError
 } from './set-org-owner-error';
 
-export type ToBackendSetOrgOwnerOutput = {
-  org: Org;
-};
-
-export type ToBackendSetOrgOwnerResponse = ToBackendResponse<
+export type ToBackendSetOrgOwnerResponse = ToBackendResponseBase<
+  'setOrgOwner',
   ToBackendSetOrgOwnerOutput,
   ToBackendSetOrgOwnerError
 >;
 
-export let zToBackendSetOrgOwnerOutput = z
-  .object({
-    org: zOrg
-  })
-  .meta({ id: 'ToBackendSetOrgOwnerOutput' });
-
 export let zToBackendSetOrgOwnerResponse = makeToBackendResponseSchema({
-  success: zToBackendSetOrgOwnerOutput,
+  operation: 'setOrgOwner',
+  output: zToBackendSetOrgOwnerOutput,
   error: zToBackendSetOrgOwnerError
 }).meta({ id: 'ToBackendSetOrgOwnerResponse' });
-
-assertTypesEqual<
-  ToBackendSetOrgOwnerOutput,
-  z.infer<typeof zToBackendSetOrgOwnerOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetOrgOwnerResponse,

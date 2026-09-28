@@ -13,7 +13,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetUserGivensOutput } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-response';
+import type { ToBackendGetUserGivensOutput } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-output';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

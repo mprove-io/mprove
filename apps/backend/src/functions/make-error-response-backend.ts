@@ -23,8 +23,6 @@ export function makeErrorResponseBackend(item: {
     method: method,
     mproveVersion: mproveVersion,
     duration: duration,
-    isRemoveErrorData:
-      cs.get<BackendConfig['backendEnv']>('backendEnv') === BackendEnvEnum.PROD,
     logResponseError: false, // logged already in log-response-backend.ts
     // logResponseError: cs.get<BackendConfig['backendLogResponseError']>(
     //   'backendLogResponseError'

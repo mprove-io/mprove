@@ -27,7 +27,7 @@ import {
 } from '#common/constants/providers';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendCreateProviderInput } from '#common/zod/backend/routes/providers/create-provider/create-provider-request';
+import type { ToBackendCreateProviderRequest } from '#common/zod/backend/routes/providers/create-provider/create-provider-request';
 import type { ToBackendCreateProviderResponse } from '#common/zod/backend/routes/providers/create-provider/create-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
@@ -206,7 +206,7 @@ export class AddProviderDialogComponent implements OnInit {
 
     let value = this.addProviderForm.getRawValue();
     let type: ProviderTypeEnum = value.type;
-    let payload: ToBackendCreateProviderInput;
+    let payload: ToBackendCreateProviderRequest['input'];
 
     if (type === ProviderTypeEnum.OpenAICompatible) {
       payload = {
@@ -268,12 +268,12 @@ export class AddProviderDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateProviderResponse) => {
-          if (resp.result?.type !== 'Success') {
+          if (resp?.type !== 'Success') {
             return;
           }
           let providers = this.providersQuery.getValue().providers;
-          let newProviders = [...providers, resp.result.value.provider].sort(
-            (a, b) => a.name.localeCompare(b.name)
+          let newProviders = [...providers, resp.output.provider].sort((a, b) =>
+            a.name.localeCompare(b.name)
           );
           this.providersQuery.updatePart({ providers: newProviders });
         }),

@@ -156,6 +156,7 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateLlmModelRequest = {
+        operation: 'createLlmModel',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -203,6 +204,7 @@ test('1', async t => {
       });
 
       let codexReq: ToBackendCreateLlmModelRequest = {
+        operation: 'createLlmModel',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -286,9 +288,9 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
-    assert.equal(codexResp.result.type, 'Success');
+    assert.equal(codexResp.type, 'Success');
 
     let {
       serverTs,

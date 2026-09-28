@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendSetProjectInfoInput } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-request';
+import type { ToBackendSetProjectInfoRequest } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-request';
 import type { ToBackendSetProjectInfoResponse } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -73,7 +73,7 @@ export class EditProjectNameDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendSetProjectInfoInput = {
+    let payload: ToBackendSetProjectInfoRequest['input'] = {
       projectId: this.ref.data.projectId,
       name: this.editProjectNameForm.value.projectName
     };
@@ -88,8 +88,8 @@ export class EditProjectNameDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetProjectInfoResponse) => {
-          if (resp.result?.type === 'Success') {
-            let project = resp.result.value.project;
+          if (resp?.type === 'Success') {
+            let project = resp.output.project;
             this.projectQuery.update(project);
             this.navQuery.updatePart({
               projectId: project.projectId,

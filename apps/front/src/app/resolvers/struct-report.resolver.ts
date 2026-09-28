@@ -12,7 +12,7 @@ import {
 import { ErEnum } from '#common/enums/er.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetReportInput } from '#common/zod/backend/routes/reports/get-report/get-report-request';
+import type { ToBackendGetReportRequest } from '#common/zod/backend/routes/reports/get-report/get-report-request';
 import type { ToBackendGetReportResponse } from '#common/zod/backend/routes/reports/get-report/get-report-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
@@ -114,7 +114,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    let payload: ToBackendGetReportInput = {
+    let payload: ToBackendGetReportRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -133,37 +133,37 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetReportResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
 
-            this.structQuery.update(resp.result.value.struct);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
-            this.reportQuery.update(resp.result.value.report);
+            this.reportQuery.update(resp.output.report);
 
             let uiState = this.uiQuery.getValue();
 
             if (
-              uiState.timezone !== resp.result.value.report.timezone ||
-              uiState.timeSpec !== resp.result.value.report.timeSpec ||
+              uiState.timezone !== resp.output.report.timezone ||
+              uiState.timeSpec !== resp.output.report.timeSpec ||
               !equal(
                 uiState.timeRangeFraction,
-                resp.result.value.report.timeRangeFraction
+                resp.output.report.timeRangeFraction
               )
             ) {
               this.uiQuery.updatePart({
-                timezone: resp.result.value.report.timezone,
-                timeSpec: resp.result.value.report.timeSpec,
-                timeRangeFraction: resp.result.value.report.timeRangeFraction
+                timezone: resp.output.report.timezone,
+                timeSpec: resp.output.report.timeSpec,
+                timeRangeFraction: resp.output.report.timeRangeFraction
               });
             }
 
             return true;
           } else if (
-            resp.result?.type === 'Failure' &&
-            resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp?.type === 'Failure' &&
+            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
               PATH_ORG,

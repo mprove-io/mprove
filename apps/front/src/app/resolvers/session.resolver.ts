@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PARAMETER_SESSION_ID } from '#common/constants/top';
-import type { ToBackendGetSessionInput } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
+import type { ToBackendGetSessionRequest } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
 import type { ToBackendGetSessionResponse } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
 import { SessionsQuery } from '../queries/sessions.query';
 import { ApiService } from '../services/api.service';
@@ -25,7 +25,7 @@ export class SessionResolver {
   ): Observable<boolean> {
     let sessionId = route.params[PARAMETER_SESSION_ID];
 
-    let payload: ToBackendGetSessionInput = {
+    let payload: ToBackendGetSessionRequest['input'] = {
       sessionId: sessionId,
       isFetchFromOpencode: true
     };
@@ -37,13 +37,13 @@ export class SessionResolver {
       })
       .pipe(
         map((resp: ToBackendGetSessionResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.sessionEventsService.resetAll();
 
-            if (resp.result.value.sessions.length > 0) {
+            if (resp.output.sessions.length > 0) {
               let existing = this.sessionsQuery.getValue().sessions;
               let merged = [...existing];
-              resp.result.value.sessions.map(incoming => {
+              resp.output.sessions.map(incoming => {
                 let idx = merged.findIndex(
                   s => s.sessionId === incoming.sessionId
                 );
@@ -60,7 +60,7 @@ export class SessionResolver {
             }
 
             this.sessionService.applySessionResponse({
-              payload: resp.result.value,
+              payload: resp.output,
               withOptimisticMerge: false
             });
 

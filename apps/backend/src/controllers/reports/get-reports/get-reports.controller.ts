@@ -24,7 +24,7 @@ import { TabService } from '#backend/services/tab.service';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetReportsOutput } from '#common/zod/backend/routes/reports/get-reports/get-reports-response';
+import type { ToBackendGetReportsOutput } from '#common/zod/backend/routes/reports/get-reports/get-reports-output';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)

@@ -12,7 +12,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetUserProfileOutput } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-response';
+import type { ToBackendGetUserProfileOutput } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-output';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

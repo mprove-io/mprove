@@ -1,37 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Provider, zProvider } from '#common/zod/backend/provider';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendToggleProviderOutput,
+  zToBackendToggleProviderOutput
+} from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-output';
 import {
   type ToBackendToggleProviderError,
   zToBackendToggleProviderError
 } from './toggle-provider-error';
 
-export type ToBackendToggleProviderOutput = {
-  provider?: Provider;
-};
-
-export type ToBackendToggleProviderResponse = ToBackendResponse<
+export type ToBackendToggleProviderResponse = ToBackendResponseBase<
+  'toggleProvider',
   ToBackendToggleProviderOutput,
   ToBackendToggleProviderError
 >;
 
-export let zToBackendToggleProviderOutput = z
-  .object({ provider: zProvider })
-  .meta({ id: 'ToBackendToggleProviderOutput' });
-
 export let zToBackendToggleProviderResponse = makeToBackendResponseSchema({
-  success: zToBackendToggleProviderOutput,
+  operation: 'toggleProvider',
+  output: zToBackendToggleProviderOutput,
   error: zToBackendToggleProviderError
 }).meta({ id: 'ToBackendToggleProviderResponse' });
-
-assertTypesEqual<
-  ToBackendToggleProviderOutput,
-  z.infer<typeof zToBackendToggleProviderOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendToggleProviderResponse,

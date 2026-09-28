@@ -24,7 +24,7 @@ import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetQueriesOutput } from '#common/zod/backend/routes/queries/get-queries/get-queries-response';
+import type { ToBackendGetQueriesOutput } from '#common/zod/backend/routes/queries/get-queries/get-queries-output';
 
 const { forEachSeries } = pIteration;
 

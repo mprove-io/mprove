@@ -1,13 +1,34 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendError,
-  zBackendError
-} from '#common/zod/backend/errors/backend-error';
+  type BackendHashSecretIsNotDefinedError,
+  zBackendHashSecretIsNotDefinedError
+} from '#common/zod/backend/errors/backend-hash-secret-is-not-defined-error';
+import {
+  type BackendTransactionRetryError,
+  zBackendTransactionRetryError
+} from '#common/zod/backend/errors/backend-transaction-retry-error';
+import {
+  type BackendUpdatePasswordTokenExpiredError,
+  zBackendUpdatePasswordTokenExpiredError
+} from '#common/zod/backend/errors/backend-update-password-token-expired-error';
+import {
+  type BackendUpdatePasswordWrongTokenError,
+  zBackendUpdatePasswordWrongTokenError
+} from '#common/zod/backend/errors/backend-update-password-wrong-token-error';
 
-export type ToBackendUpdateUserPasswordError = BackendError;
+export type ToBackendUpdateUserPasswordError =
+  | BackendHashSecretIsNotDefinedError
+  | BackendTransactionRetryError
+  | BackendUpdatePasswordTokenExpiredError
+  | BackendUpdatePasswordWrongTokenError;
 
-export let zToBackendUpdateUserPasswordError = zBackendError;
+export let zToBackendUpdateUserPasswordError = z.discriminatedUnion('code', [
+  zBackendHashSecretIsNotDefinedError,
+  zBackendTransactionRetryError,
+  zBackendUpdatePasswordTokenExpiredError,
+  zBackendUpdatePasswordWrongTokenError
+]);
 
 assertTypesEqual<
   ToBackendUpdateUserPasswordError,

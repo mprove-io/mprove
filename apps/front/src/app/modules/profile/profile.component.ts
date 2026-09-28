@@ -13,7 +13,7 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import type { ToBackendDeleteUserApiKeyResponse } from '#common/zod/backend/routes/users/delete-user-api-key/delete-user-api-key-response';
 import type { ToBackendDeleteUserCodexAuthResponse } from '#common/zod/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-response';
 import type { ToBackendGenerateUserApiKeyResponse } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
-import type { ToBackendResetUserPasswordInput } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-request';
+import type { ToBackendResetUserPasswordRequest } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-request';
 import type { ToBackendResetUserPasswordResponse } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
@@ -108,7 +108,7 @@ export class ProfileComponent implements OnInit {
     let email: string;
     this.userQuery.email$.pipe(take(1)).subscribe(x => (email = x));
 
-    let payload: ToBackendResetUserPasswordInput = {
+    let payload: ToBackendResetUserPasswordRequest['input'] = {
       email: email
     };
 
@@ -119,7 +119,7 @@ export class ProfileComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendResetUserPasswordResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             localStorage.setItem('PASSWORD_RESET_EMAIL', email);
             this.router.navigate([PATH_PASSWORD_RESET_SENT_AUTH]);
           }
@@ -159,12 +159,12 @@ export class ProfileComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGenerateUserApiKeyResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.userQuery.updatePart({
-              apiKeyPrefix: resp.result.value.apiKeyPrefix
+              apiKeyPrefix: resp.output.apiKeyPrefix
             });
             this.myDialogService.showGeneratedApiKey({
-              apiKey: resp.result.value.apiKey
+              apiKey: resp.output.apiKey
             });
           }
         }),
@@ -184,7 +184,7 @@ export class ProfileComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteUserApiKeyResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.userQuery.updatePart({
               apiKeyPrefix: undefined
             });
@@ -218,8 +218,8 @@ export class ProfileComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteUserCodexAuthResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.userQuery.update(resp.result.value.user);
+          if (resp?.type === 'Success') {
+            this.userQuery.update(resp.output.user);
           }
         }),
         take(1)

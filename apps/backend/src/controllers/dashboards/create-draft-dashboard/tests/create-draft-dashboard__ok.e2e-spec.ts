@@ -18,8 +18,8 @@ import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateDraftDashboardRequest } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-request';
 import type { ToBackendCreateDraftDashboardResponse } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-response';
+import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-output';
 import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
-import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-response';
 
 let testId = 'backend-create-draft-dashboard__ok';
 
@@ -106,6 +106,7 @@ test('1', async t => {
       });
 
       let req1: ToBackendGetDashboardRequest = {
+        operation: 'getDashboard',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -129,6 +130,7 @@ test('1', async t => {
         unwrapBackendResponseOutput({ response: resp1 });
 
       let req: ToBackendCreateDraftDashboardRequest = {
+        operation: 'createDraftDashboard',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -166,7 +168,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

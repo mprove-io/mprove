@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Given, zGiven } from '#common/zod/backend/given';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCreateGivenOutput,
+  zToBackendCreateGivenOutput
+} from '#common/zod/backend/routes/givens/create-given/create-given-output';
 import {
   type ToBackendCreateGivenError,
   zToBackendCreateGivenError
 } from './create-given-error';
 
-export type ToBackendCreateGivenOutput = {
-  userMember: Member;
-  givens: Given[];
-};
-
-export type ToBackendCreateGivenResponse = ToBackendResponse<
+export type ToBackendCreateGivenResponse = ToBackendResponseBase<
+  'createGiven',
   ToBackendCreateGivenOutput,
   ToBackendCreateGivenError
 >;
 
-export let zToBackendCreateGivenOutput = z
-  .object({
-    userMember: zMember,
-    givens: z.array(zGiven)
-  })
-  .meta({ id: 'ToBackendCreateGivenOutput' });
-
 export let zToBackendCreateGivenResponse = makeToBackendResponseSchema({
-  success: zToBackendCreateGivenOutput,
+  operation: 'createGiven',
+  output: zToBackendCreateGivenOutput,
   error: zToBackendCreateGivenError
 }).meta({ id: 'ToBackendCreateGivenResponse' });
-
-assertTypesEqual<
-  ToBackendCreateGivenOutput,
-  z.infer<typeof zToBackendCreateGivenOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateGivenResponse,

@@ -19,7 +19,7 @@ import { TabService } from '#backend/services/tab.service';
 import { DEFAULT_SRV_UI } from '#common/constants/top-backend';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ToBackendGetReportOutput } from '#common/zod/backend/routes/reports/get-report/get-report-response';
+import type { ToBackendGetReportOutput } from '#common/zod/backend/routes/reports/get-report/get-report-output';
 
 @Injectable()
 export class QueryInfoReportService {

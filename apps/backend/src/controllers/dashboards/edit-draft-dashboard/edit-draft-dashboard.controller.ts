@@ -50,7 +50,7 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendEditDraftDashboardOutput } from '#common/zod/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-response';
+import type { ToBackendEditDraftDashboardOutput } from '#common/zod/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-output';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 

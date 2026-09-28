@@ -1,44 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type StructX, zStructX } from '#common/zod/backend/struct-x';
-import { type Repo, zRepo } from '#common/zod/disk/repo';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendPullRepoOutput,
+  zToBackendPullRepoOutput
+} from '#common/zod/backend/routes/repos/pull-repo/pull-repo-output';
 import {
   type ToBackendPullRepoError,
   zToBackendPullRepoError
 } from './pull-repo-error';
 
-export type ToBackendPullRepoOutput = {
-  repo: Repo;
-  struct: StructX;
-  needValidate: boolean;
-};
-
-export type ToBackendPullRepoResponse = ToBackendResponse<
+export type ToBackendPullRepoResponse = ToBackendResponseBase<
+  'pullRepo',
   ToBackendPullRepoOutput,
   ToBackendPullRepoError
 >;
 
-export let zToBackendPullRepoOutput = z
-  .object({
-    repo: zRepo,
-    struct: zStructX,
-    needValidate: z.boolean()
-  })
-  .meta({ id: 'ToBackendPullRepoOutput' });
-
 export let zToBackendPullRepoResponse = makeToBackendResponseSchema({
-  success: zToBackendPullRepoOutput,
+  operation: 'pullRepo',
+  output: zToBackendPullRepoOutput,
   error: zToBackendPullRepoError
 }).meta({ id: 'ToBackendPullRepoResponse' });
-
-assertTypesEqual<
-  ToBackendPullRepoOutput,
-  z.infer<typeof zToBackendPullRepoOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendPullRepoResponse,

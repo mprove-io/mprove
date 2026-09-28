@@ -8,8 +8,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendCommitRepoInput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
-import type { ToBackendCommitRepoOutput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-response';
+import type { ToBackendCommitRepoOutput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-output';
+import type { ToBackendCommitRepoRequest } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -84,7 +84,7 @@ export class CommitCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let commitRepoReqPayload: ToBackendCommitRepoInput = {
+    let commitRepoReqPayload: ToBackendCommitRepoRequest['input'] = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,

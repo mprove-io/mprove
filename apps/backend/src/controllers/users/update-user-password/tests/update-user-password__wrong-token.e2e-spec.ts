@@ -48,6 +48,7 @@ test('1', async t => {
       });
 
       let updateUserPasswordReq: ToBackendUpdateUserPasswordRequest = {
+        operation: 'updateUserPassword',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -76,11 +77,8 @@ test('1', async t => {
       }
     }
 
-    assert.ok(resp.result.type === 'Failure');
-    assert.equal(
-      resp.result.error.message,
-      ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
-    );
+    assert.ok(resp.type === 'Failure');
+    assert.equal(resp.error.code, ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

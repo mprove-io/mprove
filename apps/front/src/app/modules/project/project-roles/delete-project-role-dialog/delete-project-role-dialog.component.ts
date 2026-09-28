@@ -8,7 +8,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { Role } from '#common/zod/backend/role';
-import type { ToBackendDeleteRoleInput } from '#common/zod/backend/routes/roles/delete-role/delete-role-request';
+import type { ToBackendDeleteRoleRequest } from '#common/zod/backend/routes/roles/delete-role/delete-role-request';
 import type { ToBackendDeleteRoleResponse } from '#common/zod/backend/routes/roles/delete-role/delete-role-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';
@@ -49,7 +49,7 @@ export class DeleteProjectRoleDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteRoleInput = {
+    let payload: ToBackendDeleteRoleRequest['input'] = {
       projectId: this.dataItem.role.projectId,
       roleId: this.dataItem.role.roleId
     };
@@ -64,9 +64,9 @@ export class DeleteProjectRoleDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteRoleResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
-            this.rolesQuery.update({ roles: resp.result.value.roles });
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
+            this.rolesQuery.update({ roles: resp.output.roles });
           }
         }),
         take(1)

@@ -101,6 +101,7 @@ test('1', async t => {
       });
 
       let deleteUserReq: ToBackendDeleteUserRequest = {
+        operation: 'deleteUser',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {}
@@ -126,7 +127,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

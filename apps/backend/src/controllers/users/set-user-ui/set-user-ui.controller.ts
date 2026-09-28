@@ -25,7 +25,7 @@ import { TabService } from '#backend/services/tab.service';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSetUserUiOutput } from '#common/zod/backend/routes/users/set-user-ui/set-user-ui-response';
+import type { ToBackendSetUserUiOutput } from '#common/zod/backend/routes/users/set-user-ui/set-user-ui-output';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

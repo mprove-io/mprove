@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import type { ToBackendGetGivensInput } from '#common/zod/backend/routes/givens/get-givens/get-givens-request';
+import type { ToBackendGetGivensRequest } from '#common/zod/backend/routes/givens/get-givens/get-givens-request';
 import type { ToBackendGetGivensResponse } from '#common/zod/backend/routes/givens/get-givens/get-givens-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { GivensQuery } from '../queries/givens.query';
@@ -52,7 +52,7 @@ export class ProjectGivensResolver implements Resolve<Observable<boolean>> {
       projectId = x;
     });
 
-    let payload: ToBackendGetGivensInput = {
+    let payload: ToBackendGetGivensRequest['input'] = {
       projectId: projectId
     };
 
@@ -63,10 +63,10 @@ export class ProjectGivensResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetGivensResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
 
-            let newSortedGivens = resp.result.value.givens.sort((a, b) =>
+            let newSortedGivens = resp.output.givens.sort((a, b) =>
               a.givenId > b.givenId ? 1 : b.givenId > a.givenId ? -1 : 0
             );
 

@@ -1,39 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type User, zUser } from '#common/zod/backend/user';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendRegisterUserOutput,
+  zToBackendRegisterUserOutput
+} from '#common/zod/backend/routes/users/register-user/register-user-output';
 import {
   type ToBackendRegisterUserError,
   zToBackendRegisterUserError
 } from './register-user-error';
 
-export type ToBackendRegisterUserOutput = {
-  user: User;
-};
-
-export type ToBackendRegisterUserResponse = ToBackendResponse<
+export type ToBackendRegisterUserResponse = ToBackendResponseBase<
+  'registerUser',
   ToBackendRegisterUserOutput,
   ToBackendRegisterUserError
 >;
 
-export let zToBackendRegisterUserOutput = z
-  .object({
-    user: zUser
-  })
-  .meta({ id: 'ToBackendRegisterUserOutput' });
-
 export let zToBackendRegisterUserResponse = makeToBackendResponseSchema({
-  success: zToBackendRegisterUserOutput,
+  operation: 'registerUser',
+  output: zToBackendRegisterUserOutput,
   error: zToBackendRegisterUserError
 }).meta({ id: 'ToBackendRegisterUserResponse' });
-
-assertTypesEqual<
-  ToBackendRegisterUserOutput,
-  z.infer<typeof zToBackendRegisterUserOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendRegisterUserResponse,

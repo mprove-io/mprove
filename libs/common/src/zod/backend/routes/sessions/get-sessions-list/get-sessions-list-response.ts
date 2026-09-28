@@ -1,41 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type SessionApi, zSessionApi } from '#common/zod/backend/session-api';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetSessionsListOutput,
+  zToBackendGetSessionsListOutput
+} from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-output';
 import {
   type ToBackendGetSessionsListError,
   zToBackendGetSessionsListError
 } from './get-sessions-list-error';
 
-export type ToBackendGetSessionsListOutput = {
-  sessions: SessionApi[];
-  hasMoreArchived?: boolean;
-};
-
-export type ToBackendGetSessionsListResponse = ToBackendResponse<
+export type ToBackendGetSessionsListResponse = ToBackendResponseBase<
+  'getSessionsList',
   ToBackendGetSessionsListOutput,
   ToBackendGetSessionsListError
 >;
 
-export let zToBackendGetSessionsListOutput = z
-  .object({
-    sessions: z.array(zSessionApi),
-    hasMoreArchived: z.boolean().nullish()
-  })
-  .meta({ id: 'ToBackendGetSessionsListOutput' });
-
 export let zToBackendGetSessionsListResponse = makeToBackendResponseSchema({
-  success: zToBackendGetSessionsListOutput,
+  operation: 'getSessionsList',
+  output: zToBackendGetSessionsListOutput,
   error: zToBackendGetSessionsListError
 }).meta({ id: 'ToBackendGetSessionsListResponse' });
-
-assertTypesEqual<
-  ToBackendGetSessionsListOutput,
-  z.infer<typeof zToBackendGetSessionsListOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetSessionsListResponse,

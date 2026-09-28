@@ -6,55 +6,48 @@ import {
   zConnectionOptions
 } from '#common/zod/backend/connection-parts/connection-options';
 
-export type ToBackendCreateConnectionInput = {
-  projectId: string;
-  envId: string;
-  connectionId: string;
-  type:
-    | ConnectionTypeEnum.PostgreSQL
-    | ConnectionTypeEnum.MySQL
-    | ConnectionTypeEnum.SnowFlake
-    | ConnectionTypeEnum.BigQuery
-    | ConnectionTypeEnum.Databricks
-    | ConnectionTypeEnum.MotherDuck
-    | ConnectionTypeEnum.Presto
-    | ConnectionTypeEnum.Trino
-    | ConnectionTypeEnum.GoogleApi
-    | ConnectionTypeEnum.Api;
-  options?: ConnectionOptions;
-};
-
 export type ToBackendCreateConnectionRequest = {
+  operation: 'createConnection';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendCreateConnectionInput;
+  input: {
+    projectId: string;
+    envId: string;
+    connectionId: string;
+    type:
+      | ConnectionTypeEnum.PostgreSQL
+      | ConnectionTypeEnum.MySQL
+      | ConnectionTypeEnum.SnowFlake
+      | ConnectionTypeEnum.BigQuery
+      | ConnectionTypeEnum.Databricks
+      | ConnectionTypeEnum.MotherDuck
+      | ConnectionTypeEnum.Presto
+      | ConnectionTypeEnum.Trino
+      | ConnectionTypeEnum.GoogleApi
+      | ConnectionTypeEnum.Api;
+    options?: ConnectionOptions;
+  };
 };
-
-export let zToBackendCreateConnectionInput = z
-  .object({
-    projectId: z.string(),
-    envId: z.string(),
-    connectionId: z.string().regex(/^[a-z0-9_]+$/, {
-      message:
-        'connectionId must contain only lowercase letters, digits or underscores'
-    }),
-    type: z.enum(ConnectionTypeEnum),
-    options: zConnectionOptions.nullish()
-  })
-  .meta({ id: 'ToBackendCreateConnectionInput' });
 
 export let zToBackendCreateConnectionRequest = z
   .strictObject({
+    operation: z.literal('createConnection'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendCreateConnectionInput
+    input: z
+      .object({
+        projectId: z.string(),
+        envId: z.string(),
+        connectionId: z.string().regex(/^[a-z0-9_]+$/, {
+          message:
+            'connectionId must contain only lowercase letters, digits or underscores'
+        }),
+        type: z.enum(ConnectionTypeEnum),
+        options: zConnectionOptions.nullish()
+      })
+      .meta({ id: 'ToBackendCreateConnectionInput' })
   })
   .meta({ id: 'ToBackendCreateConnectionRequest' });
-
-assertTypesEqual<
-  ToBackendCreateConnectionInput,
-  z.infer<typeof zToBackendCreateConnectionInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateConnectionRequest,

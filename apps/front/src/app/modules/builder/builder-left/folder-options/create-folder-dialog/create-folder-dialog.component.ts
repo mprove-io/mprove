@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendCreateFolderInput } from '#common/zod/backend/routes/folders/create-folder/create-folder-request';
+import type { ToBackendCreateFolderRequest } from '#common/zod/backend/routes/folders/create-folder/create-folder-request';
 import type { ToBackendCreateFolderResponse } from '#common/zod/backend/routes/folders/create-folder/create-folder-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -88,7 +88,7 @@ export class CreateFolderDialogComponent implements OnInit {
 
     let folderName = this.createFolderForm.value.folderName.toLowerCase();
 
-    let payload: ToBackendCreateFolderInput = {
+    let payload: ToBackendCreateFolderRequest['input'] = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -107,11 +107,11 @@ export class CreateFolderDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateFolderResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
           }
         }),

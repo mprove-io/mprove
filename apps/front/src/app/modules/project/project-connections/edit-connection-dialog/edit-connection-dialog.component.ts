@@ -25,9 +25,9 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ConnectionOptions } from '#common/zod/backend/connection-parts/connection-options';
 import type { TestConnectionResult } from '#common/zod/backend/connections/test-connection-result';
 import type { ProjectConnection } from '#common/zod/backend/project-connection';
-import type { ToBackendEditConnectionInput } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-request';
+import type { ToBackendEditConnectionRequest } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-request';
 import type { ToBackendEditConnectionResponse } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-response';
-import type { ToBackendTestConnectionInput } from '#common/zod/backend/routes/connections/test-connection/test-connection-request';
+import type { ToBackendTestConnectionRequest } from '#common/zod/backend/routes/connections/test-connection/test-connection-request';
 import type { ToBackendTestConnectionResponse } from '#common/zod/backend/routes/connections/test-connection/test-connection-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
@@ -818,7 +818,7 @@ export class EditConnectionDialogComponent implements OnInit {
       options.presto.internalPort = undefined;
     }
 
-    let payload: ToBackendTestConnectionInput = {
+    let payload: ToBackendTestConnectionRequest['input'] = {
       projectId: this.dataItem.connection.projectId,
       envId: this.dataItem.connection.envId,
       connectionId: this.dataItem.connection.connectionId,
@@ -837,8 +837,8 @@ export class EditConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.testConnectionResult = resp.result.value.testConnectionResult;
+          if (resp?.type === 'Success') {
+            this.testConnectionResult = resp.output.testConnectionResult;
             this.cd.detectChanges();
           }
         }),
@@ -856,7 +856,7 @@ export class EditConnectionDialogComponent implements OnInit {
       return;
     }
 
-    let payload: ToBackendTestConnectionInput = {
+    let payload: ToBackendTestConnectionRequest['input'] = {
       projectId: this.dataItem.connection.projectId,
       envId: this.dataItem.connection.envId,
       connectionId: this.dataItem.connection.connectionId,
@@ -875,9 +875,8 @@ export class EditConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendTestConnectionResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.testInternalHostResult =
-              resp.result.value.testConnectionResult;
+          if (resp?.type === 'Success') {
+            this.testInternalHostResult = resp.output.testConnectionResult;
             this.cd.detectChanges();
           }
         }),
@@ -895,7 +894,7 @@ export class EditConnectionDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendEditConnectionInput = {
+    let payload: ToBackendEditConnectionRequest['input'] = {
       projectId: this.dataItem.connection.projectId,
       envId: this.dataItem.connection.envId,
       connectionId: this.dataItem.connection.connectionId,
@@ -912,8 +911,8 @@ export class EditConnectionDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditConnectionResponse) => {
-          if (resp.result?.type === 'Success') {
-            let newConnection = resp.result.value.connection;
+          if (resp?.type === 'Success') {
+            let newConnection = resp.output.connection;
 
             let connections = this.connectionsQuery.getValue().connections;
 

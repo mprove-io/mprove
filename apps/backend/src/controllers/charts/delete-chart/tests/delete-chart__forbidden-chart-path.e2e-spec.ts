@@ -104,6 +104,7 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteChartRequest = {
+        operation: 'deleteChart',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -135,11 +136,8 @@ test('1', async t => {
       }
     }
 
-    assert.ok(resp.result.type === 'Failure');
-    assert.equal(
-      resp.result.error.message,
-      ErEnum.BACKEND_FORBIDDEN_CHART_PATH
-    );
+    assert.ok(resp.type === 'Failure');
+    assert.equal(resp.error.code, ErEnum.BACKEND_FORBIDDEN_CHART_PATH);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

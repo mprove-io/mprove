@@ -5,11 +5,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ToBackendCreateDraftDashboardInput } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-request';
+import type { ToBackendCreateDraftDashboardRequest } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-request';
 import type { ToBackendCreateDraftDashboardResponse } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-response';
-import type { ToBackendDeleteDraftDashboardsInput } from '#common/zod/backend/routes/dashboards/delete-draft-dashboards/delete-draft-dashboards-request';
+import type { ToBackendDeleteDraftDashboardsRequest } from '#common/zod/backend/routes/dashboards/delete-draft-dashboards/delete-draft-dashboards-request';
 import type { ToBackendDeleteDraftDashboardsResponse } from '#common/zod/backend/routes/dashboards/delete-draft-dashboards/delete-draft-dashboards-response';
-import type { ToBackendEditDraftDashboardInput } from '#common/zod/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-request';
+import type { ToBackendEditDraftDashboardRequest } from '#common/zod/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-request';
 import type { ToBackendEditDraftDashboardResponse } from '#common/zod/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-response';
 import type { TileX } from '#common/zod/backend/tile-x';
 import type { DashboardField } from '#common/zod/blockml/dashboard-field';
@@ -115,7 +115,7 @@ export class DashboardService {
       newTiles.push(y);
     });
 
-    let payload: ToBackendCreateDraftDashboardInput = {
+    let payload: ToBackendCreateDraftDashboardRequest['input'] = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -136,8 +136,8 @@ export class DashboardService {
       })
       .pipe(
         tap((resp: ToBackendCreateDraftDashboardResponse) => {
-          if (resp.result?.type === 'Success') {
-            resp.result.value.dashboard.tiles.forEach(tile => {
+          if (resp?.type === 'Success') {
+            resp.output.dashboard.tiles.forEach(tile => {
               tile.trackChangeId = makeTrackChangeId({
                 mconfig: tile.mconfig,
                 query: tile.query
@@ -145,11 +145,11 @@ export class DashboardService {
             });
 
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.result.value.dashboardUnitDrafts,
+              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
               dashboardSpaceNodes:
                 this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
             });
-            this.dashboardQuery.update(resp.result.value.dashboard);
+            this.dashboardQuery.update(resp.output.dashboard);
 
             let url = this.router
               .createUrlTree([], { relativeTo: this.route })
@@ -157,7 +157,7 @@ export class DashboardService {
 
             let urlArray = url.split('/');
             urlArray.pop();
-            urlArray.push(resp.result.value.dashboard.dashboardId);
+            urlArray.push(resp.output.dashboard.dashboardId);
 
             url = urlArray.join('/') + `?timezone=${timezone}`;
 
@@ -201,7 +201,7 @@ export class DashboardService {
       newTiles.push(y);
     });
 
-    let payload: ToBackendEditDraftDashboardInput = {
+    let payload: ToBackendEditDraftDashboardRequest['input'] = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -220,15 +220,15 @@ export class DashboardService {
       })
       .pipe(
         tap((resp: ToBackendEditDraftDashboardResponse) => {
-          if (resp.result?.type === 'Success') {
-            resp.result.value.dashboard.tiles.forEach(tile => {
+          if (resp?.type === 'Success') {
+            resp.output.dashboard.tiles.forEach(tile => {
               tile.trackChangeId = makeTrackChangeId({
                 mconfig: tile.mconfig,
                 query: tile.query
               });
             });
 
-            this.dashboardQuery.update(resp.result.value.dashboard);
+            this.dashboardQuery.update(resp.output.dashboard);
           }
 
           this.spinner.hide(APP_SPINNER_NAME);
@@ -241,7 +241,7 @@ export class DashboardService {
   deleteDraftDashboards(item: { dashboardIds: string[] }) {
     let { dashboardIds } = item;
 
-    let payload: ToBackendDeleteDraftDashboardsInput = {
+    let payload: ToBackendDeleteDraftDashboardsRequest['input'] = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -257,9 +257,9 @@ export class DashboardService {
       })
       .pipe(
         tap((resp: ToBackendDeleteDraftDashboardsResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.dashboardUnitsQuery.update({
-              dashboardUnitDrafts: resp.result.value.dashboardUnitDrafts,
+              dashboardUnitDrafts: resp.output.dashboardUnitDrafts,
               dashboardSpaceNodes:
                 this.dashboardUnitsQuery.getValue().dashboardSpaceNodes
             });

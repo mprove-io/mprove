@@ -37,7 +37,7 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSyncRepoOutput } from '#common/zod/backend/routes/repos/sync-repo/sync-repo-response';
+import type { ToBackendSyncRepoOutput } from '#common/zod/backend/routes/repos/sync-repo/sync-repo-output';
 import type { ToDiskSyncRepoOutput } from '#common/zod/disk/routes/repos/sync-repo/sync-repo-output';
 import type { ToDiskSyncRepoRequest } from '#common/zod/disk/routes/repos/sync-repo/sync-repo-request';
 

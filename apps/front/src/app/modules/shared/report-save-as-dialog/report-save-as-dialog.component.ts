@@ -24,11 +24,11 @@ import type { AccessRoleCombined } from '#common/zod/access-role-combined';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
 import type { Role } from '#common/zod/backend/role';
-import type { ToBackendSaveCreateReportInput } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-request';
+import type { ToBackendSaveCreateReportRequest } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-request';
 import type { ToBackendSaveCreateReportResponse } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-response';
-import type { ToBackendSaveModifyReportInput } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-request';
+import type { ToBackendSaveModifyReportRequest } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-request';
 import type { ToBackendSaveModifyReportResponse } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
-import type { ToBackendGetRolesInput } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
+import type { ToBackendGetRolesRequest } from '#common/zod/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/zod/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/zod/blockml/space';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
@@ -296,7 +296,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
     let nav = this.navQuery.getValue();
     let uiState = this.uiQuery.getValue();
 
-    let payload: ToBackendSaveCreateReportInput = {
+    let payload: ToBackendSaveCreateReportRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -327,18 +327,18 @@ export class ReportSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSaveCreateReportResponse) => {
-          if (resp.result?.type === 'Success') {
-            if (isUndefined(resp.result.value.reportSpaceNodes)) {
+          if (resp?.type === 'Success') {
+            if (isUndefined(resp.output.reportSpaceNodes)) {
               this.spinner.hide(APP_SPINNER_NAME);
               return;
             }
 
-            let newReport = resp.result.value.report;
+            let newReport = resp.output.report;
 
             if (isDefined(newReport)) {
               this.reportsQuery.update({
-                reportUnitDrafts: resp.result.value.reportUnitDrafts,
-                reportSpaceNodes: resp.result.value.reportSpaceNodes
+                reportUnitDrafts: resp.output.reportUnitDrafts,
+                reportSpaceNodes: resp.output.reportSpaceNodes
               });
 
               let currentReport = this.reportQuery.getValue();
@@ -350,7 +350,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
               this.spinner.hide(APP_SPINNER_NAME); // route params do not change
 
               this.navigateService.navigateToReport({
-                reportId: resp.result.value.report.reportId
+                reportId: resp.output.report.reportId
               });
             }
           }
@@ -368,7 +368,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendSaveModifyReportInput = {
+    let payload: ToBackendSaveModifyReportRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -397,18 +397,18 @@ export class ReportSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSaveModifyReportResponse) => {
-          if (resp.result?.type === 'Success') {
-            if (isUndefined(resp.result.value.reportSpaceNodes)) {
+          if (resp?.type === 'Success') {
+            if (isUndefined(resp.output.reportSpaceNodes)) {
               this.spinner.hide(APP_SPINNER_NAME);
               return;
             }
 
-            let newReport = resp.result.value.report;
+            let newReport = resp.output.report;
 
             if (isDefined(newReport)) {
               this.reportsQuery.update({
-                reportUnitDrafts: resp.result.value.reportUnitDrafts,
-                reportSpaceNodes: resp.result.value.reportSpaceNodes
+                reportUnitDrafts: resp.output.reportUnitDrafts,
+                reportSpaceNodes: resp.output.reportSpaceNodes
               });
 
               let currentReport = this.reportQuery.getValue();
@@ -418,7 +418,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
               }
 
               this.navigateService.navigateToReport({
-                reportId: resp.result.value.report.reportId
+                reportId: resp.output.report.reportId
               });
             }
           }
@@ -445,7 +445,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
   loadRoles() {
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendGetRolesInput = {
+    let payload: ToBackendGetRolesRequest['input'] = {
       projectId: nav.projectId
     };
 
@@ -458,8 +458,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetRolesResponse) => {
-          if (resp.result?.type === 'Success') {
-            let newSortedRoles = resp.result.value.roles.sort((a, b) =>
+          if (resp?.type === 'Success') {
+            let newSortedRoles = resp.output.roles.sort((a, b) =>
               a.roleId > b.roleId ? 1 : b.roleId > a.roleId ? -1 : 0
             );
 

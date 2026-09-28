@@ -27,11 +27,11 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ModelX } from '#common/zod/backend/model-x';
-import type { ToBackendGetChartInput } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
+import type { ToBackendGetChartRequest } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
 import type { ToBackendGetChartResponse } from '#common/zod/backend/routes/charts/get-chart/get-chart-response';
-import type { ToBackendGetFileInput } from '#common/zod/backend/routes/files/get-file/get-file-request';
+import type { ToBackendGetFileRequest } from '#common/zod/backend/routes/files/get-file/get-file-request';
 import type { ToBackendGetFileResponse } from '#common/zod/backend/routes/files/get-file/get-file-response';
-import type { ToBackendGetModelsInput } from '#common/zod/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsRequest } from '#common/zod/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
 import { getFileItems } from '#front/app/functions/get-file-items';
 import { FileQuery } from '#front/app/queries/file.query';
@@ -251,7 +251,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
 
       let nav = this.navQuery.getValue();
 
-      let payload: ToBackendGetModelsInput = {
+      let payload: ToBackendGetModelsRequest['input'] = {
         projectId: nav.projectId,
         repoId: nav.repoId,
         branchId: nav.branchId,
@@ -265,8 +265,8 @@ export class SecondFileComponent implements OnInit, OnDestroy {
         })
         .pipe(
           tap((resp: ToBackendGetModelsResponse) => {
-            if (resp.result?.type === 'Success') {
-              models = resp.result.value.models.filter(
+            if (resp?.type === 'Success') {
+              models = resp.output.models.filter(
                 y => y.filePath === this.secondFileNodeId
               );
 
@@ -301,7 +301,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
     } else if (dotExt === FileExtensionEnum.Chart) {
       let nav = this.navQuery.getValue();
 
-      let payload: ToBackendGetChartInput = {
+      let payload: ToBackendGetChartRequest['input'] = {
         projectId: nav.projectId,
         repoId: nav.repoId,
         branchId: nav.branchId,
@@ -319,12 +319,12 @@ export class SecondFileComponent implements OnInit, OnDestroy {
         })
         .pipe(
           map((resp: ToBackendGetChartResponse) => {
-            if (resp.result?.type === 'Success') {
-              this.memberQuery.update(resp.result.value.userMember);
+            if (resp?.type === 'Success') {
+              this.memberQuery.update(resp.output.userMember);
 
-              if (isDefined(resp.result.value.chart)) {
+              if (isDefined(resp.output.chart)) {
                 this.navigateService.navigateToChart({
-                  modelId: resp.result.value.chart.modelId,
+                  modelId: resp.output.chart.modelId,
                   chartId: id
                 });
               } else {
@@ -386,7 +386,7 @@ export class SecondFileComponent implements OnInit, OnDestroy {
           this.uiQuery.updatePart({ secondFileNodeId: undefined });
         }, 0);
       } else {
-        let getFilePayload: ToBackendGetFileInput = {
+        let getFilePayload: ToBackendGetFileRequest['input'] = {
           projectId: nav.projectId,
           repoId: nav.repoId,
           branchId: nav.branchId,
@@ -408,20 +408,20 @@ export class SecondFileComponent implements OnInit, OnDestroy {
           })
           .pipe(
             tap(async (resp: ToBackendGetFileResponse) => {
-              if (resp.result?.type === 'Success') {
+              if (resp?.type === 'Success') {
                 let repoState = this.repoQuery.getValue();
                 // biome-ignore format: theme breaks
-                let newRepoState: RepoState = Object.assign(resp.result.value.repo, <RepoState>{
+                let newRepoState: RepoState = Object.assign(resp.output.repo, <RepoState>{
                   conflicts: repoState.conflicts, // getFile does not check for conflicts
                   repoStatus: repoState.repoStatus // getFile does not use git fetch
                 });
                 this.repoQuery.update(newRepoState);
-                this.structQuery.update(resp.result.value.struct);
+                this.structQuery.update(resp.output.struct);
                 this.navQuery.updatePart({
-                  needValidate: resp.result.value.needValidate
+                  needValidate: resp.output.needValidate
                 });
 
-                this.secondFileContent = resp.result.value.content;
+                this.secondFileContent = resp.output.content;
 
                 this.setLanguage();
 

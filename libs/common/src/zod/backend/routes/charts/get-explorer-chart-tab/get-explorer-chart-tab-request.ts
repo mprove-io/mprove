@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendGetExplorerChartTabInput = {
-  sessionId: string;
-  chartId: string;
-};
-
 export type ToBackendGetExplorerChartTabRequest = {
+  operation: 'getExplorerChartTab';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetExplorerChartTabInput;
+  input: {
+    sessionId: string;
+    chartId: string;
+  };
 };
-
-export let zToBackendGetExplorerChartTabInput = z
-  .object({
-    sessionId: z.string(),
-    chartId: z.string()
-  })
-  .meta({ id: 'ToBackendGetExplorerChartTabInput' });
 
 export let zToBackendGetExplorerChartTabRequest = z
   .strictObject({
+    operation: z.literal('getExplorerChartTab'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetExplorerChartTabInput
+    input: z
+      .object({
+        sessionId: z.string(),
+        chartId: z.string()
+      })
+      .meta({ id: 'ToBackendGetExplorerChartTabInput' })
   })
   .meta({ id: 'ToBackendGetExplorerChartTabRequest' });
-
-assertTypesEqual<
-  ToBackendGetExplorerChartTabInput,
-  z.infer<typeof zToBackendGetExplorerChartTabInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetExplorerChartTabRequest,

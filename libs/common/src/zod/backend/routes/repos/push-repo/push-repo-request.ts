@@ -1,40 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendPushRepoInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-};
-
 export type ToBackendPushRepoRequest = {
+  operation: 'pushRepo';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendPushRepoInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+  };
 };
-
-export let zToBackendPushRepoInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string()
-  })
-  .meta({ id: 'ToBackendPushRepoInput' });
 
 export let zToBackendPushRepoRequest = z
   .strictObject({
+    operation: z.literal('pushRepo'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendPushRepoInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string()
+      })
+      .meta({ id: 'ToBackendPushRepoInput' })
   })
   .meta({ id: 'ToBackendPushRepoRequest' });
-
-assertTypesEqual<
-  ToBackendPushRepoInput,
-  z.infer<typeof zToBackendPushRepoInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendPushRepoRequest,

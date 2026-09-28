@@ -25,7 +25,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCreateGivenOutput } from '#common/zod/backend/routes/givens/create-given/create-given-response';
+import type { ToBackendCreateGivenOutput } from '#common/zod/backend/routes/givens/create-given/create-given-output';
 
 @ApiTags('Givens')
 @UseGuards(ThrottlerUserIdGuard)

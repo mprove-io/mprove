@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ToBackendValidateFilesInput } from '#common/zod/backend/routes/files/validate-files/validate-files-request';
+import type { ToBackendValidateFilesRequest } from '#common/zod/backend/routes/files/validate-files/validate-files-request';
 import type { ToBackendValidateFilesResponse } from '#common/zod/backend/routes/files/validate-files/validate-files-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -72,7 +72,7 @@ export class ValidationStatusComponent {
   ) {}
 
   validate() {
-    let payload: ToBackendValidateFilesInput = {
+    let payload: ToBackendValidateFilesRequest['input'] = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -87,11 +87,11 @@ export class ValidationStatusComponent {
       })
       .pipe(
         tap((resp: ToBackendValidateFilesResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
           }
         }),

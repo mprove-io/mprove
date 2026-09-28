@@ -1,30 +1,21 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendDeleteUserApiKeyInput = Record<string, never>;
-
 export type ToBackendDeleteUserApiKeyRequest = {
+  operation: 'deleteUserApiKey';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendDeleteUserApiKeyInput;
+  input: Record<string, never>;
 };
-
-export let zToBackendDeleteUserApiKeyInput = z
-  .object({})
-  .meta({ id: 'ToBackendDeleteUserApiKeyInput' });
 
 export let zToBackendDeleteUserApiKeyRequest = z
   .strictObject({
+    operation: z.literal('deleteUserApiKey'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendDeleteUserApiKeyInput
+    input: z.object({}).meta({ id: 'ToBackendDeleteUserApiKeyInput' })
   })
   .meta({ id: 'ToBackendDeleteUserApiKeyRequest' });
-
-assertTypesEqual<
-  ToBackendDeleteUserApiKeyInput,
-  z.infer<typeof zToBackendDeleteUserApiKeyInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteUserApiKeyRequest,

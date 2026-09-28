@@ -34,7 +34,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendEditMemberOutput } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
+import type { ToBackendEditMemberOutput } from '#common/zod/backend/routes/members/edit-member/edit-member-output';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)

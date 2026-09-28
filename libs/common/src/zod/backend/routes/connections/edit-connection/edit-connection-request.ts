@@ -5,40 +5,33 @@ import {
   zConnectionOptions
 } from '#common/zod/backend/connection-parts/connection-options';
 
-export type ToBackendEditConnectionInput = {
-  projectId: string;
-  envId: string;
-  connectionId: string;
-  options?: ConnectionOptions;
-};
-
 export type ToBackendEditConnectionRequest = {
+  operation: 'editConnection';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendEditConnectionInput;
+  input: {
+    projectId: string;
+    envId: string;
+    connectionId: string;
+    options?: ConnectionOptions;
+  };
 };
-
-export let zToBackendEditConnectionInput = z
-  .object({
-    projectId: z.string(),
-    envId: z.string(),
-    connectionId: z.string(),
-    options: zConnectionOptions.nullish()
-  })
-  .meta({ id: 'ToBackendEditConnectionInput' });
 
 export let zToBackendEditConnectionRequest = z
   .strictObject({
+    operation: z.literal('editConnection'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendEditConnectionInput
+    input: z
+      .object({
+        projectId: z.string(),
+        envId: z.string(),
+        connectionId: z.string(),
+        options: zConnectionOptions.nullish()
+      })
+      .meta({ id: 'ToBackendEditConnectionInput' })
   })
   .meta({ id: 'ToBackendEditConnectionRequest' });
-
-assertTypesEqual<
-  ToBackendEditConnectionInput,
-  z.infer<typeof zToBackendEditConnectionInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendEditConnectionRequest,

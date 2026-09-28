@@ -19,9 +19,9 @@ import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendSendMessageToEditorSessionInput } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
+import type { ToBackendSendMessageToEditorSessionRequest } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
 import type { ToBackendSendMessageToEditorSessionResponse } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-response';
-import type { ToBackendSendMessageToExplorerSessionInput } from '#common/zod/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-request';
+import type { ToBackendSendMessageToExplorerSessionRequest } from '#common/zod/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-request';
 import type { ToBackendSendMessageToExplorerSessionResponse } from '#common/zod/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-response';
 import type { SessionApi } from '#common/zod/backend/session-api';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
@@ -614,16 +614,17 @@ export class SessionComponent implements OnInit, OnDestroy {
     let isExplorer = this.session.type === SessionTypeEnum.Explorer;
 
     if (isExplorer) {
-      let explorerPayload: ToBackendSendMessageToExplorerSessionInput = {
-        sessionId: item.sessionId,
-        interactionType: item.interactionType,
-        messageId: item.messageId,
-        partId: item.partId,
-        message: item.message,
-        providerId: providerId,
-        modelId: modelId,
-        variant: item.variant
-      };
+      let explorerPayload: ToBackendSendMessageToExplorerSessionRequest['input'] =
+        {
+          sessionId: item.sessionId,
+          interactionType: item.interactionType,
+          messageId: item.messageId,
+          partId: item.partId,
+          message: item.message,
+          providerId: providerId,
+          modelId: modelId,
+          variant: item.variant
+        };
 
       this.apiService
         .req({
@@ -642,7 +643,7 @@ export class SessionComponent implements OnInit, OnDestroy {
           }
         });
     } else {
-      let editorPayload: ToBackendSendMessageToEditorSessionInput = {
+      let editorPayload: ToBackendSendMessageToEditorSessionRequest['input'] = {
         sessionId: item.sessionId,
         interactionType: item.interactionType,
         messageId: item.messageId,
@@ -684,11 +685,11 @@ export class SessionComponent implements OnInit, OnDestroy {
   }) {
     let { resp } = item;
 
-    if (resp?.result?.type !== 'Success') {
+    if (resp?.type !== 'Success') {
       return;
     }
 
-    let session = resp?.result.value?.session;
+    let session = resp?.output?.session;
 
     if (session.sessionId === this.session?.sessionId) {
       this.sessionQuery.update(session);

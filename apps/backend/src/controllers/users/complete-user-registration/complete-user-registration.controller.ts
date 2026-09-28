@@ -31,7 +31,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendConfirmUserEmailOutput } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-response';
+import type { ToBackendConfirmUserEmailOutput } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-output';
 
 @ApiTags('Users')
 @SkipJwtCheck()

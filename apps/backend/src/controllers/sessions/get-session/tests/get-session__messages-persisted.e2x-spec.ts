@@ -19,8 +19,8 @@ import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateEditorSessionRequest } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-request';
 import type { ToBackendDeleteSessionRequest } from '#common/zod/backend/routes/sessions/delete-session/delete-session-request';
+import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-output';
 import type { ToBackendGetSessionRequest } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
-import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
 import type { ToBackendSendMessageToEditorSessionRequest } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
 
 test('1', async t => {
@@ -120,6 +120,7 @@ test('1', async t => {
 
     // Create session
     let createSessionReq: ToBackendCreateEditorSessionRequest = {
+      operation: 'createEditorSession',
       traceId: traceId,
       idempotencyKey: makeId(),
       input: {
@@ -178,6 +179,7 @@ test('1', async t => {
     console.log('[test] SSE connected, sending message...');
 
     let sendMessageReq: ToBackendSendMessageToEditorSessionRequest = {
+      operation: 'sendMessageToEditorSession',
       traceId: traceId,
       idempotencyKey: makeId(),
       input: {
@@ -219,6 +221,7 @@ test('1', async t => {
 
     // Fetch session with messages and parts (simulates page reload)
     let getSessionReq: ToBackendGetSessionRequest = {
+      operation: 'getSession',
       traceId: traceId,
       idempotencyKey: makeId(),
       input: {
@@ -248,6 +251,7 @@ test('1', async t => {
     );
 
     let deleteSessionReq: ToBackendDeleteSessionRequest = {
+      operation: 'deleteSession',
       traceId: traceId,
       idempotencyKey: makeId(),
       input: {

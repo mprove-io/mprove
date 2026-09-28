@@ -1,38 +1,31 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendIsBranchExistInput = {
-  projectId: string;
-  branchId: string;
-  repoId: string;
-};
-
 export type ToBackendIsBranchExistRequest = {
+  operation: 'isBranchExist';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendIsBranchExistInput;
+  input: {
+    projectId: string;
+    branchId: string;
+    repoId: string;
+  };
 };
-
-export let zToBackendIsBranchExistInput = z
-  .object({
-    projectId: z.string(),
-    branchId: z.string(),
-    repoId: z.string()
-  })
-  .meta({ id: 'ToBackendIsBranchExistInput' });
 
 export let zToBackendIsBranchExistRequest = z
   .strictObject({
+    operation: z.literal('isBranchExist'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendIsBranchExistInput
+    input: z
+      .object({
+        projectId: z.string(),
+        branchId: z.string(),
+        repoId: z.string()
+      })
+      .meta({ id: 'ToBackendIsBranchExistInput' })
   })
   .meta({ id: 'ToBackendIsBranchExistRequest' });
-
-assertTypesEqual<
-  ToBackendIsBranchExistInput,
-  z.infer<typeof zToBackendIsBranchExistInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendIsBranchExistRequest,

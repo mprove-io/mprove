@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type ProjectsItem,
-  zProjectsItem
-} from '#common/zod/backend/projects-item';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetProjectsListOutput,
+  zToBackendGetProjectsListOutput
+} from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-output';
 import {
   type ToBackendGetProjectsListError,
   zToBackendGetProjectsListError
 } from './get-projects-list-error';
 
-export type ToBackendGetProjectsListOutput = {
-  projectsList: ProjectsItem[];
-};
-
-export type ToBackendGetProjectsListResponse = ToBackendResponse<
+export type ToBackendGetProjectsListResponse = ToBackendResponseBase<
+  'getProjectsList',
   ToBackendGetProjectsListOutput,
   ToBackendGetProjectsListError
 >;
 
-export let zToBackendGetProjectsListOutput = z
-  .object({
-    projectsList: z.array(zProjectsItem)
-  })
-  .meta({ id: 'ToBackendGetProjectsListOutput' });
-
 export let zToBackendGetProjectsListResponse = makeToBackendResponseSchema({
-  success: zToBackendGetProjectsListOutput,
+  operation: 'getProjectsList',
+  output: zToBackendGetProjectsListOutput,
   error: zToBackendGetProjectsListError
 }).meta({ id: 'ToBackendGetProjectsListResponse' });
-
-assertTypesEqual<
-  ToBackendGetProjectsListOutput,
-  z.infer<typeof zToBackendGetProjectsListOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetProjectsListResponse,

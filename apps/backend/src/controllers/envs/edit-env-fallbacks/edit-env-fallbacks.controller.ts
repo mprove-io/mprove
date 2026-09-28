@@ -29,7 +29,7 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendEditEnvFallbacksOutput } from '#common/zod/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-response';
+import type { ToBackendEditEnvFallbacksOutput } from '#common/zod/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-output';
 
 const { forEachSeries } = pIteration;
 

@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { Env } from '#common/zod/backend/env';
 import type { Ev } from '#common/zod/backend/ev';
-import type { ToBackendDeleteEnvVarInput } from '#common/zod/backend/routes/envs/delete-env-var/delete-env-var-request';
+import type { ToBackendDeleteEnvVarRequest } from '#common/zod/backend/routes/envs/delete-env-var/delete-env-var-request';
 import type { ToBackendDeleteEnvVarResponse } from '#common/zod/backend/routes/envs/delete-env-var/delete-env-var-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -51,7 +51,7 @@ export class DeleteEvDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: ToBackendDeleteEnvVarInput = {
+    let payload: ToBackendDeleteEnvVarRequest['input'] = {
       projectId: this.dataItem.env.projectId,
       envId: this.dataItem.env.envId,
       evId: this.dataItem.ev.evId
@@ -67,10 +67,10 @@ export class DeleteEvDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteEnvVarResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
             this.environmentsQuery.update({
-              environments: resp.result.value.envs
+              environments: resp.output.envs
             });
           }
         }),

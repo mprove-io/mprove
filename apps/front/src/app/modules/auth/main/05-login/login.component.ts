@@ -18,7 +18,7 @@ import {
   LOCAL_STORAGE_TOKEN
 } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendLoginUserInput } from '#common/zod/backend/routes/users/login-user/login-user-request';
+import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
 import type { ToBackendLoginUserResponse } from '#common/zod/backend/routes/users/login-user/login-user-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -101,7 +101,7 @@ export class LoginComponent implements OnInit {
 
     this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: ToBackendLoginUserInput = {
+    let payload: ToBackendLoginUserRequest['input'] = {
       email: this.loginForm.value.email,
       password: this.loginForm.value.password
     };
@@ -113,9 +113,9 @@ export class LoginComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendLoginUserResponse) => {
-          if (resp.result?.type === 'Success') {
-            let user = resp.result.value.user;
-            let token = resp.result.value.token;
+          if (resp?.type === 'Success') {
+            let user = resp.output.user;
+            let token = resp.output.token;
 
             this.userQuery.update(user);
 

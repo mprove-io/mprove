@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_SANDBOX_PROVIDER_PAGE_TITLE } from '#common/constants/page-titles';
 import type { Project } from '#common/zod/backend/project';
-import type { ToBackendSetProjectSandboxProviderInput } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-request';
+import type { ToBackendSetProjectSandboxProviderRequest } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-request';
 import type { ToBackendSetProjectSandboxProviderResponse } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
@@ -55,7 +55,7 @@ export class ProjectSandboxProviderComponent implements OnInit {
   }
 
   deleteE2bApiKey() {
-    let payload: ToBackendSetProjectSandboxProviderInput = {
+    let payload: ToBackendSetProjectSandboxProviderRequest['input'] = {
       projectId: this.project.projectId,
       e2bApiKey: ''
     };
@@ -68,8 +68,8 @@ export class ProjectSandboxProviderComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetProjectSandboxProviderResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.projectQuery.update(resp.result.value.project);
+          if (resp?.type === 'Success') {
+            this.projectQuery.update(resp.output.project);
           }
         }),
         take(1)

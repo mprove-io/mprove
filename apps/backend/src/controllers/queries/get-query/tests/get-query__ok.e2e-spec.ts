@@ -16,8 +16,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-output';
 import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
-import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-response';
 import type { ToBackendGetQueryRequest } from '#common/zod/backend/routes/queries/get-query/get-query-request';
 import type { ToBackendGetQueryResponse } from '#common/zod/backend/routes/queries/get-query/get-query-response';
 
@@ -104,6 +104,7 @@ test('1', async t => {
       });
 
       let req1: ToBackendGetDashboardRequest = {
+        operation: 'getDashboard',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -127,6 +128,7 @@ test('1', async t => {
         unwrapBackendResponseOutput({ response: resp1 });
 
       let req2: ToBackendGetQueryRequest = {
+        operation: 'getQuery',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -159,7 +161,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp2.result.type, 'Success');
+    assert.equal(resp2.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

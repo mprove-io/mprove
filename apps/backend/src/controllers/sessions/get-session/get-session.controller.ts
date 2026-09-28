@@ -25,7 +25,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
+import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-output';
 import type { SessionEventApi } from '#common/zod/backend/session-event-api';
 import type { SessionMessageApi } from '#common/zod/backend/session-message-api';
 import type { SessionPartApi } from '#common/zod/backend/session-part-api';

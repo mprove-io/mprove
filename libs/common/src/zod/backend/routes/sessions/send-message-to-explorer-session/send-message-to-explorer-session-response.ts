@@ -1,40 +1,31 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type SessionApi, zSessionApi } from '#common/zod/backend/session-api';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSendMessageToExplorerSessionOutput,
+  zToBackendSendMessageToExplorerSessionOutput
+} from '#common/zod/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-output';
 import {
   type ToBackendSendMessageToExplorerSessionError,
   zToBackendSendMessageToExplorerSessionError
 } from './send-message-to-explorer-session-error';
 
-export type ToBackendSendMessageToExplorerSessionOutput = {
-  session: SessionApi;
-};
-
-export type ToBackendSendMessageToExplorerSessionResponse = ToBackendResponse<
-  ToBackendSendMessageToExplorerSessionOutput,
-  ToBackendSendMessageToExplorerSessionError
->;
-
-export let zToBackendSendMessageToExplorerSessionOutput = z
-  .object({
-    session: zSessionApi
-  })
-  .meta({ id: 'ToBackendSendMessageToExplorerSessionOutput' });
+export type ToBackendSendMessageToExplorerSessionResponse =
+  ToBackendResponseBase<
+    'sendMessageToExplorerSession',
+    ToBackendSendMessageToExplorerSessionOutput,
+    ToBackendSendMessageToExplorerSessionError
+  >;
 
 export let zToBackendSendMessageToExplorerSessionResponse =
   makeToBackendResponseSchema({
-    success: zToBackendSendMessageToExplorerSessionOutput,
+    operation: 'sendMessageToExplorerSession',
+    output: zToBackendSendMessageToExplorerSessionOutput,
     error: zToBackendSendMessageToExplorerSessionError
   }).meta({ id: 'ToBackendSendMessageToExplorerSessionResponse' });
-
-assertTypesEqual<
-  ToBackendSendMessageToExplorerSessionOutput,
-  z.infer<typeof zToBackendSendMessageToExplorerSessionOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSendMessageToExplorerSessionResponse,

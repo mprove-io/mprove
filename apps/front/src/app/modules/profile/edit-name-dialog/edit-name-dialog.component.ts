@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendSetUserNameInput } from '#common/zod/backend/routes/users/set-user-name/set-user-name-request';
+import type { ToBackendSetUserNameRequest } from '#common/zod/backend/routes/users/set-user-name/set-user-name-request';
 import type { ToBackendSetUserNameResponse } from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
 import type { User } from '#common/zod/backend/user';
 import { UserQuery } from '#front/app/queries/user.query';
@@ -79,7 +79,7 @@ export class EditNameDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendSetUserNameInput = {
+    let payload: ToBackendSetUserNameRequest['input'] = {
       firstName: this.editNameForm.value.firstName,
       lastName: this.editNameForm.value.lastName
     };
@@ -94,8 +94,8 @@ export class EditNameDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetUserNameResponse) => {
-          if (resp.result?.type === 'Success') {
-            let user = resp.result.value.user as User;
+          if (resp?.type === 'Success') {
+            let user = resp.output.user as User;
             this.userQuery.update(user);
           }
         }),

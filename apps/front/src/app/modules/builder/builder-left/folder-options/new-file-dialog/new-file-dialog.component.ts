@@ -18,9 +18,9 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
-import type { ToBackendCreateFileInput } from '#common/zod/backend/routes/files/create-file/create-file-request';
+import type { ToBackendCreateFileRequest } from '#common/zod/backend/routes/files/create-file/create-file-request';
 import type { ToBackendCreateFileResponse } from '#common/zod/backend/routes/files/create-file/create-file-response';
-import type { ToBackendCreateFolderInput } from '#common/zod/backend/routes/folders/create-folder/create-folder-request';
+import type { ToBackendCreateFolderRequest } from '#common/zod/backend/routes/folders/create-folder/create-folder-request';
 import type { ToBackendCreateFolderResponse } from '#common/zod/backend/routes/folders/create-folder/create-folder-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -112,7 +112,7 @@ export class NewFileDialogComponent implements OnInit {
     let parentNodeId = struct.projectId;
 
     if (this.isFolder === true) {
-      let payload: ToBackendCreateFolderInput = {
+      let payload: ToBackendCreateFolderRequest['input'] = {
         projectId: this.ref.data.projectId,
         repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
@@ -129,11 +129,11 @@ export class NewFileDialogComponent implements OnInit {
         })
         .pipe(
           tap((resp: ToBackendCreateFolderResponse) => {
-            if (resp.result?.type === 'Success') {
-              this.repoQuery.update(resp.result.value.repo);
-              this.structQuery.update(resp.result.value.struct);
+            if (resp?.type === 'Success') {
+              this.repoQuery.update(resp.output.repo);
+              this.structQuery.update(resp.output.struct);
               this.navQuery.updatePart({
-                needValidate: resp.result.value.needValidate
+                needValidate: resp.output.needValidate
               });
             }
           }),
@@ -141,7 +141,7 @@ export class NewFileDialogComponent implements OnInit {
         )
         .subscribe();
     } else {
-      let payload: ToBackendCreateFileInput = {
+      let payload: ToBackendCreateFileRequest['input'] = {
         projectId: this.ref.data.projectId,
         repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
@@ -158,11 +158,11 @@ export class NewFileDialogComponent implements OnInit {
         })
         .pipe(
           tap((resp: ToBackendCreateFileResponse) => {
-            if (resp.result?.type === 'Success') {
-              this.repoQuery.update(resp.result.value.repo);
-              this.structQuery.update(resp.result.value.struct);
+            if (resp?.type === 'Success') {
+              this.repoQuery.update(resp.output.repo);
+              this.structQuery.update(resp.output.struct);
               this.navQuery.updatePart({
-                needValidate: resp.result.value.needValidate
+                needValidate: resp.output.needValidate
               });
 
               let fId = parentNodeId + '/' + name;

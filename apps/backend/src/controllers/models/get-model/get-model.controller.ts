@@ -9,7 +9,7 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetModelOutput } from '#common/zod/backend/routes/models/get-model/get-model-response';
+import type { ToBackendGetModelOutput } from '#common/zod/backend/routes/models/get-model/get-model-output';
 
 @ApiTags('Models')
 @UseGuards(ThrottlerUserIdGuard)

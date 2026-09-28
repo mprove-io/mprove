@@ -1,37 +1,31 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendGetNavInput = {
-  orgId?: string;
-  projectId?: string;
-  getRepo: boolean;
-};
-
 export type ToBackendGetNavRequest = {
+  operation: 'getNav';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetNavInput;
+  input: {
+    orgId?: string;
+    projectId?: string;
+    getRepo: boolean;
+  };
 };
-
-export let zToBackendGetNavInput = z
-  .object({
-    orgId: z.string().nullish(),
-    projectId: z.string().nullish(),
-    getRepo: z.boolean()
-  })
-  .meta({ id: 'ToBackendGetNavInput' });
 
 export let zToBackendGetNavRequest = z
   .strictObject({
+    operation: z.literal('getNav'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetNavInput
+    input: z
+      .object({
+        orgId: z.string().nullish(),
+        projectId: z.string().nullish(),
+        getRepo: z.boolean()
+      })
+      .meta({ id: 'ToBackendGetNavInput' })
   })
   .meta({ id: 'ToBackendGetNavRequest' });
-
-assertTypesEqual<ToBackendGetNavInput, z.infer<typeof zToBackendGetNavInput>>({
-  value: true
-});
 
 assertTypesEqual<
   ToBackendGetNavRequest,

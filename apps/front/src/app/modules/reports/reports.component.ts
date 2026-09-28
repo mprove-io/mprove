@@ -58,11 +58,11 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import type { ReportUnit } from '#common/zod/backend/report-unit';
 import type { ReportX } from '#common/zod/backend/report-x';
-import type { ToBackendSetFavoriteInput } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-request';
+import type { ToBackendSetFavoriteRequest } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-request';
 import type { ToBackendSetFavoriteResponse } from '#common/zod/backend/routes/favorites/set-favorite/set-favorite-response';
-import type { ToBackendRunQueriesInput } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
+import type { ToBackendRunQueriesRequest } from '#common/zod/backend/routes/queries/run-queries/run-queries-request';
 import type { ToBackendRunQueriesResponse } from '#common/zod/backend/routes/queries/run-queries/run-queries-response';
-import type { ToBackendGetReportInput } from '#common/zod/backend/routes/reports/get-report/get-report-request';
+import type { ToBackendGetReportRequest } from '#common/zod/backend/routes/reports/get-report/get-report-request';
 import type { ToBackendGetReportResponse } from '#common/zod/backend/routes/reports/get-report/get-report-response';
 import type { SpaceNode } from '#common/zod/backend/space-node';
 import type { SpaceNodeX } from '#common/zod/backend/space-node-x';
@@ -810,7 +810,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let uiState = this.uiQuery.getValue();
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendGetReportInput = {
+    let payload: ToBackendGetReportRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -829,17 +829,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp: ToBackendGetReportResponse) => {
           if (
-            resp.result?.type === 'Success' &&
-            this.report.reportId === resp.result.value.report.reportId
+            resp?.type === 'Success' &&
+            this.report.reportId === resp.output.report.reportId
           ) {
-            this.memberQuery.update(resp.result.value.userMember);
+            this.memberQuery.update(resp.output.userMember);
 
-            this.structQuery.update(resp.result.value.struct);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
-            this.reportQuery.update(resp.result.value.report);
+            this.reportQuery.update(resp.output.report);
           }
         })
       );
@@ -854,7 +854,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendRunQueriesInput = {
+    let payload: ToBackendRunQueriesRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -871,8 +871,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendRunQueriesResponse) => {
-          if (resp.result?.type === 'Success') {
-            let { runningQueries } = resp.result.value;
+          if (resp?.type === 'Success') {
+            let { runningQueries } = resp.output;
             if (
               runningQueries
                 .map(y => y.queryId)
@@ -1226,7 +1226,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendSetFavoriteInput = {
+    let payload: ToBackendSetFavoriteRequest['input'] = {
       projectId: nav.projectId,
       type: FavoriteTypeEnum.Report,
       targetId: reportId,
@@ -1240,7 +1240,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap((resp: ToBackendSetFavoriteResponse) => {
-          let isOk = resp.result?.type === 'Success';
+          let isOk = resp?.type === 'Success';
 
           if (isOk === false) {
             this.reportsQuery.updatePart({

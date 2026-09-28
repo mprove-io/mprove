@@ -15,11 +15,9 @@ import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-re
 import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
 import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
 import type { ToBackendCreateRoleGivenRequest } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
+import type { ToBackendDeleteRoleGivenOutput } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-output';
 import type { ToBackendDeleteRoleGivenRequest } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-request';
-import type {
-  ToBackendDeleteRoleGivenOutput,
-  ToBackendDeleteRoleGivenResponse
-} from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-response';
+import type { ToBackendDeleteRoleGivenResponse } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-response';
 
 let testId = 'backend-delete-role-given__ok';
 
@@ -94,6 +92,7 @@ test('1', async t => {
       });
 
       let createGivenReq: ToBackendCreateGivenRequest = {
+        operation: 'createGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -114,6 +113,7 @@ test('1', async t => {
       });
 
       let createRoleReq: ToBackendCreateRoleRequest = {
+        operation: 'createRole',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -131,6 +131,7 @@ test('1', async t => {
       });
 
       let createRoleGivenReq: ToBackendCreateRoleGivenRequest = {
+        operation: 'createRoleGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -150,6 +151,7 @@ test('1', async t => {
       });
 
       let req: ToBackendDeleteRoleGivenRequest = {
+        operation: 'deleteRoleGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -179,7 +181,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let output: ToBackendDeleteRoleGivenOutput = unwrapBackendResponseOutput({
       response: resp

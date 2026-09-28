@@ -1,40 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendRevertRepoToLastCommitInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-};
-
 export type ToBackendRevertRepoToLastCommitRequest = {
+  operation: 'revertRepoToLastCommit';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendRevertRepoToLastCommitInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+  };
 };
-
-export let zToBackendRevertRepoToLastCommitInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string()
-  })
-  .meta({ id: 'ToBackendRevertRepoToLastCommitInput' });
 
 export let zToBackendRevertRepoToLastCommitRequest = z
   .strictObject({
+    operation: z.literal('revertRepoToLastCommit'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendRevertRepoToLastCommitInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string()
+      })
+      .meta({ id: 'ToBackendRevertRepoToLastCommitInput' })
   })
   .meta({ id: 'ToBackendRevertRepoToLastCommitRequest' });
-
-assertTypesEqual<
-  ToBackendRevertRepoToLastCommitInput,
-  z.infer<typeof zToBackendRevertRepoToLastCommitInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendRevertRepoToLastCommitRequest,

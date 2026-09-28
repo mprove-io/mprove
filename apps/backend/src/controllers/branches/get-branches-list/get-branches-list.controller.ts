@@ -19,7 +19,7 @@ import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetBranchesListOutput } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-response';
+import type { ToBackendGetBranchesListOutput } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-output';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)

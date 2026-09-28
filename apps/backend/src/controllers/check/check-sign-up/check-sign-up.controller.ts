@@ -6,7 +6,7 @@ import { ToBackendCheckSignUpResponseDto } from '#backend/controllers/check/chec
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCheckSignUpOutput } from '#common/zod/backend/routes/check/check-sign-up/check-sign-up-response';
+import type { ToBackendCheckSignUpOutput } from '#common/zod/backend/routes/check/check-sign-up/check-sign-up-output';
 
 @ApiTags('Check')
 @SkipJwtCheck()

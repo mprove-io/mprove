@@ -28,9 +28,9 @@ import {
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import type { ToBackendCreateProjectInput } from '#common/zod/backend/routes/projects/create-project/create-project-request';
+import type { ToBackendCreateProjectRequest } from '#common/zod/backend/routes/projects/create-project/create-project-request';
 import type { ToBackendCreateProjectResponse } from '#common/zod/backend/routes/projects/create-project/create-project-response';
-import type { ToBackendGenerateProjectRemoteKeyInput } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-request';
+import type { ToBackendGenerateProjectRemoteKeyRequest } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-request';
 import type { ToBackendGenerateProjectRemoteKeyResponse } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ApiService } from '#front/app/services/api.service';
@@ -98,7 +98,7 @@ export class CreateProjectDialogComponent implements OnInit {
       ]
     });
 
-    let payload: ToBackendGenerateProjectRemoteKeyInput = {
+    let payload: ToBackendGenerateProjectRemoteKeyRequest['input'] = {
       orgId: this.ref.data.orgId
     };
 
@@ -111,9 +111,9 @@ export class CreateProjectDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGenerateProjectRemoteKeyResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.noteId = resp.result.value.noteId;
-            this.publicKey = resp.result.value.publicKey;
+          if (resp?.type === 'Success') {
+            this.noteId = resp.output.noteId;
+            this.publicKey = resp.output.publicKey;
             this.maskedPublicKey =
               this.publicKey.substring(0, 40) +
               '•'.repeat(this.publicKey.length - 40);
@@ -149,7 +149,7 @@ export class CreateProjectDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateProjectInput = {
+    let payload: ToBackendCreateProjectRequest['input'] = {
       orgId: this.ref.data.orgId,
       name: this.createProjectForm.value.projectName,
       remoteType: this.projectRemoteRepoType,
@@ -166,16 +166,16 @@ export class CreateProjectDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateProjectResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.router.navigate([
               PATH_ORG,
-              resp.result.value.project.orgId,
+              resp.output.project.orgId,
               PATH_PROJECT,
-              resp.result.value.project.projectId,
+              resp.output.project.projectId,
               PATH_REPO,
               PROD_REPO_ID,
               PATH_BRANCH,
-              resp.result.value.project.defaultBranch,
+              resp.output.project.defaultBranch,
               PATH_ENV,
               PROJECT_ENV_PROD,
               PATH_BUILDER

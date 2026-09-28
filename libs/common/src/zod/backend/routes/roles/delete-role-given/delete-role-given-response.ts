@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type Role, zRole } from '#common/zod/backend/role';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteRoleGivenOutput,
+  zToBackendDeleteRoleGivenOutput
+} from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-output';
 import {
   type ToBackendDeleteRoleGivenError,
   zToBackendDeleteRoleGivenError
 } from './delete-role-given-error';
 
-export type ToBackendDeleteRoleGivenOutput = {
-  userMember: Member;
-  roles: Role[];
-};
-
-export type ToBackendDeleteRoleGivenResponse = ToBackendResponse<
+export type ToBackendDeleteRoleGivenResponse = ToBackendResponseBase<
+  'deleteRoleGiven',
   ToBackendDeleteRoleGivenOutput,
   ToBackendDeleteRoleGivenError
 >;
 
-export let zToBackendDeleteRoleGivenOutput = z
-  .object({
-    userMember: zMember,
-    roles: z.array(zRole)
-  })
-  .meta({ id: 'ToBackendDeleteRoleGivenOutput' });
-
 export let zToBackendDeleteRoleGivenResponse = makeToBackendResponseSchema({
-  success: zToBackendDeleteRoleGivenOutput,
+  operation: 'deleteRoleGiven',
+  output: zToBackendDeleteRoleGivenOutput,
   error: zToBackendDeleteRoleGivenError
 }).meta({ id: 'ToBackendDeleteRoleGivenResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteRoleGivenOutput,
-  z.infer<typeof zToBackendDeleteRoleGivenOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteRoleGivenResponse,

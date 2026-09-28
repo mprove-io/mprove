@@ -7,54 +7,47 @@ import {
   zConnectionOptions
 } from '#common/zod/backend/connection-parts/connection-options';
 
-export type ToBackendTestConnectionInput = {
-  projectId: string;
-  envId: string;
-  connectionId: string;
-  type:
-    | ConnectionTypeEnum.PostgreSQL
-    | ConnectionTypeEnum.MySQL
-    | ConnectionTypeEnum.SnowFlake
-    | ConnectionTypeEnum.BigQuery
-    | ConnectionTypeEnum.Databricks
-    | ConnectionTypeEnum.MotherDuck
-    | ConnectionTypeEnum.Presto
-    | ConnectionTypeEnum.Trino
-    | ConnectionTypeEnum.GoogleApi
-    | ConnectionTypeEnum.Api;
-  options?: ConnectionOptions;
-  storeMethod?: StoreMethodEnum.Post | StoreMethodEnum.Get;
-};
-
 export type ToBackendTestConnectionRequest = {
+  operation: 'testConnection';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendTestConnectionInput;
+  input: {
+    projectId: string;
+    envId: string;
+    connectionId: string;
+    type:
+      | ConnectionTypeEnum.PostgreSQL
+      | ConnectionTypeEnum.MySQL
+      | ConnectionTypeEnum.SnowFlake
+      | ConnectionTypeEnum.BigQuery
+      | ConnectionTypeEnum.Databricks
+      | ConnectionTypeEnum.MotherDuck
+      | ConnectionTypeEnum.Presto
+      | ConnectionTypeEnum.Trino
+      | ConnectionTypeEnum.GoogleApi
+      | ConnectionTypeEnum.Api;
+    options?: ConnectionOptions;
+    storeMethod?: StoreMethodEnum.Post | StoreMethodEnum.Get;
+  };
 };
-
-export let zToBackendTestConnectionInput = z
-  .object({
-    projectId: z.string(),
-    envId: z.string(),
-    connectionId: z.string(),
-    type: z.enum(ConnectionTypeEnum),
-    options: zConnectionOptions.nullish(),
-    storeMethod: z.enum(StoreMethodEnum).nullish()
-  })
-  .meta({ id: 'ToBackendTestConnectionInput' });
 
 export let zToBackendTestConnectionRequest = z
   .strictObject({
+    operation: z.literal('testConnection'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendTestConnectionInput
+    input: z
+      .object({
+        projectId: z.string(),
+        envId: z.string(),
+        connectionId: z.string(),
+        type: z.enum(ConnectionTypeEnum),
+        options: zConnectionOptions.nullish(),
+        storeMethod: z.enum(StoreMethodEnum).nullish()
+      })
+      .meta({ id: 'ToBackendTestConnectionInput' })
   })
   .meta({ id: 'ToBackendTestConnectionRequest' });
-
-assertTypesEqual<
-  ToBackendTestConnectionInput,
-  z.infer<typeof zToBackendTestConnectionInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendTestConnectionRequest,

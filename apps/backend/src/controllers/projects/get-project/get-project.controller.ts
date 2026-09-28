@@ -11,7 +11,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetProjectOutput } from '#common/zod/backend/routes/projects/get-project/get-project-response';
+import type { ToBackendGetProjectOutput } from '#common/zod/backend/routes/projects/get-project/get-project-output';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)

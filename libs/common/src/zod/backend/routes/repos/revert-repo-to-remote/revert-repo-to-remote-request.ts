@@ -1,40 +1,33 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendRevertRepoToRemoteInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-};
-
 export type ToBackendRevertRepoToRemoteRequest = {
+  operation: 'revertRepoToRemote';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendRevertRepoToRemoteInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+  };
 };
-
-export let zToBackendRevertRepoToRemoteInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string()
-  })
-  .meta({ id: 'ToBackendRevertRepoToRemoteInput' });
 
 export let zToBackendRevertRepoToRemoteRequest = z
   .strictObject({
+    operation: z.literal('revertRepoToRemote'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendRevertRepoToRemoteInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string()
+      })
+      .meta({ id: 'ToBackendRevertRepoToRemoteInput' })
   })
   .meta({ id: 'ToBackendRevertRepoToRemoteRequest' });
-
-assertTypesEqual<
-  ToBackendRevertRepoToRemoteInput,
-  z.infer<typeof zToBackendRevertRepoToRemoteInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendRevertRepoToRemoteRequest,

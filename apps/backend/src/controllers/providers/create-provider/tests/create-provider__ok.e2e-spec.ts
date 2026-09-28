@@ -114,6 +114,7 @@ test('1', async t => {
       });
 
       let req: ToBackendCreateProviderRequest = {
+        operation: 'createProvider',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -174,7 +175,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     assert.deepEqual(unwrapBackendResponseOutput({ response: resp }).provider, {
       projectId: projectId,

@@ -7,8 +7,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendGetBranchesListInput } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-request';
-import type { ToBackendGetBranchesListOutput } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-response';
+import type { ToBackendGetBranchesListOutput } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-output';
+import type { ToBackendGetBranchesListRequest } from '#common/zod/backend/routes/branches/get-branches-list/get-branches-list-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -73,7 +73,7 @@ export class GetBranchesCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let getBranchesListReqPayload: ToBackendGetBranchesListInput = {
+    let getBranchesListReqPayload: ToBackendGetBranchesListRequest['input'] = {
       projectId: this.projectId
     };
 

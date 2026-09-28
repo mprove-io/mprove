@@ -675,13 +675,13 @@ export class SchemaGraphDialogComponent implements OnInit {
         map((resp: ToBackendGetConnectionSampleResponse) => {
           setTimeout(() => {
             if (
-              resp.result?.type === 'Success' &&
-              isDefined(resp.result.value.errorMessage)
+              resp?.type === 'Success' &&
+              isDefined(resp.output.errorMessage)
             ) {
-              this.sampleErrorMessage = resp.result.value.errorMessage;
-            } else if (resp.result?.type === 'Success') {
-              this.sampleColumnNames = resp.result.value.columnNames;
-              this.sampleRows = resp.result.value.rows;
+              this.sampleErrorMessage = resp.output.errorMessage;
+            } else if (resp?.type === 'Success') {
+              this.sampleColumnNames = resp.output.columnNames;
+              this.sampleRows = resp.output.rows;
               this.sampleErrorMessage = undefined;
             } else {
               this.sampleErrorMessage = 'Failed to fetch sample data';

@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type CachedColumn,
-  zCachedColumn
-} from '#common/zod/backend/connections/cached-column';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendRefreshCachedColumnOutput,
+  zToBackendRefreshCachedColumnOutput
+} from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-output';
 import {
   type ToBackendRefreshCachedColumnError,
   zToBackendRefreshCachedColumnError
 } from './refresh-cached-column-error';
 
-export type ToBackendRefreshCachedColumnOutput = {
-  cachedColumn?: CachedColumn;
-};
-
-export type ToBackendRefreshCachedColumnResponse = ToBackendResponse<
+export type ToBackendRefreshCachedColumnResponse = ToBackendResponseBase<
+  'refreshCachedColumn',
   ToBackendRefreshCachedColumnOutput,
   ToBackendRefreshCachedColumnError
 >;
 
-export let zToBackendRefreshCachedColumnOutput = z
-  .object({
-    cachedColumn: zCachedColumn.nullish()
-  })
-  .meta({ id: 'ToBackendRefreshCachedColumnOutput' });
-
 export let zToBackendRefreshCachedColumnResponse = makeToBackendResponseSchema({
-  success: zToBackendRefreshCachedColumnOutput,
+  operation: 'refreshCachedColumn',
+  output: zToBackendRefreshCachedColumnOutput,
   error: zToBackendRefreshCachedColumnError
 }).meta({ id: 'ToBackendRefreshCachedColumnResponse' });
-
-assertTypesEqual<
-  ToBackendRefreshCachedColumnOutput,
-  z.infer<typeof zToBackendRefreshCachedColumnOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendRefreshCachedColumnResponse,

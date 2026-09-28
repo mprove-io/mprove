@@ -1,5 +1,5 @@
 import type { ToBackendTelemetryRoute } from '#common/types/to-backend-telemetry-route';
-import { toBackendRouteRegistry } from '#common/zod/backend/request/to-backend-route-registry';
+import { toBackendRouteOperations } from '#common/zod/backend/request/to-backend-route-operations';
 
 const telemetryRoutes: ToBackendTelemetryRoute[] = [
   'api/ToBackendTelemetryLogs',
@@ -8,7 +8,7 @@ const telemetryRoutes: ToBackendTelemetryRoute[] = [
 ];
 
 export const OPEN_API_ALLOWED_PATHS: Set<string> = new Set([
-  ...Object.keys(toBackendRouteRegistry).map(route => `/${route}`),
+  ...Object.keys(toBackendRouteOperations).map(route => `/${route}`),
   ...telemetryRoutes.map(route => `/${route}`),
   '/api/ToBackendCheck',
   '/api/sse/session-events'

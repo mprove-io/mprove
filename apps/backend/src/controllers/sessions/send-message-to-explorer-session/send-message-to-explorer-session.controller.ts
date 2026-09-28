@@ -44,7 +44,7 @@ import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { getExplorerContextBlockThreshold } from '#common/functions/get-explorer-context-block-threshold/get-explorer-context-block-threshold';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSendMessageToExplorerSessionOutput } from '#common/zod/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-response';
+import type { ToBackendSendMessageToExplorerSessionOutput } from '#common/zod/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-output';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

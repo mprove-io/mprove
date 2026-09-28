@@ -55,11 +55,11 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Member } from '#common/zod/backend/member';
 import type { ModelX } from '#common/zod/backend/model-x';
-import type { ToBackendGetChartInput } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
+import type { ToBackendGetChartRequest } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
 import type { ToBackendGetChartResponse } from '#common/zod/backend/routes/charts/get-chart/get-chart-response';
-import type { ToBackendSaveFileInput } from '#common/zod/backend/routes/files/save-file/save-file-request';
+import type { ToBackendSaveFileRequest } from '#common/zod/backend/routes/files/save-file/save-file-request';
 import type { ToBackendSaveFileResponse } from '#common/zod/backend/routes/files/save-file/save-file-response';
-import type { ToBackendGetModelsInput } from '#common/zod/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsRequest } from '#common/zod/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -1083,7 +1083,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     let fileNodeId =
       this.nav.projectId + '/' + decodeFilePath({ filePath: this.file.fileId });
 
-    let payload: ToBackendSaveFileInput = {
+    let payload: ToBackendSaveFileRequest['input'] = {
       projectId: this.nav.projectId,
       repoId: this.nav.repoId,
       branchId: this.nav.branchId,
@@ -1100,11 +1100,11 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       })
       .pipe(
         tap((resp: ToBackendSaveFileResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             this.startText = this.content;
@@ -1227,7 +1227,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       let nav = this.navQuery.getValue();
 
-      let payload: ToBackendGetModelsInput = {
+      let payload: ToBackendGetModelsRequest['input'] = {
         projectId: nav.projectId,
         repoId: nav.repoId,
         branchId: nav.branchId,
@@ -1241,8 +1241,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         })
         .pipe(
           tap((resp: ToBackendGetModelsResponse) => {
-            if (resp.result?.type === 'Success') {
-              models = resp.result.value.models.filter(
+            if (resp?.type === 'Success') {
+              models = resp.output.models.filter(
                 y => y.filePath === this.file.fileNodeId
               );
 
@@ -1277,7 +1277,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     } else if (dotExt === FileExtensionEnum.Chart) {
       let nav = this.navQuery.getValue();
 
-      let payload: ToBackendGetChartInput = {
+      let payload: ToBackendGetChartRequest['input'] = {
         projectId: nav.projectId,
         repoId: nav.repoId,
         branchId: nav.branchId,
@@ -1295,12 +1295,12 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         })
         .pipe(
           map((resp: ToBackendGetChartResponse) => {
-            if (resp.result?.type === 'Success') {
-              this.memberQuery.update(resp.result.value.userMember);
+            if (resp?.type === 'Success') {
+              this.memberQuery.update(resp.output.userMember);
 
-              if (isDefined(resp.result.value.chart)) {
+              if (isDefined(resp.output.chart)) {
                 this.navigateService.navigateToChart({
-                  modelId: resp.result.value.chart.modelId,
+                  modelId: resp.output.chart.modelId,
                   chartId: id
                 });
               } else {

@@ -13,7 +13,7 @@ import {
   LOCAL_STORAGE_PROJECT_ID
 } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetNavInput } from '#common/zod/backend/routes/nav/get-nav/get-nav-request';
+import type { ToBackendGetNavRequest } from '#common/zod/backend/routes/nav/get-nav/get-nav-request';
 import type { ToBackendGetNavResponse } from '#common/zod/backend/routes/nav/get-nav/get-nav-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -76,7 +76,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
       return of(false);
     }
 
-    let payload: ToBackendGetNavInput = {
+    let payload: ToBackendGetNavRequest['input'] = {
       orgId: localStorage.getItem(LOCAL_STORAGE_ORG_ID),
       projectId: localStorage.getItem(LOCAL_STORAGE_PROJECT_ID),
       getRepo: isRepoInPath === false
@@ -89,7 +89,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetNavResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             let {
               avatarSmall,
               avatarBig,
@@ -110,7 +110,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
               userMember,
               struct,
               repo
-            } = resp.result.value;
+            } = resp.output;
 
             let nav: NavState = {
               avatarSmall: avatarSmall,
@@ -133,16 +133,16 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
 
             this.navQuery.update(nav);
             this.userQuery.update(user);
-            this.uiQuery.updatePart({ ...resp.result.value.user.ui });
+            this.uiQuery.updatePart({ ...resp.output.user.ui });
 
             if (isDefined(userMember)) {
-              this.memberQuery.update(resp.result.value.userMember);
+              this.memberQuery.update(resp.output.userMember);
             }
             if (isDefined(struct)) {
-              this.structQuery.update(resp.result.value.struct);
+              this.structQuery.update(resp.output.struct);
             }
             if (isDefined(repo)) {
-              this.repoQuery.update(resp.result.value.repo);
+              this.repoQuery.update(resp.output.repo);
             }
 
             if (user.isEmailVerified === true) {

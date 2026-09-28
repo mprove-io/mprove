@@ -1,43 +1,30 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DashboardUnit,
-  zDashboardUnit
-} from '#common/zod/backend/dashboard-unit';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteDraftDashboardsOutput,
+  zToBackendDeleteDraftDashboardsOutput
+} from '#common/zod/backend/routes/dashboards/delete-draft-dashboards/delete-draft-dashboards-output';
 import {
   type ToBackendDeleteDraftDashboardsError,
   zToBackendDeleteDraftDashboardsError
 } from './delete-draft-dashboards-error';
 
-export type ToBackendDeleteDraftDashboardsOutput = {
-  dashboardUnitDrafts: DashboardUnit[];
-};
-
-export type ToBackendDeleteDraftDashboardsResponse = ToBackendResponse<
+export type ToBackendDeleteDraftDashboardsResponse = ToBackendResponseBase<
+  'deleteDraftDashboards',
   ToBackendDeleteDraftDashboardsOutput,
   ToBackendDeleteDraftDashboardsError
 >;
 
-export let zToBackendDeleteDraftDashboardsOutput = z
-  .object({
-    dashboardUnitDrafts: z.array(zDashboardUnit)
-  })
-  .meta({ id: 'ToBackendDeleteDraftDashboardsOutput' });
-
 export let zToBackendDeleteDraftDashboardsResponse =
   makeToBackendResponseSchema({
-    success: zToBackendDeleteDraftDashboardsOutput,
+    operation: 'deleteDraftDashboards',
+    output: zToBackendDeleteDraftDashboardsOutput,
     error: zToBackendDeleteDraftDashboardsError
   }).meta({ id: 'ToBackendDeleteDraftDashboardsResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteDraftDashboardsOutput,
-  z.infer<typeof zToBackendDeleteDraftDashboardsOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteDraftDashboardsResponse,

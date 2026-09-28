@@ -9,40 +9,32 @@ import {
   zToBackendSyncRepoToServerInput
 } from '#common/zod/backend/repos/to-backend-sync-repo-to-server-input';
 
-export type ToBackendSyncRepoInput =
-  | ToBackendSyncRepoToServerInput
-  | ToBackendSyncRepoFromServerInput;
-
 export type ToBackendSyncRepoRequest = {
+  operation: 'syncRepo';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendSyncRepoInput;
+  input: ToBackendSyncRepoToServerInput | ToBackendSyncRepoFromServerInput;
 };
-
-export let zToBackendSyncRepoInput = z
-  .discriminatedUnion('direction', [
-    zToBackendSyncRepoToServerInput,
-    zToBackendSyncRepoFromServerInput
-  ])
-  .meta({ id: 'ToBackendSyncRepoInput' });
 
 export let zToBackendSyncRepoRequest = z
   .strictObject({
+    operation: z.literal('syncRepo'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendSyncRepoInput
+    input: z
+      .discriminatedUnion('direction', [
+        zToBackendSyncRepoToServerInput,
+        zToBackendSyncRepoFromServerInput
+      ])
+      .meta({ id: 'ToBackendSyncRepoInput' })
   })
   .transform(item => ({
+    operation: item.operation,
     traceId: item.traceId,
     idempotencyKey: item.idempotencyKey,
     input: item.input
   }))
   .meta({ id: 'ToBackendSyncRepoRequest' });
-
-assertTypesEqual<
-  ToBackendSyncRepoInput,
-  z.infer<typeof zToBackendSyncRepoInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSyncRepoRequest,

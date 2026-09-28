@@ -14,7 +14,7 @@ import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_DELETED_ORG_NAME
 } from '#common/constants/top-front';
-import type { ToBackendDeleteOrgInput } from '#common/zod/backend/routes/orgs/delete-org/delete-org-request';
+import type { ToBackendDeleteOrgRequest } from '#common/zod/backend/routes/orgs/delete-org/delete-org-request';
 import type { ToBackendDeleteOrgResponse } from '#common/zod/backend/routes/orgs/delete-org/delete-org-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
@@ -58,7 +58,7 @@ export class DeleteOrgDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendDeleteOrgInput = {
+    let payload: ToBackendDeleteOrgRequest['input'] = {
       orgId: this.ref.data.orgId
     };
 
@@ -71,7 +71,7 @@ export class DeleteOrgDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteOrgResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             localStorage.setItem(
               LOCAL_STORAGE_DELETED_ORG_NAME,
               this.ref.data.orgName

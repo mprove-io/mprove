@@ -37,7 +37,7 @@ import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendRevertRepoToLastCommitOutput } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
+import type { ToBackendRevertRepoToLastCommitOutput } from '#common/zod/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-output';
 import type { ToDiskRevertRepoToLastCommitOutput } from '#common/zod/disk/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-output';
 
 const { forEachSeries } = pIteration;

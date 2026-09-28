@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendPollUserCodexAuthInput = {
-  deviceAuthId: string;
-  userCode: string;
-};
-
 export type ToBackendPollUserCodexAuthRequest = {
+  operation: 'pollUserCodexAuth';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendPollUserCodexAuthInput;
+  input: {
+    deviceAuthId: string;
+    userCode: string;
+  };
 };
-
-export let zToBackendPollUserCodexAuthInput = z
-  .object({
-    deviceAuthId: z.string(),
-    userCode: z.string()
-  })
-  .meta({ id: 'ToBackendPollUserCodexAuthInput' });
 
 export let zToBackendPollUserCodexAuthRequest = z
   .strictObject({
+    operation: z.literal('pollUserCodexAuth'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendPollUserCodexAuthInput
+    input: z
+      .object({
+        deviceAuthId: z.string(),
+        userCode: z.string()
+      })
+      .meta({ id: 'ToBackendPollUserCodexAuthInput' })
   })
   .meta({ id: 'ToBackendPollUserCodexAuthRequest' });
-
-assertTypesEqual<
-  ToBackendPollUserCodexAuthInput,
-  z.infer<typeof zToBackendPollUserCodexAuthInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendPollUserCodexAuthRequest,

@@ -16,7 +16,7 @@ import {
 import { ErEnum } from '#common/enums/er.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetDashboardInput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
+import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
 import type { ToBackendGetDashboardResponse } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-response';
 import { makeTrackChangeId } from '#front/app/functions/make-track-change-id';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
@@ -117,7 +117,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    let payload: ToBackendGetDashboardInput = {
+    let payload: ToBackendGetDashboardRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -134,27 +134,27 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetDashboardResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
 
-            this.structQuery.update(resp.result.value.struct);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
-            resp.result.value.dashboard.tiles.forEach(tile => {
+            resp.output.dashboard.tiles.forEach(tile => {
               tile.trackChangeId = makeTrackChangeId({
                 mconfig: tile.mconfig,
                 query: tile.query
               });
             });
 
-            this.dashboardQuery.update(resp.result.value.dashboard);
+            this.dashboardQuery.update(resp.output.dashboard);
 
             return true;
           } else if (
-            resp.result?.type === 'Failure' &&
-            resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp?.type === 'Failure' &&
+            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
               PATH_ORG,

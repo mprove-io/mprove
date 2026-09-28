@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PARAMETER_ORG_ID } from '#common/constants/top';
-import type { ToBackendGetOrgInput } from '#common/zod/backend/routes/orgs/get-org/get-org-request';
+import type { ToBackendGetOrgRequest } from '#common/zod/backend/routes/orgs/get-org/get-org-request';
 import type { ToBackendGetOrgResponse } from '#common/zod/backend/routes/orgs/get-org/get-org-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -45,7 +45,7 @@ export class OrgAccountResolver implements Resolve<Observable<boolean>> {
       nav: nav
     });
 
-    let payload: ToBackendGetOrgInput = {
+    let payload: ToBackendGetOrgRequest['input'] = {
       orgId: route.params[PARAMETER_ORG_ID]
     };
 
@@ -56,8 +56,8 @@ export class OrgAccountResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetOrgResponse) => {
-          if (resp.result?.type === 'Success') {
-            let org = resp.result.value.org;
+          if (resp?.type === 'Success') {
+            let org = resp.output.org;
             this.orgQuery.update(org);
             return true;
           } else {

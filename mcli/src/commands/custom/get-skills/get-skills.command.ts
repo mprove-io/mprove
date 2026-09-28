@@ -2,7 +2,7 @@ import path from 'node:path';
 import { Command, Option } from 'clipanion';
 import fse from 'fs-extra';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ToBackendGetSkillsOutput } from '#common/zod/backend/routes/skills/get-skills/get-skills-response';
+import type { ToBackendGetSkillsOutput } from '#common/zod/backend/routes/skills/get-skills/get-skills-output';
 import type { SkillItem } from '#common/zod/backend/skill-item';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';

@@ -84,6 +84,7 @@ test('1', async t => {
       });
 
       let req: ToBackendEditMemberRequest = {
+        operation: 'editMember',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -116,9 +117,9 @@ test('1', async t => {
       }
     }
 
-    assert.ok(resp.result.type === 'Failure');
+    assert.ok(resp.type === 'Failure');
     assert.equal(
-      resp.result.error.message,
+      resp.error.code,
       ErEnum.BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS
     );
 

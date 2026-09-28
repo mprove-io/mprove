@@ -20,7 +20,7 @@ import { HashService } from '#backend/services/hash.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendClearCachedColumnOutput } from '#common/zod/backend/routes/connections/clear-cached-column/clear-cached-column-response';
+import type { ToBackendClearCachedColumnOutput } from '#common/zod/backend/routes/connections/clear-cached-column/clear-cached-column-output';
 
 @ApiTags('CachedColumns')
 @UseGuards(ThrottlerUserIdGuard)

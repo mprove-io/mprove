@@ -1,45 +1,30 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type LlmModelWithProvider,
-  zLlmModelWithProvider
-} from '#common/zod/backend/llm-models/llm-model-with-provider';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetLlmModelsWithProviderOutput,
+  zToBackendGetLlmModelsWithProviderOutput
+} from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-output';
 import {
   type ToBackendGetLlmModelsWithProviderError,
   zToBackendGetLlmModelsWithProviderError
 } from './get-llm-models-with-provider-error';
 
-export type ToBackendGetLlmModelsWithProviderOutput = {
-  modelsOpencode: LlmModelWithProvider[];
-  modelsAi: LlmModelWithProvider[];
-};
-
-export type ToBackendGetLlmModelsWithProviderResponse = ToBackendResponse<
+export type ToBackendGetLlmModelsWithProviderResponse = ToBackendResponseBase<
+  'getLlmModelsWithProvider',
   ToBackendGetLlmModelsWithProviderOutput,
   ToBackendGetLlmModelsWithProviderError
 >;
 
-export let zToBackendGetLlmModelsWithProviderOutput = z
-  .object({
-    modelsOpencode: z.array(zLlmModelWithProvider),
-    modelsAi: z.array(zLlmModelWithProvider)
-  })
-  .meta({ id: 'ToBackendGetLlmModelsWithProviderOutput' });
-
 export let zToBackendGetLlmModelsWithProviderResponse =
   makeToBackendResponseSchema({
-    success: zToBackendGetLlmModelsWithProviderOutput,
+    operation: 'getLlmModelsWithProvider',
+    output: zToBackendGetLlmModelsWithProviderOutput,
     error: zToBackendGetLlmModelsWithProviderError
   }).meta({ id: 'ToBackendGetLlmModelsWithProviderResponse' });
-
-assertTypesEqual<
-  ToBackendGetLlmModelsWithProviderOutput,
-  z.infer<typeof zToBackendGetLlmModelsWithProviderOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetLlmModelsWithProviderResponse,

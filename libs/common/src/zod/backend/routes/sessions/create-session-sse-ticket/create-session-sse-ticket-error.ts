@@ -1,13 +1,13 @@
 import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendError,
-  zBackendError
-} from '#common/zod/backend/errors/backend-error';
+  type BackendSessionNotFoundError,
+  zBackendSessionNotFoundError
+} from '#common/zod/backend/errors/backend-session-not-found-error';
 
-export type ToBackendCreateSessionSseTicketError = BackendError;
+export type ToBackendCreateSessionSseTicketError = BackendSessionNotFoundError;
 
-export let zToBackendCreateSessionSseTicketError = zBackendError;
+export let zToBackendCreateSessionSseTicketError = zBackendSessionNotFoundError;
 
 assertTypesEqual<
   ToBackendCreateSessionSseTicketError,

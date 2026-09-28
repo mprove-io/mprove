@@ -17,7 +17,7 @@ import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendArchiveSessionOutput } from '#common/zod/backend/routes/sessions/archive-session/archive-session-response';
+import type { ToBackendArchiveSessionOutput } from '#common/zod/backend/routes/sessions/archive-session/archive-session-output';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

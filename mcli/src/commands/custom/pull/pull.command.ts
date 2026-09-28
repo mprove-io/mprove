@@ -9,8 +9,8 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type { ToBackendPullRepoInput } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-request';
-import type { ToBackendPullRepoOutput } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-response';
+import type { ToBackendPullRepoOutput } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-output';
+import type { ToBackendPullRepoRequest } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';
@@ -93,7 +93,7 @@ export class PullCommand extends CustomCommand {
           ? apiKey.split('-')[2].toLowerCase()
           : apiKey.split('-')[2];
 
-    let pullRepoReqPayload: ToBackendPullRepoInput = {
+    let pullRepoReqPayload: ToBackendPullRepoRequest['input'] = {
       projectId: this.projectId,
       repoId: repoId,
       branchId: this.branch,

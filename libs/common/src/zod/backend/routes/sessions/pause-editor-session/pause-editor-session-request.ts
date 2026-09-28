@@ -1,34 +1,27 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendPauseEditorSessionInput = {
-  sessionId: string;
-};
-
 export type ToBackendPauseEditorSessionRequest = {
+  operation: 'pauseEditorSession';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendPauseEditorSessionInput;
+  input: {
+    sessionId: string;
+  };
 };
-
-export let zToBackendPauseEditorSessionInput = z
-  .object({
-    sessionId: z.string()
-  })
-  .meta({ id: 'ToBackendPauseEditorSessionInput' });
 
 export let zToBackendPauseEditorSessionRequest = z
   .strictObject({
+    operation: z.literal('pauseEditorSession'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendPauseEditorSessionInput
+    input: z
+      .object({
+        sessionId: z.string()
+      })
+      .meta({ id: 'ToBackendPauseEditorSessionInput' })
   })
   .meta({ id: 'ToBackendPauseEditorSessionRequest' });
-
-assertTypesEqual<
-  ToBackendPauseEditorSessionInput,
-  z.infer<typeof zToBackendPauseEditorSessionInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendPauseEditorSessionRequest,

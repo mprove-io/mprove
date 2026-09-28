@@ -2,11 +2,12 @@ import axios, { type AxiosResponse } from 'axios';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import { makeToBackendRequest } from '#common/functions/make-to-backend-request/make-to-backend-request';
 import type { ToBackendInputForRoute } from '#common/types/to-backend-input-for-route';
 import type { ToBackendOutputForRoute } from '#common/types/to-backend-output-for-route';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { ToBackendRequest } from '#common/zod/backend/request/to-backend-request';
-import type { ToBackendResponse } from '#common/zod/backend/response/to-backend-response';
+import type { ToBackendResponseForRoute } from '#common/zod/backend/response/to-backend-response-for-route';
 
 export async function mreq<TRoute extends ToBackendRoute>(item: {
   host: string;
@@ -16,11 +17,12 @@ export async function mreq<TRoute extends ToBackendRoute>(item: {
 }): Promise<ToBackendOutputForRoute<TRoute>> {
   let { host, route, payload, apiKey } = item;
 
-  let body: ToBackendRequest = {
+  let body: ToBackendRequest = makeToBackendRequest({
+    route: route,
     traceId: makeId(),
     idempotencyKey: makeId(),
     input: payload
-  };
+  });
 
   let url: string = `${host}/${route}`;
 
@@ -30,21 +32,18 @@ export async function mreq<TRoute extends ToBackendRoute>(item: {
     headers.Authorization = `Bearer ${apiKey}`;
   }
 
-  let resp: AxiosResponse<ToBackendResponse<ToBackendOutputForRoute<TRoute>>> =
-    await axios.post<ToBackendResponse<ToBackendOutputForRoute<TRoute>>>(
-      url,
-      body,
-      { headers: headers }
-    );
+  let resp: AxiosResponse<ToBackendResponseForRoute<TRoute>> = await axios.post<
+    ToBackendResponseForRoute<TRoute>
+  >(url, body, { headers: headers });
 
-  if (resp.data?.result?.type !== 'Success') {
+  if (resp.data?.type !== 'Success') {
     throw new ServerError({
       message: ErEnum.MCLI_ERROR_RESPONSE_FROM_BACKEND,
-      originalError: resp.data?.result?.error
+      originalError: resp.data?.error
     });
   }
 
-  let output: ToBackendOutputForRoute<TRoute> = resp.data.result.value;
+  let output: ToBackendOutputForRoute<TRoute> = resp.data.output;
 
   return output;
 }

@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendSetOrgInfoInput } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-request';
+import type { ToBackendSetOrgInfoRequest } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-request';
 import type { ToBackendSetOrgInfoResponse } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -73,7 +73,7 @@ export class EditOrgNameDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendSetOrgInfoInput = {
+    let payload: ToBackendSetOrgInfoRequest['input'] = {
       orgId: this.ref.data.orgId,
       name: this.editOrgNameForm.value.orgName
     };
@@ -88,8 +88,8 @@ export class EditOrgNameDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendSetOrgInfoResponse) => {
-          if (resp.result?.type === 'Success') {
-            let org = resp.result.value.org;
+          if (resp?.type === 'Success') {
+            let org = resp.output.org;
             this.orgQuery.update(org);
             this.navQuery.updatePart({
               orgId: org.orgId,

@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type ReportUnit, zReportUnit } from '#common/zod/backend/report-unit';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type SpaceNode, zSpaceNode } from '#common/zod/backend/space-node';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteReportOutput,
+  zToBackendDeleteReportOutput
+} from '#common/zod/backend/routes/reports/delete-report/delete-report-output';
 import {
   type ToBackendDeleteReportError,
   zToBackendDeleteReportError
 } from './delete-report-error';
 
-export type ToBackendDeleteReportOutput = {
-  reportUnitDrafts: ReportUnit[];
-  reportSpaceNodes: SpaceNode[];
-};
-
-export type ToBackendDeleteReportResponse = ToBackendResponse<
+export type ToBackendDeleteReportResponse = ToBackendResponseBase<
+  'deleteReport',
   ToBackendDeleteReportOutput,
   ToBackendDeleteReportError
 >;
 
-export let zToBackendDeleteReportOutput = z
-  .object({
-    reportUnitDrafts: z.array(zReportUnit),
-    reportSpaceNodes: z.array(zSpaceNode)
-  })
-  .meta({ id: 'ToBackendDeleteReportOutput' });
-
 export let zToBackendDeleteReportResponse = makeToBackendResponseSchema({
-  success: zToBackendDeleteReportOutput,
+  operation: 'deleteReport',
+  output: zToBackendDeleteReportOutput,
   error: zToBackendDeleteReportError
 }).meta({ id: 'ToBackendDeleteReportResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteReportOutput,
-  z.infer<typeof zToBackendDeleteReportOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteReportResponse,

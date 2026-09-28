@@ -1,44 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
 import {
-  type ServerUsersItem,
-  zServerUsersItem
-} from '#common/zod/backend/users/server-users-item';
+  type ToBackendGetServerUsersOutput,
+  zToBackendGetServerUsersOutput
+} from '#common/zod/backend/routes/users/get-server-users/get-server-users-output';
 import {
   type ToBackendGetServerUsersError,
   zToBackendGetServerUsersError
 } from './get-server-users-error';
 
-export type ToBackendGetServerUsersOutput = {
-  serverUsersList: ServerUsersItem[];
-  total: number;
-};
-
-export type ToBackendGetServerUsersResponse = ToBackendResponse<
+export type ToBackendGetServerUsersResponse = ToBackendResponseBase<
+  'getServerUsers',
   ToBackendGetServerUsersOutput,
   ToBackendGetServerUsersError
 >;
 
-export let zToBackendGetServerUsersOutput = z
-  .object({
-    serverUsersList: z.array(zServerUsersItem),
-    total: z.number()
-  })
-  .meta({ id: 'ToBackendGetServerUsersOutput' });
-
 export let zToBackendGetServerUsersResponse = makeToBackendResponseSchema({
-  success: zToBackendGetServerUsersOutput,
+  operation: 'getServerUsers',
+  output: zToBackendGetServerUsersOutput,
   error: zToBackendGetServerUsersError
 }).meta({ id: 'ToBackendGetServerUsersResponse' });
-
-assertTypesEqual<
-  ToBackendGetServerUsersOutput,
-  z.infer<typeof zToBackendGetServerUsersOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetServerUsersResponse,

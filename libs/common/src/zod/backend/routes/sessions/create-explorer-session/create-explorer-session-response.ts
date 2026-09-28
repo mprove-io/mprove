@@ -1,45 +1,30 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCreateExplorerSessionOutput,
+  zToBackendCreateExplorerSessionOutput
+} from '#common/zod/backend/routes/sessions/create-explorer-session/create-explorer-session-output';
 import {
   type ToBackendCreateExplorerSessionError,
   zToBackendCreateExplorerSessionError
 } from './create-explorer-session-error';
 
-export type ToBackendCreateExplorerSessionOutput = {
-  sessionId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-};
-
-export type ToBackendCreateExplorerSessionResponse = ToBackendResponse<
+export type ToBackendCreateExplorerSessionResponse = ToBackendResponseBase<
+  'createExplorerSession',
   ToBackendCreateExplorerSessionOutput,
   ToBackendCreateExplorerSessionError
 >;
 
-export let zToBackendCreateExplorerSessionOutput = z
-  .object({
-    sessionId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string()
-  })
-  .meta({ id: 'ToBackendCreateExplorerSessionOutput' });
-
 export let zToBackendCreateExplorerSessionResponse =
   makeToBackendResponseSchema({
-    success: zToBackendCreateExplorerSessionOutput,
+    operation: 'createExplorerSession',
+    output: zToBackendCreateExplorerSessionOutput,
     error: zToBackendCreateExplorerSessionError
   }).meta({ id: 'ToBackendCreateExplorerSessionResponse' });
-
-assertTypesEqual<
-  ToBackendCreateExplorerSessionOutput,
-  z.infer<typeof zToBackendCreateExplorerSessionOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateExplorerSessionResponse,

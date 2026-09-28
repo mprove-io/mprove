@@ -115,6 +115,7 @@ test('1', async t => {
 
       // not session-allowed
       let commitReq: ToBackendCommitRepoRequest = {
+        operation: 'commitRepo',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -145,9 +146,9 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Failure');
+    assert.equal(resp.type, 'Failure');
     assert.equal(
-      resp.result.error.message,
+      resp.error.code,
       ErEnum.BACKEND_SESSION_API_KEY_REQUEST_NOT_ALLOWED
     );
 

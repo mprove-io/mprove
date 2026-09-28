@@ -1,47 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type ToBackendSyncRepoFromServerOutput,
-  zToBackendSyncRepoFromServerOutput
-} from '#common/zod/backend/repos/to-backend-sync-repo-from-server-output';
-import {
-  type ToBackendSyncRepoToServerOutput,
-  zToBackendSyncRepoToServerOutput
-} from '#common/zod/backend/repos/to-backend-sync-repo-to-server-output';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSyncRepoOutput,
+  zToBackendSyncRepoOutput
+} from '#common/zod/backend/routes/repos/sync-repo/sync-repo-output';
 import {
   type ToBackendSyncRepoError,
   zToBackendSyncRepoError
 } from './sync-repo-error';
 
-export type ToBackendSyncRepoOutput =
-  | ToBackendSyncRepoToServerOutput
-  | ToBackendSyncRepoFromServerOutput;
-
-export type ToBackendSyncRepoResponse = ToBackendResponse<
+export type ToBackendSyncRepoResponse = ToBackendResponseBase<
+  'syncRepo',
   ToBackendSyncRepoOutput,
   ToBackendSyncRepoError
 >;
 
-export let zToBackendSyncRepoOutput = z
-  .discriminatedUnion('direction', [
-    zToBackendSyncRepoToServerOutput,
-    zToBackendSyncRepoFromServerOutput
-  ])
-  .meta({ id: 'ToBackendSyncRepoOutput' });
-
 export let zToBackendSyncRepoResponse = makeToBackendResponseSchema({
-  success: zToBackendSyncRepoOutput,
+  operation: 'syncRepo',
+  output: zToBackendSyncRepoOutput,
   error: zToBackendSyncRepoError
 }).meta({ id: 'ToBackendSyncRepoResponse' });
-
-assertTypesEqual<
-  ToBackendSyncRepoOutput,
-  z.infer<typeof zToBackendSyncRepoOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSyncRepoResponse,

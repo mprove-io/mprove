@@ -13,11 +13,9 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
 import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
+import type { ToBackendEditGivenOutput } from '#common/zod/backend/routes/givens/edit-given/edit-given-output';
 import type { ToBackendEditGivenRequest } from '#common/zod/backend/routes/givens/edit-given/edit-given-request';
-import type {
-  ToBackendEditGivenOutput,
-  ToBackendEditGivenResponse
-} from '#common/zod/backend/routes/givens/edit-given/edit-given-response';
+import type { ToBackendEditGivenResponse } from '#common/zod/backend/routes/givens/edit-given/edit-given-response';
 
 let testId = 'backend-edit-given__ok';
 
@@ -90,6 +88,7 @@ test('1', async t => {
         loginUserPayload: { email: email, password: password }
       });
       let createReq: ToBackendCreateGivenRequest = {
+        operation: 'createGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -108,9 +107,10 @@ test('1', async t => {
         req: createReq
       });
 
-      assert.equal(createResp.result.type, 'Success');
+      assert.equal(createResp.type, 'Success');
 
       let req: ToBackendEditGivenRequest = {
+        operation: 'editGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -140,7 +140,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
 
     let output: ToBackendEditGivenOutput = unwrapBackendResponseOutput({
       response: resp

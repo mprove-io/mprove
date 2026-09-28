@@ -5,9 +5,9 @@ import { PROJECT_TEAM_PAGE_TITLE } from '#common/constants/page-titles';
 import { MEMBERS_PER_PAGE } from '#common/constants/top-front';
 import type { Member } from '#common/zod/backend/member';
 import type { Role } from '#common/zod/backend/role';
-import type { ToBackendEditMemberInput } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
+import type { ToBackendEditMemberRequest } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
 import type { ToBackendEditMemberResponse } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
-import type { ToBackendGetMembersInput } from '#common/zod/backend/routes/members/get-members/get-members-request';
+import type { ToBackendGetMembersRequest } from '#common/zod/backend/routes/members/get-members/get-members-request';
 import type { ToBackendGetMembersResponse } from '#common/zod/backend/routes/members/get-members/get-members-response';
 import type { MemberExtended } from '#common/zod/front/member-extended';
 import { makeInitials } from '#front/app/functions/make-initials';
@@ -103,7 +103,7 @@ export class ProjectTeamComponent implements OnInit {
   }
 
   getMembers(pageNum: number) {
-    let payload: ToBackendGetMembersInput = {
+    let payload: ToBackendGetMembersRequest['input'] = {
       projectId: this.projectId,
       pageNum: pageNum,
       perPage: this.perPage
@@ -116,10 +116,10 @@ export class ProjectTeamComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetMembersResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.teamQuery.update(resp.result.value);
+          if (resp?.type === 'Success') {
+            this.teamQuery.update(resp.output);
             this.rolesQuery.update({
-              roles: resp.result.value.roles
+              roles: resp.output.roles
             });
             this.currentPage = pageNum;
           }
@@ -191,7 +191,7 @@ export class ProjectTeamComponent implements OnInit {
   }
 
   apiEditMember(member: Member, i: number) {
-    let payload: ToBackendEditMemberInput = {
+    let payload: ToBackendEditMemberRequest['input'] = {
       projectId: member.projectId,
       memberId: member.memberId,
       isAdmin: member.isAdmin,
@@ -208,16 +208,16 @@ export class ProjectTeamComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditMemberResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             let teamState = this.teamQuery.getValue();
-            teamState.members[i] = resp.result.value.member;
+            teamState.members[i] = resp.output.member;
             this.teamQuery.update({
               members: [...teamState.members],
               total: teamState.total
             });
 
-            if (resp.result.value.member.memberId === this.userId) {
-              this.memberQuery.update(resp.result.value.member);
+            if (resp.output.member.memberId === this.userId) {
+              this.memberQuery.update(resp.output.member);
             }
           }
         }),
@@ -247,7 +247,7 @@ export class ProjectTeamComponent implements OnInit {
     let newRoles = [...member.roles];
     newRoles.splice(n, 1);
 
-    let payload: ToBackendEditMemberInput = {
+    let payload: ToBackendEditMemberRequest['input'] = {
       projectId: member.projectId,
       memberId: member.memberId,
       isAdmin: member.isAdmin,
@@ -264,9 +264,9 @@ export class ProjectTeamComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditMemberResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             let teamState = this.teamQuery.getValue();
-            teamState.members[i] = resp.result.value.member;
+            teamState.members[i] = resp.output.member;
 
             this.teamQuery.update({
               members: [...teamState.members],

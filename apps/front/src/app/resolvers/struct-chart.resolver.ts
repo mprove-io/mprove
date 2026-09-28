@@ -17,7 +17,7 @@ import {
 import { ErEnum } from '#common/enums/er.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetChartInput } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
+import type { ToBackendGetChartRequest } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
 import type { ToBackendGetChartResponse } from '#common/zod/backend/routes/charts/get-chart/get-chart-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartQuery } from '../queries/chart.query';
@@ -122,7 +122,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    let payload: ToBackendGetChartInput = {
+    let payload: ToBackendGetChartRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -139,14 +139,14 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetChartResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
-            this.chartQuery.update(resp.result.value.chart);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
+            this.chartQuery.update(resp.output.chart);
 
             return true;
           } else if (
-            resp.result?.type === 'Failure' &&
-            resp.result.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp?.type === 'Failure' &&
+            resp.error.code === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
               PATH_ORG,

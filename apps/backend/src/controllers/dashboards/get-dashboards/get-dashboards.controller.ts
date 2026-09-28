@@ -22,7 +22,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetDashboardsOutput } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-response';
+import type { ToBackendGetDashboardsOutput } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-output';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)

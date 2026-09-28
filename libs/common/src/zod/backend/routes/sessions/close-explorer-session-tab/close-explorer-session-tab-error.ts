@@ -1,13 +1,22 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendError,
-  zBackendError
-} from '#common/zod/backend/errors/backend-error';
+  type BackendHashSecretIsNotDefinedError,
+  zBackendHashSecretIsNotDefinedError
+} from '#common/zod/backend/errors/backend-hash-secret-is-not-defined-error';
+import {
+  type BackendSessionNotFoundError,
+  zBackendSessionNotFoundError
+} from '#common/zod/backend/errors/backend-session-not-found-error';
 
-export type ToBackendCloseExplorerSessionTabError = BackendError;
+export type ToBackendCloseExplorerSessionTabError =
+  | BackendHashSecretIsNotDefinedError
+  | BackendSessionNotFoundError;
 
-export let zToBackendCloseExplorerSessionTabError = zBackendError;
+export let zToBackendCloseExplorerSessionTabError = z.discriminatedUnion(
+  'code',
+  [zBackendHashSecretIsNotDefinedError, zBackendSessionNotFoundError]
+);
 
 assertTypesEqual<
   ToBackendCloseExplorerSessionTabError,

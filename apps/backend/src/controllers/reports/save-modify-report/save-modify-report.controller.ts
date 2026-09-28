@@ -51,7 +51,7 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSaveModifyReportOutput } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
+import type { ToBackendSaveModifyReportOutput } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-output';
 import type { ModelMetric } from '#common/zod/blockml/model-metric';
 import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-output';
 

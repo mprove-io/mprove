@@ -17,7 +17,7 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { take, tap } from 'rxjs/operators';
 import { GIVEN_TYPES } from '#common/constants/top';
 import { GivenTypeEnum } from '#common/enums/given-type.enum';
-import type { ToBackendCreateGivenInput } from '#common/zod/backend/routes/givens/create-given/create-given-request';
+import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
 import type { ToBackendCreateGivenResponse } from '#common/zod/backend/routes/givens/create-given/create-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { GivensQuery } from '#front/app/queries/givens.query';
@@ -109,7 +109,7 @@ export class AddGivenDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateGivenInput = {
+    let payload: ToBackendCreateGivenRequest['input'] = {
       projectId: this.dataItem.projectId,
       givenId: this.addGivenForm.value.givenId,
       type: this.addGivenForm.value.type,
@@ -129,9 +129,9 @@ export class AddGivenDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateGivenResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
-            this.givensQuery.update({ givens: resp.result.value.givens });
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
+            this.givensQuery.update({ givens: resp.output.givens });
           }
         }),
         take(1)

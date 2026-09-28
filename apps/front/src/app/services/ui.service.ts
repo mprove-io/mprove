@@ -9,7 +9,7 @@ import type { ProjectExplorerSessionLink } from '#common/zod/backend/project-exp
 import type { ProjectModelLink } from '#common/zod/backend/project-model-link';
 import type { ProjectReportLink } from '#common/zod/backend/project-report-link';
 import type { ProjectSelectedGivenLink } from '#common/zod/backend/project-selected-given-link';
-import type { ToBackendSetUserUiInput } from '#common/zod/backend/routes/users/set-user-ui/set-user-ui-request';
+import type { ToBackendSetUserUiRequest } from '#common/zod/backend/routes/users/set-user-ui/set-user-ui-request';
 import type { ToBackendSetUserUiResponse } from '#common/zod/backend/routes/users/set-user-ui/set-user-ui-response';
 import type { Ui } from '#common/zod/backend/ui';
 import { NavQuery } from '../queries/nav.query';
@@ -113,7 +113,7 @@ export class UiService {
         : uiState.newSessionEditorVariant
     };
 
-    let payload: ToBackendSetUserUiInput = {
+    let payload: ToBackendSetUserUiRequest['input'] = {
       ui: ui
     };
 
@@ -124,7 +124,7 @@ export class UiService {
       })
       .pipe(
         tap((resp: ToBackendSetUserUiResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
           }
         }),
         take(1)

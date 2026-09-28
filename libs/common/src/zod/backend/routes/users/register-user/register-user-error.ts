@@ -1,13 +1,46 @@
-import type { z } from 'zod';
+import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type BackendError,
-  zBackendError
-} from '#common/zod/backend/errors/backend-error';
+  type BackendHashSecretIsNotDefinedError,
+  zBackendHashSecretIsNotDefinedError
+} from '#common/zod/backend/errors/backend-hash-secret-is-not-defined-error';
+import {
+  type BackendRestrictedUserError,
+  zBackendRestrictedUserError
+} from '#common/zod/backend/errors/backend-restricted-user-error';
+import {
+  type BackendTransactionRetryError,
+  zBackendTransactionRetryError
+} from '#common/zod/backend/errors/backend-transaction-retry-error';
+import {
+  type BackendUserAliasIsUndefinedError,
+  zBackendUserAliasIsUndefinedError
+} from '#common/zod/backend/errors/backend-user-alias-is-undefined-error';
+import {
+  type BackendUserAlreadyRegisteredError,
+  zBackendUserAlreadyRegisteredError
+} from '#common/zod/backend/errors/backend-user-already-registered-error';
+import {
+  type BackendUserIsNotInvitedError,
+  zBackendUserIsNotInvitedError
+} from '#common/zod/backend/errors/backend-user-is-not-invited-error';
 
-export type ToBackendRegisterUserError = BackendError;
+export type ToBackendRegisterUserError =
+  | BackendHashSecretIsNotDefinedError
+  | BackendRestrictedUserError
+  | BackendTransactionRetryError
+  | BackendUserAliasIsUndefinedError
+  | BackendUserAlreadyRegisteredError
+  | BackendUserIsNotInvitedError;
 
-export let zToBackendRegisterUserError = zBackendError;
+export let zToBackendRegisterUserError = z.discriminatedUnion('code', [
+  zBackendHashSecretIsNotDefinedError,
+  zBackendRestrictedUserError,
+  zBackendTransactionRetryError,
+  zBackendUserAliasIsUndefinedError,
+  zBackendUserAlreadyRegisteredError,
+  zBackendUserIsNotInvitedError
+]);
 
 assertTypesEqual<
   ToBackendRegisterUserError,

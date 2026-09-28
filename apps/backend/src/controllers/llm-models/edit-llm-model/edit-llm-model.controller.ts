@@ -42,8 +42,8 @@ import type { ToBackendRoute } from '#common/types/to-backend-route';
 import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendEditLlmModelInput } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
-import type { ToBackendEditLlmModelOutput } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-response';
+import type { ToBackendEditLlmModelOutput } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-output';
+import type { ToBackendEditLlmModelRequest } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)
@@ -70,7 +70,7 @@ export class EditLlmModelController {
     @AttachUser() user: UserTab,
     @Body() body: ToBackendEditLlmModelRequestDto
   ): Promise<ToBackendEditLlmModelOutput> {
-    let bodyPayload: ToBackendEditLlmModelInput = body.input;
+    let bodyPayload: ToBackendEditLlmModelRequest['input'] = body.input;
 
     let {
       projectId,

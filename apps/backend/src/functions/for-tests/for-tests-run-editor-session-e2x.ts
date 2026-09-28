@@ -127,6 +127,7 @@ export async function forTestsRunEditorSessionE2x(item: {
     // SSE must be connected before messages are sent, otherwise events
     // published to Redis pub/sub before SSE subscription are lost.
     let createSessionReq: ToBackendCreateEditorSessionRequest = {
+      operation: 'createEditorSession',
       traceId: traceId,
       idempotencyKey: makeId(),
       input: {
@@ -193,6 +194,7 @@ export async function forTestsRunEditorSessionE2x(item: {
 
     // Send 1st message (after SSE is connected)
     let sendFirstMessageReq: ToBackendSendMessageToEditorSessionRequest = {
+      operation: 'sendMessageToEditorSession',
       traceId: traceId,
       idempotencyKey: makeId(),
       input: {
@@ -229,6 +231,7 @@ export async function forTestsRunEditorSessionE2x(item: {
 
     // Send 2nd message
     let sendMessageReq: ToBackendSendMessageToEditorSessionRequest = {
+      operation: 'sendMessageToEditorSession',
       traceId: traceId,
       idempotencyKey: makeId(),
       input: {
@@ -295,6 +298,7 @@ export async function forTestsRunEditorSessionE2x(item: {
     if (sessionId && prep) {
       try {
         let deleteSessionReq: ToBackendDeleteSessionRequest = {
+          operation: 'deleteSession',
           traceId: traceId,
           idempotencyKey: makeId(),
           input: {
@@ -327,12 +331,12 @@ export async function forTestsRunEditorSessionE2x(item: {
     }
 
     t.is(testError, undefined);
-    t.is(createSessionResp.result.type, 'Success');
+    t.is(createSessionResp.type, 'Success');
 
     t.truthy(sessionId);
 
-    t.is(sendFirstMessageResp.result.type, 'Success');
-    t.is(sendMessageResp.result.type, 'Success');
+    t.is(sendFirstMessageResp.type, 'Success');
+    t.is(sendMessageResp.type, 'Success');
 
     // Log event summary
     let eventTypeCounts: Record<string, number> = {};

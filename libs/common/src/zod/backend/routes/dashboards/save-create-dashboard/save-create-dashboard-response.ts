@@ -1,45 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DashboardUnit,
-  zDashboardUnit
-} from '#common/zod/backend/dashboard-unit';
-import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type SpaceNode, zSpaceNode } from '#common/zod/backend/space-node';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSaveCreateDashboardOutput,
+  zToBackendSaveCreateDashboardOutput
+} from '#common/zod/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-output';
 import {
   type ToBackendSaveCreateDashboardError,
   zToBackendSaveCreateDashboardError
 } from './save-create-dashboard-error';
 
-export type ToBackendSaveCreateDashboardOutput = {
-  dashboardUnitDrafts: DashboardUnit[];
-  dashboardSpaceNodes: SpaceNode[];
-};
-
-export type ToBackendSaveCreateDashboardResponse = ToBackendResponse<
+export type ToBackendSaveCreateDashboardResponse = ToBackendResponseBase<
+  'saveCreateDashboard',
   ToBackendSaveCreateDashboardOutput,
   ToBackendSaveCreateDashboardError
 >;
 
-export let zToBackendSaveCreateDashboardOutput = z
-  .object({
-    dashboardUnitDrafts: z.array(zDashboardUnit),
-    dashboardSpaceNodes: z.array(zSpaceNode)
-  })
-  .meta({ id: 'ToBackendSaveCreateDashboardOutput' });
-
 export let zToBackendSaveCreateDashboardResponse = makeToBackendResponseSchema({
-  success: zToBackendSaveCreateDashboardOutput,
+  operation: 'saveCreateDashboard',
+  output: zToBackendSaveCreateDashboardOutput,
   error: zToBackendSaveCreateDashboardError
 }).meta({ id: 'ToBackendSaveCreateDashboardResponse' });
-
-assertTypesEqual<
-  ToBackendSaveCreateDashboardOutput,
-  z.infer<typeof zToBackendSaveCreateDashboardOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSaveCreateDashboardResponse,

@@ -26,9 +26,9 @@ import type { Extend } from '#common/types/extend';
 import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
 import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendCreateLlmModelInput } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-request';
+import type { ToBackendCreateLlmModelRequest } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-request';
 import type { ToBackendCreateLlmModelResponse } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-response';
-import type { ToBackendGetLlmModelPartsInput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
+import type { ToBackendGetLlmModelPartsRequest } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
 import type { ToBackendGetLlmModelPartsResponse } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-response';
 import { getLlmModelVariantsError } from '#front/app/functions/get-llm-model-variants-error';
 import { LlmModelVariantsComponent } from '#front/app/modules/project/project-providers/llm-model-variants/llm-model-variants.component';
@@ -333,7 +333,7 @@ export class AddLlmModelDialogComponent implements OnInit {
 
   loadModelParts() {
     let provider = this.ref.data.provider;
-    let payload: ToBackendGetLlmModelPartsInput = {
+    let payload: ToBackendGetLlmModelPartsRequest['input'] = {
       projectId: provider.projectId,
       providerId: provider.providerId
     };
@@ -352,8 +352,8 @@ export class AddLlmModelDialogComponent implements OnInit {
           );
 
           let modelParts: SelectableLlmModelPart[] =
-            resp.result?.type === 'Success'
-              ? resp.result.value.modelParts.map(modelPart => {
+            resp?.type === 'Success'
+              ? resp.output.modelParts.map(modelPart => {
                   let isAlreadySelected: boolean = configuredModelIds.includes(
                     modelPart.modelId
                   );
@@ -381,9 +381,7 @@ export class AddLlmModelDialogComponent implements OnInit {
           this.modelParts = modelParts;
 
           this.modelsErrorMessage =
-            resp.result?.type === 'Success'
-              ? resp.result.value.errorMessage
-              : undefined;
+            resp?.type === 'Success' ? resp.output.errorMessage : undefined;
 
           this.modelsLoading = false;
 
@@ -445,7 +443,7 @@ export class AddLlmModelDialogComponent implements OnInit {
       return;
     }
 
-    let payload: ToBackendCreateLlmModelInput = {
+    let payload: ToBackendCreateLlmModelRequest['input'] = {
       projectId: provider.projectId,
       providerId: provider.providerId,
       modelId: value.modelId.trim(),
@@ -470,8 +468,8 @@ export class AddLlmModelDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateLlmModelResponse) => {
-          if (resp.result?.type === 'Success') {
-            let provider: Provider = resp.result.value.provider;
+          if (resp?.type === 'Success') {
+            let provider: Provider = resp.output.provider;
 
             let providers: Provider[] = this.providersQuery
               .getValue()

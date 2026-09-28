@@ -15,7 +15,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCreateSessionSseTicketOutput } from '#common/zod/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-response';
+import type { ToBackendCreateSessionSseTicketOutput } from '#common/zod/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-output';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

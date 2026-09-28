@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { SERVER_USERS_PAGE_TITLE } from '#common/constants/page-titles';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
-import type { ToBackendGetServerUsersInput } from '#common/zod/backend/routes/users/get-server-users/get-server-users-request';
+import type { ToBackendGetServerUsersRequest } from '#common/zod/backend/routes/users/get-server-users/get-server-users-request';
 import type { ToBackendGetServerUsersResponse } from '#common/zod/backend/routes/users/get-server-users/get-server-users-response';
 import type { ServerUsersItem } from '#common/zod/backend/users/server-users-item';
 import { makeInitials } from '#front/app/functions/make-initials';
@@ -76,7 +76,7 @@ export class ServerUsersComponent implements OnInit {
   }
 
   getUsers(pageNum: number) {
-    let payload: ToBackendGetServerUsersInput = {
+    let payload: ToBackendGetServerUsersRequest['input'] = {
       pageNum: pageNum,
       perPage: this.perPage
     };
@@ -88,10 +88,10 @@ export class ServerUsersComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetServerUsersResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.serverUsersQuery.update({
-              serverUsers: resp.result.value.serverUsersList,
-              total: resp.result.value.total
+              serverUsers: resp.output.serverUsersList,
+              total: resp.output.total
             });
             this.currentPage = pageNum;
             this.cd.detectChanges();

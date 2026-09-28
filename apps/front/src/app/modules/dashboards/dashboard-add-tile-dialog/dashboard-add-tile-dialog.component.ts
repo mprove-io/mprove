@@ -10,7 +10,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
-import type { ToBackendGetModelsInput } from '#common/zod/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsRequest } from '#common/zod/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
 import type { Dashboard } from '#common/zod/blockml/dashboard';
 import type { Model } from '#common/zod/blockml/model';
@@ -64,7 +64,7 @@ export class DashboardAddTileDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendGetModelsInput = {
+    let payload: ToBackendGetModelsRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -78,10 +78,8 @@ export class DashboardAddTileDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.models = resp.result.value.models.filter(
-              y => y.hasAccess === true
-            );
+          if (resp?.type === 'Success') {
+            this.models = resp.output.models.filter(y => y.hasAccess === true);
 
             this.spinner.hide(this.spinnerName);
 

@@ -1,42 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Given, zGiven } from '#common/zod/backend/given';
-import { type Member, zMember } from '#common/zod/backend/member';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendDeleteGivenOutput,
+  zToBackendDeleteGivenOutput
+} from '#common/zod/backend/routes/givens/delete-given/delete-given-output';
 import {
   type ToBackendDeleteGivenError,
   zToBackendDeleteGivenError
 } from './delete-given-error';
 
-export type ToBackendDeleteGivenOutput = {
-  userMember: Member;
-  givens: Given[];
-};
-
-export type ToBackendDeleteGivenResponse = ToBackendResponse<
+export type ToBackendDeleteGivenResponse = ToBackendResponseBase<
+  'deleteGiven',
   ToBackendDeleteGivenOutput,
   ToBackendDeleteGivenError
 >;
 
-export let zToBackendDeleteGivenOutput = z
-  .object({
-    userMember: zMember,
-    givens: z.array(zGiven)
-  })
-  .meta({ id: 'ToBackendDeleteGivenOutput' });
-
 export let zToBackendDeleteGivenResponse = makeToBackendResponseSchema({
-  success: zToBackendDeleteGivenOutput,
+  operation: 'deleteGiven',
+  output: zToBackendDeleteGivenOutput,
   error: zToBackendDeleteGivenError
 }).meta({ id: 'ToBackendDeleteGivenResponse' });
-
-assertTypesEqual<
-  ToBackendDeleteGivenOutput,
-  z.infer<typeof zToBackendDeleteGivenOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteGivenResponse,

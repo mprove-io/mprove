@@ -1,45 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type ChartUnit, zChartUnit } from '#common/zod/backend/chart-unit';
-import { type ChartX, zChartX } from '#common/zod/backend/chart-x';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type SpaceNode, zSpaceNode } from '#common/zod/backend/space-node';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendSaveModifyChartOutput,
+  zToBackendSaveModifyChartOutput
+} from '#common/zod/backend/routes/charts/save-modify-chart/save-modify-chart-output';
 import {
   type ToBackendSaveModifyChartError,
   zToBackendSaveModifyChartError
 } from './save-modify-chart-error';
 
-export type ToBackendSaveModifyChartOutput = {
-  chart: ChartX;
-  chartUnitDrafts: ChartUnit[];
-  chartSpaceNodes: SpaceNode[];
-};
-
-export type ToBackendSaveModifyChartResponse = ToBackendResponse<
+export type ToBackendSaveModifyChartResponse = ToBackendResponseBase<
+  'saveModifyChart',
   ToBackendSaveModifyChartOutput,
   ToBackendSaveModifyChartError
 >;
 
-export let zToBackendSaveModifyChartOutput = z
-  .object({
-    chart: zChartX,
-    chartUnitDrafts: z.array(zChartUnit),
-    chartSpaceNodes: z.array(zSpaceNode)
-  })
-  .meta({ id: 'ToBackendSaveModifyChartOutput' });
-
 export let zToBackendSaveModifyChartResponse = makeToBackendResponseSchema({
-  success: zToBackendSaveModifyChartOutput,
+  operation: 'saveModifyChart',
+  output: zToBackendSaveModifyChartOutput,
   error: zToBackendSaveModifyChartError
 }).meta({ id: 'ToBackendSaveModifyChartResponse' });
-
-assertTypesEqual<
-  ToBackendSaveModifyChartOutput,
-  z.infer<typeof zToBackendSaveModifyChartOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSaveModifyChartResponse,

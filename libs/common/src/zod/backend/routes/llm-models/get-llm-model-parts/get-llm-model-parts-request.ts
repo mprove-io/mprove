@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendGetLlmModelPartsInput = {
-  projectId: string;
-  providerId: string;
-};
-
 export type ToBackendGetLlmModelPartsRequest = {
+  operation: 'getLlmModelParts';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendGetLlmModelPartsInput;
+  input: {
+    projectId: string;
+    providerId: string;
+  };
 };
-
-export let zToBackendGetLlmModelPartsInput = z
-  .strictObject({
-    projectId: z.string(),
-    providerId: z.string().trim().min(1)
-  })
-  .meta({ id: 'ToBackendGetLlmModelPartsInput' });
 
 export let zToBackendGetLlmModelPartsRequest = z
   .strictObject({
+    operation: z.literal('getLlmModelParts'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendGetLlmModelPartsInput
+    input: z
+      .strictObject({
+        projectId: z.string(),
+        providerId: z.string().trim().min(1)
+      })
+      .meta({ id: 'ToBackendGetLlmModelPartsInput' })
   })
   .meta({ id: 'ToBackendGetLlmModelPartsRequest' });
-
-assertTypesEqual<
-  ToBackendGetLlmModelPartsInput,
-  z.infer<typeof zToBackendGetLlmModelPartsInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetLlmModelPartsRequest,

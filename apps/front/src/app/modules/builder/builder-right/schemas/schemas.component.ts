@@ -24,24 +24,16 @@ import type {
 import type { RawSchemaForeignKey } from '#common/zod/backend/connection-schemas/raw-schema';
 import type { CachedColumn } from '#common/zod/backend/connections/cached-column';
 import type { ToBackendClearCachedColumnResponse } from '#common/zod/backend/routes/connections/clear-cached-column/clear-cached-column-response';
-import type {
-  ToBackendGetCachedColumnsOutput,
-  ToBackendGetCachedColumnsResponse
-} from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-response';
-import type {
-  ToBackendGetConnectionSampleOutput,
-  ToBackendGetConnectionSampleResponse
-} from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
-import type { ToBackendGetConnectionSchemasInput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
+import type { ToBackendGetCachedColumnsOutput } from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-output';
+import type { ToBackendGetCachedColumnsResponse } from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-response';
+import type { ToBackendGetConnectionSampleOutput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-output';
+import type { ToBackendGetConnectionSampleResponse } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
+import type { ToBackendGetConnectionSchemasRequest } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
 import type { ToBackendGetConnectionSchemasResponse } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-response';
-import type {
-  ToBackendRefreshCachedColumnOutput,
-  ToBackendRefreshCachedColumnResponse
-} from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-response';
-import type {
-  ToBackendViewCachedColumnOutput,
-  ToBackendViewCachedColumnResponse
-} from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-response';
+import type { ToBackendRefreshCachedColumnOutput } from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-output';
+import type { ToBackendRefreshCachedColumnResponse } from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-response';
+import type { ToBackendViewCachedColumnOutput } from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-output';
+import type { ToBackendViewCachedColumnResponse } from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
@@ -164,7 +156,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: ToBackendGetConnectionSchemasInput = {
+    let payload: ToBackendGetConnectionSchemasRequest['input'] = {
       projectId: nav.projectId,
       envId: nav.envId,
       repoId: nav.repoId,
@@ -183,8 +175,8 @@ export class SchemasComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendGetConnectionSchemasResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.combinedSchemaItems = resp.result.value.combinedSchemaItems;
+          if (resp?.type === 'Success') {
+            this.combinedSchemaItems = resp.output.combinedSchemaItems;
 
             this.treeNodes = this.buildTreeNodes({
               combinedSchemaItems: this.combinedSchemaItems
@@ -597,8 +589,8 @@ export class SchemasComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendGetCachedColumnsResponse) => {
-          if (resp.result?.type === 'Success') {
-            let output: ToBackendGetCachedColumnsOutput = resp.result.value;
+          if (resp?.type === 'Success') {
+            let output: ToBackendGetCachedColumnsOutput = resp.output;
 
             let returnedColumnIds: Set<string> = new Set(
               output.cachedColumns.map(
@@ -732,8 +724,8 @@ export class SchemasComponent implements OnInit, OnDestroy {
             tableName: data.tableName
           };
 
-          if (resp.result?.type === 'Success') {
-            let output: ToBackendViewCachedColumnOutput = resp.result.value;
+          if (resp?.type === 'Success') {
+            let output: ToBackendViewCachedColumnOutput = resp.output;
 
             if (isDefined(output.errorMessage)) {
               dialogData.errorMessage = output.errorMessage;
@@ -794,8 +786,8 @@ export class SchemasComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendRefreshCachedColumnResponse) => {
-          if (resp.result?.type === 'Success') {
-            let output: ToBackendRefreshCachedColumnOutput = resp.result.value;
+          if (resp?.type === 'Success') {
+            let output: ToBackendRefreshCachedColumnOutput = resp.output;
 
             this.updateCachedColumn({
               nodeId: data.id,
@@ -867,7 +859,7 @@ export class SchemasComponent implements OnInit, OnDestroy {
       })
       .pipe(
         map((resp: ToBackendClearCachedColumnResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.updateCachedColumn({
               nodeId: data.id,
               cachedColumn: undefined
@@ -932,8 +924,8 @@ export class SchemasComponent implements OnInit, OnDestroy {
             columnName: isColumn ? data.columnName : undefined
           };
 
-          if (resp.result?.type === 'Success') {
-            let output: ToBackendGetConnectionSampleOutput = resp.result.value;
+          if (resp?.type === 'Success') {
+            let output: ToBackendGetConnectionSampleOutput = resp.output;
 
             if (isDefined(output.errorMessage)) {
               dialogData.errorMessage = output.errorMessage;

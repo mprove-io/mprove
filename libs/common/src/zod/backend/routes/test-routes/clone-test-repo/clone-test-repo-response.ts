@@ -1,34 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendCloneTestRepoOutput,
+  zToBackendCloneTestRepoOutput
+} from '#common/zod/backend/routes/test-routes/clone-test-repo/clone-test-repo-output';
 import {
   type ToBackendCloneTestRepoError,
   zToBackendCloneTestRepoError
 } from './clone-test-repo-error';
 
-export type ToBackendCloneTestRepoOutput = Record<string, never>;
-
-export type ToBackendCloneTestRepoResponse = ToBackendResponse<
+export type ToBackendCloneTestRepoResponse = ToBackendResponseBase<
+  'cloneTestRepo',
   ToBackendCloneTestRepoOutput,
   ToBackendCloneTestRepoError
 >;
 
-export let zToBackendCloneTestRepoOutput = z
-  .object({})
-  .meta({ id: 'ToBackendCloneTestRepoOutput' });
-
 export let zToBackendCloneTestRepoResponse = makeToBackendResponseSchema({
-  success: zToBackendCloneTestRepoOutput,
+  operation: 'cloneTestRepo',
+  output: zToBackendCloneTestRepoOutput,
   error: zToBackendCloneTestRepoError
 }).meta({ id: 'ToBackendCloneTestRepoResponse' });
-
-assertTypesEqual<
-  ToBackendCloneTestRepoOutput,
-  z.infer<typeof zToBackendCloneTestRepoOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCloneTestRepoResponse,

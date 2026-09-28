@@ -12,18 +12,9 @@ import { TabToEntService } from '#backend/services/tab-to-ent.service';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type {
-  ToBackendDeleteRecordsInput,
-  ToBackendDeleteRecordsRequest
-} from '#common/zod/backend/routes/test-routes/delete-records/delete-records-request';
-import type {
-  ToBackendSeedRecordsInput,
-  ToBackendSeedRecordsRequest
-} from '#common/zod/backend/routes/test-routes/seed-records/seed-records-request';
-import type {
-  ToBackendLoginUserInput,
-  ToBackendLoginUserRequest
-} from '#common/zod/backend/routes/users/login-user/login-user-request';
+import type { ToBackendDeleteRecordsRequest } from '#common/zod/backend/routes/test-routes/delete-records/delete-records-request';
+import type { ToBackendSeedRecordsRequest } from '#common/zod/backend/routes/test-routes/seed-records/seed-records-request';
+import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
 import type { ToBackendLoginUserResponse } from '#common/zod/backend/routes/users/login-user/login-user-response';
 import { sendToBackend } from './send-to-backend';
 
@@ -96,9 +87,9 @@ export async function prepareTest(item: {
 export async function prepareSeed(item: {
   httpServer: any;
   traceId: string;
-  seedRecordsPayload?: ToBackendSeedRecordsInput;
-  deleteRecordsPayload?: ToBackendDeleteRecordsInput;
-  loginUserPayload?: ToBackendLoginUserInput;
+  seedRecordsPayload?: ToBackendSeedRecordsRequest['input'];
+  deleteRecordsPayload?: ToBackendDeleteRecordsRequest['input'];
+  loginUserPayload?: ToBackendLoginUserRequest['input'];
 }) {
   let {
     httpServer,
@@ -110,6 +101,7 @@ export async function prepareSeed(item: {
 
   if (isDefined(deleteRecordsPayload)) {
     let deleteRecordsRequest: ToBackendDeleteRecordsRequest = {
+      operation: 'deleteRecords',
       traceId: traceId,
       idempotencyKey: makeId(),
       input: deleteRecordsPayload
@@ -126,6 +118,7 @@ export async function prepareSeed(item: {
 
   if (isDefined(seedRecordsPayload)) {
     let seedRecordsRequest: ToBackendSeedRecordsRequest = {
+      operation: 'seedRecords',
       traceId: traceId,
       idempotencyKey: makeId(),
       input: seedRecordsPayload
@@ -145,6 +138,7 @@ export async function prepareSeed(item: {
 
   if (isDefined(loginUserPayload)) {
     let loginUserRequest: ToBackendLoginUserRequest = {
+      operation: 'loginUser',
       traceId: traceId,
       idempotencyKey: makeId(),
       input: loginUserPayload
@@ -163,18 +157,16 @@ export async function prepareSeed(item: {
 
   return {
     loginToken:
-      loginUserResp?.result.type === 'Success'
-        ? loginUserResp.result.value.token
-        : undefined
+      loginUserResp?.type === 'Success' ? loginUserResp.output.token : undefined
   };
 }
 
 export async function prepareTestAndSeed(item: {
   traceId: string;
-  seedRecordsPayload?: ToBackendSeedRecordsInput;
-  deleteRecordsPayload?: ToBackendDeleteRecordsInput;
+  seedRecordsPayload?: ToBackendSeedRecordsRequest['input'];
+  deleteRecordsPayload?: ToBackendDeleteRecordsRequest['input'];
   overrideConfigOptions?: Partial<BackendConfig>;
-  loginUserPayload?: ToBackendLoginUserInput;
+  loginUserPayload?: ToBackendLoginUserRequest['input'];
 }) {
   let {
     traceId,

@@ -55,6 +55,7 @@ test('1', async t => {
       let idempotencyKey = makeId();
 
       let getUserProfileReq: ToBackendGetUserProfileRequest = {
+        operation: 'getUserProfile',
         traceId: traceId,
         idempotencyKey: idempotencyKey,
         input: {}
@@ -68,6 +69,7 @@ test('1', async t => {
       });
 
       let loginUserBReq: ToBackendLoginUserRequest = {
+        operation: 'loginUser',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -106,12 +108,9 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp2.result.type, 'Failure');
-    assert.ok(resp2.result.type === 'Failure');
-    assert.equal(
-      resp2.result.error?.message,
-      ErEnum.BACKEND_IDEMP_USER_MISMATCH
-    );
+    assert.equal(resp2.type, 'Failure');
+    assert.ok(resp2.type === 'Failure');
+    assert.equal(resp2.error?.code, ErEnum.BACKEND_IDEMP_USER_MISMATCH);
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

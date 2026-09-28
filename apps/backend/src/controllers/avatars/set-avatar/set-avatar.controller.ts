@@ -25,7 +25,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSetAvatarOutput } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-response';
+import type { ToBackendSetAvatarOutput } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-output';
 
 @ApiTags('Avatars')
 @UseGuards(ThrottlerUserIdGuard)

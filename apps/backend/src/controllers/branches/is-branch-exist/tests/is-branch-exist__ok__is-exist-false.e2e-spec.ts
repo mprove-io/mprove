@@ -86,6 +86,7 @@ test('1', async t => {
       });
 
       let req: ToBackendIsBranchExistRequest = {
+        operation: 'isBranchExist',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -115,7 +116,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
     assert.equal(
       unwrapBackendResponseOutput({ response: resp }).isExist,
       false

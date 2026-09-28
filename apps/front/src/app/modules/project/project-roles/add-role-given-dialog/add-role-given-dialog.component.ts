@@ -18,7 +18,7 @@ import type { GivenTypeEnum } from '#common/enums/given-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { Given } from '#common/zod/backend/given';
 import type { Role } from '#common/zod/backend/role';
-import type { ToBackendCreateRoleGivenInput } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
+import type { ToBackendCreateRoleGivenRequest } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
 import type { ToBackendCreateRoleGivenResponse } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -108,7 +108,7 @@ export class AddRoleGivenDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendCreateRoleGivenInput = {
+    let payload: ToBackendCreateRoleGivenRequest['input'] = {
       projectId: this.dataItem.role.projectId,
       roleId: this.dataItem.role.roleId,
       givenId: this.addRoleGivenForm.value.givenId,
@@ -127,9 +127,9 @@ export class AddRoleGivenDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateRoleGivenResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
-            this.rolesQuery.update({ roles: resp.result.value.roles });
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
+            this.rolesQuery.update({ roles: resp.output.roles });
           }
         }),
         take(1)

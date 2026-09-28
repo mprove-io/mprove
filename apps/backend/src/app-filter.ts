@@ -78,7 +78,13 @@ export class AppFilter implements ExceptionFilter {
 
       let iKey = req?.idempotencyKey;
 
-      if (isDefined(iKey)) {
+      if (
+        isDefined(iKey) &&
+        req.operation === resp.operation &&
+        resp.type === 'Failure' &&
+        resp.error.code !== 'BACKEND_INVALID_REQUEST' &&
+        resp.error.code !== 'BACKEND_IDEMP_USER_MISMATCH'
+      ) {
         try {
           let user: UserTab = request.user;
 
@@ -91,7 +97,7 @@ export class AppFilter implements ExceptionFilter {
           };
 
           await this.redisService.write({
-            id: idemp.idempotencyKey,
+            id: `backend-api:${req.operation}:${idemp.idempotencyKey}`,
             data: idemp
           });
         } catch (er) {

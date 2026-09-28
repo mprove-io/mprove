@@ -18,7 +18,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
-import type { ToBackendCreateFileInput } from '#common/zod/backend/routes/files/create-file/create-file-request';
+import type { ToBackendCreateFileRequest } from '#common/zod/backend/routes/files/create-file/create-file-request';
 import type { ToBackendCreateFileResponse } from '#common/zod/backend/routes/files/create-file/create-file-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -96,7 +96,7 @@ export class CreateFileDialogComponent implements OnInit {
 
     fileName = fileName.toLowerCase();
 
-    let payload: ToBackendCreateFileInput = {
+    let payload: ToBackendCreateFileRequest['input'] = {
       projectId: this.ref.data.projectId,
       repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
@@ -115,11 +115,11 @@ export class CreateFileDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendCreateFileResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.repoQuery.update(resp.result.value.repo);
-            this.structQuery.update(resp.result.value.struct);
+          if (resp?.type === 'Success') {
+            this.repoQuery.update(resp.output.repo);
+            this.structQuery.update(resp.output.struct);
             this.navQuery.updatePart({
-              needValidate: resp.result.value.needValidate
+              needValidate: resp.output.needValidate
             });
 
             let fId = this.ref.data.parentNodeId + '/' + fileName;

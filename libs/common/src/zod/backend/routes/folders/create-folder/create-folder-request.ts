@@ -1,44 +1,37 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendCreateFolderInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-  parentNodeId: string;
-  folderName: string;
-};
-
 export type ToBackendCreateFolderRequest = {
+  operation: 'createFolder';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendCreateFolderInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    parentNodeId: string;
+    folderName: string;
+  };
 };
-
-export let zToBackendCreateFolderInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string(),
-    parentNodeId: z.string(),
-    folderName: z.string()
-  })
-  .meta({ id: 'ToBackendCreateFolderInput' });
 
 export let zToBackendCreateFolderRequest = z
   .strictObject({
+    operation: z.literal('createFolder'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendCreateFolderInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string(),
+        parentNodeId: z.string(),
+        folderName: z.string()
+      })
+      .meta({ id: 'ToBackendCreateFolderInput' })
   })
   .meta({ id: 'ToBackendCreateFolderRequest' });
-
-assertTypesEqual<
-  ToBackendCreateFolderInput,
-  z.infer<typeof zToBackendCreateFolderInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendCreateFolderRequest,

@@ -1,36 +1,29 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendSetProjectSandboxProviderInput = {
-  projectId: string;
-  e2bApiKey?: string;
-};
-
 export type ToBackendSetProjectSandboxProviderRequest = {
+  operation: 'setProjectSandboxProvider';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendSetProjectSandboxProviderInput;
+  input: {
+    projectId: string;
+    e2bApiKey?: string;
+  };
 };
-
-export let zToBackendSetProjectSandboxProviderInput = z
-  .object({
-    projectId: z.string(),
-    e2bApiKey: z.string().nullish()
-  })
-  .meta({ id: 'ToBackendSetProjectSandboxProviderInput' });
 
 export let zToBackendSetProjectSandboxProviderRequest = z
   .strictObject({
+    operation: z.literal('setProjectSandboxProvider'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendSetProjectSandboxProviderInput
+    input: z
+      .object({
+        projectId: z.string(),
+        e2bApiKey: z.string().nullish()
+      })
+      .meta({ id: 'ToBackendSetProjectSandboxProviderInput' })
   })
   .meta({ id: 'ToBackendSetProjectSandboxProviderRequest' });
-
-assertTypesEqual<
-  ToBackendSetProjectSandboxProviderInput,
-  z.infer<typeof zToBackendSetProjectSandboxProviderInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendSetProjectSandboxProviderRequest,

@@ -42,7 +42,7 @@ import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCreateDraftReportOutput } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-response';
+import type { ToBackendCreateDraftReportOutput } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-output';
 import type { Row } from '#common/zod/blockml/row';
 import type { Rq } from '#common/zod/blockml/rq';
 

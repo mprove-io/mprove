@@ -47,6 +47,7 @@ test('1', async t => {
       let idempotencyKey = makeId();
 
       let getUserProfileReq: ToBackendGetUserProfileRequest = {
+        operation: 'getUserProfile',
         traceId: traceId,
         idempotencyKey: idempotencyKey,
         input: {}
@@ -79,8 +80,8 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp1.result.type, 'Success');
-    assert.equal(resp2.result.type, 'Success');
+    assert.equal(resp1.type, 'Success');
+    assert.equal(resp2.type, 'Success');
 
     isPass = true;
   }, BACKEND_E2E_RETRY_OPTIONS).catch((er: any) => {

@@ -1,42 +1,35 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendDeleteReportInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-  reportId: string;
-};
-
 export type ToBackendDeleteReportRequest = {
+  operation: 'deleteReport';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendDeleteReportInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    reportId: string;
+  };
 };
-
-export let zToBackendDeleteReportInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string(),
-    reportId: z.string()
-  })
-  .meta({ id: 'ToBackendDeleteReportInput' });
 
 export let zToBackendDeleteReportRequest = z
   .strictObject({
+    operation: z.literal('deleteReport'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendDeleteReportInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string(),
+        reportId: z.string()
+      })
+      .meta({ id: 'ToBackendDeleteReportInput' })
   })
   .meta({ id: 'ToBackendDeleteReportRequest' });
-
-assertTypesEqual<
-  ToBackendDeleteReportInput,
-  z.infer<typeof zToBackendDeleteReportInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendDeleteReportRequest,

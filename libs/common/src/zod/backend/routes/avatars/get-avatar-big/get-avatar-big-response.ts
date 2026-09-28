@@ -1,40 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendGetAvatarBigOutput,
+  zToBackendGetAvatarBigOutput
+} from '#common/zod/backend/routes/avatars/get-avatar-big/get-avatar-big-output';
 import {
   type ToBackendGetAvatarBigError,
   zToBackendGetAvatarBigError
 } from './get-avatar-big-error';
 
-export type ToBackendGetAvatarBigOutput = {
-  avatarSmall: string;
-  avatarBig: string;
-};
-
-export type ToBackendGetAvatarBigResponse = ToBackendResponse<
+export type ToBackendGetAvatarBigResponse = ToBackendResponseBase<
+  'getAvatarBig',
   ToBackendGetAvatarBigOutput,
   ToBackendGetAvatarBigError
 >;
 
-export let zToBackendGetAvatarBigOutput = z
-  .object({
-    avatarSmall: z.string(),
-    avatarBig: z.string()
-  })
-  .meta({ id: 'ToBackendGetAvatarBigOutput' });
-
 export let zToBackendGetAvatarBigResponse = makeToBackendResponseSchema({
-  success: zToBackendGetAvatarBigOutput,
+  operation: 'getAvatarBig',
+  output: zToBackendGetAvatarBigOutput,
   error: zToBackendGetAvatarBigError
 }).meta({ id: 'ToBackendGetAvatarBigResponse' });
-
-assertTypesEqual<
-  ToBackendGetAvatarBigOutput,
-  z.infer<typeof zToBackendGetAvatarBigOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendGetAvatarBigResponse,

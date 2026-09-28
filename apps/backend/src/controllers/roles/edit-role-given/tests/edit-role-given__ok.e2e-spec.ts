@@ -91,6 +91,7 @@ test('1', async t => {
       });
 
       let createGivenReq: ToBackendCreateGivenRequest = {
+        operation: 'createGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -111,6 +112,7 @@ test('1', async t => {
       });
 
       let createRoleReq: ToBackendCreateRoleRequest = {
+        operation: 'createRole',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -128,6 +130,7 @@ test('1', async t => {
       });
 
       let createRoleGivenReq: ToBackendCreateRoleGivenRequest = {
+        operation: 'createRoleGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -147,6 +150,7 @@ test('1', async t => {
       });
 
       let req: ToBackendEditRoleGivenRequest = {
+        operation: 'editRoleGiven',
         traceId: traceId,
         idempotencyKey: makeId(),
         input: {
@@ -177,7 +181,7 @@ test('1', async t => {
       }
     }
 
-    assert.equal(resp.result.type, 'Success');
+    assert.equal(resp.type, 'Success');
     assert.deepEqual(
       unwrapBackendResponseOutput({ response: resp }).roles[0].gvs,
       [

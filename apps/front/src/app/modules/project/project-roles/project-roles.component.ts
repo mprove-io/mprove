@@ -5,7 +5,7 @@ import { PROJECT_ROLES_PAGE_TITLE } from '#common/constants/page-titles';
 import type { Given } from '#common/zod/backend/given';
 import type { Gv } from '#common/zod/backend/gv';
 import type { Role } from '#common/zod/backend/role';
-import type { ToBackendDeleteRoleGivenInput } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-request';
+import type { ToBackendDeleteRoleGivenRequest } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-request';
 import type { ToBackendDeleteRoleGivenResponse } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-response';
 import { GivensQuery } from '#front/app/queries/givens.query';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -105,7 +105,7 @@ export class ProjectRolesComponent implements OnInit {
   }
 
   deleteRoleGiven(role: Role, gv: Gv) {
-    let payload: ToBackendDeleteRoleGivenInput = {
+    let payload: ToBackendDeleteRoleGivenRequest['input'] = {
       projectId: role.projectId,
       roleId: role.roleId,
       givenId: gv.givenId
@@ -119,9 +119,9 @@ export class ProjectRolesComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendDeleteRoleGivenResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
-            this.rolesQuery.update({ roles: resp.result.value.roles });
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
+            this.rolesQuery.update({ roles: resp.output.roles });
           }
         }),
         take(1)

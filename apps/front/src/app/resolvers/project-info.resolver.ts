@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import type { ToBackendGetProjectInput } from '#common/zod/backend/routes/projects/get-project/get-project-request';
+import type { ToBackendGetProjectRequest } from '#common/zod/backend/routes/projects/get-project/get-project-request';
 import type { ToBackendGetProjectResponse } from '#common/zod/backend/routes/projects/get-project/get-project-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
@@ -52,7 +52,7 @@ export class ProjectInfoResolver implements Resolve<Observable<boolean>> {
       projectId = x;
     });
 
-    let payload: ToBackendGetProjectInput = {
+    let payload: ToBackendGetProjectRequest['input'] = {
       projectId: projectId
     };
 
@@ -63,10 +63,10 @@ export class ProjectInfoResolver implements Resolve<Observable<boolean>> {
       })
       .pipe(
         map((resp: ToBackendGetProjectResponse) => {
-          if (resp.result?.type === 'Success') {
-            this.memberQuery.update(resp.result.value.userMember);
+          if (resp?.type === 'Success') {
+            this.memberQuery.update(resp.output.userMember);
 
-            this.projectQuery.update(resp.result.value.project);
+            this.projectQuery.update(resp.output.project);
             return true;
           } else {
             return false;

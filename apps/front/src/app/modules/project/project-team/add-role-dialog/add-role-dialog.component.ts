@@ -16,7 +16,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { Member } from '#common/zod/backend/member';
 import type { Role } from '#common/zod/backend/role';
-import type { ToBackendEditMemberInput } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
+import type { ToBackendEditMemberRequest } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
 import type { ToBackendEditMemberResponse } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { RolesQuery } from '#front/app/queries/roles.query';
@@ -80,7 +80,7 @@ export class AddRoleDialogComponent implements OnInit {
 
     let member: Member = this.ref.data.member;
 
-    let payload: ToBackendEditMemberInput = {
+    let payload: ToBackendEditMemberRequest['input'] = {
       projectId: member.projectId,
       memberId: member.memberId,
       isAdmin: member.isAdmin,
@@ -99,10 +99,10 @@ export class AddRoleDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendEditMemberResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             let teamState = this.teamQuery.getValue();
 
-            teamState.members[this.ref.data.i] = resp.result.value.member;
+            teamState.members[this.ref.data.i] = resp.output.member;
 
             this.teamQuery.update({
               members: [...teamState.members],

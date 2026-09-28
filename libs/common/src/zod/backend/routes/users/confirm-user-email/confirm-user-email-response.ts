@@ -1,41 +1,29 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
   makeToBackendResponseSchema,
-  type ToBackendResponse
-} from '#common/zod/backend/response/to-backend-response';
-import { type User, zUser } from '#common/zod/backend/user';
+  type ToBackendResponseBase
+} from '#common/zod/backend/response/to-backend-response-base';
+import {
+  type ToBackendConfirmUserEmailOutput,
+  zToBackendConfirmUserEmailOutput
+} from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-output';
 import {
   type ToBackendConfirmUserEmailError,
   zToBackendConfirmUserEmailError
 } from './confirm-user-email-error';
 
-export type ToBackendConfirmUserEmailOutput = {
-  token?: string;
-  user?: User;
-};
-
-export type ToBackendConfirmUserEmailResponse = ToBackendResponse<
+export type ToBackendConfirmUserEmailResponse = ToBackendResponseBase<
+  'confirmUserEmail',
   ToBackendConfirmUserEmailOutput,
   ToBackendConfirmUserEmailError
 >;
 
-export let zToBackendConfirmUserEmailOutput = z
-  .object({
-    token: z.string().nullish(),
-    user: zUser.nullish()
-  })
-  .meta({ id: 'ToBackendConfirmUserEmailOutput' });
-
 export let zToBackendConfirmUserEmailResponse = makeToBackendResponseSchema({
-  success: zToBackendConfirmUserEmailOutput,
+  operation: 'confirmUserEmail',
+  output: zToBackendConfirmUserEmailOutput,
   error: zToBackendConfirmUserEmailError
 }).meta({ id: 'ToBackendConfirmUserEmailResponse' });
-
-assertTypesEqual<
-  ToBackendConfirmUserEmailOutput,
-  z.infer<typeof zToBackendConfirmUserEmailOutput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendConfirmUserEmailResponse,

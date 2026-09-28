@@ -20,7 +20,7 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { DashboardX } from '#common/zod/backend/dashboard-x';
-import type { ToBackendGetModelsInput } from '#common/zod/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsRequest } from '#common/zod/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
 import type { Dashboard } from '#common/zod/blockml/dashboard';
 import type { Model } from '#common/zod/blockml/model';
@@ -97,7 +97,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: ToBackendGetModelsInput = {
+    let payload: ToBackendGetModelsRequest['input'] = {
       projectId: nav.projectId,
       repoId: nav.repoId,
       branchId: nav.branchId,
@@ -114,10 +114,10 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.result?.type === 'Success') {
+          if (resp?.type === 'Success') {
             this.spinner.hide(this.spinnerName);
 
-            this.models = resp.result.value.models;
+            this.models = resp.output.models;
 
             (this.dashboard as DashboardX2).tiles.forEach((x, tileIndex) => {
               let model = this.models.find(m => m.modelId === x.modelId);

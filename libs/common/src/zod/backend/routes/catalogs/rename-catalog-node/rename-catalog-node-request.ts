@@ -1,44 +1,37 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 
-export type ToBackendRenameCatalogNodeInput = {
-  projectId: string;
-  repoId: string;
-  branchId: string;
-  envId: string;
-  nodeId: string;
-  newName: string;
-};
-
 export type ToBackendRenameCatalogNodeRequest = {
+  operation: 'renameCatalogNode';
   traceId: string;
   idempotencyKey: string;
-  input: ToBackendRenameCatalogNodeInput;
+  input: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+    envId: string;
+    nodeId: string;
+    newName: string;
+  };
 };
-
-export let zToBackendRenameCatalogNodeInput = z
-  .object({
-    projectId: z.string(),
-    repoId: z.string(),
-    branchId: z.string(),
-    envId: z.string(),
-    nodeId: z.string(),
-    newName: z.string()
-  })
-  .meta({ id: 'ToBackendRenameCatalogNodeInput' });
 
 export let zToBackendRenameCatalogNodeRequest = z
   .strictObject({
+    operation: z.literal('renameCatalogNode'),
     traceId: z.string(),
     idempotencyKey: z.string(),
-    input: zToBackendRenameCatalogNodeInput
+    input: z
+      .object({
+        projectId: z.string(),
+        repoId: z.string(),
+        branchId: z.string(),
+        envId: z.string(),
+        nodeId: z.string(),
+        newName: z.string()
+      })
+      .meta({ id: 'ToBackendRenameCatalogNodeInput' })
   })
   .meta({ id: 'ToBackendRenameCatalogNodeRequest' });
-
-assertTypesEqual<
-  ToBackendRenameCatalogNodeInput,
-  z.infer<typeof zToBackendRenameCatalogNodeInput>
->({ value: true });
 
 assertTypesEqual<
   ToBackendRenameCatalogNodeRequest,
