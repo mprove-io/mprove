@@ -14,7 +14,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { seconds, ThrottlerModule } from '@nestjs/throttler';
-import { McpModule, type McpOptions, McpTransportType } from '@rekog/mcp-nest';
 import retry from 'async-retry';
 import { and, DefaultLogger, eq, isNotNull } from 'drizzle-orm';
 import {
@@ -29,7 +28,6 @@ import pg from 'pg';
 
 const { Client } = pg;
 
-import { backendPackageJson } from '#backend/backend-package-json';
 import { BackendConfig } from '#backend/config/backend-config';
 import { ServerError } from '#common/classes/server-error/server-error';
 import {
@@ -73,6 +71,7 @@ import { usersTable } from './drizzle/postgres/schema/users';
 import { getRetryOption } from './functions/get-retry-option';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { mcpProviders } from './mcp-providers';
 import { ZodValidationPipe } from './pipes/zod-validation.pipe';
 import { ConnectionsService } from './services/db/connections.service';
 import { DconfigsService } from './services/db/dconfigs.service';
@@ -149,19 +148,6 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
   }
 });
 
-export let mcpModuleOptions: McpOptions = {
-  name: 'mprove',
-  version: backendPackageJson.version,
-  transport: McpTransportType.STREAMABLE_HTTP,
-  mcpEndpoint: 'api/mcp',
-  streamableHttp: {
-    enableJsonResponse: true,
-    statelessMode: true
-  }
-};
-
-let mcpModule = McpModule.forRoot(mcpModuleOptions);
-
 @Module({
   imports: [
     configModule,
@@ -169,13 +155,13 @@ let mcpModule = McpModule.forRoot(mcpModuleOptions);
     jwtModule,
     customThrottlerModule,
     PassportModule,
-    DrizzleModule,
-    mcpModule
+    DrizzleModule
   ],
   controllers: appControllers,
   providers: [
     Logger,
     ...appProviders,
+    ...mcpProviders,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard

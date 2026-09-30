@@ -1,6 +1,5 @@
-import { Injectable, UseFilters } from '@nestjs/common';
-import { type Context, Tool } from '@rekog/mcp-nest';
-import type { Request } from 'express';
+import { UseFilters } from '@nestjs/common';
+import { McpController, Tool } from '@rekog/mcp-nest';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
 import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
@@ -15,7 +14,7 @@ import {
   zMcpToolReadDocsOutput
 } from '#common/zod/backend/mcp-tools/mcp-tool-read-docs';
 
-@Injectable()
+@McpController()
 @UseFilters(McpExceptionFilter)
 export class ReadDocsTool {
   constructor(private docsService: DocsService) {}
@@ -28,11 +27,7 @@ export class ReadDocsTool {
       schema: zodDeepNullish({ schema: zMcpToolReadDocsOutput })
     })
   })
-  async readDocs(
-    item: McpToolReadDocsInput,
-    context: Context,
-    request: Request
-  ) {
+  async readDocs(item: McpToolReadDocsInput) {
     return this.docsService.readDocs({
       pageIds: item.pageIds
     });

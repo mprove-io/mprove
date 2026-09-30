@@ -1,5 +1,6 @@
-import { Injectable, UseFilters } from '@nestjs/common';
-import { type Context, Tool } from '@rekog/mcp-nest';
+import { UseFilters } from '@nestjs/common';
+import { Payload } from '@nestjs/microservices';
+import { McpController, McpRawRequest, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetStateService } from '#backend/controllers/state/get-state/get-state.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -19,7 +20,7 @@ import {
   zMcpToolGetStateOutput
 } from '#common/zod/backend/mcp-tools/mcp-tool-get-state';
 
-@Injectable()
+@McpController()
 @UseFilters(McpExceptionFilter)
 export class GetStateTool {
   constructor(
@@ -36,9 +37,8 @@ export class GetStateTool {
     })
   })
   async getState(
-    item: McpToolGetStateInput,
-    context: Context,
-    request: Request
+    @Payload() item: McpToolGetStateInput,
+    @McpRawRequest() request: Request
   ) {
     let user = (request as any).user as UserTab;
 

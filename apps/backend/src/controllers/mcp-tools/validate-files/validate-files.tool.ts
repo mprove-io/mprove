@@ -1,6 +1,7 @@
-import { Injectable, UseFilters } from '@nestjs/common';
+import { UseFilters } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { type Context, Tool } from '@rekog/mcp-nest';
+import { Payload } from '@nestjs/microservices';
+import { McpController, McpRawRequest, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import type { BackendConfig } from '#backend/config/backend-config';
 import { ValidateFilesService } from '#backend/controllers/files/validate-files/validate-files.service';
@@ -22,7 +23,7 @@ import {
 } from '#common/zod/backend/mcp-tools/mcp-tool-validate-files';
 import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload/process-validate-files-payload';
 
-@Injectable()
+@McpController()
 @UseFilters(McpExceptionFilter)
 export class ValidateFilesTool {
   constructor(
@@ -40,9 +41,8 @@ export class ValidateFilesTool {
     })
   })
   async validateFiles(
-    item: McpToolValidateFilesInput,
-    context: Context,
-    request: Request
+    @Payload() item: McpToolValidateFilesInput,
+    @McpRawRequest() request: Request
   ) {
     let user = (request as any).user as UserTab;
 

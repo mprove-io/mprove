@@ -67,6 +67,19 @@ import { GetLlmModelsWithProviderController } from './controllers/llm-models/get
 import { DuplicateMconfigAndQueryController } from './controllers/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query.controller';
 import { GroupMetricByDimensionController } from './controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.controller';
 import { SuggestDimensionValuesController } from './controllers/mconfigs/suggest-dimension-values/suggest-dimension-values.controller';
+import { GetConnectionSampleTool } from './controllers/mcp-tools/get-connection-sample/get-connection-sample.tool';
+import { GetConnectionSchemasTool } from './controllers/mcp-tools/get-connection-schemas/get-connection-schemas.tool';
+import { GetConnectionsListTool } from './controllers/mcp-tools/get-connections-list/get-connections-list.tool';
+import { GetModelTool } from './controllers/mcp-tools/get-model/get-model.tool';
+import { GetQueryInfoTool } from './controllers/mcp-tools/get-query-info/get-query-info.tool';
+import { GetSkillsTool } from './controllers/mcp-tools/get-skills/get-skills.tool';
+import { GetStateTool } from './controllers/mcp-tools/get-state/get-state.tool';
+import { ListDocsTool } from './controllers/mcp-tools/list-docs/list-docs.tool';
+import { McpHttpController } from './controllers/mcp-tools/mcp-http.controller';
+import { ReadDocsTool } from './controllers/mcp-tools/read-docs/read-docs.tool';
+import { RunTool } from './controllers/mcp-tools/run/run.tool';
+import { SearchDocsTool } from './controllers/mcp-tools/search-docs/search-docs.tool';
+import { ValidateFilesTool } from './controllers/mcp-tools/validate-files/validate-files.tool';
 import { FullMcpJsonController } from './controllers/mcp-tools-full-json/full-mcp-json.controller';
 import { CreateMemberController } from './controllers/members/create-member/create-member.controller';
 import { DeleteMemberController } from './controllers/members/delete-member/delete-member.controller';
@@ -174,6 +187,19 @@ import { StartUserCodexAuthController } from './controllers/users/start-user-cod
 import { UpdateUserPasswordController } from './controllers/users/update-user-password/update-user-password.controller';
 
 export const appControllers = [
+  McpHttpController,
+  GetConnectionSampleTool,
+  GetConnectionSchemasTool,
+  GetConnectionsListTool,
+  GetModelTool,
+  GetQueryInfoTool,
+  GetSkillsTool,
+  GetStateTool,
+  ListDocsTool,
+  ReadDocsTool,
+  RunTool,
+  SearchDocsTool,
+  ValidateFilesTool,
   CreateEditorSessionController,
   CreateExplorerSessionController,
   CreateSessionSseTicketController,

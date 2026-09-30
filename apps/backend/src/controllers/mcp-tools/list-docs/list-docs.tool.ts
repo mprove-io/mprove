@@ -1,6 +1,5 @@
-import { Injectable, UseFilters } from '@nestjs/common';
-import { type Context, Tool } from '@rekog/mcp-nest';
-import type { Request } from 'express';
+import { UseFilters } from '@nestjs/common';
+import { McpController, Tool } from '@rekog/mcp-nest';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
 import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
@@ -10,12 +9,11 @@ import {
   MCP_TOOL_LIST_DOCS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import {
-  type McpToolListDocsInput,
   zMcpToolListDocsInput,
   zMcpToolListDocsOutput
 } from '#common/zod/backend/mcp-tools/mcp-tool-list-docs';
 
-@Injectable()
+@McpController()
 @UseFilters(McpExceptionFilter)
 export class ListDocsTool {
   constructor(private docsService: DocsService) {}
@@ -28,11 +26,7 @@ export class ListDocsTool {
       schema: zodDeepNullish({ schema: zMcpToolListDocsOutput })
     })
   })
-  async listDocs(
-    item: McpToolListDocsInput,
-    context: Context,
-    request: Request
-  ) {
+  async listDocs() {
     return this.docsService.listDocs();
   }
 }

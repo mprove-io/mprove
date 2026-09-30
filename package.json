@@ -162,6 +162,7 @@
     "@biomejs/biome": "catalog:",
     "@praha/byethrow": "catalog:",
     "@swc-node/register": "catalog:",
+    "@swc/cli": "catalog:",
     "@swc/core": "catalog:",
     "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",

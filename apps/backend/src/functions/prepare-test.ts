@@ -1,8 +1,14 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import {
+  MCP_STRATEGY,
+  McpStrategy,
+  StreamableHttpTransport
+} from '@rekog/mcp-nest';
 import bodyParser from 'body-parser';
-import { AppModule, mcpModuleOptions } from '#backend/app.module';
+import { AppModule } from '#backend/app.module';
+import { backendPackageJson } from '#backend/backend-package-json.js';
 import { BackendConfig } from '#backend/config/backend-config';
 import { getConfig } from '#backend/config/get.config';
 import { Prep } from '#backend/interfaces/prep';
@@ -40,8 +46,20 @@ export async function prepareTest(item: {
   })
     .overrideProvider(ConfigService)
     .useValue({ get: (key: any) => mockConfig[key as keyof BackendConfig] })
-    .overrideProvider('MCP_OPTIONS')
-    .useValue({ ...mcpModuleOptions, logging: false })
+    .overrideProvider(MCP_STRATEGY)
+    .useFactory({
+      inject: [StreamableHttpTransport],
+      factory: (transport: StreamableHttpTransport): McpStrategy => {
+        let strategy: McpStrategy = new McpStrategy({
+          name: 'mprove',
+          version: backendPackageJson.version,
+          transports: [transport],
+          logging: false
+        });
+
+        return strategy;
+      }
+    })
     .overrideProvider(EmailService)
     .useValue({
       sendVerification: async () => {},
@@ -56,6 +74,16 @@ export async function prepareTest(item: {
   try {
     app.use(json({ limit: '50mb' }));
     app.use(urlencoded({ limit: '50mb', extended: true }));
+
+    let strategy: McpStrategy = app.get<McpStrategy>(MCP_STRATEGY);
+
+    strategy.setHttpAdapter(app.getHttpAdapter());
+
+    // HTTP-only global guards/interceptors stay at the HTTP layer. Tool-level
+    // exception filters still run in the RPC pipeline.
+    app.connectMicroservice({ strategy: strategy });
+
+    await app.startAllMicroservices();
 
     await app.init();
 

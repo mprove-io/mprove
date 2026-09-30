@@ -8,18 +8,6 @@ import { GetConnectionSampleService } from './controllers/connections/get-connec
 import { GetConnectionSchemasService } from './controllers/connections/get-connection-schemas/get-connection-schemas.service';
 import { GetConnectionsListService } from './controllers/connections/get-connections-list/get-connections-list.service';
 import { ValidateFilesService } from './controllers/files/validate-files/validate-files.service';
-import { GetConnectionSampleTool } from './controllers/mcp-tools/get-connection-sample/get-connection-sample.tool';
-import { GetConnectionSchemasTool } from './controllers/mcp-tools/get-connection-schemas/get-connection-schemas.tool';
-import { GetConnectionsListTool } from './controllers/mcp-tools/get-connections-list/get-connections-list.tool';
-import { GetModelTool } from './controllers/mcp-tools/get-model/get-model.tool';
-import { GetQueryInfoTool } from './controllers/mcp-tools/get-query-info/get-query-info.tool';
-import { GetSkillsTool } from './controllers/mcp-tools/get-skills/get-skills.tool';
-import { GetStateTool } from './controllers/mcp-tools/get-state/get-state.tool';
-import { ListDocsTool } from './controllers/mcp-tools/list-docs/list-docs.tool';
-import { ReadDocsTool } from './controllers/mcp-tools/read-docs/read-docs.tool';
-import { RunTool } from './controllers/mcp-tools/run/run.tool';
-import { SearchDocsTool } from './controllers/mcp-tools/search-docs/search-docs.tool';
-import { ValidateFilesTool } from './controllers/mcp-tools/validate-files/validate-files.tool';
 import { FullMcpJsonService } from './controllers/mcp-tools-full-json/full-mcp-json.service';
 import { GetModelService } from './controllers/models/get-model/get-model.service';
 import { GetQueryInfoService } from './controllers/queries/get-query-info/get-query-info.service';
@@ -230,19 +218,7 @@ export const appProviders = [
   RunService,
   GetStateService,
   //
-  GetConnectionSampleTool,
-  GetConnectionsListTool,
-  GetConnectionSchemasTool,
-  ValidateFilesTool,
-  GetQueryInfoTool,
-  GetModelTool,
-  RunTool,
-  GetStateTool,
   GetSkillsService,
-  GetSkillsTool,
-  ReadDocsTool,
-  ListDocsTool,
-  SearchDocsTool,
   {
     provide: TasksService,
     useFactory: (

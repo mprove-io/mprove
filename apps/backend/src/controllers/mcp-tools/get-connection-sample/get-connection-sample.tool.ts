@@ -1,5 +1,6 @@
-import { Injectable, UseFilters } from '@nestjs/common';
-import { type Context, Tool } from '@rekog/mcp-nest';
+import { UseFilters } from '@nestjs/common';
+import { Payload } from '@nestjs/microservices';
+import { McpController, McpRawRequest, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { GetConnectionSampleService } from '#backend/controllers/connections/get-connection-sample/get-connection-sample.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -19,7 +20,7 @@ import {
 } from '#common/zod/backend/mcp-tools/mcp-tool-get-sample';
 import type { ToBackendGetConnectionSampleOutput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 
-@Injectable()
+@McpController()
 @UseFilters(McpExceptionFilter)
 export class GetConnectionSampleTool {
   constructor(
@@ -36,9 +37,8 @@ export class GetConnectionSampleTool {
     })
   })
   async getConnectionSample(
-    item: McpToolGetSampleInput,
-    context: Context,
-    request: Request
+    @Payload() item: McpToolGetSampleInput,
+    @McpRawRequest() request: Request
   ) {
     let user = (request as any).user as UserTab;
 

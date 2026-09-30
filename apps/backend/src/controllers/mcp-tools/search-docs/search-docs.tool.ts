@@ -1,6 +1,5 @@
-import { Injectable, UseFilters } from '@nestjs/common';
-import { type Context, Tool } from '@rekog/mcp-nest';
-import type { Request } from 'express';
+import { UseFilters } from '@nestjs/common';
+import { McpController, Tool } from '@rekog/mcp-nest';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
 import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
@@ -15,7 +14,7 @@ import {
   zMcpToolSearchDocsOutput
 } from '#common/zod/backend/mcp-tools/mcp-tool-search-docs';
 
-@Injectable()
+@McpController()
 @UseFilters(McpExceptionFilter)
 export class SearchDocsTool {
   constructor(private docsService: DocsService) {}
@@ -28,11 +27,7 @@ export class SearchDocsTool {
       schema: zodDeepNullish({ schema: zMcpToolSearchDocsOutput })
     })
   })
-  async searchDocs(
-    item: McpToolSearchDocsInput,
-    context: Context,
-    request: Request
-  ) {
+  async searchDocs(item: McpToolSearchDocsInput) {
     return this.docsService.searchDocs({
       query: item.query
     });

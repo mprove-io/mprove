@@ -1,5 +1,6 @@
-import { Injectable, UseFilters } from '@nestjs/common';
-import { type Context, Tool } from '@rekog/mcp-nest';
+import { UseFilters } from '@nestjs/common';
+import { Payload } from '@nestjs/microservices';
+import { McpController, McpRawRequest, Tool } from '@rekog/mcp-nest';
 import type { Request } from 'express';
 import { RunService } from '#backend/controllers/run/run/run.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -20,7 +21,7 @@ import {
 } from '#common/zod/backend/mcp-tools/mcp-tool-run';
 import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-output';
 
-@Injectable()
+@McpController()
 @UseFilters(McpExceptionFilter)
 export class RunTool {
   constructor(
@@ -36,7 +37,10 @@ export class RunTool {
       schema: zodDeepNullish({ schema: zMcpToolRunOutput })
     })
   })
-  async run(item: McpToolRunInput, context: Context, request: Request) {
+  async run(
+    @Payload() item: McpToolRunInput,
+    @McpRawRequest() request: Request
+  ) {
     let user = (request as any).user as UserTab;
     let apiKeyType = (request as any).apiKeyType as ApiKeyTypeEnum;
 

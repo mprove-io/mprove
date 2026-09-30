@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
 import 'reflect-metadata';
+import { MCP_STRATEGY, McpStrategy } from '@rekog/mcp-nest';
 import { OPEN_API_ALLOWED_PATHS } from '#common/constants/open-api-allowed-paths';
 import {
   APP_NAME_BACKEND,
@@ -115,6 +116,16 @@ async function bootstrap() {
       'tracestate'
     ]
   });
+
+  let strategy: McpStrategy = app.get<McpStrategy>(MCP_STRATEGY);
+
+  strategy.setHttpAdapter(app.getHttpAdapter());
+
+  // HTTP-only global guards/interceptors stay at the HTTP layer. Tool-level
+  // exception filters still run in the RPC pipeline.
+  app.connectMicroservice({ strategy: strategy });
+
+  await app.startAllMicroservices();
 
   await app.listen(process.env.LISTEN_PORT || 3000);
 }

@@ -17,7 +17,9 @@ RUN apt-get update && \
 RUN chsh -s /bin/zsh root \
   && chsh -s /bin/zsh node    
 
-RUN curl -fsSL https://bun.sh/install | bash \
+ARG BUN_VERSION=1.3.14
+
+RUN curl -fsSL https://bun.sh/install | bash -s -- "bun-v${BUN_VERSION}" \
     && ln -s /root/.bun/bin/bun /usr/local/bin/bun \
     && ln -s /root/.bun/bin/bunx /usr/local/bin/bunx
 

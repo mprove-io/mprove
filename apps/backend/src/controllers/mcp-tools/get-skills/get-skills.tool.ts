@@ -1,6 +1,5 @@
-import { Injectable, UseFilters } from '@nestjs/common';
-import { type Context, Tool } from '@rekog/mcp-nest';
-import type { Request } from 'express';
+import { UseFilters } from '@nestjs/common';
+import { McpController, Tool } from '@rekog/mcp-nest';
 import { GetSkillsService } from '#backend/controllers/skills/get-skills/get-skills.service';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
 import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
@@ -10,12 +9,11 @@ import {
   MCP_TOOL_GET_SKILLS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
 import {
-  type McpToolGetSkillsInput,
   zMcpToolGetSkillsInput,
   zMcpToolGetSkillsOutput
 } from '#common/zod/backend/mcp-tools/mcp-tool-get-skills';
 
-@Injectable()
+@McpController()
 @UseFilters(McpExceptionFilter)
 export class GetSkillsTool {
   constructor(private getSkillsService: GetSkillsService) {}
@@ -28,11 +26,7 @@ export class GetSkillsTool {
       schema: zodDeepNullish({ schema: zMcpToolGetSkillsOutput })
     })
   })
-  async getSkills(
-    item: McpToolGetSkillsInput,
-    context: Context,
-    request: Request
-  ) {
+  async getSkills() {
     return await this.getSkillsService.getSkills();
   }
 }
