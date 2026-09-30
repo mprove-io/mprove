@@ -1,5 +1,4 @@
 {
-  "model": "openai/gpt-6-astra",
   "update": "disable",
   "permissions": [
     {
