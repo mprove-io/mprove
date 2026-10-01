@@ -7,6 +7,13 @@ minimumReleaseAgeExclude:
   - '@malloydata/*'
   - '@toolbox-web/grid-angular@1.9.0'
   - '@toolbox-web/grid@2.17.1'
+  - '@turbo/darwin-64@2.11.6'
+  - '@turbo/darwin-arm64@2.11.6'
+  - '@turbo/linux-64@2.11.6'
+  - '@turbo/linux-arm64@2.11.6'
+  - '@turbo/windows-64@2.11.6'
+  - '@turbo/windows-arm64@2.11.6'
+  - turbo@2.11.6
 
 catalog:
   '@anthropic-ai/sdk': 0.120.0
@@ -233,7 +240,7 @@ catalog:
   ts-pattern: 5.9.0
   tsconfig-paths: 3.14.2
   tslib: 2.7.0
-  turbo: 2.9.7
+  turbo: 2.11.6
   typanion: 3.14.0
   typescript: 5.9.2
   uuid: 11.1.0
