@@ -35,7 +35,8 @@ export const mcpProviders: Provider[] = [
       let strategy: McpStrategy = new McpStrategy({
         name: 'mprove',
         version: backendPackageJson.version,
-        transports: [transport]
+        transports: [transport],
+        isValidateResponse: false
       });
 
       return strategy;

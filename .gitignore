@@ -25,6 +25,7 @@ node_modules/
 nogit/
 notes/_dev.md
 plans/
+pnpm-patches/
 secrets/
 tmp/
 setup-docker/data/

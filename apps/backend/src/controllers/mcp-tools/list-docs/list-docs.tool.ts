@@ -1,7 +1,7 @@
 import { UseFilters } from '@nestjs/common';
 import { McpController, Tool } from '@rekog/mcp-nest';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
+import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema';
 import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
 import { DocsService } from '#backend/services/docs.service';
 import {
@@ -22,8 +22,8 @@ export class ListDocsTool {
     name: MCP_TOOL_LIST_DOCS,
     description: MCP_TOOL_LIST_DOCS_DESCRIPTION,
     parameters: zodStripMcpSchemaId({ schema: zMcpToolListDocsInput }),
-    outputSchema: zodStripMcpSchemaId({
-      schema: zodDeepNullish({ schema: zMcpToolListDocsOutput })
+    outputSchema: makeMcpOutputSchema({
+      schema: zMcpToolListDocsOutput
     })
   })
   async listDocs() {

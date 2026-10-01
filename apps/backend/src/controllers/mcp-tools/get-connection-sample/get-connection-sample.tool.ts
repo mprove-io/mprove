@@ -5,7 +5,7 @@ import type { Request } from 'express';
 import { GetConnectionSampleService } from '#backend/controllers/connections/get-connection-sample/get-connection-sample.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
+import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema';
 import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
 import { ToolService } from '#backend/services/tool.service';
 import {
@@ -32,8 +32,8 @@ export class GetConnectionSampleTool {
     name: MCP_TOOL_GET_SAMPLE,
     description: MCP_TOOL_GET_SAMPLE_DESCRIPTION,
     parameters: zodStripMcpSchemaId({ schema: zMcpToolGetSampleInput }),
-    outputSchema: zodStripMcpSchemaId({
-      schema: zodDeepNullish({ schema: zMcpToolGetSampleOutput })
+    outputSchema: makeMcpOutputSchema({
+      schema: zMcpToolGetSampleOutput
     })
   })
   async getConnectionSample(

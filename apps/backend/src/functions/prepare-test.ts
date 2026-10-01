@@ -28,8 +28,11 @@ const { json, urlencoded } = bodyParser;
 
 export async function prepareTest(item: {
   overrideConfigOptions?: Partial<BackendConfig>;
+  mcpOptions?: {
+    isValidateResponse?: boolean;
+  };
 }) {
-  let { overrideConfigOptions } = item;
+  let { overrideConfigOptions, mcpOptions } = item;
 
   let extraOverride: Partial<BackendConfig> = {
     backendEnv: BackendEnvEnum.TEST,
@@ -54,6 +57,9 @@ export async function prepareTest(item: {
           name: 'mprove',
           version: backendPackageJson.version,
           transports: [transport],
+          isValidateResponse: isDefined(mcpOptions)
+            ? mcpOptions.isValidateResponse
+            : false,
           logging: false
         });
 

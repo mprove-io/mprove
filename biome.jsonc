@@ -19,6 +19,7 @@
       "!node_modules/**",
       "!**/node_modules/**",
       "!tmp/**",
+      "!pnpm-patches/**",
       "!setup-docker/data/**",
       "!package.docker.json",
       "!external/**"

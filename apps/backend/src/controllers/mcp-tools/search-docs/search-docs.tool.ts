@@ -1,7 +1,7 @@
 import { UseFilters } from '@nestjs/common';
 import { McpController, Tool } from '@rekog/mcp-nest';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
+import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema';
 import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
 import { DocsService } from '#backend/services/docs.service';
 import {
@@ -23,8 +23,8 @@ export class SearchDocsTool {
     name: MCP_TOOL_SEARCH_DOCS,
     description: MCP_TOOL_SEARCH_DOCS_DESCRIPTION,
     parameters: zodStripMcpSchemaId({ schema: zMcpToolSearchDocsInput }),
-    outputSchema: zodStripMcpSchemaId({
-      schema: zodDeepNullish({ schema: zMcpToolSearchDocsOutput })
+    outputSchema: makeMcpOutputSchema({
+      schema: zMcpToolSearchDocsOutput
     })
   })
   async searchDocs(item: McpToolSearchDocsInput) {

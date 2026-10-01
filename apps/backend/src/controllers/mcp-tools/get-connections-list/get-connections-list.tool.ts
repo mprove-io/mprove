@@ -5,7 +5,7 @@ import type { Request } from 'express';
 import { GetConnectionsListService } from '#backend/controllers/connections/get-connections-list/get-connections-list.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
+import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema';
 import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
 import { ToolService } from '#backend/services/tool.service';
 import {
@@ -34,8 +34,8 @@ export class GetConnectionsListTool {
     parameters: zodStripMcpSchemaId({
       schema: zMcpToolGetConnectionsListInput
     }),
-    outputSchema: zodStripMcpSchemaId({
-      schema: zodDeepNullish({ schema: zMcpToolGetConnectionsListOutput })
+    outputSchema: makeMcpOutputSchema({
+      schema: zMcpToolGetConnectionsListOutput
     })
   })
   async getConnectionsList(

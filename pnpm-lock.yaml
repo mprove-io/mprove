@@ -634,8 +634,8 @@ catalogs:
       specifier: 2.7.0
       version: 2.7.0
     turbo:
-      specifier: 2.9.3
-      version: 2.9.3
+      specifier: 2.9.7
+      version: 2.9.7
     typescript:
       specifier: 5.9.2
       version: 5.9.2
@@ -660,6 +660,9 @@ catalogs:
     zone.js:
       specifier: 0.16.0
       version: 0.16.0
+
+patchedDependencies:
+  '@rekog/mcp-nest@2.0.7': 9916189a53c3455efe4f96648d6f1b961e6243cf63f45aa4b1c11670c84ac571
 
 importers:
 
@@ -736,7 +739,7 @@ importers:
         version: 4.21.0
       turbo:
         specifier: 'catalog:'
-        version: 2.9.3
+        version: 2.9.7
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -901,7 +904,7 @@ importers:
         version: 1.1.0
       '@rekog/mcp-nest':
         specifier: 'catalog:'
-        version: 2.0.7(@modelcontextprotocol/core@2.1.0)(@modelcontextprotocol/node@2.1.0(@modelcontextprotocol/server@2.1.0)(hono@4.11.4))(@modelcontextprotocol/server@2.1.0)(@nestjs/common@11.2.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.2.6)(@nestjs/microservices@11.2.6)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)(zod@4.3.6)
+        version: 2.0.7(patch_hash=9916189a53c3455efe4f96648d6f1b961e6243cf63f45aa4b1c11670c84ac571)(@modelcontextprotocol/core@2.1.0)(@modelcontextprotocol/node@2.1.0(@modelcontextprotocol/server@2.1.0)(hono@4.11.4))(@modelcontextprotocol/server@2.1.0)(@nestjs/common@11.2.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.2.6)(@nestjs/microservices@11.2.6)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)(zod@4.3.6)
       '@replit/codemirror-indentation-markers':
         specifier: 'catalog:'
         version: 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.5.2)(@codemirror/view@6.36.7)
@@ -6916,33 +6919,33 @@ packages:
     resolution: {integrity: sha512-Y8cK9aggNRsqJVaKUlEYs4s7CvQ1b1ta2DVPyAimb0I2qhzjNk+A+mxvll/klL0RlfuIUei8BF7YWiua4kQqww==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  '@turbo/darwin-64@2.9.3':
-    resolution: {integrity: sha512-P8foouaP+y/p+hhEGBoZpzMbpVvUMwPjDpcy6wN7EYfvvyISD1USuV27qWkczecihwuPJzQ1lDBuL8ERcavTyg==}
+  '@turbo/darwin-64@2.9.7':
+    resolution: {integrity: sha512-wnvOWuVWJ5EUHNKxExEWiGlTeVpLG1L0PCu5MUozyC1P2SHGiWsmpW6/yAuShH91Fa2TAHOvdCRBzriZh4j4Eg==}
     cpu: [x64]
     os: [darwin]
 
-  '@turbo/darwin-arm64@2.9.3':
-    resolution: {integrity: sha512-SIzEkvtNdzdI50FJDaIQ6kQGqgSSdFPcdn0wqmmONN6iGKjy6hsT+EH99GP65FsfV7DLZTh2NmtTIRl2kdoz5Q==}
+  '@turbo/darwin-arm64@2.9.7':
+    resolution: {integrity: sha512-mA0FIPMwwN3lodDkQYaGxj6PeT7ZaN5aCEbkKn/WB+ZB9yJdVWA4J83GH7t43jqDc5dcnVluVN5UFx3plRiXhA==}
     cpu: [arm64]
     os: [darwin]
 
-  '@turbo/linux-64@2.9.3':
-    resolution: {integrity: sha512-pLRwFmcHHNBvsCySLS6OFabr/07kDT2pxEt/k6eBf/3asiVQZKJ7Rk88AafQx2aYA641qek4RsXvYO3JYpiBug==}
+  '@turbo/linux-64@2.9.7':
+    resolution: {integrity: sha512-fEbUYpgb5l7P+q+5tsWF2gw+/GSjUsuUTcnfm+f0lozUjgcjLKyOat6PgtAChmIFcTPchCL/8rJ3TvkBy01gfA==}
     cpu: [x64]
     os: [linux]
 
-  '@turbo/linux-arm64@2.9.3':
-    resolution: {integrity: sha512-gy6ApUroC2Nzv+qjGtE/uPNkhHAFU4c8God+zd5Aiv9L9uBgHlxVJpHT3XWl5xwlJZ2KWuMrlHTaS5kmNB+q1Q==}
+  '@turbo/linux-arm64@2.9.7':
+    resolution: {integrity: sha512-VkUjulo9ytfHKUHOS5gy0XPoh4CTKPXWCL8nLdrlHVi9fSut31ECeUqnm/dAbETP5D4xo9mH9XkJ+qMzGe/zmg==}
     cpu: [arm64]
     os: [linux]
 
-  '@turbo/windows-64@2.9.3':
-    resolution: {integrity: sha512-d0YelTX6hAsB7kIEtGB3PzIzSfAg3yDoUlHwuwJc3adBXUsyUIs0YLG+1NNtuhcDOUGnWQeKUoJ2pGWvbpRj7w==}
+  '@turbo/windows-64@2.9.7':
+    resolution: {integrity: sha512-/GWdY6/x4aIHqkYJq596Rpdk1x0MkpRPkJcLAoB3yGRwyUms0+u2F1GnV54IbyAZTeKLRWSJKzNC+QwVGdYchA==}
     cpu: [x64]
     os: [win32]
 
-  '@turbo/windows-arm64@2.9.3':
-    resolution: {integrity: sha512-/08CwpKJl3oRY8nOlh2YgilZVJDHsr60XTNxRhuDeuFXONpUZ5X+Nv65izbG/xBew9qxcJFbDX9/sAmAX+ITcQ==}
+  '@turbo/windows-arm64@2.9.7':
+    resolution: {integrity: sha512-xBBgxCC5PK2+WZ1PPRZdp+aJ0bMBcEbweXWux3RUHJvX9ZodcoQySkrW6qt+ahb+uk8ZjyQodLfDwtVSoYds1w==}
     cpu: [arm64]
     os: [win32]
 
@@ -12648,8 +12651,8 @@ packages:
   tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
 
-  turbo@2.9.3:
-    resolution: {integrity: sha512-J/VUvsGRykPb9R8Kh8dHVBOqioDexLk9BhLCU/ZybRR+HN9UR3cURdazFvNgMDt9zPP8TF6K73Z+tplfmi0PqQ==}
+  turbo@2.9.7:
+    resolution: {integrity: sha512-epxzqVO2s0IxcSWcgb+qKrtco8isfe7g3VtiS6hkYnEK4A9XQDZbrtavQ6MtWR1KoQn+1fUomaQth2rfRHlUlg==}
     hasBin: true
 
   tweetnacl@0.14.5:
@@ -18460,7 +18463,7 @@ snapshots:
 
   '@protobufjs/utf8@1.1.0': {}
 
-  '@rekog/mcp-nest@2.0.7(@modelcontextprotocol/core@2.1.0)(@modelcontextprotocol/node@2.1.0(@modelcontextprotocol/server@2.1.0)(hono@4.11.4))(@modelcontextprotocol/server@2.1.0)(@nestjs/common@11.2.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.2.6)(@nestjs/microservices@11.2.6)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)(zod@4.3.6)':
+  '@rekog/mcp-nest@2.0.7(patch_hash=9916189a53c3455efe4f96648d6f1b961e6243cf63f45aa4b1c11670c84ac571)(@modelcontextprotocol/core@2.1.0)(@modelcontextprotocol/node@2.1.0(@modelcontextprotocol/server@2.1.0)(hono@4.11.4))(@modelcontextprotocol/server@2.1.0)(@nestjs/common@11.2.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.2.6)(@nestjs/microservices@11.2.6)(express@5.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)(zod@4.3.6)':
     dependencies:
       '@modelcontextprotocol/core': 2.1.0
       '@modelcontextprotocol/node': 2.1.0(@modelcontextprotocol/server@2.1.0)(hono@4.11.4)
@@ -19396,22 +19399,22 @@ snapshots:
       '@tufjs/canonical-json': 2.0.0
       minimatch: 10.1.1
 
-  '@turbo/darwin-64@2.9.3':
+  '@turbo/darwin-64@2.9.7':
     optional: true
 
-  '@turbo/darwin-arm64@2.9.3':
+  '@turbo/darwin-arm64@2.9.7':
     optional: true
 
-  '@turbo/linux-64@2.9.3':
+  '@turbo/linux-64@2.9.7':
     optional: true
 
-  '@turbo/linux-arm64@2.9.3':
+  '@turbo/linux-arm64@2.9.7':
     optional: true
 
-  '@turbo/windows-64@2.9.3':
+  '@turbo/windows-64@2.9.7':
     optional: true
 
-  '@turbo/windows-arm64@2.9.3':
+  '@turbo/windows-arm64@2.9.7':
     optional: true
 
   '@tweenjs/tween.js@18.6.4': {}
@@ -25949,14 +25952,14 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  turbo@2.9.3:
+  turbo@2.9.7:
     optionalDependencies:
-      '@turbo/darwin-64': 2.9.3
-      '@turbo/darwin-arm64': 2.9.3
-      '@turbo/linux-64': 2.9.3
-      '@turbo/linux-arm64': 2.9.3
-      '@turbo/windows-64': 2.9.3
-      '@turbo/windows-arm64': 2.9.3
+      '@turbo/darwin-64': 2.9.7
+      '@turbo/darwin-arm64': 2.9.7
+      '@turbo/linux-64': 2.9.7
+      '@turbo/linux-arm64': 2.9.7
+      '@turbo/windows-64': 2.9.7
+      '@turbo/windows-arm64': 2.9.7
 
   tweetnacl@0.14.5: {}
 

@@ -7,7 +7,7 @@ import type { BackendConfig } from '#backend/config/backend-config';
 import { ValidateFilesService } from '#backend/controllers/files/validate-files/validate-files.service';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { McpExceptionFilter } from '#backend/filters/mcp-exception.filter';
-import { zodDeepNullish } from '#backend/functions/zod-deep-nullish';
+import { makeMcpOutputSchema } from '#backend/functions/make-mcp-output-schema';
 import { zodStripMcpSchemaId } from '#backend/functions/zod-strip-mcp-schema-id';
 import { ToolService } from '#backend/services/tool.service';
 import {
@@ -36,8 +36,8 @@ export class ValidateFilesTool {
     name: MCP_TOOL_VALIDATE,
     description: MCP_TOOL_VALIDATE_DESCRIPTION,
     parameters: zodStripMcpSchemaId({ schema: zMcpToolValidateFilesInput }),
-    outputSchema: zodStripMcpSchemaId({
-      schema: zodDeepNullish({ schema: zMcpToolValidateFilesOutput })
+    outputSchema: makeMcpOutputSchema({
+      schema: zMcpToolValidateFilesOutput
     })
   })
   async validateFiles(

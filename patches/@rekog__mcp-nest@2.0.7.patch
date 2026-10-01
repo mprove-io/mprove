@@ -1,0 +1,66 @@
+diff --git a/dist/mcp/transport/mcp-server-options.interface.d.ts b/dist/mcp/transport/mcp-server-options.interface.d.ts
+index 78bbfb7cdc9eed4d54db1bd50911248c5deac86c..90556fb64c8f93ddb9eb21899fa8492797d0bb72 100644
+--- a/dist/mcp/transport/mcp-server-options.interface.d.ts
++++ b/dist/mcp/transport/mcp-server-options.interface.d.ts
+@@ -6,6 +6,14 @@ export type McpCacheHints = NonNullable<ServerOptions['cacheHints']>;
+ export type McpRequestStateOptions = NonNullable<ServerOptions['requestState']>;
+ export type McpInputRequiredOptions = NonNullable<ServerOptions['inputRequired']>;
+ export interface McpServerOptions {
++    /**
++     * Validate tool responses against their output schema. Defaults to true.
++     * Set to false to return the original response without validation or parsing.
++     * Output schemas are still advertised to clients, which may validate them.
++     * Applies to decorated and dynamic tools across all transports and schemas.
++     * Already-formatted MCP results retain their existing pass-through behavior.
++     */
++    isValidateResponse?: boolean;
+     name: string;
+     version: string;
+     server?: string;
+diff --git a/dist/mcp/transport/mcp.strategy.js b/dist/mcp/transport/mcp.strategy.js
+index e9dd8365e1df14d6cd3b63f766bfacddc086612f..1852788556a3e33ceabafcd895a933e64d8af3c0 100644
+--- a/dist/mcp/transport/mcp.strategy.js
++++ b/dist/mcp/transport/mcp.strategy.js
+@@ -455,6 +455,9 @@ class McpStrategy extends microservices_1.Server {
+         }
+         const defaultContent = [{ type: 'text', text: JSON.stringify(result) }];
+         if (outputSchema) {
++            if (this.options.isValidateResponse === false) {
++                return { structuredContent: result, content: defaultContent };
++            }
+             const validation = await (0, tool_schema_1.resolveToolSchema)(outputSchema).validate(result);
+             if (!validation.success) {
+                 throw new server_1.ProtocolError(server_1.ProtocolErrorCode.InternalError, `Tool result does not match outputSchema: ${validation.message}`);
+diff --git a/src/mcp/transport/mcp-server-options.interface.ts b/src/mcp/transport/mcp-server-options.interface.ts
+index ccb36a2526442a96d690c87a9a31e55d2db5ccf1..45514c7ba832a4a950cc20fb3e1da5599e12aaf6 100644
+--- a/src/mcp/transport/mcp-server-options.interface.ts
++++ b/src/mcp/transport/mcp-server-options.interface.ts
+@@ -41,6 +41,14 @@ export type McpInputRequiredOptions = NonNullable<
+  * module's `controllers` array. No `McpModule` is required.
+  */
+ export interface McpServerOptions {
++  /**
++   * Validate tool responses against their output schema. Defaults to true.
++   * Set to false to return the original response without validation or parsing.
++   * Output schemas are still advertised to clients, which may validate them.
++   * Applies to decorated and dynamic tools across all transports and schemas.
++   * Already-formatted MCP results retain their existing pass-through behavior.
++   */
++  isValidateResponse?: boolean;
+   /** Server name (MCP `Implementation.name`). */
+   name: string;
+   /** Server version (MCP `Implementation.version`). */
+diff --git a/src/mcp/transport/mcp.strategy.ts b/src/mcp/transport/mcp.strategy.ts
+index 5baf21d46d530c0c745b61ef138c7aa4ec92748a..07dc2d314e7ec9b0b310d482d57bcd8dd4f26457 100644
+--- a/src/mcp/transport/mcp.strategy.ts
++++ b/src/mcp/transport/mcp.strategy.ts
+@@ -909,6 +909,9 @@ export class McpStrategy extends Server implements CustomTransportStrategy {
+     }
+     const defaultContent = [{ type: 'text', text: JSON.stringify(result) }];
+     if (outputSchema) {
++      if (this.options.isValidateResponse === false) {
++        return { structuredContent: result, content: defaultContent };
++      }
+       const validation = await resolveToolSchema(outputSchema).validate(result);
+       if (!validation.success) {
+         throw new ProtocolError(
