@@ -29,34 +29,34 @@ import {
 
 export type ToBackendSeedRecordsInputProvidersItem =
   | {
+      type: ProviderTypeEnum.OpenAI;
       projectId: string;
       providerId: typeof OPENAI_PROVIDER_ID;
-      type: ProviderTypeEnum.OpenAI;
       isEnabled: boolean;
       models: ToBackendSeedRecordsModel[];
       options: ProviderOptionsOpenAI;
     }
   | {
+      type: ProviderTypeEnum.Anthropic;
       projectId: string;
       providerId: typeof ANTHROPIC_PROVIDER_ID;
-      type: ProviderTypeEnum.Anthropic;
       isEnabled: boolean;
       models: ToBackendSeedRecordsModel[];
       options: ProviderOptionsAnthropic;
     }
   | {
+      type: ProviderTypeEnum.OpenAICompatible;
       projectId: string;
       providerId: string;
-      type: ProviderTypeEnum.OpenAICompatible;
       name: string;
       isEnabled: boolean;
       models: ToBackendSeedRecordsModel[];
       options: ProviderOptionsOpenAICompatible;
     }
   | {
+      type: ProviderTypeEnum.OpenAICodex;
       projectId: string;
       providerId: typeof CODEX_PROVIDER_ID;
-      type: ProviderTypeEnum.OpenAICodex;
       isEnabled: boolean;
       models: ToBackendSeedRecordsModel[];
       options: ProviderOptionsCodex;
@@ -65,34 +65,34 @@ export type ToBackendSeedRecordsInputProvidersItem =
 export let zToBackendSeedRecordsInputProvidersItem = z
   .discriminatedUnion('type', [
     z.strictObject({
+      type: z.literal(ProviderTypeEnum.OpenAI),
       projectId: z.string(),
       providerId: z.literal(OPENAI_PROVIDER_ID),
-      type: z.literal(ProviderTypeEnum.OpenAI),
       isEnabled: z.boolean(),
       models: z.array(zToBackendSeedRecordsModel),
       options: zProviderOptionsOpenAI
     }),
     z.strictObject({
+      type: z.literal(ProviderTypeEnum.Anthropic),
       projectId: z.string(),
       providerId: z.literal(ANTHROPIC_PROVIDER_ID),
-      type: z.literal(ProviderTypeEnum.Anthropic),
       isEnabled: z.boolean(),
       models: z.array(zToBackendSeedRecordsModel),
       options: zProviderOptionsAnthropic
     }),
     z.strictObject({
+      type: z.literal(ProviderTypeEnum.OpenAICompatible),
       projectId: z.string(),
       providerId: z.string(),
-      type: z.literal(ProviderTypeEnum.OpenAICompatible),
       name: z.string(),
       isEnabled: z.boolean(),
       models: z.array(zToBackendSeedRecordsModel),
       options: zProviderOptionsOpenAICompatible
     }),
     z.strictObject({
+      type: z.literal(ProviderTypeEnum.OpenAICodex),
       projectId: z.string(),
       providerId: z.literal(CODEX_PROVIDER_ID),
-      type: z.literal(ProviderTypeEnum.OpenAICodex),
       isEnabled: z.boolean(),
       models: z.array(zToBackendSeedRecordsModel),
       options: zProviderOptionsCodex
