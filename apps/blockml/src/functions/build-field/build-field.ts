@@ -15,7 +15,7 @@ import { setImplicitLabel } from '#blockml/functions/build-field/set-implicit-la
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { sdrType } from '#common/types/sdr-type';
+import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
 export function buildField<T extends sdrType>(item: {
   entities: T[];

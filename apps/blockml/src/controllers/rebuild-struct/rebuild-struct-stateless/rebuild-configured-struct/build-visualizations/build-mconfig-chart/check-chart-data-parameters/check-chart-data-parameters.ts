@@ -16,10 +16,10 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileChartDataPivotValue } from '#common/types/blockml/parts/internal/file-chart-data-pivot-value';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { Model } from '#common/types/blockml/parts/model';
-import type { dcType } from '#common/types/dc-type';
 
 let func = FuncEnum.CheckChartDataParameters;
 

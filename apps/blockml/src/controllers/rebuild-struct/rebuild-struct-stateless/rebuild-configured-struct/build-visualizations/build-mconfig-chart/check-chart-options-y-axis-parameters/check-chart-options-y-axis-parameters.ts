@@ -12,8 +12,8 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { drcType } from '#common/types/blockml/parts/internal/drc-type';
 import type { FileChartOptionsYAxisElement } from '#common/types/blockml/parts/internal/file-chart-options-y-axis';
-import type { drcType } from '#common/types/drc-type';
 
 let func = FuncEnum.CheckChartOptionsYAxisParameters;
 

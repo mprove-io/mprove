@@ -7,7 +7,7 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import { drcType } from '#common/types/drc-type';
+import { drcType } from '#common/types/blockml/parts/internal/drc-type';
 
 let func = FuncEnum.CheckAccess;
 

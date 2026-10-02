@@ -19,11 +19,11 @@ import type { ProjectConnection } from '#common/types/backend/parts/project-conn
 import type { QueryOperation } from '#common/types/backend/parts/query-operation';
 import type { SelectedGiven } from '#common/types/backend/parts/selected-given';
 import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
 import type { Mconfig } from '#common/types/blockml/parts/mconfig';
 import type { Model } from '#common/types/blockml/parts/model';
-import type { dcType } from '#common/types/dc-type';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';

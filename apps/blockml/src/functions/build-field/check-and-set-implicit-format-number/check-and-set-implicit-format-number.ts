@@ -14,7 +14,7 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
-import type { sdrType } from '#common/types/sdr-type';
+import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
 let func = FuncEnum.CheckAndSetImplicitFormatNumber;
 

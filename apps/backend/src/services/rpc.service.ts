@@ -16,7 +16,7 @@ import type { ToBlockmlResponseForOperation } from '#common/types/blockml/respon
 import { zToDiskOperationRegistry } from '#common/types/disk/request/to-disk-operation-registry';
 import type { ToDiskRequest } from '#common/types/disk/request/to-disk-request';
 import type { ToDiskResponseForOperation } from '#common/types/disk/response/to-disk-response-for-operation';
-import type { RpcRequestData } from '#common/types/rpc-request-data';
+import type { RpcRequestData } from '#common/types/node-common/rpc-request-data';
 
 type BlockmlSendItem<TRequest extends ToBlockmlRequest> = {
   request: TRequest;

@@ -8,7 +8,7 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
-import type { sdrType } from '#common/types/sdr-type';
+import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
 let func = FuncEnum.CheckFieldNameDuplicates;
 

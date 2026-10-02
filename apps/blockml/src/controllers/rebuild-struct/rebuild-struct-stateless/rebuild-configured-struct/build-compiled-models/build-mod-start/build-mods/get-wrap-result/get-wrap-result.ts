@@ -1,4 +1,4 @@
-import type { WrapResult } from '#common/types/wrap-result';
+import type { WrapResult } from '#common/types/blockml/parts/internal/wrap-result';
 
 export async function getWrapResult<T>(item: { promise: Promise<T> }) {
   let startMs = Date.now();

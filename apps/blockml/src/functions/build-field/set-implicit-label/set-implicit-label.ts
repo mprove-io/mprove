@@ -9,7 +9,7 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { sdrType } from '#common/types/sdr-type';
+import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
 let func = FuncEnum.SetImplicitLabel;
 

@@ -37,7 +37,7 @@ import type { ToBackendMoveCatalogNodeRequest } from '#common/types/backend/rout
 import type { ToBackendMoveCatalogNodeResponse } from '#common/types/backend/routes/catalogs/move-catalog-node/move-catalog-node-response';
 import type { DiskCatalogNode } from '#common/types/disk/parts/disk-catalog-node';
 import type { RepoStatus } from '#common/types/disk/parts/repo-status';
-import type { FileItem } from '#common/types/file-item';
+import type { FileItem } from '#common/types/front/file-item';
 import { getFileItems } from '#front/app/functions/get-file-items';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

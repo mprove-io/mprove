@@ -15,7 +15,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
-import type { sdrType } from '#common/types/sdr-type';
+import type { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 
 let func = FuncEnum.CheckAndSetImplicitResult;
 

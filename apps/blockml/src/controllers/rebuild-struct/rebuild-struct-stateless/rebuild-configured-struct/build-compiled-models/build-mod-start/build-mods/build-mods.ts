@@ -27,7 +27,7 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
-import type { WrapResult } from '#common/types/wrap-result';
+import type { WrapResult } from '#common/types/blockml/parts/internal/wrap-result';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { errorToWrapResult } from './error-to-wrap-result/error-to-wrap-result';

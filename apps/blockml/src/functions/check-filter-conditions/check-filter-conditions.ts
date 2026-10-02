@@ -10,7 +10,7 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import { sdrType } from '#common/types/sdr-type';
+import { sdrType } from '#common/types/blockml/parts/internal/sdr-type';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
 let func = FuncEnum.CheckFilterConditions;

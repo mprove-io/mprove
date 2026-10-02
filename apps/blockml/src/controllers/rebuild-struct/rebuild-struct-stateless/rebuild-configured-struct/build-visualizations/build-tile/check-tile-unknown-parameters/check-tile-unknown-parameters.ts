@@ -11,8 +11,8 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { dcType } from '#common/types/blockml/parts/internal/dc-type';
 import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
-import type { dcType } from '#common/types/dc-type';
 
 let func = FuncEnum.CheckTileUnknownParameters;
 
