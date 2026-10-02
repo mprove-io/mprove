@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
 import { zDashboardField } from '#common/types/blockml/parts/dashboard-field';
 import { zTile } from '#common/types/blockml/parts/tile';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export let zDashboard = z
   .object({

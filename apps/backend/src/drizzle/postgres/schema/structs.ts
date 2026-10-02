@@ -7,7 +7,7 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { StructLt, StructSt } from '#common/types/st-lt';
+import type { StructLt, StructSt } from '#common/types/shared/st-lt/st-lt';
 
 export const structsTable = pgTable(
   'structs',

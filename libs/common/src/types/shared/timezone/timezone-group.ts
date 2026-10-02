@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zTimezone } from '#common/types/timezone';
+import { zTimezone } from '#common/types/shared/timezone/timezone';
 
 export let zTimezoneGroup = z
   .object({

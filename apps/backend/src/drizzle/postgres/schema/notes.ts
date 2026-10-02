@@ -7,7 +7,7 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { NoteLt, NoteSt } from '#common/types/st-lt';
+import type { NoteLt, NoteSt } from '#common/types/shared/st-lt/st-lt';
 
 export const notesTable = pgTable(
   'notes',

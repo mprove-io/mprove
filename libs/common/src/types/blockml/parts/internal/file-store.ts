@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
 import { zFieldAny } from '#common/types/blockml/parts/internal/field-any';
 import { zFileBasic } from '#common/types/blockml/parts/internal/file-basic';
 import { zFileStoreBuildMetric } from '#common/types/blockml/parts/internal/file-store-build-metric';
 import { zFileStoreFieldGroup } from '#common/types/blockml/parts/internal/file-store-field-group';
 import { zFileStoreFieldTimeGroup } from '#common/types/blockml/parts/internal/file-store-field-time-group';
 import { zFileStoreResult } from '#common/types/blockml/parts/internal/file-store-result';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export let zFileStore = zFileBasic
   .extend({

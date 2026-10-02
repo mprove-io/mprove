@@ -9,7 +9,7 @@ import {
   type ReportField,
   zReportField
 } from '#common/types/blockml/parts/report-field';
-import { zTimezone } from '#common/types/z-timezone';
+import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export type ToBackendSaveCreateReportRequest = {
   operation: 'saveCreateReport';

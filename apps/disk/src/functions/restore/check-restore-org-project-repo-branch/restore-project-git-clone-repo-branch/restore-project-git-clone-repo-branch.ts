@@ -3,7 +3,7 @@ import type { SimpleGit } from 'simple-git';
 import type { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { DiskRestoreProjectGitCloneRepoBranchError } from '#common/types/disk/function-errors/disk-restore-project-git-clone-repo-branch-error';
-import type { ProjectLt } from '#common/types/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/st-lt';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
 import { createBranch } from '#disk/functions/git/create-branch/create-branch';
 import { createGit } from '#disk/functions/git/create-git/create-git';

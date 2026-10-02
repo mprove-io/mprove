@@ -10,7 +10,7 @@ import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/
 import type { DiskItemCatalog } from '#common/types/disk/parts/disk-item-catalog';
 import type { DiskItemStatus } from '#common/types/disk/parts/disk-item-status';
 import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
-import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
+import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getInitialCommitHash } from '#disk/controllers/repos/create-dev-repo/get-initial-commit-hash/get-initial-commit-hash';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';

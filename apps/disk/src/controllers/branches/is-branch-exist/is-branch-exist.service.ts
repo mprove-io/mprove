@@ -4,7 +4,7 @@ import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
 import type { BaseProject } from '#common/types/backend/parts/base-project';
 import type { ToDiskIsBranchExistOutput } from '#common/types/disk/routes/branches/is-branch-exist/is-branch-exist-output';
-import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
+import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { createGit } from '#disk/functions/git/create-git/create-git';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';

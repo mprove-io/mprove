@@ -1,4 +1,4 @@
-import type { TimezoneGroup } from '#common/types/timezone-group';
+import type { TimezoneGroup } from '#common/types/shared/timezone/timezone-group';
 
 export const timezones: TimezoneGroup[] = [
   {

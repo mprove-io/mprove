@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import type { ProjectLt } from '#common/types/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/st-lt';
 import { checkRestoreOrgProject } from '#disk/functions/restore/check-restore-org-project/check-restore-org-project';
 import { restoreProjectGitCloneRepo } from '#disk/functions/restore/check-restore-org-project-repo/restore-project-git-clone-repo/restore-project-git-clone-repo';
 

@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
 import { zFieldAny } from '#common/types/blockml/parts/internal/field-any';
 import { zFileBasic } from '#common/types/blockml/parts/internal/file-basic';
 import { zFilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export let zFileDashboard = zFileBasic
   .extend({

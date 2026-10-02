@@ -14,7 +14,7 @@ import type { BaseProject } from '#common/types/backend/parts/base-project';
 import type { ToBackendGetRebuildStructRequest } from '#common/types/backend/routes/test-routes/get-rebuild-struct/get-rebuild-struct-request';
 import type { ToBackendGetRebuildStructResponse } from '#common/types/backend/routes/test-routes/get-rebuild-struct/get-rebuild-struct-response';
 import type { ToDiskSeedProjectRequest } from '#common/types/disk/routes/seed/seed-project/seed-project-request';
-import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
+import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
 
 let testId = 'get-rebuild-struct__ok';
 

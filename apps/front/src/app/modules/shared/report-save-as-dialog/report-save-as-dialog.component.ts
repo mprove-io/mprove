@@ -20,7 +20,6 @@ import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { AccessRoleCombined } from '#common/types/access-role-combined';
 import type { ReportUnit } from '#common/types/backend/parts/report-unit';
 import type { ReportX } from '#common/types/backend/parts/report-x';
 import type { Role } from '#common/types/backend/parts/role';
@@ -31,6 +30,7 @@ import type { ToBackendSaveModifyReportResponse } from '#common/types/backend/ro
 import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/roles/get-roles/get-roles-request';
 import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Space } from '#common/types/blockml/parts/space';
+import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { MemberQuery } from '#front/app/queries/member.query';

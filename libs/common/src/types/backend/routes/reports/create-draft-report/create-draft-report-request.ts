@@ -15,7 +15,7 @@ import {
   type RowChange,
   zRowChange
 } from '#common/types/blockml/parts/row-change';
-import { zTimezone } from '#common/types/z-timezone';
+import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export type ToBackendCreateDraftReportRequest = {
   operation: 'createDraftReport';

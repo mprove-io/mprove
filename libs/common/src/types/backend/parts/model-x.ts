@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
 import { zModel } from '#common/types/blockml/parts/model';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export let zModelX = zModel
   .extend({

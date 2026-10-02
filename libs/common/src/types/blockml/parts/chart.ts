@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
 import { zTile } from '#common/types/blockml/parts/tile';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export let zChart = z
   .object({

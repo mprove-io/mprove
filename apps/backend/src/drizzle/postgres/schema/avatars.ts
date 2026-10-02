@@ -7,7 +7,7 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { AvatarLt, AvatarSt } from '#common/types/st-lt';
+import type { AvatarLt, AvatarSt } from '#common/types/shared/st-lt/st-lt';
 
 export const avatarsTable = pgTable(
   'avatars',

@@ -38,7 +38,10 @@ import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas
 import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schema';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 import type { Member } from '#common/types/backend/parts/member';
-import type { ConnectionLt, ConnectionSt } from '#common/types/st-lt';
+import type {
+  ConnectionLt,
+  ConnectionSt
+} from '#common/types/shared/st-lt/st-lt';
 
 const { forEachSeries } = pIteration;
 

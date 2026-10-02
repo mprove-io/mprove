@@ -70,7 +70,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BaseProject } from '#common/types/backend/parts/base-project';
-import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
+import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
 import { decryptData } from '#node-common/functions/decrypt-data/decrypt-data';
 import { TabToEntService } from './tab-to-ent.service';
 

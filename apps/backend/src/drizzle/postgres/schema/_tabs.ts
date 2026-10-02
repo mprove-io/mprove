@@ -64,7 +64,7 @@ import type {
   UconfigSt,
   UserLt,
   UserSt
-} from '#common/types/st-lt';
+} from '#common/types/shared/st-lt/st-lt';
 import { AvatarEnt } from './avatars';
 import { BranchEnt } from './branches';
 import { BridgeEnt } from './bridges';

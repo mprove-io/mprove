@@ -33,7 +33,6 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
-import type { AccessRoleCombined } from '#common/types/access-role-combined';
 import type { ChartX } from '#common/types/backend/parts/chart-x';
 import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
 import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
@@ -52,6 +51,7 @@ import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/rol
 import type { Chart } from '#common/types/blockml/parts/chart';
 import type { Model } from '#common/types/blockml/parts/model';
 import type { Space } from '#common/types/blockml/parts/space';
+import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { spaceUnitToDashboardUnit } from '#front/app/functions/space/space-unit-to-dashboard-unit';

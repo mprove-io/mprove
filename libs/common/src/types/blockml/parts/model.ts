@@ -2,10 +2,10 @@ import type { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
 import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import { zModelField } from '#common/types/blockml/parts/model-field';
 import { zModelNode } from '#common/types/blockml/parts/model-node';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export let zModel = z
   .object({

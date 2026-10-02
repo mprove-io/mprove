@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { zTimezone } from '#common/types/z-timezone';
+import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export type ToBackendGetReportRequest = {
   operation: 'getReport';

@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
 import { zColumn } from '#common/types/blockml/parts/column';
 import { zFraction } from '#common/types/blockml/parts/fraction';
 import { zMconfigChart } from '#common/types/blockml/parts/mconfig-chart';
 import { zReportField } from '#common/types/blockml/parts/report-field';
 import { zRow } from '#common/types/blockml/parts/row';
-import { zTimezone } from '#common/types/z-timezone';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
+import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export let zReport = z
   .object({

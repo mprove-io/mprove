@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export let zSpaceUnit = z
   .object({

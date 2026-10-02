@@ -9,7 +9,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { EnvLt, EnvSt } from '#common/types/st-lt';
+import type { EnvLt, EnvSt } from '#common/types/shared/st-lt/st-lt';
 
 export const envsTable = pgTable(
   'envs',

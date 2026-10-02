@@ -26,7 +26,10 @@ import type { Model } from '#common/types/blockml/parts/model';
 import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
 import type { Preset } from '#common/types/blockml/parts/preset';
 import type { ToBlockmlRebuildStructOutput } from '#common/types/blockml/routes/rebuild-struct/rebuild-struct-output';
-import type { ConnectionLt, ConnectionSt } from '#common/types/st-lt';
+import type {
+  ConnectionLt,
+  ConnectionSt
+} from '#common/types/shared/st-lt/st-lt';
 import { getMproveDir } from '#node-common/functions/get-mprove-dir/get-mprove-dir';
 import { rebuildStructStateless } from './rebuild-struct-stateless/rebuild-struct-stateless';
 

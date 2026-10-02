@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import { zTimezone } from '#common/types/z-timezone';
+import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export let zMproveConfig = z
   .object({

@@ -6,7 +6,7 @@ import { zFilter } from '#common/types/blockml/parts/filter';
 import { zMconfigChart } from '#common/types/blockml/parts/mconfig-chart';
 import { zSorting } from '#common/types/blockml/parts/sorting';
 import { zStorePart } from '#common/types/blockml/parts/store-part';
-import { zTimezone } from '#common/types/z-timezone';
+import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export let zMconfig = z
   .object({

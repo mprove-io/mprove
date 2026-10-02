@@ -11,7 +11,7 @@ import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/
 import type { DiskItemCatalog } from '#common/types/disk/parts/disk-item-catalog';
 import type { DiskItemStatus } from '#common/types/disk/parts/disk-item-status';
 import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
-import type { ProjectLt } from '#common/types/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';

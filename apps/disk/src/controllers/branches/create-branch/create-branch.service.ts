@@ -11,7 +11,7 @@ import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/
 import type { DiskItemCatalog } from '#common/types/disk/parts/disk-item-catalog';
 import type { DiskItemStatus } from '#common/types/disk/parts/disk-item-status';
 import type { ToDiskCreateBranchOutput } from '#common/types/disk/routes/branches/create-branch/create-branch-output';
-import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
+import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';

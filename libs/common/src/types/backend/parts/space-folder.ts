@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import {
-  type AccessRoleCombined,
-  zAccessRoleCombined
-} from '#common/types/access-role-combined';
-import {
   type SpaceNode,
   zSpaceNode
 } from '#common/types/backend/parts/space-node';
+import {
+  type AccessRoleCombined,
+  zAccessRoleCombined
+} from '#common/types/shared/access-role-combined';
 
 export let zSpaceFolder = z.object({
   type: z.literal('spaceFolder'),

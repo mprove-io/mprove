@@ -2,9 +2,9 @@ import type { Model as MalloyModel } from '@malloydata/malloy';
 import type { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
 import { zFileBasic } from '#common/types/blockml/parts/internal/file-basic';
 import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export let zFileMod = zFileBasic
   .extend({

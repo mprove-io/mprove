@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { BaseProject } from '#common/types/backend/parts/base-project';
 import type { ToDiskDeleteDevRepoOutput } from '#common/types/disk/routes/repos/delete-dev-repo/delete-dev-repo-output';
-import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
+import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path/remove-path';

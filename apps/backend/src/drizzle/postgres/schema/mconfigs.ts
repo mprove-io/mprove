@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import type { MconfigLt, MconfigSt } from '#common/types/st-lt';
+import type { MconfigLt, MconfigSt } from '#common/types/shared/st-lt/st-lt';
 
 export const mconfigsTable = pgTable(
   'mconfigs',

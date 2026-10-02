@@ -8,7 +8,7 @@ import type { ToDiskCreateFolderRequest } from '#common/types/disk/routes/folder
 import type { ToDiskCreateFolderResponse } from '#common/types/disk/routes/folders/create-folder/create-folder-response';
 import type { ToDiskCreateOrgRequest } from '#common/types/disk/routes/orgs/create-org/create-org-request';
 import type { ToDiskCreateProjectRequest } from '#common/types/disk/routes/projects/create-project/create-project-request';
-import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
+import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
 import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
 import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 

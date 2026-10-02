@@ -9,7 +9,6 @@ import type {
   Todo
 } from '@opencode-ai/sdk/v2';
 import { z } from 'zod';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
 import { zCodexAuth } from '#common/types/backend/parts/codex-auth';
 import { zConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
 import { zExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schema';
@@ -38,7 +37,8 @@ import { zSorting } from '#common/types/blockml/parts/sorting';
 import { zSpace } from '#common/types/blockml/parts/space';
 import { zStorePart } from '#common/types/blockml/parts/store-part';
 import { zTile } from '#common/types/blockml/parts/tile';
-import { zGv } from './backend/parts/gv';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
+import { zGv } from '../../backend/parts/gv';
 
 export let zAvatarSt = z
   .object({ avatarSmall: z.string() })

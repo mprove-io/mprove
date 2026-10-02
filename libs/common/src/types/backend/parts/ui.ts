@@ -8,7 +8,7 @@ import { zProjectModelLink } from '#common/types/backend/parts/project-model-lin
 import { zProjectReportLink } from '#common/types/backend/parts/project-report-link';
 import { zProjectSelectedGivenLink } from '#common/types/backend/parts/project-selected-given-link';
 import { zFraction } from '#common/types/blockml/parts/fraction';
-import { zTimezone } from '#common/types/z-timezone';
+import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export let zUi = z
   .object({

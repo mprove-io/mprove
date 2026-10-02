@@ -21,7 +21,6 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { AccessRoleCombined } from '#common/types/access-role-combined';
 import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
 import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
 import type { Role } from '#common/types/backend/parts/role';
@@ -33,6 +32,7 @@ import type { ToBackendGetRolesRequest } from '#common/types/backend/routes/role
 import type { ToBackendGetRolesResponse } from '#common/types/backend/routes/roles/get-roles/get-roles-response';
 import type { Dashboard } from '#common/types/blockml/parts/dashboard';
 import type { Space } from '#common/types/blockml/parts/space';
+import type { AccessRoleCombined } from '#common/types/shared/access-role-combined';
 import { makeUnitDisplayPath } from '#front/app/functions/make-unit-display-path';
 import { DashboardUnitsQuery } from '#front/app/queries/dashboard-units.query';
 import { MemberQuery } from '#front/app/queries/member.query';

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import { zTimezone } from '#common/types/z-timezone';
+import { zTimezone } from '#common/types/shared/timezone/z-timezone';
 
 export let zRq = z
   .object({

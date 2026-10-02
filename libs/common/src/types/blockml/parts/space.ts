@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zAccessRoleCombined } from '#common/types/access-role-combined';
+import { zAccessRoleCombined } from '#common/types/shared/access-role-combined';
 
 export let zSpace = z
   .object({
