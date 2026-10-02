@@ -9,8 +9,8 @@ import {
   PROJECT_CONFIG_THOUSANDS_SEPARATOR,
   PROJECT_CONFIG_WEEK_START
 } from '#common/constants/top';
-import type { MproveConfig } from '#common/zod/backend/mprove-config';
-import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
+import type { MproveConfig } from '#common/types/backend/mprove-config';
+import type { FileProjectConf } from '#common/types/blockml/internal/file-project-conf';
 
 export function getProjectConfig(item: {
   isUseCache: boolean;

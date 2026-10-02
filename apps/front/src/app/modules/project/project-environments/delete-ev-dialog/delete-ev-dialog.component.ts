@@ -7,10 +7,10 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { Env } from '#common/zod/backend/env';
-import type { Ev } from '#common/zod/backend/ev';
-import type { ToBackendDeleteEnvVarRequest } from '#common/zod/backend/routes/envs/delete-env-var/delete-env-var-request';
-import type { ToBackendDeleteEnvVarResponse } from '#common/zod/backend/routes/envs/delete-env-var/delete-env-var-response';
+import type { Env } from '#common/types/backend/env';
+import type { Ev } from '#common/types/backend/ev';
+import type { ToBackendDeleteEnvVarRequest } from '#common/types/backend/routes/envs/delete-env-var/delete-env-var-request';
+import type { ToBackendDeleteEnvVarResponse } from '#common/types/backend/routes/envs/delete-env-var/delete-env-var-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ApiService } from '#front/app/services/api.service';

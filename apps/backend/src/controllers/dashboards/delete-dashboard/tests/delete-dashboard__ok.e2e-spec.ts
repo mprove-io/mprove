@@ -15,8 +15,8 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDeleteDashboardRequest } from '#common/zod/backend/routes/dashboards/delete-dashboard/delete-dashboard-request';
-import type { ToBackendDeleteDashboardResponse } from '#common/zod/backend/routes/dashboards/delete-dashboard/delete-dashboard-response';
+import type { ToBackendDeleteDashboardRequest } from '#common/types/backend/routes/dashboards/delete-dashboard/delete-dashboard-request';
+import type { ToBackendDeleteDashboardResponse } from '#common/types/backend/routes/dashboards/delete-dashboard/delete-dashboard-response';
 
 let testId = 'backend-delete-dashboard__ok';
 

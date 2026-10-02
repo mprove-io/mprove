@@ -13,7 +13,7 @@ import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import type { FuncEnum } from '#common/enums/special/func.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ProjectConnection } from '#common/zod/backend/project-connection';
+import type { ProjectConnection } from '#common/types/backend/project-connection';
 import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
 import { resolveTestSourceDir } from './resolve-test-source-dir/resolve-test-source-dir';
 

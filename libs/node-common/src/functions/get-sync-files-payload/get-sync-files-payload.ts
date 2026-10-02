@@ -1,12 +1,12 @@
 import { Result } from '@praha/byethrow';
 import pIteration from 'p-iteration';
 import type { StatusResult } from 'simple-git';
-import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
-import type { FileStatus } from '#common/zod/disk/file-status';
-import type { FileWithGitFileStatus } from '#common/zod/disk/file-with-git-file-status';
-import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
-import type { GetSyncFilesPayloadError } from '#common/zod/node-common/function-errors/get-sync-files-payload-error';
+import type { DiskSyncFile } from '#common/types/disk/disk-sync-file';
+import type { FileStatus } from '#common/types/disk/file-status';
+import type { FileWithGitFileStatus } from '#common/types/disk/file-with-git-file-status';
+import type { FileIsSymlinkError } from '#common/types/node-common/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/types/node-common/errors/file-size-is-too-big-error';
+import type { GetSyncFilesPayloadError } from '#common/types/node-common/function-errors/get-sync-files-payload-error';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size/read-file-check-size';
 
 const { forEachSeries } = pIteration;

@@ -49,10 +49,10 @@ import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendEditDraftDashboardOutput } from '#common/types/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-output';
+import type { TileX } from '#common/types/backend/tile-x';
+import type { DiskCatalogFile } from '#common/types/disk/disk-catalog-file';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendEditDraftDashboardOutput } from '#common/zod/backend/routes/dashboards/edit-draft-dashboard/edit-draft-dashboard-output';
-import type { TileX } from '#common/zod/backend/tile-x';
-import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)

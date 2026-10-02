@@ -16,8 +16,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { QueryInfoReportService } from '#backend/services/query-info-report.service';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
+import type { ToBackendGetReportOutput } from '#common/types/backend/routes/reports/get-report/get-report-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetReportOutput } from '#common/zod/backend/routes/reports/get-report/get-report-output';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)

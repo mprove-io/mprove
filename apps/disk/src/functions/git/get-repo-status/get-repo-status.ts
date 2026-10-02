@@ -1,11 +1,11 @@
 import { Result } from '@praha/byethrow';
 import type { BranchSummary, DiffResult, SimpleGit } from 'simple-git';
-import type { DiskFileChange } from '#common/zod/disk/disk-file-change';
-import type { DiskFileLine } from '#common/zod/disk/disk-file-line';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
-import type { DiskGetRepoConflictsError } from '#common/zod/disk/function-errors/disk-get-repo-conflicts-error';
-import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { GetChangesToCommitError } from '#common/zod/node-common/function-errors/get-changes-to-commit-error';
+import type { DiskFileChange } from '#common/types/disk/disk-file-change';
+import type { DiskFileLine } from '#common/types/disk/disk-file-line';
+import type { DiskItemStatus } from '#common/types/disk/disk-item-status';
+import type { DiskGetRepoConflictsError } from '#common/types/disk/function-errors/disk-get-repo-conflicts-error';
+import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
+import type { GetChangesToCommitError } from '#common/types/node-common/function-errors/get-changes-to-commit-error';
 import { getRepoConflicts } from '#disk/functions/git/get-repo-status/get-repo-conflicts/get-repo-conflicts';
 import { getRepoStatusWithoutStagedChanges } from '#disk/functions/git/get-repo-status/get-repo-status-without-staged-changes/get-repo-status-without-staged-changes';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';

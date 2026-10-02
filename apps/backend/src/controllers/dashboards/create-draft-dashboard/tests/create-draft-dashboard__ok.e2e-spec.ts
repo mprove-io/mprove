@@ -16,10 +16,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateDraftDashboardRequest } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-request';
-import type { ToBackendCreateDraftDashboardResponse } from '#common/zod/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-response';
-import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-output';
-import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
+import type { ToBackendCreateDraftDashboardRequest } from '#common/types/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-request';
+import type { ToBackendCreateDraftDashboardResponse } from '#common/types/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-response';
+import type { ToBackendGetDashboardOutput } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-output';
+import type { ToBackendGetDashboardRequest } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-request';
 
 let testId = 'backend-create-draft-dashboard__ok';
 

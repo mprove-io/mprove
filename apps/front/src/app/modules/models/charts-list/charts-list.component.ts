@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { CHARTS_LIST_PAGE_TITLE } from '#common/constants/page-titles';
-import type { ChartUnit } from '#common/zod/backend/chart-unit';
+import type { ChartUnit } from '#common/types/backend/chart-unit';
 import { FilteredChartsQuery } from '#front/app/queries/filtered-charts.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

@@ -33,12 +33,12 @@ import type {
   CombinedSchemaColumn,
   CombinedSchemaItem,
   CombinedSchemaTable
-} from '#common/zod/backend/connection-schemas/combined-schema';
-import type { ExtraSchema } from '#common/zod/backend/connection-schemas/extra-schema';
-import type { ConnectionRawSchema } from '#common/zod/backend/connection-schemas/raw-schema';
-import type { CachedColumn } from '#common/zod/backend/connections/cached-column';
-import type { Member } from '#common/zod/backend/member';
-import type { ConnectionLt, ConnectionSt } from '#common/zod/st-lt';
+} from '#common/types/backend/connection-schemas/combined-schema';
+import type { ExtraSchema } from '#common/types/backend/connection-schemas/extra-schema';
+import type { ConnectionRawSchema } from '#common/types/backend/connection-schemas/raw-schema';
+import type { CachedColumn } from '#common/types/backend/connections/cached-column';
+import type { Member } from '#common/types/backend/member';
+import type { ConnectionLt, ConnectionSt } from '#common/types/st-lt';
 
 const { forEachSeries } = pIteration;
 

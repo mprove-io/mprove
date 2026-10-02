@@ -15,8 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
-import type { ToBackendCreateRoleResponse } from '#common/zod/backend/routes/roles/create-role/create-role-response';
+import type { ToBackendCreateRoleRequest } from '#common/types/backend/routes/roles/create-role/create-role-request';
+import type { ToBackendCreateRoleResponse } from '#common/types/backend/routes/roles/create-role/create-role-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';

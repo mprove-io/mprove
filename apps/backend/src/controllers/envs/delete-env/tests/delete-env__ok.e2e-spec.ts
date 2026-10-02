@@ -10,8 +10,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDeleteEnvRequest } from '#common/zod/backend/routes/envs/delete-env/delete-env-request';
-import type { ToBackendDeleteEnvResponse } from '#common/zod/backend/routes/envs/delete-env/delete-env-response';
+import type { ToBackendDeleteEnvRequest } from '#common/types/backend/routes/envs/delete-env/delete-env-request';
+import type { ToBackendDeleteEnvResponse } from '#common/types/backend/routes/envs/delete-env/delete-env-response';
 
 let testId = 'backend-delete-env__ok';
 

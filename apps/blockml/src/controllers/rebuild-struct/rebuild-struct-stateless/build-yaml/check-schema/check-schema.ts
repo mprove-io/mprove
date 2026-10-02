@@ -14,10 +14,10 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileSchema } from '#common/zod/blockml/internal/file-schema';
-import type { FileSchemaColumn } from '#common/zod/blockml/internal/file-schema-column';
-import type { FileSchemaRelationship } from '#common/zod/blockml/internal/file-schema-relationship';
-import type { FileSchemaTable } from '#common/zod/blockml/internal/file-schema-table';
+import type { FileSchema } from '#common/types/blockml/internal/file-schema';
+import type { FileSchemaColumn } from '#common/types/blockml/internal/file-schema-column';
+import type { FileSchemaRelationship } from '#common/types/blockml/internal/file-schema-relationship';
+import type { FileSchemaTable } from '#common/types/blockml/internal/file-schema-table';
 import { getExpectedMirrorType } from './get-expected-mirror-type/get-expected-mirror-type';
 
 let func = FuncEnum.CheckSchema;

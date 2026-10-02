@@ -17,8 +17,8 @@ import {
 import { ErEnum } from '#common/enums/er.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetChartRequest } from '#common/zod/backend/routes/charts/get-chart/get-chart-request';
-import type { ToBackendGetChartResponse } from '#common/zod/backend/routes/charts/get-chart/get-chart-response';
+import type { ToBackendGetChartRequest } from '#common/types/backend/routes/charts/get-chart/get-chart-request';
+import type { ToBackendGetChartResponse } from '#common/types/backend/routes/charts/get-chart/get-chart-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartQuery } from '../queries/chart.query';
 import { MemberQuery } from '../queries/member.query';

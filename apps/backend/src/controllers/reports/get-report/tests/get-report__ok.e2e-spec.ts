@@ -16,8 +16,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetReportRequest } from '#common/zod/backend/routes/reports/get-report/get-report-request';
-import type { ToBackendGetReportResponse } from '#common/zod/backend/routes/reports/get-report/get-report-response';
+import type { ToBackendGetReportRequest } from '#common/types/backend/routes/reports/get-report/get-report-request';
+import type { ToBackendGetReportResponse } from '#common/types/backend/routes/reports/get-report/get-report-response';
 
 let testId = 'backend-get-report__ok';
 

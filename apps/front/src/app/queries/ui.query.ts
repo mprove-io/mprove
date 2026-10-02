@@ -10,16 +10,16 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import type { ProjectChartLink } from '#common/zod/backend/project-chart-link';
-import type { ProjectDashboardLink } from '#common/zod/backend/project-dashboard-link';
-import type { ProjectExplorerSessionLink } from '#common/zod/backend/project-explorer-session-link';
-import type { ProjectModelLink } from '#common/zod/backend/project-model-link';
-import type { ProjectReportLink } from '#common/zod/backend/project-report-link';
-import type { ProjectSelectedGivenLink } from '#common/zod/backend/project-selected-given-link';
-import type { Column } from '#common/zod/blockml/column';
-import type { Fraction } from '#common/zod/blockml/fraction';
-import type { ChartPointsData } from '#common/zod/front/chart-points-data';
-import type { DataRow } from '#common/zod/front/data-row';
+import type { ProjectChartLink } from '#common/types/backend/project-chart-link';
+import type { ProjectDashboardLink } from '#common/types/backend/project-dashboard-link';
+import type { ProjectExplorerSessionLink } from '#common/types/backend/project-explorer-session-link';
+import type { ProjectModelLink } from '#common/types/backend/project-model-link';
+import type { ProjectReportLink } from '#common/types/backend/project-report-link';
+import type { ProjectSelectedGivenLink } from '#common/types/backend/project-selected-given-link';
+import type { Column } from '#common/types/blockml/column';
+import type { Fraction } from '#common/types/blockml/fraction';
+import type { ChartPointsData } from '#common/types/front/chart-points-data';
+import type { DataRow } from '#common/types/front/data-row';
 import { BaseQuery } from './base.query';
 
 export interface RepChartData {

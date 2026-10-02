@@ -1,9 +1,9 @@
 import type { Logger } from '@nestjs/common';
 import type { z } from 'zod';
-import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
-import { zToDiskOperationRegistry } from '#common/zod/disk/request/to-disk-operation-registry';
-import type { ToDiskRequestForOperation } from '#common/zod/disk/request/to-disk-request-for-operation';
-import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
+import type { ToDiskOperation } from '#common/types/disk/request/to-disk-operation';
+import { zToDiskOperationRegistry } from '#common/types/disk/request/to-disk-operation-registry';
+import type { ToDiskRequestForOperation } from '#common/types/disk/request/to-disk-request-for-operation';
+import type { ToDiskResponseForOperation } from '#common/types/disk/response/to-disk-response-for-operation';
 import { makeInvalidRequestResponse } from '#disk/functions/top/make-invalid-request-response/make-invalid-request-response';
 import { processValidatedRequest } from '#disk/functions/top/process-validated-request/process-validated-request';
 import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';

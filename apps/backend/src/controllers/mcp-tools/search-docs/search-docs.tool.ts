@@ -12,7 +12,7 @@ import {
   type McpToolSearchDocsInput,
   zMcpToolSearchDocsInput,
   zMcpToolSearchDocsOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-search-docs';
+} from '#common/types/backend/mcp-tools/mcp-tool-search-docs';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

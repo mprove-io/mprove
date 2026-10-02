@@ -12,8 +12,8 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { FileChartData } from '#common/types/blockml/internal/file-chart-data';
 import type { dcType } from '#common/types/dc-type';
-import type { FileChartData } from '#common/zod/blockml/internal/file-chart-data';
 
 let func = FuncEnum.CheckChartData;
 

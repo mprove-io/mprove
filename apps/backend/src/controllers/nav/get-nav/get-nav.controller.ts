@@ -29,12 +29,12 @@ import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { Member } from '#common/types/backend/member';
+import type { ToBackendGetNavOutput } from '#common/types/backend/routes/nav/get-nav/get-nav-output';
+import type { StructX } from '#common/types/backend/struct-x';
+import type { Repo } from '#common/types/disk/repo';
+import type { ToDiskGetCatalogNodesOutput } from '#common/types/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { Member } from '#common/zod/backend/member';
-import type { ToBackendGetNavOutput } from '#common/zod/backend/routes/nav/get-nav/get-nav-output';
-import type { StructX } from '#common/zod/backend/struct-x';
-import type { Repo } from '#common/zod/disk/repo';
-import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
 
 @ApiTags('Nav')
 @UseGuards(ThrottlerUserIdGuard)

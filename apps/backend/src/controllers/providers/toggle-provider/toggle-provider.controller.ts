@@ -27,10 +27,10 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { Provider } from '#common/types/backend/provider';
+import type { ToBackendToggleProviderOutput } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-output';
+import type { ToBackendToggleProviderRequest } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-request';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendToggleProviderOutput } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-output';
-import type { ToBackendToggleProviderRequest } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)

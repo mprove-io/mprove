@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { FileStore } from '#common/types/blockml/internal/file-store';
 
 export function makeQueryId(item: {
   projectId: string;

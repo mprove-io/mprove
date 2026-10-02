@@ -7,8 +7,8 @@ import {
 } from '@angular/router';
 import type { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import type { ToBackendGetProvidersRequest } from '#common/zod/backend/routes/providers/get-providers/get-providers-request';
-import type { ToBackendGetProvidersResponse } from '#common/zod/backend/routes/providers/get-providers/get-providers-response';
+import type { ToBackendGetProvidersRequest } from '#common/types/backend/routes/providers/get-providers/get-providers-request';
+import type { ToBackendGetProvidersResponse } from '#common/types/backend/routes/providers/get-providers/get-providers-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, type NavState } from '../queries/nav.query';

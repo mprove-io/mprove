@@ -7,8 +7,8 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { USERS_PER_PAGE } from '#common/constants/top-front';
-import type { ToBackendGetServerUsersRequest } from '#common/zod/backend/routes/users/get-server-users/get-server-users-request';
-import type { ToBackendGetServerUsersResponse } from '#common/zod/backend/routes/users/get-server-users/get-server-users-response';
+import type { ToBackendGetServerUsersRequest } from '#common/types/backend/routes/users/get-server-users/get-server-users-request';
+import type { ToBackendGetServerUsersResponse } from '#common/types/backend/routes/users/get-server-users/get-server-users-response';
 import { ServerUsersQuery } from '../queries/server-users.query';
 import { ApiService } from '../services/api.service';
 

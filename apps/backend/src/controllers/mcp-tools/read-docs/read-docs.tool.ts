@@ -12,7 +12,7 @@ import {
   type McpToolReadDocsInput,
   zMcpToolReadDocsInput,
   zMcpToolReadDocsOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-read-docs';
+} from '#common/types/backend/mcp-tools/mcp-tool-read-docs';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

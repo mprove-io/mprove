@@ -32,8 +32,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendCreateEnvOutput } from '#common/types/backend/routes/envs/create-env/create-env-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCreateEnvOutput } from '#common/zod/backend/routes/envs/create-env/create-env-output';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)

@@ -9,11 +9,11 @@ import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fie
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change/sort-chart-fields-on-select-change';
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change/sort-fields-on-select-change';
-import type { ChartX } from '#common/zod/backend/chart-x';
-import type { MconfigField } from '#common/zod/backend/mconfig-field';
-import type { MconfigX } from '#common/zod/backend/mconfig-x';
-import type { ModelField } from '#common/zod/blockml/model-field';
-import type { Sorting } from '#common/zod/blockml/sorting';
+import type { ChartX } from '#common/types/backend/chart-x';
+import type { MconfigField } from '#common/types/backend/mconfig-field';
+import type { MconfigX } from '#common/types/backend/mconfig-x';
+import type { ModelField } from '#common/types/blockml/model-field';
+import type { Sorting } from '#common/types/blockml/sorting';
 import { ChartQuery } from '#front/app/queries/chart.query';
 import { ModelQuery } from '#front/app/queries/model.query';
 import { ApiService } from '#front/app/services/api.service';

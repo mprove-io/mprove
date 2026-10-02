@@ -1,5 +1,5 @@
+import { toBackendRouteOperations } from '#common/types/backend/request/to-backend-route-operations';
 import type { ToBackendTelemetryRoute } from '#common/types/to-backend-telemetry-route';
-import { toBackendRouteOperations } from '#common/zod/backend/request/to-backend-route-operations';
 
 const telemetryRoutes: ToBackendTelemetryRoute[] = [
   'api/ToBackendTelemetryLogs',

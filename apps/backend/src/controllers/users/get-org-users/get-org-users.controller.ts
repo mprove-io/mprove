@@ -19,9 +19,9 @@ import { makeFullName } from '#backend/functions/make-full-name';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
+import type { OrgUsersItem } from '#common/types/backend/org-users/org-users-item';
+import type { ToBackendGetOrgUsersOutput } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { OrgUsersItem } from '#common/zod/backend/org-users/org-users-item';
-import type { ToBackendGetOrgUsersOutput } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-output';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

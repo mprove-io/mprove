@@ -13,8 +13,8 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
-import type { FileStore } from '#common/zod/blockml/internal/file-store';
-import type { FileStoreBuildMetric } from '#common/zod/blockml/internal/file-store-build-metric';
+import type { FileStore } from '#common/types/blockml/internal/file-store';
+import type { FileStoreBuildMetric } from '#common/types/blockml/internal/file-store-build-metric';
 
 let func = FuncEnum.CheckStoreBuildMetrics;
 

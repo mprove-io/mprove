@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
-import type { DiskCheckoutBranchError } from '#common/zod/disk/function-errors/disk-checkout-branch-error';
-import type { DiskGetIsFetchedAfterCheckoutRequestedBranchError } from '#common/zod/disk/function-errors/disk-get-is-fetched-after-checkout-requested-branch-error';
+import type { DiskCheckoutBranchError } from '#common/types/disk/function-errors/disk-checkout-branch-error';
+import type { DiskGetIsFetchedAfterCheckoutRequestedBranchError } from '#common/types/disk/function-errors/disk-get-is-fetched-after-checkout-requested-branch-error';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist/is-local-branch-exist';
 

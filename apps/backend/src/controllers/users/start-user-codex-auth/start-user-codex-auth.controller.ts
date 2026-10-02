@@ -11,8 +11,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { CodexService } from '#backend/services/codex.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendStartUserCodexAuthOutput } from '#common/types/backend/routes/users/start-user-codex-auth/start-user-codex-auth-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendStartUserCodexAuthOutput } from '#common/zod/backend/routes/users/start-user-codex-auth/start-user-codex-auth-output';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

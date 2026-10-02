@@ -9,9 +9,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendGetOrgUsersOutput } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-output';
-import type { ToBackendGetOrgUsersRequest } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-request';
-import type { ToBackendGetOrgUsersResponse } from '#common/zod/backend/routes/org-users/get-org-users/get-org-users-response';
+import type { ToBackendGetOrgUsersOutput } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-output';
+import type { ToBackendGetOrgUsersRequest } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-request';
+import type { ToBackendGetOrgUsersResponse } from '#common/types/backend/routes/org-users/get-org-users/get-org-users-response';
 
 let testId = 'backend-get-org-users__ok-5';
 

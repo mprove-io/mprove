@@ -8,11 +8,11 @@ import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
-import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
-import type { DiskGetNodesAndFilesPayloadRecursiveError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-payload-recursive-error';
-import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
-import type { FileSizeIsTooBigError } from '#common/zod/node-common/errors/file-size-is-too-big-error';
+import type { DiskCatalogFile } from '#common/types/disk/disk-catalog-file';
+import type { DiskCatalogNode } from '#common/types/disk/disk-catalog-node';
+import type { DiskGetNodesAndFilesPayloadRecursiveError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-payload-recursive-error';
+import type { FileIsSymlinkError } from '#common/types/node-common/errors/file-is-symlink-error';
+import type { FileSizeIsTooBigError } from '#common/types/node-common/errors/file-size-is-too-big-error';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size/read-file-check-size';
 
 export type NodesAndFilesPayload = {

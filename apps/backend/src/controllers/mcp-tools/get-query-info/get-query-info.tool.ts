@@ -18,8 +18,8 @@ import {
   type McpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoInput,
   zMcpToolGetQueryInfoOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-get-query-info';
-import type { ToBackendGetQueryInfoOutput } from '#common/zod/backend/routes/query-info/get-query-info/get-query-info-output';
+} from '#common/types/backend/mcp-tools/mcp-tool-get-query-info';
+import type { ToBackendGetQueryInfoOutput } from '#common/types/backend/routes/query-info/get-query-info/get-query-info-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

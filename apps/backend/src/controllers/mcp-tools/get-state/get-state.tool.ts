@@ -18,7 +18,7 @@ import {
   type McpToolGetStateInput,
   zMcpToolGetStateInput,
   zMcpToolGetStateOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-get-state';
+} from '#common/types/backend/mcp-tools/mcp-tool-get-state';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

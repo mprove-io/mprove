@@ -15,8 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendSetProjectSandboxProviderRequest } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-request';
-import type { ToBackendSetProjectSandboxProviderResponse } from '#common/zod/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-response';
+import type { ToBackendSetProjectSandboxProviderRequest } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-request';
+import type { ToBackendSetProjectSandboxProviderResponse } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';

@@ -20,9 +20,9 @@ import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendGetRepoOutput } from '#common/types/backend/routes/repos/get-repo/get-repo-output';
+import type { ToDiskGetCatalogNodesOutput } from '#common/types/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetRepoOutput } from '#common/zod/backend/routes/repos/get-repo/get-repo-output';
-import type { ToDiskGetCatalogNodesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

@@ -2,17 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
 import type { LogResult, SimpleGit, StatusResult } from 'simple-git';
-import type { BaseProject } from '#common/zod/backend/base-project';
-import type { DiskItemCatalog } from '#common/zod/disk/disk-item-catalog';
-import type { DiskItemStatus } from '#common/zod/disk/disk-item-status';
-import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
-import type { DiskDevRepoCommitDoesNotMatchLocalCommitError } from '#common/zod/disk/errors/disk-dev-repo-commit-does-not-match-local-commit-error';
-import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
-import type { DiskGetNodesAndFilesError } from '#common/zod/disk/function-errors/disk-get-nodes-and-files-error';
-import type { DiskGetRepoStatusError } from '#common/zod/disk/function-errors/disk-get-repo-status-error';
-import type { DiskGetSyncDataError } from '#common/zod/disk/function-errors/disk-get-sync-data-error';
-import type { ToDiskSyncRepoOutput } from '#common/zod/disk/routes/repos/sync-repo/sync-repo-output';
-import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { BaseProject } from '#common/types/backend/base-project';
+import type { DiskItemCatalog } from '#common/types/disk/disk-item-catalog';
+import type { DiskItemStatus } from '#common/types/disk/disk-item-status';
+import type { DiskSyncFile } from '#common/types/disk/disk-sync-file';
+import type { DiskDevRepoCommitDoesNotMatchLocalCommitError } from '#common/types/disk/errors/disk-dev-repo-commit-does-not-match-local-commit-error';
+import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
+import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
+import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
+import type { DiskGetSyncDataError } from '#common/types/disk/function-errors/disk-get-sync-data-error';
+import type { ToDiskSyncRepoOutput } from '#common/types/disk/routes/repos/sync-repo/sync-repo-output';
+import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
 import type { DiskConfig } from '#disk/config/disk-config';
 import {
   getSyncData,

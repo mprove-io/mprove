@@ -6,7 +6,7 @@ import { log } from '#blockml/functions/log/log';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FileSpace } from '#common/types/blockml/internal/file-space';
 import { checkSpaceFolderElementsRecursive } from './check-space-folder-elements-recursive/check-space-folder-elements-recursive';
 
 let func = FuncEnum.CheckSpaceFolders;

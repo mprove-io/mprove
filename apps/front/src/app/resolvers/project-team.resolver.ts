@@ -8,8 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { MEMBERS_PER_PAGE } from '#common/constants/top-front';
-import type { ToBackendGetMembersRequest } from '#common/zod/backend/routes/members/get-members/get-members-request';
-import type { ToBackendGetMembersResponse } from '#common/zod/backend/routes/members/get-members/get-members-response';
+import type { ToBackendGetMembersRequest } from '#common/types/backend/routes/members/get-members/get-members-request';
+import type { ToBackendGetMembersResponse } from '#common/types/backend/routes/members/get-members/get-members-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';

@@ -18,9 +18,9 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
-import type { ToBackendSaveModifyDashboardRequest } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
-import type { ToBackendSaveModifyDashboardResponse } from '#common/zod/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
+import type { ToBackendGetDashboardRequest } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-request';
+import type { ToBackendSaveModifyDashboardRequest } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-request';
+import type { ToBackendSaveModifyDashboardResponse } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-response';
 
 let testId = 'backend-save-modify-dashboard__add-tile-ok';
 

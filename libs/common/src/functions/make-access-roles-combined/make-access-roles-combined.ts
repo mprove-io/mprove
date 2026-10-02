@@ -1,4 +1,4 @@
-import type { AccessRoleCombined } from '#common/zod/access-role-combined';
+import type { AccessRoleCombined } from '#common/types/access-role-combined';
 
 export function makeAccessRolesCombined(item: {
   accessRoles: string[];

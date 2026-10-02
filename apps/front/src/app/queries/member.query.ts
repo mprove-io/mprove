@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { Member } from '#common/zod/backend/member';
+import type { Member } from '#common/types/backend/member';
 import { BaseQuery } from './base.query';
 
 export type MemberState = Member;

@@ -11,8 +11,8 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendEditConnectionRequest } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-request';
-import type { ToBackendEditConnectionResponse } from '#common/zod/backend/routes/connections/edit-connection/edit-connection-response';
+import type { ToBackendEditConnectionRequest } from '#common/types/backend/routes/connections/edit-connection/edit-connection-request';
+import type { ToBackendEditConnectionResponse } from '#common/types/backend/routes/connections/edit-connection/edit-connection-response';
 
 let testId = 'backend-edit-connection__ok';
 

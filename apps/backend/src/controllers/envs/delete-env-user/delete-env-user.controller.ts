@@ -25,8 +25,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendDeleteEnvUserOutput } from '#common/types/backend/routes/envs/delete-env-user/delete-env-user-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteEnvUserOutput } from '#common/zod/backend/routes/envs/delete-env-user/delete-env-user-output';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)

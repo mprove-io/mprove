@@ -19,12 +19,12 @@ import { ErEnum } from '#common/enums/er.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { sleep } from '#common/functions/sleep/sleep';
-import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-output';
-import type { RunChart } from '#common/zod/backend/run/run-chart';
-import type { RunDashboard } from '#common/zod/backend/run/run-dashboard';
-import type { RunQuery } from '#common/zod/backend/run/run-query';
-import type { RunReport } from '#common/zod/backend/run/run-report';
-import type { McliQueriesStats } from '#common/zod/mcli/mcli-queries-stats';
+import type { ToBackendRunOutput } from '#common/types/backend/routes/run/run/run-output';
+import type { RunChart } from '#common/types/backend/run/run-chart';
+import type { RunDashboard } from '#common/types/backend/run/run-dashboard';
+import type { RunQuery } from '#common/types/backend/run/run-query';
+import type { RunReport } from '#common/types/backend/run/run-report';
+import type { McliQueriesStats } from '#common/types/mcli/mcli-queries-stats';
 
 @Injectable()
 export class RunService {

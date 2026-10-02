@@ -16,9 +16,9 @@ import {
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
-import type { ToBackendGetLlmModelsWithProviderRequest } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
-import type { ToBackendGetLlmModelsWithProviderResponse } from '#common/zod/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
+import type { LlmModelVariant } from '#common/types/backend/llm-models/llm-model-variant';
+import type { ToBackendGetLlmModelsWithProviderRequest } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
+import type { ToBackendGetLlmModelsWithProviderResponse } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';

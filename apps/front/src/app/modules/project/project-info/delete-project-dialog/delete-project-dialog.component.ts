@@ -14,8 +14,8 @@ import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_DELETED_PROJECT_NAME
 } from '#common/constants/top-front';
-import type { ToBackendDeleteProjectRequest } from '#common/zod/backend/routes/projects/delete-project/delete-project-request';
-import type { ToBackendDeleteProjectResponse } from '#common/zod/backend/routes/projects/delete-project/delete-project-response';
+import type { ToBackendDeleteProjectRequest } from '#common/types/backend/routes/projects/delete-project/delete-project-request';
+import type { ToBackendDeleteProjectResponse } from '#common/types/backend/routes/projects/delete-project/delete-project-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';

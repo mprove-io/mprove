@@ -1,8 +1,8 @@
 import { createZodDto } from 'nestjs-zod';
 import { createBackendResponseDto } from '#backend/functions/create-backend-response-dto';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import { zToBackendSetOrgInfoRequest } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-request';
-import { zToBackendSetOrgInfoResponse } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-response';
+import { zToBackendSetOrgInfoRequest } from '#common/types/backend/routes/orgs/set-org-info/set-org-info-request';
+import { zToBackendSetOrgInfoResponse } from '#common/types/backend/routes/orgs/set-org-info/set-org-info-response';
 
 export class ToBackendSetOrgInfoRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendSetOrgInfoRequest })

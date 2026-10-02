@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskCreateProjectResponse } from '#common/zod/disk/routes/projects/create-project/create-project-response';
+import type { ToDiskCreateProjectResponse } from '#common/types/disk/routes/projects/create-project/create-project-response';
 import { handleHttpRequest } from '#disk/functions/top/handle-http-request/handle-http-request';
 import { CreateProjectService } from './create-project.service';
 

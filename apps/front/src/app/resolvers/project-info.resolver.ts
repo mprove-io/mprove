@@ -7,8 +7,8 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import type { ToBackendGetProjectRequest } from '#common/zod/backend/routes/projects/get-project/get-project-request';
-import type { ToBackendGetProjectResponse } from '#common/zod/backend/routes/projects/get-project/get-project-response';
+import type { ToBackendGetProjectRequest } from '#common/types/backend/routes/projects/get-project/get-project-request';
+import type { ToBackendGetProjectResponse } from '#common/types/backend/routes/projects/get-project/get-project-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';

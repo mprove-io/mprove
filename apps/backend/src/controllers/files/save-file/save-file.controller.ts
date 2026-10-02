@@ -36,9 +36,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendSaveFileOutput } from '#common/types/backend/routes/files/save-file/save-file-output';
+import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSaveFileOutput } from '#common/zod/backend/routes/files/save-file/save-file-output';
-import type { ToDiskSaveFileOutput } from '#common/zod/disk/routes/files/save-file/save-file-output';
 
 const { forEachSeries } = pIteration;
 

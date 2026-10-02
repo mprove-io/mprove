@@ -7,9 +7,9 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { Fraction } from '#common/zod/blockml/fraction';
-import type { FractionControl } from '#common/zod/blockml/fraction-control';
-import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
+import type { Fraction } from '#common/types/blockml/fraction';
+import type { FractionControl } from '#common/types/blockml/fraction-control';
+import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
 
 @Component({
   standalone: false,

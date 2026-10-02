@@ -13,9 +13,9 @@ import { checkStoreFieldDetail } from '#blockml/functions/build-field/check-stor
 import { checkStoreFieldGroup } from '#blockml/functions/build-field/check-store-field-group/check-store-field-group';
 import { setImplicitLabel } from '#blockml/functions/build-field/set-implicit-label/set-implicit-label';
 import { CallerEnum } from '#common/enums/special/caller.enum';
+import type { FileProjectConf } from '#common/types/blockml/internal/file-project-conf';
+import type { FileStore } from '#common/types/blockml/internal/file-store';
 import type { sdrType } from '#common/types/sdr-type';
-import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
-import type { FileStore } from '#common/zod/blockml/internal/file-store';
 
 export function buildField<T extends sdrType>(item: {
   entities: T[];

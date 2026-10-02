@@ -8,8 +8,8 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendLogoutUserRequest } from '#common/zod/backend/routes/users/logout-user/logout-user-request';
-import type { ToBackendLogoutUserResponse } from '#common/zod/backend/routes/users/logout-user/logout-user-response';
+import type { ToBackendLogoutUserRequest } from '#common/types/backend/routes/users/logout-user/logout-user-request';
+import type { ToBackendLogoutUserResponse } from '#common/types/backend/routes/users/logout-user/logout-user-response';
 
 let testId = 'backend-logout-user__ok';
 

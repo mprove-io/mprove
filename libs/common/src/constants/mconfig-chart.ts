@@ -1,8 +1,8 @@
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
-import type { MconfigChartSeries } from '#common/zod/blockml/mconfig-chart-series';
-import type { MconfigChartXAxis } from '#common/zod/blockml/mconfig-chart-x-axis';
-import type { MconfigChartYAxis } from '#common/zod/blockml/mconfig-chart-y-axis';
+import type { MconfigChart } from '#common/types/blockml/mconfig-chart';
+import type { MconfigChartSeries } from '#common/types/blockml/mconfig-chart-series';
+import type { MconfigChartXAxis } from '#common/types/blockml/mconfig-chart-x-axis';
+import type { MconfigChartYAxis } from '#common/types/blockml/mconfig-chart-y-axis';
 
 export const CHART_DEFAULT_SIZE_FIELD_VALUE = 'size_field_value';
 

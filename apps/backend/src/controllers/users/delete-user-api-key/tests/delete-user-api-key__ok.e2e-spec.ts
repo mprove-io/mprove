@@ -8,9 +8,9 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDeleteUserApiKeyRequest } from '#common/zod/backend/routes/users/delete-user-api-key/delete-user-api-key-request';
-import type { ToBackendDeleteUserApiKeyResponse } from '#common/zod/backend/routes/users/delete-user-api-key/delete-user-api-key-response';
-import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
+import type { ToBackendDeleteUserApiKeyRequest } from '#common/types/backend/routes/users/delete-user-api-key/delete-user-api-key-request';
+import type { ToBackendDeleteUserApiKeyResponse } from '#common/types/backend/routes/users/delete-user-api-key/delete-user-api-key-response';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 
 let testId = 'backend-delete-user-api-key__ok';
 

@@ -9,8 +9,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCompleteUserRegistrationRequest } from '#common/zod/backend/routes/users/complete-user-registration/complete-user-registration-request';
-import type { ToBackendCompleteUserRegistrationResponse } from '#common/zod/backend/routes/users/complete-user-registration/complete-user-registration-response';
+import type { ToBackendCompleteUserRegistrationRequest } from '#common/types/backend/routes/users/complete-user-registration/complete-user-registration-request';
+import type { ToBackendCompleteUserRegistrationResponse } from '#common/types/backend/routes/users/complete-user-registration/complete-user-registration-response';
 
 let testId = 'backend-confirm-user-email__user-already-registered';
 

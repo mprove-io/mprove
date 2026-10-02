@@ -1,6 +1,6 @@
 import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { AccessRoleCombined } from '#common/zod/access-role-combined';
-import type { Member } from '#common/zod/backend/member';
+import type { AccessRoleCombined } from '#common/types/access-role-combined';
+import type { Member } from '#common/types/backend/member';
 
 export function checkModelAccess(item: {
   member: MemberTab | Member;

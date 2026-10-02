@@ -8,8 +8,8 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDeleteUserRequest } from '#common/zod/backend/routes/users/delete-user/delete-user-request';
-import type { ToBackendDeleteUserResponse } from '#common/zod/backend/routes/users/delete-user/delete-user-response';
+import type { ToBackendDeleteUserRequest } from '#common/types/backend/routes/users/delete-user/delete-user-request';
+import type { ToBackendDeleteUserResponse } from '#common/types/backend/routes/users/delete-user/delete-user-response';
 
 let testId = 'backend-delete-user__ok';
 

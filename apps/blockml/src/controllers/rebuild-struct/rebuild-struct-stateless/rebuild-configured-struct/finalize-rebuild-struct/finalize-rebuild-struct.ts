@@ -18,19 +18,19 @@ import type {
   ExtraSchemaColumn,
   ExtraSchemaRelationship,
   ExtraSchemaTable
-} from '#common/zod/backend/connection-schemas/extra-schema';
-import { MproveConfig } from '#common/zod/backend/mprove-config';
-import type { FileChart } from '#common/zod/blockml/internal/file-chart';
-import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
-import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
-import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
-import type { FileReport } from '#common/zod/blockml/internal/file-report';
-import type { FileSchema } from '#common/zod/blockml/internal/file-schema';
-import type { FileStore } from '#common/zod/blockml/internal/file-store';
-import type { Model } from '#common/zod/blockml/model';
-import type { ModelMetric } from '#common/zod/blockml/model-metric';
-import type { Preset } from '#common/zod/blockml/preset';
-import type { Space } from '#common/zod/blockml/space';
+} from '#common/types/backend/connection-schemas/extra-schema';
+import { MproveConfig } from '#common/types/backend/mprove-config';
+import type { FileChart } from '#common/types/blockml/internal/file-chart';
+import type { FileDashboard } from '#common/types/blockml/internal/file-dashboard';
+import type { FilePartSpace } from '#common/types/blockml/internal/file-part-space';
+import type { FileProjectConf } from '#common/types/blockml/internal/file-project-conf';
+import type { FileReport } from '#common/types/blockml/internal/file-report';
+import type { FileSchema } from '#common/types/blockml/internal/file-schema';
+import type { FileStore } from '#common/types/blockml/internal/file-store';
+import type { Model } from '#common/types/blockml/model';
+import type { ModelMetric } from '#common/types/blockml/model-metric';
+import type { Preset } from '#common/types/blockml/preset';
+import type { Space } from '#common/types/blockml/space';
 import type { MalloyConnection } from '#node-common/functions/malloy/make-malloy-connections/make-malloy-connections';
 import { removeRebuildStructTempDir } from './remove-rebuild-struct-temp-dir/remove-rebuild-struct-temp-dir';
 

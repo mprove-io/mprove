@@ -1,6 +1,6 @@
+import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
+import { toBackendRouteOperations } from '#common/types/backend/request/to-backend-route-operations';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendOperation } from '#common/zod/backend/request/to-backend-operation';
-import { toBackendRouteOperations } from '#common/zod/backend/request/to-backend-route-operations';
 
 export function getToBackendOperation(item: {
   path: string;

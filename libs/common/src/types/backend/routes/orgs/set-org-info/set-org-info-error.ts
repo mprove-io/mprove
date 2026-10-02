@@ -1,0 +1,42 @@
+import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type BackendHashSecretIsNotDefinedError,
+  zBackendHashSecretIsNotDefinedError
+} from '#common/types/backend/errors/backend-hash-secret-is-not-defined-error';
+import {
+  type BackendOnlyOrgOwnerCanAccessError,
+  zBackendOnlyOrgOwnerCanAccessError
+} from '#common/types/backend/errors/backend-only-org-owner-can-access-error';
+import {
+  type BackendOrgDoesNotExistError,
+  zBackendOrgDoesNotExistError
+} from '#common/types/backend/errors/backend-org-does-not-exist-error';
+import {
+  type BackendRestrictedOrganizationNameError,
+  zBackendRestrictedOrganizationNameError
+} from '#common/types/backend/errors/backend-restricted-organization-name-error';
+import {
+  type BackendTransactionRetryError,
+  zBackendTransactionRetryError
+} from '#common/types/backend/errors/backend-transaction-retry-error';
+
+export type ToBackendSetOrgInfoError =
+  | BackendHashSecretIsNotDefinedError
+  | BackendOnlyOrgOwnerCanAccessError
+  | BackendOrgDoesNotExistError
+  | BackendRestrictedOrganizationNameError
+  | BackendTransactionRetryError;
+
+export let zToBackendSetOrgInfoError = z.discriminatedUnion('code', [
+  zBackendHashSecretIsNotDefinedError,
+  zBackendOnlyOrgOwnerCanAccessError,
+  zBackendOrgDoesNotExistError,
+  zBackendRestrictedOrganizationNameError,
+  zBackendTransactionRetryError
+]);
+
+assertTypesEqual<
+  ToBackendSetOrgInfoError,
+  z.infer<typeof zToBackendSetOrgInfoError>
+>({ value: true });

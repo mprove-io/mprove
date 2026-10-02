@@ -9,9 +9,9 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendSetUserNameOutput } from '#common/zod/backend/routes/users/set-user-name/set-user-name-output';
-import type { ToBackendSetUserNameRequest } from '#common/zod/backend/routes/users/set-user-name/set-user-name-request';
-import type { ToBackendSetUserNameResponse } from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
+import type { ToBackendSetUserNameOutput } from '#common/types/backend/routes/users/set-user-name/set-user-name-output';
+import type { ToBackendSetUserNameRequest } from '#common/types/backend/routes/users/set-user-name/set-user-name-request';
+import type { ToBackendSetUserNameResponse } from '#common/types/backend/routes/users/set-user-name/set-user-name-response';
 
 let testId = 'backend-set-user-name__ok';
 

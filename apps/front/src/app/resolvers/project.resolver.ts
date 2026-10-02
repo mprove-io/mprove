@@ -14,8 +14,8 @@ import {
 } from '#common/constants/top';
 import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ToBackendGetProjectRequest } from '#common/zod/backend/routes/projects/get-project/get-project-request';
-import type { ToBackendGetProjectResponse } from '#common/zod/backend/routes/projects/get-project/get-project-response';
+import type { ToBackendGetProjectRequest } from '#common/types/backend/routes/projects/get-project/get-project-request';
+import type { ToBackendGetProjectResponse } from '#common/types/backend/routes/projects/get-project/get-project-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';

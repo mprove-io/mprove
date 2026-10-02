@@ -36,12 +36,12 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { LlmModel } from '#common/types/backend/llm-models/llm-model';
+import type { LlmModelPart } from '#common/types/backend/llm-models/llm-model-part';
+import type { LlmModelVariant } from '#common/types/backend/llm-models/llm-model-variant';
+import type { ToBackendGetLlmModelPartsOutput } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-output';
+import type { ToBackendGetLlmModelPartsRequest } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
-import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
-import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
-import type { ToBackendGetLlmModelPartsOutput } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-output';
-import type { ToBackendGetLlmModelPartsRequest } from '#common/zod/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)

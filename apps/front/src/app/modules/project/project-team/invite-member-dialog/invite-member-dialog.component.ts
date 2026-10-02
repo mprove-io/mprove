@@ -15,8 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendCreateMemberRequest } from '#common/zod/backend/routes/members/create-member/create-member-request';
-import type { ToBackendCreateMemberResponse } from '#common/zod/backend/routes/members/create-member/create-member-response';
+import type { ToBackendCreateMemberRequest } from '#common/types/backend/routes/members/create-member/create-member-request';
+import type { ToBackendCreateMemberResponse } from '#common/types/backend/routes/members/create-member/create-member-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { TeamQuery } from '#front/app/queries/team.query';
 import { ApiService } from '#front/app/services/api.service';

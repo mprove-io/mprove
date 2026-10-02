@@ -45,8 +45,8 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendCreateExplorerSessionOutput } from '#common/types/backend/routes/sessions/create-explorer-session/create-explorer-session-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCreateExplorerSessionOutput } from '#common/zod/backend/routes/sessions/create-explorer-session/create-explorer-session-output';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

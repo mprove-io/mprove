@@ -27,8 +27,8 @@ import {
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { BmlError } from '#common/zod/blockml/bml-error';
-import type { DiskCatalogFile } from '#common/zod/disk/disk-catalog-file';
+import type { BmlError } from '#common/types/blockml/bml-error';
+import type { DiskCatalogFile } from '#common/types/disk/disk-catalog-file';
 
 export type ExplorerRebuildOk = {
   ok: true;

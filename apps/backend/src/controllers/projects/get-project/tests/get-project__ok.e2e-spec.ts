@@ -10,8 +10,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetProjectRequest } from '#common/zod/backend/routes/projects/get-project/get-project-request';
-import type { ToBackendGetProjectResponse } from '#common/zod/backend/routes/projects/get-project/get-project-response';
+import type { ToBackendGetProjectRequest } from '#common/types/backend/routes/projects/get-project/get-project-request';
+import type { ToBackendGetProjectResponse } from '#common/types/backend/routes/projects/get-project/get-project-response';
 
 let testId = 'backend-get-project__ok';
 

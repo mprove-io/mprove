@@ -10,13 +10,13 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { CHANNEL_RPC_REPLY } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
-import { zToBlockmlOperationRegistry } from '#common/zod/blockml/request/to-blockml-operation-registry';
-import type { ToBlockmlRequest } from '#common/zod/blockml/request/to-blockml-request';
-import type { ToBlockmlResponseForOperation } from '#common/zod/blockml/response/to-blockml-response-for-operation';
-import { zToDiskOperationRegistry } from '#common/zod/disk/request/to-disk-operation-registry';
-import type { ToDiskRequest } from '#common/zod/disk/request/to-disk-request';
-import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
-import type { RpcRequestData } from '#common/zod/rpc-request-data';
+import { zToBlockmlOperationRegistry } from '#common/types/blockml/request/to-blockml-operation-registry';
+import type { ToBlockmlRequest } from '#common/types/blockml/request/to-blockml-request';
+import type { ToBlockmlResponseForOperation } from '#common/types/blockml/response/to-blockml-response-for-operation';
+import { zToDiskOperationRegistry } from '#common/types/disk/request/to-disk-operation-registry';
+import type { ToDiskRequest } from '#common/types/disk/request/to-disk-request';
+import type { ToDiskResponseForOperation } from '#common/types/disk/response/to-disk-response-for-operation';
+import type { RpcRequestData } from '#common/types/rpc-request-data';
 
 type BlockmlSendItem<TRequest extends ToBlockmlRequest> = {
   request: TRequest;

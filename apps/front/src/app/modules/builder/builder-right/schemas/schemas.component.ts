@@ -20,20 +20,20 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type {
   ColumnCombinedReference,
   CombinedSchemaItem
-} from '#common/zod/backend/connection-schemas/combined-schema';
-import type { RawSchemaForeignKey } from '#common/zod/backend/connection-schemas/raw-schema';
-import type { CachedColumn } from '#common/zod/backend/connections/cached-column';
-import type { ToBackendClearCachedColumnResponse } from '#common/zod/backend/routes/connections/clear-cached-column/clear-cached-column-response';
-import type { ToBackendGetCachedColumnsOutput } from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-output';
-import type { ToBackendGetCachedColumnsResponse } from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-response';
-import type { ToBackendGetConnectionSampleOutput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-output';
-import type { ToBackendGetConnectionSampleResponse } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
-import type { ToBackendGetConnectionSchemasRequest } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
-import type { ToBackendGetConnectionSchemasResponse } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-response';
-import type { ToBackendRefreshCachedColumnOutput } from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-output';
-import type { ToBackendRefreshCachedColumnResponse } from '#common/zod/backend/routes/connections/refresh-cached-column/refresh-cached-column-response';
-import type { ToBackendViewCachedColumnOutput } from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-output';
-import type { ToBackendViewCachedColumnResponse } from '#common/zod/backend/routes/connections/view-cached-column/view-cached-column-response';
+} from '#common/types/backend/connection-schemas/combined-schema';
+import type { RawSchemaForeignKey } from '#common/types/backend/connection-schemas/raw-schema';
+import type { CachedColumn } from '#common/types/backend/connections/cached-column';
+import type { ToBackendClearCachedColumnResponse } from '#common/types/backend/routes/connections/clear-cached-column/clear-cached-column-response';
+import type { ToBackendGetCachedColumnsOutput } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-output';
+import type { ToBackendGetCachedColumnsResponse } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-response';
+import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
+import type { ToBackendGetConnectionSampleResponse } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-response';
+import type { ToBackendGetConnectionSchemasRequest } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-request';
+import type { ToBackendGetConnectionSchemasResponse } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-response';
+import type { ToBackendRefreshCachedColumnOutput } from '#common/types/backend/routes/connections/refresh-cached-column/refresh-cached-column-output';
+import type { ToBackendRefreshCachedColumnResponse } from '#common/types/backend/routes/connections/refresh-cached-column/refresh-cached-column-response';
+import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-output';
+import type { ToBackendViewCachedColumnResponse } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';

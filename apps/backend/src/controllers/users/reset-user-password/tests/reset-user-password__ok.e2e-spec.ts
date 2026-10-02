@@ -8,8 +8,8 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendResetUserPasswordRequest } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-request';
-import type { ToBackendResetUserPasswordResponse } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-response';
+import type { ToBackendResetUserPasswordRequest } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-request';
+import type { ToBackendResetUserPasswordResponse } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-response';
 
 let testId = 'backend-reset-user-password__ok';
 

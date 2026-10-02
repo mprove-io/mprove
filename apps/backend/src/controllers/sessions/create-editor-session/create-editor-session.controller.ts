@@ -61,9 +61,9 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendCreateEditorSessionOutput } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-output';
+import type { ToDiskCreateDevRepoOutput } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCreateEditorSessionOutput } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-output';
-import type { ToDiskCreateDevRepoOutput } from '#common/zod/disk/routes/repos/create-dev-repo/create-dev-repo-output';
 
 const { forEachSeries } = pIteration;
 

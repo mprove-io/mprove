@@ -9,8 +9,8 @@ import { getBuilderUrl } from '#common/functions/get-builder-url/get-builder-url
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { mapBmlErrorsToMproveValidationErrors } from '#common/functions/map-bml-errors-to-mprove-validation-errors/map-bml-errors-to-mprove-validation-errors';
-import type { ToBackendSyncRepoOutput } from '#common/zod/backend/routes/repos/sync-repo/sync-repo-output';
-import type { ToBackendSyncRepoRequest } from '#common/zod/backend/routes/repos/sync-repo/sync-repo-request';
+import type { ToBackendSyncRepoOutput } from '#common/types/backend/routes/repos/sync-repo/sync-repo-output';
+import type { ToBackendSyncRepoRequest } from '#common/types/backend/routes/repos/sync-repo/sync-repo-request';
 import { CustomCommand } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { mreq } from '#mcli/functions/mreq/mreq';

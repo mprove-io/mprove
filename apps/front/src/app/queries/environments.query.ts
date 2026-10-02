@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { Env } from '#common/zod/backend/env';
+import type { Env } from '#common/types/backend/env';
 import { BaseQuery } from './base.query';
 
 export class EnvironmentsState {

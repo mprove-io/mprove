@@ -38,12 +38,12 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
+import type { LlmModel } from '#common/types/backend/llm-models/llm-model';
+import type { LlmModelPart } from '#common/types/backend/llm-models/llm-model-part';
+import type { Provider } from '#common/types/backend/provider';
+import type { ToBackendEditLlmModelOutput } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-output';
+import type { ToBackendEditLlmModelRequest } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
-import type { LlmModelPart } from '#common/zod/backend/llm-models/llm-model-part';
-import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendEditLlmModelOutput } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-output';
-import type { ToBackendEditLlmModelRequest } from '#common/zod/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)

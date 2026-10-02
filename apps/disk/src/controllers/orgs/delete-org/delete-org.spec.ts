@@ -1,9 +1,9 @@
 import test from 'ava';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/orgs/create-org/create-org-request';
-import type { ToDiskDeleteOrgRequest } from '#common/zod/disk/routes/orgs/delete-org/delete-org-request';
-import type { ToDiskIsOrgExistRequest } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-request';
-import type { ToDiskIsOrgExistResponse } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-response';
+import type { ToDiskCreateOrgRequest } from '#common/types/disk/routes/orgs/create-org/create-org-request';
+import type { ToDiskDeleteOrgRequest } from '#common/types/disk/routes/orgs/delete-org/delete-org-request';
+import type { ToDiskIsOrgExistRequest } from '#common/types/disk/routes/orgs/is-org-exist/is-org-exist-request';
+import type { ToDiskIsOrgExistResponse } from '#common/types/disk/routes/orgs/is-org-exist/is-org-exist-response';
 import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
 import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 

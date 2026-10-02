@@ -1,4 +1,4 @@
-import type { LlmModelVariant } from '#common/zod/backend/llm-models/llm-model-variant';
+import type { LlmModelVariant } from '#common/types/backend/llm-models/llm-model-variant';
 
 export function getLlmModelVariantsError(item: {
   variants: LlmModelVariant[];

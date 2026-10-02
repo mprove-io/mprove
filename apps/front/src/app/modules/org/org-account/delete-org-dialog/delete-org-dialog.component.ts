@@ -14,8 +14,8 @@ import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_DELETED_ORG_NAME
 } from '#common/constants/top-front';
-import type { ToBackendDeleteOrgRequest } from '#common/zod/backend/routes/orgs/delete-org/delete-org-request';
-import type { ToBackendDeleteOrgResponse } from '#common/zod/backend/routes/orgs/delete-org/delete-org-response';
+import type { ToBackendDeleteOrgRequest } from '#common/types/backend/routes/orgs/delete-org/delete-org-request';
+import type { ToBackendDeleteOrgResponse } from '#common/types/backend/routes/orgs/delete-org/delete-org-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';
 import { ApiService } from '#front/app/services/api.service';

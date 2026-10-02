@@ -26,10 +26,10 @@ import type {
   RawSchemaColumn,
   RawSchemaIndex,
   RawSchemaTable
-} from '#common/zod/backend/connection-schemas/raw-schema';
-import type { FetchSampleResult } from '#common/zod/backend/connections/fetch-sample-result';
-import type { TestConnectionResult } from '#common/zod/backend/connections/test-connection-result';
-import type { MalloyConfigPart } from '#common/zod/backend/malloy-config-part';
+} from '#common/types/backend/connection-schemas/raw-schema';
+import type { FetchSampleResult } from '#common/types/backend/connections/fetch-sample-result';
+import type { TestConnectionResult } from '#common/types/backend/connections/test-connection-result';
+import type { MalloyConfigPart } from '#common/types/backend/malloy-config-part';
 import { TabService } from '../tab.service';
 
 const { forEachSeries } = pIteration;

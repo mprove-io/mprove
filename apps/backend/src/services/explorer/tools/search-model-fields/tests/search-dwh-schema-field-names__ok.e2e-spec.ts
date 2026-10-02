@@ -14,7 +14,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendSeedRecordsRequest } from '#common/zod/backend/routes/test-routes/seed-records/seed-records-request';
+import type { ToBackendSeedRecordsRequest } from '#common/types/backend/routes/test-routes/seed-records/seed-records-request';
 
 let testId = 'search-dwh-schema-field-names__ok';
 

@@ -10,8 +10,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendRenameCatalogNodeRequest } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-request';
-import type { ToBackendRenameCatalogNodeResponse } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-response';
+import type { ToBackendRenameCatalogNodeRequest } from '#common/types/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-request';
+import type { ToBackendRenameCatalogNodeResponse } from '#common/types/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-response';
 
 let testId = 'backend-rename-catalog-node__ok';
 

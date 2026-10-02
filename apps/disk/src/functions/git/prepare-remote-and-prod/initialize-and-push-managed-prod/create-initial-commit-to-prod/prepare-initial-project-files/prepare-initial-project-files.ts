@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { DiskPrepareInitialProjectFilesError } from '#common/zod/disk/function-errors/disk-prepare-initial-project-files-error';
-import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
+import type { DiskPrepareInitialProjectFilesError } from '#common/types/disk/function-errors/disk-prepare-initial-project-files-error';
+import type { FileIsSymlinkError } from '#common/types/node-common/errors/file-is-symlink-error';
 import { copyPath } from '#disk/functions/disk/copy-path/copy-path';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { writeDefaultInitialProjectFiles } from '#disk/functions/git/prepare-remote-and-prod/initialize-and-push-managed-prod/create-initial-commit-to-prod/prepare-initial-project-files/write-default-initial-project-files/write-default-initial-project-files';

@@ -20,9 +20,9 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendToggleProviderRequest } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-request';
-import type { ToBackendToggleProviderResponse } from '#common/zod/backend/routes/providers/toggle-provider/toggle-provider-response';
+import type { Provider } from '#common/types/backend/provider';
+import type { ToBackendToggleProviderRequest } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-request';
+import type { ToBackendToggleProviderResponse } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-response';
 
 let testId = 'backend-toggle-provider__ok';
 

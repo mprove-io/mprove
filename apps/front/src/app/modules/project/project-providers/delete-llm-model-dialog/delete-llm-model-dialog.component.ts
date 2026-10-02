@@ -7,10 +7,10 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
-import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendDeleteLlmModelRequest } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
-import type { ToBackendDeleteLlmModelResponse } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
+import type { LlmModel } from '#common/types/backend/llm-models/llm-model';
+import type { Provider } from '#common/types/backend/provider';
+import type { ToBackendDeleteLlmModelRequest } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
+import type { ToBackendDeleteLlmModelResponse } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
 

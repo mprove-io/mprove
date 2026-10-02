@@ -15,8 +15,8 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
-import type { ToBackendGetDashboardResponse } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-response';
+import type { ToBackendGetDashboardRequest } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-request';
+import type { ToBackendGetDashboardResponse } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-response';
 
 let testId = 'backend-get-dashboard__ok-access-roles';
 

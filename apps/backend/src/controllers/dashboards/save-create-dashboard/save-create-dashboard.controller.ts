@@ -49,11 +49,11 @@ import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { DashboardX } from '#common/types/backend/dashboard-x';
+import type { ToBackendSaveCreateDashboardOutput } from '#common/types/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-output';
+import type { TileX } from '#common/types/backend/tile-x';
+import type { ToDiskCreateFileOutput } from '#common/types/disk/routes/files/create-file/create-file-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { DashboardX } from '#common/zod/backend/dashboard-x';
-import type { ToBackendSaveCreateDashboardOutput } from '#common/zod/backend/routes/dashboards/save-create-dashboard/save-create-dashboard-output';
-import type { TileX } from '#common/zod/backend/tile-x';
-import type { ToDiskCreateFileOutput } from '#common/zod/disk/routes/files/create-file/create-file-output';
 
 const { forEachSeries } = pIteration;
 

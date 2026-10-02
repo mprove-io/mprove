@@ -6,7 +6,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ModelFieldLeafEnt } from '#backend/drizzle/postgres/schema/model-field-leafs';
 import { modelFieldLeafsTable } from '#backend/drizzle/postgres/schema/model-field-leafs';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import type { CombinedSchemaItem } from '#common/zod/backend/connection-schemas/combined-schema';
+import type { CombinedSchemaItem } from '#common/types/backend/connection-schemas/combined-schema';
 import type { SearchFieldMatch } from './search-model-fields.types';
 
 type DwhFieldNameMatch = {

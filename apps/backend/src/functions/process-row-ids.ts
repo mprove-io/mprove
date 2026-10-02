@@ -4,7 +4,7 @@ import { MyRegex } from '#common/classes/my-regex/my-regex';
 import { QUAD_UNDERSCORE, UNDEF } from '#common/constants/top';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Row } from '#common/zod/blockml/row';
+import type { Row } from '#common/types/blockml/row';
 
 export function processRowIds(item: {
   rows: Row[];

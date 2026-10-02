@@ -13,7 +13,7 @@ import { UNK_ST_ID } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendRequest } from '#common/zod/backend/request/to-backend-request';
+import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
 import type { UserTab } from './drizzle/postgres/schema/_tabs';
 import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';

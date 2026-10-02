@@ -10,8 +10,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetConnectionSampleOutput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)

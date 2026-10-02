@@ -4,7 +4,7 @@ import { Queue, Worker } from 'groupmq';
 import Redis from 'ioredis';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
-import type { ToBlockmlResponse } from '#common/zod/blockml/response/to-blockml-response';
+import type { ToBlockmlResponse } from '#common/types/blockml/response/to-blockml-response';
 import { MessageService } from '../message/message.service';
 @Injectable()
 export class ConsumerService {

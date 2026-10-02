@@ -5,11 +5,11 @@ import { log } from '#blockml/functions/log/log';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { FileChart } from '#common/zod/blockml/internal/file-chart';
-import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
-import type { FileReport } from '#common/zod/blockml/internal/file-report';
-import type { FileStore } from '#common/zod/blockml/internal/file-store';
-import type { ModelMetric } from '#common/zod/blockml/model-metric';
+import type { FileChart } from '#common/types/blockml/internal/file-chart';
+import type { FileDashboard } from '#common/types/blockml/internal/file-dashboard';
+import type { FileReport } from '#common/types/blockml/internal/file-report';
+import type { FileStore } from '#common/types/blockml/internal/file-store';
+import type { ModelMetric } from '#common/types/blockml/model-metric';
 
 let func = FuncEnum.LogStruct;
 

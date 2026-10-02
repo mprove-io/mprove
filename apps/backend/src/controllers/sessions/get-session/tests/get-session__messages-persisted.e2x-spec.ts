@@ -17,11 +17,11 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateEditorSessionRequest } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-request';
-import type { ToBackendDeleteSessionRequest } from '#common/zod/backend/routes/sessions/delete-session/delete-session-request';
-import type { ToBackendGetSessionOutput } from '#common/zod/backend/routes/sessions/get-session/get-session-output';
-import type { ToBackendGetSessionRequest } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
-import type { ToBackendSendMessageToEditorSessionRequest } from '#common/zod/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
+import type { ToBackendCreateEditorSessionRequest } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-request';
+import type { ToBackendDeleteSessionRequest } from '#common/types/backend/routes/sessions/delete-session/delete-session-request';
+import type { ToBackendGetSessionOutput } from '#common/types/backend/routes/sessions/get-session/get-session-output';
+import type { ToBackendGetSessionRequest } from '#common/types/backend/routes/sessions/get-session/get-session-request';
+import type { ToBackendSendMessageToEditorSessionRequest } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
 
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;

@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PARAMETER_ORG_ID } from '#common/constants/top';
 import { LOCAL_STORAGE_ORG_ID } from '#common/constants/top-front';
-import type { ToBackendGetOrgRequest } from '#common/zod/backend/routes/orgs/get-org/get-org-request';
-import type { ToBackendGetOrgResponse } from '#common/zod/backend/routes/orgs/get-org/get-org-response';
+import type { ToBackendGetOrgRequest } from '#common/types/backend/routes/orgs/get-org/get-org-request';
+import type { ToBackendGetOrgResponse } from '#common/types/backend/routes/orgs/get-org/get-org-response';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 

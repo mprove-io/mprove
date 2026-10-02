@@ -9,9 +9,9 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { take, tap } from 'rxjs/operators';
-import type { MemberGiven } from '#common/zod/backend/members/member-given';
-import type { ToBackendGetMemberGivensRequest } from '#common/zod/backend/routes/members/get-member-givens/get-member-givens-request';
-import type { ToBackendGetMemberGivensResponse } from '#common/zod/backend/routes/members/get-member-givens/get-member-givens-response';
+import type { MemberGiven } from '#common/types/backend/members/member-given';
+import type { ToBackendGetMemberGivensRequest } from '#common/types/backend/routes/members/get-member-givens/get-member-givens-request';
+import type { ToBackendGetMemberGivensResponse } from '#common/types/backend/routes/members/get-member-givens/get-member-givens-response';
 import { ApiService } from '#front/app/services/api.service';
 
 export interface GetMemberGivensDialogData {

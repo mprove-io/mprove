@@ -10,9 +10,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
-import type { ToBackendSetUserNameRequest } from '#common/zod/backend/routes/users/set-user-name/set-user-name-request';
-import type { ToBackendSetUserNameResponse } from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
+import type { ToBackendSetUserNameRequest } from '#common/types/backend/routes/users/set-user-name/set-user-name-request';
+import type { ToBackendSetUserNameResponse } from '#common/types/backend/routes/users/set-user-name/set-user-name-response';
 
 let testId = 'backend-jwt-auth-guard__user-key-request-not-allowed';
 

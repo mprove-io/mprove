@@ -4,13 +4,13 @@ import { METHOD_RPC } from '#common/constants/top';
 import {
   type ToDiskOperation,
   zToDiskOperation
-} from '#common/zod/disk/request/to-disk-operation';
-import { zToDiskOperationRegistry } from '#common/zod/disk/request/to-disk-operation-registry';
-import type { ToDiskRequest } from '#common/zod/disk/request/to-disk-request';
-import type { ToDiskResponse } from '#common/zod/disk/response/to-disk-response';
-import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
-import type { ToDiskResponseForRequest } from '#common/zod/disk/response/to-disk-response-for-request';
-import type { ToDiskUnknownOperationResponse } from '#common/zod/disk/response/to-disk-unknown-operation-response';
+} from '#common/types/disk/request/to-disk-operation';
+import { zToDiskOperationRegistry } from '#common/types/disk/request/to-disk-operation-registry';
+import type { ToDiskRequest } from '#common/types/disk/request/to-disk-request';
+import type { ToDiskResponse } from '#common/types/disk/response/to-disk-response';
+import type { ToDiskResponseForOperation } from '#common/types/disk/response/to-disk-response-for-operation';
+import type { ToDiskResponseForRequest } from '#common/types/disk/response/to-disk-response-for-request';
+import type { ToDiskUnknownOperationResponse } from '#common/types/disk/response/to-disk-unknown-operation-response';
 import { CreateBranchService } from '#disk/controllers/branches/create-branch/create-branch.service';
 import { DeleteBranchService } from '#disk/controllers/branches/delete-branch/delete-branch.service';
 import { IsBranchExistService } from '#disk/controllers/branches/is-branch-exist/is-branch-exist.service';

@@ -21,12 +21,12 @@ import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { MconfigField } from '#common/zod/backend/mconfig-field';
-import type { MconfigX } from '#common/zod/backend/mconfig-x';
-import type { MconfigChartSeries } from '#common/zod/blockml/mconfig-chart-series';
-import type { Query } from '#common/zod/blockml/query';
-import type { DataPoint } from '#common/zod/front/data-point';
-import type { DataRow } from '#common/zod/front/data-row';
+import type { MconfigField } from '#common/types/backend/mconfig-field';
+import type { MconfigX } from '#common/types/backend/mconfig-x';
+import type { MconfigChartSeries } from '#common/types/blockml/mconfig-chart-series';
+import type { Query } from '#common/types/blockml/query';
+import type { DataPoint } from '#common/types/front/data-point';
+import type { DataRow } from '#common/types/front/data-row';
 import { frontFormatTsUnix } from '../functions/front-format-ts-unix';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';

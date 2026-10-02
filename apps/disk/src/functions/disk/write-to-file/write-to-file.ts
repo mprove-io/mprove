@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 
-import type { DiskWriteToFileError } from '#common/zod/disk/function-errors/disk-write-to-file-error';
+import type { DiskWriteToFileError } from '#common/types/disk/function-errors/disk-write-to-file-error';
 
 export async function writeToFile(item: {
   filePath: string;

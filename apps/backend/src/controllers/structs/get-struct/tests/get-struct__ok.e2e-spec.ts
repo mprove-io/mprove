@@ -11,8 +11,8 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetStructRequest } from '#common/zod/backend/routes/structs/get-struct/get-struct-request';
-import type { ToBackendGetStructResponse } from '#common/zod/backend/routes/structs/get-struct/get-struct-response';
+import type { ToBackendGetStructRequest } from '#common/types/backend/routes/structs/get-struct/get-struct-request';
+import type { ToBackendGetStructResponse } from '#common/types/backend/routes/structs/get-struct/get-struct-response';
 
 let testId = 'backend-get-struct__ok';
 

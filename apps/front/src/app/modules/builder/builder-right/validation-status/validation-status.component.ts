@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ToBackendValidateFilesRequest } from '#common/zod/backend/routes/files/validate-files/validate-files-request';
-import type { ToBackendValidateFilesResponse } from '#common/zod/backend/routes/files/validate-files/validate-files-response';
+import type { ToBackendValidateFilesRequest } from '#common/types/backend/routes/files/validate-files/validate-files-request';
+import type { ToBackendValidateFilesResponse } from '#common/types/backend/routes/files/validate-files/validate-files-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';

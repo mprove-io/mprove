@@ -1,7 +1,7 @@
 import type { MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
-import type { AccessRoleCombined } from '#common/zod/access-role-combined';
-import type { Member } from '#common/zod/backend/member';
+import type { AccessRoleCombined } from '#common/types/access-role-combined';
+import type { Member } from '#common/types/backend/member';
 
 export function checkAccess(item: {
   member: MemberTab | Member;

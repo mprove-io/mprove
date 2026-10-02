@@ -49,8 +49,8 @@ import { HashService } from '#backend/services/hash.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendDeleteRecordsOutput } from '#common/types/backend/routes/test-routes/delete-records/delete-records-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteRecordsOutput } from '#common/zod/backend/routes/test-routes/delete-records/delete-records-output';
 
 @ApiTags('TestRoutes')
 @SkipJwtCheck()

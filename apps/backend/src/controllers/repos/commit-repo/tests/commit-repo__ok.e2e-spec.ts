@@ -10,8 +10,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCommitRepoRequest } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
-import type { ToBackendCommitRepoResponse } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-response';
+import type { ToBackendCommitRepoRequest } from '#common/types/backend/routes/repos/commit-repo/commit-repo-request';
+import type { ToBackendCommitRepoResponse } from '#common/types/backend/routes/repos/commit-repo/commit-repo-response';
 
 let testId = 'backend-commit-repo__ok';
 

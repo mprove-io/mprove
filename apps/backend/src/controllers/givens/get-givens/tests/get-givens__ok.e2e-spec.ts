@@ -12,10 +12,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
-import type { ToBackendGetGivensOutput } from '#common/zod/backend/routes/givens/get-givens/get-givens-output';
-import type { ToBackendGetGivensRequest } from '#common/zod/backend/routes/givens/get-givens/get-givens-request';
-import type { ToBackendGetGivensResponse } from '#common/zod/backend/routes/givens/get-givens/get-givens-response';
+import type { ToBackendCreateGivenRequest } from '#common/types/backend/routes/givens/create-given/create-given-request';
+import type { ToBackendGetGivensOutput } from '#common/types/backend/routes/givens/get-givens/get-givens-output';
+import type { ToBackendGetGivensRequest } from '#common/types/backend/routes/givens/get-givens/get-givens-request';
+import type { ToBackendGetGivensResponse } from '#common/types/backend/routes/givens/get-givens/get-givens-response';
 
 let testId = 'backend-get-givens__ok';
 

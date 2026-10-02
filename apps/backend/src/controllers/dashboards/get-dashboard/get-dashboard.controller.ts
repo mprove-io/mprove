@@ -14,8 +14,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { QueryInfoDashboardService } from '#backend/services/query-info-dashboard.service';
+import type { ToBackendGetDashboardOutput } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-output';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)

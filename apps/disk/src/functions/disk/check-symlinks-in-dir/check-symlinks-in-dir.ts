@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
-import type { DiskCheckSymlinksInDirError } from '#common/zod/disk/function-errors/disk-check-symlinks-in-dir-error';
+import type { DiskCheckSymlinksInDirError } from '#common/types/disk/function-errors/disk-check-symlinks-in-dir-error';
 import { walkRecursive } from './walk-recursive/walk-recursive';
 
 export async function checkSymlinksInDir(item: {

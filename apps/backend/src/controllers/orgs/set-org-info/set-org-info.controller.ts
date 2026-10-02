@@ -27,8 +27,8 @@ import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendSetOrgInfoOutput } from '#common/types/backend/routes/orgs/set-org-info/set-org-info-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSetOrgInfoOutput } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-output';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)

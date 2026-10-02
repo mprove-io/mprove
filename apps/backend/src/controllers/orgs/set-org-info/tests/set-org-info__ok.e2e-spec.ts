@@ -8,8 +8,8 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendSetOrgInfoRequest } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-request';
-import type { ToBackendSetOrgInfoResponse } from '#common/zod/backend/routes/orgs/set-org-info/set-org-info-response';
+import type { ToBackendSetOrgInfoRequest } from '#common/types/backend/routes/orgs/set-org-info/set-org-info-request';
+import type { ToBackendSetOrgInfoResponse } from '#common/types/backend/routes/orgs/set-org-info/set-org-info-response';
 
 let testId = 'backend-set-org-info__ok';
 

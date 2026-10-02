@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
+import type { DashboardUnit } from '#common/types/backend/dashboard-unit';
 import { DashboardUnitsFilteredQuery } from '#front/app/queries/dashboard-units-filtered.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

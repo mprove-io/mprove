@@ -20,8 +20,8 @@ import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-p
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { ToBackendRenameCatalogNodeRequest } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-request';
-import type { ToBackendRenameCatalogNodeResponse } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-response';
+import type { ToBackendRenameCatalogNodeRequest } from '#common/types/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-request';
+import type { ToBackendRenameCatalogNodeResponse } from '#common/types/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';

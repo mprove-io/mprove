@@ -16,8 +16,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDeleteChartRequest } from '#common/zod/backend/routes/charts/delete-chart/delete-chart-request';
-import type { ToBackendDeleteChartResponse } from '#common/zod/backend/routes/charts/delete-chart/delete-chart-response';
+import type { ToBackendDeleteChartRequest } from '#common/types/backend/routes/charts/delete-chart/delete-chart-request';
+import type { ToBackendDeleteChartResponse } from '#common/types/backend/routes/charts/delete-chart/delete-chart-response';
 
 let testId = 'backend-delete-chart__forbidden-chart-path';
 

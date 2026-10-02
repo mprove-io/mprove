@@ -8,8 +8,8 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendSetAvatarRequest } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-request';
-import type { ToBackendSetAvatarResponse } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-response';
+import type { ToBackendSetAvatarRequest } from '#common/types/backend/routes/avatars/set-avatar/set-avatar-request';
+import type { ToBackendSetAvatarResponse } from '#common/types/backend/routes/avatars/set-avatar/set-avatar-response';
 
 let testId = 'backend-set-avatar__ok';
 

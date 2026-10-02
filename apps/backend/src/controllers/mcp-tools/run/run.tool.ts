@@ -18,8 +18,8 @@ import {
   type McpToolRunInput,
   zMcpToolRunInput,
   zMcpToolRunOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-run';
-import type { ToBackendRunOutput } from '#common/zod/backend/routes/run/run/run-output';
+} from '#common/types/backend/mcp-tools/mcp-tool-run';
+import type { ToBackendRunOutput } from '#common/types/backend/routes/run/run/run-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

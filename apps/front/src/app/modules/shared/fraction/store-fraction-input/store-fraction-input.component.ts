@@ -27,12 +27,12 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendSuggestDimensionValuesOutput } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-output';
-import type { ToBackendSuggestDimensionValuesRequest } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-request';
-import type { ToBackendSuggestDimensionValuesResponse } from '#common/zod/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
-import type { Fraction } from '#common/zod/blockml/fraction';
-import type { FractionControl } from '#common/zod/blockml/fraction-control';
-import type { EventFractionUpdate } from '#common/zod/front/event-fraction-update';
+import type { ToBackendSuggestDimensionValuesOutput } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-output';
+import type { ToBackendSuggestDimensionValuesRequest } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-request';
+import type { ToBackendSuggestDimensionValuesResponse } from '#common/types/backend/routes/mconfigs/suggest-dimension-values/suggest-dimension-values-response';
+import type { Fraction } from '#common/types/blockml/fraction';
+import type { FractionControl } from '#common/types/blockml/fraction-control';
+import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 

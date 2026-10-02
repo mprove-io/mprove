@@ -38,8 +38,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { getMotherduckDatabaseWrongChars } from '#common/functions/get-motherduck-database-wrong-chars/get-motherduck-database-wrong-chars';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendTestConnectionOutput } from '#common/types/backend/routes/connections/test-connection/test-connection-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendTestConnectionOutput } from '#common/zod/backend/routes/connections/test-connection/test-connection-output';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)

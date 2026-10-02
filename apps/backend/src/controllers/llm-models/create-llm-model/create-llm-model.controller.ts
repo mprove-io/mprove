@@ -34,11 +34,11 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
+import type { LlmModel } from '#common/types/backend/llm-models/llm-model';
+import type { Provider } from '#common/types/backend/provider';
+import type { ToBackendCreateLlmModelOutput } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-output';
+import type { ToBackendCreateLlmModelRequest } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-request';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
-import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendCreateLlmModelOutput } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-output';
-import type { ToBackendCreateLlmModelRequest } from '#common/zod/backend/routes/llm-models/create-llm-model/create-llm-model-request';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)

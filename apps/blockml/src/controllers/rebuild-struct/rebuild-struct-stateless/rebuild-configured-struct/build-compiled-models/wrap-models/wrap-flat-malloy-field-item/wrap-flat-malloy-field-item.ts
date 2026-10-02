@@ -10,9 +10,9 @@ import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { FlatMalloyFieldItem } from '#common/zod/blockml/internal/flat-malloy-field-item';
-import type { ModelField } from '#common/zod/blockml/model-field';
-import type { ModelNode } from '#common/zod/blockml/model-node';
+import type { FlatMalloyFieldItem } from '#common/types/blockml/internal/flat-malloy-field-item';
+import type { ModelField } from '#common/types/blockml/model-field';
+import type { ModelNode } from '#common/types/blockml/model-node';
 
 type FieldItemFieldWithAtomicType = FlatMalloyFieldItem['field'] & {
   type: AtomicType & { timeframe?: string };

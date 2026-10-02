@@ -9,8 +9,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendSetOrgOwnerRequest } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-request';
-import type { ToBackendSetOrgOwnerResponse } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-response';
+import type { ToBackendSetOrgOwnerRequest } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-request';
+import type { ToBackendSetOrgOwnerResponse } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-response';
 
 let testId = 'backend-set-org-owner__new-owner-not-found';
 

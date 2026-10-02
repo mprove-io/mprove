@@ -13,9 +13,9 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { Given } from '#common/zod/backend/given';
-import type { ToBackendEditGivenRequest } from '#common/zod/backend/routes/givens/edit-given/edit-given-request';
-import type { ToBackendEditGivenResponse } from '#common/zod/backend/routes/givens/edit-given/edit-given-response';
+import type { Given } from '#common/types/backend/given';
+import type { ToBackendEditGivenRequest } from '#common/types/backend/routes/givens/edit-given/edit-given-request';
+import type { ToBackendEditGivenResponse } from '#common/types/backend/routes/givens/edit-given/edit-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { GivensQuery } from '#front/app/queries/givens.query';
 import { MemberQuery } from '#front/app/queries/member.query';

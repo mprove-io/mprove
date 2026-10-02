@@ -2,8 +2,8 @@ import type { Logger } from '@nestjs/common';
 import { getToBackendOperation } from '#backend/functions/get-to-backend-operation';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendOperation } from '#common/zod/backend/request/to-backend-operation';
-import type { ToBackendResponse } from '#common/zod/backend/response/to-backend-response';
+import type { ToBackendOperation } from '#common/types/backend/request/to-backend-operation';
+import type { ToBackendResponse } from '#common/types/backend/response/to-backend-response';
 import { logToConsole } from '#node-common/functions/log-to-console/log-to-console';
 
 export function makeOkResponse(item: {

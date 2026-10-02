@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { Result } from '@praha/byethrow';
-import type { ValidatePathUnderDirError } from '#common/zod/node-common/function-errors/validate-path-under-dir-error';
+import type { ValidatePathUnderDirError } from '#common/types/node-common/function-errors/validate-path-under-dir-error';
 
 export function validatePathUnderDir(item: {
   fullPath: string;

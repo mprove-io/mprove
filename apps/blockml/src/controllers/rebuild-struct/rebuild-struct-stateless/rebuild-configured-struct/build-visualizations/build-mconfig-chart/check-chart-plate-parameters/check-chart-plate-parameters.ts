@@ -11,8 +11,8 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { FileChartPlate } from '#common/types/blockml/internal/file-chart-plate';
 import type { dcType } from '#common/types/dc-type';
-import type { FileChartPlate } from '#common/zod/blockml/internal/file-chart-plate';
 
 let func = FuncEnum.CheckChartPlateParameters;
 

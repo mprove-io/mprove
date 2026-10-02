@@ -1,4 +1,4 @@
-import type { Space } from '#common/zod/blockml/space';
+import type { Space } from '#common/types/blockml/space';
 
 export function getReportSpaceFromFilePath(item: {
   filePath: string;

@@ -8,7 +8,7 @@ import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { BmlFile } from '#common/zod/blockml/bml-file';
+import type { BmlFile } from '#common/types/blockml/bml-file';
 
 let func = FuncEnum.CheckMproveExplorer;
 

@@ -10,8 +10,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateFileRequest } from '#common/zod/backend/routes/files/create-file/create-file-request';
-import type { ToBackendCreateFileResponse } from '#common/zod/backend/routes/files/create-file/create-file-response';
+import type { ToBackendCreateFileRequest } from '#common/types/backend/routes/files/create-file/create-file-request';
+import type { ToBackendCreateFileResponse } from '#common/types/backend/routes/files/create-file/create-file-response';
 
 let testId = 'backend-create-file__ok';
 

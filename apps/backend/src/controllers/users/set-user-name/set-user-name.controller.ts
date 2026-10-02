@@ -25,8 +25,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendSetUserNameOutput } from '#common/types/backend/routes/users/set-user-name/set-user-name-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSetUserNameOutput } from '#common/zod/backend/routes/users/set-user-name/set-user-name-output';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

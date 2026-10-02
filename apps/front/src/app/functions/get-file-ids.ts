@@ -1,4 +1,4 @@
-import type { DiskCatalogNode } from '#common/zod/disk/disk-catalog-node';
+import type { DiskCatalogNode } from '#common/types/disk/disk-catalog-node';
 
 export function getFileIds(item: { nodes: DiskCatalogNode[] }): string[] {
   let { nodes } = item;

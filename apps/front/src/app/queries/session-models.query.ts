@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { LlmModelWithProvider } from '#common/zod/backend/llm-models/llm-model-with-provider';
+import type { LlmModelWithProvider } from '#common/types/backend/llm-models/llm-model-with-provider';
 import { BaseQuery } from './base.query';
 
 export class SessionModelsState {

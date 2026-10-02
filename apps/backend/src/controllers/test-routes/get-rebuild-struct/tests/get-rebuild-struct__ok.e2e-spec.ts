@@ -10,11 +10,11 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BaseProject } from '#common/zod/backend/base-project';
-import type { ToBackendGetRebuildStructRequest } from '#common/zod/backend/routes/test-routes/get-rebuild-struct/get-rebuild-struct-request';
-import type { ToBackendGetRebuildStructResponse } from '#common/zod/backend/routes/test-routes/get-rebuild-struct/get-rebuild-struct-response';
-import type { ToDiskSeedProjectRequest } from '#common/zod/disk/routes/seed/seed-project/seed-project-request';
-import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { BaseProject } from '#common/types/backend/base-project';
+import type { ToBackendGetRebuildStructRequest } from '#common/types/backend/routes/test-routes/get-rebuild-struct/get-rebuild-struct-request';
+import type { ToBackendGetRebuildStructResponse } from '#common/types/backend/routes/test-routes/get-rebuild-struct/get-rebuild-struct-response';
+import type { ToDiskSeedProjectRequest } from '#common/types/disk/routes/seed/seed-project/seed-project-request';
+import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
 
 let testId = 'get-rebuild-struct__ok';
 

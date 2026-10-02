@@ -10,8 +10,8 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import type { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
-import type { ProviderLt, ProviderSt } from '#common/zod/st-lt';
+import type { LlmModel } from '#common/types/backend/llm-models/llm-model';
+import type { ProviderLt, ProviderSt } from '#common/types/st-lt';
 
 export const providersTable = pgTable(
   'providers',

@@ -15,8 +15,8 @@ import {
 } from '#common/constants/top';
 import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { OrgsItem } from '#common/zod/backend/orgs-item';
-import type { ToBackendGetOrgsListResponse } from '#common/zod/backend/routes/orgs/get-orgs-list/get-orgs-list-response';
+import type { OrgsItem } from '#common/types/backend/orgs-item';
+import type { ToBackendGetOrgsListResponse } from '#common/types/backend/routes/orgs/get-orgs-list/get-orgs-list-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';

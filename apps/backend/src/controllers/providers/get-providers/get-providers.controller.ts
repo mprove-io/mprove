@@ -21,11 +21,11 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { TabService } from '#backend/services/tab.service';
+import type { Member } from '#common/types/backend/member';
+import type { Provider } from '#common/types/backend/provider';
+import type { ToBackendGetProvidersOutput } from '#common/types/backend/routes/providers/get-providers/get-providers-output';
+import type { ToBackendGetProvidersRequest } from '#common/types/backend/routes/providers/get-providers/get-providers-request';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { Member } from '#common/zod/backend/member';
-import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendGetProvidersOutput } from '#common/zod/backend/routes/providers/get-providers/get-providers-output';
-import type { ToBackendGetProvidersRequest } from '#common/zod/backend/routes/providers/get-providers/get-providers-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)

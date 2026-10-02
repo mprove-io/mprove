@@ -45,7 +45,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { Ev } from '#common/zod/backend/ev';
+import type { Ev } from '#common/types/backend/ev';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { appControllers } from './app-controllers';
 import { AppFilter } from './app-filter';

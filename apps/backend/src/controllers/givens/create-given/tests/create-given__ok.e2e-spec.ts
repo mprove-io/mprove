@@ -12,9 +12,9 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateGivenOutput } from '#common/zod/backend/routes/givens/create-given/create-given-output';
-import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
-import type { ToBackendCreateGivenResponse } from '#common/zod/backend/routes/givens/create-given/create-given-response';
+import type { ToBackendCreateGivenOutput } from '#common/types/backend/routes/givens/create-given/create-given-output';
+import type { ToBackendCreateGivenRequest } from '#common/types/backend/routes/givens/create-given/create-given-request';
+import type { ToBackendCreateGivenResponse } from '#common/types/backend/routes/givens/create-given/create-given-response';
 
 let testId = 'backend-create-given__ok';
 

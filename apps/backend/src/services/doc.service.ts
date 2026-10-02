@@ -27,11 +27,11 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ReportDataColumn } from '#common/zod/backend/report-data-column';
-import type { ReportX } from '#common/zod/backend/report-x';
-import type { Fraction } from '#common/zod/blockml/fraction';
-import type { Row } from '#common/zod/blockml/row';
-import type { RowRecord } from '#common/zod/blockml/row-record';
+import type { ReportDataColumn } from '#common/types/backend/report-data-column';
+import type { ReportX } from '#common/types/backend/report-x';
+import type { Fraction } from '#common/types/blockml/fraction';
+import type { Row } from '#common/types/blockml/row';
+import type { RowRecord } from '#common/types/blockml/row-record';
 import { CycleGraph } from '#node-common/classes/cycle-graph/cycle-graph';
 
 @Injectable()

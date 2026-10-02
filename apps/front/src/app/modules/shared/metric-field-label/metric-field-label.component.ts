@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import type { ModelMetricX } from '#common/zod/backend/model-metric-x';
+import type { ModelMetricX } from '#common/types/backend/model-metric-x';
 
 @Component({
   standalone: false,

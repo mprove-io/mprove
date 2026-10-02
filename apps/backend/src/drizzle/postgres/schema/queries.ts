@@ -10,7 +10,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import type { QueryLt, QuerySt } from '#common/zod/st-lt';
+import type { QueryLt, QuerySt } from '#common/types/st-lt';
 
 export const queriesTable = pgTable(
   'queries',

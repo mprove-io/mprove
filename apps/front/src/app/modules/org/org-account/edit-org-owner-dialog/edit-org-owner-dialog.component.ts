@@ -19,8 +19,8 @@ import {
   LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
   LOCAL_STORAGE_NEW_ORG_OWNER
 } from '#common/constants/top-front';
-import type { ToBackendSetOrgOwnerRequest } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-request';
-import type { ToBackendSetOrgOwnerResponse } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-response';
+import type { ToBackendSetOrgOwnerRequest } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-request';
+import type { ToBackendSetOrgOwnerResponse } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { OrgQuery } from '#front/app/queries/org.query';

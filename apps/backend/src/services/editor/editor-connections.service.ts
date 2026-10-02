@@ -17,7 +17,7 @@ import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { MalloyConfigPart } from '#common/zod/backend/malloy-config-part';
+import type { MalloyConfigPart } from '#common/types/backend/malloy-config-part';
 import { EnvsService } from '../db/envs.service';
 
 @Injectable()

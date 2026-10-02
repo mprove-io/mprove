@@ -1,5 +1,5 @@
-import type { ChartUnit } from '#common/zod/backend/chart-unit';
-import type { SpaceUnit } from '#common/zod/backend/space-unit';
+import type { ChartUnit } from '#common/types/backend/chart-unit';
+import type { SpaceUnit } from '#common/types/backend/space-unit';
 
 export function spaceUnitToChartUnit(item: {
   spaceUnit: SpaceUnit;

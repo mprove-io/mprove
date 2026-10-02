@@ -8,8 +8,8 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetUserProfileRequest } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-request';
-import type { ToBackendGetUserProfileResponse } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-response';
+import type { ToBackendGetUserProfileRequest } from '#common/types/backend/routes/users/get-user-profile/get-user-profile-request';
+import type { ToBackendGetUserProfileResponse } from '#common/types/backend/routes/users/get-user-profile/get-user-profile-response';
 
 let testId = 'backend-get-user-profile__ok';
 

@@ -9,8 +9,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetOrgRequest } from '#common/zod/backend/routes/orgs/get-org/get-org-request';
-import type { ToBackendGetOrgResponse } from '#common/zod/backend/routes/orgs/get-org/get-org-response';
+import type { ToBackendGetOrgRequest } from '#common/types/backend/routes/orgs/get-org/get-org-request';
+import type { ToBackendGetOrgResponse } from '#common/types/backend/routes/orgs/get-org/get-org-response';
 
 let testId = 'backend-get-org__org-not-found';
 

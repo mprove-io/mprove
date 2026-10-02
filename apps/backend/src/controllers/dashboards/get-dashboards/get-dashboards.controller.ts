@@ -21,8 +21,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
+import type { ToBackendGetDashboardsOutput } from '#common/types/backend/routes/dashboards/get-dashboards/get-dashboards-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetDashboardsOutput } from '#common/zod/backend/routes/dashboards/get-dashboards/get-dashboards-output';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)

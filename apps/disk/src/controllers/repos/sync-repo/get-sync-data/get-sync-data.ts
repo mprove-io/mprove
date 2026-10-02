@@ -1,8 +1,8 @@
 import { Result } from '@praha/byethrow';
 import type { StatusResult } from 'simple-git';
-import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
-import type { DiskGetSyncDataError } from '#common/zod/disk/function-errors/disk-get-sync-data-error';
-import type { GetSyncFilesPayloadError } from '#common/zod/node-common/function-errors/get-sync-files-payload-error';
+import type { DiskSyncFile } from '#common/types/disk/disk-sync-file';
+import type { DiskGetSyncDataError } from '#common/types/disk/function-errors/disk-get-sync-data-error';
+import type { GetSyncFilesPayloadError } from '#common/types/node-common/function-errors/get-sync-files-payload-error';
 import { getSyncFilesPayload } from '#node-common/functions/get-sync-files-payload/get-sync-files-payload';
 import { getToServerSyncData } from './get-to-server-sync-data/get-to-server-sync-data';
 

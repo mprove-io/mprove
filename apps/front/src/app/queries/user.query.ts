@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { User } from '#common/zod/backend/user';
+import type { User } from '#common/types/backend/user';
 import { getFullName } from '../functions/get-full-name';
 import { makeInitials } from '../functions/make-initials';
 import { BaseQuery } from './base.query';

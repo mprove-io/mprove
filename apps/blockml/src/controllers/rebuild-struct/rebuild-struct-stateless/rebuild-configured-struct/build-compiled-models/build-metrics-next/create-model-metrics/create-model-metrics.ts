@@ -17,9 +17,9 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileStore } from '#common/zod/blockml/internal/file-store';
-import type { Model } from '#common/zod/blockml/model';
-import type { ModelMetric } from '#common/zod/blockml/model-metric';
+import type { FileStore } from '#common/types/blockml/internal/file-store';
+import type { Model } from '#common/types/blockml/model';
+import type { ModelMetric } from '#common/types/blockml/model-metric';
 import {
   type FindModelNodeOutput,
   findModelNodeRecursive

@@ -10,12 +10,12 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
-import type { ToBackendSaveFileRequest } from '#common/zod/backend/routes/files/save-file/save-file-request';
-import type { ToBackendCommitRepoRequest } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
-import type { ToBackendMergeRepoRequest } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-request';
-import type { ToBackendMergeRepoResponse } from '#common/zod/backend/routes/repos/merge-repo/merge-repo-response';
-import type { ToBackendPushRepoRequest } from '#common/zod/backend/routes/repos/push-repo/push-repo-request';
+import type { ToBackendCreateBranchRequest } from '#common/types/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendSaveFileRequest } from '#common/types/backend/routes/files/save-file/save-file-request';
+import type { ToBackendCommitRepoRequest } from '#common/types/backend/routes/repos/commit-repo/commit-repo-request';
+import type { ToBackendMergeRepoRequest } from '#common/types/backend/routes/repos/merge-repo/merge-repo-request';
+import type { ToBackendMergeRepoResponse } from '#common/types/backend/routes/repos/merge-repo/merge-repo-response';
+import type { ToBackendPushRepoRequest } from '#common/types/backend/routes/repos/push-repo/push-repo-request';
 
 let testId = 'backend-merge-repo__ok-remote';
 

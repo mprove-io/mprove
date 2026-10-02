@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
+import type { DashboardUnit } from '#common/types/backend/dashboard-unit';
 import { BaseQuery } from './base.query';
 
 export class DashboardUnitsFilteredState {

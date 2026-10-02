@@ -8,8 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import type { ToBackendGetEnvsRequest } from '#common/zod/backend/routes/envs/get-envs/get-envs-request';
-import type { ToBackendGetEnvsResponse } from '#common/zod/backend/routes/envs/get-envs/get-envs-response';
+import type { ToBackendGetEnvsRequest } from '#common/types/backend/routes/envs/get-envs/get-envs-request';
+import type { ToBackendGetEnvsResponse } from '#common/types/backend/routes/envs/get-envs/get-envs-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { EnvironmentsQuery } from '../queries/environments.query';
 import { MemberQuery } from '../queries/member.query';

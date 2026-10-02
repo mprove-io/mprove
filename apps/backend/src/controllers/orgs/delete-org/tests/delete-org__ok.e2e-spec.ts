@@ -8,8 +8,8 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDeleteOrgRequest } from '#common/zod/backend/routes/orgs/delete-org/delete-org-request';
-import type { ToBackendDeleteOrgResponse } from '#common/zod/backend/routes/orgs/delete-org/delete-org-response';
+import type { ToBackendDeleteOrgRequest } from '#common/types/backend/routes/orgs/delete-org/delete-org-request';
+import type { ToBackendDeleteOrgResponse } from '#common/types/backend/routes/orgs/delete-org/delete-org-response';
 
 let testId = 'backend-delete-org__ok';
 

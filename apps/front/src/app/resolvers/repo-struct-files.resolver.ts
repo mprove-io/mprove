@@ -10,8 +10,8 @@ import {
   PATH_PROJECT
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import type { ToBackendGetRepoRequest } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
-import type { ToBackendGetRepoResponse } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
+import type { ToBackendGetRepoRequest } from '#common/types/backend/routes/repos/get-repo/get-repo-request';
+import type { ToBackendGetRepoResponse } from '#common/types/backend/routes/repos/get-repo/get-repo-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';

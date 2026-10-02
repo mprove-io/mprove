@@ -18,9 +18,9 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { CachedColumn } from '#common/types/backend/connections/cached-column';
+import type { ToBackendGetCachedColumnsOutput } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { CachedColumn } from '#common/zod/backend/connections/cached-column';
-import type { ToBackendGetCachedColumnsOutput } from '#common/zod/backend/routes/connections/get-cached-columns/get-cached-columns-output';
 
 @ApiTags('CachedColumns')
 @UseGuards(ThrottlerUserIdGuard)

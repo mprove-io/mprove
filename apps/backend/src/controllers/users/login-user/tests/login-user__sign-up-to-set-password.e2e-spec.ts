@@ -9,8 +9,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
-import type { ToBackendLoginUserResponse } from '#common/zod/backend/routes/users/login-user/login-user-response';
+import type { ToBackendLoginUserRequest } from '#common/types/backend/routes/users/login-user/login-user-request';
+import type { ToBackendLoginUserResponse } from '#common/types/backend/routes/users/login-user/login-user-response';
 
 let testId = 'backend-login-user__sign-up-to-set-password';
 

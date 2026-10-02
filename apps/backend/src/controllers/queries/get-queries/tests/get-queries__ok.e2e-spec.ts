@@ -16,10 +16,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendGetDashboardOutput } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-output';
-import type { ToBackendGetDashboardRequest } from '#common/zod/backend/routes/dashboards/get-dashboard/get-dashboard-request';
-import type { ToBackendGetQueriesRequest } from '#common/zod/backend/routes/queries/get-queries/get-queries-request';
-import type { ToBackendGetQueriesResponse } from '#common/zod/backend/routes/queries/get-queries/get-queries-response';
+import type { ToBackendGetDashboardOutput } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-output';
+import type { ToBackendGetDashboardRequest } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-request';
+import type { ToBackendGetQueriesRequest } from '#common/types/backend/routes/queries/get-queries/get-queries-request';
+import type { ToBackendGetQueriesResponse } from '#common/types/backend/routes/queries/get-queries/get-queries-response';
 
 let testId = 'backend-get-queries__ok';
 

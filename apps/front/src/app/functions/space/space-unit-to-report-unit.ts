@@ -1,5 +1,5 @@
-import type { ReportUnit } from '#common/zod/backend/report-unit';
-import type { SpaceUnit } from '#common/zod/backend/space-unit';
+import type { ReportUnit } from '#common/types/backend/report-unit';
+import type { SpaceUnit } from '#common/types/backend/space-unit';
 
 export function spaceUnitToReportUnit(item: {
   spaceUnit: SpaceUnit;

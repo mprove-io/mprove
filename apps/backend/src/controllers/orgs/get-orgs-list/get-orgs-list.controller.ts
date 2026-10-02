@@ -14,8 +14,8 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { OrgsService } from '#backend/services/db/orgs.service';
 import { TabService } from '#backend/services/tab.service';
+import type { ToBackendGetOrgsListOutput } from '#common/types/backend/routes/orgs/get-orgs-list/get-orgs-list-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetOrgsListOutput } from '#common/zod/backend/routes/orgs/get-orgs-list/get-orgs-list-output';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)

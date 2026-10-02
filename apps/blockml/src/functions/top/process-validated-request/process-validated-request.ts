@@ -1,10 +1,10 @@
 import type { Logger } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
 import type { BlockmlResultForOperation } from '#blockml/types/blockml-result-for-operation';
-import type { ToBlockmlOperation } from '#common/zod/blockml/request/to-blockml-operation';
-import type { ToBlockmlRequestForOperation } from '#common/zod/blockml/request/to-blockml-request-for-operation';
-import type { ToBlockmlResponseForOperation } from '#common/zod/blockml/response/to-blockml-response-for-operation';
-import type { ToBlockmlResponseMetadata } from '#common/zod/blockml/response/to-blockml-response-metadata';
+import type { ToBlockmlOperation } from '#common/types/blockml/request/to-blockml-operation';
+import type { ToBlockmlRequestForOperation } from '#common/types/blockml/request/to-blockml-request-for-operation';
+import type { ToBlockmlResponseForOperation } from '#common/types/blockml/response/to-blockml-response-for-operation';
+import type { ToBlockmlResponseMetadata } from '#common/types/blockml/response/to-blockml-response-metadata';
 
 export async function processValidatedRequest<
   TOperation extends ToBlockmlOperation

@@ -1,11 +1,11 @@
 import { wrapTiles } from '#blockml/functions/wrap-tiles/wrap-tiles';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
-import type { Chart } from '#common/zod/blockml/chart';
-import type { FileChart } from '#common/zod/blockml/internal/file-chart';
-import type { FileStore } from '#common/zod/blockml/internal/file-store';
-import type { Mconfig } from '#common/zod/blockml/mconfig';
-import type { Model } from '#common/zod/blockml/model';
-import type { Query } from '#common/zod/blockml/query';
+import type { Chart } from '#common/types/blockml/chart';
+import type { FileChart } from '#common/types/blockml/internal/file-chart';
+import type { FileStore } from '#common/types/blockml/internal/file-store';
+import type { Mconfig } from '#common/types/blockml/mconfig';
+import type { Model } from '#common/types/blockml/model';
+import type { Query } from '#common/types/blockml/query';
 
 export function wrapCharts(item: {
   structId: string;

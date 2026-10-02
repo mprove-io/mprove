@@ -20,9 +20,9 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
-import type { ToBackendSaveCreateReportRequest } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-request';
-import type { ToBackendSaveCreateReportResponse } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-response';
+import type { ToBackendCreateDraftReportRequest } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-request';
+import type { ToBackendSaveCreateReportRequest } from '#common/types/backend/routes/reports/save-create-report/save-create-report-request';
+import type { ToBackendSaveCreateReportResponse } from '#common/types/backend/routes/reports/save-create-report/save-create-report-response';
 
 let testId = 'backend-save-create-report__space-member-is-not-editor';
 

@@ -3,7 +3,7 @@ import { MALLOY_FILTER_ANY } from '#common/constants/top';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Fraction } from '#common/zod/blockml/fraction';
+import type { Fraction } from '#common/types/blockml/fraction';
 
 export function getMalloyFilterBooleanFractions(item: {
   parsed: BooleanFilter;

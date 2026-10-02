@@ -10,8 +10,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetStateRequest } from '#common/zod/backend/routes/state/get-state/get-state-request';
-import type { ToBackendGetStateResponse } from '#common/zod/backend/routes/state/get-state/get-state-response';
+import type { ToBackendGetStateRequest } from '#common/types/backend/routes/state/get-state/get-state-request';
+import type { ToBackendGetStateResponse } from '#common/types/backend/routes/state/get-state/get-state-response';
 
 let testId = 'backend-jwt-auth-guard__api-key-not-found';
 

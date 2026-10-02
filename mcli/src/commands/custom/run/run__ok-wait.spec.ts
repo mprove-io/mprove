@@ -8,7 +8,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { McliQueriesStats } from '#common/zod/mcli/mcli-queries-stats';
+import type { McliQueriesStats } from '#common/types/mcli/mcli-queries-stats';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { getConfig } from '#mcli/config/get.config';
 import { makeTestApiKey } from '#mcli/functions/make-test-api-key/make-test-api-key';

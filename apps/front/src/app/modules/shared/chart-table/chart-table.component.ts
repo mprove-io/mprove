@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
-import type { MconfigField } from '#common/zod/backend/mconfig-field';
+import type { MconfigField } from '#common/types/backend/mconfig-field';
 import { QDataRow } from '#front/app/services/data.service';
 
 @Component({

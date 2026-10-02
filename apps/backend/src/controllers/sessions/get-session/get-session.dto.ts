@@ -1,8 +1,8 @@
 import { createZodDto } from 'nestjs-zod';
 import { createBackendResponseDto } from '#backend/functions/create-backend-response-dto';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import { zToBackendGetSessionRequest } from '#common/zod/backend/routes/sessions/get-session/get-session-request';
-import { zToBackendGetSessionResponse } from '#common/zod/backend/routes/sessions/get-session/get-session-response';
+import { zToBackendGetSessionRequest } from '#common/types/backend/routes/sessions/get-session/get-session-request';
+import { zToBackendGetSessionResponse } from '#common/types/backend/routes/sessions/get-session/get-session-response';
 
 export class ToBackendGetSessionRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetSessionRequest })

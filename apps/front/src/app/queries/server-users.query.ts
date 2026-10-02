@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { ServerUsersItem } from '#common/zod/backend/users/server-users-item';
+import type { ServerUsersItem } from '#common/types/backend/users/server-users-item';
 import { BaseQuery } from './base.query';
 
 export class ServerUsersState {

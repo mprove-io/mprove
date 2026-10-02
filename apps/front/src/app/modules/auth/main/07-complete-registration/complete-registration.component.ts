@@ -11,8 +11,8 @@ import {
   LOCAL_STORAGE_TOKEN
 } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendCompleteUserRegistrationRequest } from '#common/zod/backend/routes/users/complete-user-registration/complete-user-registration-request';
-import type { ToBackendCompleteUserRegistrationResponse } from '#common/zod/backend/routes/users/complete-user-registration/complete-user-registration-response';
+import type { ToBackendCompleteUserRegistrationRequest } from '#common/types/backend/routes/users/complete-user-registration/complete-user-registration-request';
+import type { ToBackendCompleteUserRegistrationResponse } from '#common/types/backend/routes/users/complete-user-registration/complete-user-registration-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { AuthService } from '#front/app/services/auth.service';

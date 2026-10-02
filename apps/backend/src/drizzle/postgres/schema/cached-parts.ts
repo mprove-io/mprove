@@ -8,7 +8,7 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { CachedPartLt, CachedPartSt } from '#common/zod/st-lt';
+import type { CachedPartLt, CachedPartSt } from '#common/types/st-lt';
 
 export const cachedPartsTable = pgTable(
   'cached_parts',

@@ -24,8 +24,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendCreateRoleOutput } from '#common/types/backend/routes/roles/create-role/create-role-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCreateRoleOutput } from '#common/zod/backend/routes/roles/create-role/create-role-output';
 
 @ApiTags('Roles')
 @UseGuards(ThrottlerUserIdGuard)

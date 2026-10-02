@@ -14,10 +14,10 @@ import {
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { Member } from '#common/zod/backend/member';
-import type { Role } from '#common/zod/backend/role';
-import type { ToBackendEditMemberRequest } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
-import type { ToBackendEditMemberResponse } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
+import type { Member } from '#common/types/backend/member';
+import type { Role } from '#common/types/backend/role';
+import type { ToBackendEditMemberRequest } from '#common/types/backend/routes/members/edit-member/edit-member-request';
+import type { ToBackendEditMemberResponse } from '#common/types/backend/routes/members/edit-member/edit-member-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { RolesQuery } from '#front/app/queries/roles.query';
 import { TeamQuery } from '#front/app/queries/team.query';

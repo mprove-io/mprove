@@ -4,7 +4,7 @@ import { LINE_NUM, LINE_NUMBERS } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileErrorLine } from '#common/zod/blockml/internal/file-error-line';
+import type { FileErrorLine } from '#common/types/blockml/internal/file-error-line';
 
 export function processLineNumbersRecursive(item: {
   hash: any;

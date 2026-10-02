@@ -1,5 +1,5 @@
-import type { SpaceFolder } from '#common/zod/backend/space-folder';
-import type { Space } from '#common/zod/blockml/space';
+import type { SpaceFolder } from '#common/types/backend/space-folder';
+import type { Space } from '#common/types/blockml/space';
 
 export function makeSpaceFolder(item: {
   space: Space;

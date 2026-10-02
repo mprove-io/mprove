@@ -15,8 +15,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { RunQuery } from '#common/zod/backend/run/run-query';
-import type { RunReport } from '#common/zod/backend/run/run-report';
+import type { RunQuery } from '#common/types/backend/run/run-query';
+import type { RunReport } from '#common/types/backend/run/run-report';
 
 interface RunReportPrepRow {
   title: string;

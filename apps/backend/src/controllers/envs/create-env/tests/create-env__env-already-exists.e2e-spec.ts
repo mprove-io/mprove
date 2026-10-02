@@ -11,8 +11,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateEnvRequest } from '#common/zod/backend/routes/envs/create-env/create-env-request';
-import type { ToBackendCreateEnvResponse } from '#common/zod/backend/routes/envs/create-env/create-env-response';
+import type { ToBackendCreateEnvRequest } from '#common/types/backend/routes/envs/create-env/create-env-request';
+import type { ToBackendCreateEnvResponse } from '#common/types/backend/routes/envs/create-env/create-env-response';
 
 let testId = 'backend-create-env__env-already-exists';
 

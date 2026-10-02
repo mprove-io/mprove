@@ -15,8 +15,8 @@ import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { FieldTypeEnum } from '#common/enums/field-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import type { KeyValuePair } from '#common/zod/blockml/key-value-pair';
-import type { ModelField } from '#common/zod/blockml/model-field';
+import type { KeyValuePair } from '#common/types/blockml/key-value-pair';
+import type { ModelField } from '#common/types/blockml/model-field';
 
 export const modelFieldLeafsTable = pgTable(
   'model_field_leafs',

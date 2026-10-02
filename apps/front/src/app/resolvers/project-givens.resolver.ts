@@ -7,8 +7,8 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import type { ToBackendGetGivensRequest } from '#common/zod/backend/routes/givens/get-givens/get-givens-request';
-import type { ToBackendGetGivensResponse } from '#common/zod/backend/routes/givens/get-givens/get-givens-response';
+import type { ToBackendGetGivensRequest } from '#common/types/backend/routes/givens/get-givens/get-givens-request';
+import type { ToBackendGetGivensResponse } from '#common/types/backend/routes/givens/get-givens/get-givens-response';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { GivensQuery } from '../queries/givens.query';
 import { MemberQuery } from '../queries/member.query';

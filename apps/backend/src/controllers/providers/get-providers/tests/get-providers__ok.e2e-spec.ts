@@ -12,10 +12,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendGetProvidersOutput } from '#common/zod/backend/routes/providers/get-providers/get-providers-output';
-import type { ToBackendGetProvidersRequest } from '#common/zod/backend/routes/providers/get-providers/get-providers-request';
-import type { ToBackendGetProvidersResponse } from '#common/zod/backend/routes/providers/get-providers/get-providers-response';
+import type { Provider } from '#common/types/backend/provider';
+import type { ToBackendGetProvidersOutput } from '#common/types/backend/routes/providers/get-providers/get-providers-output';
+import type { ToBackendGetProvidersRequest } from '#common/types/backend/routes/providers/get-providers/get-providers-request';
+import type { ToBackendGetProvidersResponse } from '#common/types/backend/routes/providers/get-providers/get-providers-response';
 
 let testId = 'backend-get-providers__ok';
 

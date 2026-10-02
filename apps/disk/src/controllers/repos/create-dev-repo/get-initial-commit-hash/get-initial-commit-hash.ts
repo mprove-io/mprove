@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { LogResult, SimpleGit } from 'simple-git';
-import type { DiskCheckoutBranchError } from '#common/zod/disk/function-errors/disk-checkout-branch-error';
-import type { DiskGetInitialCommitHashError } from '#common/zod/disk/function-errors/disk-get-initial-commit-hash-error';
+import type { DiskCheckoutBranchError } from '#common/types/disk/function-errors/disk-checkout-branch-error';
+import type { DiskGetInitialCommitHashError } from '#common/types/disk/function-errors/disk-get-initial-commit-hash-error';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch/checkout-branch';
 
 export async function getInitialCommitHash(item: {

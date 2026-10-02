@@ -10,11 +10,11 @@ import {
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
-import type { ToBackendDeleteUserApiKeyResponse } from '#common/zod/backend/routes/users/delete-user-api-key/delete-user-api-key-response';
-import type { ToBackendDeleteUserCodexAuthResponse } from '#common/zod/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-response';
-import type { ToBackendGenerateUserApiKeyResponse } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
-import type { ToBackendResetUserPasswordRequest } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-request';
-import type { ToBackendResetUserPasswordResponse } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-response';
+import type { ToBackendDeleteUserApiKeyResponse } from '#common/types/backend/routes/users/delete-user-api-key/delete-user-api-key-response';
+import type { ToBackendDeleteUserCodexAuthResponse } from '#common/types/backend/routes/users/delete-user-codex-auth/delete-user-codex-auth-response';
+import type { ToBackendGenerateUserApiKeyResponse } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
+import type { ToBackendResetUserPasswordRequest } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-request';
+import type { ToBackendResetUserPasswordResponse } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';

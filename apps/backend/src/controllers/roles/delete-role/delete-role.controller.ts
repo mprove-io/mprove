@@ -32,8 +32,8 @@ import { RolesService } from '#backend/services/db/roles.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendDeleteRoleOutput } from '#common/types/backend/routes/roles/delete-role/delete-role-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteRoleOutput } from '#common/zod/backend/routes/roles/delete-role/delete-role-output';
 
 @ApiTags('Roles')
 @UseGuards(ThrottlerUserIdGuard)

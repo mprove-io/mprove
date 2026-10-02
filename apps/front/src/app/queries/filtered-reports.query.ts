@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { ReportUnit } from '#common/zod/backend/report-unit';
+import type { ReportUnit } from '#common/types/backend/report-unit';
 import { BaseQuery } from './base.query';
 
 export class FilteredReportsState {

@@ -3,10 +3,10 @@ import { z } from 'zod';
 import { makeInvalidRequestResponse } from '#blockml/functions/top/make-invalid-request-response/make-invalid-request-response';
 import { processValidatedRequest } from '#blockml/functions/top/process-validated-request/process-validated-request';
 import type { BlockmlResultForOperation } from '#blockml/types/blockml-result-for-operation';
-import type { ToBlockmlOperation } from '#common/zod/blockml/request/to-blockml-operation';
-import { zToBlockmlOperationRegistry } from '#common/zod/blockml/request/to-blockml-operation-registry';
-import type { ToBlockmlRequestForOperation } from '#common/zod/blockml/request/to-blockml-request-for-operation';
-import type { ToBlockmlResponseForOperation } from '#common/zod/blockml/response/to-blockml-response-for-operation';
+import type { ToBlockmlOperation } from '#common/types/blockml/request/to-blockml-operation';
+import { zToBlockmlOperationRegistry } from '#common/types/blockml/request/to-blockml-operation-registry';
+import type { ToBlockmlRequestForOperation } from '#common/types/blockml/request/to-blockml-request-for-operation';
+import type { ToBlockmlResponseForOperation } from '#common/types/blockml/response/to-blockml-response-for-operation';
 
 export async function handleHttpRequest<
   TOperation extends ToBlockmlOperation

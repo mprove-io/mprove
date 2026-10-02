@@ -22,9 +22,9 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
+import type { ProjectsItem } from '#common/types/backend/projects-item';
+import type { ToBackendGetProjectsListOutput } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ProjectsItem } from '#common/zod/backend/projects-item';
-import type { ToBackendGetProjectsListOutput } from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-output';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)

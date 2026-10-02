@@ -15,10 +15,10 @@ import {
 } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { ToBackendGetSessionsListRequest } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
-import type { ToBackendGetSessionsListResponse } from '#common/zod/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
-import type { SessionApi } from '#common/zod/backend/session-api';
-import type { SessionApiX } from '#common/zod/front/session-api-x';
+import type { ToBackendGetSessionsListRequest } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
+import type { ToBackendGetSessionsListResponse } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
+import type { SessionApi } from '#common/types/backend/session-api';
+import type { SessionApiX } from '#common/types/front/session-api-x';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';

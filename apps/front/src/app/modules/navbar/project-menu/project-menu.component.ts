@@ -15,8 +15,8 @@ import {
   PATH_TEAM,
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
-import type { ToBackendGetUserGivensRequest } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-request';
-import type { ToBackendGetUserGivensResponse } from '#common/zod/backend/routes/users/get-user-givens/get-user-givens-response';
+import type { ToBackendGetUserGivensRequest } from '#common/types/backend/routes/users/get-user-givens/get-user-givens-request';
+import type { ToBackendGetUserGivensResponse } from '#common/types/backend/routes/users/get-user-givens/get-user-givens-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';

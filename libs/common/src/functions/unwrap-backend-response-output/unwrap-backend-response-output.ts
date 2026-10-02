@@ -1,6 +1,6 @@
 import { ServerError } from '#common/classes/server-error/server-error';
-import type { BackendError } from '#common/zod/backend/errors/backend-error';
-import type { ToBackendResponseBase } from '#common/zod/backend/response/to-backend-response-base';
+import type { BackendError } from '#common/types/backend/errors/backend-error';
+import type { ToBackendResponseBase } from '#common/types/backend/response/to-backend-response-base';
 
 export function unwrapBackendResponseOutput<TOutput>(item: {
   response: ToBackendResponseBase<string, TOutput, BackendError>;

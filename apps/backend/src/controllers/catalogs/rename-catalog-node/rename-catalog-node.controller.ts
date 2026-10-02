@@ -36,9 +36,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRenameCatalogNodeOutput } from '#common/types/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-output';
+import type { ToDiskRenameCatalogNodeOutput } from '#common/types/disk/routes/catalogs/rename-catalog-node/rename-catalog-node-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendRenameCatalogNodeOutput } from '#common/zod/backend/routes/catalogs/rename-catalog-node/rename-catalog-node-output';
-import type { ToDiskRenameCatalogNodeOutput } from '#common/zod/disk/routes/catalogs/rename-catalog-node/rename-catalog-node-output';
 
 const { forEachSeries } = pIteration;
 

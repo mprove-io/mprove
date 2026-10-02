@@ -15,8 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendCreateEnvRequest } from '#common/zod/backend/routes/envs/create-env/create-env-request';
-import type { ToBackendCreateEnvResponse } from '#common/zod/backend/routes/envs/create-env/create-env-response';
+import type { ToBackendCreateEnvRequest } from '#common/types/backend/routes/envs/create-env/create-env-request';
+import type { ToBackendCreateEnvResponse } from '#common/types/backend/routes/envs/create-env/create-env-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';

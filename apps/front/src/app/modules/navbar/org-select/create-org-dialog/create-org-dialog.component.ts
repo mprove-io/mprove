@@ -28,8 +28,8 @@ import {
   LOCAL_STORAGE_PROJECT_ID
 } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ToBackendCreateOrgRequest } from '#common/zod/backend/routes/orgs/create-org/create-org-request';
-import type { ToBackendCreateOrgResponse } from '#common/zod/backend/routes/orgs/create-org/create-org-response';
+import type { ToBackendCreateOrgRequest } from '#common/types/backend/routes/orgs/create-org/create-org-request';
+import type { ToBackendCreateOrgResponse } from '#common/types/backend/routes/orgs/create-org/create-org-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';

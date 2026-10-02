@@ -1,8 +1,8 @@
 import { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { MconfigField } from '#common/zod/backend/mconfig-field';
-import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
-import type { ModelField } from '#common/zod/blockml/model-field';
-import type { Sorting } from '#common/zod/blockml/sorting';
+import type { MconfigField } from '#common/types/backend/mconfig-field';
+import type { MconfigChart } from '#common/types/blockml/mconfig-chart';
+import type { ModelField } from '#common/types/blockml/model-field';
+import type { Sorting } from '#common/types/blockml/sorting';
 
 export function makeMconfigFields(item: {
   modelFields: ModelField[];

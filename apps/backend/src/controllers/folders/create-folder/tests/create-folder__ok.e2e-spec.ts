@@ -10,8 +10,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateFolderRequest } from '#common/zod/backend/routes/folders/create-folder/create-folder-request';
-import type { ToBackendCreateFolderResponse } from '#common/zod/backend/routes/folders/create-folder/create-folder-response';
+import type { ToBackendCreateFolderRequest } from '#common/types/backend/routes/folders/create-folder/create-folder-request';
+import type { ToBackendCreateFolderResponse } from '#common/types/backend/routes/folders/create-folder/create-folder-response';
 
 let testId = 'backend-create-folder__ok';
 

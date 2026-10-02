@@ -5,8 +5,8 @@ import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FieldAny } from '#common/zod/blockml/internal/field-any';
-import type { Model } from '#common/zod/blockml/model';
+import type { FieldAny } from '#common/types/blockml/internal/field-any';
+import type { Model } from '#common/types/blockml/model';
 
 export function checkSuggestFields(item: {
   fields: FieldAny[];

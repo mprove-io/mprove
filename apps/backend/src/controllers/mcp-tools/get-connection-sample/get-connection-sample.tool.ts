@@ -17,8 +17,8 @@ import {
   type McpToolGetSampleInput,
   zMcpToolGetSampleInput,
   zMcpToolGetSampleOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-get-sample';
-import type { ToBackendGetConnectionSampleOutput } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-output';
+} from '#common/types/backend/mcp-tools/mcp-tool-get-sample';
+import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

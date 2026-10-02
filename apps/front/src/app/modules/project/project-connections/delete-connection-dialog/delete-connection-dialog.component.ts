@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendDeleteConnectionRequest } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-request';
-import type { ToBackendDeleteConnectionResponse } from '#common/zod/backend/routes/connections/delete-connection/delete-connection-response';
+import type { ToBackendDeleteConnectionRequest } from '#common/types/backend/routes/connections/delete-connection/delete-connection-request';
+import type { ToBackendDeleteConnectionResponse } from '#common/types/backend/routes/connections/delete-connection/delete-connection-response';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { ApiService } from '#front/app/services/api.service';
 

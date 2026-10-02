@@ -7,9 +7,9 @@ import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Fraction } from '#common/zod/blockml/fraction';
-import type { FileReport } from '#common/zod/blockml/internal/file-report';
-import type { ModelMetric } from '#common/zod/blockml/model-metric';
+import type { Fraction } from '#common/types/blockml/fraction';
+import type { FileReport } from '#common/types/blockml/internal/file-report';
+import type { ModelMetric } from '#common/types/blockml/model-metric';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
 let func = FuncEnum.BuildReportRowParameterFractions;

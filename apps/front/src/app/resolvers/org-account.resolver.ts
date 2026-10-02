@@ -8,8 +8,8 @@ import {
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { PARAMETER_ORG_ID } from '#common/constants/top';
-import type { ToBackendGetOrgRequest } from '#common/zod/backend/routes/orgs/get-org/get-org-request';
-import type { ToBackendGetOrgResponse } from '#common/zod/backend/routes/orgs/get-org/get-org-response';
+import type { ToBackendGetOrgRequest } from '#common/types/backend/routes/orgs/get-org/get-org-request';
+import type { ToBackendGetOrgResponse } from '#common/types/backend/routes/orgs/get-org/get-org-response';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { OrgQuery } from '../queries/org.query';

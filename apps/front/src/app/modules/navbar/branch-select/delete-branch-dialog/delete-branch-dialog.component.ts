@@ -20,8 +20,8 @@ import {
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ToBackendDeleteBranchRequest } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-request';
-import type { ToBackendDeleteBranchResponse } from '#common/zod/backend/routes/branches/delete-branch/delete-branch-response';
+import type { ToBackendDeleteBranchRequest } from '#common/types/backend/routes/branches/delete-branch/delete-branch-request';
+import type { ToBackendDeleteBranchResponse } from '#common/types/backend/routes/branches/delete-branch/delete-branch-response';
 import { ApiService } from '#front/app/services/api.service';
 
 export interface DeleteBranchDialogData {

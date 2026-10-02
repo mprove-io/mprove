@@ -11,8 +11,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendEditMemberRequest } from '#common/zod/backend/routes/members/edit-member/edit-member-request';
-import type { ToBackendEditMemberResponse } from '#common/zod/backend/routes/members/edit-member/edit-member-response';
+import type { ToBackendEditMemberRequest } from '#common/types/backend/routes/members/edit-member/edit-member-request';
+import type { ToBackendEditMemberResponse } from '#common/types/backend/routes/members/edit-member/edit-member-response';
 
 let testId = 'backend-edit-member__roles-do-not-exist';
 

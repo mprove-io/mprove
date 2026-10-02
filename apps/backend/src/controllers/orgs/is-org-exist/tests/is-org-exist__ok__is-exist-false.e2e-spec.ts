@@ -9,8 +9,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendIsOrgExistRequest } from '#common/zod/backend/routes/orgs/is-org-exist/is-org-exist-request';
-import type { ToBackendIsOrgExistResponse } from '#common/zod/backend/routes/orgs/is-org-exist/is-org-exist-response';
+import type { ToBackendIsOrgExistRequest } from '#common/types/backend/routes/orgs/is-org-exist/is-org-exist-request';
+import type { ToBackendIsOrgExistResponse } from '#common/types/backend/routes/orgs/is-org-exist/is-org-exist-response';
 
 let testId = 'backend-is-org-exist__ok__is-exist-false';
 

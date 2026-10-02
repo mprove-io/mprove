@@ -11,7 +11,7 @@ import {
 import {
   zMcpToolGetSkillsInput,
   zMcpToolGetSkillsOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-get-skills';
+} from '#common/types/backend/mcp-tools/mcp-tool-get-skills';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

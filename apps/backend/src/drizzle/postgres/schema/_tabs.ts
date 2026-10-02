@@ -1,9 +1,9 @@
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import type { LlmModel } from '#common/zod/backend/llm-models/llm-model';
-import type { ProviderOptionsAnthropic } from '#common/zod/backend/provider-options/provider-options-anthropic';
-import type { ProviderOptionsCodex } from '#common/zod/backend/provider-options/provider-options-codex';
-import type { ProviderOptionsOpenAI } from '#common/zod/backend/provider-options/provider-options-openai';
-import type { ProviderOptionsOpenAICompatible } from '#common/zod/backend/provider-options/provider-options-openai-compatible';
+import type { LlmModel } from '#common/types/backend/llm-models/llm-model';
+import type { ProviderOptionsAnthropic } from '#common/types/backend/provider-options/provider-options-anthropic';
+import type { ProviderOptionsCodex } from '#common/types/backend/provider-options/provider-options-codex';
+import type { ProviderOptionsOpenAI } from '#common/types/backend/provider-options/provider-options-openai';
+import type { ProviderOptionsOpenAICompatible } from '#common/types/backend/provider-options/provider-options-openai-compatible';
 import type {
   AvatarLt,
   AvatarSt,
@@ -64,7 +64,7 @@ import type {
   UconfigSt,
   UserLt,
   UserSt
-} from '#common/zod/st-lt';
+} from '#common/types/st-lt';
 import { AvatarEnt } from './avatars';
 import { BranchEnt } from './branches';
 import { BridgeEnt } from './bridges';

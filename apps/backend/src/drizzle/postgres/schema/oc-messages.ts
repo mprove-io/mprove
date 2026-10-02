@@ -7,7 +7,7 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { OcMessageLt, OcMessageSt } from '#common/zod/st-lt';
+import type { OcMessageLt, OcMessageSt } from '#common/types/st-lt';
 
 export const ocMessagesTable = pgTable(
   'oc_messages',

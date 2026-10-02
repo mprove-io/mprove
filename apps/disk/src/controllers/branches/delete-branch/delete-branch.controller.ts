@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskDeleteBranchResponse } from '#common/zod/disk/routes/branches/delete-branch/delete-branch-response';
+import type { ToDiskDeleteBranchResponse } from '#common/types/disk/routes/branches/delete-branch/delete-branch-response';
 import { handleHttpRequest } from '#disk/functions/top/handle-http-request/handle-http-request';
 import { DeleteBranchService } from './delete-branch.service';
 

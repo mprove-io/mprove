@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import type { ReportUnit } from '#common/zod/backend/report-unit';
+import type { ReportUnit } from '#common/types/backend/report-unit';
 import { FilteredReportsQuery } from '#front/app/queries/filtered-reports.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { NavigateService } from '#front/app/services/navigate.service';

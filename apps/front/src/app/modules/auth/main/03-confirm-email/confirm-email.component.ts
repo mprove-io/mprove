@@ -9,8 +9,8 @@ import {
 } from '#common/constants/top';
 import { LOCAL_STORAGE_TOKEN } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendConfirmUserEmailRequest } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-request';
-import type { ToBackendConfirmUserEmailResponse } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-response';
+import type { ToBackendConfirmUserEmailRequest } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-request';
+import type { ToBackendConfirmUserEmailResponse } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { AuthService } from '#front/app/services/auth.service';

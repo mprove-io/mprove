@@ -8,7 +8,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { RoleLt, RoleSt } from '#common/zod/st-lt';
+import type { RoleLt, RoleSt } from '#common/types/st-lt';
 
 export const rolesTable = pgTable(
   'roles',

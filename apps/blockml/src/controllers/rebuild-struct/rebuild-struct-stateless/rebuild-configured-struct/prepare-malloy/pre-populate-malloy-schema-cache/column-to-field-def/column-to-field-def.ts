@@ -12,7 +12,7 @@ import { DatabricksTypeParser } from '#blockml/classes/parse/parse-databricks-ty
 import { TrinoPrestoSchemaParser } from '#blockml/classes/parse/parse-trino-type/parse-trino-type';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { RawSchemaColumn } from '#common/zod/backend/connection-schemas/raw-schema';
+import type { RawSchemaColumn } from '#common/types/backend/connection-schemas/raw-schema';
 
 export function columnToFieldDef(item: {
   connectionType: ConnectionTypeEnum;

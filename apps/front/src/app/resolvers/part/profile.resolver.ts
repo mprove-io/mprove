@@ -6,7 +6,7 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import type { ToBackendGetUserProfileResponse } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-response';
+import type { ToBackendGetUserProfileResponse } from '#common/types/backend/routes/users/get-user-profile/get-user-profile-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '../../services/api.service';
 

@@ -11,7 +11,7 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FileSpace } from '#common/types/blockml/internal/file-space';
 
 let caller = CallerEnum.BuildYaml;
 let func = FuncEnum.SplitFiles;

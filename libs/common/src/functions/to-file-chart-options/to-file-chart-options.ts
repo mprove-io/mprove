@@ -5,11 +5,11 @@ import {
 } from '#common/constants/mconfig-chart';
 import { UI_CHART_TYPES } from '#common/constants/ui-chart-types';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { FileChartOptions } from '#common/zod/blockml/internal/file-chart-options';
-import type { FileChartOptionsSeriesElement } from '#common/zod/blockml/internal/file-chart-options-series';
-import type { FileChartOptionsXAxisElement } from '#common/zod/blockml/internal/file-chart-options-x-axis';
-import type { FileChartOptionsYAxisElement } from '#common/zod/blockml/internal/file-chart-options-y-axis';
-import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
+import type { FileChartOptions } from '#common/types/blockml/internal/file-chart-options';
+import type { FileChartOptionsSeriesElement } from '#common/types/blockml/internal/file-chart-options-series';
+import type { FileChartOptionsXAxisElement } from '#common/types/blockml/internal/file-chart-options-x-axis';
+import type { FileChartOptionsYAxisElement } from '#common/types/blockml/internal/file-chart-options-y-axis';
+import type { MconfigChart } from '#common/types/blockml/mconfig-chart';
 
 export function toFileChartOptions(item: {
   chart: MconfigChart;

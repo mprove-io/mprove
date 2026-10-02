@@ -8,8 +8,8 @@ import { Prep } from '#backend/interfaces/prep';
 import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendRegisterUserRequest } from '#common/zod/backend/routes/users/register-user/register-user-request';
-import type { ToBackendRegisterUserResponse } from '#common/zod/backend/routes/users/register-user/register-user-response';
+import type { ToBackendRegisterUserRequest } from '#common/types/backend/routes/users/register-user/register-user-request';
+import type { ToBackendRegisterUserResponse } from '#common/types/backend/routes/users/register-user/register-user-response';
 
 let testId = 'backend-register-user__ok';
 

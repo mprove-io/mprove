@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import type { OcEventTab } from '#backend/drizzle/postgres/schema/_tabs';
-import type { SessionStreamEvent } from '#common/zod/backend/session-stream-event';
+import type { SessionStreamEvent } from '#common/types/backend/session-stream-event';
 
 @Injectable()
 export class OcEventsService {

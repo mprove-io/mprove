@@ -10,9 +10,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendGenerateUserApiKeyOutput } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-output';
-import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
-import type { ToBackendGenerateUserApiKeyResponse } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
+import type { ToBackendGenerateUserApiKeyOutput } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-output';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
+import type { ToBackendGenerateUserApiKeyResponse } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-response';
 
 let testId = 'backend-generate-user-api-key__ok';
 

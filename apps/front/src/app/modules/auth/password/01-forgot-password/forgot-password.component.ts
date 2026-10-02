@@ -7,8 +7,8 @@ import { take, tap } from 'rxjs/operators';
 import { FORGOT_YOUR_PASSWORD_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_LOGIN, PATH_PASSWORD_RESET_SENT } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import type { ToBackendResetUserPasswordRequest } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-request';
-import type { ToBackendResetUserPasswordResponse } from '#common/zod/backend/routes/users/reset-user-password/reset-user-password-response';
+import type { ToBackendResetUserPasswordRequest } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-request';
+import type { ToBackendResetUserPasswordResponse } from '#common/types/backend/routes/users/reset-user-password/reset-user-password-response';
 import { ApiService } from '#front/app/services/api.service';
 
 @Component({

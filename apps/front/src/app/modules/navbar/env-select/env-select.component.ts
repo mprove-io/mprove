@@ -21,9 +21,9 @@ import {
 } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { EnvsItem } from '#common/zod/backend/envs-item';
-import type { ToBackendGetEnvsListRequest } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-request';
-import type { ToBackendGetEnvsListResponse } from '#common/zod/backend/routes/envs/get-envs-list/get-envs-list-response';
+import type { EnvsItem } from '#common/types/backend/envs-item';
+import type { ToBackendGetEnvsListRequest } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-request';
+import type { ToBackendGetEnvsListResponse } from '#common/types/backend/routes/envs/get-envs-list/get-envs-list-response';
 import { checkNavMain } from '#front/app/functions/check-nav-main';
 import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

@@ -7,7 +7,7 @@ import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
+import type { FileDashboard } from '#common/types/blockml/internal/file-dashboard';
 
 let func = FuncEnum.CheckDashboardTilesExist;
 

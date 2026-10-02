@@ -11,7 +11,7 @@ import {
 import {
   zMcpToolListDocsInput,
   zMcpToolListDocsOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-list-docs';
+} from '#common/types/backend/mcp-tools/mcp-tool-list-docs';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

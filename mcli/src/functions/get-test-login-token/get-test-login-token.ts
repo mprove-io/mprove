@@ -1,5 +1,5 @@
-import type { ToBackendLoginUserOutput } from '#common/zod/backend/routes/users/login-user/login-user-output';
-import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
+import type { ToBackendLoginUserOutput } from '#common/types/backend/routes/users/login-user/login-user-output';
+import type { ToBackendLoginUserRequest } from '#common/types/backend/routes/users/login-user/login-user-request';
 import { mreq } from '#mcli/functions/mreq/mreq';
 
 export async function getTestLoginToken(item: {

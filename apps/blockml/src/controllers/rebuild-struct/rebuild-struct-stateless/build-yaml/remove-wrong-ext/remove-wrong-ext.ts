@@ -8,8 +8,8 @@ import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { BmlFile } from '#common/zod/blockml/bml-file';
-import type { File2 } from '#common/zod/blockml/internal/file-2';
+import type { BmlFile } from '#common/types/blockml/bml-file';
+import type { File2 } from '#common/types/blockml/internal/file-2';
 
 let func = FuncEnum.RemoveWrongExt;
 

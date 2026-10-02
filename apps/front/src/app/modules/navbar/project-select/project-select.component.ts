@@ -22,9 +22,9 @@ import {
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ProjectsItem } from '#common/zod/backend/projects-item';
-import type { ToBackendGetProjectsListRequest } from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-request';
-import type { ToBackendGetProjectsListResponse } from '#common/zod/backend/routes/projects/get-projects-list/get-projects-list-response';
+import type { ProjectsItem } from '#common/types/backend/projects-item';
+import type { ToBackendGetProjectsListRequest } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-request';
+import type { ToBackendGetProjectsListResponse } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';

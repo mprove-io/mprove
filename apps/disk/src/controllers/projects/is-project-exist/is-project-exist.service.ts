@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Result } from '@praha/byethrow';
-import type { ToDiskIsProjectExistOutput } from '#common/zod/disk/routes/projects/is-project-exist/is-project-exist-output';
+import type { ToDiskIsProjectExistOutput } from '#common/types/disk/routes/projects/is-project-exist/is-project-exist-output';
 import type { DiskConfig } from '#disk/config/disk-config';
 import { isPathExist } from '#disk/functions/disk/is-path-exist/is-path-exist';
 import { checkRestoreOrg } from '#disk/functions/restore/check-restore-org/check-restore-org';

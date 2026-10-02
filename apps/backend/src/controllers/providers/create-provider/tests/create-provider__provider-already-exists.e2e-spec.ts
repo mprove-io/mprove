@@ -12,8 +12,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateProviderRequest } from '#common/zod/backend/routes/providers/create-provider/create-provider-request';
-import type { ToBackendCreateProviderResponse } from '#common/zod/backend/routes/providers/create-provider/create-provider-response';
+import type { ToBackendCreateProviderRequest } from '#common/types/backend/routes/providers/create-provider/create-provider-request';
+import type { ToBackendCreateProviderResponse } from '#common/types/backend/routes/providers/create-provider/create-provider-response';
 
 let testId = 'backend-create-provider__provider-already-exists';
 

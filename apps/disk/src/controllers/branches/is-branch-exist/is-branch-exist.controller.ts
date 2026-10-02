@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskIsBranchExistResponse } from '#common/zod/disk/routes/branches/is-branch-exist/is-branch-exist-response';
+import type { ToDiskIsBranchExistResponse } from '#common/types/disk/routes/branches/is-branch-exist/is-branch-exist-response';
 import { handleHttpRequest } from '#disk/functions/top/handle-http-request/handle-http-request';
 import { IsBranchExistService } from './is-branch-exist.service';
 

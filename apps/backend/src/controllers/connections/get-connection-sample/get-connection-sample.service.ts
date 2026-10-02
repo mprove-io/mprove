@@ -21,7 +21,7 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FetchSampleResult } from '#common/zod/backend/connections/fetch-sample-result';
+import type { FetchSampleResult } from '#common/types/backend/connections/fetch-sample-result';
 
 @Injectable()
 export class GetConnectionSampleService {

@@ -10,10 +10,10 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { MconfigChartSeries } from '#common/zod/blockml/mconfig-chart-series';
-import type { ChartSeriesWithField } from '#common/zod/front/chart-series-with-field';
-import type { EventChartSeriesElementUpdate } from '#common/zod/front/event-chart-series-element-update';
-import type { EventChartToggleSeries } from '#common/zod/front/event-chart-toggle-series';
+import type { MconfigChartSeries } from '#common/types/blockml/mconfig-chart-series';
+import type { ChartSeriesWithField } from '#common/types/front/chart-series-with-field';
+import type { EventChartSeriesElementUpdate } from '#common/types/front/event-chart-series-element-update';
+import type { EventChartToggleSeries } from '#common/types/front/event-chart-toggle-series';
 import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
 import { ChartTypeItem } from '../../models/models.component';
 

@@ -30,8 +30,8 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendSetOrgOwnerOutput } from '#common/types/backend/routes/orgs/set-org-owner/set-org-owner-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendSetOrgOwnerOutput } from '#common/zod/backend/routes/orgs/set-org-owner/set-org-owner-output';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)

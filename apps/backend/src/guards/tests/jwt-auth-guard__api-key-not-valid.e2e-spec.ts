@@ -11,9 +11,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendGetRepoRequest } from '#common/zod/backend/routes/repos/get-repo/get-repo-request';
-import type { ToBackendGetRepoResponse } from '#common/zod/backend/routes/repos/get-repo/get-repo-response';
-import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
+import type { ToBackendGetRepoRequest } from '#common/types/backend/routes/repos/get-repo/get-repo-request';
+import type { ToBackendGetRepoResponse } from '#common/types/backend/routes/repos/get-repo/get-repo-response';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 
 let testId = 'backend-jwt-auth-guard__api-key-not-valid';
 

@@ -4,7 +4,7 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
-import type { ProjectConnection } from '#common/zod/backend/project-connection';
+import type { ProjectConnection } from '#common/types/backend/project-connection';
 
 let caller = CallerEnum.BuildYaml;
 let func = FuncEnum.CheckSchema;

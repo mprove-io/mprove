@@ -1,6 +1,6 @@
 import type { Result } from '@praha/byethrow';
-import type { ToBlockmlOperation } from '#common/zod/blockml/request/to-blockml-operation';
-import type { ToBlockmlResponseForOperation } from '#common/zod/blockml/response/to-blockml-response-for-operation';
+import type { ToBlockmlOperation } from '#common/types/blockml/request/to-blockml-operation';
+import type { ToBlockmlResponseForOperation } from '#common/types/blockml/response/to-blockml-response-for-operation';
 
 export type BlockmlResultForOperation<TOperation extends ToBlockmlOperation> =
   Result.Result<

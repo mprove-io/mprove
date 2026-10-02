@@ -10,8 +10,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateEnvVarRequest } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-request';
-import type { ToBackendCreateEnvVarResponse } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-response';
+import type { ToBackendCreateEnvVarRequest } from '#common/types/backend/routes/envs/create-env-var/create-env-var-request';
+import type { ToBackendCreateEnvVarResponse } from '#common/types/backend/routes/envs/create-env-var/create-env-var-response';
 
 let testId = 'backend-create-env-var__ok';
 

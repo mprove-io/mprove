@@ -15,14 +15,14 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
-import type { FileChart } from '#common/zod/blockml/internal/file-chart';
-import type { FileDashboard } from '#common/zod/blockml/internal/file-dashboard';
-import type { FileMod } from '#common/zod/blockml/internal/file-mod';
-import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
-import type { FileReport } from '#common/zod/blockml/internal/file-report';
-import type { FileSchema } from '#common/zod/blockml/internal/file-schema';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
-import type { FileStore } from '#common/zod/blockml/internal/file-store';
+import type { FileChart } from '#common/types/blockml/internal/file-chart';
+import type { FileDashboard } from '#common/types/blockml/internal/file-dashboard';
+import type { FileMod } from '#common/types/blockml/internal/file-mod';
+import type { FileProjectConf } from '#common/types/blockml/internal/file-project-conf';
+import type { FileReport } from '#common/types/blockml/internal/file-report';
+import type { FileSchema } from '#common/types/blockml/internal/file-schema';
+import type { FileSpace } from '#common/types/blockml/internal/file-space';
+import type { FileStore } from '#common/types/blockml/internal/file-store';
 
 let func = FuncEnum.SplitFiles;
 

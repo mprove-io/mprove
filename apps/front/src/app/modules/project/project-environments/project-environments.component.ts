@@ -9,13 +9,13 @@ import {
   PATH_PROJECT,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
-import type { Env } from '#common/zod/backend/env';
-import type { EnvUser } from '#common/zod/backend/env-user';
-import type { Ev } from '#common/zod/backend/ev';
-import type { ToBackendDeleteEnvUserRequest } from '#common/zod/backend/routes/envs/delete-env-user/delete-env-user-request';
-import type { ToBackendDeleteEnvUserResponse } from '#common/zod/backend/routes/envs/delete-env-user/delete-env-user-response';
-import type { ToBackendEditEnvFallbacksRequest } from '#common/zod/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-request';
-import type { ToBackendEditEnvFallbacksResponse } from '#common/zod/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-response';
+import type { Env } from '#common/types/backend/env';
+import type { EnvUser } from '#common/types/backend/env-user';
+import type { Ev } from '#common/types/backend/ev';
+import type { ToBackendDeleteEnvUserRequest } from '#common/types/backend/routes/envs/delete-env-user/delete-env-user-request';
+import type { ToBackendDeleteEnvUserResponse } from '#common/types/backend/routes/envs/delete-env-user/delete-env-user-response';
+import type { ToBackendEditEnvFallbacksRequest } from '#common/types/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-request';
+import type { ToBackendEditEnvFallbacksResponse } from '#common/types/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

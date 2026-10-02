@@ -1,4 +1,4 @@
-import type { ToBackendGetConnectionSchemasOutput } from '#common/zod/backend/routes/connections/get-connection-schemas/get-connection-schemas-output';
+import type { ToBackendGetConnectionSchemasOutput } from '#common/types/backend/routes/connections/get-connection-schemas/get-connection-schemas-output';
 
 export function processGetConnectionSchemasPayload(item: {
   payload: ToBackendGetConnectionSchemasOutput;

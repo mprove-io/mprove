@@ -15,8 +15,8 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetModelsRequest } from '#common/zod/backend/routes/models/get-models/get-models-request';
-import type { ToBackendGetModelsResponse } from '#common/zod/backend/routes/models/get-models/get-models-response';
+import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
+import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
 
 let testId = 'backend-get-models__ok';
 

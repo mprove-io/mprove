@@ -1,6 +1,6 @@
 import { Result } from '@praha/byethrow';
 import fse, { type Stats } from 'fs-extra';
-import type { ReadFileCheckSizeError } from '#common/zod/node-common/function-errors/read-file-check-size-error';
+import type { ReadFileCheckSizeError } from '#common/types/node-common/function-errors/read-file-check-size-error';
 
 export async function readFileCheckSize(item: {
   filePath: string | URL;

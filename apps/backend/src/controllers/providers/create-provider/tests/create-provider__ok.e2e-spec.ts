@@ -20,8 +20,8 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateProviderRequest } from '#common/zod/backend/routes/providers/create-provider/create-provider-request';
-import type { ToBackendCreateProviderResponse } from '#common/zod/backend/routes/providers/create-provider/create-provider-response';
+import type { ToBackendCreateProviderRequest } from '#common/types/backend/routes/providers/create-provider/create-provider-request';
+import type { ToBackendCreateProviderResponse } from '#common/types/backend/routes/providers/create-provider/create-provider-response';
 
 let testId = 'backend-create-provider__ok';
 

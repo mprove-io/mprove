@@ -14,8 +14,8 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendCreateEnvVarRequest } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-request';
-import type { ToBackendCreateEnvVarResponse } from '#common/zod/backend/routes/envs/create-env-var/create-env-var-response';
+import type { ToBackendCreateEnvVarRequest } from '#common/types/backend/routes/envs/create-env-var/create-env-var-request';
+import type { ToBackendCreateEnvVarResponse } from '#common/types/backend/routes/envs/create-env-var/create-env-var-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';

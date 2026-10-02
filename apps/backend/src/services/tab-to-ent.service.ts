@@ -129,7 +129,7 @@ import type {
   UconfigSt,
   UserLt,
   UserSt
-} from '#common/zod/st-lt';
+} from '#common/types/st-lt';
 import { encryptData } from '#node-common/functions/encrypt-data/encrypt-data';
 import { HashService } from './hash.service';
 

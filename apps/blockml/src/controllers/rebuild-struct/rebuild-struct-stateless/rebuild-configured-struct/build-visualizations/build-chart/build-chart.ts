@@ -3,7 +3,7 @@ import { Result } from '@praha/byethrow';
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
-import type { FileChart } from '#common/zod/blockml/internal/file-chart';
+import type { FileChart } from '#common/types/blockml/internal/file-chart';
 import { checkChartAccess } from './check-chart-access/check-chart-access';
 import { checkChartTilesExist } from './check-chart-tiles-exist/check-chart-tiles-exist';
 

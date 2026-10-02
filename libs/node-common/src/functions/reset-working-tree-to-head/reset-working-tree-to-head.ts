@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { Result } from '@praha/byethrow';
 import type { SimpleGit, StatusResult } from 'simple-git';
-import type { ResetWorkingTreeToHeadError } from '#common/zod/node-common/function-errors/reset-working-tree-to-head-error';
+import type { ResetWorkingTreeToHeadError } from '#common/types/node-common/function-errors/reset-working-tree-to-head-error';
 import { createSimpleGit } from '#node-common/functions/create-simple-git/create-simple-git';
 import { removePathUnderDir } from '#node-common/functions/reset-working-tree-to-head/remove-path-under-dir/remove-path-under-dir';
 

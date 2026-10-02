@@ -20,7 +20,7 @@ import {
   type McpToolValidateFilesInput,
   zMcpToolValidateFilesInput,
   zMcpToolValidateFilesOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-validate-files';
+} from '#common/types/backend/mcp-tools/mcp-tool-validate-files';
 import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload/process-validate-files-payload';
 
 @McpController()

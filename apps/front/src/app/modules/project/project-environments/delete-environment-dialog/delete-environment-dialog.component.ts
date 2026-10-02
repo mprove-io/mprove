@@ -8,8 +8,8 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import type { ToBackendDeleteEnvRequest } from '#common/zod/backend/routes/envs/delete-env/delete-env-request';
-import type { ToBackendDeleteEnvResponse } from '#common/zod/backend/routes/envs/delete-env/delete-env-response';
+import type { ToBackendDeleteEnvRequest } from '#common/types/backend/routes/envs/delete-env/delete-env-request';
+import type { ToBackendDeleteEnvResponse } from '#common/types/backend/routes/envs/delete-env/delete-env-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';

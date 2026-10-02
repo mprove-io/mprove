@@ -15,8 +15,8 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetChartsRequest } from '#common/zod/backend/routes/charts/get-charts/get-charts-request';
-import type { ToBackendGetChartsResponse } from '#common/zod/backend/routes/charts/get-charts/get-charts-response';
+import type { ToBackendGetChartsRequest } from '#common/types/backend/routes/charts/get-charts/get-charts-request';
+import type { ToBackendGetChartsResponse } from '#common/types/backend/routes/charts/get-charts/get-charts-response';
 
 let testId = 'backend-get-charts__ok';
 

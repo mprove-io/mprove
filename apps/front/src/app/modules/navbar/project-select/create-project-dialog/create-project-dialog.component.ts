@@ -28,10 +28,10 @@ import {
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import type { ToBackendCreateProjectRequest } from '#common/zod/backend/routes/projects/create-project/create-project-request';
-import type { ToBackendCreateProjectResponse } from '#common/zod/backend/routes/projects/create-project/create-project-response';
-import type { ToBackendGenerateProjectRemoteKeyRequest } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-request';
-import type { ToBackendGenerateProjectRemoteKeyResponse } from '#common/zod/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-response';
+import type { ToBackendCreateProjectRequest } from '#common/types/backend/routes/projects/create-project/create-project-request';
+import type { ToBackendCreateProjectResponse } from '#common/types/backend/routes/projects/create-project/create-project-response';
+import type { ToBackendGenerateProjectRemoteKeyRequest } from '#common/types/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-request';
+import type { ToBackendGenerateProjectRemoteKeyResponse } from '#common/types/backend/routes/projects/generate-project-remote-key/generate-project-remote-key-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ApiService } from '#front/app/services/api.service';
 import { ValidationService } from '#front/app/services/validation.service';

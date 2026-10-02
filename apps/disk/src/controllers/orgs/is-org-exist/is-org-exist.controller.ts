@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskIsOrgExistResponse } from '#common/zod/disk/routes/orgs/is-org-exist/is-org-exist-response';
+import type { ToDiskIsOrgExistResponse } from '#common/types/disk/routes/orgs/is-org-exist/is-org-exist-response';
 import { handleHttpRequest } from '#disk/functions/top/handle-http-request/handle-http-request';
 import { IsOrgExistService } from './is-org-exist.service';
 

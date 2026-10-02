@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
 import { combineLatest, map } from 'rxjs';
-import type { Org } from '#common/zod/backend/org';
+import type { Org } from '#common/types/backend/org';
 import { BaseQuery } from './base.query';
 import { UserQuery } from './user.query';
 

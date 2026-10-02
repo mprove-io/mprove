@@ -17,7 +17,7 @@ import {
   type McpToolGetModelInput,
   zMcpToolGetModelInput,
   zMcpToolGetModelOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-get-model';
+} from '#common/types/backend/mcp-tools/mcp-tool-get-model';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
 
 @McpController()

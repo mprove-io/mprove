@@ -13,8 +13,8 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { FileProjectConf } from '#common/types/blockml/internal/file-project-conf';
 import type { sdrType } from '#common/types/sdr-type';
-import type { FileProjectConf } from '#common/zod/blockml/internal/file-project-conf';
 
 let func = FuncEnum.CheckAndSetImplicitFormatNumber;
 

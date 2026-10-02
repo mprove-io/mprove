@@ -20,8 +20,8 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendDeleteLlmModelRequest } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
-import type { ToBackendDeleteLlmModelResponse } from '#common/zod/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
+import type { ToBackendDeleteLlmModelRequest } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
+import type { ToBackendDeleteLlmModelResponse } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-response';
 
 let testId = 'backend-delete-llm-model__ok';
 

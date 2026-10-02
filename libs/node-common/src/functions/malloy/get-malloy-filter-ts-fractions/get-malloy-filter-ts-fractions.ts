@@ -26,7 +26,7 @@ import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Fraction } from '#common/zod/blockml/fraction';
+import type { Fraction } from '#common/types/blockml/fraction';
 import { getCurrentUnitStartTs } from '#node-common/functions/get-current-unit-start-ts/get-current-unit-start-ts';
 import { getUnitDuration } from '#node-common/functions/get-unit-duration/get-unit-duration';
 import { getFractionTsMixUnit } from '#node-common/functions/malloy/get-malloy-filter-ts-fractions/get-fraction-ts-mix-unit/get-fraction-ts-mix-unit';

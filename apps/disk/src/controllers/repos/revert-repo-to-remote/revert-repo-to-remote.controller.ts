@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskRevertRepoToRemoteResponse } from '#common/zod/disk/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
+import type { ToDiskRevertRepoToRemoteResponse } from '#common/types/disk/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
 import { handleHttpRequest } from '#disk/functions/top/handle-http-request/handle-http-request';
 import { RevertRepoToRemoteService } from './revert-repo-to-remote.service';
 

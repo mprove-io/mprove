@@ -27,8 +27,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendDeleteGivenOutput } from '#common/types/backend/routes/givens/delete-given/delete-given-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteGivenOutput } from '#common/zod/backend/routes/givens/delete-given/delete-given-output';
 
 @ApiTags('Givens')
 @UseGuards(ThrottlerUserIdGuard)

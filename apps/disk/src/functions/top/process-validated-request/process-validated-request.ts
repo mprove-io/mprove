@@ -1,9 +1,9 @@
 import type { Logger } from '@nestjs/common';
 import { Result } from '@praha/byethrow';
-import type { ToDiskOperation } from '#common/zod/disk/request/to-disk-operation';
-import type { ToDiskRequestForOperation } from '#common/zod/disk/request/to-disk-request-for-operation';
-import type { ToDiskResponseForOperation } from '#common/zod/disk/response/to-disk-response-for-operation';
-import type { ToDiskResponseMetadata } from '#common/zod/disk/response/to-disk-response-metadata';
+import type { ToDiskOperation } from '#common/types/disk/request/to-disk-operation';
+import type { ToDiskRequestForOperation } from '#common/types/disk/request/to-disk-request-for-operation';
+import type { ToDiskResponseForOperation } from '#common/types/disk/response/to-disk-response-for-operation';
+import type { ToDiskResponseMetadata } from '#common/types/disk/response/to-disk-response-metadata';
 import type { DiskResultForOperation } from '#disk/types/disk-result-for-operation';
 
 export async function processValidatedRequest<

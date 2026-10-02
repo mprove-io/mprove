@@ -7,12 +7,12 @@ import { METHOD_RPC } from '#common/constants/top';
 import {
   type ToBlockmlOperation,
   zToBlockmlOperation
-} from '#common/zod/blockml/request/to-blockml-operation';
-import { zToBlockmlOperationRegistry } from '#common/zod/blockml/request/to-blockml-operation-registry';
-import type { ToBlockmlRequest } from '#common/zod/blockml/request/to-blockml-request';
-import type { ToBlockmlResponse } from '#common/zod/blockml/response/to-blockml-response';
-import type { ToBlockmlResponseForOperation } from '#common/zod/blockml/response/to-blockml-response-for-operation';
-import type { ToBlockmlUnknownOperationResponse } from '#common/zod/blockml/response/to-blockml-unknown-operation-response';
+} from '#common/types/blockml/request/to-blockml-operation';
+import { zToBlockmlOperationRegistry } from '#common/types/blockml/request/to-blockml-operation-registry';
+import type { ToBlockmlRequest } from '#common/types/blockml/request/to-blockml-request';
+import type { ToBlockmlResponse } from '#common/types/blockml/response/to-blockml-response';
+import type { ToBlockmlResponseForOperation } from '#common/types/blockml/response/to-blockml-response-for-operation';
+import type { ToBlockmlUnknownOperationResponse } from '#common/types/blockml/response/to-blockml-unknown-operation-response';
 
 @Injectable()
 export class MessageService {

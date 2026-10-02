@@ -10,9 +10,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendGetUserProfileRequest } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-request';
-import type { ToBackendGetUserProfileResponse } from '#common/zod/backend/routes/users/get-user-profile/get-user-profile-response';
-import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
+import type { ToBackendGetUserProfileRequest } from '#common/types/backend/routes/users/get-user-profile/get-user-profile-request';
+import type { ToBackendGetUserProfileResponse } from '#common/types/backend/routes/users/get-user-profile/get-user-profile-response';
+import type { ToBackendLoginUserRequest } from '#common/types/backend/routes/users/login-user/login-user-request';
 
 let testId = 'backend-get-user-profile__idemp-user-mismatch';
 

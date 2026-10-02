@@ -11,7 +11,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { map, take } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetConnectionSampleResponse } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
+import type { ToBackendGetConnectionSampleResponse } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-response';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../../../shared/shared.module';
 

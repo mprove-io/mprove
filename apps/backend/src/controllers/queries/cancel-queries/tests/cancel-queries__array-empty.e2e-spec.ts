@@ -21,10 +21,10 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCancelQueriesRequest } from '#common/zod/backend/routes/queries/cancel-queries/cancel-queries-request';
-import type { ToBackendCancelQueriesResponse } from '#common/zod/backend/routes/queries/cancel-queries/cancel-queries-response';
-import type { Mconfig } from '#common/zod/blockml/mconfig';
-import type { Query } from '#common/zod/blockml/query';
+import type { ToBackendCancelQueriesRequest } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-request';
+import type { ToBackendCancelQueriesResponse } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-response';
+import type { Mconfig } from '#common/types/blockml/mconfig';
+import type { Query } from '#common/types/blockml/query';
 
 let testId = 'backend-cancel-queries__array-empty';
 

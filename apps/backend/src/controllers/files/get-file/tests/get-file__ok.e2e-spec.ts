@@ -11,8 +11,8 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendGetFileRequest } from '#common/zod/backend/routes/files/get-file/get-file-request';
-import type { ToBackendGetFileResponse } from '#common/zod/backend/routes/files/get-file/get-file-response';
+import type { ToBackendGetFileRequest } from '#common/types/backend/routes/files/get-file/get-file-request';
+import type { ToBackendGetFileResponse } from '#common/types/backend/routes/files/get-file/get-file-response';
 
 let testId = 'backend-get-file__ok';
 

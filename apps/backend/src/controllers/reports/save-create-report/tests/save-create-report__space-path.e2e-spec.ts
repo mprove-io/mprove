@@ -17,10 +17,10 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeSpaceUnits } from '#common/functions/make-space-units/make-space-units';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
-import type { ToBackendSaveCreateReportOutput } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-output';
-import type { ToBackendSaveCreateReportRequest } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-request';
-import type { ToBackendSaveCreateReportResponse } from '#common/zod/backend/routes/reports/save-create-report/save-create-report-response';
+import type { ToBackendCreateDraftReportRequest } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-request';
+import type { ToBackendSaveCreateReportOutput } from '#common/types/backend/routes/reports/save-create-report/save-create-report-output';
+import type { ToBackendSaveCreateReportRequest } from '#common/types/backend/routes/reports/save-create-report/save-create-report-request';
+import type { ToBackendSaveCreateReportResponse } from '#common/types/backend/routes/reports/save-create-report/save-create-report-response';
 
 let testId = 'backend-save-create-report__space-path';
 

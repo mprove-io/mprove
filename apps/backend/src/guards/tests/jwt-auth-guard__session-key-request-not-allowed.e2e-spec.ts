@@ -16,8 +16,8 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCommitRepoRequest } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-request';
-import type { ToBackendCommitRepoResponse } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-response';
+import type { ToBackendCommitRepoRequest } from '#common/types/backend/routes/repos/commit-repo/commit-repo-request';
+import type { ToBackendCommitRepoResponse } from '#common/types/backend/routes/repos/commit-repo/commit-repo-response';
 
 let testId = 'backend-jwt-auth-guard__session-key-request-not-allowed';
 

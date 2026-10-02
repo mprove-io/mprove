@@ -11,7 +11,7 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { File3 } from '#common/zod/blockml/internal/file-3';
+import type { File3 } from '#common/types/blockml/internal/file-3';
 
 let func = FuncEnum.YamlToObjects;
 

@@ -5,8 +5,8 @@ import { log } from '#blockml/functions/log/log';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
-import type { FileSpace } from '#common/zod/blockml/internal/file-space';
+import type { FilePartSpace } from '#common/types/blockml/internal/file-part-space';
+import type { FileSpace } from '#common/types/blockml/internal/file-space';
 import { pushFilePartSpaceFoldersRecursive } from './push-file-part-space-folders-recursive/push-file-part-space-folders-recursive';
 
 let func = FuncEnum.MakeFilePartSpaces;

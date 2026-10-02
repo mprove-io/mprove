@@ -7,7 +7,7 @@ import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileMod } from '#common/zod/blockml/internal/file-mod';
+import type { FileMod } from '#common/types/blockml/internal/file-mod';
 import { checkModBuildMetricsFieldGroups } from './check-mod-build-metrics-field-groups/check-mod-build-metrics-field-groups';
 
 let func = FuncEnum.CheckBuildMetricsFieldGroups;

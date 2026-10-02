@@ -9,7 +9,7 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
 
 export const projectsTable = pgTable(
   'projects',

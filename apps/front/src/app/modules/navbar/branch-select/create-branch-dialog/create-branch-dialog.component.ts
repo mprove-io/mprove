@@ -30,9 +30,9 @@ import {
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
-import type { ToBackendCreateBranchResponse } from '#common/zod/backend/routes/branches/create-branch/create-branch-response';
-import type { BranchItem } from '#common/zod/front/branch-item';
+import type { ToBackendCreateBranchRequest } from '#common/types/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendCreateBranchResponse } from '#common/types/backend/routes/branches/create-branch/create-branch-response';
+import type { BranchItem } from '#common/types/front/branch-item';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';

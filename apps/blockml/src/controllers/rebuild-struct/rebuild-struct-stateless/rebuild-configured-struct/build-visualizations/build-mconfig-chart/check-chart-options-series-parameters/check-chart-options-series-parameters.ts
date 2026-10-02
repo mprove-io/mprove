@@ -14,10 +14,10 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
+import type { FileChartOptionsSeriesElement } from '#common/types/blockml/internal/file-chart-options-series';
+import type { FilePartTile } from '#common/types/blockml/internal/file-part-tile';
+import type { FileReport } from '#common/types/blockml/internal/file-report';
 import type { drcType } from '#common/types/drc-type';
-import type { FileChartOptionsSeriesElement } from '#common/zod/blockml/internal/file-chart-options-series';
-import type { FilePartTile } from '#common/zod/blockml/internal/file-part-tile';
-import type { FileReport } from '#common/zod/blockml/internal/file-report';
 
 let func = FuncEnum.CheckChartOptionsSeriesParameters;
 

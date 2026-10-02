@@ -20,9 +20,9 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+import type { ToBackendCommitRepoOutput } from '#common/types/backend/routes/repos/commit-repo/commit-repo-output';
+import type { ToDiskCommitRepoOutput } from '#common/types/disk/routes/repos/commit-repo/commit-repo-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendCommitRepoOutput } from '#common/zod/backend/routes/repos/commit-repo/commit-repo-output';
-import type { ToDiskCommitRepoOutput } from '#common/zod/disk/routes/repos/commit-repo/commit-repo-output';
 
 @ApiTags('Repos')
 @UseGuards(ThrottlerUserIdGuard)

@@ -10,8 +10,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDeleteMemberRequest } from '#common/zod/backend/routes/members/delete-member/delete-member-request';
-import type { ToBackendDeleteMemberResponse } from '#common/zod/backend/routes/members/delete-member/delete-member-response';
+import type { ToBackendDeleteMemberRequest } from '#common/types/backend/routes/members/delete-member/delete-member-request';
+import type { ToBackendDeleteMemberResponse } from '#common/types/backend/routes/members/delete-member/delete-member-response';
 
 let testId = 'backend-delete-member__ok';
 

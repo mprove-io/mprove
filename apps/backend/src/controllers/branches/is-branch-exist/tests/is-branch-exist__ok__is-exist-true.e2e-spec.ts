@@ -11,8 +11,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendIsBranchExistRequest } from '#common/zod/backend/routes/branches/is-branch-exist/is-branch-exist-request';
-import type { ToBackendIsBranchExistResponse } from '#common/zod/backend/routes/branches/is-branch-exist/is-branch-exist-response';
+import type { ToBackendIsBranchExistRequest } from '#common/types/backend/routes/branches/is-branch-exist/is-branch-exist-request';
+import type { ToBackendIsBranchExistResponse } from '#common/types/backend/routes/branches/is-branch-exist/is-branch-exist-response';
 
 let testId = 'backend-is-branch-exist__ok__is-exist-true';
 

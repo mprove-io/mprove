@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Sandbox } from 'e2b';
-import type { CodexAuth } from '#common/zod/backend/codex-auth';
+import type { CodexAuth } from '#common/types/backend/codex-auth';
 
 const CODEX_AUTH_JSON_PATH = '/home/user/.local/share/opencode/auth.json';
 

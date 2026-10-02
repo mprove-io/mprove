@@ -18,8 +18,8 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendGetStructOutput } from '#common/types/backend/routes/structs/get-struct/get-struct-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetStructOutput } from '#common/zod/backend/routes/structs/get-struct/get-struct-output';
 
 @ApiTags('Structs')
 @UseGuards(ThrottlerUserIdGuard)

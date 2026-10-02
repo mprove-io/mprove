@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { Project } from '#common/zod/backend/project';
+import type { Project } from '#common/types/backend/project';
 import { BaseQuery } from './base.query';
 
 export type ProjectState = Project;

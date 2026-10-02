@@ -12,10 +12,10 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FieldFilter } from '#common/zod/blockml/internal/field-filter';
-import type { FieldStoreFilter } from '#common/zod/blockml/internal/field-store-filter';
-import type { FileStore } from '#common/zod/blockml/internal/file-store';
-import type { FileStoreResult } from '#common/zod/blockml/internal/file-store-result';
+import type { FieldFilter } from '#common/types/blockml/internal/field-filter';
+import type { FieldStoreFilter } from '#common/types/blockml/internal/field-store-filter';
+import type { FileStore } from '#common/types/blockml/internal/file-store';
+import type { FileStoreResult } from '#common/types/blockml/internal/file-store-result';
 
 let func = FuncEnum.CheckStoreFractionControls;
 

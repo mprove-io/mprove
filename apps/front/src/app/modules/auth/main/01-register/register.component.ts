@@ -11,9 +11,9 @@ import {
   PATH_VERIFY_EMAIL
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import type { ToBackendCheckSignUpResponse } from '#common/zod/backend/routes/check/check-sign-up/check-sign-up-response';
-import type { ToBackendRegisterUserRequest } from '#common/zod/backend/routes/users/register-user/register-user-request';
-import type { ToBackendRegisterUserResponse } from '#common/zod/backend/routes/users/register-user/register-user-response';
+import type { ToBackendCheckSignUpResponse } from '#common/types/backend/routes/check/check-sign-up/check-sign-up-response';
+import type { ToBackendRegisterUserRequest } from '#common/types/backend/routes/users/register-user/register-user-request';
+import type { ToBackendRegisterUserResponse } from '#common/types/backend/routes/users/register-user/register-user-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 

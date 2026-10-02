@@ -12,9 +12,9 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FieldStoreFilter } from '#common/zod/blockml/internal/field-store-filter';
-import type { FileFraction } from '#common/zod/blockml/internal/file-fraction';
-import type { FileStoreFractionType } from '#common/zod/blockml/internal/file-store-fraction-type';
+import type { FieldStoreFilter } from '#common/types/blockml/internal/field-store-filter';
+import type { FileFraction } from '#common/types/blockml/internal/file-fraction';
+import type { FileStoreFractionType } from '#common/types/blockml/internal/file-store-fraction-type';
 
 let func = FuncEnum.CheckStoreFraction;
 

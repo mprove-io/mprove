@@ -21,8 +21,8 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { UsersService } from '#backend/services/db/users.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendGenerateUserApiKeyOutput } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGenerateUserApiKeyOutput } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-output';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

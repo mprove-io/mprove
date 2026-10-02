@@ -1,7 +1,7 @@
 import { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { Mconfig } from '#common/zod/blockml/mconfig';
-import type { ModelField } from '#common/zod/blockml/model-field';
-import type { Sorting } from '#common/zod/blockml/sorting';
+import type { Mconfig } from '#common/types/blockml/mconfig';
+import type { ModelField } from '#common/types/blockml/model-field';
+import type { Sorting } from '#common/types/blockml/sorting';
 
 export function sortChartFieldsOnSelectChange<T extends Mconfig>(item: {
   mconfig: T;

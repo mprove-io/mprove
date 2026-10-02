@@ -1,9 +1,9 @@
 import { Result } from '@praha/byethrow';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/zod/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
-import type { DiskRestoreProjectGitCloneRepoBranchError } from '#common/zod/disk/function-errors/disk-restore-project-git-clone-repo-branch-error';
-import type { ProjectLt } from '#common/zod/st-lt';
+import type { DiskCheckRestoreOrgProjectRepoBranchError } from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
+import type { DiskRestoreProjectGitCloneRepoBranchError } from '#common/types/disk/function-errors/disk-restore-project-git-clone-repo-branch-error';
+import type { ProjectLt } from '#common/types/st-lt';
 import { checkRestoreOrgProjectRepo } from '#disk/functions/restore/check-restore-org-project-repo/check-restore-org-project-repo';
 import { restoreProjectGitCloneRepoBranch } from '#disk/functions/restore/check-restore-org-project-repo-branch/restore-project-git-clone-repo-branch/restore-project-git-clone-repo-branch';
 

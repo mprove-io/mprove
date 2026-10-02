@@ -9,8 +9,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendConfirmUserEmailRequest } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-request';
-import type { ToBackendConfirmUserEmailResponse } from '#common/zod/backend/routes/users/confirm-user-email/confirm-user-email-response';
+import type { ToBackendConfirmUserEmailRequest } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-request';
+import type { ToBackendConfirmUserEmailResponse } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-response';
 
 let testId = 'backend-confirm-user-email__user-does-not-exist';
 

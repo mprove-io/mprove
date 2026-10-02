@@ -18,8 +18,8 @@ import {
   LOCAL_STORAGE_TOKEN
 } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
-import type { ToBackendLoginUserResponse } from '#common/zod/backend/routes/users/login-user/login-user-response';
+import type { ToBackendLoginUserRequest } from '#common/types/backend/routes/users/login-user/login-user-request';
+import type { ToBackendLoginUserResponse } from '#common/types/backend/routes/users/login-user/login-user-response';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { AuthService } from '#front/app/services/auth.service';

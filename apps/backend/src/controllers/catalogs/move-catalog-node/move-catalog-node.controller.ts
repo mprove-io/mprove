@@ -36,9 +36,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendMoveCatalogNodeOutput } from '#common/types/backend/routes/catalogs/move-catalog-node/move-catalog-node-output';
+import type { ToDiskMoveCatalogNodeOutput } from '#common/types/disk/routes/catalogs/move-catalog-node/move-catalog-node-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendMoveCatalogNodeOutput } from '#common/zod/backend/routes/catalogs/move-catalog-node/move-catalog-node-output';
-import type { ToDiskMoveCatalogNodeOutput } from '#common/zod/disk/routes/catalogs/move-catalog-node/move-catalog-node-output';
 
 const { forEachSeries } = pIteration;
 

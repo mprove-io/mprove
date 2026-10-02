@@ -13,9 +13,9 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendSetUserNameRequest } from '#common/zod/backend/routes/users/set-user-name/set-user-name-request';
-import type { ToBackendSetUserNameResponse } from '#common/zod/backend/routes/users/set-user-name/set-user-name-response';
-import type { User } from '#common/zod/backend/user';
+import type { ToBackendSetUserNameRequest } from '#common/types/backend/routes/users/set-user-name/set-user-name-request';
+import type { ToBackendSetUserNameResponse } from '#common/types/backend/routes/users/set-user-name/set-user-name-response';
+import type { User } from '#common/types/backend/user';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../shared/shared.module';

@@ -36,9 +36,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendPullRepoOutput } from '#common/types/backend/routes/repos/pull-repo/pull-repo-output';
+import type { ToDiskPullRepoOutput } from '#common/types/disk/routes/repos/pull-repo/pull-repo-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendPullRepoOutput } from '#common/zod/backend/routes/repos/pull-repo/pull-repo-output';
-import type { ToDiskPullRepoOutput } from '#common/zod/disk/routes/repos/pull-repo/pull-repo-output';
 
 const { forEachSeries } = pIteration;
 

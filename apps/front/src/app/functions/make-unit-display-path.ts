@@ -7,7 +7,7 @@ import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Space } from '#common/zod/blockml/space';
+import type { Space } from '#common/types/blockml/space';
 
 export function makeUnitDisplayPath(item: {
   projectId: string;

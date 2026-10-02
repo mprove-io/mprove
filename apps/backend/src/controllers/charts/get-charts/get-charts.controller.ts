@@ -23,8 +23,8 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
+import type { ToBackendGetChartsOutput } from '#common/types/backend/routes/charts/get-charts/get-charts-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetChartsOutput } from '#common/zod/backend/routes/charts/get-charts/get-charts-output';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)

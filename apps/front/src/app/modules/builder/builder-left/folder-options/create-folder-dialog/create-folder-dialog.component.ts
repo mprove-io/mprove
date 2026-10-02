@@ -15,8 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendCreateFolderRequest } from '#common/zod/backend/routes/folders/create-folder/create-folder-request';
-import type { ToBackendCreateFolderResponse } from '#common/zod/backend/routes/folders/create-folder/create-folder-response';
+import type { ToBackendCreateFolderRequest } from '#common/types/backend/routes/folders/create-folder/create-folder-request';
+import type { ToBackendCreateFolderResponse } from '#common/types/backend/routes/folders/create-folder/create-folder-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';

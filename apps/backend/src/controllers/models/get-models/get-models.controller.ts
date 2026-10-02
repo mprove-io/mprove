@@ -21,9 +21,9 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ModelX } from '#common/types/backend/model-x';
+import type { ToBackendGetModelsOutput } from '#common/types/backend/routes/models/get-models/get-models-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ModelX } from '#common/zod/backend/model-x';
-import type { ToBackendGetModelsOutput } from '#common/zod/backend/routes/models/get-models/get-models-output';
 
 @ApiTags('Models')
 @UseGuards(ThrottlerUserIdGuard)

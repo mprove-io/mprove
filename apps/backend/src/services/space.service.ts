@@ -13,11 +13,11 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Member } from '#common/zod/backend/member';
-import type { SpaceFolder } from '#common/zod/backend/space-folder';
-import type { SpaceNode } from '#common/zod/backend/space-node';
-import type { SpaceUnit } from '#common/zod/backend/space-unit';
-import type { Space } from '#common/zod/blockml/space';
+import type { Member } from '#common/types/backend/member';
+import type { SpaceFolder } from '#common/types/backend/space-folder';
+import type { SpaceNode } from '#common/types/backend/space-node';
+import type { SpaceUnit } from '#common/types/backend/space-unit';
+import type { Space } from '#common/types/blockml/space';
 
 @Injectable()
 export class SpaceService {

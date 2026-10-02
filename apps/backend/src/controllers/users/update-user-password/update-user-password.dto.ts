@@ -1,8 +1,8 @@
 import { createZodDto } from 'nestjs-zod';
 import { createBackendResponseDto } from '#backend/functions/create-backend-response-dto';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import { zToBackendUpdateUserPasswordRequest } from '#common/zod/backend/routes/users/update-user-password/update-user-password-request';
-import { zToBackendUpdateUserPasswordResponse } from '#common/zod/backend/routes/users/update-user-password/update-user-password-response';
+import { zToBackendUpdateUserPasswordRequest } from '#common/types/backend/routes/users/update-user-password/update-user-password-request';
+import { zToBackendUpdateUserPasswordResponse } from '#common/types/backend/routes/users/update-user-password/update-user-password-response';
 
 export class ToBackendUpdateUserPasswordRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendUpdateUserPasswordRequest })

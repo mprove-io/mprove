@@ -12,11 +12,11 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Member } from '#common/zod/backend/member';
-import type { ModelPart } from '#common/zod/backend/model-part';
-import type { ModelPartX } from '#common/zod/backend/model-part-x';
-import type { ModelX } from '#common/zod/backend/model-x';
-import type { Model } from '#common/zod/blockml/model';
+import type { Member } from '#common/types/backend/member';
+import type { ModelPart } from '#common/types/backend/model-part';
+import type { ModelPartX } from '#common/types/backend/model-part-x';
+import type { ModelX } from '#common/types/backend/model-x';
+import type { Model } from '#common/types/blockml/model';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

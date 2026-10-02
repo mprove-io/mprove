@@ -17,7 +17,7 @@ import {
   type McpToolGetSchemasInput,
   zMcpToolGetSchemasInput,
   zMcpToolGetSchemasOutput
-} from '#common/zod/backend/mcp-tools/mcp-tool-get-schemas';
+} from '#common/types/backend/mcp-tools/mcp-tool-get-schemas';
 import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload/process-get-connection-schemas-payload';
 
 @McpController()

@@ -14,10 +14,10 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Env } from '#common/zod/backend/env';
-import type { Ev } from '#common/zod/backend/ev';
-import type { ToBackendEditEnvVarRequest } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-request';
-import type { ToBackendEditEnvVarResponse } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-response';
+import type { Env } from '#common/types/backend/env';
+import type { Ev } from '#common/types/backend/ev';
+import type { ToBackendEditEnvVarRequest } from '#common/types/backend/routes/envs/edit-env-var/edit-env-var-request';
+import type { ToBackendEditEnvVarResponse } from '#common/types/backend/routes/envs/edit-env-var/edit-env-var-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';
 import { MemberQuery } from '#front/app/queries/member.query';

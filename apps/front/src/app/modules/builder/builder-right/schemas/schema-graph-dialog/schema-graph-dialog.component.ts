@@ -14,8 +14,8 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Edge, Node, Vflow, VflowComponent } from 'ngx-vflow';
 import { map, take } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { CombinedSchemaItem } from '#common/zod/backend/connection-schemas/combined-schema';
-import type { ToBackendGetConnectionSampleResponse } from '#common/zod/backend/routes/connections/get-connection-sample/get-connection-sample-response';
+import type { CombinedSchemaItem } from '#common/types/backend/connection-schemas/combined-schema';
+import type { ToBackendGetConnectionSampleResponse } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-response';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../../../shared/shared.module';
 import {

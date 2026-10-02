@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
-import type { ToDiskSaveFileResponse } from '#common/zod/disk/routes/files/save-file/save-file-response';
+import type { ToDiskSaveFileResponse } from '#common/types/disk/routes/files/save-file/save-file-response';
 import { handleHttpRequest } from '#disk/functions/top/handle-http-request/handle-http-request';
 import { SaveFileService } from './save-file.service';
 

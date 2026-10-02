@@ -1,8 +1,8 @@
 import { createZodDto } from 'nestjs-zod';
 import { createBackendResponseDto } from '#backend/functions/create-backend-response-dto';
 import { zodStripCustom } from '#backend/functions/zod-strip-custom';
-import { zToBackendGetFileRequest } from '#common/zod/backend/routes/files/get-file/get-file-request';
-import { zToBackendGetFileResponse } from '#common/zod/backend/routes/files/get-file/get-file-response';
+import { zToBackendGetFileRequest } from '#common/types/backend/routes/files/get-file/get-file-request';
+import { zToBackendGetFileResponse } from '#common/types/backend/routes/files/get-file/get-file-response';
 
 export class ToBackendGetFileRequestDto extends createZodDto(
   zodStripCustom({ schema: zToBackendGetFileRequest })

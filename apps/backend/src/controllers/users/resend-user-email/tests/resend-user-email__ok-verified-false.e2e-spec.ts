@@ -9,8 +9,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendResendUserEmailRequest } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-request';
-import type { ToBackendResendUserEmailResponse } from '#common/zod/backend/routes/users/resend-user-email/resend-user-email-response';
+import type { ToBackendResendUserEmailRequest } from '#common/types/backend/routes/users/resend-user-email/resend-user-email-request';
+import type { ToBackendResendUserEmailResponse } from '#common/types/backend/routes/users/resend-user-email/resend-user-email-response';
 
 let testId = 'resend-user-email__ok-verified-false';
 

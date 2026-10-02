@@ -6,7 +6,7 @@ import { log } from '#blockml/functions/log/log';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { FilePartSpace } from '#common/zod/blockml/internal/file-part-space';
+import type { FilePartSpace } from '#common/types/blockml/internal/file-part-space';
 import { setSpaceFullTitleRecursive } from './set-space-full-title-recursive/set-space-full-title-recursive';
 
 let func = FuncEnum.BuildSpaceFullTitles;

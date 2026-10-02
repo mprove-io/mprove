@@ -3,12 +3,12 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BaseProject } from '#common/zod/backend/base-project';
-import type { ToDiskGetCatalogNodesRequest } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-request';
-import type { ToDiskGetCatalogNodesResponse } from '#common/zod/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
-import type { ToDiskCreateOrgRequest } from '#common/zod/disk/routes/orgs/create-org/create-org-request';
-import type { ToDiskCreateProjectRequest } from '#common/zod/disk/routes/projects/create-project/create-project-request';
-import type { ProjectLt, ProjectSt } from '#common/zod/st-lt';
+import type { BaseProject } from '#common/types/backend/base-project';
+import type { ToDiskGetCatalogNodesRequest } from '#common/types/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-request';
+import type { ToDiskGetCatalogNodesResponse } from '#common/types/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-response';
+import type { ToDiskCreateOrgRequest } from '#common/types/disk/routes/orgs/create-org/create-org-request';
+import type { ToDiskCreateProjectRequest } from '#common/types/disk/routes/projects/create-project/create-project-request';
+import type { ProjectLt, ProjectSt } from '#common/types/st-lt';
 import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
 import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 

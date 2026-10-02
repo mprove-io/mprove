@@ -15,8 +15,8 @@ import {
   PATH_PROJECT
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
-import type { ToBackendGetModelRequest } from '#common/zod/backend/routes/models/get-model/get-model-request';
-import type { ToBackendGetModelResponse } from '#common/zod/backend/routes/models/get-model/get-model-response';
+import type { ToBackendGetModelRequest } from '#common/types/backend/routes/models/get-model/get-model-request';
+import type { ToBackendGetModelResponse } from '#common/types/backend/routes/models/get-model/get-model-response';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { ModelQuery } from '../queries/model.query';

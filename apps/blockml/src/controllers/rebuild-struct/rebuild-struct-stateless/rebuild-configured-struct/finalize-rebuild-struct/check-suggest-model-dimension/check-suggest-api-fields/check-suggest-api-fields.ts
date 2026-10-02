@@ -4,8 +4,8 @@ import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Model } from '#common/zod/blockml/model';
-import type { ModelField } from '#common/zod/blockml/model-field';
+import type { Model } from '#common/types/blockml/model';
+import type { ModelField } from '#common/types/blockml/model-field';
 
 export function checkSuggestApiFields(item: {
   fields: ModelField[];

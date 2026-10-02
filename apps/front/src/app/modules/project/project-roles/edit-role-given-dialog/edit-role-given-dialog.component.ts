@@ -14,11 +14,11 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { GivenTypeEnum } from '#common/enums/given-type.enum';
-import type { Given } from '#common/zod/backend/given';
-import type { Gv } from '#common/zod/backend/gv';
-import type { Role } from '#common/zod/backend/role';
-import type { ToBackendEditRoleGivenRequest } from '#common/zod/backend/routes/roles/edit-role-given/edit-role-given-request';
-import type { ToBackendEditRoleGivenResponse } from '#common/zod/backend/routes/roles/edit-role-given/edit-role-given-response';
+import type { Given } from '#common/types/backend/given';
+import type { Gv } from '#common/types/backend/gv';
+import type { Role } from '#common/types/backend/role';
+import type { ToBackendEditRoleGivenRequest } from '#common/types/backend/routes/roles/edit-role-given/edit-role-given-request';
+import type { ToBackendEditRoleGivenResponse } from '#common/types/backend/routes/roles/edit-role-given/edit-role-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { RolesQuery } from '#front/app/queries/roles.query';

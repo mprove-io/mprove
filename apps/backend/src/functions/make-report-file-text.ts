@@ -16,15 +16,15 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import { toFileChartOptions } from '#common/functions/to-file-chart-options/to-file-chart-options';
 import { toYaml } from '#common/functions/to-yaml/to-yaml';
-import type { FileFraction } from '#common/zod/blockml/internal/file-fraction';
-import type { FileFractionControl } from '#common/zod/blockml/internal/file-fraction-control';
-import type { FileReport } from '#common/zod/blockml/internal/file-report';
-import type { FileReportRow } from '#common/zod/blockml/internal/file-report-row';
-import type { FileReportRowParameter } from '#common/zod/blockml/internal/file-report-row-parameter';
-import type { MconfigChart } from '#common/zod/blockml/mconfig-chart';
-import type { ModelMetric } from '#common/zod/blockml/model-metric';
-import type { ReportField } from '#common/zod/blockml/report-field';
-import type { Row } from '#common/zod/blockml/row';
+import type { FileFraction } from '#common/types/blockml/internal/file-fraction';
+import type { FileFractionControl } from '#common/types/blockml/internal/file-fraction-control';
+import type { FileReport } from '#common/types/blockml/internal/file-report';
+import type { FileReportRow } from '#common/types/blockml/internal/file-report-row';
+import type { FileReportRowParameter } from '#common/types/blockml/internal/file-report-row-parameter';
+import type { MconfigChart } from '#common/types/blockml/mconfig-chart';
+import type { ModelMetric } from '#common/types/blockml/model-metric';
+import type { ReportField } from '#common/types/blockml/report-field';
+import type { Row } from '#common/types/blockml/row';
 
 export function makeReportFileText(item: {
   reportId: string;

@@ -1,8 +1,8 @@
 import { createRequire } from 'node:module';
 import { BaseContext, Cli, CommandClass } from 'clipanion';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendDeleteRecordsRequest } from '#common/zod/backend/routes/test-routes/delete-records/delete-records-request';
-import type { ToBackendSeedRecordsRequest } from '#common/zod/backend/routes/test-routes/seed-records/seed-records-request';
+import type { ToBackendDeleteRecordsRequest } from '#common/types/backend/routes/test-routes/delete-records/delete-records-request';
+import type { ToBackendSeedRecordsRequest } from '#common/types/backend/routes/test-routes/seed-records/seed-records-request';
 import type { CustomContext } from '#mcli/classes/custom-command/custom-command';
 import { McliConfig } from '#mcli/config/mcli-config';
 import { mreq } from '#mcli/functions/mreq/mreq';

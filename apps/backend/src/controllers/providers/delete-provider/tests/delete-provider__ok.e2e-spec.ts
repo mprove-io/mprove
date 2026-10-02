@@ -15,8 +15,8 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendDeleteProviderRequest } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-request';
-import type { ToBackendDeleteProviderResponse } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-response';
+import type { ToBackendDeleteProviderRequest } from '#common/types/backend/routes/providers/delete-provider/delete-provider-request';
+import type { ToBackendDeleteProviderResponse } from '#common/types/backend/routes/providers/delete-provider/delete-provider-response';
 
 let testId = 'backend-delete-provider__ok';
 

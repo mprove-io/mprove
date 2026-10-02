@@ -1,5 +1,5 @@
-import type { DashboardUnit } from '#common/zod/backend/dashboard-unit';
-import type { SpaceUnit } from '#common/zod/backend/space-unit';
+import type { DashboardUnit } from '#common/types/backend/dashboard-unit';
+import type { SpaceUnit } from '#common/types/backend/space-unit';
 
 export function spaceUnitToDashboardUnit(item: {
   spaceUnit: SpaceUnit;

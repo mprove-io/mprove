@@ -1,4 +1,4 @@
-import type { SpaceFolder } from '#common/zod/backend/space-folder';
+import type { SpaceFolder } from '#common/types/backend/space-folder';
 
 export function makeSyntheticSpaceFolder(item: {
   id: string;

@@ -37,9 +37,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendDeleteFolderOutput } from '#common/types/backend/routes/folders/delete-folder/delete-folder-output';
+import type { ToDiskDeleteFolderOutput } from '#common/types/disk/routes/folders/delete-folder/delete-folder-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteFolderOutput } from '#common/zod/backend/routes/folders/delete-folder/delete-folder-output';
-import type { ToDiskDeleteFolderOutput } from '#common/zod/disk/routes/folders/delete-folder/delete-folder-output';
 
 const { forEachSeries } = pIteration;
 

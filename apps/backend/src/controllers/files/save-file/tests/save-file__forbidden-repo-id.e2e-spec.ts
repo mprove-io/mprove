@@ -11,8 +11,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendSaveFileRequest } from '#common/zod/backend/routes/files/save-file/save-file-request';
-import type { ToBackendSaveFileResponse } from '#common/zod/backend/routes/files/save-file/save-file-response';
+import type { ToBackendSaveFileRequest } from '#common/types/backend/routes/files/save-file/save-file-request';
+import type { ToBackendSaveFileResponse } from '#common/types/backend/routes/files/save-file/save-file-response';
 
 let testId = 'backend-save-file__forbidden-repo-id';
 

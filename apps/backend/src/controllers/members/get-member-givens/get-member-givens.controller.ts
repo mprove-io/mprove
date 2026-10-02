@@ -10,8 +10,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { GivensService } from '#backend/services/db/givens.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import type { ToBackendGetMemberGivensOutput } from '#common/types/backend/routes/members/get-member-givens/get-member-givens-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetMemberGivensOutput } from '#common/zod/backend/routes/members/get-member-givens/get-member-givens-output';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)

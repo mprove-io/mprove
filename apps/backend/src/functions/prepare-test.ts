@@ -18,10 +18,10 @@ import { TabToEntService } from '#backend/services/tab-to-ent.service';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendDeleteRecordsRequest } from '#common/zod/backend/routes/test-routes/delete-records/delete-records-request';
-import type { ToBackendSeedRecordsRequest } from '#common/zod/backend/routes/test-routes/seed-records/seed-records-request';
-import type { ToBackendLoginUserRequest } from '#common/zod/backend/routes/users/login-user/login-user-request';
-import type { ToBackendLoginUserResponse } from '#common/zod/backend/routes/users/login-user/login-user-response';
+import type { ToBackendDeleteRecordsRequest } from '#common/types/backend/routes/test-routes/delete-records/delete-records-request';
+import type { ToBackendSeedRecordsRequest } from '#common/types/backend/routes/test-routes/seed-records/seed-records-request';
+import type { ToBackendLoginUserRequest } from '#common/types/backend/routes/users/login-user/login-user-request';
+import type { ToBackendLoginUserResponse } from '#common/types/backend/routes/users/login-user/login-user-response';
 import { sendToBackend } from './send-to-backend';
 
 const { json, urlencoded } = bodyParser;

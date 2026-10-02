@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendSetSessionTitleRequest } from '#common/zod/backend/routes/sessions/set-session-title/set-session-title-request';
+import type { ToBackendSetSessionTitleRequest } from '#common/types/backend/routes/sessions/set-session-title/set-session-title-request';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';

@@ -8,7 +8,7 @@ import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { StoreMethodEnum } from '#common/enums/store-method.enum';
-import type { OptionsStoreGoogleApi } from '#common/zod/backend/connection-parts/options-store-google-api';
+import type { OptionsStoreGoogleApi } from '#common/types/backend/connection-parts/options-store-google-api';
 
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
 export const MPROVE_EXPLORER_FILENAME = 'mprove-explorer.md';

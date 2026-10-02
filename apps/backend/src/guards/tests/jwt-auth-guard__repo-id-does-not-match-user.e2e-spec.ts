@@ -12,9 +12,9 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendGetStateRequest } from '#common/zod/backend/routes/state/get-state/get-state-request';
-import type { ToBackendGetStateResponse } from '#common/zod/backend/routes/state/get-state/get-state-response';
-import type { ToBackendGenerateUserApiKeyRequest } from '#common/zod/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
+import type { ToBackendGetStateRequest } from '#common/types/backend/routes/state/get-state/get-state-request';
+import type { ToBackendGetStateResponse } from '#common/types/backend/routes/state/get-state/get-state-response';
+import type { ToBackendGenerateUserApiKeyRequest } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
 
 let testId = 'backend-jwt-auth-guard__repo-id-does-not-match-user';
 

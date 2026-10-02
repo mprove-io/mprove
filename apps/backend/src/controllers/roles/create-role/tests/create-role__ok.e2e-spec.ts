@@ -11,9 +11,9 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateRoleOutput } from '#common/zod/backend/routes/roles/create-role/create-role-output';
-import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
-import type { ToBackendCreateRoleResponse } from '#common/zod/backend/routes/roles/create-role/create-role-response';
+import type { ToBackendCreateRoleOutput } from '#common/types/backend/routes/roles/create-role/create-role-output';
+import type { ToBackendCreateRoleRequest } from '#common/types/backend/routes/roles/create-role/create-role-request';
+import type { ToBackendCreateRoleResponse } from '#common/types/backend/routes/roles/create-role/create-role-response';
 
 let testId = 'backend-create-role__ok';
 

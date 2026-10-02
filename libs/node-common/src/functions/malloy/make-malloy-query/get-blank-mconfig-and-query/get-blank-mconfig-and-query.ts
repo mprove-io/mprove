@@ -3,9 +3,9 @@ import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { Mconfig } from '#common/zod/blockml/mconfig';
-import type { Model } from '#common/zod/blockml/model';
-import type { Query } from '#common/zod/blockml/query';
+import type { Mconfig } from '#common/types/blockml/mconfig';
+import type { Model } from '#common/types/blockml/model';
+import type { Query } from '#common/types/blockml/query';
 import { makeQueryId } from '#node-common/functions/make-query-id/make-query-id';
 
 export function getBlankMconfigAndQuery(item: {

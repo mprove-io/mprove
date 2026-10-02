@@ -16,10 +16,10 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
-import type { ToBackendSaveModifyReportOutput } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-output';
-import type { ToBackendSaveModifyReportRequest } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-request';
-import type { ToBackendSaveModifyReportResponse } from '#common/zod/backend/routes/reports/save-modify-report/save-modify-report-response';
+import type { ToBackendCreateDraftReportRequest } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-request';
+import type { ToBackendSaveModifyReportOutput } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-output';
+import type { ToBackendSaveModifyReportRequest } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-request';
+import type { ToBackendSaveModifyReportResponse } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-response';
 
 let testId = 'backend-save-modify-report__space-path-user';
 

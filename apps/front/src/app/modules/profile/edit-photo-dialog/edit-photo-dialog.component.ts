@@ -9,8 +9,8 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendSetAvatarRequest } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-request';
-import type { ToBackendSetAvatarResponse } from '#common/zod/backend/routes/avatars/set-avatar/set-avatar-response';
+import type { ToBackendSetAvatarRequest } from '#common/types/backend/routes/avatars/set-avatar/set-avatar-request';
+import type { ToBackendSetAvatarResponse } from '#common/types/backend/routes/avatars/set-avatar/set-avatar-response';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 

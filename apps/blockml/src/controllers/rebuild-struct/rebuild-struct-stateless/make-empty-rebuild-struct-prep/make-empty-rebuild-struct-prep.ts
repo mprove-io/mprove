@@ -12,7 +12,7 @@ import {
   PROJECT_CONFIG_WEEK_START
 } from '#common/constants/top';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
-import { MproveConfig } from '#common/zod/backend/mprove-config';
+import { MproveConfig } from '#common/types/backend/mprove-config';
 
 export function makeEmptyRebuildStructPrep(item: {
   errors: BmError[];

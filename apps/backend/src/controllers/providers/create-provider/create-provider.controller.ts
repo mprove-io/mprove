@@ -30,10 +30,10 @@ import { UrlService } from '#backend/services/url.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
+import type { Provider } from '#common/types/backend/provider';
+import type { ToBackendCreateProviderOutput } from '#common/types/backend/routes/providers/create-provider/create-provider-output';
+import type { ToBackendCreateProviderRequest } from '#common/types/backend/routes/providers/create-provider/create-provider-request';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { Provider } from '#common/zod/backend/provider';
-import type { ToBackendCreateProviderOutput } from '#common/zod/backend/routes/providers/create-provider/create-provider-output';
-import type { ToBackendCreateProviderRequest } from '#common/zod/backend/routes/providers/create-provider/create-provider-request';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)

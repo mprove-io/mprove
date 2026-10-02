@@ -2,10 +2,10 @@ import path from 'node:path';
 import { Result } from '@praha/byethrow';
 import fse from 'fs-extra';
 import pIteration from 'p-iteration';
-import type { DiskSyncFile } from '#common/zod/disk/disk-sync-file';
-import type { DiskPathTraversalError } from '#common/zod/disk/errors/disk-path-traversal-error';
-import type { FileIsSymlinkError } from '#common/zod/node-common/errors/file-is-symlink-error';
-import type { ApplySyncPayloadError } from '#common/zod/node-common/function-errors/apply-sync-payload-error';
+import type { DiskSyncFile } from '#common/types/disk/disk-sync-file';
+import type { DiskPathTraversalError } from '#common/types/disk/errors/disk-path-traversal-error';
+import type { FileIsSymlinkError } from '#common/types/node-common/errors/file-is-symlink-error';
+import type { ApplySyncPayloadError } from '#common/types/node-common/function-errors/apply-sync-payload-error';
 import { validatePathUnderDir } from '#node-common/functions/validate-path-under-dir/validate-path-under-dir';
 
 const { forEachSeries } = pIteration;

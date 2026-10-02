@@ -13,8 +13,8 @@ import {
   LOCAL_STORAGE_PROJECT_ID
 } from '#common/constants/top-front';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ToBackendGetNavRequest } from '#common/zod/backend/routes/nav/get-nav/get-nav-request';
-import type { ToBackendGetNavResponse } from '#common/zod/backend/routes/nav/get-nav/get-nav-response';
+import type { ToBackendGetNavRequest } from '#common/types/backend/routes/nav/get-nav/get-nav-request';
+import type { ToBackendGetNavResponse } from '#common/types/backend/routes/nav/get-nav/get-nav-response';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';

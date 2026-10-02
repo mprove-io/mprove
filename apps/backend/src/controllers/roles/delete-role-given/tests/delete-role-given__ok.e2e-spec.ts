@@ -12,12 +12,12 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateGivenRequest } from '#common/zod/backend/routes/givens/create-given/create-given-request';
-import type { ToBackendCreateRoleRequest } from '#common/zod/backend/routes/roles/create-role/create-role-request';
-import type { ToBackendCreateRoleGivenRequest } from '#common/zod/backend/routes/roles/create-role-given/create-role-given-request';
-import type { ToBackendDeleteRoleGivenOutput } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-output';
-import type { ToBackendDeleteRoleGivenRequest } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-request';
-import type { ToBackendDeleteRoleGivenResponse } from '#common/zod/backend/routes/roles/delete-role-given/delete-role-given-response';
+import type { ToBackendCreateGivenRequest } from '#common/types/backend/routes/givens/create-given/create-given-request';
+import type { ToBackendCreateRoleRequest } from '#common/types/backend/routes/roles/create-role/create-role-request';
+import type { ToBackendCreateRoleGivenRequest } from '#common/types/backend/routes/roles/create-role-given/create-role-given-request';
+import type { ToBackendDeleteRoleGivenOutput } from '#common/types/backend/routes/roles/delete-role-given/delete-role-given-output';
+import type { ToBackendDeleteRoleGivenRequest } from '#common/types/backend/routes/roles/delete-role-given/delete-role-given-request';
+import type { ToBackendDeleteRoleGivenResponse } from '#common/types/backend/routes/roles/delete-role-given/delete-role-given-response';
 
 let testId = 'backend-delete-role-given__ok';
 

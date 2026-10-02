@@ -21,9 +21,9 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateDraftReportRequest } from '#common/zod/backend/routes/reports/create-draft-report/create-draft-report-request';
-import type { ToBackendDeleteDraftReportsRequest } from '#common/zod/backend/routes/reports/delete-draft-reports/delete-draft-reports-request';
-import type { ToBackendDeleteDraftReportsResponse } from '#common/zod/backend/routes/reports/delete-draft-reports/delete-draft-reports-response';
+import type { ToBackendCreateDraftReportRequest } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-request';
+import type { ToBackendDeleteDraftReportsRequest } from '#common/types/backend/routes/reports/delete-draft-reports/delete-draft-reports-request';
+import type { ToBackendDeleteDraftReportsResponse } from '#common/types/backend/routes/reports/delete-draft-reports/delete-draft-reports-response';
 
 let testId = 'backend-delete-draft-reports__ok';
 

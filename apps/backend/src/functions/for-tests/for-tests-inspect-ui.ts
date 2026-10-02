@@ -3,7 +3,7 @@ import { Prep } from '#backend/interfaces/prep';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { EditorOpencodeService } from '#backend/services/editor/editor-opencode.service';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ToBackendCreateEditorSessionResponse } from '#common/zod/backend/routes/sessions/create-editor-session/create-editor-session-response';
+import type { ToBackendCreateEditorSessionResponse } from '#common/types/backend/routes/sessions/create-editor-session/create-editor-session-response';
 
 export async function forTestsInspectUi(item: {
   t: ExecutionContext;

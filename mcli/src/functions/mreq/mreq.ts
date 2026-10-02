@@ -3,11 +3,11 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { makeToBackendRequest } from '#common/functions/make-to-backend-request/make-to-backend-request';
+import type { ToBackendRequest } from '#common/types/backend/request/to-backend-request';
+import type { ToBackendResponseForRoute } from '#common/types/backend/response/to-backend-response-for-route';
 import type { ToBackendInputForRoute } from '#common/types/to-backend-input-for-route';
 import type { ToBackendOutputForRoute } from '#common/types/to-backend-output-for-route';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendRequest } from '#common/zod/backend/request/to-backend-request';
-import type { ToBackendResponseForRoute } from '#common/zod/backend/response/to-backend-response-for-route';
 
 export async function mreq<TRoute extends ToBackendRoute>(item: {
   host: string;

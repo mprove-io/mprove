@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendDeleteProviderRequest } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-request';
-import type { ToBackendDeleteProviderResponse } from '#common/zod/backend/routes/providers/delete-provider/delete-provider-response';
+import type { ToBackendDeleteProviderRequest } from '#common/types/backend/routes/providers/delete-provider/delete-provider-request';
+import type { ToBackendDeleteProviderResponse } from '#common/types/backend/routes/providers/delete-provider/delete-provider-response';
 import { ProvidersQuery } from '#front/app/queries/providers.query';
 import { ApiService } from '#front/app/services/api.service';
 

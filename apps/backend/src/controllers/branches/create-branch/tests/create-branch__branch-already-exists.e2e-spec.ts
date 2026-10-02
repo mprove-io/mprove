@@ -11,8 +11,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateBranchRequest } from '#common/zod/backend/routes/branches/create-branch/create-branch-request';
-import type { ToBackendCreateBranchResponse } from '#common/zod/backend/routes/branches/create-branch/create-branch-response';
+import type { ToBackendCreateBranchRequest } from '#common/types/backend/routes/branches/create-branch/create-branch-request';
+import type { ToBackendCreateBranchResponse } from '#common/types/backend/routes/branches/create-branch/create-branch-response';
 
 let testId = 'backend-create-branch__branch-already-exists';
 

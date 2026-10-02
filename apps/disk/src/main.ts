@@ -11,7 +11,7 @@ import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
 import { APP_NAME_DISK } from '#common/constants/top-disk';
 import { ErEnum } from '#common/enums/er.enum';
-import type { DiskCheckSymlinksInDirError } from '#common/zod/disk/function-errors/disk-check-symlinks-in-dir-error';
+import type { DiskCheckSymlinksInDirError } from '#common/types/disk/function-errors/disk-check-symlinks-in-dir-error';
 import { getLoggerOptions } from '#node-common/functions/get-logger-options/get-logger-options';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events/listen-process-events';
 import { AppModule } from './app.module';

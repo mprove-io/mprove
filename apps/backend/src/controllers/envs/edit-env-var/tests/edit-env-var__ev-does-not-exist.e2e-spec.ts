@@ -11,8 +11,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendEditEnvVarRequest } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-request';
-import type { ToBackendEditEnvVarResponse } from '#common/zod/backend/routes/envs/edit-env-var/edit-env-var-response';
+import type { ToBackendEditEnvVarRequest } from '#common/types/backend/routes/envs/edit-env-var/edit-env-var-request';
+import type { ToBackendEditEnvVarResponse } from '#common/types/backend/routes/envs/edit-env-var/edit-env-var-response';
 
 let testId = 'backend-edit-env-var__ev-does-not-exist';
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { OrgUsersItem } from '#common/zod/backend/org-users/org-users-item';
+import type { OrgUsersItem } from '#common/types/backend/org-users/org-users-item';
 import { BaseQuery } from './base.query';
 
 export class UsersState {

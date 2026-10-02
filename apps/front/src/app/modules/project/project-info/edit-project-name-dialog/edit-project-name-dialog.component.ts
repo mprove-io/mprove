@@ -15,8 +15,8 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { ToBackendSetProjectInfoRequest } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-request';
-import type { ToBackendSetProjectInfoResponse } from '#common/zod/backend/routes/projects/set-project-info/set-project-info-response';
+import type { ToBackendSetProjectInfoRequest } from '#common/types/backend/routes/projects/set-project-info/set-project-info-request';
+import type { ToBackendSetProjectInfoResponse } from '#common/types/backend/routes/projects/set-project-info/set-project-info-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';

@@ -1,7 +1,7 @@
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Member } from '#common/zod/backend/member';
-import type { User } from '#common/zod/backend/user';
+import type { Member } from '#common/types/backend/member';
+import type { User } from '#common/types/backend/user';
 
 export function getFullName(x: Member | User) {
   let firstName = capitalizeFirstLetter(x.firstName);

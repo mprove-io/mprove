@@ -10,8 +10,8 @@ import { BACKEND_E2E_RETRY_OPTIONS } from '#common/constants/top-backend';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendCreateMemberRequest } from '#common/zod/backend/routes/members/create-member/create-member-request';
-import type { ToBackendCreateMemberResponse } from '#common/zod/backend/routes/members/create-member/create-member-response';
+import type { ToBackendCreateMemberRequest } from '#common/types/backend/routes/members/create-member/create-member-request';
+import type { ToBackendCreateMemberResponse } from '#common/types/backend/routes/members/create-member/create-member-response';
 
 let testId = 'backend-create-member__ok-existing-user';
 

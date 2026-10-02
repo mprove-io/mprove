@@ -18,8 +18,8 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendValidateFilesOutput } from '#common/zod/backend/routes/files/validate-files/validate-files-output';
-import type { ToDiskGetCatalogFilesOutput } from '#common/zod/disk/routes/catalogs/get-catalog-files/get-catalog-files-output';
+import type { ToBackendValidateFilesOutput } from '#common/types/backend/routes/files/validate-files/validate-files-output';
+import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-output';
 
 const { forEachSeries } = pIteration;
 

@@ -10,8 +10,8 @@ import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { FileReport } from '#common/zod/blockml/internal/file-report';
-import type { FileReportRow } from '#common/zod/blockml/internal/file-report-row';
+import type { FileReport } from '#common/types/blockml/internal/file-report';
+import type { FileReportRow } from '#common/types/blockml/internal/file-report-row';
 
 let func = FuncEnum.CheckReportRowUnknownParameters;
 

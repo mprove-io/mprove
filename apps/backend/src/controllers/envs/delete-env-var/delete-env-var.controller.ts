@@ -28,8 +28,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendDeleteEnvVarOutput } from '#common/types/backend/routes/envs/delete-env-var/delete-env-var-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendDeleteEnvVarOutput } from '#common/zod/backend/routes/envs/delete-env-var/delete-env-var-output';
 
 const { forEachSeries } = pIteration;
 

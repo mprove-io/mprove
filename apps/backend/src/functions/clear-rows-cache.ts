@@ -1,6 +1,6 @@
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import type { Row } from '#common/zod/blockml/row';
+import type { Row } from '#common/types/blockml/row';
 
 export function clearRowsCache(item: {
   processedRows: Row[];

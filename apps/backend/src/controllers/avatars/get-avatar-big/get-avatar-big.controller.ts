@@ -11,8 +11,8 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { TabService } from '#backend/services/tab.service';
+import type { ToBackendGetAvatarBigOutput } from '#common/types/backend/routes/avatars/get-avatar-big/get-avatar-big-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
-import type { ToBackendGetAvatarBigOutput } from '#common/zod/backend/routes/avatars/get-avatar-big/get-avatar-big-output';
 
 @ApiTags('Avatars')
 @UseGuards(ThrottlerUserIdGuard)
