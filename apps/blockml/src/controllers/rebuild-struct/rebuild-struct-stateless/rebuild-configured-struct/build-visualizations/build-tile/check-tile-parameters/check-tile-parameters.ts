@@ -17,12 +17,12 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileDashboard } from '#common/types/blockml/internal/file-dashboard';
-import type { FileErrorLine } from '#common/types/blockml/internal/file-error-line';
-import type { FileStore } from '#common/types/blockml/internal/file-store';
-import type { FileStoreResult } from '#common/types/blockml/internal/file-store-result';
-import type { FileTileParameter } from '#common/types/blockml/internal/file-tile-parameter';
-import type { Model } from '#common/types/blockml/model';
+import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
+import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
+import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
+import type { FileStoreResult } from '#common/types/blockml/parts/internal/file-store-result';
+import type { FileTileParameter } from '#common/types/blockml/parts/internal/file-tile-parameter';
+import type { Model } from '#common/types/blockml/parts/model';
 import type { dcType } from '#common/types/dc-type';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 

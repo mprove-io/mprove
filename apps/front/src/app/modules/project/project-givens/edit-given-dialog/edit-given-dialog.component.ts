@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { Given } from '#common/types/backend/given';
+import type { Given } from '#common/types/backend/parts/given';
 import type { ToBackendEditGivenRequest } from '#common/types/backend/routes/givens/edit-given/edit-given-request';
 import type { ToBackendEditGivenResponse } from '#common/types/backend/routes/givens/edit-given/edit-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';

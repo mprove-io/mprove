@@ -3,24 +3,30 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ExtraSchema,
   zExtraSchema
-} from '#common/types/backend/connection-schemas/extra-schema';
+} from '#common/types/backend/parts/connection-schemas/extra-schema';
 import {
   type MproveConfig,
   zMproveConfig
-} from '#common/types/backend/mprove-config';
-import { type BmlError, zBmlError } from '#common/types/blockml/bml-error';
-import { type Chart, zChart } from '#common/types/blockml/chart';
-import { type Dashboard, zDashboard } from '#common/types/blockml/dashboard';
-import { type Mconfig, zMconfig } from '#common/types/blockml/mconfig';
-import { type Model, zModel } from '#common/types/blockml/model';
+} from '#common/types/backend/parts/mprove-config';
+import {
+  type BmlError,
+  zBmlError
+} from '#common/types/blockml/parts/bml-error';
+import { type Chart, zChart } from '#common/types/blockml/parts/chart';
+import {
+  type Dashboard,
+  zDashboard
+} from '#common/types/blockml/parts/dashboard';
+import { type Mconfig, zMconfig } from '#common/types/blockml/parts/mconfig';
+import { type Model, zModel } from '#common/types/blockml/parts/model';
 import {
   type ModelMetric,
   zModelMetric
-} from '#common/types/blockml/model-metric';
-import { type Preset, zPreset } from '#common/types/blockml/preset';
-import { type Query, zQuery } from '#common/types/blockml/query';
-import { type Report, zReport } from '#common/types/blockml/report';
-import { type Space, zSpace } from '#common/types/blockml/space';
+} from '#common/types/blockml/parts/model-metric';
+import { type Preset, zPreset } from '#common/types/blockml/parts/preset';
+import { type Query, zQuery } from '#common/types/blockml/parts/query';
+import { type Report, zReport } from '#common/types/blockml/parts/report';
+import { type Space, zSpace } from '#common/types/blockml/parts/space';
 
 export type ToBlockmlRebuildStructOutput = {
   extraSchemas: ExtraSchema[];

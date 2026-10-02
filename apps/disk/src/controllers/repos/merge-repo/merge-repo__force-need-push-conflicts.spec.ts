@@ -3,7 +3,7 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BaseProject } from '#common/types/backend/base-project';
+import type { BaseProject } from '#common/types/backend/parts/base-project';
 import type { ToDiskCreateBranchRequest } from '#common/types/disk/routes/branches/create-branch/create-branch-request';
 import type { ToDiskSaveFileRequest } from '#common/types/disk/routes/files/save-file/save-file-request';
 import type { ToDiskCreateOrgRequest } from '#common/types/disk/routes/orgs/create-org/create-org-request';

@@ -20,9 +20,9 @@ import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fie
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change/sort-chart-fields-on-select-change';
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change/sort-fields-on-select-change';
-import type { ChartX } from '#common/types/backend/chart-x';
-import type { ModelField } from '#common/types/blockml/model-field';
-import type { ModelFieldY } from '#common/types/blockml/model-field-y';
+import type { ChartX } from '#common/types/backend/parts/chart-x';
+import type { ModelField } from '#common/types/blockml/parts/model-field';
+import type { ModelFieldY } from '#common/types/blockml/parts/model-field-y';
 import { ApiService } from '#front/app/services/api.service';
 import { ChartService } from '#front/app/services/chart.service';
 import { StructService } from '#front/app/services/struct.service';

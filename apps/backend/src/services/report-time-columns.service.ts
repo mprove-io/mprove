@@ -38,8 +38,8 @@ import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Column } from '#common/types/blockml/column';
-import type { Fraction } from '#common/types/blockml/fraction';
+import type { Column } from '#common/types/blockml/parts/column';
+import type { Fraction } from '#common/types/blockml/parts/fraction';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions/bricks-to-fractions';
 
 @Injectable()

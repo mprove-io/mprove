@@ -9,9 +9,9 @@ import {
   PATH_PROJECT,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
-import type { Env } from '#common/types/backend/env';
-import type { EnvUser } from '#common/types/backend/env-user';
-import type { Ev } from '#common/types/backend/ev';
+import type { Env } from '#common/types/backend/parts/env';
+import type { EnvUser } from '#common/types/backend/parts/env-user';
+import type { Ev } from '#common/types/backend/parts/ev';
 import type { ToBackendDeleteEnvUserRequest } from '#common/types/backend/routes/envs/delete-env-user/delete-env-user-request';
 import type { ToBackendDeleteEnvUserResponse } from '#common/types/backend/routes/envs/delete-env-user/delete-env-user-response';
 import type { ToBackendEditEnvFallbacksRequest } from '#common/types/backend/routes/envs/edit-env-fallbacks/edit-env-fallbacks-request';

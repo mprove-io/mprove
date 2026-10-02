@@ -12,7 +12,7 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { FieldAny } from '#common/types/blockml/internal/field-any';
+import type { FieldAny } from '#common/types/blockml/parts/internal/field-any';
 import type { sdrType } from '#common/types/sdr-type';
 
 let func = FuncEnum.CheckFieldUnknownParameters;

@@ -1,4 +1,4 @@
-import type { FilePartSpace } from '#common/types/blockml/internal/file-part-space';
+import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 
 export function getSpaceFromFilePath(item: {
   filePath: string;

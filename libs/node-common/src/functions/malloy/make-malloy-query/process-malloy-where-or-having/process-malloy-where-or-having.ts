@@ -11,9 +11,9 @@ import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.e
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Filter } from '#common/types/blockml/filter';
-import type { Fraction } from '#common/types/blockml/fraction';
-import type { Model } from '#common/types/blockml/model';
+import type { Filter } from '#common/types/blockml/parts/filter';
+import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { Model } from '#common/types/blockml/parts/model';
 import { getMalloyFiltersFractions } from '#node-common/functions/malloy/make-malloy-query/process-malloy-where-or-having/get-malloy-filters-fractions/get-malloy-filters-fractions';
 
 export function processMalloyWhereOrHaving(item: {

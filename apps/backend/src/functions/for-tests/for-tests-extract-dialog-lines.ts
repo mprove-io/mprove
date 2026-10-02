@@ -1,4 +1,4 @@
-import type { SessionEventApi } from '#common/types/backend/session-event-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
 
 export function forTestsExtractDialogLines(item: {
   events: SessionEventApi[];

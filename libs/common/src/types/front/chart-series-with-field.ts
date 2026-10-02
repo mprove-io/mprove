@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { zMconfigField } from '#common/types/backend/mconfig-field';
-import { zMconfigChartSeries } from '#common/types/blockml/mconfig-chart-series';
+import { zMconfigField } from '#common/types/backend/parts/mconfig-field';
+import { zMconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
 
 export let zChartSeriesWithField = zMconfigChartSeries
   .extend({

@@ -35,8 +35,8 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendMoveCatalogNodeRequest } from '#common/types/backend/routes/catalogs/move-catalog-node/move-catalog-node-request';
 import type { ToBackendMoveCatalogNodeResponse } from '#common/types/backend/routes/catalogs/move-catalog-node/move-catalog-node-response';
-import type { DiskCatalogNode } from '#common/types/disk/disk-catalog-node';
-import type { RepoStatus } from '#common/types/disk/repo-status';
+import type { DiskCatalogNode } from '#common/types/disk/parts/disk-catalog-node';
+import type { RepoStatus } from '#common/types/disk/parts/repo-status';
 import type { FileItem } from '#common/types/file-item';
 import { getFileItems } from '#front/app/functions/get-file-items';
 import { FileQuery, FileState } from '#front/app/queries/file.query';

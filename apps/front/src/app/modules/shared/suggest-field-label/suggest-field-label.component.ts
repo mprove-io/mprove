@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import type { SuggestField } from '#common/types/backend/suggest-field';
+import type { SuggestField } from '#common/types/backend/parts/suggest-field';
 
 @Component({
   standalone: false,

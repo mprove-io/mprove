@@ -4,7 +4,7 @@ import { MPROVE_TAG_FIELD_GROUP } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FlatMalloyFieldItem } from '#common/types/blockml/internal/flat-malloy-field-item';
+import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
 import { checkGroupSuffix } from './check-group-suffix/check-group-suffix';
 
 export function checkModBuildMetricsFieldGroups(item: {

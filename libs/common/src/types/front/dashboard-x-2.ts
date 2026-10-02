@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zDashboardX } from '#common/types/backend/dashboard-x';
+import { zDashboardX } from '#common/types/backend/parts/dashboard-x';
 import { zTileX2 } from '#common/types/front/tile-x-2';
 
 export let zDashboardX2 = zDashboardX

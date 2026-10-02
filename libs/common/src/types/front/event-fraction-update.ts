@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zFraction } from '#common/types/blockml/fraction';
+import { zFraction } from '#common/types/blockml/parts/fraction';
 
 export let zEventFractionUpdate = z
   .object({

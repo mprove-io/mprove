@@ -1,8 +1,8 @@
 import { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { MconfigField } from '#common/types/backend/mconfig-field';
-import type { MconfigChart } from '#common/types/blockml/mconfig-chart';
-import type { ModelField } from '#common/types/blockml/model-field';
-import type { Sorting } from '#common/types/blockml/sorting';
+import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
+import type { ModelField } from '#common/types/blockml/parts/model-field';
+import type { Sorting } from '#common/types/blockml/parts/sorting';
 
 export function makeMconfigFields(item: {
   modelFields: ModelField[];

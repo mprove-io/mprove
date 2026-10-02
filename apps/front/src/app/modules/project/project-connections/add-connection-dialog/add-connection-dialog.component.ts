@@ -25,9 +25,9 @@ import { DatabricksAuthTypeEnum } from '#common/enums/databricks-auth-type.enum'
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ConnectionOptions } from '#common/types/backend/connection-parts/connection-options';
-import type { TestConnectionResult } from '#common/types/backend/connections/test-connection-result';
-import type { EnvsItem } from '#common/types/backend/envs-item';
+import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
+import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
+import type { EnvsItem } from '#common/types/backend/parts/envs-item';
 import type { ToBackendCreateConnectionRequest } from '#common/types/backend/routes/connections/create-connection/create-connection-request';
 import type { ToBackendCreateConnectionResponse } from '#common/types/backend/routes/connections/create-connection/create-connection-response';
 import type { ToBackendTestConnectionRequest } from '#common/types/backend/routes/connections/test-connection/test-connection-request';

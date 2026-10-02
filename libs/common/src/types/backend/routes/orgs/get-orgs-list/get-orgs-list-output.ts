@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type OrgsItem, zOrgsItem } from '#common/types/backend/orgs-item';
+import {
+  type OrgsItem,
+  zOrgsItem
+} from '#common/types/backend/parts/orgs-item';
 
 export type ToBackendGetOrgsListOutput = {
   orgsList: OrgsItem[];

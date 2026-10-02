@@ -8,12 +8,12 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { prepareTile } from '#common/functions/prepare-tile/prepare-tile';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
 import { toYaml } from '#common/functions/to-yaml/to-yaml';
-import type { DashboardX } from '#common/types/backend/dashboard-x';
-import type { FieldFilter } from '#common/types/blockml/internal/field-filter';
-import type { FileDashboard } from '#common/types/blockml/internal/file-dashboard';
-import type { FileFraction } from '#common/types/blockml/internal/file-fraction';
-import type { FileFractionControl } from '#common/types/blockml/internal/file-fraction-control';
-import type { FilePartTile } from '#common/types/blockml/internal/file-part-tile';
+import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
+import type { FieldFilter } from '#common/types/blockml/parts/internal/field-filter';
+import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
+import type { FileFraction } from '#common/types/blockml/parts/internal/file-fraction';
+import type { FileFractionControl } from '#common/types/blockml/parts/internal/file-fraction-control';
+import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
 
 export function makeDashboardFileText(item: {
   dashboard: DashboardX;

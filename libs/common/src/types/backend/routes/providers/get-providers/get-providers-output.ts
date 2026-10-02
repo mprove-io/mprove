@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/types/backend/member';
-import { type Provider, zProvider } from '#common/types/backend/provider';
+import { type Member, zMember } from '#common/types/backend/parts/member';
+import { type Provider, zProvider } from '#common/types/backend/parts/provider';
 
 export type ToBackendGetProvidersOutput = {
   userMember: Member;

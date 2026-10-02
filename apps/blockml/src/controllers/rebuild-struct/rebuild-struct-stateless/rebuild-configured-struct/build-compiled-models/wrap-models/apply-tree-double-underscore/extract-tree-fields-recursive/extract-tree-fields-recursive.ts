@@ -1,6 +1,6 @@
 import { DOUBLE_UNDERSCORE } from '#common/constants/top';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
-import type { ModelNode } from '#common/types/blockml/model-node';
+import type { ModelNode } from '#common/types/blockml/parts/model-node';
 
 type TreeField = {
   fieldNode: ModelNode;

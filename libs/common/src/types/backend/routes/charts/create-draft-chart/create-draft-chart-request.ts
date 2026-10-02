@@ -1,10 +1,13 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type MconfigX, zMconfigX } from '#common/types/backend/mconfig-x';
+import {
+  type MconfigX,
+  zMconfigX
+} from '#common/types/backend/parts/mconfig-x';
 import {
   type QueryOperation,
   zQueryOperation
-} from '#common/types/backend/query-operation';
+} from '#common/types/backend/parts/query-operation';
 
 export type ToBackendCreateDraftChartRequest = {
   operation: 'createDraftChart';

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { ChartUnit } from '#common/types/backend/chart-unit';
+import type { ChartUnit } from '#common/types/backend/parts/chart-unit';
 import { BaseQuery } from './base.query';
 
 export class FilteredChartsState {

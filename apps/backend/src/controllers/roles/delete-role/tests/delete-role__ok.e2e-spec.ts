@@ -11,7 +11,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { Member } from '#common/types/backend/member';
+import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendGetMembersOutput } from '#common/types/backend/routes/members/get-members/get-members-output';
 import type { ToBackendGetMembersRequest } from '#common/types/backend/routes/members/get-members/get-members-request';
 import type { ToBackendCreateRoleRequest } from '#common/types/backend/routes/roles/create-role/create-role-request';

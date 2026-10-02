@@ -3,28 +3,28 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type MproveValidationError,
   zMproveValidationError
-} from '#common/types/backend/state/mprove-validation-error';
+} from '#common/types/backend/parts/state/mprove-validation-error';
 import {
   type StateChartItem,
   zStateChartItem
-} from '#common/types/backend/state/state-chart-item';
+} from '#common/types/backend/parts/state/state-chart-item';
 import {
   type StateDashboardItem,
   zStateDashboardItem
-} from '#common/types/backend/state/state-dashboard-item';
+} from '#common/types/backend/parts/state/state-dashboard-item';
 import {
   type StateMetricItem,
   zStateMetricItem
-} from '#common/types/backend/state/state-metric-item';
+} from '#common/types/backend/parts/state/state-metric-item';
 import {
   type StateModelItem,
   zStateModelItem
-} from '#common/types/backend/state/state-model-item';
+} from '#common/types/backend/parts/state/state-model-item';
 import {
   type StateReportItem,
   zStateReportItem
-} from '#common/types/backend/state/state-report-item';
-import { type Repo, zRepo } from '#common/types/disk/repo';
+} from '#common/types/backend/parts/state/state-report-item';
+import { type Repo, zRepo } from '#common/types/disk/parts/repo';
 
 export type ToBackendGetStateOutput = {
   needValidate: boolean;

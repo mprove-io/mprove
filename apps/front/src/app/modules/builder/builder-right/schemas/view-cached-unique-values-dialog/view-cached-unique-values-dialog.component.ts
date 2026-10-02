@@ -11,7 +11,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { map, take } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { CachedColumn } from '#common/types/backend/connections/cached-column';
+import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 import type { ToBackendViewCachedColumnOutput } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-output';
 import type { ToBackendViewCachedColumnResponse } from '#common/types/backend/routes/connections/view-cached-column/view-cached-column-response';
 import { ApiService } from '#front/app/services/api.service';

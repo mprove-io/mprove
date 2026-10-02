@@ -22,8 +22,8 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { ModelMetricX } from '#common/types/backend/model-metric-x';
-import type { RowChange } from '#common/types/blockml/row-change';
+import type { ModelMetricX } from '#common/types/backend/parts/model-metric-x';
+import type { RowChange } from '#common/types/blockml/parts/row-change';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { ModelsQuery } from '#front/app/queries/models.query';
 import { ReportQuery } from '#front/app/queries/report.query';

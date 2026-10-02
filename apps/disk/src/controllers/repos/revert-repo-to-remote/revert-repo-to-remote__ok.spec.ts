@@ -4,7 +4,7 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { BaseProject } from '#common/types/backend/base-project';
+import type { BaseProject } from '#common/types/backend/parts/base-project';
 import type { ToDiskGetFileRequest } from '#common/types/disk/routes/files/get-file/get-file-request';
 import type { ToDiskGetFileResponse } from '#common/types/disk/routes/files/get-file/get-file-response';
 import type { ToDiskSaveFileRequest } from '#common/types/disk/routes/files/save-file/save-file-request';

@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type LlmModelVariant,
   zLlmModelVariant
-} from '#common/types/backend/llm-models/llm-model-variant';
+} from '#common/types/backend/parts/llm-models/llm-model-variant';
 
 export type ToBackendCreateLlmModelRequest = {
   operation: 'createLlmModel';

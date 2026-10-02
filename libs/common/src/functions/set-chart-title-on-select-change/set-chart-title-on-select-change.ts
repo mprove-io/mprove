@@ -1,7 +1,7 @@
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { getCompLabel } from '#common/functions/set-chart-title-on-select-change/get-comp-label/get-comp-label';
-import type { Mconfig } from '#common/types/blockml/mconfig';
-import type { ModelField } from '#common/types/blockml/model-field';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig';
+import type { ModelField } from '#common/types/blockml/parts/model-field';
 
 export function setChartTitleOnSelectChange<T extends Mconfig>(item: {
   mconfig: T;

@@ -3,10 +3,10 @@ import {
   SESSION_TAB_CREATED_EVENT_TYPE,
   SESSION_TITLE_UPDATED_EVENT_TYPE
 } from '#common/constants/top';
-import type { SessionMessageApi } from '#common/types/backend/session-message-api';
-import type { SessionPartApi } from '#common/types/backend/session-part-api';
-import type { SessionStreamEvent } from '#common/types/backend/session-stream-event';
-import type { SessionTabCreatedEventProperties } from '#common/types/backend/session-tab-created-event';
+import type { SessionMessageApi } from '#common/types/backend/parts/session-message-api';
+import type { SessionPartApi } from '#common/types/backend/parts/session-part-api';
+import type { SessionStreamEvent } from '#common/types/backend/parts/session-stream-event';
+import type { SessionTabCreatedEventProperties } from '#common/types/backend/parts/session-tab-created-event';
 import { binarySearch } from '../functions/binary-search';
 import { ExplorerTabsQuery } from '../queries/explorer-tabs.query';
 import { SessionQuery } from '../queries/session.query';

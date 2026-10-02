@@ -16,8 +16,8 @@ import {
   SESSION_TITLE_UPDATED_EVENT_TYPE
 } from '#common/constants/top';
 import type { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import type { MproveSessionTitleUpdatedEvent } from '#common/types/backend/session-stream-event';
-import type { SessionTabCreatedEvent } from '#common/types/backend/session-tab-created-event';
+import type { MproveSessionTitleUpdatedEvent } from '#common/types/backend/parts/session-stream-event';
+import type { SessionTabCreatedEvent } from '#common/types/backend/parts/session-tab-created-event';
 
 @Injectable()
 export class ExplorerEventsMakerService {

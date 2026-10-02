@@ -1,0 +1,36 @@
+import { z } from 'zod';
+import { zAccessRoleCombined } from '#common/types/access-role-combined';
+import { zFieldAny } from '#common/types/blockml/parts/internal/field-any';
+import { zFileBasic } from '#common/types/blockml/parts/internal/file-basic';
+import { zFileChartOptions } from '#common/types/blockml/parts/internal/file-chart-options';
+import { zFileReportRow } from '#common/types/blockml/parts/internal/file-report-row';
+
+export let zFileReport = zFileBasic
+  .extend({
+    report: z.string().nullish(),
+    report_line_num: z.number().nullish(),
+    title: z.string().nullish(),
+    title_line_num: z.number().nullish(),
+    space: z.string().nullish(),
+    access_roles: z.array(z.string()).nullish(),
+    access_roles_line_num: z.number().nullish(),
+    accessRolesCombined: z.array(zAccessRoleCombined).nullish(),
+    rows: z.array(zFileReportRow).nullish(),
+    rows_line_num: z.number().nullish(),
+    options: zFileChartOptions.nullish(),
+    options_line_num: z.number().nullish(),
+    parameters: z.array(zFieldAny).nullish(),
+    parameters_line_num: z.number().nullish(),
+    fields: z.array(zFieldAny).nullish(),
+    fields_line_num: z.number().nullish(),
+    tiles: z
+      .array(
+        z.object({
+          options: zFileChartOptions.nullish()
+        })
+      )
+      .nullish()
+  })
+  .meta({ id: 'FileReport' });
+
+export type FileReport = z.infer<typeof zFileReport>;

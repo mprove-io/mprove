@@ -22,10 +22,10 @@ import {
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { SessionApi } from '#common/types/backend/parts/session-api';
 import type { ToBackendGetBranchesListRequest } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-request';
 import type { ToBackendGetBranchesListResponse } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-response';
-import type { SessionApi } from '#common/types/backend/session-api';
-import type { RepoStatus } from '#common/types/disk/repo-status';
+import type { RepoStatus } from '#common/types/disk/parts/repo-status';
 import type { BranchItem } from '#common/types/front/branch-item';
 import { checkNavMain } from '#front/app/functions/check-nav-main';
 import { makeBranchExtraId } from '#front/app/functions/make-branch-extra-id';

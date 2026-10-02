@@ -30,7 +30,7 @@ import { UrlService } from '#backend/services/url.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { Provider } from '#common/types/backend/provider';
+import type { Provider } from '#common/types/backend/parts/provider';
 import type { ToBackendEditProviderOutput } from '#common/types/backend/routes/providers/edit-provider/edit-provider-output';
 import type { ToBackendEditProviderRequest } from '#common/types/backend/routes/providers/edit-provider/edit-provider-request';
 import type { ToBackendRoute } from '#common/types/to-backend-route';

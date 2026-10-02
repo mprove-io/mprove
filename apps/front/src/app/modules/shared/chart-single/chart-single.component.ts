@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import type { MconfigField } from '#common/types/backend/mconfig-field';
+import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
 import { QDataRow } from '#front/app/services/data.service';
 
 @Component({

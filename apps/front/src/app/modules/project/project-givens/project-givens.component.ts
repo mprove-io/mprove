@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { PROJECT_GIVENS_PAGE_TITLE } from '#common/constants/page-titles';
-import type { Given } from '#common/types/backend/given';
+import type { Given } from '#common/types/backend/parts/given';
 import { GivensQuery } from '#front/app/queries/givens.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

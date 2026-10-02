@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Ui, zUi } from '#common/types/backend/ui';
+import { type Ui, zUi } from '#common/types/backend/parts/ui';
 
 export type ToBackendSetUserUiRequest = {
   operation: 'setUserUi';

@@ -3,8 +3,8 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DiskCatalogFile,
   zDiskCatalogFile
-} from '#common/types/disk/disk-catalog-file';
-import { type Repo, zRepo } from '#common/types/disk/repo';
+} from '#common/types/disk/parts/disk-catalog-file';
+import { type Repo, zRepo } from '#common/types/disk/parts/repo';
 
 export type ToDiskCreateDevRepoOutput = {
   repo: Repo;

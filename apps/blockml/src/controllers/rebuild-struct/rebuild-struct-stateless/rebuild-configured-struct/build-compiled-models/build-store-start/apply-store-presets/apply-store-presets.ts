@@ -9,8 +9,8 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { FileStore } from '#common/types/blockml/internal/file-store';
-import type { Preset } from '#common/types/blockml/preset';
+import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
+import type { Preset } from '#common/types/blockml/parts/preset';
 
 let func = FuncEnum.ApplyStorePresets;
 

@@ -23,8 +23,8 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendCancelQueriesRequest } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-request';
 import type { ToBackendCancelQueriesResponse } from '#common/types/backend/routes/queries/cancel-queries/cancel-queries-response';
-import type { Mconfig } from '#common/types/blockml/mconfig';
-import type { Query } from '#common/types/blockml/query';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig';
+import type { Query } from '#common/types/blockml/parts/query';
 
 let testId = 'backend-cancel-queries__array-empty';
 

@@ -5,7 +5,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ConnectionOptions,
   zConnectionOptions
-} from '#common/types/backend/connection-parts/connection-options';
+} from '#common/types/backend/parts/connection-parts/connection-options';
 
 export type ToBackendTestConnectionRequest = {
   operation: 'testConnection';

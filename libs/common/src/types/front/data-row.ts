@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zRow } from '#common/types/blockml/row';
+import { zRow } from '#common/types/blockml/parts/row';
 
 export let zDataRow = zRow
   .extend({

@@ -1,6 +1,6 @@
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Mconfig } from '#common/types/blockml/mconfig';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig';
 
 export function replaceChartField<T extends Mconfig>(item: {
   mconfig: T;

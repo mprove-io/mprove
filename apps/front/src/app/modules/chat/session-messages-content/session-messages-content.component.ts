@@ -6,7 +6,7 @@ import type { ToolPart } from '@opencode-ai/sdk/v2';
 import { VS_LIGHT_THEME_EXTRA_SINGLE_SESSION_READ } from '#common/constants/code-themes/themes';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { SessionApi } from '#common/types/backend/session-api';
+import type { SessionApi } from '#common/types/backend/parts/session-api';
 import { environment } from '#front/environments/environment';
 import { ExplorerTabsQuery } from '../../../queries/explorer-tabs.query';
 import { ExplorerTabService } from '../../../services/explorer-tab.service';

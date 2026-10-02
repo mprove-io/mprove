@@ -9,7 +9,7 @@ import {
 } from '#common/constants/top';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Member } from '#common/types/backend/member';
+import type { Member } from '#common/types/backend/parts/member';
 
 export type SpaceUnitTarget = {
   space: string;

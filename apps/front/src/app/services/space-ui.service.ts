@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import type { SpaceFolder } from '#common/types/backend/space-folder';
-import type { SpaceFolderX } from '#common/types/backend/space-folder-x';
-import type { SpaceNode } from '#common/types/backend/space-node';
-import type { SpaceNodeX } from '#common/types/backend/space-node-x';
+import type { SpaceFolder } from '#common/types/backend/parts/space-folder';
+import type { SpaceFolderX } from '#common/types/backend/parts/space-folder-x';
+import type { SpaceNode } from '#common/types/backend/parts/space-node';
+import type { SpaceNodeX } from '#common/types/backend/parts/space-node-x';
 import { UnitsUiService } from './units-ui.service';
 
 @Injectable({ providedIn: 'root' })

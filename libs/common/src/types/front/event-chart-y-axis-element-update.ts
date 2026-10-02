@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zMconfigChartYAxis } from '#common/types/blockml/mconfig-chart-y-axis';
+import { zMconfigChartYAxis } from '#common/types/blockml/parts/mconfig-chart-y-axis';
 
 export let zEventChartYAxisElementUpdate = z
   .object({

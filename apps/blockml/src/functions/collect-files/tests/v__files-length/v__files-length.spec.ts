@@ -9,7 +9,7 @@ import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { BmlFile } from '#common/types/blockml/bml-file';
+import type { BmlFile } from '#common/types/blockml/parts/bml-file';
 
 let caller = CallerEnum.RebuildStruct;
 let func = FuncEnum.CollectFiles;

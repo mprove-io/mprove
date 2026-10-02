@@ -16,7 +16,7 @@ import {
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { LlmModelVariant } from '#common/types/backend/llm-models/llm-model-variant';
+import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { ToBackendGetLlmModelsWithProviderRequest } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-request';
 import type { ToBackendGetLlmModelsWithProviderResponse } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-response';
 import { MemberQuery } from '#front/app/queries/member.query';

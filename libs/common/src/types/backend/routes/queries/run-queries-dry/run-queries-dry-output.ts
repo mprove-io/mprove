@@ -3,8 +3,8 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type QueryEstimate,
   zQueryEstimate
-} from '#common/types/backend/query-estimate';
-import { type Query, zQuery } from '#common/types/blockml/query';
+} from '#common/types/backend/parts/query-estimate';
+import { type Query, zQuery } from '#common/types/blockml/parts/query';
 
 export type ToBackendRunQueriesDryOutput = {
   dryId: string;

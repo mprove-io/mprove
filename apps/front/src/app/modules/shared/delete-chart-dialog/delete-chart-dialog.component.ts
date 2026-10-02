@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ChartUnit } from '#common/types/backend/chart-unit';
+import type { ChartUnit } from '#common/types/backend/parts/chart-unit';
 import type { ToBackendDeleteChartRequest } from '#common/types/backend/routes/charts/delete-chart/delete-chart-request';
 import type { ToBackendDeleteChartResponse } from '#common/types/backend/routes/charts/delete-chart/delete-chart-response';
 import { ChartQuery } from '#front/app/queries/chart.query';

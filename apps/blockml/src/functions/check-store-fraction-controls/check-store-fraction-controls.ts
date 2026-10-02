@@ -13,8 +13,8 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileErrorLine } from '#common/types/blockml/internal/file-error-line';
-import type { FileStoreFractionControl } from '#common/types/blockml/internal/file-store-fraction-control';
+import type { FileErrorLine } from '#common/types/blockml/parts/internal/file-error-line';
+import type { FileStoreFractionControl } from '#common/types/blockml/parts/internal/file-store-fraction-control';
 
 let func = FuncEnum.CheckStoreFractionControls;
 

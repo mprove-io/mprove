@@ -7,7 +7,7 @@ import { FractionTsMixUnitEnum } from '#common/enums/fraction/fraction-ts-mix-un
 import { FractionTsMomentTypeEnum } from '#common/enums/fraction/fraction-ts-moment-type.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
-import type { Fraction } from '#common/types/blockml/fraction';
+import type { Fraction } from '#common/types/blockml/parts/fraction';
 import { StructQuery } from '../queries/struct.query';
 
 @Injectable({ providedIn: 'root' })

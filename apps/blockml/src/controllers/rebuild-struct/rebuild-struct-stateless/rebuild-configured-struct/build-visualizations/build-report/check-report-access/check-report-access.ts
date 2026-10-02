@@ -7,7 +7,7 @@ import { log } from '#blockml/functions/log/log';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { FileReport } from '#common/types/blockml/internal/file-report';
+import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 
 let func = FuncEnum.CheckReportAccess;
 

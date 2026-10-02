@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zSessionApi } from '#common/types/backend/session-api';
+import { zSessionApi } from '#common/types/backend/parts/session-api';
 
 export let zSessionApiX = zSessionApi
   .extend({

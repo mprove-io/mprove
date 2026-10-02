@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type TileX, zTileX } from '#common/types/backend/tile-x';
+import { type TileX, zTileX } from '#common/types/backend/parts/tile-x';
 
 export type ToBackendSaveModifyDashboardRequest = {
   operation: 'saveModifyDashboard';

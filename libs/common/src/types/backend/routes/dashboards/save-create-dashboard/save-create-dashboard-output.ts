@@ -3,8 +3,11 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DashboardUnit,
   zDashboardUnit
-} from '#common/types/backend/dashboard-unit';
-import { type SpaceNode, zSpaceNode } from '#common/types/backend/space-node';
+} from '#common/types/backend/parts/dashboard-unit';
+import {
+  type SpaceNode,
+  zSpaceNode
+} from '#common/types/backend/parts/space-node';
 
 export type ToBackendSaveCreateDashboardOutput = {
   dashboardUnitDrafts: DashboardUnit[];

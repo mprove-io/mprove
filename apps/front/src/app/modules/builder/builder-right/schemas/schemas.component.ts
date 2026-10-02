@@ -20,9 +20,9 @@ import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type {
   ColumnCombinedReference,
   CombinedSchemaItem
-} from '#common/types/backend/connection-schemas/combined-schema';
-import type { RawSchemaForeignKey } from '#common/types/backend/connection-schemas/raw-schema';
-import type { CachedColumn } from '#common/types/backend/connections/cached-column';
+} from '#common/types/backend/parts/connection-schemas/combined-schema';
+import type { RawSchemaForeignKey } from '#common/types/backend/parts/connection-schemas/raw-schema';
+import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 import type { ToBackendClearCachedColumnResponse } from '#common/types/backend/routes/connections/clear-cached-column/clear-cached-column-response';
 import type { ToBackendGetCachedColumnsOutput } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-output';
 import type { ToBackendGetCachedColumnsResponse } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-response';

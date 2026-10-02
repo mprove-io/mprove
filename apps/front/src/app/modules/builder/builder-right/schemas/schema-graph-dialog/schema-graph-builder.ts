@@ -5,8 +5,8 @@ import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import type {
   CombinedSchemaColumn,
   CombinedSchemaTable
-} from '#common/types/backend/connection-schemas/combined-schema';
-import type { RawSchemaIndex } from '#common/types/backend/connection-schemas/raw-schema';
+} from '#common/types/backend/parts/connection-schemas/combined-schema';
+import type { RawSchemaIndex } from '#common/types/backend/parts/connection-schemas/raw-schema';
 
 let NODE_WIDTH = 250;
 let HEADER_HEIGHT = 40;

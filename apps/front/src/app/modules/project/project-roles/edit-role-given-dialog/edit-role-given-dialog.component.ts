@@ -14,9 +14,9 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import type { GivenTypeEnum } from '#common/enums/given-type.enum';
-import type { Given } from '#common/types/backend/given';
-import type { Gv } from '#common/types/backend/gv';
-import type { Role } from '#common/types/backend/role';
+import type { Given } from '#common/types/backend/parts/given';
+import type { Gv } from '#common/types/backend/parts/gv';
+import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendEditRoleGivenRequest } from '#common/types/backend/routes/roles/edit-role-given/edit-role-given-request';
 import type { ToBackendEditRoleGivenResponse } from '#common/types/backend/routes/roles/edit-role-given/edit-role-given-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';

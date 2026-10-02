@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type SkillItem, zSkillItem } from '#common/types/backend/skill-item';
+import {
+  type SkillItem,
+  zSkillItem
+} from '#common/types/backend/parts/skill-item';
 
 export type ToBackendGetSkillsOutput = {
   skillItems: SkillItem[];

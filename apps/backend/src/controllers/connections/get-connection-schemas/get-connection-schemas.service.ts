@@ -33,11 +33,11 @@ import type {
   CombinedSchemaColumn,
   CombinedSchemaItem,
   CombinedSchemaTable
-} from '#common/types/backend/connection-schemas/combined-schema';
-import type { ExtraSchema } from '#common/types/backend/connection-schemas/extra-schema';
-import type { ConnectionRawSchema } from '#common/types/backend/connection-schemas/raw-schema';
-import type { CachedColumn } from '#common/types/backend/connections/cached-column';
-import type { Member } from '#common/types/backend/member';
+} from '#common/types/backend/parts/connection-schemas/combined-schema';
+import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schema';
+import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schema';
+import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
+import type { Member } from '#common/types/backend/parts/member';
 import type { ConnectionLt, ConnectionSt } from '#common/types/st-lt';
 
 const { forEachSeries } = pIteration;

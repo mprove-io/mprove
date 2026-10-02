@@ -12,8 +12,8 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileStore } from '#common/types/blockml/internal/file-store';
-import type { FileStoreFieldTimeGroup } from '#common/types/blockml/internal/file-store-field-time-group';
+import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
+import type { FileStoreFieldTimeGroup } from '#common/types/blockml/parts/internal/file-store-field-time-group';
 
 let func = FuncEnum.CheckStoreFieldTimeGroups;
 

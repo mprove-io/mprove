@@ -3,11 +3,11 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type BaseProject,
   zBaseProject
-} from '#common/types/backend/base-project';
+} from '#common/types/backend/parts/base-project';
 import {
   type DiskSyncFile,
   zDiskSyncFile
-} from '#common/types/disk/disk-sync-file';
+} from '#common/types/disk/parts/disk-sync-file';
 
 export type ToDiskSyncRepoRequest =
   | {

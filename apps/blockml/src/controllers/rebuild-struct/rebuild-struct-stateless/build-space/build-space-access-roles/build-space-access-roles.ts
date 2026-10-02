@@ -9,7 +9,7 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
 import type { AccessRoleCombined } from '#common/types/access-role-combined';
-import type { FilePartSpace } from '#common/types/blockml/internal/file-part-space';
+import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
 
 let func = FuncEnum.BuildSpaceAccessRoles;
 

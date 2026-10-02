@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { Role } from '#common/types/backend/role';
+import type { Role } from '#common/types/backend/parts/role';
 import type { ToBackendDeleteRoleRequest } from '#common/types/backend/routes/roles/delete-role/delete-role-request';
 import type { ToBackendDeleteRoleResponse } from '#common/types/backend/routes/roles/delete-role/delete-role-response';
 import { MemberQuery } from '#front/app/queries/member.query';

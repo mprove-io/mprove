@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import type { DiskCatalogNode } from '#common/types/disk/disk-catalog-node';
-import { zDiskCatalogNode } from '#common/types/disk/disk-catalog-node';
-import { type Repo, zRepo } from '#common/types/disk/repo';
+import type { DiskCatalogNode } from '#common/types/disk/parts/disk-catalog-node';
+import { zDiskCatalogNode } from '#common/types/disk/parts/disk-catalog-node';
+import { type Repo, zRepo } from '#common/types/disk/parts/repo';
 import type { Extend } from '#common/types/extend';
 
 export type ToDiskSyncRepoRepo = Extend<

@@ -26,8 +26,8 @@ import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { SuggestField } from '#common/types/backend/parts/suggest-field';
 import type { ToBackendGetSuggestFieldsOutput } from '#common/types/backend/routes/suggest-fields/get-suggest-fields/get-suggest-fields-output';
-import type { SuggestField } from '#common/types/backend/suggest-field';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('SuggestFields')

@@ -1,5 +1,5 @@
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import type { SessionApi } from '#common/types/backend/session-api';
+import type { SessionApi } from '#common/types/backend/parts/session-api';
 
 export function makeTitle(session: SessionApi): string {
   if (

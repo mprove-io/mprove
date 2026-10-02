@@ -1,5 +1,5 @@
-import type { AppliedGivenValue } from '#common/types/blockml/applied-given-value';
-import type { FilePartTile } from '#common/types/blockml/internal/file-part-tile';
+import type { AppliedGivenValue } from '#common/types/blockml/parts/applied-given-value';
+import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
 
 export interface FilePartTileExtra extends FilePartTile {
   mconfigParentId: string;

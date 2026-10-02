@@ -17,7 +17,7 @@ import type { ToBackendRevertRepoToLastCommitRequest } from '#common/types/backe
 import type { ToBackendRevertRepoToLastCommitResponse } from '#common/types/backend/routes/repos/revert-repo-to-last-commit/revert-repo-to-last-commit-response';
 import type { ToBackendRevertRepoToRemoteRequest } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
 import type { ToBackendRevertRepoToRemoteResponse } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
-import type { RepoStatus } from '#common/types/disk/repo-status';
+import type { RepoStatus } from '#common/types/disk/parts/repo-status';
 import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';

@@ -15,9 +15,9 @@ import {
 } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
+import type { SessionApi } from '#common/types/backend/parts/session-api';
 import type { ToBackendGetSessionsListRequest } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-request';
 import type { ToBackendGetSessionsListResponse } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
-import type { SessionApi } from '#common/types/backend/session-api';
 import type { SessionApiX } from '#common/types/front/session-api-x';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { makeTitle } from '#front/app/functions/make-title';

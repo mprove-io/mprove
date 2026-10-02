@@ -27,7 +27,7 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { isTimezoneValid } from '#common/functions/is-timezone-valid/is-timezone-valid';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileProjectConf } from '#common/types/blockml/internal/file-project-conf';
+import type { FileProjectConf } from '#common/types/blockml/parts/internal/file-project-conf';
 
 let func = FuncEnum.CheckProjectConfig;
 

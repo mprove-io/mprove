@@ -13,7 +13,7 @@ import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { SessionEventApi } from '#common/types/backend/session-event-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
 import { TabService } from '../tab.service';
 
 @Injectable()

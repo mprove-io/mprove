@@ -19,8 +19,8 @@ import {
 import { PivotAggEnum } from '#common/enums/chart/pivot-agg.enum';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
-import type { MconfigField } from '#common/types/backend/mconfig-field';
-import type { MconfigChart } from '#common/types/blockml/mconfig-chart';
+import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { DataService, type QDataRow } from '#front/app/services/data.service';
 

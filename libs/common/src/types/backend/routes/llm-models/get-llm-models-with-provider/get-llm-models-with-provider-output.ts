@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type LlmModelWithProvider,
   zLlmModelWithProvider
-} from '#common/types/backend/llm-models/llm-model-with-provider';
+} from '#common/types/backend/parts/llm-models/llm-model-with-provider';
 
 export type ToBackendGetLlmModelsWithProviderOutput = {
   modelsOpencode: LlmModelWithProvider[];

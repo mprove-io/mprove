@@ -1,4 +1,4 @@
-import type { SpaceUnit } from '#common/types/backend/space-unit';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 
 export function makeSpaceUnitWithSpace(item: {
   unit: SpaceUnit;

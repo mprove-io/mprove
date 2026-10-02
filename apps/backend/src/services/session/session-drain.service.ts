@@ -36,7 +36,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type {
   MproveSessionTitleUpdatedEvent,
   SessionStreamEvent
-} from '#common/types/backend/session-stream-event';
+} from '#common/types/backend/parts/session-stream-event';
 import { OcEventsService } from '../db/oc-events.service';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';

@@ -15,7 +15,7 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Member } from '#common/types/backend/member';
+import type { Member } from '#common/types/backend/parts/member';
 import type { ToBackendCheckLastNavRequest } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-request';
 import type { ToBackendCheckLastNavResponse } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-response';
 import { MemberQuery } from '#front/app/queries/member.query';

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zBmlError } from '#common/types/blockml/bml-error';
+import { zBmlError } from '#common/types/blockml/parts/bml-error';
 
 export let zBmlErrorExtra = zBmlError
   .extend({

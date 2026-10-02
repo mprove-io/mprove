@@ -15,10 +15,10 @@ import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Fraction } from '#common/types/blockml/fraction';
-import type { FractionControl } from '#common/types/blockml/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/fraction-sub-type-option';
-import type { FileStore } from '#common/types/blockml/internal/file-store';
+import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
+import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
 
 @Component({

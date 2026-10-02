@@ -15,7 +15,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { LlmModelWithProvider } from '#common/types/backend/llm-models/llm-model-with-provider';
+import type { LlmModelWithProvider } from '#common/types/backend/parts/llm-models/llm-model-with-provider';
 import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 

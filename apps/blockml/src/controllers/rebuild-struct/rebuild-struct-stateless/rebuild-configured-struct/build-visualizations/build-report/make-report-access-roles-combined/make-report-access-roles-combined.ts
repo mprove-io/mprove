@@ -8,8 +8,8 @@ import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
-import type { FilePartSpace } from '#common/types/blockml/internal/file-part-space';
-import type { FileReport } from '#common/types/blockml/internal/file-report';
+import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
+import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
 
 let func = FuncEnum.MakeReportAccessRolesCombined;
 

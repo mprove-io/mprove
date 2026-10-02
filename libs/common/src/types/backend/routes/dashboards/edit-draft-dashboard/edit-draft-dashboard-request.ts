@@ -3,8 +3,8 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DashboardField,
   zDashboardField
-} from '#common/types/blockml/dashboard-field';
-import { type Tile, zTile } from '#common/types/blockml/tile';
+} from '#common/types/blockml/parts/dashboard-field';
+import { type Tile, zTile } from '#common/types/blockml/parts/tile';
 
 export type ToBackendEditDraftDashboardRequest = {
   operation: 'editDraftDashboard';

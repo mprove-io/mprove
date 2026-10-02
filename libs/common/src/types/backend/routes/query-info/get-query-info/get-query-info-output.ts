@@ -3,15 +3,15 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type QueryInfoChart,
   zQueryInfoChart
-} from '#common/types/backend/query-info/query-info-chart';
+} from '#common/types/backend/parts/query-info/query-info-chart';
 import {
   type QueryInfoDashboard,
   zQueryInfoDashboard
-} from '#common/types/backend/query-info/query-info-dashboard';
+} from '#common/types/backend/parts/query-info/query-info-dashboard';
 import {
   type QueryInfoReport,
   zQueryInfoReport
-} from '#common/types/backend/query-info/query-info-report';
+} from '#common/types/backend/parts/query-info/query-info-report';
 
 export type ToBackendGetQueryInfoOutput = {
   chart?: QueryInfoChart;

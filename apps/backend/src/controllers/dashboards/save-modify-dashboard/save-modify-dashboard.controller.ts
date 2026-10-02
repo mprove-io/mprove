@@ -51,8 +51,8 @@ import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { TileX } from '#common/types/backend/parts/tile-x';
 import type { ToBackendSaveModifyDashboardOutput } from '#common/types/backend/routes/dashboards/save-modify-dashboard/save-modify-dashboard-output';
-import type { TileX } from '#common/types/backend/tile-x';
 import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 

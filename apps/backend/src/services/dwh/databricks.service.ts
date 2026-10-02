@@ -24,10 +24,10 @@ import type {
   RawSchemaForeignKey,
   RawSchemaIndex,
   RawSchemaTable
-} from '#common/types/backend/connection-schemas/raw-schema';
-import type { FetchSampleResult } from '#common/types/backend/connections/fetch-sample-result';
-import type { TestConnectionResult } from '#common/types/backend/connections/test-connection-result';
-import type { MalloyConfigPart } from '#common/types/backend/malloy-config-part';
+} from '#common/types/backend/parts/connection-schemas/raw-schema';
+import type { FetchSampleResult } from '#common/types/backend/parts/connections/fetch-sample-result';
+import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
+import type { MalloyConfigPart } from '#common/types/backend/parts/malloy-config-part';
 import { TabService } from '../tab.service';
 
 const quietLogger = new DBSQLLogger({ level: LogLevel.error });

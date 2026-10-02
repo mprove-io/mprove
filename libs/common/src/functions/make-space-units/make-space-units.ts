@@ -1,5 +1,5 @@
-import type { SpaceNode } from '#common/types/backend/space-node';
-import type { SpaceUnit } from '#common/types/backend/space-unit';
+import type { SpaceNode } from '#common/types/backend/parts/space-node';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 
 export function makeSpaceUnits(item: { spaceNodes: SpaceNode[] }): SpaceUnit[] {
   let { spaceNodes } = item;

@@ -17,13 +17,13 @@ import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum'
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { MconfigX } from '#common/types/backend/mconfig-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
+import type { TileX } from '#common/types/backend/parts/tile-x';
 import type { ToBackendGetQueryRequest } from '#common/types/backend/routes/queries/get-query/get-query-request';
 import type { ToBackendGetQueryResponse } from '#common/types/backend/routes/queries/get-query/get-query-response';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
 import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
-import type { TileX } from '#common/types/backend/tile-x';
-import type { Query } from '#common/types/blockml/query';
+import type { Query } from '#common/types/blockml/parts/query';
 import { getSelectValid } from '#front/app/functions/get-select-valid';
 import { NavQuery, type NavState } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';

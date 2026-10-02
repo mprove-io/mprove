@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ServerUsersItem,
   zServerUsersItem
-} from '#common/types/backend/users/server-users-item';
+} from '#common/types/backend/parts/users/server-users-item';
 
 export type ToBackendGetServerUsersOutput = {
   serverUsersList: ServerUsersItem[];

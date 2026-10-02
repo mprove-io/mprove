@@ -1,7 +1,7 @@
 import { DOUBLE_UNDERSCORE } from '#common/constants/top';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ModelNode } from '#common/types/blockml/model-node';
+import type { ModelNode } from '#common/types/blockml/parts/model-node';
 
 import {
   type ExtractTreeFieldsOutput,

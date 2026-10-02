@@ -1,5 +1,5 @@
-import type { FilePartSpace } from '#common/types/blockml/internal/file-part-space';
-import type { FileSpaceFolder } from '#common/types/blockml/internal/file-space-folder';
+import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
+import type { FileSpaceFolder } from '#common/types/blockml/parts/internal/file-space-folder';
 
 export function pushFilePartSpaceFoldersRecursive(item: {
   folders: FileSpaceFolder[];

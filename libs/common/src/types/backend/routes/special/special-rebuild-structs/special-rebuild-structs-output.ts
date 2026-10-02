@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type BridgeItem,
   zBridgeItem
-} from '#common/types/backend/special/bridge-item';
+} from '#common/types/backend/parts/special/bridge-item';
 
 export type ToBackendSpecialRebuildStructsOutput = {
   notFoundProjectIds: string[];

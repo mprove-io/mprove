@@ -27,7 +27,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { QueryOperation } from '#common/types/backend/query-operation';
+import type { QueryOperation } from '#common/types/backend/parts/query-operation';
 import type { ToBackendGetChartOutput } from '#common/types/backend/routes/charts/get-chart/get-chart-output';
 
 @Injectable()

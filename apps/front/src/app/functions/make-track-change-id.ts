@@ -1,5 +1,5 @@
-import type { Mconfig } from '#common/types/blockml/mconfig';
-import type { Query } from '#common/types/blockml/query';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig';
+import type { Query } from '#common/types/blockml/parts/query';
 
 export function makeTrackChangeId(item: { mconfig: Mconfig; query: Query }) {
   let { mconfig, query } = item;

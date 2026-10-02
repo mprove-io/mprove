@@ -31,7 +31,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Ev } from '#common/types/backend/ev';
+import type { Ev } from '#common/types/backend/parts/ev';
 import type { ToBackendCreateEnvVarOutput } from '#common/types/backend/routes/envs/create-env-var/create-env-var-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 

@@ -1,5 +1,5 @@
-import type { SpaceFolder } from '#common/types/backend/space-folder';
-import type { Space } from '#common/types/blockml/space';
+import type { SpaceFolder } from '#common/types/backend/parts/space-folder';
+import type { Space } from '#common/types/blockml/parts/space';
 
 export function makeSpaceFolder(item: {
   space: Space;

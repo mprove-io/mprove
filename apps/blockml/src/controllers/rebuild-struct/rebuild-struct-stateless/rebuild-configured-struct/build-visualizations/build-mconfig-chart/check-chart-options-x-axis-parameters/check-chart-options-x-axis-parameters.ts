@@ -12,7 +12,7 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileChartOptionsXAxisElement } from '#common/types/blockml/internal/file-chart-options-x-axis';
+import type { FileChartOptionsXAxisElement } from '#common/types/blockml/parts/internal/file-chart-options-x-axis';
 import type { dcType } from '#common/types/dc-type';
 
 let func = FuncEnum.CheckChartOptionsXAxisParameters;

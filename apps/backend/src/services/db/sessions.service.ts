@@ -17,8 +17,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { OcSessionApi } from '#common/types/backend/oc-session-api';
-import type { SessionApi } from '#common/types/backend/session-api';
+import type { OcSessionApi } from '#common/types/backend/parts/oc-session-api';
+import type { SessionApi } from '#common/types/backend/parts/session-api';
 import { TabService } from '../tab.service';
 
 @Injectable()

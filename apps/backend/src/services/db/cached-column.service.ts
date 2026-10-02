@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import type { CachedColumnTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
-import type { CachedColumn } from '#common/types/backend/connections/cached-column';
+import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 
 @Injectable()
 export class CachedColumnService {

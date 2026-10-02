@@ -26,7 +26,7 @@ import {
   PROVIDER_TYPE_NAME_BY_TYPE
 } from '#common/constants/providers';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
-import type { Provider } from '#common/types/backend/provider';
+import type { Provider } from '#common/types/backend/parts/provider';
 import type { ToBackendCreateProviderRequest } from '#common/types/backend/routes/providers/create-provider/create-provider-request';
 import type { ToBackendCreateProviderResponse } from '#common/types/backend/routes/providers/create-provider/create-provider-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';

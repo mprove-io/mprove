@@ -3,8 +3,8 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type SessionApi,
   zSessionApi
-} from '#common/types/backend/session-api';
-import { type Repo, zRepo } from '#common/types/disk/repo';
+} from '#common/types/backend/parts/session-api';
+import { type Repo, zRepo } from '#common/types/disk/parts/repo';
 
 export type ToBackendCommitRepoOutput = {
   repo: Repo;

@@ -1,5 +1,5 @@
-import type { DashboardUnit } from '#common/types/backend/dashboard-unit';
-import type { SpaceUnit } from '#common/types/backend/space-unit';
+import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 
 export function spaceUnitToDashboardUnit(item: {
   spaceUnit: SpaceUnit;

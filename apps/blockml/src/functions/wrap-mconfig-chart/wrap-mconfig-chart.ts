@@ -6,12 +6,12 @@ import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
-import type { FileChartData } from '#common/types/blockml/internal/file-chart-data';
-import type { FileChartOptions } from '#common/types/blockml/internal/file-chart-options';
-import type { MconfigChart } from '#common/types/blockml/mconfig-chart';
-import type { MconfigChartSeries } from '#common/types/blockml/mconfig-chart-series';
-import type { MconfigChartXAxis } from '#common/types/blockml/mconfig-chart-x-axis';
-import type { MconfigChartYAxis } from '#common/types/blockml/mconfig-chart-y-axis';
+import type { FileChartData } from '#common/types/blockml/parts/internal/file-chart-data';
+import type { FileChartOptions } from '#common/types/blockml/parts/internal/file-chart-options';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
+import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
+import type { MconfigChartXAxis } from '#common/types/blockml/parts/mconfig-chart-x-axis';
+import type { MconfigChartYAxis } from '#common/types/blockml/parts/mconfig-chart-y-axis';
 export function wrapMconfigChart(item: {
   title: string;
   type: ChartTypeEnum;

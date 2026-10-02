@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type CachedColumn,
   zCachedColumn
-} from '#common/types/backend/connections/cached-column';
+} from '#common/types/backend/parts/connections/cached-column';
 
 export type ToBackendRefreshCachedColumnOutput = {
   cachedColumn?: CachedColumn;

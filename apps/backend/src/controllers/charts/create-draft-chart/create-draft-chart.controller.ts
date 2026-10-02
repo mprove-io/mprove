@@ -52,7 +52,7 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendCreateDraftChartOutput } from '#common/types/backend/routes/charts/create-draft-chart/create-draft-chart-output';
-import type { Tile } from '#common/types/blockml/tile';
+import type { Tile } from '#common/types/blockml/parts/tile';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Charts')

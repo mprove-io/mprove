@@ -3,11 +3,11 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ToBackendSyncRepoFromServerOutput,
   zToBackendSyncRepoFromServerOutput
-} from '#common/types/backend/repos/to-backend-sync-repo-from-server-output';
+} from '#common/types/backend/parts/repos/to-backend-sync-repo-from-server-output';
 import {
   type ToBackendSyncRepoToServerOutput,
   zToBackendSyncRepoToServerOutput
-} from '#common/types/backend/repos/to-backend-sync-repo-to-server-output';
+} from '#common/types/backend/parts/repos/to-backend-sync-repo-to-server-output';
 
 export type ToBackendSyncRepoOutput =
   | ToBackendSyncRepoToServerOutput

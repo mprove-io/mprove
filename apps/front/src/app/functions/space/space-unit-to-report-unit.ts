@@ -1,5 +1,5 @@
-import type { ReportUnit } from '#common/types/backend/report-unit';
-import type { SpaceUnit } from '#common/types/backend/space-unit';
+import type { ReportUnit } from '#common/types/backend/parts/report-unit';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 
 export function spaceUnitToReportUnit(item: {
   spaceUnit: SpaceUnit;

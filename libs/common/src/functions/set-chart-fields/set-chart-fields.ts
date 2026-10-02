@@ -3,9 +3,9 @@ import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { setChartSeries } from '#common/functions/set-chart-series/set-chart-series';
-import type { Mconfig } from '#common/types/blockml/mconfig';
-import type { MconfigChart } from '#common/types/blockml/mconfig-chart';
-import type { ModelField } from '#common/types/blockml/model-field';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
+import type { ModelField } from '#common/types/blockml/parts/model-field';
 
 export function setChartFields<T extends Mconfig>(item: {
   oldChartType?: ChartTypeEnum;

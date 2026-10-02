@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/types/backend/member';
+import { type Member, zMember } from '#common/types/backend/parts/member';
 
 export type ToBackendCreateMemberOutput = {
   member: Member;

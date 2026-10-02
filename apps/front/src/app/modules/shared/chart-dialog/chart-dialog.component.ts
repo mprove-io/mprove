@@ -31,7 +31,7 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
 import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fields';
-import type { MconfigX } from '#common/types/backend/mconfig-x';
+import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
 import type { ToBackendDuplicateMconfigAndQueryRequest } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-request';
 import type { ToBackendDuplicateMconfigAndQueryResponse } from '#common/types/backend/routes/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query-response';
 import type { ToBackendGroupMetricByDimensionRequest } from '#common/types/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-request';
@@ -42,9 +42,9 @@ import type { ToBackendGetQueryRequest } from '#common/types/backend/routes/quer
 import type { ToBackendGetQueryResponse } from '#common/types/backend/routes/queries/get-query/get-query-response';
 import type { ToBackendRunQueriesRequest } from '#common/types/backend/routes/queries/run-queries/run-queries-request';
 import type { ToBackendRunQueriesResponse } from '#common/types/backend/routes/queries/run-queries/run-queries-response';
-import type { Model } from '#common/types/blockml/model';
-import type { ModelFieldY } from '#common/types/blockml/model-field-y';
-import type { Query } from '#common/types/blockml/query';
+import type { Model } from '#common/types/blockml/parts/model';
+import type { ModelFieldY } from '#common/types/blockml/parts/model-field-y';
+import type { Query } from '#common/types/blockml/parts/query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { StructQuery } from '#front/app/queries/struct.query';

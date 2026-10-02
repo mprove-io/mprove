@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { DashboardUnit } from '#common/types/backend/dashboard-unit';
-import type { SpaceNode } from '#common/types/backend/space-node';
+import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
+import type { SpaceNode } from '#common/types/backend/parts/space-node';
 import { BaseQuery } from './base.query';
 
 export class DashboardUnitsState {

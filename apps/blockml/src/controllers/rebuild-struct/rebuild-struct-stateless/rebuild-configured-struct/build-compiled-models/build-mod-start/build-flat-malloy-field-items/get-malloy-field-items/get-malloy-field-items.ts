@@ -7,7 +7,7 @@ import type { ConfigService } from '@nestjs/config';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import type { MalloySourceField } from '#blockml/types/malloy-source-field';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { FlatMalloyFieldItem } from '#common/types/blockml/internal/flat-malloy-field-item';
+import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
 import { flattenMalloyFieldItemsRecursive } from './flatten-malloy-field-items-recursive/flatten-malloy-field-items-recursive';
 import { getMalloySourceAnnotationValues } from './get-malloy-source-annotation-values/get-malloy-source-annotation-values';
 import { makeMalloySourceErrorLine } from './make-malloy-source-error-line/make-malloy-source-error-line';

@@ -42,8 +42,8 @@ import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeId } from '#common/functions/make-id/make-id';
 import type { ToBackendCreateDraftReportOutput } from '#common/types/backend/routes/reports/create-draft-report/create-draft-report-output';
-import type { Row } from '#common/types/blockml/row';
-import type { Rq } from '#common/types/blockml/rq';
+import type { Row } from '#common/types/blockml/parts/row';
+import type { Rq } from '#common/types/blockml/parts/rq';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Reports')

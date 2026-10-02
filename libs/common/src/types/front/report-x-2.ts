@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zReportX } from '#common/types/backend/report-x';
+import { zReportX } from '#common/types/backend/parts/report-x';
 import { zRowX2 } from '#common/types/front/row-x-2';
 
 export let zReportX2 = zReportX

@@ -20,7 +20,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { LlmModel } from '#common/types/backend/llm-models/llm-model';
+import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 
 @Injectable()
 export class ExplorerModelsService {

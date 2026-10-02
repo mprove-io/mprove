@@ -26,9 +26,9 @@ import {
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ModelMetricX } from '#common/types/backend/model-metric-x';
-import type { ModelPartX } from '#common/types/backend/model-part-x';
-import type { StructX } from '#common/types/backend/struct-x';
+import type { ModelMetricX } from '#common/types/backend/parts/model-metric-x';
+import type { ModelPartX } from '#common/types/backend/parts/model-part-x';
+import type { StructX } from '#common/types/backend/parts/struct-x';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

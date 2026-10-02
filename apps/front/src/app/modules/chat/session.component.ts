@@ -19,13 +19,13 @@ import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { SessionApi } from '#common/types/backend/parts/session-api';
+import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
+import type { SessionMessageApi } from '#common/types/backend/parts/session-message-api';
 import type { ToBackendSendMessageToEditorSessionRequest } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-request';
 import type { ToBackendSendMessageToEditorSessionResponse } from '#common/types/backend/routes/sessions/send-message-to-editor-session/send-message-to-editor-session-response';
 import type { ToBackendSendMessageToExplorerSessionRequest } from '#common/types/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-request';
 import type { ToBackendSendMessageToExplorerSessionResponse } from '#common/types/backend/routes/sessions/send-message-to-explorer-session/send-message-to-explorer-session-response';
-import type { SessionApi } from '#common/types/backend/session-api';
-import type { SessionEventApi } from '#common/types/backend/session-event-api';
-import type { SessionMessageApi } from '#common/types/backend/session-message-api';
 import { splitModelExtraId } from '#front/app/functions/split-model-extra-id';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {

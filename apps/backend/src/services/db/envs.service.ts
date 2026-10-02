@@ -12,10 +12,10 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Env } from '#common/types/backend/env';
-import type { EnvUser } from '#common/types/backend/env-user';
-import type { EnvsItem } from '#common/types/backend/envs-item';
-import type { Ev } from '#common/types/backend/ev';
+import type { Env } from '#common/types/backend/parts/env';
+import type { EnvUser } from '#common/types/backend/parts/env-user';
+import type { EnvsItem } from '#common/types/backend/parts/envs-item';
+import type { Ev } from '#common/types/backend/parts/ev';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

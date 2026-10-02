@@ -9,12 +9,12 @@ import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Listener } from '#common/types/blockml/listener';
-import type { ModelMetric } from '#common/types/blockml/model-metric';
-import type { Parameter } from '#common/types/blockml/parameter';
-import type { ReportField } from '#common/types/blockml/report-field';
-import type { Row } from '#common/types/blockml/row';
-import type { RowChange } from '#common/types/blockml/row-change';
+import type { Listener } from '#common/types/blockml/parts/listener';
+import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
+import type { Parameter } from '#common/types/blockml/parts/parameter';
+import type { ReportField } from '#common/types/blockml/parts/report-field';
+import type { Row } from '#common/types/blockml/parts/row';
+import type { RowChange } from '#common/types/blockml/parts/row-change';
 
 @Injectable()
 export class ReportRowService {

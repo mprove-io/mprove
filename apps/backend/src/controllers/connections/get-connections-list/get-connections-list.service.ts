@@ -10,7 +10,7 @@ import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ConnectionItem } from '#common/types/backend/connections/connection-item';
+import type { ConnectionItem } from '#common/types/backend/parts/connections/connection-item';
 
 @Injectable()
 export class GetConnectionsListService {

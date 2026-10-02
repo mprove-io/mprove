@@ -22,7 +22,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DiskFileLine } from '#common/types/disk/disk-file-line';
+import type { DiskFileLine } from '#common/types/disk/parts/disk-file-line';
 import type { BmlErrorExtra } from '#common/types/front/bml-error-extra';
 import { getFileExtension } from '#front/app/functions/get-file-extension';
 import { FileQuery } from '#front/app/queries/file.query';

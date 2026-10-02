@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zModelNode } from '#common/types/blockml/model-node';
+import { zModelNode } from '#common/types/blockml/parts/model-node';
 
 export let zModelNodeExtra = zModelNode
   .extend({

@@ -6,8 +6,8 @@ import type { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter/capitalize-first-letter';
 import { decodeFilePath } from '#common/functions/decode-file-path/decode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { BmlFile } from '#common/types/blockml/bml-file';
-import type { FileMod } from '#common/types/blockml/internal/file-mod';
+import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 
 export async function prepareMalloyFile(item: {
   file: BmlFile;

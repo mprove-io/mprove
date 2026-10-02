@@ -12,9 +12,9 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendSeedRecordsInputConnectionsItem } from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-connections-item';
 import type { ToBackendGetChartRequest } from '#common/types/backend/routes/charts/get-chart/get-chart-request';
 import type { ToBackendGetChartResponse } from '#common/types/backend/routes/charts/get-chart/get-chart-response';
-import type { ToBackendSeedRecordsInputConnectionsItem } from '#common/types/backend/test-routes/to-backend-seed-records-input-connections-item';
 
 let testId = 'backend-get-chart__ok';
 

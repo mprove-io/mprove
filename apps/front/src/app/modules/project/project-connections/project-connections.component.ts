@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { PROJECT_CONNECTIONS_PAGE_TITLE } from '#common/constants/page-titles';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import type { ProjectConnection } from '#common/types/backend/project-connection';
+import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 import { ConnectionsQuery } from '#front/app/queries/connections.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';

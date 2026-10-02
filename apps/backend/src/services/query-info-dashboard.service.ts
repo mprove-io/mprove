@@ -33,7 +33,7 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import type { ToBackendGetDashboardOutput } from '#common/types/backend/routes/dashboards/get-dashboard/get-dashboard-output';
-import type { DiskCatalogFile } from '#common/types/disk/disk-catalog-file';
+import type { DiskCatalogFile } from '#common/types/disk/parts/disk-catalog-file';
 import { UsersService } from './db/users.service';
 
 @Injectable()

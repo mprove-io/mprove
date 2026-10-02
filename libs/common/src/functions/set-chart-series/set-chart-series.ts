@@ -7,9 +7,9 @@ import {
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type { Mconfig } from '#common/types/blockml/mconfig';
-import type { MconfigChart } from '#common/types/blockml/mconfig-chart';
-import type { MconfigChartSeries } from '#common/types/blockml/mconfig-chart-series';
+import type { Mconfig } from '#common/types/blockml/parts/mconfig';
+import type { MconfigChart } from '#common/types/blockml/parts/mconfig-chart';
+import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
 
 export function setChartSeries<T extends Mconfig>(item: { mconfig: T }) {
   let { mconfig } = item;

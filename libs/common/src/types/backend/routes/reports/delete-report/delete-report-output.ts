@@ -3,8 +3,11 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ReportUnit,
   zReportUnit
-} from '#common/types/backend/report-unit';
-import { type SpaceNode, zSpaceNode } from '#common/types/backend/space-node';
+} from '#common/types/backend/parts/report-unit';
+import {
+  type SpaceNode,
+  zSpaceNode
+} from '#common/types/backend/parts/space-node';
 
 export type ToBackendDeleteReportOutput = {
   reportUnitDrafts: ReportUnit[];

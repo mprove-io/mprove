@@ -21,10 +21,10 @@ import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { MconfigField } from '#common/types/backend/mconfig-field';
-import type { MconfigX } from '#common/types/backend/mconfig-x';
-import type { MconfigChartSeries } from '#common/types/blockml/mconfig-chart-series';
-import type { Query } from '#common/types/blockml/query';
+import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
+import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
+import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
+import type { Query } from '#common/types/blockml/parts/query';
 import type { DataPoint } from '#common/types/front/data-point';
 import type { DataRow } from '#common/types/front/data-row';
 import { frontFormatTsUnix } from '../functions/front-format-ts-unix';

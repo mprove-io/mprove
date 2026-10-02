@@ -2,7 +2,7 @@ import { BmError } from '#blockml/classes/bm-error/bm-error';
 import { MPROVE_TAG_FIELD_GROUP } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import type { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import type { FlatMalloyFieldItem } from '#common/types/blockml/internal/flat-malloy-field-item';
+import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
 
 export function checkGroupSuffix(item: {
   fieldItems: FlatMalloyFieldItem[];

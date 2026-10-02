@@ -33,7 +33,7 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { LlmModel } from '#common/types/backend/llm-models/llm-model';
+import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 
 export const OPENCODE_PROJECT_OPENAI_PROVIDER_ID = '_mprove_openai';
 

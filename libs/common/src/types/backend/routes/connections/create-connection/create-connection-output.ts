@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ProjectConnection,
   zProjectConnection
-} from '#common/types/backend/project-connection';
+} from '#common/types/backend/parts/project-connection';
 
 export type ToBackendCreateConnectionOutput = {
   connection: ProjectConnection;

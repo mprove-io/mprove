@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type BmlError, zBmlError } from '#common/types/blockml/bml-error';
+import {
+  type BmlError,
+  zBmlError
+} from '#common/types/blockml/parts/bml-error';
 
 export type BackendCreateDraftDashboardFailedError = {
   code: 'BACKEND_CREATE_DRAFT_DASHBOARD_FAILED';

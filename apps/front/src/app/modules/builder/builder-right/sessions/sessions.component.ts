@@ -7,6 +7,7 @@ import { PATH_NEW_SESSION } from '#common/constants/top';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { SessionApi } from '#common/types/backend/parts/session-api';
 import type { ToBackendArchiveSessionRequest } from '#common/types/backend/routes/sessions/archive-session/archive-session-request';
 import type { ToBackendArchiveSessionResponse } from '#common/types/backend/routes/sessions/archive-session/archive-session-response';
 import type { ToBackendGetSessionsListOutput } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-output';
@@ -14,7 +15,6 @@ import type { ToBackendGetSessionsListRequest } from '#common/types/backend/rout
 import type { ToBackendGetSessionsListResponse } from '#common/types/backend/routes/sessions/get-sessions-list/get-sessions-list-response';
 import type { ToBackendPauseEditorSessionRequest } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-request';
 import type { ToBackendPauseEditorSessionResponse } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-response';
-import type { SessionApi } from '#common/types/backend/session-api';
 import type { SessionApiX } from '#common/types/front/session-api-x';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';

@@ -21,7 +21,7 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { LlmModelVariant } from '#common/types/backend/llm-models/llm-model-variant';
+import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import type { ToBackendCreateLlmModelRequest } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-request';
 import type { ToBackendCreateLlmModelResponse } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-response';
 

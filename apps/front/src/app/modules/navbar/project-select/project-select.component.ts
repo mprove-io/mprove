@@ -22,7 +22,7 @@ import {
 } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { ProjectsItem } from '#common/types/backend/projects-item';
+import type { ProjectsItem } from '#common/types/backend/parts/projects-item';
 import type { ToBackendGetProjectsListRequest } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-request';
 import type { ToBackendGetProjectsListResponse } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-response';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

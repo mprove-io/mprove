@@ -1,8 +1,8 @@
 import { parseAnnotation, Tag } from '@malloydata/malloy-tag';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { KeyTagPair } from '#common/types/blockml/key-tag-pair';
-import type { KeyValuePair } from '#common/types/blockml/key-value-pair';
+import type { KeyTagPair } from '#common/types/blockml/parts/key-tag-pair';
+import type { KeyValuePair } from '#common/types/blockml/parts/key-value-pair';
 
 interface ParseResult {
   malloyTags: KeyValuePair[];

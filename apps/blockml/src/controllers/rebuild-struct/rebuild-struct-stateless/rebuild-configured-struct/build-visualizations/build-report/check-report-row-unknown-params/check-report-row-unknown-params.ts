@@ -11,8 +11,8 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { FileReport } from '#common/types/blockml/internal/file-report';
-import type { FileReportRowParameter } from '#common/types/blockml/internal/file-report-row-parameter';
+import type { FileReport } from '#common/types/blockml/parts/internal/file-report';
+import type { FileReportRowParameter } from '#common/types/blockml/parts/internal/file-report-row-parameter';
 
 let func = FuncEnum.CheckReportRowUnknownParams;
 

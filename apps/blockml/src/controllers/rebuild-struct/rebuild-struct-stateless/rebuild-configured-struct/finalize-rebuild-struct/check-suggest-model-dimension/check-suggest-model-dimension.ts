@@ -8,7 +8,7 @@ import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Model } from '#common/types/blockml/model';
+import type { Model } from '#common/types/blockml/parts/model';
 import type { sdrType } from '#common/types/sdr-type';
 import { checkSuggestApiFields } from './check-suggest-api-fields/check-suggest-api-fields';
 import { checkSuggestFields } from './check-suggest-fields/check-suggest-fields';

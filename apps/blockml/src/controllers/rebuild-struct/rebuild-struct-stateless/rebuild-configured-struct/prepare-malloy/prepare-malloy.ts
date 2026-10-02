@@ -3,9 +3,9 @@ import { Result } from '@praha/byethrow';
 import type { BlockmlConfig } from '#blockml/config/blockml-config';
 import { prePopulateMalloySchemaCache } from '#blockml/controllers/rebuild-struct/rebuild-struct-stateless/rebuild-configured-struct/prepare-malloy/pre-populate-malloy-schema-cache/pre-populate-malloy-schema-cache';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ProjectConnection } from '#common/types/backend/project-connection';
-import type { BmlFile } from '#common/types/blockml/bml-file';
-import type { FileMod } from '#common/types/blockml/internal/file-mod';
+import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
+import type { BmlFile } from '#common/types/blockml/parts/bml-file';
+import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
 import {
   type MalloyConnection,
   makeMalloyConnections

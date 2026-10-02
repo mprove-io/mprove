@@ -1,6 +1,6 @@
 import type { ReportTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
-import type { FilterX } from '#common/types/backend/filter-x';
+import type { FilterX } from '#common/types/backend/parts/filter-x';
 
 export function makeReportFiltersX(item: { report: ReportTab }) {
   let filtersX: FilterX[] = item.report.fields.map(field => {

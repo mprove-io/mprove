@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type ModelInfo, zModelInfo } from '#common/types/backend/model-info';
+import {
+  type ModelInfo,
+  zModelInfo
+} from '#common/types/backend/parts/model-info';
 
 export type ToBackendCreateFileRequest = {
   operation: 'createFile';

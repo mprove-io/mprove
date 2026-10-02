@@ -11,9 +11,9 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { makeAccessRolesCombined } from '#common/functions/make-access-roles-combined/make-access-roles-combined';
-import type { FileMod } from '#common/types/blockml/internal/file-mod';
-import type { FilePartSpace } from '#common/types/blockml/internal/file-part-space';
-import type { KeyValuePair } from '#common/types/blockml/key-value-pair';
+import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
+import type { FilePartSpace } from '#common/types/blockml/parts/internal/file-part-space';
+import type { KeyValuePair } from '#common/types/blockml/parts/key-value-pair';
 
 let func = FuncEnum.CheckModSpaces;
 

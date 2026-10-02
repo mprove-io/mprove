@@ -6,11 +6,11 @@ import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.e
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ReportX } from '#common/types/backend/report-x';
-import type { Fraction } from '#common/types/blockml/fraction';
-import type { FractionControl } from '#common/types/blockml/fraction-control';
-import type { FractionSubTypeOption } from '#common/types/blockml/fraction-sub-type-option';
-import type { ReportField } from '#common/types/blockml/report-field';
+import type { ReportX } from '#common/types/backend/parts/report-x';
+import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { FractionControl } from '#common/types/blockml/parts/fraction-control';
+import type { FractionSubTypeOption } from '#common/types/blockml/parts/fraction-sub-type-option';
+import type { ReportField } from '#common/types/blockml/parts/report-field';
 import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
 import { getFractionTypeForAny } from '#front/app/functions/get-fraction-type-for-any';
 import { ModelsQuery } from '#front/app/queries/models.query';

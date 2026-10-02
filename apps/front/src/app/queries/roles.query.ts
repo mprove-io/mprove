@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import type { Role } from '#common/types/backend/role';
+import type { Role } from '#common/types/backend/parts/role';
 import { BaseQuery } from './base.query';
 
 export class RolesState {

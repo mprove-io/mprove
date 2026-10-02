@@ -15,8 +15,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
+import type { ToBackendSeedRecordsInputConnectionsItem } from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-connections-item';
 import type { ToBackendGenerateUserApiKeyRequest } from '#common/types/backend/routes/users/generate-user-api-key/generate-user-api-key-request';
-import type { ToBackendSeedRecordsInputConnectionsItem } from '#common/types/backend/test-routes/to-backend-seed-records-input-connections-item';
 
 let testId = 'backend-mcp-get-model__ok';
 

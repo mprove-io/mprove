@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zMconfigChartSeries } from '#common/types/blockml/mconfig-chart-series';
+import { zMconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
 
 export let zEventChartSeriesElementUpdate = z
   .object({

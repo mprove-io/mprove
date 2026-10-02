@@ -7,8 +7,8 @@ import { log } from '#blockml/functions/log/log';
 import type { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
-import type { FileDashboard } from '#common/types/blockml/internal/file-dashboard';
-import type { FileStore } from '#common/types/blockml/internal/file-store';
+import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';
+import type { FileStore } from '#common/types/blockml/parts/internal/file-store';
 
 let func = FuncEnum.CheckDashboardTopParameters;
 

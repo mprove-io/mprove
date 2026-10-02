@@ -14,8 +14,8 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { Env } from '#common/types/backend/env';
-import type { Ev } from '#common/types/backend/ev';
+import type { Env } from '#common/types/backend/parts/env';
+import type { Ev } from '#common/types/backend/parts/ev';
 import type { ToBackendEditEnvVarRequest } from '#common/types/backend/routes/envs/edit-env-var/edit-env-var-request';
 import type { ToBackendEditEnvVarResponse } from '#common/types/backend/routes/envs/edit-env-var/edit-env-var-response';
 import { SharedModule } from '#front/app/modules/shared/shared.module';

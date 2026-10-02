@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/types/backend/member';
-import { type StructX, zStructX } from '#common/types/backend/struct-x';
+import { type Member, zMember } from '#common/types/backend/parts/member';
+import { type StructX, zStructX } from '#common/types/backend/parts/struct-x';
 import {
   type SuggestField,
   zSuggestField
-} from '#common/types/backend/suggest-field';
+} from '#common/types/backend/parts/suggest-field';
 
 export type ToBackendGetSuggestFieldsOutput = {
   needValidate: boolean;

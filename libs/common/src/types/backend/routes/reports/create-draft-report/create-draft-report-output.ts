@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/types/backend/member';
+import { type Member, zMember } from '#common/types/backend/parts/member';
 import {
   type ReportUnit,
   zReportUnit
-} from '#common/types/backend/report-unit';
-import { type ReportX, zReportX } from '#common/types/backend/report-x';
-import { type StructX, zStructX } from '#common/types/backend/struct-x';
+} from '#common/types/backend/parts/report-unit';
+import { type ReportX, zReportX } from '#common/types/backend/parts/report-x';
+import { type StructX, zStructX } from '#common/types/backend/parts/struct-x';
 
 export type ToBackendCreateDraftReportOutput = {
   needValidate: boolean;

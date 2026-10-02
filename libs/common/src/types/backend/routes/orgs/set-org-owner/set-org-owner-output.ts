@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Org, zOrg } from '#common/types/backend/org';
+import { type Org, zOrg } from '#common/types/backend/parts/org';
 
 export type ToBackendSetOrgOwnerOutput = {
   org: Org;

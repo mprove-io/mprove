@@ -10,7 +10,7 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { MconfigChartSeries } from '#common/types/blockml/mconfig-chart-series';
+import type { MconfigChartSeries } from '#common/types/blockml/parts/mconfig-chart-series';
 import type { ChartSeriesWithField } from '#common/types/front/chart-series-with-field';
 import type { EventChartSeriesElementUpdate } from '#common/types/front/event-chart-series-element-update';
 import type { EventChartToggleSeries } from '#common/types/front/event-chart-toggle-series';

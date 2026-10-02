@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type EnvsItem, zEnvsItem } from '#common/types/backend/envs-item';
+import {
+  type EnvsItem,
+  zEnvsItem
+} from '#common/types/backend/parts/envs-item';
 
 export type ToBackendGetEnvsListOutput = {
   envsList: EnvsItem[];

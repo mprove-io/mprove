@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Query, zQuery } from '#common/types/blockml/query';
+import { type Query, zQuery } from '#common/types/blockml/parts/query';
 
 export type ToBackendGetQueriesOutput = {
   queries: Query[];

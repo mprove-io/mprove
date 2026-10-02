@@ -1,10 +1,10 @@
 import { Result } from '@praha/byethrow';
 import type { SimpleGit } from 'simple-git';
-import type { DiskItemStatus } from '#common/types/disk/disk-item-status';
 import type { DiskRepoIsNotCleanForCheckoutBranchError } from '#common/types/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
 import type { DiskCheckoutBranchError } from '#common/types/disk/function-errors/disk-checkout-branch-error';
 import type { DiskGetRepoStatusError } from '#common/types/disk/function-errors/disk-get-repo-status-error';
-import type { RepoStatus } from '#common/types/disk/repo-status';
+import type { DiskItemStatus } from '#common/types/disk/parts/disk-item-status';
+import type { RepoStatus } from '#common/types/disk/parts/repo-status';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status/get-repo-status';
 import { addTraceSpan } from '#node-common/functions/add-trace-span/add-trace-span';
 

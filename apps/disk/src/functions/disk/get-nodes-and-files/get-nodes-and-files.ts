@@ -1,10 +1,10 @@
 import { Result } from '@praha/byethrow';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
-import type { DiskCatalogFile } from '#common/types/disk/disk-catalog-file';
-import type { DiskCatalogNode } from '#common/types/disk/disk-catalog-node';
-import type { DiskItemCatalog } from '#common/types/disk/disk-item-catalog';
 import type { DiskGetNodesAndFilesError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
 import type { DiskGetNodesAndFilesPayloadRecursiveError } from '#common/types/disk/function-errors/disk-get-nodes-and-files-payload-recursive-error';
+import type { DiskCatalogFile } from '#common/types/disk/parts/disk-catalog-file';
+import type { DiskCatalogNode } from '#common/types/disk/parts/disk-catalog-node';
+import type { DiskItemCatalog } from '#common/types/disk/parts/disk-item-catalog';
 import type { GetMproveDirError } from '#common/types/node-common/function-errors/get-mprove-dir-error';
 import { getMproveDir } from '#node-common/functions/get-mprove-dir/get-mprove-dir';
 import {

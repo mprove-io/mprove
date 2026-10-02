@@ -3,8 +3,8 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type CombinedSchemaItem,
   zCombinedSchemaItem
-} from '#common/types/backend/connection-schemas/combined-schema';
-import { type Member, zMember } from '#common/types/backend/member';
+} from '#common/types/backend/parts/connection-schemas/combined-schema';
+import { type Member, zMember } from '#common/types/backend/parts/member';
 
 export type ToBackendGetConnectionSchemasOutput = {
   userMember: Member;

@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import type { Env } from '#common/types/backend/env';
-import type { Ev } from '#common/types/backend/ev';
+import type { Env } from '#common/types/backend/parts/env';
+import type { Ev } from '#common/types/backend/parts/ev';
 import type { ToBackendDeleteEnvVarRequest } from '#common/types/backend/routes/envs/delete-env-var/delete-env-var-request';
 import type { ToBackendDeleteEnvVarResponse } from '#common/types/backend/routes/envs/delete-env-var/delete-env-var-response';
 import { EnvironmentsQuery } from '#front/app/queries/environments.query';

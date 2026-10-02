@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type CombinedSchemaItem,
   zCombinedSchemaItem
-} from '#common/types/backend/connection-schemas/combined-schema';
+} from '#common/types/backend/parts/connection-schemas/combined-schema';
 
 export type McpToolGetSchemasInput = {
   projectId: string;

@@ -3,11 +3,11 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type MproveValidationError,
   zMproveValidationError
-} from '#common/types/backend/state/mprove-validation-error';
+} from '#common/types/backend/parts/state/mprove-validation-error';
 import {
   type ValidateFilesRepo,
   zValidateFilesRepo
-} from '#common/types/backend/state/validate-files-repo';
+} from '#common/types/backend/parts/state/validate-files-repo';
 
 export type McpToolValidateFilesInput = {
   projectId: string;

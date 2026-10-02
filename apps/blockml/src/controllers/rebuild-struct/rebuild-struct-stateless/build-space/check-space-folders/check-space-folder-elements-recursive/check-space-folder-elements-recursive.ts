@@ -4,7 +4,7 @@ import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
-import type { FileSpace } from '#common/types/blockml/internal/file-space';
+import type { FileSpace } from '#common/types/blockml/parts/internal/file-space';
 
 export function checkSpaceFolderElementsRecursive(item: {
   file: FileSpace;

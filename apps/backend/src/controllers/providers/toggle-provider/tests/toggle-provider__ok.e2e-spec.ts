@@ -20,7 +20,7 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import { unwrapBackendResponseOutput } from '#common/functions/unwrap-backend-response-output/unwrap-backend-response-output';
-import type { Provider } from '#common/types/backend/provider';
+import type { Provider } from '#common/types/backend/parts/provider';
 import type { ToBackendToggleProviderRequest } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-request';
 import type { ToBackendToggleProviderResponse } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-response';
 

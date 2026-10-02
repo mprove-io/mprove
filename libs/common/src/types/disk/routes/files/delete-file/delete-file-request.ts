@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type BaseProject,
   zBaseProject
-} from '#common/types/backend/base-project';
+} from '#common/types/backend/parts/base-project';
 
 export type ToDiskDeleteFileRequest = {
   operation: 'deleteFile';

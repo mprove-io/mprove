@@ -10,7 +10,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ReportUnit } from '#common/types/backend/report-unit';
+import type { ReportUnit } from '#common/types/backend/parts/report-unit';
 import type { ToBackendDeleteReportRequest } from '#common/types/backend/routes/reports/delete-report/delete-report-request';
 import type { ToBackendDeleteReportResponse } from '#common/types/backend/routes/reports/delete-report/delete-report-response';
 import { ReportQuery } from '#front/app/queries/report.query';

@@ -3,23 +3,23 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type OcSessionApi,
   zOcSessionApi
-} from '#common/types/backend/oc-session-api';
+} from '#common/types/backend/parts/oc-session-api';
 import {
   type SessionApi,
   zSessionApi
-} from '#common/types/backend/session-api';
+} from '#common/types/backend/parts/session-api';
 import {
   type SessionEventApi,
   zSessionEventApi
-} from '#common/types/backend/session-event-api';
+} from '#common/types/backend/parts/session-event-api';
 import {
   type SessionMessageApi,
   zSessionMessageApi
-} from '#common/types/backend/session-message-api';
+} from '#common/types/backend/parts/session-message-api';
 import {
   type SessionPartApi,
   zSessionPartApi
-} from '#common/types/backend/session-part-api';
+} from '#common/types/backend/parts/session-part-api';
 
 export type ToBackendGetSessionOutput = {
   session: SessionApi;

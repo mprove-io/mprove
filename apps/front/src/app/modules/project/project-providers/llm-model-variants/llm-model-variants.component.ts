@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { LLM_MODEL_DEFAULT_VARIANT } from '#common/constants/llm-models';
-import type { LlmModelVariant } from '#common/types/backend/llm-models/llm-model-variant';
+import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 import { getLlmModelVariantsError } from '#front/app/functions/get-llm-model-variants-error';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 

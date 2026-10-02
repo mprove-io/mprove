@@ -4,12 +4,12 @@ import { ControlClassEnum } from '#common/enums/control-class.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { toFileChartOptions } from '#common/functions/to-file-chart-options/to-file-chart-options';
-import type { MconfigX } from '#common/types/backend/mconfig-x';
-import type { TileX } from '#common/types/backend/tile-x';
-import type { FileFraction } from '#common/types/blockml/internal/file-fraction';
-import type { FileFractionControl } from '#common/types/blockml/internal/file-fraction-control';
-import type { FilePartTile } from '#common/types/blockml/internal/file-part-tile';
-import type { FileTileParameter } from '#common/types/blockml/internal/file-tile-parameter';
+import type { MconfigX } from '#common/types/backend/parts/mconfig-x';
+import type { TileX } from '#common/types/backend/parts/tile-x';
+import type { FileFraction } from '#common/types/blockml/parts/internal/file-fraction';
+import type { FileFractionControl } from '#common/types/blockml/parts/internal/file-fraction-control';
+import type { FilePartTile } from '#common/types/blockml/parts/internal/file-part-tile';
+import type { FileTileParameter } from '#common/types/blockml/parts/internal/file-tile-parameter';
 
 export function prepareTile(item: {
   tile?: TileX;

@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type DashboardX,
   zDashboardX
-} from '#common/types/backend/dashboard-x';
+} from '#common/types/backend/parts/dashboard-x';
 
 export type ToBackendEditDraftDashboardOutput = {
   dashboard: DashboardX;

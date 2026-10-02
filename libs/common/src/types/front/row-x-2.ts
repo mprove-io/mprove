@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { zModelField } from '#common/types/blockml/model-field';
-import { zRow } from '#common/types/blockml/row';
+import { zModelField } from '#common/types/blockml/parts/model-field';
+import { zRow } from '#common/types/blockml/parts/row';
 
 export let zRowX2 = zRow
   .extend({

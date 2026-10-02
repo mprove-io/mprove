@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Member, zMember } from '#common/types/backend/member';
-import { type StructX, zStructX } from '#common/types/backend/struct-x';
-import { type User, zUser } from '#common/types/backend/user';
-import { type Repo, zRepo } from '#common/types/disk/repo';
+import { type Member, zMember } from '#common/types/backend/parts/member';
+import { type StructX, zStructX } from '#common/types/backend/parts/struct-x';
+import { type User, zUser } from '#common/types/backend/parts/user';
+import { type Repo, zRepo } from '#common/types/disk/parts/repo';
 
 export type ToBackendGetNavOutput = {
   avatarSmall: string;

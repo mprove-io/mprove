@@ -19,12 +19,12 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { DashboardX } from '#common/types/backend/dashboard-x';
+import type { DashboardX } from '#common/types/backend/parts/dashboard-x';
 import type { ToBackendGetModelsRequest } from '#common/types/backend/routes/models/get-models/get-models-request';
 import type { ToBackendGetModelsResponse } from '#common/types/backend/routes/models/get-models/get-models-response';
-import type { Dashboard } from '#common/types/blockml/dashboard';
-import type { Model } from '#common/types/blockml/model';
-import type { ModelField } from '#common/types/blockml/model-field';
+import type { Dashboard } from '#common/types/blockml/parts/dashboard';
+import type { Model } from '#common/types/blockml/parts/model';
+import type { ModelField } from '#common/types/blockml/parts/model-field';
 import type { DashboardX2 } from '#common/types/front/dashboard-x-2';
 import type { TileX2 } from '#common/types/front/tile-x-2';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';

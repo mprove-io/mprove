@@ -51,7 +51,7 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { ToBackendSaveModifyReportOutput } from '#common/types/backend/routes/reports/save-modify-report/save-modify-report-output';
-import type { ModelMetric } from '#common/types/blockml/model-metric';
+import type { ModelMetric } from '#common/types/blockml/parts/model-metric';
 import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 

@@ -3,12 +3,12 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type MproveConfig,
   zMproveConfig
-} from '#common/types/backend/mprove-config';
-import { type Model, zModel } from '#common/types/blockml/model';
+} from '#common/types/backend/parts/mprove-config';
+import { type Model, zModel } from '#common/types/blockml/parts/model';
 import {
   type ModelMetric,
   zModelMetric
-} from '#common/types/blockml/model-metric';
+} from '#common/types/blockml/parts/model-metric';
 
 export type ToBackendGetRebuildStructRequest = {
   operation: 'getRebuildStruct';

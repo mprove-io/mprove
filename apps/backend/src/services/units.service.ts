@@ -7,11 +7,11 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ChartUnit } from '#common/types/backend/chart-unit';
-import type { DashboardUnit } from '#common/types/backend/dashboard-unit';
-import type { Member } from '#common/types/backend/member';
-import type { ReportUnit } from '#common/types/backend/report-unit';
-import type { SpaceUnit } from '#common/types/backend/space-unit';
+import type { ChartUnit } from '#common/types/backend/parts/chart-unit';
+import type { DashboardUnit } from '#common/types/backend/parts/dashboard-unit';
+import type { Member } from '#common/types/backend/parts/member';
+import type { ReportUnit } from '#common/types/backend/parts/report-unit';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
 
 @Injectable()
 export class UnitsService {

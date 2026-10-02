@@ -47,7 +47,7 @@ import { setChartFields } from '#common/functions/set-chart-fields/set-chart-fie
 import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change/set-chart-title-on-select-change';
 import { sortChartFieldsOnSelectChange } from '#common/functions/sort-chart-fields-on-select-change/sort-chart-fields-on-select-change';
 import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-select-change/sort-fields-on-select-change';
-import type { QueryOperation } from '#common/types/backend/query-operation';
+import type { QueryOperation } from '#common/types/backend/parts/query-operation';
 import type { ToBackendGroupMetricByDimensionOutput } from '#common/types/backend/routes/mconfigs/group-metric-by-dimension/group-metric-by-dimension-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 

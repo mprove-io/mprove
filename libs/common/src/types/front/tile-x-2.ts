@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { zTileX } from '#common/types/backend/tile-x';
-import { zModelField } from '#common/types/blockml/model-field';
+import { zTileX } from '#common/types/backend/parts/tile-x';
+import { zModelField } from '#common/types/blockml/parts/model-field';
 
 export let zTileX2 = zTileX
   .extend({

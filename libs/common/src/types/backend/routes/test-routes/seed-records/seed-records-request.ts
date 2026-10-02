@@ -3,49 +3,49 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ToBackendSeedRecordsInputCachedColumnsItem,
   zToBackendSeedRecordsInputCachedColumnsItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-cached-columns-item';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-cached-columns-item';
 import {
   type ToBackendSeedRecordsInputCachedPartsItem,
   zToBackendSeedRecordsInputCachedPartsItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-cached-parts-item';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-cached-parts-item';
 import {
   type ToBackendSeedRecordsInputConnectionsItem,
   zToBackendSeedRecordsInputConnectionsItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-connections-item';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-connections-item';
 import {
   type ToBackendSeedRecordsInputEnvsItem,
   zToBackendSeedRecordsInputEnvsItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-envs-item';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-envs-item';
 import {
   type ToBackendSeedRecordsInputMembersItem,
   zToBackendSeedRecordsInputMembersItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-members-item';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-members-item';
 import {
   type ToBackendSeedRecordsInputModelFieldLeafsItem,
   zToBackendSeedRecordsInputModelFieldLeafsItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-model-field-leafs-item';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-model-field-leafs-item';
 import {
   type ToBackendSeedRecordsInputOrgsItem,
   zToBackendSeedRecordsInputOrgsItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-orgs-item';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-orgs-item';
 import {
   type ToBackendSeedRecordsInputProjectsItem,
   zToBackendSeedRecordsInputProjectsItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-projects-item';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-projects-item';
 import {
   type ToBackendSeedRecordsInputProvidersItem,
   zToBackendSeedRecordsInputProvidersItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-providers-item';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-providers-item';
 import {
   type ToBackendSeedRecordsInputSessionsItem,
   zToBackendSeedRecordsInputSessionsItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-sessions-item';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-sessions-item';
 import {
   type ToBackendSeedRecordsInputUsersItem,
   zToBackendSeedRecordsInputUsersItem
-} from '#common/types/backend/test-routes/to-backend-seed-records-input-users-item';
-import { type Mconfig, zMconfig } from '#common/types/blockml/mconfig';
-import { type Query, zQuery } from '#common/types/blockml/query';
+} from '#common/types/backend/parts/test-routes/to-backend-seed-records-input-users-item';
+import { type Mconfig, zMconfig } from '#common/types/blockml/parts/mconfig';
+import { type Query, zQuery } from '#common/types/blockml/parts/query';
 
 export type ToBackendSeedRecordsRequest = {
   operation: 'seedRecords';

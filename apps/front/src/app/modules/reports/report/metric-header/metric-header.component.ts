@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { IHeaderAngularComp } from 'ag-grid-angular';
 import { IHeaderParams, IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs';
-import type { ReportX } from '#common/types/backend/report-x';
+import type { ReportX } from '#common/types/backend/parts/report-x';
 import type { DataRow } from '#common/types/front/data-row';
 import { ReportQuery } from '#front/app/queries/report.query';
 import { UiQuery } from '#front/app/queries/ui.query';

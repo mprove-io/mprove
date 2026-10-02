@@ -39,8 +39,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { BridgeItem } from '#common/types/backend/parts/special/bridge-item';
 import type { ToBackendSpecialRebuildStructsOutput } from '#common/types/backend/routes/special/special-rebuild-structs/special-rebuild-structs-output';
-import type { BridgeItem } from '#common/types/backend/special/bridge-item';
 import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-output';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 

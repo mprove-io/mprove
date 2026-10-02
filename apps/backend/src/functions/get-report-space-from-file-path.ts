@@ -1,4 +1,4 @@
-import type { Space } from '#common/types/blockml/space';
+import type { Space } from '#common/types/blockml/parts/space';
 
 export function getReportSpaceFromFilePath(item: {
   filePath: string;

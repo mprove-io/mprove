@@ -1,7 +1,7 @@
 import { Result } from '@praha/byethrow';
 import type { StatusResult } from 'simple-git';
-import type { DiskSyncFile } from '#common/types/disk/disk-sync-file';
 import type { DiskGetToServerSyncDataError } from '#common/types/disk/function-errors/disk-get-to-server-sync-data-error';
+import type { DiskSyncFile } from '#common/types/disk/parts/disk-sync-file';
 import type { GetSyncAppliedChangesError } from '#common/types/node-common/function-errors/get-sync-applied-changes-error';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage/add-changes-to-stage';
 import { applySyncPayload } from '#node-common/functions/apply-sync-payload/apply-sync-payload';

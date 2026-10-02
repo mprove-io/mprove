@@ -1,4 +1,4 @@
-import type { SpaceNode } from '#common/types/backend/space-node';
+import type { SpaceNode } from '#common/types/backend/parts/space-node';
 
 export function sortSpaceNodes(item: { nodes: SpaceNode[] }): SpaceNode[] {
   let { nodes } = item;

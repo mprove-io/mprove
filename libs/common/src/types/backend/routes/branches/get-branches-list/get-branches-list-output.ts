@@ -3,12 +3,12 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ToBackendGetBranchesListOutputBranchesItem,
   zToBackendGetBranchesListOutputBranchesItem
-} from '#common/types/backend/branches/to-backend-get-branches-list-output-branches-item';
-import { type Member, zMember } from '#common/types/backend/member';
+} from '#common/types/backend/parts/branches/to-backend-get-branches-list-output-branches-item';
+import { type Member, zMember } from '#common/types/backend/parts/member';
 import {
   type SessionApi,
   zSessionApi
-} from '#common/types/backend/session-api';
+} from '#common/types/backend/parts/session-api';
 
 export type ToBackendGetBranchesListOutput = {
   branchesList: ToBackendGetBranchesListOutputBranchesItem[];

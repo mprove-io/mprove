@@ -20,11 +20,11 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
-import type { CodexModel } from '#common/types/backend/codex-model';
-import type { LlmModel } from '#common/types/backend/llm-models/llm-model';
-import type { LlmModelInput } from '#common/types/backend/llm-models/llm-model-input';
-import type { LlmModelPart } from '#common/types/backend/llm-models/llm-model-part';
-import type { LlmModelVariant } from '#common/types/backend/llm-models/llm-model-variant';
+import type { CodexModel } from '#common/types/backend/parts/codex-model';
+import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
+import type { LlmModelInput } from '#common/types/backend/parts/llm-models/llm-model-input';
+import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
+import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
 
 export type LlmModelPartsResult = {
   modelParts: LlmModelPart[];

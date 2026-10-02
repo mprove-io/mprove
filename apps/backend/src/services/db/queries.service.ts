@@ -25,7 +25,7 @@ import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { StoreMethodEnum } from '#common/enums/store-method.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Query } from '#common/types/blockml/query';
+import type { Query } from '#common/types/blockml/parts/query';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 import { EnvsService } from './envs.service';

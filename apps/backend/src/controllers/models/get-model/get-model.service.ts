@@ -8,10 +8,10 @@ import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
-import type { Member } from '#common/types/backend/member';
-import type { ModelX } from '#common/types/backend/model-x';
+import type { Member } from '#common/types/backend/parts/member';
+import type { ModelX } from '#common/types/backend/parts/model-x';
+import type { StructX } from '#common/types/backend/parts/struct-x';
 import type { ToBackendGetModelOutput } from '#common/types/backend/routes/models/get-model/get-model-output';
-import type { StructX } from '#common/types/backend/struct-x';
 
 @Injectable()
 export class GetModelService {

@@ -34,7 +34,7 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Fraction } from '#common/types/blockml/fraction';
+import type { Fraction } from '#common/types/blockml/parts/fraction';
 import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { TimeService } from '#front/app/services/time.service';

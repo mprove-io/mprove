@@ -2,16 +2,19 @@ import { z } from 'zod';
 import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type Listener, zListener } from '#common/types/blockml/listener';
+import { type Listener, zListener } from '#common/types/blockml/parts/listener';
 import {
   type MconfigChart,
   zMconfigChart
-} from '#common/types/blockml/mconfig-chart';
+} from '#common/types/blockml/parts/mconfig-chart';
 import {
   type ReportField,
   zReportField
-} from '#common/types/blockml/report-field';
-import { type RowChange, zRowChange } from '#common/types/blockml/row-change';
+} from '#common/types/blockml/parts/report-field';
+import {
+  type RowChange,
+  zRowChange
+} from '#common/types/blockml/parts/row-change';
 import { zTimezone } from '#common/types/z-timezone';
 
 export type ToBackendEditDraftReportRequest = {

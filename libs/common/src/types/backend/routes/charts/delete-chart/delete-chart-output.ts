@@ -1,7 +1,13 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import { type ChartUnit, zChartUnit } from '#common/types/backend/chart-unit';
-import { type SpaceNode, zSpaceNode } from '#common/types/backend/space-node';
+import {
+  type ChartUnit,
+  zChartUnit
+} from '#common/types/backend/parts/chart-unit';
+import {
+  type SpaceNode,
+  zSpaceNode
+} from '#common/types/backend/parts/space-node';
 
 export type ToBackendDeleteChartOutput = {
   chartUnitDrafts: ChartUnit[];

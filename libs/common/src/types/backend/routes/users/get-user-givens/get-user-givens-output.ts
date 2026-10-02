@@ -3,8 +3,8 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type MemberGiven,
   zMemberGiven
-} from '#common/types/backend/members/member-given';
-import { type User, zUser } from '#common/types/backend/user';
+} from '#common/types/backend/parts/members/member-given';
+import { type User, zUser } from '#common/types/backend/parts/user';
 
 export type ToBackendGetUserGivensOutput = {
   user: User;

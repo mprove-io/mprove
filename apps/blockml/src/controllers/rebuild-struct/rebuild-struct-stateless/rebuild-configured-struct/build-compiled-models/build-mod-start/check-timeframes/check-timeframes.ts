@@ -8,8 +8,8 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileMod } from '#common/types/blockml/internal/file-mod';
-import type { FlatMalloyFieldItem } from '#common/types/blockml/internal/flat-malloy-field-item';
+import type { FileMod } from '#common/types/blockml/parts/internal/file-mod';
+import type { FlatMalloyFieldItem } from '#common/types/blockml/parts/internal/flat-malloy-field-item';
 
 let func = FuncEnum.CheckTimeframes;
 

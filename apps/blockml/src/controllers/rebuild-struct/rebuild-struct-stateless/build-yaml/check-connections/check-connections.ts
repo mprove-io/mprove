@@ -12,7 +12,7 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ProjectConnection } from '#common/types/backend/project-connection';
+import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
 
 let func = FuncEnum.CheckConnections;
 

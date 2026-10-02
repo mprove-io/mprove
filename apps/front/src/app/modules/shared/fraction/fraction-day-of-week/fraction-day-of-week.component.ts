@@ -12,7 +12,7 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { FractionDayOfWeekValueEnum } from '#common/enums/fraction/fraction-day-of-week-value.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
-import type { Fraction } from '#common/types/blockml/fraction';
+import type { Fraction } from '#common/types/blockml/parts/fraction';
 import type { EventFractionUpdate } from '#common/types/front/event-fraction-update';
 import {
   FractionDayOfWeekValueItem,

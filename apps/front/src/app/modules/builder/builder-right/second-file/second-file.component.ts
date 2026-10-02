@@ -26,7 +26,7 @@ import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { ModelX } from '#common/types/backend/model-x';
+import type { ModelX } from '#common/types/backend/parts/model-x';
 import type { ToBackendGetChartRequest } from '#common/types/backend/routes/charts/get-chart/get-chart-request';
 import type { ToBackendGetChartResponse } from '#common/types/backend/routes/charts/get-chart/get-chart-response';
 import type { ToBackendGetFileRequest } from '#common/types/backend/routes/files/get-file/get-file-request';

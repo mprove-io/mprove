@@ -1,5 +1,5 @@
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type { ModelField } from '#common/types/blockml/model-field';
+import type { ModelField } from '#common/types/blockml/parts/model-field';
 
 export function getCompLabel(item: { field: ModelField }): string {
   let { field } = item;

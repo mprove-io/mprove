@@ -12,7 +12,7 @@ import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { FileChartOptions } from '#common/types/blockml/internal/file-chart-options';
+import type { FileChartOptions } from '#common/types/blockml/parts/internal/file-chart-options';
 import type { drcType } from '#common/types/drc-type';
 
 let func = FuncEnum.CheckChartOptionsParameters;

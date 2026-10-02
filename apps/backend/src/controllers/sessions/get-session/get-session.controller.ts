@@ -24,10 +24,10 @@ import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
+import type { SessionMessageApi } from '#common/types/backend/parts/session-message-api';
+import type { SessionPartApi } from '#common/types/backend/parts/session-part-api';
 import type { ToBackendGetSessionOutput } from '#common/types/backend/routes/sessions/get-session/get-session-output';
-import type { SessionEventApi } from '#common/types/backend/session-event-api';
-import type { SessionMessageApi } from '#common/types/backend/session-message-api';
-import type { SessionPartApi } from '#common/types/backend/session-part-api';
 import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Sessions')

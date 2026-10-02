@@ -53,8 +53,8 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Member } from '#common/types/backend/member';
-import type { ModelX } from '#common/types/backend/model-x';
+import type { Member } from '#common/types/backend/parts/member';
+import type { ModelX } from '#common/types/backend/parts/model-x';
 import type { ToBackendGetChartRequest } from '#common/types/backend/routes/charts/get-chart/get-chart-request';
 import type { ToBackendGetChartResponse } from '#common/types/backend/routes/charts/get-chart/get-chart-response';
 import type { ToBackendSaveFileRequest } from '#common/types/backend/routes/files/save-file/save-file-request';

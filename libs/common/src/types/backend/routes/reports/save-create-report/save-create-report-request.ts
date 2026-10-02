@@ -4,11 +4,11 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type MconfigChart,
   zMconfigChart
-} from '#common/types/blockml/mconfig-chart';
+} from '#common/types/blockml/parts/mconfig-chart';
 import {
   type ReportField,
   zReportField
-} from '#common/types/blockml/report-field';
+} from '#common/types/blockml/parts/report-field';
 import { zTimezone } from '#common/types/z-timezone';
 
 export type ToBackendSaveCreateReportRequest = {

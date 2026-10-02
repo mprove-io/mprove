@@ -20,12 +20,12 @@ import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { QueryInfoChart } from '#common/types/backend/query-info/query-info-chart';
-import type { QueryInfoDashboard } from '#common/types/backend/query-info/query-info-dashboard';
-import type { QueryInfoQuery } from '#common/types/backend/query-info/query-info-query';
-import type { QueryInfoReport } from '#common/types/backend/query-info/query-info-report';
-import type { QueryInfoRow } from '#common/types/backend/query-info/query-info-row';
-import type { QueryInfoTile } from '#common/types/backend/query-info/query-info-tile';
+import type { QueryInfoChart } from '#common/types/backend/parts/query-info/query-info-chart';
+import type { QueryInfoDashboard } from '#common/types/backend/parts/query-info/query-info-dashboard';
+import type { QueryInfoQuery } from '#common/types/backend/parts/query-info/query-info-query';
+import type { QueryInfoReport } from '#common/types/backend/parts/query-info/query-info-report';
+import type { QueryInfoRow } from '#common/types/backend/parts/query-info/query-info-row';
+import type { QueryInfoTile } from '#common/types/backend/parts/query-info/query-info-tile';
 import type { ToBackendGetQueryInfoOutput } from '#common/types/backend/routes/query-info/get-query-info/get-query-info-output';
 
 @Injectable()

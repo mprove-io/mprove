@@ -13,11 +13,11 @@ import {
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { Member } from '#common/types/backend/member';
-import type { SpaceFolder } from '#common/types/backend/space-folder';
-import type { SpaceNode } from '#common/types/backend/space-node';
-import type { SpaceUnit } from '#common/types/backend/space-unit';
-import type { Space } from '#common/types/blockml/space';
+import type { Member } from '#common/types/backend/parts/member';
+import type { SpaceFolder } from '#common/types/backend/parts/space-folder';
+import type { SpaceNode } from '#common/types/backend/parts/space-node';
+import type { SpaceUnit } from '#common/types/backend/parts/space-unit';
+import type { Space } from '#common/types/blockml/parts/space';
 
 @Injectable()
 export class SpaceService {

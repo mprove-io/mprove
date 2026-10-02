@@ -10,19 +10,19 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ProviderOptionsAnthropic,
   zProviderOptionsAnthropic
-} from '#common/types/backend/provider-options/provider-options-anthropic';
+} from '#common/types/backend/parts/provider-options/provider-options-anthropic';
 import {
   type ProviderOptionsCodex,
   zProviderOptionsCodex
-} from '#common/types/backend/provider-options/provider-options-codex';
+} from '#common/types/backend/parts/provider-options/provider-options-codex';
 import {
   type ProviderOptionsOpenAI,
   zProviderOptionsOpenAI
-} from '#common/types/backend/provider-options/provider-options-openai';
+} from '#common/types/backend/parts/provider-options/provider-options-openai';
 import {
   type ProviderOptionsOpenAICompatible,
   zProviderOptionsOpenAICompatible
-} from '#common/types/backend/provider-options/provider-options-openai-compatible';
+} from '#common/types/backend/parts/provider-options/provider-options-openai-compatible';
 import type { Extend } from '#common/types/extend';
 
 export type ToBackendCreateProviderRequest = {

@@ -2,8 +2,8 @@ import { DatePickerDate, DatePickerI18n } from '@vaadin/date-picker';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
-import type { MconfigField } from '#common/types/backend/mconfig-field';
-import type { Space } from '#common/types/blockml/space';
+import type { MconfigField } from '#common/types/backend/parts/mconfig-field';
+import type { Space } from '#common/types/blockml/parts/space';
 import type { RefreshItem } from '#common/types/front/refresh-item';
 
 export const SPECIAL_ERROR = 'SPECIAL_ERROR';

@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ProjectsItem,
   zProjectsItem
-} from '#common/types/backend/projects-item';
+} from '#common/types/backend/parts/projects-item';
 
 export type ToBackendGetProjectsListOutput = {
   projectsList: ProjectsItem[];
