@@ -15,9 +15,9 @@ import {
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import {
   type McpToolGetConnectionsListInput,
-  zMcpToolGetConnectionsListInput,
-  zMcpToolGetConnectionsListOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-connections-list';
+  zMcpToolGetConnectionsListInput
+} from '#common/types/backend/mcp-tools/mcp-tool-get-connections-list/mcp-tool-get-connections-list-input';
+import { zMcpToolGetConnectionsListOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-connections-list/mcp-tool-get-connections-list-output';
 import type { ToBackendGetConnectionsListOutput } from '#common/types/backend/routes/connections/get-connections-list/get-connections-list-output';
 
 @McpController()

@@ -18,9 +18,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import {
   type McpToolValidateFilesInput,
-  zMcpToolValidateFilesInput,
-  zMcpToolValidateFilesOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-validate-files';
+  zMcpToolValidateFilesInput
+} from '#common/types/backend/mcp-tools/mcp-tool-validate-files/mcp-tool-validate-files-input';
+import { zMcpToolValidateFilesOutput } from '#common/types/backend/mcp-tools/mcp-tool-validate-files/mcp-tool-validate-files-output';
 import { processValidateFilesPayload } from '#node-common/functions/process-validate-files-payload/process-validate-files-payload';
 
 @McpController()

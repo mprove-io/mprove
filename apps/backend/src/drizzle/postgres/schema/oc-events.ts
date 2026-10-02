@@ -7,7 +7,8 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { OcEventLt, OcEventSt } from '#common/types/shared/st-lt/st-lt';
+import type { OcEventLt } from '#common/types/shared/st-lt/oc-events/oc-event-lt';
+import type { OcEventSt } from '#common/types/shared/st-lt/oc-events/oc-event-st';
 
 export const ocEventsTable = pgTable(
   'oc_events',

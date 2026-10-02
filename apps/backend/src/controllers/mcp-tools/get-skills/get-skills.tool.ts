@@ -8,10 +8,8 @@ import {
   MCP_TOOL_GET_SKILLS,
   MCP_TOOL_GET_SKILLS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import {
-  zMcpToolGetSkillsInput,
-  zMcpToolGetSkillsOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-skills';
+import { zMcpToolGetSkillsInput } from '#common/types/backend/mcp-tools/mcp-tool-get-skills/mcp-tool-get-skills-input';
+import { zMcpToolGetSkillsOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-skills/mcp-tool-get-skills-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

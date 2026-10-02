@@ -16,13 +16,11 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ConnectionRawSchema,
-  RawSchemaColumn,
-  RawSchemaForeignKey,
-  RawSchemaIndex,
-  RawSchemaTable
-} from '#common/types/backend/parts/connection-schemas/raw-schema';
+import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
+import type { RawSchemaColumn } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-column';
+import type { RawSchemaForeignKey } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-foreign-key';
+import type { RawSchemaIndex } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-index';
+import type { RawSchemaTable } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-table';
 import type { FetchSampleResult } from '#common/types/backend/parts/connections/fetch-sample-result';
 import type { TestConnectionResult } from '#common/types/backend/parts/connections/test-connection-result';
 import type { MalloyConfigPart } from '#common/types/backend/parts/malloy-config-part';

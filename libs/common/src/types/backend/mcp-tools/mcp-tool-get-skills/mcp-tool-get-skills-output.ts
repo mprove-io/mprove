@@ -1,0 +1,21 @@
+import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type SkillItem,
+  zSkillItem
+} from '#common/types/backend/parts/skill-item';
+
+export type McpToolGetSkillsOutput = {
+  skillItems: SkillItem[];
+};
+
+export let zMcpToolGetSkillsOutput = z
+  .object({
+    skillItems: z.array(zSkillItem)
+  })
+  .meta({ id: 'McpToolGetSkillsOutput' });
+
+assertTypesEqual<
+  McpToolGetSkillsOutput,
+  z.infer<typeof zMcpToolGetSkillsOutput>
+>({ value: true });

@@ -27,21 +27,17 @@ import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
-import type {
-  ColumnCombinedReference,
-  CombinedSchema,
-  CombinedSchemaColumn,
-  CombinedSchemaItem,
-  CombinedSchemaTable
-} from '#common/types/backend/parts/connection-schemas/combined-schema';
-import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schema';
-import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schema';
+import type { ColumnCombinedReference } from '#common/types/backend/parts/connection-schemas/combined-schemas/column-combined-reference';
+import type { CombinedSchema } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema';
+import type { CombinedSchemaColumn } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-column';
+import type { CombinedSchemaItem } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-item';
+import type { CombinedSchemaTable } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-table';
+import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema';
+import type { ConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 import type { Member } from '#common/types/backend/parts/member';
-import type {
-  ConnectionLt,
-  ConnectionSt
-} from '#common/types/shared/st-lt/st-lt';
+import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
+import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
 
 const { forEachSeries } = pIteration;
 

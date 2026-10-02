@@ -16,9 +16,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import {
   type McpToolRunInput,
-  zMcpToolRunInput,
-  zMcpToolRunOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-run';
+  zMcpToolRunInput
+} from '#common/types/backend/mcp-tools/mcp-tool-run/mcp-tool-run-input';
+import { zMcpToolRunOutput } from '#common/types/backend/mcp-tools/mcp-tool-run/mcp-tool-run-output';
 import type { ToBackendRunOutput } from '#common/types/backend/routes/run/run/run-output';
 
 @McpController()

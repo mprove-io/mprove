@@ -10,10 +10,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import type {
-  CachedColumnLt,
-  CachedColumnSt
-} from '#common/types/shared/st-lt/st-lt';
+import type { CachedColumnLt } from '#common/types/shared/st-lt/cached-columns/cached-column-lt';
+import type { CachedColumnSt } from '#common/types/shared/st-lt/cached-columns/cached-column-st';
 
 export type CachedColumnStatus = 'running' | 'completed' | 'error';
 

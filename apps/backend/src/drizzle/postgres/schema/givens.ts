@@ -10,7 +10,8 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { GivenTypeEnum } from '#common/enums/given-type.enum';
-import type { GivenLt, GivenSt } from '#common/types/shared/st-lt/st-lt';
+import type { GivenLt } from '#common/types/shared/st-lt/givens/given-lt';
+import type { GivenSt } from '#common/types/shared/st-lt/givens/given-st';
 
 export const givensTable = pgTable(
   'givens',

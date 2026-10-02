@@ -1,16 +1,13 @@
 import { z } from 'zod';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type CodexAuthOpenai,
+  zCodexAuthOpenai
+} from '#common/types/backend/parts/codex-auth-openai';
 
-export let zCodexAuthOpenai = z
-  .object({
-    type: z.literal('oauth'),
-    refresh: z.string(),
-    expires: z.number(),
-    access: z.string().nullish(),
-    accountId: z.string().nullish()
-  })
-  .meta({ id: 'CodexAuthOpenai' });
-
-export type CodexAuthOpenai = z.infer<typeof zCodexAuthOpenai>;
+export type CodexAuth = {
+  openai: CodexAuthOpenai;
+};
 
 export let zCodexAuth = z
   .object({
@@ -18,4 +15,4 @@ export let zCodexAuth = z
   })
   .meta({ id: 'CodexAuth' });
 
-export type CodexAuth = z.infer<typeof zCodexAuth>;
+assertTypesEqual<CodexAuth, z.infer<typeof zCodexAuth>>({ value: true });

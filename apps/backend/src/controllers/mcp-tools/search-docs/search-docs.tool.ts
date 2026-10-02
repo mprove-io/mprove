@@ -10,9 +10,9 @@ import {
 } from '#common/constants/mcp-tools-registry';
 import {
   type McpToolSearchDocsInput,
-  zMcpToolSearchDocsInput,
-  zMcpToolSearchDocsOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-search-docs';
+  zMcpToolSearchDocsInput
+} from '#common/types/backend/mcp-tools/mcp-tool-search-docs/mcp-tool-search-docs-input';
+import { zMcpToolSearchDocsOutput } from '#common/types/backend/mcp-tools/mcp-tool-search-docs/mcp-tool-search-docs-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

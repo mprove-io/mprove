@@ -13,12 +13,10 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string/to-boolean-from-lowercase-string';
-import type {
-  ExtraSchema,
-  ExtraSchemaColumn,
-  ExtraSchemaRelationship,
-  ExtraSchemaTable
-} from '#common/types/backend/parts/connection-schemas/extra-schema';
+import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema';
+import type { ExtraSchemaColumn } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema-column';
+import type { ExtraSchemaRelationship } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema-relationship';
+import type { ExtraSchemaTable } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema-table';
 import { MproveConfig } from '#common/types/backend/parts/mprove-config';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';

@@ -10,9 +10,9 @@ import {
 } from '#common/constants/mcp-tools-registry';
 import {
   type McpToolReadDocsInput,
-  zMcpToolReadDocsInput,
-  zMcpToolReadDocsOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-read-docs';
+  zMcpToolReadDocsInput
+} from '#common/types/backend/mcp-tools/mcp-tool-read-docs/mcp-tool-read-docs-input';
+import { zMcpToolReadDocsOutput } from '#common/types/backend/mcp-tools/mcp-tool-read-docs/mcp-tool-read-docs-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

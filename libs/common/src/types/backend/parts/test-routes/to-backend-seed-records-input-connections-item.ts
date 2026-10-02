@@ -8,7 +8,7 @@ import {
 import {
   type ConnectionRawSchema,
   zConnectionRawSchema
-} from '#common/types/backend/parts/connection-schemas/raw-schema';
+} from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
 
 export type ToBackendSeedRecordsInputConnectionsItem = {
   projectId: string;

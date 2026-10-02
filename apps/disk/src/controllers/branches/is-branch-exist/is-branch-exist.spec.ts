@@ -8,7 +8,8 @@ import type { ToDiskIsBranchExistRequest } from '#common/types/disk/routes/branc
 import type { ToDiskIsBranchExistResponse } from '#common/types/disk/routes/branches/is-branch-exist/is-branch-exist-response';
 import type { ToDiskCreateOrgRequest } from '#common/types/disk/routes/orgs/create-org/create-org-request';
 import type { ToDiskCreateProjectRequest } from '#common/types/disk/routes/projects/create-project/create-project-request';
-import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
+import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
 import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 

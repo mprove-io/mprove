@@ -9,7 +9,8 @@ import type { ToDiskCreateProjectRequest } from '#common/types/disk/routes/proje
 import type { ToDiskDeleteProjectRequest } from '#common/types/disk/routes/projects/delete-project/delete-project-request';
 import type { ToDiskIsProjectExistRequest } from '#common/types/disk/routes/projects/is-project-exist/is-project-exist-request';
 import type { ToDiskIsProjectExistResponse } from '#common/types/disk/routes/projects/is-project-exist/is-project-exist-response';
-import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
+import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
 import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 

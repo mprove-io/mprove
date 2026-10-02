@@ -8,7 +8,8 @@ import type { ToDiskMoveCatalogNodeRequest } from '#common/types/disk/routes/cat
 import type { ToDiskMoveCatalogNodeResponse } from '#common/types/disk/routes/catalogs/move-catalog-node/move-catalog-node-response';
 import type { ToDiskCreateOrgRequest } from '#common/types/disk/routes/orgs/create-org/create-org-request';
 import type { ToDiskCreateProjectRequest } from '#common/types/disk/routes/projects/create-project/create-project-request';
-import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
+import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
 import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 

@@ -9,7 +9,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { MemberLt, MemberSt } from '#common/types/shared/st-lt/st-lt';
+import type { MemberLt } from '#common/types/shared/st-lt/members/member-lt';
+import type { MemberSt } from '#common/types/shared/st-lt/members/member-st';
 
 export const membersTable = pgTable(
   'members',

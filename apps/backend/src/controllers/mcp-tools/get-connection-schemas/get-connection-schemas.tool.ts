@@ -15,9 +15,9 @@ import {
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import {
   type McpToolGetSchemasInput,
-  zMcpToolGetSchemasInput,
-  zMcpToolGetSchemasOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-schemas';
+  zMcpToolGetSchemasInput
+} from '#common/types/backend/mcp-tools/mcp-tool-get-schemas/mcp-tool-get-schemas-input';
+import { zMcpToolGetSchemasOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-schemas/mcp-tool-get-schemas-output';
 import { processGetConnectionSchemasPayload } from '#node-common/functions/process-get-connection-schemas-payload/process-get-connection-schemas-payload';
 
 @McpController()

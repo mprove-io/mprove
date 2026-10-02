@@ -1,17 +1,22 @@
 import { z } from 'zod';
-import { zRepoStatus } from '#common/types/disk/parts/repo-status';
+import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
+import {
+  type ValidateFilesRepoConflict,
+  zValidateFilesRepoConflict
+} from '#common/types/backend/parts/state/validate-files-repo-conflict';
+import {
+  type RepoStatus,
+  zRepoStatus
+} from '#common/types/disk/parts/repo-status';
 
-export let zValidateFilesRepoConflict = z
-  .object({
-    fileId: z.string(),
-    fileName: z.string(),
-    lineNumber: z.number().int()
-  })
-  .meta({ id: 'ValidateFilesRepoConflict' });
-
-export type ValidateFilesRepoConflict = z.infer<
-  typeof zValidateFilesRepoConflict
->;
+export type ValidateFilesRepo = {
+  orgId: string;
+  projectId: string;
+  repoId: string;
+  currentBranchId: string;
+  repoStatus: RepoStatus;
+  conflicts: ValidateFilesRepoConflict[];
+};
 
 export let zValidateFilesRepo = z
   .object({
@@ -24,4 +29,6 @@ export let zValidateFilesRepo = z
   })
   .meta({ id: 'ValidateFilesRepo' });
 
-export type ValidateFilesRepo = z.infer<typeof zValidateFilesRepo>;
+assertTypesEqual<ValidateFilesRepo, z.infer<typeof zValidateFilesRepo>>({
+  value: true
+});

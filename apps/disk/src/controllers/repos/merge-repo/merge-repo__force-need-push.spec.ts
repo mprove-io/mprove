@@ -12,7 +12,8 @@ import type { ToDiskCreateProjectRequest } from '#common/types/disk/routes/proje
 import type { ToDiskCommitRepoRequest } from '#common/types/disk/routes/repos/commit-repo/commit-repo-request';
 import type { ToDiskMergeRepoRequest } from '#common/types/disk/routes/repos/merge-repo/merge-repo-request';
 import type { ToDiskMergeRepoResponse } from '#common/types/disk/routes/repos/merge-repo/merge-repo-response';
-import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
+import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
 import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 

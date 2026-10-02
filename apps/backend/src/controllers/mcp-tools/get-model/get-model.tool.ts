@@ -15,9 +15,9 @@ import {
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import {
   type McpToolGetModelInput,
-  zMcpToolGetModelInput,
-  zMcpToolGetModelOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-model';
+  zMcpToolGetModelInput
+} from '#common/types/backend/mcp-tools/mcp-tool-get-model/mcp-tool-get-model-input';
+import { zMcpToolGetModelOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-model/mcp-tool-get-model-output';
 import { processGetModelPayload } from '#node-common/functions/process-get-model-payload/process-get-model-payload';
 
 @McpController()

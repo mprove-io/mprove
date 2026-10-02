@@ -13,10 +13,8 @@ import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { BaseConnection } from '#common/types/backend/parts/base-connection';
 import type { ConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
 import type { ProjectConnection } from '#common/types/backend/parts/project-connection';
-import type {
-  ConnectionLt,
-  ConnectionSt
-} from '#common/types/shared/st-lt/st-lt';
+import type { ConnectionLt } from '#common/types/shared/st-lt/connections/connection-lt';
+import type { ConnectionSt } from '#common/types/shared/st-lt/connections/connection-st';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 import { TabToEntService } from '../tab-to-ent.service';

@@ -16,9 +16,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import {
   type McpToolGetStateInput,
-  zMcpToolGetStateInput,
-  zMcpToolGetStateOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-state';
+  zMcpToolGetStateInput
+} from '#common/types/backend/mcp-tools/mcp-tool-get-state/mcp-tool-get-state-input';
+import { zMcpToolGetStateOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-state/mcp-tool-get-state-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

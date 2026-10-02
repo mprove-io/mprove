@@ -7,7 +7,8 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { UconfigLt, UconfigSt } from '#common/types/shared/st-lt/st-lt';
+import type { UconfigLt } from '#common/types/shared/st-lt/uconfigs/uconfig-lt';
+import type { UconfigSt } from '#common/types/shared/st-lt/uconfigs/uconfig-st';
 
 export const uconfigsTable = pgTable(
   'uconfigs',

@@ -12,7 +12,8 @@ import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import type { SessionLt, SessionSt } from '#common/types/shared/st-lt/st-lt';
+import type { SessionLt } from '#common/types/shared/st-lt/sessions/session-lt';
+import type { SessionSt } from '#common/types/shared/st-lt/sessions/session-st';
 
 export const sessionsTable = pgTable(
   'sessions',

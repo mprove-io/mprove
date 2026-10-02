@@ -10,7 +10,8 @@ import type { ToDiskCreateProjectRequest } from '#common/types/disk/routes/proje
 import type { ToDiskCommitRepoRequest } from '#common/types/disk/routes/repos/commit-repo/commit-repo-request';
 import type { ToDiskPushRepoRequest } from '#common/types/disk/routes/repos/push-repo/push-repo-request';
 import type { ToDiskPushRepoResponse } from '#common/types/disk/routes/repos/push-repo/push-repo-response';
-import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
+import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
 import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 

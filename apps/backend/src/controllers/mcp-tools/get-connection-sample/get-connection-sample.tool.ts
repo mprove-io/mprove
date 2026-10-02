@@ -15,9 +15,9 @@ import {
 import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import {
   type McpToolGetSampleInput,
-  zMcpToolGetSampleInput,
-  zMcpToolGetSampleOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-sample';
+  zMcpToolGetSampleInput
+} from '#common/types/backend/mcp-tools/mcp-tool-get-sample/mcp-tool-get-sample-input';
+import { zMcpToolGetSampleOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-sample/mcp-tool-get-sample-output';
 import type { ToBackendGetConnectionSampleOutput } from '#common/types/backend/routes/connections/get-connection-sample/get-connection-sample-output';
 
 @McpController()

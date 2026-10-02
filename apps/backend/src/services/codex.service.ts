@@ -15,7 +15,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
-import type { CodexAuthOpenai } from '#common/types/backend/parts/codex-auth';
+import type { CodexAuthOpenai } from '#common/types/backend/parts/codex-auth-openai';
 import {
   type CodexModel,
   zCodexModel

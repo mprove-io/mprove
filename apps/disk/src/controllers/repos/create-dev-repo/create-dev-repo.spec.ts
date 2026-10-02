@@ -8,7 +8,8 @@ import type { ToDiskCreateOrgRequest } from '#common/types/disk/routes/orgs/crea
 import type { ToDiskCreateProjectRequest } from '#common/types/disk/routes/projects/create-project/create-project-request';
 import type { ToDiskCreateDevRepoRequest } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-request';
 import type { ToDiskCreateDevRepoResponse } from '#common/types/disk/routes/repos/create-dev-repo/create-dev-repo-response';
-import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
+import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
 import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 

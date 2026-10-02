@@ -16,9 +16,9 @@ import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
 import {
   type McpToolGetQueryInfoInput,
-  zMcpToolGetQueryInfoInput,
-  zMcpToolGetQueryInfoOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-query-info';
+  zMcpToolGetQueryInfoInput
+} from '#common/types/backend/mcp-tools/mcp-tool-get-query-info/mcp-tool-get-query-info-input';
+import { zMcpToolGetQueryInfoOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-query-info/mcp-tool-get-query-info-output';
 import type { ToBackendGetQueryInfoOutput } from '#common/types/backend/routes/query-info/get-query-info/get-query-info-output';
 
 @McpController()

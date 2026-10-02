@@ -1,5 +1,5 @@
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
-import type { CombinedSchemaColumn } from '#common/types/backend/parts/connection-schemas/combined-schema';
+import type { CombinedSchemaColumn } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-column';
 
 export function sortSchemaColumns(item: {
   columns: CombinedSchemaColumn[];

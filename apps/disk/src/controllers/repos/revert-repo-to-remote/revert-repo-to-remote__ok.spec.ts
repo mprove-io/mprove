@@ -14,7 +14,8 @@ import type { ToDiskCommitRepoRequest } from '#common/types/disk/routes/repos/co
 import type { ToDiskPushRepoRequest } from '#common/types/disk/routes/repos/push-repo/push-repo-request';
 import type { ToDiskRevertRepoToRemoteRequest } from '#common/types/disk/routes/repos/revert-repo-to-remote/revert-repo-to-remote-request';
 import type { ToDiskRevertRepoToRemoteResponse } from '#common/types/disk/routes/repos/revert-repo-to-remote/revert-repo-to-remote-response';
-import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
+import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import { logToConsoleDisk } from '#disk/functions/top/log-to-console-disk/log-to-console-disk';
 import { prepareTest } from '#disk/functions/top/prepare-test/prepare-test';
 

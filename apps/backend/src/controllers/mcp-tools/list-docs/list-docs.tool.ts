@@ -8,10 +8,8 @@ import {
   MCP_TOOL_LIST_DOCS,
   MCP_TOOL_LIST_DOCS_DESCRIPTION
 } from '#common/constants/mcp-tools-registry';
-import {
-  zMcpToolListDocsInput,
-  zMcpToolListDocsOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-list-docs';
+import { zMcpToolListDocsInput } from '#common/types/backend/mcp-tools/mcp-tool-list-docs/mcp-tool-list-docs-input';
+import { zMcpToolListDocsOutput } from '#common/types/backend/mcp-tools/mcp-tool-list-docs/mcp-tool-list-docs-output';
 
 @McpController()
 @UseFilters(McpExceptionFilter)

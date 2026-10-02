@@ -10,7 +10,8 @@ import {
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import type { ModelLt, ModelSt } from '#common/types/shared/st-lt/st-lt';
+import type { ModelLt } from '#common/types/shared/st-lt/models/model-lt';
+import type { ModelSt } from '#common/types/shared/st-lt/models/model-st';
 
 export const modelsTable = pgTable(
   'models',

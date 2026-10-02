@@ -3,7 +3,7 @@ import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-ty
 import {
   type ExtraSchema,
   zExtraSchema
-} from '#common/types/backend/parts/connection-schemas/extra-schema';
+} from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema';
 import {
   type MproveConfig,
   zMproveConfig

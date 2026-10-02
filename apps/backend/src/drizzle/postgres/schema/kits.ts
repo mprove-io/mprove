@@ -7,7 +7,8 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import type { KitLt, KitSt } from '#common/types/shared/st-lt/st-lt';
+import type { KitLt } from '#common/types/shared/st-lt/kits/kit-lt';
+import type { KitSt } from '#common/types/shared/st-lt/kits/kit-st';
 
 export const kitsTable = pgTable(
   'kits',

@@ -1,5 +1,5 @@
 import type { BmError } from '#blockml/classes/bm-error/bm-error';
-import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schema';
+import type { ExtraSchema } from '#common/types/backend/parts/connection-schemas/extra-schemas/extra-schema';
 import type { MproveConfig } from '#common/types/backend/parts/mprove-config';
 import type { FileChart } from '#common/types/blockml/parts/internal/file-chart';
 import type { FileDashboard } from '#common/types/blockml/parts/internal/file-dashboard';

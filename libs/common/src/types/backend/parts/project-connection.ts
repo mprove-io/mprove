@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { zConnectionOptions } from '#common/types/backend/parts/connection-parts/connection-options';
-import { zConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schema';
+import { zConnectionRawSchema } from '#common/types/backend/parts/connection-schemas/raw-schemas/connection-raw-schema';
 
 // TODO: `options` is tightened (non-nullish) despite interface `@IsOptional()`.
 // Reason: makeMalloyConnections in libs/node-common dereferences

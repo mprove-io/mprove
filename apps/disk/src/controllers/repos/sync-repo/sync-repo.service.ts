@@ -12,7 +12,8 @@ import type { DiskItemCatalog } from '#common/types/disk/parts/disk-item-catalog
 import type { DiskItemStatus } from '#common/types/disk/parts/disk-item-status';
 import type { DiskSyncFile } from '#common/types/disk/parts/disk-sync-file';
 import type { ToDiskSyncRepoOutput } from '#common/types/disk/routes/repos/sync-repo/sync-repo-output';
-import type { ProjectLt, ProjectSt } from '#common/types/shared/st-lt/st-lt';
+import type { ProjectLt } from '#common/types/shared/st-lt/projects/project-lt';
+import type { ProjectSt } from '#common/types/shared/st-lt/projects/project-st';
 import type { DiskConfig } from '#disk/config/disk-config';
 import {
   getSyncData,

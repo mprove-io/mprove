@@ -11,7 +11,8 @@ import {
 } from 'drizzle-orm/pg-core';
 import type { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
-import type { ProviderLt, ProviderSt } from '#common/types/shared/st-lt/st-lt';
+import type { ProviderLt } from '#common/types/shared/st-lt/providers/provider-lt';
+import type { ProviderSt } from '#common/types/shared/st-lt/providers/provider-st';
 
 export const providersTable = pgTable(
   'providers',

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { zValidateFilesRepoConflict } from '#common/types/backend/parts/state/validate-files-repo';
+import { zValidateFilesRepoConflict } from '#common/types/backend/parts/state/validate-files-repo-conflict';
 import { zDiskCatalogNode } from '#common/types/disk/parts/disk-catalog-node';
 import { zRepoError } from '#common/types/disk/parts/repo-error';
 import { zRepoStatus } from '#common/types/disk/parts/repo-status';

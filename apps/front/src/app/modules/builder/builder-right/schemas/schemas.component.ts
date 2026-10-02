@@ -17,11 +17,9 @@ import { exhaustMap, finalize, map, take, tap } from 'rxjs/operators';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
-import type {
-  ColumnCombinedReference,
-  CombinedSchemaItem
-} from '#common/types/backend/parts/connection-schemas/combined-schema';
-import type { RawSchemaForeignKey } from '#common/types/backend/parts/connection-schemas/raw-schema';
+import type { ColumnCombinedReference } from '#common/types/backend/parts/connection-schemas/combined-schemas/column-combined-reference';
+import type { CombinedSchemaItem } from '#common/types/backend/parts/connection-schemas/combined-schemas/combined-schema-item';
+import type { RawSchemaForeignKey } from '#common/types/backend/parts/connection-schemas/raw-schemas/raw-schema-foreign-key';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
 import type { ToBackendClearCachedColumnResponse } from '#common/types/backend/routes/connections/clear-cached-column/clear-cached-column-response';
 import type { ToBackendGetCachedColumnsOutput } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-output';

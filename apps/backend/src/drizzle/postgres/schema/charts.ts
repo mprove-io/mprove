@@ -10,7 +10,8 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import type { ChartLt, ChartSt } from '#common/types/shared/st-lt/st-lt';
+import type { ChartLt } from '#common/types/shared/st-lt/charts/chart-lt';
+import type { ChartSt } from '#common/types/shared/st-lt/charts/chart-st';
 
 export const chartsTable = pgTable(
   'charts',

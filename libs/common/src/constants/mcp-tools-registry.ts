@@ -1,52 +1,28 @@
 import type { z } from 'zod';
-import {
-  zMcpToolGetConnectionsListInput,
-  zMcpToolGetConnectionsListOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-connections-list';
-import {
-  zMcpToolGetModelInput,
-  zMcpToolGetModelOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-model';
-import {
-  zMcpToolGetQueryInfoInput,
-  zMcpToolGetQueryInfoOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-query-info';
-import {
-  zMcpToolGetSampleInput,
-  zMcpToolGetSampleOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-sample';
-import {
-  zMcpToolGetSchemasInput,
-  zMcpToolGetSchemasOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-schemas';
-import {
-  zMcpToolGetSkillsInput,
-  zMcpToolGetSkillsOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-skills';
-import {
-  zMcpToolGetStateInput,
-  zMcpToolGetStateOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-get-state';
-import {
-  zMcpToolListDocsInput,
-  zMcpToolListDocsOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-list-docs';
-import {
-  zMcpToolReadDocsInput,
-  zMcpToolReadDocsOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-read-docs';
-import {
-  zMcpToolRunInput,
-  zMcpToolRunOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-run';
-import {
-  zMcpToolSearchDocsInput,
-  zMcpToolSearchDocsOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-search-docs';
-import {
-  zMcpToolValidateFilesInput,
-  zMcpToolValidateFilesOutput
-} from '#common/types/backend/mcp-tools/mcp-tool-validate-files';
+import { zMcpToolGetConnectionsListInput } from '#common/types/backend/mcp-tools/mcp-tool-get-connections-list/mcp-tool-get-connections-list-input';
+import { zMcpToolGetConnectionsListOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-connections-list/mcp-tool-get-connections-list-output';
+import { zMcpToolGetModelInput } from '#common/types/backend/mcp-tools/mcp-tool-get-model/mcp-tool-get-model-input';
+import { zMcpToolGetModelOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-model/mcp-tool-get-model-output';
+import { zMcpToolGetQueryInfoInput } from '#common/types/backend/mcp-tools/mcp-tool-get-query-info/mcp-tool-get-query-info-input';
+import { zMcpToolGetQueryInfoOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-query-info/mcp-tool-get-query-info-output';
+import { zMcpToolGetSampleInput } from '#common/types/backend/mcp-tools/mcp-tool-get-sample/mcp-tool-get-sample-input';
+import { zMcpToolGetSampleOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-sample/mcp-tool-get-sample-output';
+import { zMcpToolGetSchemasInput } from '#common/types/backend/mcp-tools/mcp-tool-get-schemas/mcp-tool-get-schemas-input';
+import { zMcpToolGetSchemasOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-schemas/mcp-tool-get-schemas-output';
+import { zMcpToolGetSkillsInput } from '#common/types/backend/mcp-tools/mcp-tool-get-skills/mcp-tool-get-skills-input';
+import { zMcpToolGetSkillsOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-skills/mcp-tool-get-skills-output';
+import { zMcpToolGetStateInput } from '#common/types/backend/mcp-tools/mcp-tool-get-state/mcp-tool-get-state-input';
+import { zMcpToolGetStateOutput } from '#common/types/backend/mcp-tools/mcp-tool-get-state/mcp-tool-get-state-output';
+import { zMcpToolListDocsInput } from '#common/types/backend/mcp-tools/mcp-tool-list-docs/mcp-tool-list-docs-input';
+import { zMcpToolListDocsOutput } from '#common/types/backend/mcp-tools/mcp-tool-list-docs/mcp-tool-list-docs-output';
+import { zMcpToolReadDocsInput } from '#common/types/backend/mcp-tools/mcp-tool-read-docs/mcp-tool-read-docs-input';
+import { zMcpToolReadDocsOutput } from '#common/types/backend/mcp-tools/mcp-tool-read-docs/mcp-tool-read-docs-output';
+import { zMcpToolRunInput } from '#common/types/backend/mcp-tools/mcp-tool-run/mcp-tool-run-input';
+import { zMcpToolRunOutput } from '#common/types/backend/mcp-tools/mcp-tool-run/mcp-tool-run-output';
+import { zMcpToolSearchDocsInput } from '#common/types/backend/mcp-tools/mcp-tool-search-docs/mcp-tool-search-docs-input';
+import { zMcpToolSearchDocsOutput } from '#common/types/backend/mcp-tools/mcp-tool-search-docs/mcp-tool-search-docs-output';
+import { zMcpToolValidateFilesInput } from '#common/types/backend/mcp-tools/mcp-tool-validate-files/mcp-tool-validate-files-input';
+import { zMcpToolValidateFilesOutput } from '#common/types/backend/mcp-tools/mcp-tool-validate-files/mcp-tool-validate-files-output';
 
 export const MCP_TOOL_RUN = 'run';
 export const MCP_TOOL_GET_STATE = 'get-state';
