@@ -15,8 +15,8 @@ import { OrgsService } from '#backend/services/db/orgs.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsProjectExistOutput } from '#common/types/backend/routes/projects/is-project-exist/is-project-exist-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)

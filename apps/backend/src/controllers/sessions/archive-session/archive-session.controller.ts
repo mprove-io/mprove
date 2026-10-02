@@ -16,8 +16,8 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendArchiveSessionOutput } from '#common/types/backend/routes/sessions/archive-session/archive-session-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

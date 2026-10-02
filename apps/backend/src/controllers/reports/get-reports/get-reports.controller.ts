@@ -23,8 +23,8 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetReportsOutput } from '#common/types/backend/routes/reports/get-reports/get-reports-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)

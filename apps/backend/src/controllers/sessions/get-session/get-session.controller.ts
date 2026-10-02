@@ -27,8 +27,8 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { SessionEventApi } from '#common/types/backend/parts/session-event-api';
 import type { SessionMessageApi } from '#common/types/backend/parts/session-message-api';
 import type { SessionPartApi } from '#common/types/backend/parts/session-part-api';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetSessionOutput } from '#common/types/backend/routes/sessions/get-session/get-session-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

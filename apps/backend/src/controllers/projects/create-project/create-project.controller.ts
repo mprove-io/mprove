@@ -33,8 +33,8 @@ import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateProjectOutput } from '#common/types/backend/routes/projects/create-project/create-project-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)

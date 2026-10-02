@@ -19,9 +19,9 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetFileOutput } from '#common/types/backend/routes/files/get-file/get-file-output';
 import type { ToDiskGetFileOutput } from '#common/types/disk/routes/files/get-file/get-file-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)

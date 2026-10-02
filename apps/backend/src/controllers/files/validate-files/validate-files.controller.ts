@@ -10,7 +10,7 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Files')
 @UseGuards(ThrottlerUserIdGuard)

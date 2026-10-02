@@ -11,8 +11,8 @@ import { GivensService } from '#backend/services/db/givens.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetRolesOutput } from '#common/types/backend/routes/roles/get-roles/get-roles-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Roles')
 @UseGuards(ThrottlerUserIdGuard)

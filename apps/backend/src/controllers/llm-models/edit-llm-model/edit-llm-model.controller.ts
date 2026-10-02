@@ -41,9 +41,9 @@ import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-u
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { Provider } from '#common/types/backend/parts/provider';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditLlmModelOutput } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-output';
 import type { ToBackendEditLlmModelRequest } from '#common/types/backend/routes/llm-models/edit-llm-model/edit-llm-model-request';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)

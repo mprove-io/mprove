@@ -37,9 +37,9 @@ import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateFolderOutput } from '#common/types/backend/routes/folders/create-folder/create-folder-output';
 import type { ToDiskCreateFolderOutput } from '#common/types/disk/routes/folders/create-folder/create-folder-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 const { forEachSeries } = pIteration;
 

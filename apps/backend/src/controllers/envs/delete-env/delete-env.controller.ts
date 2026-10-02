@@ -33,8 +33,8 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteEnvOutput } from '#common/types/backend/routes/envs/delete-env/delete-env-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Envs')
 @UseGuards(ThrottlerUserIdGuard)

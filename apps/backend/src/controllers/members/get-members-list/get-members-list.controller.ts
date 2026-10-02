@@ -16,8 +16,8 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetMembersListOutput } from '#common/types/backend/routes/members/get-members-list/get-members-list-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)

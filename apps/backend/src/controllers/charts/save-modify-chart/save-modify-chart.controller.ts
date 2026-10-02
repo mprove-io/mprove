@@ -59,9 +59,9 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-path';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSaveModifyChartOutput } from '#common/types/backend/routes/charts/save-modify-chart/save-modify-chart-output';
 import type { ToDiskSaveFileOutput } from '#common/types/disk/routes/files/save-file/save-file-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 const { forEachSeries } = pIteration;
 

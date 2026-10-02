@@ -20,8 +20,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCheckLastNavOutput } from '#common/types/backend/routes/nav/check-last-nav/check-last-nav-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Nav')
 @UseGuards(ThrottlerUserIdGuard)

@@ -24,8 +24,8 @@ import { UsersService } from '#backend/services/db/users.service';
 import { TabService } from '#backend/services/tab.service';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetUserUiOutput } from '#common/types/backend/routes/users/set-user-ui/set-user-ui-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

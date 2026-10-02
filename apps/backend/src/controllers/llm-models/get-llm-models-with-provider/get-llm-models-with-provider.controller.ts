@@ -16,8 +16,8 @@ import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { LlmModelWithProvider } from '#common/types/backend/parts/llm-models/llm-model-with-provider';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetLlmModelsWithProviderOutput } from '#common/types/backend/routes/llm-models/get-llm-models-with-provider/get-llm-models-with-provider-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)

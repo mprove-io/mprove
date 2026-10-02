@@ -28,9 +28,9 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { Provider } from '#common/types/backend/parts/provider';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendToggleProviderOutput } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-output';
 import type { ToBackendToggleProviderRequest } from '#common/types/backend/routes/providers/toggle-provider/toggle-provider-request';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)

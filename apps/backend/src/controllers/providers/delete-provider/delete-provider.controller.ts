@@ -26,9 +26,9 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteProviderOutput } from '#common/types/backend/routes/providers/delete-provider/delete-provider-output';
 import type { ToBackendDeleteProviderRequest } from '#common/types/backend/routes/providers/delete-provider/delete-provider-request';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)

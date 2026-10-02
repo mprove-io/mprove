@@ -42,8 +42,8 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRefreshCachedColumnOutput } from '#common/types/backend/routes/connections/refresh-cached-column/refresh-cached-column-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 const CACHED_PARTS_INSERT_CHUNK_SIZE = 400;
 

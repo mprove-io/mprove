@@ -13,7 +13,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

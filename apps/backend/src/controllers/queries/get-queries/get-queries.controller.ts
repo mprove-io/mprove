@@ -23,8 +23,8 @@ import { StructsService } from '#backend/services/db/structs.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetQueriesOutput } from '#common/types/backend/routes/queries/get-queries/get-queries-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 const { forEachSeries } = pIteration;
 

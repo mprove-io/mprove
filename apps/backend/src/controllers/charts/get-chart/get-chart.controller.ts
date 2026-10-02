@@ -14,8 +14,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { QueryInfoChartService } from '#backend/services/query-info-chart.service';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetChartOutput } from '#common/types/backend/routes/charts/get-chart/get-chart-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Charts')
 @UseGuards(ThrottlerUserIdGuard)

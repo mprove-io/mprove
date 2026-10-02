@@ -17,8 +17,8 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendPauseEditorSessionOutput } from '#common/types/backend/routes/sessions/pause-editor-session/pause-editor-session-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

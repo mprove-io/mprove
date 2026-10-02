@@ -39,9 +39,9 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { LlmModelPart } from '#common/types/backend/parts/llm-models/llm-model-part';
 import type { LlmModelVariant } from '#common/types/backend/parts/llm-models/llm-model-variant';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetLlmModelPartsOutput } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-output';
 import type { ToBackendGetLlmModelPartsRequest } from '#common/types/backend/routes/llm-models/get-llm-model-parts/get-llm-model-parts-request';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)

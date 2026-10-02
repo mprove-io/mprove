@@ -23,8 +23,8 @@ import { RolesService } from '#backend/services/db/roles.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetMembersOutput } from '#common/types/backend/routes/members/get-members/get-members-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Members')
 @UseGuards(ThrottlerUserIdGuard)

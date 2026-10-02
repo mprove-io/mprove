@@ -12,8 +12,8 @@ import { FavoritesService } from '#backend/services/db/favorites.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetFavoriteOutput } from '#common/types/backend/routes/favorites/set-favorite/set-favorite-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Favorites')
 @UseGuards(ThrottlerUserIdGuard)

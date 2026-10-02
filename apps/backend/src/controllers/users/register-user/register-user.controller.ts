@@ -38,8 +38,8 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import { makeCopy } from '#common/functions/make-copy/make-copy';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRegisterUserOutput } from '#common/types/backend/routes/users/register-user/register-user-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Users')
 @SkipJwtCheck()

@@ -12,8 +12,8 @@ import { DconfigsService } from '#backend/services/db/dconfigs.service';
 import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendIsOrgExistOutput } from '#common/types/backend/routes/orgs/is-org-exist/is-org-exist-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)

@@ -18,8 +18,8 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetBranchesListOutput } from '#common/types/backend/routes/branches/get-branches-list/get-branches-list-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)

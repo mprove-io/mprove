@@ -1,4 +1,4 @@
-import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 export const MCLI_USER_ALLOWED_REQUEST_NAMES: ToBackendRoute[] = [
   'api/ToBackendGetConnectionsList', // get-connections-list

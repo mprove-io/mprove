@@ -17,10 +17,10 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBlockmlRebuildStructOutput } from '#common/types/blockml/routes/rebuild-struct/rebuild-struct-output';
 import type { ToBlockmlRebuildStructRequest } from '#common/types/blockml/routes/rebuild-struct/rebuild-struct-request';
 import type { ToDiskGetCatalogFilesOutput } from '#common/types/disk/routes/catalogs/get-catalog-files/get-catalog-files-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('TestRoutes')
 // ToBackendGetRebuildStructRequest is for tests only

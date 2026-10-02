@@ -28,9 +28,9 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { ProvidersService } from '#backend/services/db/providers.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { Provider } from '#common/types/backend/parts/provider';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendDeleteLlmModelOutput } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-output';
 import type { ToBackendDeleteLlmModelRequest } from '#common/types/backend/routes/llm-models/delete-llm-model/delete-llm-model-request';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)

@@ -20,8 +20,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetConnectionsOutput } from '#common/types/backend/routes/connections/get-connections/get-connections-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Connections')
 @UseGuards(ThrottlerUserIdGuard)

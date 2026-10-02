@@ -23,8 +23,8 @@ import { ReportRowService } from '#backend/services/report-row.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendEditDraftReportOutput } from '#common/types/backend/routes/reports/edit-draft-report/edit-draft-report-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)

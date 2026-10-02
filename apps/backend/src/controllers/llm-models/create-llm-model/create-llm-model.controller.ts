@@ -36,9 +36,9 @@ import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty/is-undefined-or-empty';
 import type { LlmModel } from '#common/types/backend/parts/llm-models/llm-model';
 import type { Provider } from '#common/types/backend/parts/provider';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateLlmModelOutput } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-output';
 import type { ToBackendCreateLlmModelRequest } from '#common/types/backend/routes/llm-models/create-llm-model/create-llm-model-request';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('LlmModels')
 @UseGuards(ThrottlerUserIdGuard)

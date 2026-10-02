@@ -39,9 +39,9 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendRevertRepoToRemoteOutput } from '#common/types/backend/routes/repos/revert-repo-to-remote/revert-repo-to-remote-output';
 import type { ToDiskRevertRepoToRemoteOutput } from '#common/types/disk/routes/repos/revert-repo-to-remote/revert-repo-to-remote-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 const { forEachSeries } = pIteration;
 

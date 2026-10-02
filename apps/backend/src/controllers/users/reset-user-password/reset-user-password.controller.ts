@@ -29,7 +29,7 @@ import {
   THROTTLE_MULTIPLIER
 } from '#common/constants/top-backend';
 import { makeId } from '#common/functions/make-id/make-id';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Users')
 @SkipJwtCheck()

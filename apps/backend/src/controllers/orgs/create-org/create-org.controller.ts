@@ -23,8 +23,8 @@ import { DEMO_ORG_NAME } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateOrgOutput } from '#common/types/backend/routes/orgs/create-org/create-org-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)

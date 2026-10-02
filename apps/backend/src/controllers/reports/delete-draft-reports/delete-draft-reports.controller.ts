@@ -32,7 +32,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Reports')
 @UseGuards(ThrottlerUserIdGuard)

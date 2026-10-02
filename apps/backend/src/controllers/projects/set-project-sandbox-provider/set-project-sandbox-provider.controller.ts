@@ -25,8 +25,8 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined/is-defined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendSetProjectSandboxProviderOutput } from '#common/types/backend/routes/projects/set-project-sandbox-provider/set-project-sandbox-provider-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)

@@ -34,7 +34,7 @@ import { OrgsService } from '#backend/services/db/orgs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Orgs')
 @UseGuards(ThrottlerUserIdGuard)

@@ -29,8 +29,8 @@ import { TabService } from '#backend/services/tab.service';
 import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendConfirmUserEmailOutput } from '#common/types/backend/routes/users/confirm-user-email/confirm-user-email-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Users')
 @SkipJwtCheck()

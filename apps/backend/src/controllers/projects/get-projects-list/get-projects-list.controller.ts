@@ -23,8 +23,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { TabService } from '#backend/services/tab.service';
 import type { ProjectsItem } from '#common/types/backend/parts/projects-item';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetProjectsListOutput } from '#common/types/backend/routes/projects/get-projects-list/get-projects-list-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Projects')
 @UseGuards(ThrottlerUserIdGuard)

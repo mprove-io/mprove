@@ -32,7 +32,7 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 
 @ApiTags('Branches')
 @UseGuards(ThrottlerUserIdGuard)

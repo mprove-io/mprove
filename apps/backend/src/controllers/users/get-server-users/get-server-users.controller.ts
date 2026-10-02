@@ -25,8 +25,8 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { ErEnum } from '#common/enums/er.enum';
 import type { ServerUsersItem } from '#common/types/backend/parts/users/server-users-item';
 import type { ServerUsersMembershipItem } from '#common/types/backend/parts/users/server-users-membership-item';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetServerUsersOutput } from '#common/types/backend/routes/users/get-server-users/get-server-users-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Users')
 @UseGuards(ThrottlerUserIdGuard)

@@ -19,8 +19,8 @@ import { HashService } from '#backend/services/hash.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import type { CachedColumn } from '#common/types/backend/parts/connections/cached-column';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetCachedColumnsOutput } from '#common/types/backend/routes/connections/get-cached-columns/get-cached-columns-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('CachedColumns')
 @UseGuards(ThrottlerUserIdGuard)

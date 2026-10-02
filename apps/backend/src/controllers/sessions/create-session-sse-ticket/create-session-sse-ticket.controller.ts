@@ -14,8 +14,8 @@ import { ServerError } from '#common/classes/server-error/server-error';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { makeId } from '#common/functions/make-id/make-id';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateSessionSseTicketOutput } from '#common/types/backend/routes/sessions/create-session-sse-ticket/create-session-sse-ticket-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Sessions')
 @UseGuards(ThrottlerUserIdGuard)

@@ -25,8 +25,8 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { RolesService } from '#backend/services/db/roles.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateRoleGivenOutput } from '#common/types/backend/routes/roles/create-role-given/create-role-given-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Roles')
 @UseGuards(ThrottlerUserIdGuard)

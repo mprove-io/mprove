@@ -31,10 +31,10 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import type { Member } from '#common/types/backend/parts/member';
 import type { StructX } from '#common/types/backend/parts/struct-x';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendGetNavOutput } from '#common/types/backend/routes/nav/get-nav/get-nav-output';
 import type { Repo } from '#common/types/disk/parts/repo';
 import type { ToDiskGetCatalogNodesOutput } from '#common/types/disk/routes/catalogs/get-catalog-nodes/get-catalog-nodes-output';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Nav')
 @UseGuards(ThrottlerUserIdGuard)

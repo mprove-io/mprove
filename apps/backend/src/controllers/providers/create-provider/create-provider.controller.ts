@@ -31,9 +31,9 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ProviderTypeEnum } from '#common/enums/provider-type.enum';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty/is-defined-and-not-empty';
 import type { Provider } from '#common/types/backend/parts/provider';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateProviderOutput } from '#common/types/backend/routes/providers/create-provider/create-provider-output';
 import type { ToBackendCreateProviderRequest } from '#common/types/backend/routes/providers/create-provider/create-provider-request';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Providers')
 @UseGuards(ThrottlerUserIdGuard)

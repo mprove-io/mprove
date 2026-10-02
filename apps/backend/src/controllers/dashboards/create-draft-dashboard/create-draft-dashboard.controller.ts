@@ -53,9 +53,9 @@ import { encodeFilePath } from '#common/functions/encode-file-path/encode-file-p
 import { isDefined } from '#common/functions/is-defined/is-defined';
 import { isUndefined } from '#common/functions/is-undefined/is-undefined';
 import type { TileX } from '#common/types/backend/parts/tile-x';
+import type { ToBackendRoute } from '#common/types/backend/request/to-backend-route';
 import type { ToBackendCreateDraftDashboardOutput } from '#common/types/backend/routes/dashboards/create-draft-dashboard/create-draft-dashboard-output';
 import type { DiskCatalogFile } from '#common/types/disk/parts/disk-catalog-file';
-import type { ToBackendRoute } from '#common/types/to-backend-route';
 
 @ApiTags('Dashboards')
 @UseGuards(ThrottlerUserIdGuard)
