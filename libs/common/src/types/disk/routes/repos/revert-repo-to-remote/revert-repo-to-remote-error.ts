@@ -5,29 +5,35 @@ import {
   zDiskRemoteBranchIsNotExistError
 } from '#common/types/disk/errors/disk-remote-branch-is-not-exist-error';
 import {
-  type DiskRepoIsNotCleanForCheckoutBranchError,
-  zDiskRepoIsNotCleanForCheckoutBranchError
-} from '#common/types/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
+  type DiskCheckRestoreOrgProjectRepoBranchError,
+  zDiskCheckRestoreOrgProjectRepoBranchError
+} from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import {
-  type FileIsSymlinkError,
-  zFileIsSymlinkError
-} from '#common/types/node-common/errors/file-is-symlink-error';
+  type DiskCheckoutBranchError,
+  zDiskCheckoutBranchError
+} from '#common/types/disk/function-errors/disk-checkout-branch-error';
 import {
-  type FileSizeIsTooBigError,
-  zFileSizeIsTooBigError
-} from '#common/types/node-common/errors/file-size-is-too-big-error';
+  type DiskGetNodesAndFilesError,
+  zDiskGetNodesAndFilesError
+} from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
+import {
+  type DiskGetRepoStatusError,
+  zDiskGetRepoStatusError
+} from '#common/types/disk/function-errors/disk-get-repo-status-error';
 
 export type ToDiskRevertRepoToRemoteError =
   | DiskRemoteBranchIsNotExistError
-  | DiskRepoIsNotCleanForCheckoutBranchError
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError;
+  | DiskCheckRestoreOrgProjectRepoBranchError
+  | DiskCheckoutBranchError
+  | DiskGetRepoStatusError
+  | DiskGetNodesAndFilesError;
 
-export let zToDiskRevertRepoToRemoteError = z.discriminatedUnion('code', [
+export let zToDiskRevertRepoToRemoteError = z.union([
   zDiskRemoteBranchIsNotExistError,
-  zDiskRepoIsNotCleanForCheckoutBranchError,
-  zFileIsSymlinkError,
-  zFileSizeIsTooBigError
+  zDiskCheckRestoreOrgProjectRepoBranchError,
+  zDiskCheckoutBranchError,
+  zDiskGetRepoStatusError,
+  zDiskGetNodesAndFilesError
 ]);
 
 assertTypesEqual<

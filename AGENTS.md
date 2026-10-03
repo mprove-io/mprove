@@ -367,6 +367,10 @@ handwritten TypeScript type.
 Export both and verify equivalence with
 `assertTypesEqual<Type, z.infer<typeof schema>>`.
 
+This requirement is one-way: a native TypeScript type does not automatically
+require a Zod schema. Add a schema when needed for runtime validation or
+contract composition, not merely because a native type exists.
+
 Do not define the native type using `z.infer`.
 
 Exception: finite string literal sets may use a single module-local `const`

@@ -9,19 +9,37 @@ import {
   zDiskCheckRestoreOrgProjectRepoBranchError
 } from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import {
+  type DiskCheckoutBranchError,
+  zDiskCheckoutBranchError
+} from '#common/types/disk/function-errors/disk-checkout-branch-error';
+import {
   type DiskDeleteBranchFromRepositoriesError,
   zDiskDeleteBranchFromRepositoriesError
 } from '#common/types/disk/function-errors/disk-delete-branch-from-repositories-error';
+import {
+  type DiskGetNodesAndFilesError,
+  zDiskGetNodesAndFilesError
+} from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
+import {
+  type DiskGetRepoStatusError,
+  zDiskGetRepoStatusError
+} from '#common/types/disk/function-errors/disk-get-repo-status-error';
 
 export type ToDiskDeleteBranchError =
   | DiskDefaultBranchCannotBeDeletedError
   | DiskCheckRestoreOrgProjectRepoBranchError
-  | DiskDeleteBranchFromRepositoriesError;
+  | DiskCheckoutBranchError
+  | DiskDeleteBranchFromRepositoriesError
+  | DiskGetRepoStatusError
+  | DiskGetNodesAndFilesError;
 
 export let zToDiskDeleteBranchError = z.union([
   zDiskDefaultBranchCannotBeDeletedError,
   zDiskCheckRestoreOrgProjectRepoBranchError,
-  zDiskDeleteBranchFromRepositoriesError
+  zDiskCheckoutBranchError,
+  zDiskDeleteBranchFromRepositoriesError,
+  zDiskGetRepoStatusError,
+  zDiskGetNodesAndFilesError
 ]);
 
 assertTypesEqual<

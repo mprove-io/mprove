@@ -1,27 +1,27 @@
 import { z } from 'zod';
 import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
 import {
-  type DiskRepoIsNotCleanForCheckoutBranchError,
-  zDiskRepoIsNotCleanForCheckoutBranchError
-} from '#common/types/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
+  type DiskGetInitialCommitHashError,
+  zDiskGetInitialCommitHashError
+} from '#common/types/disk/function-errors/disk-get-initial-commit-hash-error';
 import {
-  type FileIsSymlinkError,
-  zFileIsSymlinkError
-} from '#common/types/node-common/errors/file-is-symlink-error';
+  type DiskGetNodesAndFilesError,
+  zDiskGetNodesAndFilesError
+} from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
 import {
-  type FileSizeIsTooBigError,
-  zFileSizeIsTooBigError
-} from '#common/types/node-common/errors/file-size-is-too-big-error';
+  type DiskGetRepoStatusError,
+  zDiskGetRepoStatusError
+} from '#common/types/disk/function-errors/disk-get-repo-status-error';
 
 export type ToDiskCreateDevRepoError =
-  | DiskRepoIsNotCleanForCheckoutBranchError
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError;
+  | DiskGetInitialCommitHashError
+  | DiskGetRepoStatusError
+  | DiskGetNodesAndFilesError;
 
-export let zToDiskCreateDevRepoError = z.discriminatedUnion('code', [
-  zDiskRepoIsNotCleanForCheckoutBranchError,
-  zFileIsSymlinkError,
-  zFileSizeIsTooBigError
+export let zToDiskCreateDevRepoError = z.union([
+  zDiskGetInitialCommitHashError,
+  zDiskGetRepoStatusError,
+  zDiskGetNodesAndFilesError
 ]);
 
 assertTypesEqual<

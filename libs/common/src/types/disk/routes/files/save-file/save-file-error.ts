@@ -5,41 +5,53 @@ import {
   zDiskFileIsNotExistError
 } from '#common/types/disk/errors/disk-file-is-not-exist-error';
 import {
-  type DiskPathTraversalError,
-  zDiskPathTraversalError
-} from '#common/types/disk/errors/disk-path-traversal-error';
+  type DiskCheckRestoreOrgProjectRepoBranchError,
+  zDiskCheckRestoreOrgProjectRepoBranchError
+} from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import {
-  type DiskRepoIsNotCleanForCheckoutBranchError,
-  zDiskRepoIsNotCleanForCheckoutBranchError
-} from '#common/types/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
+  type DiskCheckoutBranchError,
+  zDiskCheckoutBranchError
+} from '#common/types/disk/function-errors/disk-checkout-branch-error';
 import {
-  type DiskRepoStatusIsNotNeedPushError,
-  zDiskRepoStatusIsNotNeedPushError
-} from '#common/types/disk/errors/disk-repo-status-is-not-need-push-error';
+  type DiskGetNodesAndFilesError,
+  zDiskGetNodesAndFilesError
+} from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
 import {
-  type FileIsSymlinkError,
-  zFileIsSymlinkError
-} from '#common/types/node-common/errors/file-is-symlink-error';
+  type DiskGetRepoStatusError,
+  zDiskGetRepoStatusError
+} from '#common/types/disk/function-errors/disk-get-repo-status-error';
 import {
-  type FileSizeIsTooBigError,
-  zFileSizeIsTooBigError
-} from '#common/types/node-common/errors/file-size-is-too-big-error';
+  type DiskPushToRemoteError,
+  zDiskPushToRemoteError
+} from '#common/types/disk/function-errors/disk-push-to-remote-error';
+import {
+  type DiskWriteToFileError,
+  zDiskWriteToFileError
+} from '#common/types/disk/function-errors/disk-write-to-file-error';
+import {
+  type ValidatePathUnderDirError,
+  zValidatePathUnderDirError
+} from '#common/types/node-common/function-errors/validate-path-under-dir-error';
 
 export type ToDiskSaveFileError =
   | DiskFileIsNotExistError
-  | DiskPathTraversalError
-  | DiskRepoIsNotCleanForCheckoutBranchError
-  | DiskRepoStatusIsNotNeedPushError
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError;
+  | ValidatePathUnderDirError
+  | DiskCheckRestoreOrgProjectRepoBranchError
+  | DiskCheckoutBranchError
+  | DiskWriteToFileError
+  | DiskPushToRemoteError
+  | DiskGetRepoStatusError
+  | DiskGetNodesAndFilesError;
 
-export let zToDiskSaveFileError = z.discriminatedUnion('code', [
+export let zToDiskSaveFileError = z.union([
   zDiskFileIsNotExistError,
-  zDiskPathTraversalError,
-  zDiskRepoIsNotCleanForCheckoutBranchError,
-  zDiskRepoStatusIsNotNeedPushError,
-  zFileIsSymlinkError,
-  zFileSizeIsTooBigError
+  zValidatePathUnderDirError,
+  zDiskCheckRestoreOrgProjectRepoBranchError,
+  zDiskCheckoutBranchError,
+  zDiskWriteToFileError,
+  zDiskPushToRemoteError,
+  zDiskGetRepoStatusError,
+  zDiskGetNodesAndFilesError
 ]);
 
 assertTypesEqual<ToDiskSaveFileError, z.infer<typeof zToDiskSaveFileError>>({

@@ -1,21 +1,7 @@
-import { z } from 'zod';
-import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import {
-  type DiskFileChange,
-  zDiskFileChange
-} from '#common/types/disk/parts/disk-file-change';
-import {
-  type DiskFileLine,
-  zDiskFileLine
-} from '#common/types/disk/parts/disk-file-line';
-import {
-  type RepoError,
-  zRepoError
-} from '#common/types/disk/parts/repo-error';
-import {
-  type RepoStatus,
-  zRepoStatus
-} from '#common/types/disk/parts/repo-status';
+import type { DiskFileChange } from '#common/types/disk/parts/disk-file-change';
+import type { DiskFileLine } from '#common/types/disk/parts/disk-file-line';
+import type { RepoError } from '#common/types/disk/parts/repo-error';
+import type { RepoStatus } from '#common/types/disk/parts/repo-status';
 
 export type DiskItemStatus = {
   repoStatus: RepoStatus;
@@ -25,18 +11,3 @@ export type DiskItemStatus = {
   changesToCommit: DiskFileChange[];
   changesToPush: DiskFileChange[];
 };
-
-export let zDiskItemStatus = z
-  .object({
-    repoStatus: zRepoStatus,
-    repoError: zRepoError.nullish(),
-    conflicts: z.array(zDiskFileLine),
-    currentBranch: z.string(),
-    changesToCommit: z.array(zDiskFileChange),
-    changesToPush: z.array(zDiskFileChange)
-  })
-  .meta({ id: 'DiskItemStatus' });
-
-assertTypesEqual<DiskItemStatus, z.infer<typeof zDiskItemStatus>>({
-  value: true
-});

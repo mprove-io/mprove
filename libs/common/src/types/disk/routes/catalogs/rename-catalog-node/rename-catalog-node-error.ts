@@ -9,37 +9,43 @@ import {
   zDiskOldPathIsNotExistError
 } from '#common/types/disk/errors/disk-old-path-is-not-exist-error';
 import {
-  type DiskPathTraversalError,
-  zDiskPathTraversalError
-} from '#common/types/disk/errors/disk-path-traversal-error';
+  type DiskCheckRestoreOrgProjectRepoBranchError,
+  zDiskCheckRestoreOrgProjectRepoBranchError
+} from '#common/types/disk/function-errors/disk-check-restore-org-project-repo-branch-error';
 import {
-  type DiskRepoIsNotCleanForCheckoutBranchError,
-  zDiskRepoIsNotCleanForCheckoutBranchError
-} from '#common/types/disk/errors/disk-repo-is-not-clean-for-checkout-branch-error';
+  type DiskCheckoutBranchError,
+  zDiskCheckoutBranchError
+} from '#common/types/disk/function-errors/disk-checkout-branch-error';
 import {
-  type FileIsSymlinkError,
-  zFileIsSymlinkError
-} from '#common/types/node-common/errors/file-is-symlink-error';
+  type DiskGetNodesAndFilesError,
+  zDiskGetNodesAndFilesError
+} from '#common/types/disk/function-errors/disk-get-nodes-and-files-error';
 import {
-  type FileSizeIsTooBigError,
-  zFileSizeIsTooBigError
-} from '#common/types/node-common/errors/file-size-is-too-big-error';
+  type DiskGetRepoStatusError,
+  zDiskGetRepoStatusError
+} from '#common/types/disk/function-errors/disk-get-repo-status-error';
+import {
+  type ValidatePathUnderDirError,
+  zValidatePathUnderDirError
+} from '#common/types/node-common/function-errors/validate-path-under-dir-error';
 
 export type ToDiskRenameCatalogNodeError =
   | DiskNewPathAlreadyExistError
   | DiskOldPathIsNotExistError
-  | DiskPathTraversalError
-  | DiskRepoIsNotCleanForCheckoutBranchError
-  | FileIsSymlinkError
-  | FileSizeIsTooBigError;
+  | ValidatePathUnderDirError
+  | DiskCheckRestoreOrgProjectRepoBranchError
+  | DiskCheckoutBranchError
+  | DiskGetRepoStatusError
+  | DiskGetNodesAndFilesError;
 
-export let zToDiskRenameCatalogNodeError = z.discriminatedUnion('code', [
+export let zToDiskRenameCatalogNodeError = z.union([
   zDiskNewPathAlreadyExistError,
   zDiskOldPathIsNotExistError,
-  zDiskPathTraversalError,
-  zDiskRepoIsNotCleanForCheckoutBranchError,
-  zFileIsSymlinkError,
-  zFileSizeIsTooBigError
+  zValidatePathUnderDirError,
+  zDiskCheckRestoreOrgProjectRepoBranchError,
+  zDiskCheckoutBranchError,
+  zDiskGetRepoStatusError,
+  zDiskGetNodesAndFilesError
 ]);
 
 assertTypesEqual<

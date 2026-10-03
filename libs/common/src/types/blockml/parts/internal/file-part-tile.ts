@@ -1,27 +1,10 @@
-import { z } from 'zod';
-import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
-import { assertTypesEqual } from '#common/functions/assert-types-equal/assert-types-equal';
-import {
-  type FilterBricksDictionary,
-  zFilterBricksDictionary
-} from '#common/types/blockml/parts/filter-bricks-dictionary';
-import { type Fraction, zFraction } from '#common/types/blockml/parts/fraction';
-import {
-  type FileChartData,
-  zFileChartData
-} from '#common/types/blockml/parts/internal/file-chart-data';
-import {
-  type FileChartOptions,
-  zFileChartOptions
-} from '#common/types/blockml/parts/internal/file-chart-options';
-import {
-  type FileChartPlate,
-  zFileChartPlate
-} from '#common/types/blockml/parts/internal/file-chart-plate';
-import {
-  type FileTileParameter,
-  zFileTileParameter
-} from '#common/types/blockml/parts/internal/file-tile-parameter';
+import type { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import type { FilterBricksDictionary } from '#common/types/blockml/parts/filter-bricks-dictionary';
+import type { Fraction } from '#common/types/blockml/parts/fraction';
+import type { FileChartData } from '#common/types/blockml/parts/internal/file-chart-data';
+import type { FileChartOptions } from '#common/types/blockml/parts/internal/file-chart-options';
+import type { FileChartPlate } from '#common/types/blockml/parts/internal/file-chart-plate';
+import type { FileTileParameter } from '#common/types/blockml/parts/internal/file-tile-parameter';
 import type { EnumValues } from '#common/types/enum-values';
 
 export type FilePartTile = {
@@ -54,45 +37,3 @@ export type FilePartTile = {
   combinedFilters?: FilterBricksDictionary;
   filtersFractions?: Record<string, Fraction[]>;
 };
-
-export let zFilePartTile = z
-  .object({
-    title: z.string().nullish(),
-    title_line_num: z.number().nullish(),
-    model: z.string().nullish(),
-    model_line_num: z.number().nullish(),
-    select: z.array(z.string()).nullish(),
-    select_line_num: z.number().nullish(),
-    sorts: z.string().nullish(),
-    sorts_line_num: z.number().nullish(),
-    limit: z.string().nullish(),
-    limit_line_num: z.number().nullish(),
-    type: z.enum(ChartTypeEnum).nullish(),
-    type_line_num: z.number().nullish(),
-    data: zFileChartData.nullish(),
-    data_line_num: z.number().nullish(),
-    options: zFileChartOptions.nullish(),
-    options_line_num: z.number().nullish(),
-    plate: zFileChartPlate.nullish(),
-    plate_line_num: z.number().nullish(),
-    parameters: z.array(zFileTileParameter).nullish(),
-    parameters_line_num: z.number().nullish(),
-    malloyQueryStable: z.string().nullish(),
-    malloyQueryExtra: z.string().nullish(),
-    compiledQuery: z.any().nullish(),
-    sql: z.array(z.string()).nullish(),
-    sortingsAry: z
-      .array(
-        z.object({
-          fieldId: z.string().nullish(),
-          desc: z.boolean().nullish()
-        })
-      )
-      .nullish(),
-    listen: z.record(z.string(), z.string()).nullish(),
-    combinedFilters: zFilterBricksDictionary.nullish(),
-    filtersFractions: z.record(z.string(), z.array(zFraction)).nullish()
-  })
-  .meta({ id: 'FilePartTile' });
-
-assertTypesEqual<FilePartTile, z.infer<typeof zFilePartTile>>({ value: true });
